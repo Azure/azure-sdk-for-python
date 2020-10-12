@@ -9,7 +9,7 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -19,8 +19,8 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class QueuesOperations:
-    """QueuesOperations async operations.
+class TopicsOperations:
+    """TopicsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -48,8 +48,8 @@ class QueuesOperations:
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.SBQueueListResult"]:
-        """Gets the queues within a namespace.
+    ) -> AsyncIterable["models.SBTopicListResult"]:
+        """Gets all the topics in a namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -62,19 +62,22 @@ class QueuesOperations:
         :param top: May be used to limit the number of results to the most recent N usageDetails.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SBQueueListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBQueueListResult]
+        :return: An iterator like instance of either SBTopicListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBTopicListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBQueueListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBTopicListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -101,7 +104,7 @@ class QueuesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('SBQueueListResult', pipeline_response)
+            deserialized = self._deserialize('SBTopicListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -123,43 +126,46 @@ class QueuesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues'}  # type: ignore
+    list_by_namespace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics'}  # type: ignore
 
     async def create_or_update(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
-        parameters: "models.SBQueue",
+        topic_name: str,
+        parameters: "models.SBTopic",
         **kwargs
-    ) -> "models.SBQueue":
-        """Creates or updates a Service Bus queue. This operation is idempotent.
+    ) -> "models.SBTopic":
+        """Creates a topic in the specified namespace.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
-        :param parameters: Parameters supplied to create or update a queue resource.
-        :type parameters: ~azure.mgmt.servicebus.models.SBQueue
+        :param topic_name: The topic name.
+        :type topic_name: str
+        :param parameters: Parameters supplied to create a topic resource.
+        :type parameters: ~azure.mgmt.servicebus.models.SBTopic
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SBQueue, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.SBQueue
+        :return: SBTopic, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.SBTopic
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBQueue"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBTopic"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -171,13 +177,12 @@ class QueuesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'SBQueue')
+        body_content = self._serialize.body(parameters, 'SBTopic')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -186,45 +191,48 @@ class QueuesOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SBQueue', pipeline_response)
+        deserialized = self._deserialize('SBTopic', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'}  # type: ignore
 
     async def delete(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
+        topic_name: str,
         **kwargs
     ) -> None:
-        """Deletes a queue from the specified namespace in a resource group.
+        """Deletes a topic from the specified namespace and resource group.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -235,6 +243,7 @@ class QueuesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -248,39 +257,42 @@ class QueuesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
+        topic_name: str,
         **kwargs
-    ) -> "models.SBQueue":
-        """Returns a description for the specified queue.
+    ) -> "models.SBTopic":
+        """Returns a description for the specified topic.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SBQueue, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.SBQueue
+        :return: SBTopic, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.SBTopic
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBQueue"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBTopic"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -291,7 +303,7 @@ class QueuesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -302,43 +314,46 @@ class QueuesOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SBQueue', pipeline_response)
+        deserialized = self._deserialize('SBTopic', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}'}  # type: ignore
 
     def list_authorization_rules(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
+        topic_name: str,
         **kwargs
     ) -> AsyncIterable["models.SBAuthorizationRuleListResult"]:
-        """Gets all authorization rules for a queue.
+        """Gets authorization rules for a topic.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SBAuthorizationRuleListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBAuthorizationRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRuleListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
@@ -346,7 +361,7 @@ class QueuesOperations:
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-                    'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+                    'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -384,25 +399,25 @@ class QueuesOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules'}  # type: ignore
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules'}  # type: ignore
 
     async def create_or_update_authorization_rule(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
+        topic_name: str,
         authorization_rule_name: str,
         parameters: "models.SBAuthorizationRule",
         **kwargs
     ) -> "models.SBAuthorizationRule":
-        """Creates an authorization rule for a queue.
+        """Creates an authorization rule for the specified topic.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param parameters: The shared access authorization rule.
@@ -413,17 +428,20 @@ class QueuesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRule"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create_or_update_authorization_rule.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -436,13 +454,12 @@ class QueuesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'SBAuthorizationRule')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -457,84 +474,24 @@ class QueuesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
-
-    async def delete_authorization_rule(
-        self,
-        resource_group_name: str,
-        namespace_name: str,
-        queue_name: str,
-        authorization_rule_name: str,
-        **kwargs
-    ) -> None:
-        """Deletes a queue authorization rule.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
-        :param authorization_rule_name: The authorization rule name.
-        :type authorization_rule_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-01"
-
-        # Construct URL
-        url = self.delete_authorization_rule.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
-            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
+    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
 
     async def get_authorization_rule(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
+        topic_name: str,
         authorization_rule_name: str,
         **kwargs
     ) -> "models.SBAuthorizationRule":
-        """Gets an authorization rule for a queue by rule name.
+        """Returns the specified authorization rule.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -543,16 +500,19 @@ class QueuesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.SBAuthorizationRule"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.get_authorization_rule.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -564,7 +524,7 @@ class QueuesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -581,42 +541,45 @@ class QueuesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
 
-    async def list_keys(
+    async def delete_authorization_rule(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
+        topic_name: str,
         authorization_rule_name: str,
         **kwargs
-    ) -> "models.AccessKeys":
-        """Primary and secondary connection strings to the queue.
+    ) -> None:
+        """Deletes a topic authorization rule.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AccessKeys, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.AccessKeys
+        :return: None, or the result of cls(response)
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         # Construct URL
-        url = self.list_keys.metadata['url']  # type: ignore
+        url = self.delete_authorization_rule.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -628,7 +591,71 @@ class QueuesOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}'}  # type: ignore
+
+    async def list_keys(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        topic_name: str,
+        authorization_rule_name: str,
+        **kwargs
+    ) -> "models.AccessKeys":
+        """Gets the primary and secondary connection strings for the topic.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
+        :param authorization_rule_name: The authorization rule name.
+        :type authorization_rule_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AccessKeys, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.AccessKeys
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2017-04-01"
+        accept = "application/json"
+
+        # Construct URL
+        url = self.list_keys.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+            'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -645,25 +672,25 @@ class QueuesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}/ListKeys'}  # type: ignore
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}/ListKeys'}  # type: ignore
 
     async def regenerate_keys(
         self,
         resource_group_name: str,
         namespace_name: str,
-        queue_name: str,
+        topic_name: str,
         authorization_rule_name: str,
         parameters: "models.RegenerateAccessKeyParameters",
         **kwargs
     ) -> "models.AccessKeys":
-        """Regenerates the primary or secondary connection strings to the queue.
+        """Regenerates primary or secondary connection strings for the topic.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param namespace_name: The namespace name.
         :type namespace_name: str
-        :param queue_name: The queue name.
-        :type queue_name: str
+        :param topic_name: The topic name.
+        :type topic_name: str
         :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param parameters: Parameters supplied to regenerate the authorization rule.
@@ -674,17 +701,20 @@ class QueuesOperations:
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.AccessKeys"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.regenerate_keys.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
-            'queueName': self._serialize.url("queue_name", queue_name, 'str', min_length=1),
+            'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'authorizationRuleName': self._serialize.url("authorization_rule_name", authorization_rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
@@ -697,13 +727,12 @@ class QueuesOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(parameters, 'RegenerateAccessKeyParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -718,4 +747,4 @@ class QueuesOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}/regenerateKeys'}  # type: ignore
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}/regenerateKeys'}  # type: ignore

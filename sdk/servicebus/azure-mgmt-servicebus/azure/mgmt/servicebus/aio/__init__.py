@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._service_bus_management_client_async import ServiceBusManagementClient
+from ._service_bus_management_client import ServiceBusManagementClient
 __all__ = ['ServiceBusManagementClient']

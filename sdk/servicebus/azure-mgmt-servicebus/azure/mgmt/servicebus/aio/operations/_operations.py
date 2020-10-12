@@ -9,7 +9,7 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -19,8 +19,8 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class RegionsOperations:
-    """RegionsOperations async operations.
+class Operations:
+    """Operations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -41,38 +41,33 @@ class RegionsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_sku(
+    def list(
         self,
-        sku: str,
         **kwargs
-    ) -> AsyncIterable["models.PremiumMessagingRegionsListResult"]:
-        """Gets the available Regions for a given sku.
+    ) -> AsyncIterable["models.OperationListResult"]:
+        """Lists all of the available ServiceBus REST API operations.
 
-        :param sku: The sku type.
-        :type sku: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PremiumMessagingRegionsListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.PremiumMessagingRegionsListResult]
+        :return: An iterator like instance of either OperationListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremiumMessagingRegionsListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OperationListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_sku.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                    'sku': self._serialize.url("sku", sku, 'str', max_length=50, min_length=1),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+                url = self.list.metadata['url']  # type: ignore
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -85,7 +80,7 @@ class RegionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('PremiumMessagingRegionsListResult', pipeline_response)
+            deserialized = self._deserialize('OperationListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -107,4 +102,4 @@ class RegionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_sku.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/sku/{sku}/regions'}  # type: ignore
+    list.metadata = {'url': '/providers/Microsoft.ServiceBus/operations'}  # type: ignore

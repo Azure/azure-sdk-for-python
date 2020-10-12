@@ -15,18 +15,18 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import ServiceBusManagementClientConfiguration
-from .operations_async import Operations
-from .operations_async import NamespacesOperations
-from .operations_async import DisasterRecoveryConfigsOperations
-from .operations_async import MigrationConfigsOperations
-from .operations_async import QueuesOperations
-from .operations_async import TopicsOperations
-from .operations_async import SubscriptionsOperations
-from .operations_async import RulesOperations
-from .operations_async import RegionsOperations
-from .operations_async import PremiumMessagingRegionsOperations
-from .operations_async import EventHubsOperations
+from ._configuration import ServiceBusManagementClientConfiguration
+from .operations import Operations
+from .operations import NamespacesOperations
+from .operations import DisasterRecoveryConfigsOperations
+from .operations import MigrationConfigsOperations
+from .operations import QueuesOperations
+from .operations import TopicsOperations
+from .operations import SubscriptionsOperations
+from .operations import RulesOperations
+from .operations import RegionsOperations
+from .operations import PremiumMessagingRegionsOperations
+from .operations import EventHubsOperations
 from .. import models
 
 
@@ -34,27 +34,27 @@ class ServiceBusManagementClient(object):
     """Azure Service Bus client.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.servicebus.aio.operations_async.Operations
+    :vartype operations: azure.mgmt.servicebus.aio.operations.Operations
     :ivar namespaces: NamespacesOperations operations
-    :vartype namespaces: azure.mgmt.servicebus.aio.operations_async.NamespacesOperations
+    :vartype namespaces: azure.mgmt.servicebus.aio.operations.NamespacesOperations
     :ivar disaster_recovery_configs: DisasterRecoveryConfigsOperations operations
-    :vartype disaster_recovery_configs: azure.mgmt.servicebus.aio.operations_async.DisasterRecoveryConfigsOperations
+    :vartype disaster_recovery_configs: azure.mgmt.servicebus.aio.operations.DisasterRecoveryConfigsOperations
     :ivar migration_configs: MigrationConfigsOperations operations
-    :vartype migration_configs: azure.mgmt.servicebus.aio.operations_async.MigrationConfigsOperations
+    :vartype migration_configs: azure.mgmt.servicebus.aio.operations.MigrationConfigsOperations
     :ivar queues: QueuesOperations operations
-    :vartype queues: azure.mgmt.servicebus.aio.operations_async.QueuesOperations
+    :vartype queues: azure.mgmt.servicebus.aio.operations.QueuesOperations
     :ivar topics: TopicsOperations operations
-    :vartype topics: azure.mgmt.servicebus.aio.operations_async.TopicsOperations
+    :vartype topics: azure.mgmt.servicebus.aio.operations.TopicsOperations
     :ivar subscriptions: SubscriptionsOperations operations
-    :vartype subscriptions: azure.mgmt.servicebus.aio.operations_async.SubscriptionsOperations
+    :vartype subscriptions: azure.mgmt.servicebus.aio.operations.SubscriptionsOperations
     :ivar rules: RulesOperations operations
-    :vartype rules: azure.mgmt.servicebus.aio.operations_async.RulesOperations
+    :vartype rules: azure.mgmt.servicebus.aio.operations.RulesOperations
     :ivar regions: RegionsOperations operations
-    :vartype regions: azure.mgmt.servicebus.aio.operations_async.RegionsOperations
+    :vartype regions: azure.mgmt.servicebus.aio.operations.RegionsOperations
     :ivar premium_messaging_regions: PremiumMessagingRegionsOperations operations
-    :vartype premium_messaging_regions: azure.mgmt.servicebus.aio.operations_async.PremiumMessagingRegionsOperations
+    :vartype premium_messaging_regions: azure.mgmt.servicebus.aio.operations.PremiumMessagingRegionsOperations
     :ivar event_hubs: EventHubsOperations operations
-    :vartype event_hubs: azure.mgmt.servicebus.aio.operations_async.EventHubsOperations
+    :vartype event_hubs: azure.mgmt.servicebus.aio.operations.EventHubsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -77,6 +77,7 @@ class ServiceBusManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(

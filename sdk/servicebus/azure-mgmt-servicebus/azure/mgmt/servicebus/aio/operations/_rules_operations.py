@@ -9,7 +9,7 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -19,8 +19,8 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SubscriptionsOperations:
-    """SubscriptionsOperations async operations.
+class RulesOperations:
+    """RulesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -41,16 +41,17 @@ class SubscriptionsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    def list_by_topic(
+    def list_by_subscriptions(
         self,
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
+        subscription_name: str,
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.SBSubscriptionListResult"]:
-        """List all the subscriptions under a specified topic.
+    ) -> AsyncIterable["models.RuleListResult"]:
+        """List all the rules within given topic-subscription.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -58,6 +59,8 @@ class SubscriptionsOperations:
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
+        :param subscription_name: The subscription name.
+        :type subscription_name: str
         :param skip: Skip is only used if a previous operation returned a partial result. If a previous
          response contains a nextLink element, the value of the nextLink element will include a skip
          parameter that specifies a starting point to use for subsequent calls.
@@ -65,27 +68,31 @@ class SubscriptionsOperations:
         :param top: May be used to limit the number of results to the most recent N usageDetails.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SBSubscriptionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.SBSubscriptionListResult]
+        :return: An iterator like instance of either RuleListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicebus.models.RuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBSubscriptionListResult"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.RuleListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = 'application/json'
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_topic.metadata['url']  # type: ignore
+                url = self.list_by_subscriptions.metadata['url']  # type: ignore
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
                     'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
+                    'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -105,7 +112,7 @@ class SubscriptionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('SBSubscriptionListResult', pipeline_response)
+            deserialized = self._deserialize('RuleListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -127,7 +134,7 @@ class SubscriptionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_topic.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions'}  # type: ignore
+    list_by_subscriptions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules'}  # type: ignore
 
     async def create_or_update(
         self,
@@ -135,10 +142,11 @@ class SubscriptionsOperations:
         namespace_name: str,
         topic_name: str,
         subscription_name: str,
-        parameters: "models.SBSubscription",
+        rule_name: str,
+        parameters: "models.Rule",
         **kwargs
-    ) -> "models.SBSubscription":
-        """Creates a topic subscription.
+    ) -> "models.Rule":
+        """Creates a new rule and updates an existing rule.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -148,18 +156,23 @@ class SubscriptionsOperations:
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
-        :param parameters: Parameters supplied to create a subscription resource.
-        :type parameters: ~azure.mgmt.servicebus.models.SBSubscription
+        :param rule_name: The rule name.
+        :type rule_name: str
+        :param parameters: Parameters supplied to create a rule.
+        :type parameters: ~azure.mgmt.servicebus.models.Rule
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SBSubscription, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.SBSubscription
+        :return: Rule, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.Rule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBSubscription"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Rule"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
         content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
 
         # Construct URL
         url = self.create_or_update.metadata['url']  # type: ignore
@@ -168,6 +181,7 @@ class SubscriptionsOperations:
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
             'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -179,13 +193,12 @@ class SubscriptionsOperations:
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, 'SBSubscription')
+        body_content = self._serialize.body(parameters, 'Rule')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -194,13 +207,13 @@ class SubscriptionsOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SBSubscription', pipeline_response)
+        deserialized = self._deserialize('Rule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
 
     async def delete(
         self,
@@ -208,9 +221,10 @@ class SubscriptionsOperations:
         namespace_name: str,
         topic_name: str,
         subscription_name: str,
+        rule_name: str,
         **kwargs
     ) -> None:
-        """Deletes a subscription from the specified topic.
+        """Deletes an existing rule.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -220,15 +234,20 @@ class SubscriptionsOperations:
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
+        :param rule_name: The rule name.
+        :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -237,6 +256,7 @@ class SubscriptionsOperations:
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
             'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -247,6 +267,7 @@ class SubscriptionsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -260,7 +281,7 @@ class SubscriptionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'}  # type: ignore
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
 
     async def get(
         self,
@@ -268,9 +289,10 @@ class SubscriptionsOperations:
         namespace_name: str,
         topic_name: str,
         subscription_name: str,
+        rule_name: str,
         **kwargs
-    ) -> "models.SBSubscription":
-        """Returns a subscription description for the specified topic.
+    ) -> "models.Rule":
+        """Retrieves the description for the specified rule.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
@@ -280,15 +302,20 @@ class SubscriptionsOperations:
         :type topic_name: str
         :param subscription_name: The subscription name.
         :type subscription_name: str
+        :param rule_name: The rule name.
+        :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SBSubscription, or the result of cls(response)
-        :rtype: ~azure.mgmt.servicebus.models.SBSubscription
+        :return: Rule, or the result of cls(response)
+        :rtype: ~azure.mgmt.servicebus.models.Rule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SBSubscription"]
-        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Rule"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2017-04-01"
+        accept = "application/json"
 
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
@@ -297,6 +324,7 @@ class SubscriptionsOperations:
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str', max_length=50, min_length=6),
             'topicName': self._serialize.url("topic_name", topic_name, 'str', min_length=1),
             'subscriptionName': self._serialize.url("subscription_name", subscription_name, 'str', max_length=50, min_length=1),
+            'ruleName': self._serialize.url("rule_name", rule_name, 'str', max_length=50, min_length=1),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -307,7 +335,7 @@ class SubscriptionsOperations:
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = 'application/json'
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -318,10 +346,10 @@ class SubscriptionsOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('SBSubscription', pipeline_response)
+        deserialized = self._deserialize('Rule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}'}  # type: ignore
