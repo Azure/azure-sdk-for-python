@@ -299,6 +299,10 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type node_count: int
     :param library_requirements: Library version requirements
     :type library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+    :param spark_config_properties: Spark configuration file to specify
+     additional properties
+    :type spark_config_properties:
+     ~azure.mgmt.synapse.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will
@@ -334,6 +338,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
@@ -350,6 +355,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.spark_events_folder = kwargs.get('spark_events_folder', None)
         self.node_count = kwargs.get('node_count', None)
         self.library_requirements = kwargs.get('library_requirements', None)
+        self.spark_config_properties = kwargs.get('spark_config_properties', None)
         self.spark_version = kwargs.get('spark_version', None)
         self.default_spark_log_folder = kwargs.get('default_spark_log_folder', None)
         self.node_size = kwargs.get('node_size', None)

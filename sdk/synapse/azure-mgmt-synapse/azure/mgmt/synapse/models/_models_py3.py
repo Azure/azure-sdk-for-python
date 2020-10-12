@@ -299,6 +299,10 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type node_count: int
     :param library_requirements: Library version requirements
     :type library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+    :param spark_config_properties: Spark configuration file to specify
+     additional properties
+    :type spark_config_properties:
+     ~azure.mgmt.synapse.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will
@@ -334,13 +338,14 @@ class BigDataPoolResourceInfo(TrackedResource):
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
         'node_size_family': {'key': 'properties.nodeSizeFamily', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, provisioning_state: str=None, auto_scale=None, creation_date=None, auto_pause=None, is_compute_isolation_enabled: bool=None, spark_events_folder: str=None, node_count: int=None, library_requirements=None, spark_version: str=None, default_spark_log_folder: str=None, node_size=None, node_size_family=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, provisioning_state: str=None, auto_scale=None, creation_date=None, auto_pause=None, is_compute_isolation_enabled: bool=None, spark_events_folder: str=None, node_count: int=None, library_requirements=None, spark_config_properties=None, spark_version: str=None, default_spark_log_folder: str=None, node_size=None, node_size_family=None, **kwargs) -> None:
         super(BigDataPoolResourceInfo, self).__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = provisioning_state
         self.auto_scale = auto_scale
@@ -350,6 +355,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.spark_events_folder = spark_events_folder
         self.node_count = node_count
         self.library_requirements = library_requirements
+        self.spark_config_properties = spark_config_properties
         self.spark_version = spark_version
         self.default_spark_log_folder = default_spark_log_folder
         self.node_size = node_size
