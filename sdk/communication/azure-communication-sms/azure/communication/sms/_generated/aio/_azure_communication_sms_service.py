@@ -11,8 +11,8 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import AzureCommunicationSMSServiceConfiguration
-from .operations_async import SmsOperations
+from ._configuration import AzureCommunicationSMSServiceConfiguration
+from .operations import SmsOperations
 from .. import models
 
 
@@ -20,7 +20,7 @@ class AzureCommunicationSMSService(object):
     """Azure Communication SMS Service.
 
     :ivar sms: SmsOperations operations
-    :vartype sms: azure.communication.sms.aio.operations_async.SmsOperations
+    :vartype sms: azure.communication.sms.aio.operations.SmsOperations
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
     """
