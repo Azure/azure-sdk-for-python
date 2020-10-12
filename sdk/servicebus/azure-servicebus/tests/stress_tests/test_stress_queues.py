@@ -10,7 +10,7 @@ import pytest
 import sys
 import time
 
-from azure.servicebus import ServiceBusClient
+from azure.servicebus import ServiceBusClient, AutoLockRenew
 from azure.servicebus._common.constants import ReceiveMode
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
@@ -157,9 +157,10 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
     # Cannot be defined at local scope due to pickling into multiproc runner.
     class ReceiverTimeoutStressTestRunner(StressTestRunner):
-        def OnSend(self, state, sent_message):
+        def OnSend(self, state, sent_message, sender):
             '''Called on every successful send'''
             if state.total_sent % 10 == 0:
+                # To make it time out and reconnect
                 time.sleep(self.max_wait_time + 5)
 
     @pytest.mark.liveTest
@@ -176,6 +177,123 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
             max_wait_time = 5,
             duration=timedelta(seconds=600))
+
+        result = stress_test.Run()
+        assert(result.total_sent > 0)
+        assert(result.total_received > 0)
+
+
+    class LongRenewStressTestRunner(StressTestRunner):
+        def OnReceive(self, state, received_message, receiver):
+            '''Called on every successful receive'''
+            renewer = AutoLockRenew()
+            renewer.register(received_message, timeout=300)
+            time.sleep(300)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_stress_queue_long_renew_send_and_receive(self, servicebus_namespace_connection_string, servicebus_queue):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, debug=False)
+
+        stress_test = ServiceBusQueueStressTests.LongRenewStressTestRunner(
+                                       senders = [sb_client.get_queue_sender(servicebus_queue.name)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
+                                       duration=timedelta(seconds=3000),
+                                       send_delay=300)
+
+        result = stress_test.Run()
+        assert(result.total_sent > 0)
+        assert(result.total_received > 0)
+
+
+    class LongSessionRenewStressTestRunner(StressTestRunner):
+        def OnReceive(self, state, received_message, receiver):
+            '''Called on every successful receive'''
+            renewer = AutoLockRenew()
+            renewer.register(receiver.Session, timeout=300)
+            time.sleep(300)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_stress_queue_long_renew_session_send_and_receive(self, servicebus_namespace_connection_string, servicebus_queue):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, debug=False)
+
+        session_id = 'test_stress_queue_long_renew_send_and_receive'
+
+        stress_test = ServiceBusQueueStressTests.LongSessionRenewStressTestRunner(
+                                       senders = [sb_client.get_queue_sender(servicebus_queue.name)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id)],
+                                       duration=timedelta(seconds=3000),
+                                       send_delay=300,
+                                       send_session_id=session_id)
+
+        result = stress_test.Run()
+        assert(result.total_sent > 0)
+        assert(result.total_received > 0)
+
+
+    class PeekOnReceiveStressTestRunner(StressTestRunner):
+        def OnReceiveBatch(self, state, received_message, receiver):
+            '''Called on every successful receive'''
+            assert receiver.peek_messages()[0]
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_stress_queue_peek_messages(self, servicebus_namespace_connection_string, servicebus_queue):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, debug=False)
+
+        stress_test = ServiceBusQueueStressTests.PeekOnReceiveStressTestRunner(
+                                       senders = [sb_client.get_queue_sender(servicebus_queue.name)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
+                                       duration = timedelta(seconds=300),
+                                       receive_delay = 30,
+                                       receive_type = ReceiveType.none)
+
+        result = stress_test.Run()
+        assert(result.total_sent > 0)
+        # TODO: This merits better validation, to be implemented alongside full metric spread.
+
+
+    class RestartHandlerStressTestRunner(StressTestRunner):
+        def PostReceive(self, state, receiver):
+            '''Called after completion of every successful receive'''
+            if state.total_received % 3 == 0:
+                receiver.__exit__()
+                receiver.__enter__()
+
+        def OnSend(self, state, sent_message, sender):
+            '''Called after completion of every successful receive'''
+            if state.total_sent % 3 == 0:
+                sender.__exit__()
+                sender.__enter__()
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @ServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_stress_queue_close_and_reopen(self, servicebus_namespace_connection_string, servicebus_queue):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, debug=False)
+
+        stress_test = ServiceBusQueueStressTests.RestartHandlerStressTestRunner(
+                                       senders = [sb_client.get_queue_sender(servicebus_queue.name)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
+                                       duration = timedelta(seconds=300),
+                                       receive_delay = 30,
+                                       send_delay = 10)
 
         result = stress_test.Run()
         assert(result.total_sent > 0)

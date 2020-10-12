@@ -17,6 +17,7 @@ from azure.servicebus.exceptions import MessageAlreadySettled
 class ReceiveType:
     push="push"
     pull="pull"
+    none=None
 
 
 class StressTestResults(object):
@@ -57,7 +58,8 @@ class StressTestRunner:
                  send_delay = .01,
                  receive_delay = 0,
                  should_complete_messages = True,
-                 max_message_count = 1):
+                 max_message_count = 1,
+                 send_session_id = None):
         self.senders = senders
         self.receivers = receivers
         self.duration=duration
@@ -69,6 +71,7 @@ class StressTestRunner:
         self.receive_delay = receive_delay
         self.should_complete_messages = should_complete_messages
         self.max_message_count = max_message_count
+        self.send_session_id = send_session_id
 
         # Because of pickle we need to create a state object and not just pass around ourselves.
         # If we ever require multiple runs of this one after another, just make Run() reset this.
@@ -81,14 +84,21 @@ class StressTestRunner:
 
 
     # Plugin functions the caller can override to further tailor the test.
-    def OnSend(self, state, sent_message):
-        '''Called on every successful send'''
+    def OnSend(self, state, sent_message, sender):
+        '''Called on every successful send, per message'''
         pass
 
-    def OnReceive(self, state, received_message):
-        '''Called on every successful receive'''
+    def OnReceive(self, state, received_message, receiver):
+        '''Called on every successful receive, per message'''
         pass
 
+    def OnReceiveBatch(self, state, batch, receiver):
+        '''Called on every successful receive, at the batch or iterator level rather than per-message'''
+        pass
+
+    def PostReceive(self, state, receiver):
+        '''Called after completion of every successful receive'''
+        pass
 
     def OnComplete(self, send_results=[], receive_results=[]):
         '''Called on stress test run completion'''
@@ -132,8 +142,11 @@ class StressTestRunner:
                 while end_time > datetime.utcnow():
                     print("SENDING")
                     message = self._ConstructMessage()
-                    sender.send_messages(message)
-                    self.OnSend(self._state, message)
+                    if self.send_session_id != None:
+                        sender.send_messages(message, session_id=self.send_session_id)
+                    else:
+                        sender.send_messages(message)
+                    self.OnSend(self._state, message, sender)
                     self._state.total_sent += 1
                     time.sleep(self.send_delay)
             return self._state
@@ -150,9 +163,12 @@ class StressTestRunner:
                         batch = receiver.receive_messages(max_message_count=self.max_message_count, max_wait_time=self.max_wait_time)
                     elif self.receive_type == ReceiveType.push:
                         batch = receiver.get_streaming_message_iter(max_wait_time=self.max_wait_time)
+                    elif self.receive_type == ReceiveType.none:
+                        batch = []
 
+                    self.OnReceiveBatch(self._state, batch, receiver)
                     for message in batch:
-                        self.OnReceive(self._state, message)
+                        self.OnReceive(self._state, message, receiver)
                         try:
                             if self.should_complete_messages:
                                 message.complete()
@@ -163,6 +179,7 @@ class StressTestRunner:
                         if end_time <= datetime.utcnow():
                             break
                         time.sleep(self.receive_delay)
+                    self.PostReceive(self._state, receiver)
             return self._state
         except Exception as e:
             print("Exception in receiver", e)
