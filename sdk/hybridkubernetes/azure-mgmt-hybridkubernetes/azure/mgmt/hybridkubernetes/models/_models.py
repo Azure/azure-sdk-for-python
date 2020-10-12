@@ -13,8 +13,57 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class AuthenticationDetails(Model):
+    """Authentication details of the user.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_method: Required. The mode of client authentication.
+     Default value: "Token" .
+    :vartype authentication_method: str
+    :param value: Required. Authentication token value.
+    :type value:
+     ~azure.mgmt.hybridkubernetes.models.AuthenticationDetailsValue
+    """
+
+    _validation = {
+        'authentication_method': {'required': True, 'constant': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'AuthenticationDetailsValue'},
+    }
+
+    authentication_method = "Token"
+
+    def __init__(self, **kwargs):
+        super(AuthenticationDetails, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
+class AuthenticationDetailsValue(Model):
+    """Authentication token value.
+
+    :param token: Authentication token.
+    :type token: str
+    """
+
+    _attribute_map = {
+        'token': {'key': 'token', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AuthenticationDetailsValue, self).__init__(**kwargs)
+        self.token = kwargs.get('token', None)
+
+
 class Resource(Model):
-    """Resource.
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -164,7 +213,7 @@ class ConnectedCluster(TrackedResource):
      certificate used by the agent to do the initial handshake to the backend
      services in Azure.
     :type agent_public_key_certificate: str
-    :param aad_profile: Required.
+    :param aad_profile: Required. AAD profile of the connected cluster.
     :type aad_profile:
      ~azure.mgmt.hybridkubernetes.models.ConnectedClusterAADProfile
     :ivar kubernetes_version: The Kubernetes version of the connected cluster
@@ -176,8 +225,9 @@ class ConnectedCluster(TrackedResource):
     :ivar agent_version: Version of the agent running on the connected cluster
      resource
     :vartype agent_version: str
-    :param provisioning_state: Possible values include: 'Succeeded', 'Failed',
-     'Canceled', 'Provisioning', 'Updating', 'Deleting', 'Accepted'
+    :param provisioning_state: Provisioning state of the connected cluster
+     resource. Possible values include: 'Succeeded', 'Failed', 'Canceled',
+     'Provisioning', 'Updating', 'Deleting', 'Accepted'
     :type provisioning_state: str or
      ~azure.mgmt.hybridkubernetes.models.ProvisioningState
     """
@@ -222,7 +272,7 @@ class ConnectedCluster(TrackedResource):
 
 
 class ConnectedClusterAADProfile(Model):
-    """ConnectedClusterAADProfile.
+    """AAD profile of the connected cluster.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -370,43 +420,43 @@ class CredentialResults(Model):
         self.kubeconfigs = None
 
 
-class ErrorDetails(Model):
-    """The error response details containing error code and error message.
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'type': {'readonly': True},
+        'info': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
 
 
 class ErrorResponse(Model):
-    """The error response that indicates why an operation has failed.
+    """The resource management error response.
 
-    :param error:
-    :type error: ~azure.mgmt.hybridkubernetes.models.ErrorDetails
+    :param error: The error object.
+    :type error: ~azure.mgmt.hybridkubernetes.models.ErrorResponseError
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetails'},
+        'error': {'key': 'error', 'type': 'ErrorResponseError'},
     }
 
     def __init__(self, **kwargs):
@@ -424,6 +474,50 @@ class ErrorResponseException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+
+
+class ErrorResponseError(Model):
+    """The error object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.hybridkubernetes.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.hybridkubernetes.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ErrorResponseError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class Operation(Model):
