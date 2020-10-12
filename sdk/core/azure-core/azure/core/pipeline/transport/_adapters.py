@@ -28,8 +28,8 @@ import os.path
 import socket
 import sys
 import warnings
-from base64 import b64encode
 
+from base64 import b64encode
 from urllib3.poolmanager import PoolManager, proxy_from_url
 from urllib3.response import HTTPResponse
 from urllib3.util import parse_url
@@ -51,6 +51,7 @@ from requests.models import Response
 from requests.utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,
                     get_encoding_from_headers, prepend_scheme_if_needed,
                     get_auth_from_url, urldefragauth, select_proxy)
+from six.moves.urllib_parse import urlparse
 from requests.structures import CaseInsensitiveDict
 from requests.cookies import extract_cookies_to_jar
 from requests.exceptions import (
@@ -61,7 +62,6 @@ from requests.exceptions import (
     ProxyError,
     RetryError,
     InvalidSchema,
-    InvalidProxyURL,
     InvalidURL
 )   # mypy: ignore
 
@@ -72,13 +72,8 @@ except ImportError:
         raise InvalidSchema("Missing dependencies for SOCKS support.")
 
 _ver = sys.version_info
-is_py2 = (_ver[0] == 2)
-if is_py2:
-    from urlparse import urlparse
-    basestring = basestring # mypy: ignore
-else:
-    from urllib.parse import urlparse
-
+is_py3 = (_ver[0] == 3)
+if is_py3:
     basestring = (str, bytes)
 
 DEFAULT_POOLBLOCK = False
@@ -94,10 +89,7 @@ def to_native_string(string, encoding='ascii'):
     if isinstance(string, str):
         out = string
     else:
-        if is_py2:
-            out = string.encode(encoding)
-        else:
-            out = string.decode(encoding)
+        out = string.encode(encoding)
 
     return out
 
@@ -146,9 +138,6 @@ def _basic_auth_str(username, password):
 
 class BaseAdapter(object):
     """The Base Transport Adapter"""
-
-    def __init__(self):
-        super(BaseAdapter, self).__init__()
 
     def send(self, request, stream=False, timeout=None, verify=True,
              cert=None, proxies=None):
@@ -292,7 +281,8 @@ class HTTPAdapter(BaseAdapter):
 
         return manager
 
-    def cert_verify(self, conn, url, verify, cert):     #pylint disable=no-self-use
+    # pylint: disable=R0201
+    def cert_verify(self, conn, url, verify, cert):
         """Verify a SSL certificate. This method should not be called from user
         code, and is only exposed for use when subclassing the
         :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
@@ -396,7 +386,7 @@ class HTTPAdapter(BaseAdapter):
             proxy = prepend_scheme_if_needed(proxy, 'http')
             proxy_url = parse_url(proxy)
             if not proxy_url.host:
-                raise InvalidProxyURL("Please check proxy URL. It is malformed"
+                raise InvalidURL("Please check proxy URL. It is malformed"
                                       " and could be missing the host.")
             proxy_manager = self.proxy_manager_for(proxy)
             conn = proxy_manager.connection_from_url(url)
@@ -418,6 +408,7 @@ class HTTPAdapter(BaseAdapter):
         for proxy in self.proxy_manager.values():
             proxy.clear()
 
+    # pylint: disable=R0201
     def request_url(self, request, proxies):
         """Obtain the url to use when making the final request.
 
@@ -461,7 +452,8 @@ class HTTPAdapter(BaseAdapter):
         """
         pass
 
-    def proxy_headers(self, proxy): #pylint disable=no-self-use
+    # pylint: disable=R0201
+    def proxy_headers(self, proxy):
         """Returns a dictionary of the headers to add to any request sent
         through a proxy. This works with urllib3 magic to ensure that they are
         correctly sent to the proxy, rather than in a tunnelled request if
@@ -483,8 +475,8 @@ class HTTPAdapter(BaseAdapter):
 
         return headers
 
+    # pylint disable=too-many-branches
     def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None, **kwargs):
-        # pylint disable=too-many-branches
         """Sends PreparedRequest object. Returns Response object.
 
         :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
@@ -548,7 +540,7 @@ class HTTPAdapter(BaseAdapter):
                 if hasattr(conn, 'proxy_pool'):
                     conn = conn.proxy_pool
 
-                low_conn = conn._get_conn(timeout=DEFAULT_POOL_TIMEOUT) #pylint disable=protected-access
+                low_conn = conn._get_conn(timeout=DEFAULT_POOL_TIMEOUT) # pylint: disable=W0212
 
                 try:
                     low_conn.putrequest(request.method,
