@@ -69,9 +69,9 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             self.mysql_connection_string = self.get_settings_value("METRICS_ADVISOR_MYSQL_CONNECTION_STRING")
             self.postgresql_connection_string = self.get_settings_value("METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING")
             self.elasticsearch_auth_header = self.get_settings_value("METRICS_ADVISOR_ELASTICSEARCH_AUTH_HEADER")
-            self.anomaly_detection_configuration_id = "c0f2539f-b804-4ab9-a70f-0da0c89c76d8"
-            self.data_feed_id = "4957a2f7-a0f4-4fc0-b8d7-d866c1df0f4c"
-            self.metric_id = "3d48ed3e-6e6e-4391-b78f-b00dfee1e6f5"
+            self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
+            self.data_feed_id = self.get_settings_value("METRICS_ADVISOR_DATA_FEED_ID")
+            self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
             self.scrubber.register_name_pair(
                 self.sql_server_connection_string,
                 "connectionstring"
@@ -409,13 +409,13 @@ class TestMetricsAdvisorClientBase(AzureTestCase):
             service_endpoint = self.get_settings_value("METRICS_ADVISOR_ENDPOINT")
             subscription_key = self.get_settings_value("METRICS_ADVISOR_SUBSCRIPTION_KEY")
             api_key = self.get_settings_value("METRICS_ADVISOR_API_KEY")
-            self.anomaly_detection_configuration_id = "c0f2539f-b804-4ab9-a70f-0da0c89c76d8"
-            self.anomaly_alert_configuration_id = "ff3014a0-bbbb-41ec-a637-677e77b81299"
-            self.metric_id = "3d48ed3e-6e6e-4391-b78f-b00dfee1e6f5"
-            self.incident_id = "cc2ff8a836361371b8c6eaad71b194f4-1746b031c00"
-            self.dimension_name = "Dim1"
-            self.feedback_id = "f8f3db61-bc18-49ac-80a3-5b64bf3878df"
-            self.alert_id = "1746b031c00"
+            self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
+            self.anomaly_alert_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_ALERT_CONFIGURATION_ID")
+            self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
+            self.incident_id = self.get_settings_value("METRICS_ADVISOR_INCIDENT_ID")
+            self.dimension_name = self.get_settings_value("METRICS_ADVISOR_DIMENSION_NAME")
+            self.feedback_id = self.get_settings_value("METRICS_ADVISOR_FEEDBACK_ID")
+            self.alert_id = self.get_settings_value("METRICS_ADVISOR_ALERT_ID")
             self.scrubber.register_name_pair(
                 self.anomaly_detection_configuration_id,
                 "anomaly_detection_configuration_id"

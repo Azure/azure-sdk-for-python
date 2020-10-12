@@ -28,6 +28,14 @@ jobs:
         AZURE_METRICS_ADVISOR_MYSQL_CONNECTION_STRING: $(metricsadvisor-test-mysql-connection-string)
         AZURE_METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING: $(metricsadvisor-test-postgresql-connection-string)
         AZURE_METRICS_ADVISOR_ELASTICSEARCH_AUTH_HEADER: $(metricsadvisor-test-elasticsearch-auth-header)
+        AZURE_METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID: $(python-metricsadvisor-test-anomaly-detection-config-id)
+        AZURE_METRICS_ADVISOR_DATA_FEED_ID: $(python-metricsadvisor-test-data-feed-id)
+        AZURE_METRICS_ADVISOR_METRIC_ID: $(python-metricsadvisor-test-metric-id)
+        AZURE_METRICS_ADVISOR_ANOMALY_ALERT_CONFIGURATION_ID: $(python-metricsadvisor-test-anomaly-alert-config-id)
+        AZURE_METRICS_ADVISOR_INCIDENT_ID: $(python-metricsadvisor-test-incident-id)
+        AZURE_METRICS_ADVISOR_DIMENSION_NAME: $(python-metricsadvisor-test-dimension-name)
+        AZURE_METRICS_ADVISOR_FEEDBACK_ID: $(python-metricsadvisor-test-feedback-id)
+        AZURE_METRICS_ADVISOR_ALERT_ID: $(python-metricsadvisor-test-alert-id)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
