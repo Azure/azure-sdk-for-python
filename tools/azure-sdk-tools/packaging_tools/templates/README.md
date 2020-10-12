@@ -2,14 +2,16 @@
 
 This is the Microsoft Azure {{package_pprint_name}} Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
-For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all)
 
 
 # Usage
 
-For code examples, see [{{package_pprint_name}}](https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}})
-on docs.microsoft.com.
+To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk/python/mgmt)
 
+For code samples, see [{{package_pprint_name}}](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/{{package_doc_id}}/) on docs.microsoft.com.
+
+Additional code samples can be found [here](https://aka.ms/azsdk/python/mgmt/samples)
 
 # Provide Feedback
 
