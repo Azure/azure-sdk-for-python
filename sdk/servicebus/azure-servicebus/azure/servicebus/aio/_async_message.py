@@ -71,7 +71,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
             await self._settle_via_mgmt_link(settle_operation,
                                              dead_letter_reason=dead_letter_reason,
                                              dead_letter_error_description=dead_letter_error_description)()
-        except Exception as exception:
+        except Exception as exception:  # pylint: disable=broad-except
             _LOGGER.info(
                 "Message settling: %r has encountered an exception (%r) through management link",
                 settle_operation,
