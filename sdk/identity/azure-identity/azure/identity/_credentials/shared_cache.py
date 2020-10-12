@@ -45,7 +45,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
     def __init__(self, username=None, **kwargs):
         # type: (Optional[str], **Any) -> None
 
-        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+        self._auth_record = kwargs.pop("_authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
             # authenticate in the tenant that produced the record unless "tenant_id" specifies another
             self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id

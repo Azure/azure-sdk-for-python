@@ -36,7 +36,7 @@ secret_names = [s.name for s in client.list_properties_of_secrets()]
 # credentials to access data from past authentications. If the cache contains sufficient data,
 # this eliminates the need for your application to prompt for authentication every time it runs.
 deserialized_record = AuthenticationRecord.deserialize(record_json)
-new_credential = InteractiveBrowserCredential(enable_persistent_cache=True, authentication_record=deserialized_record)
+new_credential = InteractiveBrowserCredential(enable_persistent_cache=True, _authentication_record=deserialized_record)
 
 # This request should also succeed without prompting for authentication.
 client = SecretClient(VAULT_URL, new_credential)

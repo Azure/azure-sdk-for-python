@@ -81,7 +81,7 @@ def test_authentication_record_argument():
 
     app_factory = Mock(wraps=validate_app_parameters)
     credential = MockCredential(
-        authentication_record=record, disable_automatic_authentication=True, msal_app_factory=app_factory,
+        _authentication_record=record, disable_automatic_authentication=True, msal_app_factory=app_factory,
     )
     with pytest.raises(AuthenticationRequiredError):
         credential.get_token("scope")
@@ -104,7 +104,7 @@ def test_tenant_argument_overrides_record():
         return Mock(get_accounts=Mock(return_value=[]))
 
     credential = MockCredential(
-        authentication_record=record,
+        _authentication_record=record,
         tenant_id=expected_tenant,
         disable_automatic_authentication=True,
         msal_app_factory=validate_authority,
@@ -124,7 +124,7 @@ def test_disable_automatic_authentication():
     )
 
     credential = MockCredential(
-        authentication_record=record,
+        _authentication_record=record,
         disable_automatic_authentication=True,
         msal_app_factory=lambda *_, **__: msal_app,
         request_token=Mock(side_effect=Exception("credential shouldn't begin interactive authentication")),
@@ -207,7 +207,7 @@ def test_get_token_wraps_exceptions():
         acquire_token_silent_with_error=Mock(side_effect=CustomException(expected_message)),
         get_accounts=Mock(return_value=[{"home_account_id": record.home_account_id}]),
     )
-    credential = MockCredential(msal_app_factory=lambda *_, **__: msal_app, authentication_record=record)
+    credential = MockCredential(msal_app_factory=lambda *_, **__: msal_app, _authentication_record=record)
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
 
