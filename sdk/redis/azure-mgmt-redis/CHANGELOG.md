@@ -1,43 +1,45 @@
 # Release History
 
-## 12.0.0b1 (2020-10-09)
+## 12.0.0b1 (2020-10-12)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 7.0.0rc2 (2020-09-01)
 
 **Features**
 
-  - Added operation LinkedServerOperations.begin_create
-  - Added operation RedisOperations.begin_import_data
-  - Added operation RedisOperations.begin_export_data
-  - Added operation RedisOperations.begin_create
-  - Added operation RedisOperations.begin_delete
+  - Model RedisRebootParameters has a new parameter ports
+  - Model RedisInstanceDetails has a new parameter is_master
 
 **Breaking changes**
 
-  - Operation FirewallRulesOperations.delete has a new signature
-  - Operation FirewallRulesOperations.get has a new signature
-  - Operation FirewallRulesOperations.list_by_redis_resource has a new signature
-  - Operation LinkedServerOperations.delete has a new signature
-  - Operation LinkedServerOperations.get has a new signature
-  - Operation LinkedServerOperations.list has a new signature
-  - Operation PatchSchedulesOperations.list_by_redis_resource has a new signature
   - Operation RedisOperations.force_reboot has a new signature
-  - Operation RedisOperations.get has a new signature
-  - Operation RedisOperations.list_by_resource_group has a new signature
-  - Operation RedisOperations.list_keys has a new signature
-  - Operation RedisOperations.list_upgrade_notifications has a new signature
-  - Operation RedisOperations.update has a new signature
-  - Operation FirewallRulesOperations.create_or_update has a new signature
-  - Operation Operations.list has a new signature
-  - Operation PatchSchedulesOperations.delete has a new signature
-  - Operation PatchSchedulesOperations.get has a new signature
-  - Operation PatchSchedulesOperations.create_or_update has a new signature
-  - Operation RedisOperations.check_name_availability has a new signature
-  - Operation RedisOperations.list has a new signature
-  - Operation RedisOperations.regenerate_key has a new signature
-  - Removed operation LinkedServerOperations.create
-  - Removed operation RedisOperations.import_data
-  - Removed operation RedisOperations.create
-  - Removed operation RedisOperations.export_data
-  - Removed operation RedisOperations.delete
 
 ## 7.0.0rc1 (2019-12-07)
 
