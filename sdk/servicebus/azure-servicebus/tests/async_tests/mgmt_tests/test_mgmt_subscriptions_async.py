@@ -103,11 +103,11 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
 
         try:
             topic_description = await mgmt_service.create_topic(topic_name)
-            subscription_description = await mgmt_service.create_subscription(topic_description, subscription_name)
+            subscription_description = await mgmt_service.create_subscription(topic_description.name, subscription_name)
 
             # Try updating one setting.
             subscription_description.lock_duration = datetime.timedelta(minutes=2)
-            await mgmt_service.update_subscription(topic_description, subscription_description)
+            await mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = await mgmt_service.get_subscription(topic_name, subscription_name)
             assert subscription_description.lock_duration == datetime.timedelta(minutes=2)
 
@@ -120,8 +120,8 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             # topic_description.enable_partitioning = True # Cannot be changed after creation
             # topic_description.requires_session = True # Cannot be changed after creation
 
-            await mgmt_service.update_subscription(topic_description, subscription_description)
-            subscription_description = await mgmt_service.get_subscription(topic_description, subscription_name)
+            await mgmt_service.update_subscription(topic_description.name, subscription_description)
+            subscription_description = await mgmt_service.get_subscription(topic_description.name, subscription_name)
 
             assert subscription_description.auto_delete_on_idle == datetime.timedelta(minutes=10)
             assert subscription_description.dead_lettering_on_message_expiration == True
@@ -193,7 +193,7 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
         assert len(subscriptions) == 2
 
         description = await mgmt_service.get_subscription(topic_name, subscription_name_1)
-        await mgmt_service.delete_subscription(topic_name, description)
+        await mgmt_service.delete_subscription(topic_name, description.name)
 
         subscriptions = await async_pageable_to_list(mgmt_service.list_subscriptions(topic_name))
         assert len(subscriptions) == 1 and subscriptions[0].name == subscription_name_2

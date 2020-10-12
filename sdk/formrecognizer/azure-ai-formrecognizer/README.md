@@ -20,10 +20,18 @@ from form documents. It includes the following main functionalities:
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer
+pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library supports the v2.0 version of the Form Recognizer service
+> Note: This version of the client library defaults to the v2.1-preview version of the service
+
+This table shows the relationship between SDK versions and supported API versions of the service
+
+|SDK version|Supported API version of service
+|-|-
+|3.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 2.0
+|3.1.0b1 - Latest release (beta)| 2.0, 2.1-preview
+
 
 #### Create a Form Recognizer resource
 Form Recognizer supports both [multi-service and single-service access][multi_and_single_service].
@@ -135,6 +143,7 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 - Training custom models with labels to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
+- Creating a composed model from a collection of existing trained models with labels.
 
 Please note that models can also be trained using a graphical user interface such as the [Form Recognizer Labeling Tool][fr-labeling-tool].
 
@@ -183,6 +192,8 @@ result = poller.result()
 
 for recognized_form in result:
     print("Form type: {}".format(recognized_form.form_type))
+    print("Form type confidence: {}".format(recognized_form.form_type_confidence))
+    print("Form was analyzed using model with ID: {}".format(recognized_form.model_id))
     for name, field in recognized_form.fields.items():
         print("Field '{}' has label '{}' with value '{}' and a confidence score of {}".format(
             name,
@@ -275,12 +286,14 @@ form_training_client = FormTrainingClient(endpoint, credential)
 
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = form_training_client.begin_training(
-    container_sas_url, use_training_labels=False
+    container_sas_url, use_training_labels=False, model_name="my first model"
 )
 model = poller.result()
 
 # Custom model information
 print("Model ID: {}".format(model.model_id))
+print("Model name: {}".format(model.model_name))
+print("Is composed model?: {}".format(model.properties.is_composed_model))
 print("Status: {}".format(model.status))
 print("Training started on: {}".format(model.training_started_on))
 print("Training completed on: {}".format(model.training_completed_on))
@@ -288,8 +301,8 @@ print("Training completed on: {}".format(model.training_completed_on))
 print("\nRecognized fields:")
 for submodel in model.submodels:
     print(
-        "The submodel with form type '{}' has recognized the following fields: {}".format(
-            submodel.form_type,
+        "The submodel with form type '{}' and model ID '{}' has recognized the following fields: {}".format(
+            submodel.form_type, submodel.model_id,
             ", ".join(
                 [
                     field.label if field.label else name
@@ -336,6 +349,8 @@ model_id = "<model_id from the Train a Model sample>"
 
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
+print("Model name: {}".format(model.model_name))
+print("Is composed model?: {}".format(model.properties.is_composed_model))
 print("Status: {}".format(custom_model.status))
 print("Training started on: {}".format(custom_model.training_started_on))
 print("Training completed on: {}".format(custom_model.training_completed_on))
@@ -388,6 +403,7 @@ These code samples show common scenario operations with the Azure Form Recognize
 * Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels]
 * Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models]
 * Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model]
+* Create a composed model from a collection of models trained with labels: |[sample_create_composed_model.py][sample_create_composed_model]
 
 ### Async APIs
 This library also includes a complete async API supported on Python 3.5+. To use it, you must
@@ -403,7 +419,7 @@ are found under the `azure.ai.formrecognizer.aio` namespace.
 * Train a model with labels: [sample_train_model_with_labels_async.py][sample_train_model_with_labels_async]
 * Manage custom models: [sample_manage_custom_models_async.py][sample_manage_custom_models_async]
 * Copy a model between Form Recognizer resources: [sample_copy_model_async.py][sample_copy_model_async]
-
+* Create a composed model from a collection of models trained with labels: [sample_create_composed_model_async.py][sample_create_composed_model_async]
 
 ### Additional documentation
 
@@ -475,3 +491,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_train_model_without_labels_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_train_model_without_labels_async.py
 [sample_copy_model]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_copy_model.py
 [sample_copy_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_copy_model_async.py
+[sample_create_composed_model]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_create_composed_model.py
+[sample_create_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples/async_samples/sample_create_composed_model_async.py

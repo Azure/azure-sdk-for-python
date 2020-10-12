@@ -501,7 +501,7 @@ class ShareClient(StorageAccountHostsMixin):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.share.set_quota( # type: ignore
+            return self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
                 lease_access_conditions=access_conditions,
