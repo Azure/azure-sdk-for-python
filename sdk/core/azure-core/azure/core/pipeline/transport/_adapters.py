@@ -26,6 +26,9 @@
 
 import os.path
 import socket
+import sys
+import warnings
+from base64 import b64encode
 
 from urllib3.poolmanager import PoolManager, proxy_from_url
 from urllib3.response import HTTPResponse
@@ -45,16 +48,22 @@ from urllib3.exceptions import ResponseError
 from urllib3.exceptions import LocationValueError
 
 from requests.models import Response
-from requests.compat import urlparse, basestring
 from requests.utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,
                     get_encoding_from_headers, prepend_scheme_if_needed,
                     get_auth_from_url, urldefragauth, select_proxy)
 from requests.structures import CaseInsensitiveDict
 from requests.cookies import extract_cookies_to_jar
-from requests.exceptions import (ConnectionError, ConnectTimeout, ReadTimeout, SSLError,
-                         ProxyError, RetryError, InvalidSchema, InvalidProxyURL,
-                         InvalidURL)
-from requests.auth import _basic_auth_str
+from requests.exceptions import (
+    ConnectionError,    # pylint: disable=redefined-builtin
+    ConnectTimeout,
+    ReadTimeout,
+    SSLError,
+    ProxyError,
+    RetryError,
+    InvalidSchema,
+    InvalidProxyURL,
+    InvalidURL
+)
 
 try:
     from urllib3.contrib.socks import SOCKSProxyManager
@@ -62,11 +71,78 @@ except ImportError:
     def SOCKSProxyManager(*args, **kwargs):
         raise InvalidSchema("Missing dependencies for SOCKS support.")
 
+_ver = sys.version_info
+is_py2 = (_ver[0] == 2)
+if is_py2:
+    from urlparse import urlparse
+    basestring = basestring
+else:
+    from urllib.parse import urlparse
+
+    basestring = (str, bytes)
+
 DEFAULT_POOLBLOCK = False
 DEFAULT_POOLSIZE = 10
 DEFAULT_RETRIES = 0
 DEFAULT_POOL_TIMEOUT = None
 
+def to_native_string(string, encoding='ascii'):
+    """Given a string object, regardless of type, returns a representation of
+    that string in the native string type, encoding and decoding where
+    necessary. This assumes ASCII unless told otherwise.
+    """
+    if isinstance(string, str):
+        out = string
+    else:
+        if is_py2:
+            out = string.encode(encoding)
+        else:
+            out = string.decode(encoding)
+
+    return out
+
+def _basic_auth_str(username, password):
+    """Returns a Basic Auth string."""
+
+    # "I want us to put a big-ol' comment on top of it that
+    # says that this behaviour is dumb but we need to preserve
+    # it because people are relying on it."
+    #    - Lukasa
+    #
+    # These are here solely to maintain backwards compatibility
+    # for things like ints. This will be removed in 3.0.0.
+    if not isinstance(username, basestring):
+        warnings.warn(
+            "Non-string usernames will no longer be supported in Requests "
+            "3.0.0. Please convert the object you've passed in ({!r}) to "
+            "a string or bytes object in the near future to avoid "
+            "problems.".format(username),
+            category=DeprecationWarning,
+        )
+        username = str(username)
+
+    if not isinstance(password, basestring):
+        warnings.warn(
+            "Non-string passwords will no longer be supported in Requests "
+            "3.0.0. Please convert the object you've passed in ({!r}) to "
+            "a string or bytes object in the near future to avoid "
+            "problems.".format(type(password)),
+            category=DeprecationWarning,
+        )
+        password = str(password)
+    # -- End Removal --
+
+    if isinstance(username, str):
+        username = username.encode('latin1')
+
+    if isinstance(password, str):
+        password = password.encode('latin1')
+
+    authstr = 'Basic ' + to_native_string(
+        b64encode(b':'.join((username, password))).strip()
+    )
+
+    return authstr
 
 class BaseAdapter(object):
     """The Base Transport Adapter"""
@@ -216,7 +292,7 @@ class HTTPAdapter(BaseAdapter):
 
         return manager
 
-    def cert_verify(self, conn, url, verify, cert):
+    def cert_verify(self, conn, url, verify, cert): #pylint disable=no-self-use
         """Verify a SSL certificate. This method should not be called from user
         code, and is only exposed for use when subclassing the
         :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
@@ -385,7 +461,7 @@ class HTTPAdapter(BaseAdapter):
         """
         pass
 
-    def proxy_headers(self, proxy):
+    def proxy_headers(self, proxy): #pylint disable=no-self-use
         """Returns a dictionary of the headers to add to any request sent
         through a proxy. This works with urllib3 magic to ensure that they are
         correctly sent to the proxy, rather than in a tunnelled request if
@@ -408,6 +484,7 @@ class HTTPAdapter(BaseAdapter):
         return headers
 
     def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None, **kwargs):
+        # pylint disable=too-many-branches
         """Sends PreparedRequest object. Returns Response object.
 
         :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
@@ -471,7 +548,7 @@ class HTTPAdapter(BaseAdapter):
                 if hasattr(conn, 'proxy_pool'):
                     conn = conn.proxy_pool
 
-                low_conn = conn._get_conn(timeout=DEFAULT_POOL_TIMEOUT)
+                low_conn = conn._get_conn(timeout=DEFAULT_POOL_TIMEOUT) #pylint disable=protected-access
 
                 try:
                     low_conn.putrequest(request.method,
@@ -542,9 +619,8 @@ class HTTPAdapter(BaseAdapter):
             if isinstance(e, _SSLError):
                 # This branch is for urllib3 versions earlier than v1.22
                 raise SSLError(e, request=request)
-            elif isinstance(e, ReadTimeoutError):
+            if isinstance(e, ReadTimeoutError):
                 raise ReadTimeout(e, request=request)
-            else:
-                raise
+            raise
 
         return self.build_response(request, resp)
