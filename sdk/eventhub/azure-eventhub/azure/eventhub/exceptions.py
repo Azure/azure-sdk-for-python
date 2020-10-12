@@ -5,6 +5,8 @@
 import logging
 import six
 
+from azure.core.exceptions import AzureError
+
 from uamqp import errors, compat
 
 from ._constants import NO_RETRY_ERRORS
@@ -36,7 +38,7 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-class EventHubError(Exception):
+class EventHubError(AzureError):
     """Represents an error occurred in the client.
 
     :ivar message: The error message.
@@ -123,7 +125,7 @@ class OperationTimeoutError(EventHubError):
     """Operation timed out."""
 
 
-class OwnershipLostError(Exception):
+class OwnershipLostError(AzureError):
     """Raised when `update_checkpoint` detects the ownership to a partition has been lost."""
 
 
