@@ -144,7 +144,7 @@ etag : str
 
 The following sections provide several code snippets covering some of the most common Configuration Service tasks, including:
 
-* [Create a Configuration Setting](#create-a-configration-setting)
+* [Create a Configuration Setting](#create-a-configuration-setting)
 * [Get a Configuration Setting](#get-a-configuration-setting)
 * [Delete a Configuration Setting](#delete-a-configuration-setting)
 * [List Configuration Settings](#list-configuration-settings)
