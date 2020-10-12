@@ -197,7 +197,7 @@ def test_enable_persistent_cache():
         ClientSecretCredential(*required_arguments)
 
         # allowing an unencrypted cache doesn't count as opting in to the persistent cache
-        ClientSecretCredential(*required_arguments, allow_unencrypted_cache=True)
+        ClientSecretCredential(*required_arguments, _allow_unencrypted_cache=True)
 
     # keyword argument opts in to persistent cache
     with patch(persistent_cache + ".msal_extensions") as mock_extensions:
@@ -209,7 +209,7 @@ def test_enable_persistent_cache():
         with pytest.raises(NotImplementedError):
             ClientSecretCredential(*required_arguments, enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
-            ClientSecretCredential(*required_arguments, enable_persistent_cache=True, allow_unencrypted_cache=True)
+            ClientSecretCredential(*required_arguments, enable_persistent_cache=True, _allow_unencrypted_cache=True)
 
 
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
@@ -223,7 +223,7 @@ def test_persistent_cache_linux(mock_extensions):
     required_arguments = ("tenant-id", "client-id", "secret")
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    ClientSecretCredential(*required_arguments, enable_persistent_cache=True, allow_unencrypted_cache=True)
+    ClientSecretCredential(*required_arguments, enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -234,7 +234,7 @@ def test_persistent_cache_linux(mock_extensions):
     with pytest.raises(ValueError):
         ClientSecretCredential(*required_arguments, enable_persistent_cache=True)
 
-    ClientSecretCredential(*required_arguments, enable_persistent_cache=True, allow_unencrypted_cache=True)
+    ClientSecretCredential(*required_arguments, enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 

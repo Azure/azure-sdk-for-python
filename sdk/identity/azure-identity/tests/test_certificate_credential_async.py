@@ -162,7 +162,7 @@ def test_enable_persistent_cache(cert_path, cert_password):
         CertificateCredential(*required_arguments, password=cert_password)
 
         # allowing an unencrypted cache doesn't count as opting in to the persistent cache
-        CertificateCredential(*required_arguments, password=cert_password, allow_unencrypted_cache=True)
+        CertificateCredential(*required_arguments, password=cert_password, _allow_unencrypted_cache=True)
 
     # keyword argument opts in to persistent cache
     with patch(persistent_cache + ".msal_extensions") as mock_extensions:
@@ -175,7 +175,7 @@ def test_enable_persistent_cache(cert_path, cert_password):
             CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
             CertificateCredential(
-                *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
+                *required_arguments, password=cert_password, enable_persistent_cache=True, _allow_unencrypted_cache=True
             )
 
 
@@ -192,7 +192,7 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
     CertificateCredential(
-        *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
+        *required_arguments, password=cert_password, enable_persistent_cache=True, _allow_unencrypted_cache=True
     )
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
@@ -205,7 +205,7 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
         CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
 
     CertificateCredential(
-        *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
+        *required_arguments, password=cert_password, enable_persistent_cache=True, _allow_unencrypted_cache=True
     )
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 

@@ -24,7 +24,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
 
     def __init__(self, **kwargs):
         if kwargs.pop("enable_persistent_cache", False):
-            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+            allow_unencrypted = kwargs.pop("_allow_unencrypted_cache", False)
             cache = load_service_principal_cache(allow_unencrypted)
         else:
             cache = msal.TokenCache()

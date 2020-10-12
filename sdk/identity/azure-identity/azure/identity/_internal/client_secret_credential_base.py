@@ -35,7 +35,7 @@ class ClientSecretCredentialBase(ABC):
 
         enable_persistent_cache = kwargs.pop("enable_persistent_cache", False)
         if enable_persistent_cache:
-            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+            allow_unencrypted = kwargs.pop("_allow_unencrypted_cache", False)
             cache = load_service_principal_cache(allow_unencrypted)
         else:
             cache = TokenCache()

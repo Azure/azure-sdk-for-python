@@ -603,7 +603,7 @@ async def test_allow_unencrypted_cache():
     mock_extensions = msal_extensions_patch.start()
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -617,7 +617,7 @@ async def test_allow_unencrypted_cache():
         await credential.get_token("scope")
 
     # still no encryption, but now we allow the unencrypted fallback
-    SharedTokenCacheCredential(allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
     msal_extensions_patch.stop()

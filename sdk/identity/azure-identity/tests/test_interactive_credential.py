@@ -237,7 +237,7 @@ def test_enable_persistent_cache():
             assert credential._cache is in_memory_cache
 
             # allowing an unencrypted cache doesn't count as opting in to the persistent cache
-            credential = TestCredential(allow_unencrypted_cache=True)
+            credential = TestCredential(_allow_unencrypted_cache=True)
             assert credential._cache is in_memory_cache
 
     # keyword argument opts in to persistent cache
@@ -250,7 +250,7 @@ def test_enable_persistent_cache():
         with pytest.raises(NotImplementedError):
             TestCredential(enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
-            TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+            TestCredential(enable_persistent_cache=True, _allow_unencrypted_cache=True)
 
 
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
@@ -269,7 +269,7 @@ def test_persistent_cache_linux(mock_extensions):
             pass
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+    TestCredential(enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -280,7 +280,7 @@ def test_persistent_cache_linux(mock_extensions):
     with pytest.raises(ValueError):
         TestCredential(enable_persistent_cache=True)
 
-    TestCredential(enable_persistent_cache=True, allow_unencrypted_cache=True)
+    TestCredential(enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
