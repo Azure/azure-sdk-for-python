@@ -428,7 +428,7 @@ class DigitalTwinsClient(object):
         include_model_definition = kwargs.get("include_model_definition", False)
 
         return self._client.digital_twin_models.get_by_id(
-            model_id, 
+            model_id,
             include_model_definition,
             **kwargs
         )
@@ -554,7 +554,7 @@ class DigitalTwinsClient(object):
         event_routes_list_options = None
         results_per_page = kwargs.pop('results_per_page', None)
         if results_per_page is not None:
-            event_routes_list_options= {'max_item_count': results_per_page}
+            event_routes_list_options = {'max_item_count': results_per_page}
 
         return self._client.event_routes.list(
             event_routes_list_options=event_routes_list_options,
