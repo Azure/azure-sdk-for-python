@@ -216,7 +216,7 @@ class RequestsTransport(HttpTransport):
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
         adapter = HTTPAdapter(max_retries=disable_retries)
         for p in self._protocols:
-            session.mount(p, adapter)
+            session.mount(p, adapter)   # mypy: ignore
 
     def open(self):
         if not self.session and self._session_owner:

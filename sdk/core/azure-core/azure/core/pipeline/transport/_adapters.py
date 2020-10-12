@@ -54,7 +54,7 @@ from requests.utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,
 from requests.structures import CaseInsensitiveDict
 from requests.cookies import extract_cookies_to_jar
 from requests.exceptions import (
-    ConnectionError,    # pylint: disable=redefined-builtin
+    ConnectionError,
     ConnectTimeout,
     ReadTimeout,
     SSLError,
@@ -63,7 +63,7 @@ from requests.exceptions import (
     InvalidSchema,
     InvalidProxyURL,
     InvalidURL
-)
+)   # mypy: ignore
 
 try:
     from urllib3.contrib.socks import SOCKSProxyManager
@@ -75,7 +75,7 @@ _ver = sys.version_info
 is_py2 = (_ver[0] == 2)
 if is_py2:
     from urlparse import urlparse
-    basestring = basestring
+    basestring = basestring # mypy: ignore
 else:
     from urllib.parse import urlparse
 
@@ -196,7 +196,7 @@ class HTTPAdapter(BaseAdapter):
 
       >>> import requests
       >>> s = requests.Session()
-      >>> a = requests.adapters.HTTPAdapter(max_retries=3)
+      >>> a = HTTPAdapter(max_retries=3)
       >>> s.mount('http://', a)
     """
     __attrs__ = ['max_retries', 'config', '_pool_connections', '_pool_maxsize',
@@ -292,7 +292,7 @@ class HTTPAdapter(BaseAdapter):
 
         return manager
 
-    def cert_verify(self, conn, url, verify, cert): #pylint disable=no-self-use
+    def cert_verify(self, conn, url, verify, cert):     #pylint disable=no-self-use
         """Verify a SSL certificate. This method should not be called from user
         code, and is only exposed for use when subclassing the
         :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
