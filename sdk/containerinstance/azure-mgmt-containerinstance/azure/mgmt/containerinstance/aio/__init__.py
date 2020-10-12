@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._container_instance_management_client_async import ContainerInstanceManagementClient
+from ._container_instance_management_client import ContainerInstanceManagementClient
 __all__ = ['ContainerInstanceManagementClient']

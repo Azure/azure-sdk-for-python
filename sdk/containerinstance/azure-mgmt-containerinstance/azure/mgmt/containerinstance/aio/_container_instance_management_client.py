@@ -15,11 +15,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import ContainerInstanceManagementClientConfiguration
-from .operations_async import ContainerGroupsOperations
-from .operations_async import Operations
-from .operations_async import LocationOperations
-from .operations_async import ContainersOperations
+from ._configuration import ContainerInstanceManagementClientConfiguration
+from .operations import ContainerGroupsOperations
+from .operations import Operations
+from .operations import LocationOperations
+from .operations import ContainersOperations
 from .. import models
 
 
@@ -27,13 +27,13 @@ class ContainerInstanceManagementClient(object):
     """ContainerInstanceManagementClient.
 
     :ivar container_groups: ContainerGroupsOperations operations
-    :vartype container_groups: azure.mgmt.containerinstance.aio.operations_async.ContainerGroupsOperations
+    :vartype container_groups: azure.mgmt.containerinstance.aio.operations.ContainerGroupsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.containerinstance.aio.operations_async.Operations
+    :vartype operations: azure.mgmt.containerinstance.aio.operations.Operations
     :ivar location: LocationOperations operations
-    :vartype location: azure.mgmt.containerinstance.aio.operations_async.LocationOperations
+    :vartype location: azure.mgmt.containerinstance.aio.operations.LocationOperations
     :ivar containers: ContainersOperations operations
-    :vartype containers: azure.mgmt.containerinstance.aio.operations_async.ContainersOperations
+    :vartype containers: azure.mgmt.containerinstance.aio.operations.ContainersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -56,6 +56,7 @@ class ContainerInstanceManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.container_groups = ContainerGroupsOperations(
