@@ -368,14 +368,14 @@ class FormPage(object):
         self.lines = kwargs.get("lines", None)
 
     @classmethod
-    def _from_generated_receipt(cls, read_result):
+    def _from_generated_prebuilt_model(cls, read_result):
         return [cls(
             page_number=page.page,
             text_angle=adjust_text_angle(page.angle),
             width=page.width,
             height=page.height,
             unit=page.unit,
-            tables=None,  # receipt model does not return tables
+            tables=None,  # prebuilt model does not return tables
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
             if page.lines else None
         ) for page in read_result]
