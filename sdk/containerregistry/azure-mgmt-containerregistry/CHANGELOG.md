@@ -2,162 +2,59 @@
 
 ## 8.0.0b1 (2020-10-12)
 
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 3.0.0rc15(2020-9-16)
 **Features**
 
-  - Model ScopeMap has a new parameter type_properties_type
-  - Added operation WebhooksOperations.begin_create
-  - Added operation WebhooksOperations.begin_update
-  - Added operation WebhooksOperations.begin_delete
-  - Added operation BuildTasksOperations.begin_create
-  - Added operation BuildTasksOperations.begin_update
-  - Added operation BuildTasksOperations.begin_delete
-  - Added operation ScopeMapsOperations.begin_create
-  - Added operation ScopeMapsOperations.begin_update
-  - Added operation ScopeMapsOperations.begin_delete
-  - Added operation BuildsOperations.begin_cancel
-  - Added operation BuildsOperations.begin_update
-  - Added operation ReplicationsOperations.begin_create
-  - Added operation ReplicationsOperations.begin_update
-  - Added operation ReplicationsOperations.begin_delete
-  - Added operation TaskRunsOperations.begin_create
-  - Added operation TaskRunsOperations.begin_update
-  - Added operation TaskRunsOperations.begin_delete
-  - Added operation RegistriesOperations.begin_generate_credentials
-  - Added operation RegistriesOperations.begin_import_image
-  - Added operation RegistriesOperations.begin_update
-  - Added operation RegistriesOperations.begin_schedule_run
-  - Added operation RegistriesOperations.begin_create
-  - Added operation RegistriesOperations.begin_delete
-  - Added operation ImportPipelinesOperations.begin_create
-  - Added operation ImportPipelinesOperations.begin_delete
-  - Added operation TasksOperations.begin_create
-  - Added operation TasksOperations.begin_update
-  - Added operation TasksOperations.begin_delete
-  - Added operation AgentPoolsOperations.begin_create
-  - Added operation AgentPoolsOperations.begin_update
-  - Added operation AgentPoolsOperations.begin_delete
-  - Added operation PipelineRunsOperations.begin_create
-  - Added operation PipelineRunsOperations.begin_delete
-  - Added operation TokensOperations.begin_create
-  - Added operation TokensOperations.begin_update
-  - Added operation TokensOperations.begin_delete
-  - Added operation BuildStepsOperations.begin_create
-  - Added operation BuildStepsOperations.begin_update
-  - Added operation BuildStepsOperations.begin_delete
-  - Added operation PrivateEndpointConnectionsOperations.begin_create_or_update
-  - Added operation PrivateEndpointConnectionsOperations.begin_delete
-  - Added operation ExportPipelinesOperations.begin_create
-  - Added operation ExportPipelinesOperations.begin_delete
-  - Added operation RunsOperations.begin_cancel
-  - Added operation RunsOperations.begin_update
+  - Model FileTaskRunRequest has a new parameter log_template
+  - Model Run has a new parameter log_artifact
+  - Model EncodedTaskRunRequest has a new parameter log_template
+  - Model ImportPipeline has a new parameter location
+  - Model TaskRunRequest has a new parameter log_template
+  - Model Task has a new parameter log_template
+  - Model Task has a new parameter is_system_task
+  - Model RunRequest has a new parameter log_template
+  - Model ExportPipeline has a new parameter location
+  - Model TaskUpdateParameters has a new parameter log_template
+  - Model TaskRunUpdateParameters has a new parameter location
+  - Model DockerBuildRequest has a new parameter log_template
 
 **Breaking changes**
 
-  - Operation AgentPoolsOperations.get has a new signature
-  - Operation AgentPoolsOperations.get_queue_status has a new signature
-  - Operation AgentPoolsOperations.list has a new signature
-  - Operation BuildStepsOperations.get has a new signature
-  - Operation BuildStepsOperations.list has a new signature
-  - Operation BuildStepsOperations.list_build_arguments has a new signature
-  - Operation BuildTasksOperations.get has a new signature
-  - Operation BuildTasksOperations.list has a new signature
-  - Operation BuildTasksOperations.list_source_repository_properties has a new signature
-  - Operation BuildsOperations.get has a new signature
-  - Operation BuildsOperations.get_log_link has a new signature
-  - Operation BuildsOperations.list has a new signature
-  - Operation ExportPipelinesOperations.get has a new signature
-  - Operation ExportPipelinesOperations.list has a new signature
-  - Operation ImportPipelinesOperations.get has a new signature
-  - Operation ImportPipelinesOperations.list has a new signature
-  - Operation PipelineRunsOperations.get has a new signature
-  - Operation PipelineRunsOperations.list has a new signature
-  - Operation PrivateEndpointConnectionsOperations.get has a new signature
-  - Operation PrivateEndpointConnectionsOperations.list has a new signature
-  - Operation RegistriesOperations.get has a new signature
-  - Operation RegistriesOperations.get_build_source_upload_url has a new signature
-  - Operation RegistriesOperations.list_by_resource_group has a new signature
-  - Operation RegistriesOperations.list_credentials has a new signature
-  - Operation RegistriesOperations.list_private_link_resources has a new signature
-  - Operation RegistriesOperations.list_usages has a new signature
-  - Operation ReplicationsOperations.get has a new signature
-  - Operation ReplicationsOperations.list has a new signature
-  - Operation RunsOperations.get has a new signature
-  - Operation RunsOperations.get_log_sas_url has a new signature
-  - Operation RunsOperations.list has a new signature
-  - Operation ScopeMapsOperations.get has a new signature
-  - Operation ScopeMapsOperations.list has a new signature
-  - Operation TaskRunsOperations.get has a new signature
-  - Operation TaskRunsOperations.get_details has a new signature
-  - Operation TaskRunsOperations.list has a new signature
-  - Operation TasksOperations.get has a new signature
-  - Operation TasksOperations.get_details has a new signature
-  - Operation TasksOperations.list has a new signature
-  - Operation TokensOperations.get has a new signature
-  - Operation TokensOperations.list has a new signature
-  - Operation WebhooksOperations.get has a new signature
-  - Operation WebhooksOperations.get_callback_config has a new signature
-  - Operation WebhooksOperations.list has a new signature
-  - Operation WebhooksOperations.list_events has a new signature
-  - Operation WebhooksOperations.ping has a new signature
-  - Model DockerBuildRequest no longer has parameter log_template
-  - Model TaskUpdateParameters no longer has parameter log_template
-  - Model Run no longer has parameter log_artifact
-  - Model Task no longer has parameter log_template
-  - Model Task no longer has parameter is_system_task
-  - Model TaskRunRequest no longer has parameter log_template
-  - Model RunRequest no longer has parameter log_template
-  - Model EncodedTaskRunRequest no longer has parameter log_template
-  - Model ScopeMap no longer has parameter scope_map_type
-  - Model FileTaskRunRequest no longer has parameter log_template
-  - Operation RegistriesOperations.regenerate_credential has a new signature
-  - Operation RegistriesOperations.check_name_availability has a new signature
-  - Operation RegistriesOperations.list has a new signature
-  - Operation Operations.list has a new signature
-  - Removed operation WebhooksOperations.update
-  - Removed operation WebhooksOperations.delete
-  - Removed operation WebhooksOperations.create
-  - Removed operation BuildTasksOperations.update
-  - Removed operation BuildTasksOperations.delete
-  - Removed operation BuildTasksOperations.create
-  - Removed operation ScopeMapsOperations.update
-  - Removed operation ScopeMapsOperations.delete
-  - Removed operation ScopeMapsOperations.create
-  - Removed operation BuildsOperations.cancel
-  - Removed operation BuildsOperations.update
-  - Removed operation ReplicationsOperations.update
-  - Removed operation ReplicationsOperations.delete
-  - Removed operation ReplicationsOperations.create
-  - Removed operation TaskRunsOperations.update
-  - Removed operation TaskRunsOperations.delete
-  - Removed operation TaskRunsOperations.create
-  - Removed operation RegistriesOperations.schedule_run
-  - Removed operation RegistriesOperations.create
-  - Removed operation RegistriesOperations.generate_credentials
-  - Removed operation RegistriesOperations.update
-  - Removed operation RegistriesOperations.delete
-  - Removed operation RegistriesOperations.import_image
-  - Removed operation ImportPipelinesOperations.delete
-  - Removed operation ImportPipelinesOperations.create
-  - Removed operation TasksOperations.update
-  - Removed operation TasksOperations.delete
-  - Removed operation TasksOperations.create
-  - Removed operation AgentPoolsOperations.update
-  - Removed operation AgentPoolsOperations.delete
-  - Removed operation AgentPoolsOperations.create
-  - Removed operation PipelineRunsOperations.delete
-  - Removed operation PipelineRunsOperations.create
-  - Removed operation TokensOperations.update
-  - Removed operation TokensOperations.delete
-  - Removed operation TokensOperations.create
-  - Removed operation BuildStepsOperations.update
-  - Removed operation BuildStepsOperations.delete
-  - Removed operation BuildStepsOperations.create
-  - Removed operation PrivateEndpointConnectionsOperations.delete
-  - Removed operation PrivateEndpointConnectionsOperations.create_or_update
-  - Removed operation ExportPipelinesOperations.delete
-  - Removed operation ExportPipelinesOperations.create
-  - Removed operation RunsOperations.cancel
-  - Removed operation RunsOperations.update
+  - Model TaskRun no longer has parameter tags
+  
+## 3.0.0rc14(2020-06-15)
+
+**Features**
+
+  - Model RunGetLogResult has a new parameter log_artifact_link
 
 ## 3.0.0rc13 (2020-05-15)
 
