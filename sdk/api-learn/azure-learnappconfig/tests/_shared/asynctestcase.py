@@ -9,7 +9,7 @@ from .testcase import AppConfigTestCase
 
 class AsyncAppConfigTestCase(AppConfigTestCase):
     def __init__(self, *args, **kwargs):
-        super(AppConfigTestCase, self).__init__(*args, **kwargs)
+        super(AsyncAppConfigTestCase, self).__init__(*args, **kwargs)
 
     class AsyncFakeCredential(object):
         # fake async credential

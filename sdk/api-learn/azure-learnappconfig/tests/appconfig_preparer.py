@@ -97,7 +97,7 @@ class AppConfigPreparer(AzureMgmtPreparer):
     def remove_resource(self, name, **kwargs):
         if self.is_live:
             group = self._get_resource_group(**kwargs)
-            self.client.namespaces.delete(group.name, name, polling=False)
+            self.client.configuration_stores.begin_delete(group.name, name)
 
     def _get_resource_group(self, **kwargs):
         try:
