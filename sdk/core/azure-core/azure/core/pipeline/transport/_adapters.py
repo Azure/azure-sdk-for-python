@@ -35,26 +35,32 @@ from urllib3.response import HTTPResponse
 from urllib3.util import parse_url
 from urllib3.util import Timeout as TimeoutSauce
 from urllib3.util.retry import Retry
-from urllib3.exceptions import ClosedPoolError
-from urllib3.exceptions import ConnectTimeoutError
-from urllib3.exceptions import HTTPError as _HTTPError
-from urllib3.exceptions import MaxRetryError
-from urllib3.exceptions import NewConnectionError
-from urllib3.exceptions import ProxyError as _ProxyError
-from urllib3.exceptions import ProtocolError
-from urllib3.exceptions import ReadTimeoutError
-from urllib3.exceptions import SSLError as _SSLError
-from urllib3.exceptions import ResponseError
-from urllib3.exceptions import LocationValueError
+from urllib3.exceptions import (
+    ClosedPoolError,
+    ConnectTimeoutError,
+    HTTPError as _HTTPError,
+    MaxRetryError,
+    NewConnectionError,
+    ProxyError as _ProxyError,
+    ProtocolError,
+    ReadTimeoutError,
+    SSLError as _SSLError,
+    ResponseError,
+    LocationValueError,
+)
 
 from requests.models import Response
-from requests.utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,
-                    get_encoding_from_headers, prepend_scheme_if_needed,
-                    get_auth_from_url, urldefragauth, select_proxy)
+from requests.utils import (
+    DEFAULT_CA_BUNDLE_PATH,
+    extract_zipped_paths,
+    get_encoding_from_headers,
+    prepend_scheme_if_needed,
+    get_auth_from_url,
+    urldefragauth, select_proxy)
 from six.moves.urllib_parse import urlparse
 from requests.structures import CaseInsensitiveDict
 from requests.cookies import extract_cookies_to_jar
-from requests.exceptions import (
+from requests.exceptions import (   # pylint: disable=W0622
     ConnectionError,
     ConnectTimeout,
     ReadTimeout,
@@ -438,6 +444,7 @@ class HTTPAdapter(BaseAdapter):
 
         return url
 
+    # pylint: disable=W0107
     def add_headers(self, request, **kwargs):
         """Add any headers needed by the connection. As of v2.0 this does
         nothing by default, but is left for overriding by users that subclass
@@ -475,7 +482,7 @@ class HTTPAdapter(BaseAdapter):
 
         return headers
 
-    # pylint disable=too-many-branches
+    # pylint disable=R0912
     def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None, **kwargs):
         """Sends PreparedRequest object. Returns Response object.
 
