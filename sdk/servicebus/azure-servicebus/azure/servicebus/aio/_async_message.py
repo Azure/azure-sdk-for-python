@@ -61,7 +61,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
                         )
                     )
                     return
-                except RuntimeError as exception:
+                except Exception as exception:  # pylint: disable=broad-except
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
@@ -92,7 +92,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
-        await self._settle_message(MESSAGE_COMPLETE)
+        await self._settle_message_with_retry(MESSAGE_COMPLETE)
         self._settled = True
 
     async def dead_letter(  # type: ignore
@@ -114,7 +114,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        await self._settle_message(MESSAGE_DEAD_LETTER,
+        await self._settle_message_with_retry(MESSAGE_DEAD_LETTER,
                                    dead_letter_reason=reason,
                                    dead_letter_error_description=error_description)
         self._settled = True
@@ -131,7 +131,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
-        await self._settle_message(MESSAGE_ABANDON)
+        await self._settle_message_with_retry(MESSAGE_ABANDON)
         self._settled = True
 
     async def defer(self) -> None:  # type: ignore
@@ -147,7 +147,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEFER)
-        await self._settle_message(MESSAGE_DEFER)
+        await self._settle_message_with_retry(MESSAGE_DEFER)
         self._settled = True
 
     async def renew_lock(self, **kwargs: Any) -> datetime.datetime:

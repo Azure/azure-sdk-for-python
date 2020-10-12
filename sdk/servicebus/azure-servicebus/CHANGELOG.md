@@ -14,7 +14,7 @@
 
 * Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)
 and methods that use amqp management link for request like `schedule_messages`, `received_deferred_messages`, etc.
-now raise more concrete exception instead of `MessageSettleFailed`/`ServiceBusError`.
+now raise more concrete exception other than `MessageSettleFailed` and `ServiceBusError`.
 
 **BugFixes**
 
