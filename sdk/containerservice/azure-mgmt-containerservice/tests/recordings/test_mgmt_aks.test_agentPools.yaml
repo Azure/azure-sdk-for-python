@@ -1,0 +1,159 @@
+interactions:
+- request:
+    body: '{"properties": {"count": 3, "vmSize": "Standard_DS2_v2", "osType": "Linux",
+      "type": "VirtualMachineScaleSets", "mode": "System", "orchestratorVersion":
+      "", "availabilityZones": ["1", "2", "3"], "nodeTaints": []}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '212'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerservice/14.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2020-09-01
+  response:
+    body:
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\"\
+        ,\n  \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\"\
+        ,\n  \"properties\": {\n   \"count\": 3,\n   \"vmSize\": \"Standard_DS2_v2\"\
+        ,\n   \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"maxPods\"\
+        : 110,\n   \"type\": \"VirtualMachineScaleSets\",\n   \"provisioningState\"\
+        : \"Updating\",\n   \"powerState\": {\n    \"code\": \"Running\"\n   },\n\
+        \   \"orchestratorVersion\": \"1.17.11\",\n   \"nodeLabels\": {},\n   \"mode\"\
+        : \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\": \"AKSUbuntu-1604-2020.09.23\"\
+        \n  }\n }"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/85351c07-6c30-4f76-80c8-638c23aa4f8e?api-version=2017-08-31
+      cache-control:
+      - no-cache
+      content-length:
+      - '697'
+      content-type:
+      - application/json
+      date:
+      - Mon, 12 Oct 2020 08:50:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerservice/14.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent?api-version=2020-09-01
+  response:
+    body:
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/agentPools/aksagent\"\
+        ,\n  \"name\": \"aksagent\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/agentPools\"\
+        ,\n  \"properties\": {\n   \"count\": 3,\n   \"vmSize\": \"Standard_DS2_v2\"\
+        ,\n   \"osDiskSizeGB\": 128,\n   \"osDiskType\": \"Managed\",\n   \"maxPods\"\
+        : 110,\n   \"type\": \"VirtualMachineScaleSets\",\n   \"provisioningState\"\
+        : \"Succeeded\",\n   \"powerState\": {\n    \"code\": \"Running\"\n   },\n\
+        \   \"orchestratorVersion\": \"1.17.11\",\n   \"nodeLabels\": {},\n   \"mode\"\
+        : \"System\",\n   \"osType\": \"Linux\",\n   \"nodeImageVersion\": \"AKSUbuntu-1604-2020.09.23\"\
+        \n  }\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '698'
+      content-type:
+      - application/json
+      date:
+      - Mon, 12 Oct 2020 08:50:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerservice/14.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/availableAgentPoolVersions?api-version=2020-09-01
+  response:
+    body:
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_agentPoolsb25d0bdc/providers/Microsoft.ContainerService/managedClusters/4/availableagentpoolversions\"\
+        ,\n  \"name\": \"default\",\n  \"type\": \"Microsoft.ContainerService/managedClusters/availableAgentpoolVersions\"\
+        ,\n  \"properties\": {\n   \"agentPoolVersions\": [\n    {\n     \"default\"\
+        : true,\n     \"kubernetesVersion\": \"1.17.11\"\n    },\n    {\n     \"kubernetesVersion\"\
+        : \"1.16.13\"\n    },\n    {\n     \"kubernetesVersion\": \"1.16.15\"\n  \
+        \  },\n    {\n     \"kubernetesVersion\": \"1.17.9\"\n    }\n   ]\n  }\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '575'
+      content-type:
+      - application/json
+      date:
+      - Mon, 12 Oct 2020 08:50:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

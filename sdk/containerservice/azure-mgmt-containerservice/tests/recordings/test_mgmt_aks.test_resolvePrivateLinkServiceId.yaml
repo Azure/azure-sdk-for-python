@@ -1,0 +1,135 @@
+interactions:
+- request:
+    body: '{"properties": {"dnsPrefix": "akspythonsdk", "agentPoolProfiles": [{"count":
+      1, "vmSize": "Standard_DS2_v2", "maxPods": 110, "osType": "Linux", "maxCount":
+      100, "minCount": 1, "enableAutoScaling": true, "type": "VirtualMachineScaleSets",
+      "mode": "System", "name": "aksagent"}], "servicePrincipalProfile": {"clientId":
+      "22922db6-2c37-4027-b39c-e994c47c5dc8", "secret": "9.JEMsq~6_v.8g.4rGEMF5Gnz8L4_pJy_Y"},
+      "apiServerAccessProfile": {"enablePrivateCluster": true}}, "location": "eastus"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '487'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerservice/14.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_resolvePrivateLinkServiceIdbbbc12a7/providers/Microsoft.ContainerService/managedClusters/3?api-version=2020-09-01
+  response:
+    body:
+      string: "{\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_mgmt_aks_test_resolvePrivateLinkServiceIdbbbc12a7/providers/Microsoft.ContainerService/managedClusters/3\"\
+        ,\n  \"location\": \"eastus\",\n  \"name\": \"3\",\n  \"type\": \"Microsoft.ContainerService/ManagedClusters\"\
+        ,\n  \"properties\": {\n   \"provisioningState\": \"Updating\",\n   \"powerState\"\
+        : {\n    \"code\": \"Running\"\n   },\n   \"kubernetesVersion\": \"1.17.11\"\
+        ,\n   \"dnsPrefix\": \"akspythonsdk\",\n   \"privateFQDN\": \"akspythonsdk-e0c2aaf5.4335fb0d-831f-4277-8951-c7e76db5136d.privatelink.eastus.azmk8s.io\"\
+        ,\n   \"agentPoolProfiles\": [\n    {\n     \"name\": \"aksagent\",\n    \
+        \ \"count\": 1,\n     \"vmSize\": \"Standard_DS2_v2\",\n     \"osDiskSizeGB\"\
+        : 128,\n     \"osDiskType\": \"Managed\",\n     \"maxPods\": 110,\n     \"\
+        type\": \"VirtualMachineScaleSets\",\n     \"maxCount\": 100,\n     \"minCount\"\
+        : 1,\n     \"enableAutoScaling\": true,\n     \"provisioningState\": \"Updating\"\
+        ,\n     \"powerState\": {\n      \"code\": \"Running\"\n     },\n     \"orchestratorVersion\"\
+        : \"1.17.11\",\n     \"nodeLabels\": {},\n     \"mode\": \"System\",\n   \
+        \  \"osType\": \"Linux\",\n     \"nodeImageVersion\": \"AKSUbuntu-1604-2020.09.23\"\
+        \n    }\n   ],\n   \"servicePrincipalProfile\": {\n    \"clientId\": \"22922db6-2c37-4027-b39c-e994c47c5dc8\"\
+        \n   },\n   \"addonProfiles\": {\n    \"KubeDashboard\": {\n     \"enabled\"\
+        : true,\n     \"config\": null\n    }\n   },\n   \"nodeResourceGroup\": \"\
+        MC_test_mgmt_aks_test_resolvePrivateLinkServiceIdbbbc12a7_3_eastus\",\n  \
+        \ \"enableRBAC\": true,\n   \"networkProfile\": {\n    \"networkPlugin\":\
+        \ \"kubenet\",\n    \"loadBalancerSku\": \"Standard\",\n    \"loadBalancerProfile\"\
+        : {\n     \"managedOutboundIPs\": {\n      \"count\": 1\n     },\n     \"\
+        effectiveOutboundIPs\": [\n      {\n       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_test_mgmt_aks_test_resolvePrivateLinkServiceIdbbbc12a7_3_eastus/providers/Microsoft.Network/publicIPAddresses/1deac15c-4478-48f3-91fd-4bf7b7be6312\"\
+        \n      }\n     ]\n    },\n    \"podCidr\": \"10.244.0.0/16\",\n    \"serviceCidr\"\
+        : \"10.0.0.0/16\",\n    \"dnsServiceIP\": \"10.0.0.10\",\n    \"dockerBridgeCidr\"\
+        : \"172.17.0.1/16\",\n    \"outboundType\": \"loadBalancer\"\n   },\n   \"\
+        maxAgentPools\": 10,\n   \"privateLinkResources\": [\n    {\n     \"name\"\
+        : \"management\",\n     \"type\": \"Microsoft.ContainerService/managedClusters/privateLinkResources\"\
+        ,\n     \"groupId\": \"management\",\n     \"requiredMembers\": [\n      \"\
+        management\"\n     ],\n     \"privateLinkServiceID\": \"/subscriptions/ed53aee2-e021-4b4c-bba9-1d2ed8dae198/resourceGroups/hcp-underlay-eastus-cx-544/providers/Microsoft.Network/privateLinkServices/a76de4607f6e64ad3ae1279419def08c\"\
+        \n    }\n   ],\n   \"apiServerAccessProfile\": {\n    \"enablePrivateCluster\"\
+        : true,\n    \"privateDNSZone\": \"system\"\n   }\n  },\n  \"sku\": {\n  \
+        \ \"name\": \"Basic\",\n   \"tier\": \"Free\"\n  }\n }"
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/37e6015b-a73c-4d40-967f-04e8580e6c21?api-version=2017-08-31
+      cache-control:
+      - no-cache
+      content-length:
+      - '2710'
+      content-type:
+      - application/json
+      date:
+      - Mon, 12 Oct 2020 08:53:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1194'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "testManagement"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '26'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-containerservice/14.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_aks_test_resolvePrivateLinkServiceIdbbbc12a7/providers/Microsoft.ContainerService/managedClusters/3/resolvePrivateLinkServiceId?api-version=2020-09-01
+  response:
+    body:
+      string: '{}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2'
+      content-type:
+      - application/json
+      date:
+      - Mon, 12 Oct 2020 08:53:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+version: 1
