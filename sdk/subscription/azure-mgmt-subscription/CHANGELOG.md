@@ -1,5 +1,18 @@
 # Release History
 
+## 0.7.0 (2020-10-12)
+
+**Features**
+
+  - Added operation group AliasOperations
+
+**Breaking changes**
+
+  - Removed operation SubscriptionOperations.create_subscription_in_enrollment_account
+  - Removed operation SubscriptionOperations.create_subscription
+  - Removed operation SubscriptionOperations.create_csp_subscription
+  - Removed operation group SubscriptionOperationOperations
+
 ## 0.6.0 (2020-06-05)
 
 **Features**
