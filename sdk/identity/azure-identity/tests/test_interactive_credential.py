@@ -216,7 +216,7 @@ def test_get_token_wraps_exceptions():
 
 
 def test_enable_persistent_cache():
-    """the credential should use the persistent cache only when given enable_persistent_cache=True"""
+    """the credential should use the persistent cache only when given _enable_persistent_cache=True"""
 
     class TestCredential(InteractiveCredential):
         def __init__(self, **kwargs):
@@ -242,15 +242,15 @@ def test_enable_persistent_cache():
 
     # keyword argument opts in to persistent cache
     with patch(persistent_cache + ".msal_extensions") as mock_extensions:
-        TestCredential(enable_persistent_cache=True)
+        TestCredential(_enable_persistent_cache=True)
     assert mock_extensions.PersistedTokenCache.call_count == 1
 
     # opting in on an unsupported platform raises an exception
     with patch(persistent_cache + ".sys.platform", "commodore64"):
         with pytest.raises(NotImplementedError):
-            TestCredential(enable_persistent_cache=True)
+            TestCredential(_enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
-            TestCredential(enable_persistent_cache=True, _allow_unencrypted_cache=True)
+            TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
 
 
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
@@ -269,7 +269,7 @@ def test_persistent_cache_linux(mock_extensions):
             pass
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    TestCredential(enable_persistent_cache=True, _allow_unencrypted_cache=True)
+    TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -278,9 +278,9 @@ def test_persistent_cache_linux(mock_extensions):
 
     # encryption unavailable, no opt in to unencrypted cache -> credential should raise
     with pytest.raises(ValueError):
-        TestCredential(enable_persistent_cache=True)
+        TestCredential(_enable_persistent_cache=True)
 
-    TestCredential(enable_persistent_cache=True, _allow_unencrypted_cache=True)
+    TestCredential(_enable_persistent_cache=True, _allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
