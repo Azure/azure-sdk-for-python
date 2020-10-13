@@ -23,11 +23,11 @@ from azure.servicebus.exceptions import (
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,
-    MessageLockExpired,
-    MessageAlreadySettled,
+    ServiceBusMessageLockExpired,
+    ServiceBusMessageAlreadySettled,
     AutoLockRenewTimeout,
-    MessageSettleFailed,
-    MessageSendFailed)
+    ServiceBusMessageSettleFailed,
+    ServiceBusMessageSendFailed)
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -126,7 +126,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     messages.append(message)
                     assert session_id == session._session_id
                     assert session_id == message.session_id
-                    with pytest.raises(MessageAlreadySettled):
+                    with pytest.raises(ServiceBusMessageAlreadySettled):
                         message.complete()
 
             assert not session._running
@@ -378,7 +378,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    with pytest.raises(MessageAlreadySettled):
+                    with pytest.raises(ServiceBusMessageAlreadySettled):
                         message.complete()
                 with pytest.raises(ServiceBusError):
                     deferred = session.receive_deferred_messages(deferred_messages)
@@ -412,7 +412,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
                 deferred = session.receive_deferred_messages(deferred_messages)
 
-                with pytest.raises(MessageAlreadySettled):
+                with pytest.raises(ServiceBusMessageAlreadySettled):
                     message.complete()
 
     @pytest.mark.liveTest
@@ -661,7 +661,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
 
-            with pytest.raises(MessageSettleFailed):
+            with pytest.raises(ServiceBusMessageSettleFailed):
                 messages[0].complete()
 
 
@@ -1008,5 +1008,5 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = Message("This should be an invalid non session message")
-                with pytest.raises(MessageSendFailed):
+                with pytest.raises(ServiceBusMessageSendFailed):
                     sender.send_messages(message)

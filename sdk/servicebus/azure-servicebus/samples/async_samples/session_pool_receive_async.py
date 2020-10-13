@@ -10,7 +10,7 @@ import uuid
 
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenew
 from azure.servicebus import Message
-from azure.servicebus.exceptions import NoActiveSession
+from azure.servicebus.exceptions import ServiceBusNoActiveSession
 
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -39,7 +39,7 @@ async def message_processing(servicebus_client, queue_name):
                         await receiver.session.set_state("CLOSED")
                         break
                 await renewer.close()
-        except NoActiveSession:
+        except ServiceBusNoActiveSession:
             print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
             return
 

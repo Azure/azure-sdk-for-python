@@ -141,6 +141,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self.max_wait_time = max_wait_time
 
         async def __anext__(self):
+            # pylint: disable=protected-access
             original_timeout = None
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.

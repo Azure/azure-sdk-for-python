@@ -7,6 +7,7 @@
 from typing import Optional
 
 from uamqp import errors, constants
+from azure.core.exceptions import AzureError
 
 from ._common.constants import SESSION_LOCK_LOST, SESSION_LOCK_TIMEOUT
 
@@ -69,14 +70,14 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
     error_need_raise = False
     if isinstance(exception, errors.MessageAlreadySettled):
         logger.info("Message already settled (%r)", exception)
-        error = MessageAlreadySettled(exception)
+        error = ServiceBusMessageAlreadySettled(exception)
         error_need_close_handler = False
         error_need_raise = True
     elif isinstance(exception, errors.MessageContentTooLarge) or \
             (isinstance(exception, errors.MessageException) and
              exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
         logger.info("Message content is too large (%r)", exception)
-        error = MessageContentTooLarge(exception)
+        error = ServiceBusMessageContentTooLarge(exception)
         error_need_close_handler = False
         error_need_raise = True
     elif isinstance(exception, errors.MessageException):
@@ -84,17 +85,17 @@ def _create_servicebus_exception(logger, exception, handler):  # pylint: disable
         if exception.condition == constants.ErrorCodes.ClientError and 'timed out' in str(exception):
             error = OperationTimeoutError("Send operation timed out", inner_exception=exception)
         else:
-            error = MessageSendFailed(exception)
+            error = ServiceBusMessageSendFailed(exception)
         error_need_raise = False
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
         try:
             session_id = handler._session_id  # pylint: disable=protected-access
         except AttributeError:
             session_id = None
-        error = SessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
+        error = ServiceBusSessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
         error_need_raise = True
     elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_TIMEOUT:
-        error = NoActiveSession("Queue has no active session to receive from.")
+        error = ServiceBusNoActiveSession("Queue has no active session to receive from.")
         error_need_raise = True
     elif isinstance(exception, errors.AuthenticationException):
         logger.info("Authentication failed due to exception: (%r).", exception)
@@ -154,18 +155,23 @@ class _ServiceBusErrorPolicy(errors.ErrorPolicy):
         return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
 
-class ServiceBusError(Exception):
-    """An error occured.
+class ServiceBusError(AzureError):
+    """Base exception for all Service Bus errors which can be used for default error handling.
 
-    This is the parent of all Service Bus errors and can
-    be used for default error handling.
-
+    :param message: The message object stringified as 'message' attribute
+    :keyword error: The original exception if any
+    :paramtype error: Exception
+    :ivar inner_exception: The exception passed with the 'error' kwarg
+    :type inner_exception: Exception
+    :ivar exc_type: The exc_type from sys.exc_info()
+    :ivar exc_value: The exc_value from sys.exc_info()
+    :ivar exc_traceback: The exc_traceback from sys.exc_info()
+    :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
+    :ivar str message: A stringified version of the message parameter
     """
 
-    def __init__(self, message, inner_exception=None):
-        # type: (Optional[str], Optional[Exception]) -> None
-        self.inner_exception = inner_exception
-        super(ServiceBusError, self).__init__(message)
+    def __init__(self, message, *args, **kwargs):
+        super(ServiceBusError, self).__init__(message, error=kwargs.get("error"))
 
 
 class ServiceBusResourceNotFound(ServiceBusError):
@@ -184,7 +190,7 @@ class ServiceBusAuthenticationError(ServiceBusError):
     """An error occured when authenticate the connection."""
 
 
-class NoActiveSession(ServiceBusError):
+class ServiceBusNoActiveSession(ServiceBusError):
     """No active Sessions are available to receive from."""
 
 
@@ -192,15 +198,15 @@ class OperationTimeoutError(ServiceBusError):
     """Operation timed out."""
 
 
-class MessageError(ServiceBusError):
+class ServiceBusMessageError(ServiceBusError):
     """A message failed to send because the message is in a wrong state"""
 
 
-class MessageContentTooLarge(MessageError, ValueError):
+class ServiceBusMessageContentTooLarge(ServiceBusMessageError, ValueError):
     """Message content is larger than the service bus frame size"""
 
 
-class MessageAlreadySettled(MessageError):
+class ServiceBusMessageAlreadySettled(ServiceBusMessageError):
     """Failed to settle the message.
 
     An attempt was made to complete an operation on a message that has already
@@ -208,63 +214,72 @@ class MessageAlreadySettled(MessageError):
     This error will also be raised if an attempt is made to settle a message
     received via ReceiveAndDelete mode.
 
+    :param str action: The settlement operation, there are four types of settlement,
+     `complete/abandon/defer/dead_letter`.
+
     """
 
     def __init__(self, action):
         # type: (str) -> None
         message = "Unable to {} message as it has already been settled".format(action)
-        super(MessageAlreadySettled, self).__init__(message)
+        super(ServiceBusMessageAlreadySettled, self).__init__(message)
 
 
-class MessageSettleFailed(ServiceBusError):
-    """Attempt to settle a message failed."""
+class ServiceBusMessageSettleFailed(ServiceBusError):
+    """Attempt to settle a message failed.
 
-    def __init__(self, action, inner_exception):
+    :param str action: The settlement operation, there are four types of settlement,
+     `complete/abandon/defer/dead_letter`.
+    :param error: The original exception if any.
+    :type error: Exception
+
+    """
+
+    def __init__(self, action, error):
         # type: (str, Exception) -> None
-        message = "Failed to {} message. Error: {}".format(action, inner_exception)
-        self.inner_exception = inner_exception
-        super(MessageSettleFailed, self).__init__(message, inner_exception)
+        message = "Failed to {} message. Error: {}".format(action, error)
+        super(ServiceBusMessageSettleFailed, self).__init__(message, error=error)
 
 
-class MessageSendFailed(ServiceBusError):
+class ServiceBusMessageSendFailed(ServiceBusError):
     """A message failed to send to the Service Bus entity."""
 
-    def __init__(self, inner_exception):
+    def __init__(self, error):
         # type: (Exception) -> None
-        message = "Message failed to send. Error: {}".format(inner_exception)
+        message = "Message failed to send. Error: {}".format(error)
         self.condition = None
         self.description = None
-        if hasattr(inner_exception, 'condition'):
-            self.condition = inner_exception.condition      # type: ignore
-            self.description = inner_exception.description  # type: ignore
-        self.inner_exception = inner_exception
-        super(MessageSendFailed, self).__init__(message, inner_exception)
+        if hasattr(error, 'condition'):
+            self.condition = error.condition      # type: ignore
+            self.description = error.description  # type: ignore
+        self.inner_exception = error
+        super(ServiceBusMessageSendFailed, self).__init__(message, error)
 
 
-class MessageLockExpired(ServiceBusError):
+class ServiceBusMessageLockExpired(ServiceBusError):
     """The lock on the message has expired and it has been released back to the queue.
 
     It will need to be received again in order to settle it.
 
     """
 
-    def __init__(self, message=None, inner_exception=None):
+    def __init__(self, message=None, error=None):
         # type: (Optional[str], Optional[Exception]) -> None
         message = message or "Message lock expired"
-        super(MessageLockExpired, self).__init__(message, inner_exception=inner_exception)
+        super(ServiceBusMessageLockExpired, self).__init__(message, error=error)
 
 
-class SessionLockExpired(ServiceBusError):
+class ServiceBusSessionLockExpired(ServiceBusError):
     """The lock on the session has expired.
 
     All unsettled messages that have been received can no longer be settled.
 
     """
 
-    def __init__(self, message=None, inner_exception=None):
+    def __init__(self, message=None, error=None):
         # type: (Optional[str], Optional[Exception]) -> None
         message = message or "Session lock expired"
-        super(SessionLockExpired, self).__init__(message, inner_exception=inner_exception)
+        super(ServiceBusSessionLockExpired, self).__init__(message, error=error)
 
 
 class AutoLockRenewFailed(ServiceBusError):

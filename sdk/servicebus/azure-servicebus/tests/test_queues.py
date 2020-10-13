@@ -30,12 +30,12 @@ from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
     ServiceBusError,
-    MessageLockExpired,
-    MessageAlreadySettled,
+    ServiceBusMessageLockExpired,
+    ServiceBusMessageAlreadySettled,
     AutoLockRenewTimeout,
-    MessageSendFailed,
-    MessageSettleFailed,
-    MessageContentTooLarge,
+    ServiceBusMessageSendFailed,
+    ServiceBusMessageSettleFailed,
+    ServiceBusMessageContentTooLarge,
     OperationTimeoutError
 )
 
@@ -234,7 +234,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert not message.session_id
                     assert not message.reply_to_session_id
                     messages.append(message)
-                    with pytest.raises(MessageAlreadySettled):
+                    with pytest.raises(ServiceBusMessageAlreadySettled):
                         message.complete()
     
             assert len(messages) == 10
@@ -311,9 +311,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for message in receiver:
                     print_message(_logger, message)
                     message.complete()
-                    with pytest.raises(MessageAlreadySettled):
+                    with pytest.raises(ServiceBusMessageAlreadySettled):
                         message.complete()
-                    with pytest.raises(MessageAlreadySettled):
+                    with pytest.raises(ServiceBusMessageAlreadySettled):
                         message.renew_lock()
                     count += 1
 
@@ -557,7 +557,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    with pytest.raises(MessageAlreadySettled):
+                    with pytest.raises(ServiceBusMessageAlreadySettled):
                         message.complete()
                 with pytest.raises(ServiceBusError):
                     deferred = receiver.receive_deferred_messages(deferred_messages)
@@ -845,11 +845,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             too_large = "A" * 256 * 1024
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(MessageContentTooLarge):
+                with pytest.raises(ServiceBusMessageContentTooLarge):
                     sender.send_messages(Message(too_large))
 
                 half_too_large = "A" * int((1024 * 256) / 2)
-                with pytest.raises(MessageContentTooLarge):
+                with pytest.raises(ServiceBusMessageContentTooLarge):
                     sender.send_messages([Message(half_too_large), Message(half_too_large)])
 
     @pytest.mark.liveTest
@@ -891,7 +891,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages[1].complete()
                     assert (messages[2].locked_until_utc - utc_now()) <= timedelta(seconds=60)
                     sleep_until_expired(messages[2])
-                    with pytest.raises(MessageLockExpired):
+                    with pytest.raises(ServiceBusMessageLockExpired):
                         messages[2].complete()
     
     @pytest.mark.liveTest
@@ -930,14 +930,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert message._lock_expired
                         try:
                             message.complete()
-                            raise AssertionError("Didn't raise MessageLockExpired")
-                        except MessageLockExpired as e:
+                            raise AssertionError("Didn't raise ServiceBusMessageLockExpired")
+                        except ServiceBusMessageLockExpired as e:
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                     else:
                         if message._lock_expired:
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             assert message._lock_expired
-                            with pytest.raises(MessageLockExpired):
+                            with pytest.raises(ServiceBusMessageLockExpired):
                                 message.complete()
                         else:
                             assert message.delivery_count >= 1
@@ -1029,7 +1029,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
     
-            with pytest.raises(MessageSettleFailed):
+            with pytest.raises(ServiceBusMessageSettleFailed):
                 messages[0].complete()
     
 
@@ -1053,9 +1053,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 time.sleep((messages[0].locked_until_utc - utc_now()).total_seconds()+1)
                 assert messages[0]._lock_expired
-                with pytest.raises(MessageLockExpired):
+                with pytest.raises(ServiceBusMessageLockExpired):
                     messages[0].complete()
-                with pytest.raises(MessageLockExpired):
+                with pytest.raises(ServiceBusMessageLockExpired):
                     messages[0].renew_lock()
     
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
@@ -1117,15 +1117,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 received = messages[0]
                 print_message(_logger, received)
-                with pytest.raises(MessageAlreadySettled):
+                with pytest.raises(ServiceBusMessageAlreadySettled):
                     received.complete()
-                with pytest.raises(MessageAlreadySettled):
+                with pytest.raises(ServiceBusMessageAlreadySettled):
                     received.abandon()
-                with pytest.raises(MessageAlreadySettled):
+                with pytest.raises(ServiceBusMessageAlreadySettled):
                     received.defer()
-                with pytest.raises(MessageAlreadySettled):
+                with pytest.raises(ServiceBusMessageAlreadySettled):
                     received.dead_letter()
-                with pytest.raises(MessageAlreadySettled):
+                with pytest.raises(ServiceBusMessageAlreadySettled):
                     received.renew_lock()
     
             time.sleep(30)

@@ -24,10 +24,10 @@ from azure.servicebus.exceptions import (
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,
-    MessageLockExpired,
-    MessageAlreadySettled,
+    ServiceBusMessageLockExpired,
+    ServiceBusMessageAlreadySettled,
     AutoLockRenewTimeout,
-    MessageSettleFailed)
+    ServiceBusMessageSettleFailed)
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
@@ -94,7 +94,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 messages.append(message)
                 assert session_id == session.session.session_id
                 assert session_id == message.session_id
-                with pytest.raises(MessageAlreadySettled):
+                with pytest.raises(ServiceBusMessageAlreadySettled):
                     await message.complete()
 
             assert session._running
@@ -299,7 +299,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
-                    with pytest.raises(MessageAlreadySettled):
+                    with pytest.raises(ServiceBusMessageAlreadySettled):
                         await message.complete()
                 with pytest.raises(ServiceBusError):
                     deferred = await session.receive_deferred_messages(deferred_messages)
@@ -332,7 +332,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             assert count == 10
 
-            with pytest.raises(MessageSettleFailed):
+            with pytest.raises(ServiceBusMessageSettleFailed):
                 await message.complete()
 
     @pytest.mark.liveTest
@@ -563,7 +563,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
 
-            with pytest.raises(MessageSettleFailed):
+            with pytest.raises(ServiceBusMessageSettleFailed):
                 await messages[0].complete()
 
 

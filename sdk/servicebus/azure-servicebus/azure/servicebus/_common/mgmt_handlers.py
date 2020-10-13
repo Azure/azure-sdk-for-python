@@ -7,7 +7,7 @@
 import uamqp
 
 from .message import PeekedMessage, ReceivedMessage
-from ..exceptions import ServiceBusError, MessageLockExpired
+from ..exceptions import ServiceBusError, ServiceBusMessageLockExpired
 from .constants import ReceiveMode
 
 
@@ -23,7 +23,7 @@ def lock_renew_op(status_code, message, description):
     if status_code == 200:
         return message.get_data()
     if status_code == 410:
-        raise MessageLockExpired(message=description)
+        raise ServiceBusMessageLockExpired(message=description)
     raise ServiceBusError(
         "Management request returned status code: {}. Description: {}, Data: {}".format(
             status_code, description, message.get_data()))

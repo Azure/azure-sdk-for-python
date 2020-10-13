@@ -50,12 +50,12 @@ from .constants import (
     ANNOTATION_SYMBOL_KEY_MAP
 )
 from ..exceptions import (
-    MessageAlreadySettled,
-    MessageLockExpired,
-    SessionLockExpired,
-    MessageSettleFailed,
-    MessageContentTooLarge,
-    ServiceBusError)
+    ServiceBusMessageAlreadySettled,
+    ServiceBusMessageLockExpired,
+    ServiceBusSessionLockExpired,
+    ServiceBusMessageSettleFailed,
+    ServiceBusMessageContentTooLarge
+)
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
@@ -552,7 +552,7 @@ class BatchMessage(object):
         :param message: The Message to be added to the batch.
         :type message: ~azure.servicebus.Message
         :rtype: None
-        :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
+        :raises: :class: ~azure.servicebus.exceptions.ServiceBusMessageContentTooLarge, when exceeding the size limit.
         """
         message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
@@ -566,7 +566,7 @@ class BatchMessage(object):
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise MessageContentTooLarge(
+            raise ServiceBusMessageContentTooLarge(
                 "BatchMessage has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
@@ -770,17 +770,17 @@ class ReceivedMessageBase(PeekedMessage):
     def _check_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
-            raise MessageSettleFailed(action, "Orphan message had no open connection.")
+            raise ServiceBusMessageSettleFailed(action, "Orphan message had no open connection.")
         if self._settled:
-            raise MessageAlreadySettled(action)
+            raise ServiceBusMessageAlreadySettled(action)
         try:
             if self._lock_expired:
-                raise MessageLockExpired(inner_exception=self.auto_renew_error)
+                raise ServiceBusMessageLockExpired(error=self.auto_renew_error)
         except TypeError:
             pass
         try:
             if self._receiver.session._lock_expired:  # pylint: disable=protected-access
-                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
+                raise ServiceBusSessionLockExpired(error=self._receiver.session.auto_renew_error)
         except AttributeError:
             pass
 
@@ -926,7 +926,7 @@ class ReceivedMessage(ReceivedMessageBase):
                                        dead_letter_reason=dead_letter_reason,
                                        dead_letter_error_description=dead_letter_error_description)()
         except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
+            raise ServiceBusMessageSettleFailed(settle_operation, e)
 
     def complete(self):
         # type: () -> None
@@ -935,10 +935,10 @@ class ReceivedMessage(ReceivedMessageBase):
         This removes the message from the queue.
 
         :rtype: None
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusSessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageSettleFailed if message settle operation fails.
 
 
         .. admonition:: Example:
@@ -966,10 +966,10 @@ class ReceivedMessage(ReceivedMessageBase):
         :param str reason: The reason for dead-lettering the message.
         :param str error_description: The detailed error description for dead-lettering the message.
         :rtype: None
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusSessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageSettleFailed if message settle operation fails.
 
         .. admonition:: Example:
 
@@ -995,10 +995,10 @@ class ReceivedMessage(ReceivedMessageBase):
         This message will be returned to the queue and made available to be received again.
 
         :rtype: None
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusSessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageSettleFailed if message settle operation fails.
 
 
         .. admonition:: Example:
@@ -1023,10 +1023,10 @@ class ReceivedMessage(ReceivedMessageBase):
         specifically by its sequence number in order to be received.
 
         :rtype: None
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusSessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageSettleFailed if message settle operation fails.
 
         .. admonition:: Example:
 
@@ -1064,8 +1064,8 @@ class ReceivedMessage(ReceivedMessageBase):
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusMessageAlreadySettled is message has already been settled.
         """
         try:
             if self._receiver.session:  # type: ignore
