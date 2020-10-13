@@ -1,5 +1,15 @@
 # Release History
 
+## 6.3.0 (2020-10-09)
+
+**Features**
+
+  - Model CognitiveServicesAccountApiProperties has a new parameter website_name
+  - Model CognitiveServicesAccountApiProperties has a new parameter super_user
+  - Model CognitiveServicesAccountApiProperties has a new parameter aad_client_id
+  - Model CognitiveServicesAccountApiProperties has a new parameter aad_tenant_id
+  - Added operation PrivateEndpointConnectionsOperations.list
+  
 ## 6.2.0 (2020-05-29)
 
 **Features**

@@ -318,11 +318,26 @@ class CognitiveServicesAccountApiProperties(Model):
     :param storage_account_connection_string: (Personalization Only) The
      storage account connection string.
     :type storage_account_connection_string: str
+    :param aad_client_id: (Metrics Advisor Only) The Azure AD Client Id
+     (Application Id).
+    :type aad_client_id: str
+    :param aad_tenant_id: (Metrics Advisor Only) The Azure AD Tenant Id.
+    :type aad_tenant_id: str
+    :param super_user: (Metrics Advisor Only) The super user of Metrics
+     Advisor.
+    :type super_user: str
+    :param website_name: (Metrics Advisor Only) The website name of Metrics
+     Advisor.
+    :type website_name: str
     """
 
     _validation = {
         'event_hub_connection_string': {'max_length': 1000, 'pattern': r'^( *)Endpoint=sb://(.*);( *)SharedAccessKeyName=(.*);( *)SharedAccessKey=(.*)$'},
         'storage_account_connection_string': {'max_length': 1000, 'pattern': r'^(( *)DefaultEndpointsProtocol=(http|https)( *);( *))?AccountName=(.*)AccountKey=(.*)EndpointSuffix=(.*)$'},
+        'aad_client_id': {'max_length': 500},
+        'aad_tenant_id': {'max_length': 500},
+        'super_user': {'max_length': 500},
+        'website_name': {'max_length': 500},
     }
 
     _attribute_map = {
@@ -330,14 +345,22 @@ class CognitiveServicesAccountApiProperties(Model):
         'statistics_enabled': {'key': 'statisticsEnabled', 'type': 'bool'},
         'event_hub_connection_string': {'key': 'eventHubConnectionString', 'type': 'str'},
         'storage_account_connection_string': {'key': 'storageAccountConnectionString', 'type': 'str'},
+        'aad_client_id': {'key': 'aadClientId', 'type': 'str'},
+        'aad_tenant_id': {'key': 'aadTenantId', 'type': 'str'},
+        'super_user': {'key': 'superUser', 'type': 'str'},
+        'website_name': {'key': 'websiteName', 'type': 'str'},
     }
 
-    def __init__(self, *, qna_runtime_endpoint: str=None, statistics_enabled: bool=None, event_hub_connection_string: str=None, storage_account_connection_string: str=None, **kwargs) -> None:
+    def __init__(self, *, qna_runtime_endpoint: str=None, statistics_enabled: bool=None, event_hub_connection_string: str=None, storage_account_connection_string: str=None, aad_client_id: str=None, aad_tenant_id: str=None, super_user: str=None, website_name: str=None, **kwargs) -> None:
         super(CognitiveServicesAccountApiProperties, self).__init__(**kwargs)
         self.qna_runtime_endpoint = qna_runtime_endpoint
         self.statistics_enabled = statistics_enabled
         self.event_hub_connection_string = event_hub_connection_string
         self.storage_account_connection_string = storage_account_connection_string
+        self.aad_client_id = aad_client_id
+        self.aad_tenant_id = aad_tenant_id
+        self.super_user = super_user
+        self.website_name = website_name
 
 
 class CognitiveServicesAccountEnumerateSkusResult(Model):
@@ -824,6 +847,23 @@ class PrivateEndpointConnection(Resource):
     def __init__(self, *, properties=None, **kwargs) -> None:
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.properties = properties
+
+
+class PrivateEndpointConnectionListResult(Model):
+    """A list of private endpoint connections.
+
+    :param value: Array of private endpoint connections
+    :type value:
+     list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        self.value = value
 
 
 class PrivateEndpointConnectionProperties(Model):
