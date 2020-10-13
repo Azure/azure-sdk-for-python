@@ -642,6 +642,7 @@ def test_auth_record_multiple_accounts_for_username():
     assert token.token == expected_access_token
 
 
+@pytest.mark.skip("in 1.5.0 allow_unencrypted_cache is private and defaults to True")
 @patch("azure.identity._internal.persistent_cache.sys.platform", "linux2")
 @patch("azure.identity._internal.persistent_cache.msal_extensions")
 def test_allow_unencrypted_cache(mock_extensions):
@@ -651,7 +652,7 @@ def test_allow_unencrypted_cache(mock_extensions):
     """
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
-    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
 
@@ -664,7 +665,7 @@ def test_allow_unencrypted_cache(mock_extensions):
     assert mock_extensions.PersistedTokenCache.call_count == 0
 
     # still no encryption, but now we allow the unencrypted fallback
-    SharedTokenCacheCredential(_allow_unencrypted_cache=True)
+    SharedTokenCacheCredential(allow_unencrypted_cache=True)
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
 
