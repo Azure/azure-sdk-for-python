@@ -240,9 +240,8 @@ class Resource(Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir,
-     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
-     'fhir-R4'
+    :param kind: Required. The kind of the service. Possible values include:
+     'fhir', 'fhir-Stu3', 'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
@@ -251,6 +250,9 @@ class Resource(Model):
     :param etag: An etag associated with the resource, used for optimistic
      concurrency when editing it.
     :type etag: str
+    :param identity: Setting indicating whether the service has a managed
+     identity associated with it.
+    :type identity: ~azure.mgmt.healthcareapis.models.ResourceIdentity
     """
 
     _validation = {
@@ -269,9 +271,10 @@ class Resource(Model):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
     }
 
-    def __init__(self, *, kind, location: str, tags=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, kind, location: str, tags=None, etag: str=None, identity=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -280,6 +283,42 @@ class Resource(Model):
         self.location = location
         self.tags = tags
         self.etag = etag
+        self.identity = identity
+
+
+class ResourceIdentity(Model):
+    """Setting indicating whether the service has a managed identity associated
+    with it.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar principal_id: The principal ID of the resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the resource.
+    :vartype tenant_id: str
+    :param type: Type of identity being specified, currently SystemAssigned
+     and None are allowed. Possible values include: 'SystemAssigned', 'None'
+    :type type: str or
+     ~azure.mgmt.healthcareapis.models.ManagedServiceIdentityType
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'tenant_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, type=None, **kwargs) -> None:
+        super(ResourceIdentity, self).__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
 
 
 class ServiceAccessPolicyEntry(Model):
@@ -287,8 +326,8 @@ class ServiceAccessPolicyEntry(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_id: Required. An object ID that is allowed access to the
-     FHIR service.
+    :param object_id: Required. An Azure AD object ID (User or Apps) that is
+     allowed access to the FHIR service.
     :type object_id: str
     """
 
@@ -371,6 +410,9 @@ class ServiceCosmosDbConfigurationInfo(Model):
     :param offer_throughput: The provisioned throughput for the backing
      database.
     :type offer_throughput: int
+    :param key_vault_key_uri: The URI of the customer-managed key for the
+     backing database.
+    :type key_vault_key_uri: str
     """
 
     _validation = {
@@ -379,11 +421,30 @@ class ServiceCosmosDbConfigurationInfo(Model):
 
     _attribute_map = {
         'offer_throughput': {'key': 'offerThroughput', 'type': 'int'},
+        'key_vault_key_uri': {'key': 'keyVaultKeyUri', 'type': 'str'},
     }
 
-    def __init__(self, *, offer_throughput: int=None, **kwargs) -> None:
+    def __init__(self, *, offer_throughput: int=None, key_vault_key_uri: str=None, **kwargs) -> None:
         super(ServiceCosmosDbConfigurationInfo, self).__init__(**kwargs)
         self.offer_throughput = offer_throughput
+        self.key_vault_key_uri = key_vault_key_uri
+
+
+class ServiceExportConfigurationInfo(Model):
+    """Export operation configuration information.
+
+    :param storage_account_name: The name of the default export storage
+     account.
+    :type storage_account_name: str
+    """
+
+    _attribute_map = {
+        'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
+    }
+
+    def __init__(self, *, storage_account_name: str=None, **kwargs) -> None:
+        super(ServiceExportConfigurationInfo, self).__init__(**kwargs)
+        self.storage_account_name = storage_account_name
 
 
 class ServicesDescription(Resource):
@@ -400,9 +461,8 @@ class ServicesDescription(Resource):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir,
-     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
-     'fhir-R4'
+    :param kind: Required. The kind of the service. Possible values include:
+     'fhir', 'fhir-Stu3', 'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
@@ -411,6 +471,9 @@ class ServicesDescription(Resource):
     :param etag: An etag associated with the resource, used for optimistic
      concurrency when editing it.
     :type etag: str
+    :param identity: Setting indicating whether the service has a managed
+     identity associated with it.
+    :type identity: ~azure.mgmt.healthcareapis.models.ResourceIdentity
     :param properties: The common properties of a service.
     :type properties: ~azure.mgmt.healthcareapis.models.ServicesProperties
     """
@@ -431,11 +494,12 @@ class ServicesDescription(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
         'properties': {'key': 'properties', 'type': 'ServicesProperties'},
     }
 
-    def __init__(self, *, kind, location: str, tags=None, etag: str=None, properties=None, **kwargs) -> None:
-        super(ServicesDescription, self).__init__(kind=kind, location=location, tags=tags, etag=etag, **kwargs)
+    def __init__(self, *, kind, location: str, tags=None, etag: str=None, identity=None, properties=None, **kwargs) -> None:
+        super(ServicesDescription, self).__init__(kind=kind, location=location, tags=tags, etag=etag, identity=identity, **kwargs)
         self.properties = properties
 
 
@@ -496,15 +560,12 @@ class ServicesProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar provisioning_state: The provisioning state. Possible values include:
      'Deleting', 'Succeeded', 'Creating', 'Accepted', 'Verifying', 'Updating',
      'Failed', 'Canceled', 'Deprovisioned'
     :vartype provisioning_state: str or
      ~azure.mgmt.healthcareapis.models.ProvisioningState
-    :param access_policies: Required. The access policies of the service
-     instance.
+    :param access_policies: The access policies of the service instance.
     :type access_policies:
      list[~azure.mgmt.healthcareapis.models.ServiceAccessPolicyEntry]
     :param cosmos_db_configuration: The settings for the Cosmos DB database
@@ -519,11 +580,14 @@ class ServicesProperties(Model):
      service instance.
     :type cors_configuration:
      ~azure.mgmt.healthcareapis.models.ServiceCorsConfigurationInfo
+    :param export_configuration: The settings for the export operation of the
+     service instance.
+    :type export_configuration:
+     ~azure.mgmt.healthcareapis.models.ServiceExportConfigurationInfo
     """
 
     _validation = {
         'provisioning_state': {'readonly': True},
-        'access_policies': {'required': True},
     }
 
     _attribute_map = {
@@ -532,12 +596,14 @@ class ServicesProperties(Model):
         'cosmos_db_configuration': {'key': 'cosmosDbConfiguration', 'type': 'ServiceCosmosDbConfigurationInfo'},
         'authentication_configuration': {'key': 'authenticationConfiguration', 'type': 'ServiceAuthenticationConfigurationInfo'},
         'cors_configuration': {'key': 'corsConfiguration', 'type': 'ServiceCorsConfigurationInfo'},
+        'export_configuration': {'key': 'exportConfiguration', 'type': 'ServiceExportConfigurationInfo'},
     }
 
-    def __init__(self, *, access_policies, cosmos_db_configuration=None, authentication_configuration=None, cors_configuration=None, **kwargs) -> None:
+    def __init__(self, *, access_policies=None, cosmos_db_configuration=None, authentication_configuration=None, cors_configuration=None, export_configuration=None, **kwargs) -> None:
         super(ServicesProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.access_policies = access_policies
         self.cosmos_db_configuration = cosmos_db_configuration
         self.authentication_configuration = authentication_configuration
         self.cors_configuration = cors_configuration
+        self.export_configuration = export_configuration
