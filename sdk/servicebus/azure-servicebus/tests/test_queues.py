@@ -7,6 +7,7 @@
 import logging
 import sys
 import os
+import types
 import pytest
 import time
 import uuid
@@ -14,6 +15,7 @@ from datetime import datetime, timedelta
 import calendar
 
 import uamqp
+from uamqp import compat
 from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
 from azure.servicebus._common.message import Message, PeekedMessage, ReceivedMessage, BatchMessage
 from azure.servicebus._common.constants import (
@@ -33,7 +35,9 @@ from azure.servicebus.exceptions import (
     AutoLockRenewTimeout,
     MessageSendFailed,
     MessageSettleFailed,
-    MessageContentTooLarge)
+    MessageContentTooLarge,
+    OperationTimeoutError
+)
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
@@ -1911,3 +1915,67 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     # #assert message.amqp_message.delivery_annotations[b"delivery_annotations"] == 3
                     # assert message.amqp_message.header.priority == 5
                     # #assert message.amqp_message.footer[b"footer"] == 6
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_send_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        def _hack_amqp_sender_run(cls):
+            time.sleep(6)  # sleep until timeout
+            cls.message_handler.work()
+            cls._waiting_messages = 0
+            cls._pending_messages = cls._filter_pending()
+            if cls._backoff and not cls._waiting_messages:
+                _logger.info("Client told to backoff - sleeping for %r seconds", cls._backoff)
+                cls._connection.sleep(cls._backoff)
+                cls._backoff = 0
+            cls._connection.work()
+            return True
+
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # this one doesn't need to reset the method, as it's hacking the method on the instance
+                sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
+                with pytest.raises(OperationTimeoutError):
+                    sender.send_messages(Message("body"), timeout=5)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_mgmt_operation_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        def hack_mgmt_execute(self, operation, op_type, message, timeout=0):
+            start_time = self._counter.get_current_ms()
+            operation_id = str(uuid.uuid4())
+            self._responses[operation_id] = None
+
+            time.sleep(6)  # sleep until timeout
+            while not self._responses[operation_id] and not self.mgmt_error:
+                if timeout > 0:
+                    now = self._counter.get_current_ms()
+                    if (now - start_time) >= timeout:
+                        raise compat.TimeoutException("Failed to receive mgmt response in {}ms".format(timeout))
+                self.connection.work()
+            if self.mgmt_error:
+                raise self.mgmt_error
+            response = self._responses.pop(operation_id)
+            return response
+
+        original_execute_method = uamqp.mgmt_operation.MgmtOperation.execute
+        # hack the mgmt method on the class, not on an instance, so it needs reset
+
+        try:
+            uamqp.mgmt_operation.MgmtOperation.execute = hack_mgmt_execute
+            with ServiceBusClient.from_connection_string(
+                    servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    with pytest.raises(OperationTimeoutError):
+                        scheduled_time_utc = utc_now() + timedelta(seconds=30)
+                        sender.schedule_messages(Message("Message to be scheduled"), scheduled_time_utc, timeout=5)
+        finally:
+            # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
+            uamqp.mgmt_operation.MgmtOperation.execute = original_execute_method

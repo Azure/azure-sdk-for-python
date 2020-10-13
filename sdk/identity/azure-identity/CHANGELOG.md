@@ -1,9 +1,20 @@
 # Release History
 
-## 1.5.0b2 (2020-10-06)
+## 1.5.0b2 (2020-10-07)
+### Fixed
+- `AzureCliCredential.get_token` correctly sets token expiration time,
+  preventing clients from using expired tokens
+  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
+
 ### Changed
 - Adopted msal-extensions 0.3.0
-([#13107](https://github.com/Azure/azure-sdk-for-python/issues/13107)) 
+([#13107](https://github.com/Azure/azure-sdk-for-python/issues/13107))
+
+## 1.4.1 (2020-10-07)
+### Fixed
+- `AzureCliCredential.get_token` correctly sets token expiration time,
+  preventing clients from using expired tokens
+  ([#14345](https://github.com/Azure/azure-sdk-for-python/issues/14345))
 
 ## 1.5.0b1 (2020-09-08)
 ### Added
