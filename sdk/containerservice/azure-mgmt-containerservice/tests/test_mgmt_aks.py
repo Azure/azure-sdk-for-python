@@ -44,8 +44,14 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_managed_clusters(self, resource_group):
-        CLIENT_ID = self.settings.CLIENT_ID or "123"
-        CLIENT_SECRET = self.settings.CLIENT_SECRET or "123"
+        try:
+            CLIENT_ID = self.settings.CLIENT_ID
+        except:
+            CLIENT_ID = "123"
+        try:
+            CLIENT_SECRET = self.settings.CLIENT_SECRET
+        except:
+            CLIENT_SECRET = "123"
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "7"
 
@@ -133,8 +139,14 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_privateLinkResources(self, resource_group):
-        CLIENT_ID = self.settings.CLIENT_ID or "123"
-        CLIENT_SECRET = self.settings.CLIENT_SECRET or "123"
+        try:
+            CLIENT_ID = self.settings.CLIENT_ID
+        except:
+            CLIENT_ID = "123"
+        try:
+            CLIENT_SECRET = self.settings.CLIENT_SECRET
+        except:
+            CLIENT_SECRET = "123"
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "2"
 
@@ -179,8 +191,14 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_resolvePrivateLinkServiceId(self, resource_group):
-        CLIENT_ID = self.settings.CLIENT_ID or "123"
-        CLIENT_SECRET = self.settings.CLIENT_SECRET or "123"
+        try:
+            CLIENT_ID = self.settings.CLIENT_ID
+        except:
+            CLIENT_ID = "123"
+        try:
+            CLIENT_SECRET = self.settings.CLIENT_SECRET
+        except:
+            CLIENT_SECRET = "123"
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "3"
 
@@ -229,8 +247,14 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_agentPools(self, resource_group):
-        CLIENT_ID = self.settings.CLIENT_ID or "123"
-        CLIENT_SECRET = self.settings.CLIENT_SECRET or "123"
+        try:
+            CLIENT_ID = self.settings.CLIENT_ID
+        except:
+            CLIENT_ID = "123"
+        try:
+            CLIENT_SECRET = self.settings.CLIENT_SECRET
+        except:
+            CLIENT_SECRET = "123"
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "4"
         AGENT_POOL_NAME = "aksagent"
