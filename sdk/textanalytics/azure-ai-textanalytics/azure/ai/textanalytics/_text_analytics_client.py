@@ -388,7 +388,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(self._client.models().HealthcareJobState, raw_response)
+        healthcare_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").HealthcareJobState, raw_response)
         return healthcare_paged_result(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace
@@ -628,7 +628,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, raw_response, _, headers):
-        analyze_result = self._deserialize(self._client.models().AnalyzeJobState, raw_response)
+        analyze_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").AnalyzeJobState, raw_response)
         return analyze_paged_result(self._client.analyze_status, raw_response, analyze_result, headers)
 
     @distributed_trace

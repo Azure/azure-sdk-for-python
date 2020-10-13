@@ -13,6 +13,7 @@ from ._user_agent import USER_AGENT
 class TextAnalyticsApiVersion(str, Enum):
     """Text Analytics API versions supported by this package"""
 
+    V3_2_PREVIEW = "v3.2-preview.1"
     #: this is the default version
     V3_1_PREVIEW = "v3.1-preview.2"
     V3_0 = "v3.0"
