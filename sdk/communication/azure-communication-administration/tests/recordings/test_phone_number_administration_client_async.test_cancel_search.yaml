@@ -3,21 +3,21 @@ interactions:
     body: ''
     headers:
       Date:
-      - Mon, 28 Sep 2020 22:29:32 GMT
+      - Sat, 10 Oct 2020 02:21:03 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/search_id/cancel?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/search_id_to_cancel/cancel?api-version=2020-07-20-preview1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Sep 2020 22:29:33 GMT
-      ms-cv: Br5JTlNBNE66iA7S70L1xg.0
-      x-processing-time: 894ms
+      date: Sat, 10 Oct 2020 02:21:02 GMT
+      ms-cv: S0C//fSJm0WSuLAGwi42LA.0
+      x-processing-time: 265ms
     status:
       code: 202
       message: Accepted
