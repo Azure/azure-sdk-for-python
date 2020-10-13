@@ -299,6 +299,10 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type node_count: int
     :param library_requirements: Library version requirements
     :type library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+    :param spark_config_properties: Spark configuration file to specify
+     additional properties
+    :type spark_config_properties:
+     ~azure.mgmt.synapse.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will
@@ -334,6 +338,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
@@ -350,6 +355,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.spark_events_folder = kwargs.get('spark_events_folder', None)
         self.node_count = kwargs.get('node_count', None)
         self.library_requirements = kwargs.get('library_requirements', None)
+        self.spark_config_properties = kwargs.get('spark_config_properties', None)
         self.spark_version = kwargs.get('spark_version', None)
         self.default_spark_log_folder = kwargs.get('default_spark_log_folder', None)
         self.node_size = kwargs.get('node_size', None)
@@ -2187,6 +2193,32 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.other_errors = None
         self.last_operation = None
         self.type = 'Managed'
+
+
+class ManagedVirtualNetworkSettings(Model):
+    """Managed Virtual Network Settings.
+
+    :param prevent_data_exfiltration: Prevent Data Exfiltration
+    :type prevent_data_exfiltration: bool
+    :param linked_access_check_on_target_resource: Linked Access Check On
+     Target Resource
+    :type linked_access_check_on_target_resource: bool
+    :param allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For
+     Linking
+    :type allowed_aad_tenant_ids_for_linking: list[str]
+    """
+
+    _attribute_map = {
+        'prevent_data_exfiltration': {'key': 'preventDataExfiltration', 'type': 'bool'},
+        'linked_access_check_on_target_resource': {'key': 'linkedAccessCheckOnTargetResource', 'type': 'bool'},
+        'allowed_aad_tenant_ids_for_linking': {'key': 'allowedAadTenantIdsForLinking', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedVirtualNetworkSettings, self).__init__(**kwargs)
+        self.prevent_data_exfiltration = kwargs.get('prevent_data_exfiltration', None)
+        self.linked_access_check_on_target_resource = kwargs.get('linked_access_check_on_target_resource', None)
+        self.allowed_aad_tenant_ids_for_linking = kwargs.get('allowed_aad_tenant_ids_for_linking', None)
 
 
 class MetadataSyncConfig(ProxyResource):
@@ -5028,6 +5060,9 @@ class Workspace(TrackedResource):
      list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
     :ivar extra_properties: Workspace level configs and feature flags
     :vartype extra_properties: dict[str, object]
+    :param managed_virtual_network_settings: Managed Virtual Network Settings
+    :type managed_virtual_network_settings:
+     ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
     :param identity: Identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
     """
@@ -5057,6 +5092,7 @@ class Workspace(TrackedResource):
         'managed_virtual_network': {'key': 'properties.managedVirtualNetwork', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'extra_properties': {'key': 'properties.extraProperties', 'type': '{object}'},
+        'managed_virtual_network_settings': {'key': 'properties.managedVirtualNetworkSettings', 'type': 'ManagedVirtualNetworkSettings'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
@@ -5072,6 +5108,7 @@ class Workspace(TrackedResource):
         self.managed_virtual_network = kwargs.get('managed_virtual_network', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
         self.extra_properties = None
+        self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -5134,6 +5171,9 @@ class WorkspacePatchInfo(Model):
     :type tags: dict[str, str]
     :param identity: The identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
+    :param managed_virtual_network_settings: Managed Virtual Network Settings
+    :type managed_virtual_network_settings:
+     ~azure.mgmt.synapse.models.WorkspacePatchInfoManagedVirtualNetworkSettings
     :param sql_administrator_login_password: SQL administrator login password
     :type sql_administrator_login_password: str
     :ivar provisioning_state: Resource provisioning state
@@ -5147,6 +5187,7 @@ class WorkspacePatchInfo(Model):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
+        'managed_virtual_network_settings': {'key': 'managedVirtualNetworkSettings', 'type': 'WorkspacePatchInfoManagedVirtualNetworkSettings'},
         'sql_administrator_login_password': {'key': 'properties.sqlAdministratorLoginPassword', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -5155,5 +5196,32 @@ class WorkspacePatchInfo(Model):
         super(WorkspacePatchInfo, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.identity = kwargs.get('identity', None)
+        self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
         self.sql_administrator_login_password = kwargs.get('sql_administrator_login_password', None)
         self.provisioning_state = None
+
+
+class WorkspacePatchInfoManagedVirtualNetworkSettings(Model):
+    """Managed Virtual Network Settings.
+
+    :param prevent_data_exfiltration: Prevent Data Exfiltration
+    :type prevent_data_exfiltration: bool
+    :param linked_access_check_on_target_resource: Linked Access Check On
+     Target Resource
+    :type linked_access_check_on_target_resource: bool
+    :param allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For
+     Linking
+    :type allowed_aad_tenant_ids_for_linking: list[str]
+    """
+
+    _attribute_map = {
+        'prevent_data_exfiltration': {'key': 'preventDataExfiltration', 'type': 'bool'},
+        'linked_access_check_on_target_resource': {'key': 'linkedAccessCheckOnTargetResource', 'type': 'bool'},
+        'allowed_aad_tenant_ids_for_linking': {'key': 'allowedAadTenantIdsForLinking', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkspacePatchInfoManagedVirtualNetworkSettings, self).__init__(**kwargs)
+        self.prevent_data_exfiltration = kwargs.get('prevent_data_exfiltration', None)
+        self.linked_access_check_on_target_resource = kwargs.get('linked_access_check_on_target_resource', None)
+        self.allowed_aad_tenant_ids_for_linking = kwargs.get('allowed_aad_tenant_ids_for_linking', None)

@@ -65,6 +65,7 @@ try:
     from ._models_py3 import ManagedIntegrationRuntimeNode
     from ._models_py3 import ManagedIntegrationRuntimeOperationResult
     from ._models_py3 import ManagedIntegrationRuntimeStatus
+    from ._models_py3 import ManagedVirtualNetworkSettings
     from ._models_py3 import MetadataSyncConfig
     from ._models_py3 import OperationMetaLogSpecification
     from ._models_py3 import OperationMetaMetricDimensionSpecification
@@ -133,6 +134,7 @@ try:
     from ._models_py3 import Workspace
     from ._models_py3 import WorkspaceAadAdminInfo
     from ._models_py3 import WorkspacePatchInfo
+    from ._models_py3 import WorkspacePatchInfoManagedVirtualNetworkSettings
 except (SyntaxError, ImportError):
     from ._models import AutoPauseProperties
     from ._models import AutoScaleProperties
@@ -189,6 +191,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedIntegrationRuntimeNode
     from ._models import ManagedIntegrationRuntimeOperationResult
     from ._models import ManagedIntegrationRuntimeStatus
+    from ._models import ManagedVirtualNetworkSettings
     from ._models import MetadataSyncConfig
     from ._models import OperationMetaLogSpecification
     from ._models import OperationMetaMetricDimensionSpecification
@@ -257,6 +260,7 @@ except (SyntaxError, ImportError):
     from ._models import Workspace
     from ._models import WorkspaceAadAdminInfo
     from ._models import WorkspacePatchInfo
+    from ._models import WorkspacePatchInfoManagedVirtualNetworkSettings
 from ._paged_models import BigDataPoolResourceInfoPaged
 from ._paged_models import IntegrationRuntimeResourcePaged
 from ._paged_models import IpFirewallRuleInfoPaged
@@ -369,6 +373,7 @@ __all__ = [
     'ManagedIntegrationRuntimeNode',
     'ManagedIntegrationRuntimeOperationResult',
     'ManagedIntegrationRuntimeStatus',
+    'ManagedVirtualNetworkSettings',
     'MetadataSyncConfig',
     'OperationMetaLogSpecification',
     'OperationMetaMetricDimensionSpecification',
@@ -437,6 +442,7 @@ __all__ = [
     'Workspace',
     'WorkspaceAadAdminInfo',
     'WorkspacePatchInfo',
+    'WorkspacePatchInfoManagedVirtualNetworkSettings',
     'BigDataPoolResourceInfoPaged',
     'IpFirewallRuleInfoPaged',
     'SqlPoolPaged',
