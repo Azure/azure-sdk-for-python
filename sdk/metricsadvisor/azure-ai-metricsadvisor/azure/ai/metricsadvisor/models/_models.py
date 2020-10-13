@@ -1862,15 +1862,6 @@ class Anomaly(msrest.serialization.Model):
     :vartype status: str
     """
 
-    _validation = {
-        'metric_id': {'readonly': True},
-        'detection_configuration_id': {'readonly': True},
-        'timestamp': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_time': {'readonly': True},
-        'dimension': {'readonly': True},
-    }
-
     _attribute_map = {
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'detection_configuration_id': {'key': 'detectionConfigurationId', 'type': 'str'},
@@ -1945,14 +1936,6 @@ class Incident(msrest.serialization.Model):
     :vartype status: str or ~azure.ai.metricsadvisor.models.IncidentPropertyIncidentStatus
     """
 
-    _validation = {
-        'metric_id': {'readonly': True},
-        'detection_configuration_id': {'readonly': True},
-        'id': {'readonly': True},
-        'start_time': {'readonly': True},
-        'last_time': {'readonly': True},
-    }
-
     _attribute_map = {
         'metric_id': {'key': 'metricId', 'type': 'str'},
         'detection_configuration_id': {'key': 'detectionConfigurationId', 'type': 'str'},
@@ -2014,12 +1997,6 @@ class IncidentRootCause(msrest.serialization.Model):
     :ivar description: description.
     :vartype description: str
     """
-
-    _validation = {
-        'path': {'readonly': True},
-        'score': {'readonly': True},
-        'description': {'readonly': True},
-    }
 
     _attribute_map = {
         'dimension_key': {'key': 'dimensionKey', 'type': '{str}'},
@@ -2085,18 +2062,6 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
     :paramtype anomaly_detection_configuration_snapshot:
      ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
     """
-
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'value': {'required': True},
-    }
 
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
@@ -2201,18 +2166,6 @@ class ChangePointFeedback(msrest.serialization.Model):
     :type value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
     """
 
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
@@ -2307,16 +2260,6 @@ class CommentFeedback(msrest.serialization.Model):
     :type value: str
     """
 
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
@@ -2408,17 +2351,6 @@ class PeriodFeedback(msrest.serialization.Model):
      "AutoDetect", "AssignValue".
     :type period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
     """
-
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'value': {'required': True},
-        'period_type': {'required': True},
-    }
 
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
