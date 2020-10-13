@@ -2356,7 +2356,7 @@ class Incident(msrest.serialization.Model):
         super(Incident, self).__init__(**kwargs)
         self.metric_id = kwargs.get('metric_id', None)
         self.detection_configuration_id = kwargs.get('detection_configuration_id', None)
-        self.incident_id = kwargs.get('incident_id', None)
+        self.id = kwargs.get('id', None)
         self.start_time = kwargs.get('start_time', None)
         self.last_time = kwargs.get('last_time', None)
         self.dimension_key = kwargs.get('dimension_key', None)
@@ -2364,11 +2364,11 @@ class Incident(msrest.serialization.Model):
         self.status = kwargs.get('status', None)
 
     def __repr__(self):
-        return "Incident(metric_id={}, detection_configuration_id={}, incident_id={}, start_time={}, last_time={}, " \
+        return "Incident(metric_id={}, detection_configuration_id={}, id={}, start_time={}, last_time={}, " \
                "dimension_key={}, severity={}, status={})".format(
                     self.metric_id,
                     self.detection_configuration_id,
-                    self.incident_id,
+                    self.id,
                     self.start_time,
                     self.last_time,
                     self.dimension_key,
@@ -2390,7 +2390,7 @@ class Incident(msrest.serialization.Model):
         return cls(
             metric_id=incident_result.metric_id,
             detection_configuration_id=incident_result.anomaly_detection_configuration_id,
-            incident_id=incident_result.incident_id,
+            id=incident_result.incident_id,
             start_time=incident_result.start_time,
             last_time=incident_result.last_time,
             dimension_key=dimension_key,
