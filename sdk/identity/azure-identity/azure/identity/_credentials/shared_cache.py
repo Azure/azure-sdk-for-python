@@ -24,7 +24,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
-    from .. import AuthenticationRecord
+    from .._auth_record import AuthenticationRecord
     from .._internal import AadClientBase
 
 

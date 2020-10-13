@@ -5,10 +5,10 @@
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import (
-    AuthenticationRecord,
     CredentialUnavailableError,
     SharedTokenCacheCredential,
 )
+from azure.identity._auth_record import AuthenticationRecord
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
     KNOWN_ALIASES,
