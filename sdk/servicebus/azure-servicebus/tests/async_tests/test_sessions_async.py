@@ -163,7 +163,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE, max_wait_time=5)
-            with pytest.raises(NoActiveSession):
+            with pytest.raises(ServiceBusNoActiveSession):
                 await session._open_with_retry()
 
 
@@ -473,7 +473,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await messages[0].complete()
                     await messages[1].complete()
                     time.sleep(70) #TODO: BUG: Was 40
-                    with pytest.raises(SessionLockExpired):
+                    with pytest.raises(ServiceBusSessionLockExpired):
                         await messages[2].complete()
 
 
@@ -501,7 +501,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=20) as session:
                 renewer.register(session.session, timeout=60)
                 print("Registered lock renew thread", session.session.locked_until_utc, utc_now())
-                with pytest.raises(SessionLockExpired):
+                with pytest.raises(ServiceBusSessionLockExpired):
                     async for message in session:
                         if not messages:
                             await asyncio.sleep(45)
@@ -524,8 +524,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                             assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
                                 await message.complete()
-                                raise AssertionError("Didn't raise SessionLockExpired")
-                            except SessionLockExpired as e:
+                                raise AssertionError("Didn't raise ServiceBusSessionLockExpired")
+                            except ServiceBusSessionLockExpired as e:
                                 assert isinstance(e.inner_exception, AutoLockRenewTimeout)
                             messages.append(message)
 
@@ -593,9 +593,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 with pytest.raises(TypeError):
                     await messages[0].renew_lock()
                 assert receiver.session._lock_expired
-                with pytest.raises(SessionLockExpired):
+                with pytest.raises(ServiceBusSessionLockExpired):
                     await messages[0].complete()
-                with pytest.raises(SessionLockExpired):
+                with pytest.raises(ServiceBusSessionLockExpired):
                     await receiver.session.renew_lock()
 
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
@@ -819,7 +819,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                             print("Message: {}".format(message))
                             messages.append(message)
                             await message.complete()
-                except NoActiveSession:
+                except ServiceBusNoActiveSession:
                     return
                 except Exception as e:
                     errors.append(e)
@@ -892,7 +892,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             # Then let's try a case we can recover from to make sure everything works on reestablishment.
             receiver = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE)
-            with pytest.raises(NoActiveSession):
+            with pytest.raises(ServiceBusNoActiveSession):
                 await receiver._open_with_retry()
 
             session_id = str(uuid.uuid4())
