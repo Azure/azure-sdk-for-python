@@ -10,6 +10,20 @@
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
 
+**Breaking Changes**
+
+* `azure.servicebus.ServiceBusError` now inherits from `azure.core.exception.AzureError`.
+* The parameter `inner_exception` that `ServiceBusError` takes is now renamed to `error`.
+* The following Service Bus errors are renamed:
+  - `NoActiveSession` to `ServiceBusNoActiveSession`
+  - `MessageError` to `ServiceBusMessageError`
+  - `MessageContentTooLarge` to `ServiceBusMessageContentTooLarge`
+  - `MessageAlreadySettled` to `ServiceBusMessageAlreadySettled`
+  - `MessageSettleFailed` to `ServiceBusMessageSettleFailed`
+  - `MessageSendFailed` to `ServiceBusMessageSendFailed`
+  - `MessageLockExpired` to `ServiceBusMessageLockExpired`
+  - `SessionLockExpired` to `ServiceBusSessionLockExpired`
+
 **BugFixes**
 
 * Updated uAMQP dependency to 1.2.11.
