@@ -255,6 +255,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     @distributed_trace_async
     async def delete_share(
             self, delete_snapshots=False, # type: Optional[bool]
+            include_leased_snapshots=False, # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> None
@@ -263,6 +264,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
+        :param bool include_leased_snapshots:
+            Indicates if leased snapshots are to be deleted.
+            The `delete_snapshots` param must be set to True
+
+            .. versionadded:: 12.6.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -284,8 +291,12 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         delete_include = None
-        if delete_snapshots:
+        if include_leased_snapshots and not delete_snapshots:
+            raise ValueError("`delete_snapshots` must be set to True in order to include leased snapshots.")
+        if delete_snapshots and not include_leased_snapshots:
             delete_include = DeleteSnapshotsOptionType.include
+        elif delete_snapshots and include_leased_snapshots:
+            delete_include = DeleteSnapshotsOptionType.include_leased
         try:
             await self._client.share.delete(
                 timeout=timeout,
