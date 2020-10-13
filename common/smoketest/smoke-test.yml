@@ -11,36 +11,79 @@ jobs:
           OSVmImage: ubuntu-18.04
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_27_Linux (AzureCloud Canary):
+          PythonVersion: '2.7'
+          InstallAsyncRequirements: false
+          OSVmImage: ubuntu-18.04
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_37_Linux (AzureCloud):
           PythonVersion: '3.7'
           OSVmImage: ubuntu-18.04
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_37_Linux (AzureCloud Canary):
+          PythonVersion: '3.7'
+          OSVmImage: ubuntu-18.04
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_38_Linux (AzureCloud):
           PythonVersion: '3.8'
           OSVmImage: ubuntu-18.04
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_38_Linux (AzureCloud Canary):
+          PythonVersion: '3.8'
+          OSVmImage: ubuntu-18.04
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_37_Windows (AzureCloud):
           PythonVersion: '3.7'
           OSVmImage: windows-2019
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_37_Windows (AzureCloud Canary):
+          PythonVersion: '3.7'
+          OSVmImage: windows-2019
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_38_Windows (AzureCloud):
           PythonVersion: '3.8'
           OSVmImage: windows-2019
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_38_Windows (AzureCloud Canary):
+          PythonVersion: '3.8'
+          OSVmImage: windows-2019
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_37_Mac (AzureCloud):
           PythonVersion: '3.7'
           OSVmImage: macOS-10.15
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_37_Mac (AzureCloud Canary):
+          PythonVersion: '3.7'
+          OSVmImage: macOS-10.15
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_38_Mac (AzureCloud):
           PythonVersion: '3.8'
           OSVmImage: macOS-10.15
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_38_Mac (AzureCloud Canary):
+          PythonVersion: '3.8'
+          OSVmImage: macOS-10.15
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_38_Linux (AzureUSGovernment):
           PythonVersion: '3.8'
           OSVmImage: ubuntu-18.04
