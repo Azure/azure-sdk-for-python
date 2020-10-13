@@ -7,7 +7,7 @@
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
-
+from azure_devtools.scenario_tests import create_random_name
 from azure.ai.metricsadvisor.models import (
     EmailHook,
     WebHook,
@@ -18,7 +18,7 @@ from base_testcase import TestMetricsAdvisorAdministrationClientBase
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
 
     def test_create_email_hook(self):
-        email_hook_name = self.create_random_name("testemailhook")
+        email_hook_name = self.create_random_name(create_random_name("testemailhook"))
         try:
             email_hook = self.admin_client.create_hook(
                 name=email_hook_name,
@@ -42,7 +42,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 self.admin_client.get_hook(email_hook.id)
 
     def test_create_web_hook(self):
-        web_hook_name = self.create_random_name("testwebhook")
+        web_hook_name = self.create_random_name(create_random_name("testwebhook"))
         try:
             web_hook = self.admin_client.create_hook(
                 name=web_hook_name,
@@ -70,17 +70,18 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         assert len(list(hooks)) > 0
 
     def test_update_email_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         try:
             hook = self._create_email_hook_for_update(name)
-            hook.name = "update"
+            name = self.get_replayable_random_resource_name("update")
+            hook.name = name
             hook.description = "update"
             hook.external_link = "update"
             hook.emails_to_alert = ["myemail@m.com"]
 
             updated = self.admin_client.update_hook(hook)
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
@@ -89,19 +90,20 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.delete_hook(hook.id)
 
     def test_update_email_hook_with_kwargs(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         try:
             hook = self._create_email_hook_for_update(name)
+            name = self.get_replayable_random_resource_name("update")
             updated = self.admin_client.update_hook(
                 hook.id,
                 hook_type="Email",
-                name="update",
+                name=name,
                 description="update",
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
@@ -110,23 +112,23 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.delete_hook(hook.id)
 
     def test_update_email_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         try:
             hook = self._create_email_hook_for_update(name)
-
+            name = self.get_replayable_random_resource_name("updateme")
             hook.name = "don't update me"
             hook.description = "don't update me"
             hook.emails_to_alert = []
             updated = self.admin_client.update_hook(
                 hook,
                 hook_type="Email",
-                name="update",
+                name=name,
                 description="update",
                 external_link="update",
                 emails_to_alert=["myemail@m.com"]
             )
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
@@ -135,18 +137,19 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.delete_hook(hook.id)
 
     def test_update_email_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         try:
             hook = self._create_email_hook_for_update(name)
+            name = self.get_replayable_random_resource_name("reset")
             updated = self.admin_client.update_hook(
                 hook.id,
                 hook_type="Email",
-                name="reset",
+                name=name,
                 description=None,
                 external_link=None,
             )
 
-            self.assertEqual(updated.name, "reset")
+            self.assertEqual(updated.name, name)
 
             # sending null, but not clearing properties
             # self.assertEqual(updated.description, "")
@@ -156,10 +159,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.delete_hook(hook.id)
 
     def test_update_web_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         try:
             hook = self._create_web_hook_for_update(name)
-            hook.name = "update"
+            name = self.get_replayable_random_resource_name("hookupdate")
+            hook.name = name
             hook.description = "update"
             hook.external_link = "update"
             hook.username = "myusername"
@@ -167,7 +171,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
             updated = self.admin_client.update_hook(hook)
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.username, "myusername")
@@ -177,21 +181,22 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.delete_hook(hook.id)
 
     def test_update_web_hook_with_kwargs(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         try:
             hook = self._create_web_hook_for_update(name)
+            name = self.get_replayable_random_resource_name("hookupdate")
             updated = self.admin_client.update_hook(
                 hook.id,
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
-                name="update",
+                name=name,
                 description="update",
                 external_link="update",
                 username="myusername",
                 password="password"
             )
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "update")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.username, "myusername")
@@ -201,10 +206,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.delete_hook(hook.id)
 
     def test_update_web_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         try:
             hook = self._create_web_hook_for_update(name)
-
+            name = self.get_replayable_random_resource_name("hookupdate")
             hook.name = "don't update me"
             hook.description = "updateMe"
             hook.username = "don't update me"
@@ -214,13 +219,13 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 hook,
                 hook_type="Web",
                 endpoint="https://httpbin.org/post",
-                name="update",
+                name=name,
                 external_link="update",
                 username="myusername",
                 password="password"
             )
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "updateMe")
             self.assertEqual(updated.external_link, "update")
             self.assertEqual(updated.username, "myusername")
@@ -230,13 +235,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             self.admin_client.delete_hook(hook.id)
 
     def test_update_web_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         try:
             hook = self._create_web_hook_for_update(name)
+            name = self.get_replayable_random_resource_name("reset")
             updated = self.admin_client.update_hook(
                 hook.id,
                 hook_type="Web",
-                name="reset",
+                name=name,
                 description=None,
                 endpoint="https://httpbin.org/post",
                 external_link=None,
@@ -244,7 +250,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 password=None
             )
 
-            self.assertEqual(updated.name, "reset")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.password, "")
 
             # sending null, but not clearing properties

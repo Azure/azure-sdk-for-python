@@ -7,6 +7,7 @@
 import datetime
 from dateutil.tz import tzutc
 import pytest
+from azure_devtools.scenario_tests import create_random_name
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
@@ -39,7 +40,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_simple_data_feed(self):
-        data_feed_name = self.create_random_name("testfeed")
+        data_feed_name = self.create_random_name(create_random_name("testfeed"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -70,7 +71,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_from_sql_server(self):
 
-        data_feed_name = self.create_random_name("testfeedasync")
+        data_feed_name = self.create_random_name(create_random_name("testfeedasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -161,7 +162,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_from_sql_server_with_custom_values(self):
 
-        data_feed_name = self.create_random_name("testfeedasync")
+        data_feed_name = self.create_random_name(create_random_name("testfeedasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -256,7 +257,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_azure_table(self):
-        name = self.create_random_name("tablefeedasync")
+        name = self.create_random_name(create_random_name("tablefeedasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -297,7 +298,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_azure_blob(self):
-        name = self.create_random_name("blobfeedasync")
+        name = self.create_random_name(create_random_name("blobfeedasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -338,7 +339,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_azure_cosmos_db(self):
-        name = self.create_random_name("cosmosfeedasync")
+        name = self.create_random_name(create_random_name("cosmosfeedasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -381,7 +382,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_http_request_get(self):
-        name = self.create_random_name("httprequestfeedgetasync")
+        name = self.create_random_name(create_random_name("httpgetasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -421,7 +422,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_http_request_post(self):
-        name = self.create_random_name("httprequestfeedpostasync")
+        name = self.create_random_name(create_random_name("httppostasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -462,7 +463,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_application_insights(self):
-        name = self.create_random_name("applicationinsightsasync")
+        name = self.create_random_name(create_random_name("appinsightsasync"))
         async with self.admin_client:
             try:
                 query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
@@ -509,7 +510,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_data_explorer(self):
-        name = self.create_random_name("azuredataexplorerasync")
+        name = self.create_random_name(create_random_name("dataexplorer"))
         async with self.admin_client:
             try:
                 query = "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime + 1d; " \
@@ -551,7 +552,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_influxdb(self):
-        name = self.create_random_name("influxdbasync")
+        name = self.create_random_name(create_random_name("influxdbasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -597,7 +598,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_datalake(self):
-        name = self.create_random_name("datalakeasync")
+        name = self.create_random_name(create_random_name("datalakeasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -643,7 +644,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_mongodb(self):
-        name = self.create_random_name("mongodbasync")
+        name = self.create_random_name(create_random_name("mongodbasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -685,7 +686,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_mysql(self):
-        name = self.create_random_name("mysqlasync")
+        name = self.create_random_name(create_random_name("mysqlasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -725,7 +726,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_postgresql(self):
-        name = self.create_random_name("postgresqlasync")
+        name = self.create_random_name(create_random_name("postgresqlasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -765,7 +766,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_data_feed_with_elasticsearch(self):
-        name = self.create_random_name("elasticasync")
+        name = self.create_random_name(create_random_name("elasticasync"))
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
@@ -828,11 +829,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_list_data_feeds_with_status(self):
         async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(status="Paused")
+            feeds = self.admin_client.list_data_feeds(status="Active")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
-            assert len(feeds_list) == 0
+            assert len(feeds_list) > 0
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_list_data_feeds_with_source_type(self):
@@ -863,14 +864,15 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 all_feeds_list.append(feed)
             async for feed in skipped_feeds:
                 skipped_feeds_list.append(feed)
-            assert len(all_feeds_list) == len(skipped_feeds_list) + 1
+            assert len(all_feeds_list) > len(skipped_feeds_list)
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_data_feed_with_model(self):
         async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+            data_feed = await self._create_data_feed_for_update(create_random_name("update"))
             try:
-                data_feed.name = "update"
+                name = self.get_replayable_random_resource_name("updatedatafeed")
+                data_feed.name = name
                 data_feed.options.data_feed_description = "updated"
                 data_feed.schema.timestamp_column = "time"
                 data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2020, 12, 10)
@@ -892,7 +894,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.source.query = "get data"
 
                 updated = await self.admin_client.update_data_feed(data_feed)
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.options.data_feed_description, "updated")
                 self.assertEqual(updated.schema.timestamp_column, "time")
                 self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
@@ -920,11 +922,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_data_feed_with_kwargs(self):
         async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+            data_feed = await self._create_data_feed_for_update(create_random_name("update"))
             try:
+                name = self.get_replayable_random_resource_name("updatedatafeed")
                 updated = await self.admin_client.update_data_feed(
                     data_feed.id,
-                    name="update",
+                    name=name,
                     data_feed_description="updated",
                     timestamp_column="time",
                     ingestion_begin_time=datetime.datetime(2020, 12, 10),
@@ -947,7 +950,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.options.data_feed_description, "updated")
                 self.assertEqual(updated.schema.timestamp_column, "time")
                 self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
@@ -975,9 +978,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_data_feed_with_model_and_kwargs(self):
         async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+            data_feed = await self._create_data_feed_for_update(create_random_name("update"))
             try:
-                data_feed.name = "updateMe"
+                name = self.get_replayable_random_resource_name("updateMe")
+                data_feed.name = name
                 data_feed.options.data_feed_description = "updateMe"
                 data_feed.schema.timestamp_column = "don't update me"
                 data_feed.ingestion_settings.ingestion_begin_time = datetime.datetime(2020, 12, 22)
@@ -1021,7 +1025,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         query="get data"
                     )
                 )
-                self.assertEqual(updated.name, "updateMe")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.options.data_feed_description, "updateMe")
                 self.assertEqual(updated.schema.timestamp_column, "time")
                 self.assertEqual(updated.ingestion_settings.ingestion_begin_time,
@@ -1049,11 +1053,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_data_feed_by_reseting_properties(self):
         async with self.admin_client:
-            data_feed = await self._create_data_feed_for_update("update")
+            data_feed = await self._create_data_feed_for_update(create_random_name("update"))
             try:
+                name = self.get_replayable_random_resource_name("update")
                 updated = await self.admin_client.update_data_feed(
                     data_feed.id,
-                    name="update",
+                    name=name,
                     data_feed_description=None,
                     timestamp_column=None,
                     ingestion_start_offset=None,
@@ -1071,7 +1076,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     status=None,
                     action_link_template=None,
                 )
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 # self.assertEqual(updated.options.data_feed_description, "")  # doesn't currently clear
                 # self.assertEqual(updated.schema.timestamp_column, "")  # doesn't currently clear
                 self.assertEqual(updated.ingestion_settings.ingestion_begin_time,

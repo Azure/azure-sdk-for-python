@@ -6,7 +6,7 @@
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
-
+from azure_devtools.scenario_tests import create_random_name
 from azure.ai.metricsadvisor.models import (
     MetricDetectionCondition,
     MetricSeriesGroupDetectionCondition,
@@ -24,10 +24,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_ad_config_whole_series_detection(self):
 
-        data_feed = await self._create_data_feed("adconfigasync")
+        data_feed = await self._create_data_feed(create_random_name("adconfigasync"))
         async with self.admin_client:
             try:
-                detection_config_name = self.create_random_name("testdetectionconfigasync")
+                detection_config_name = self.create_random_name(create_random_name("detectconfigasync"))
                 config = await self.admin_client.create_metric_anomaly_detection_configuration(
                     name=detection_config_name,
                     metric_id=data_feed.metric_ids[0],
@@ -104,10 +104,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_ad_config_with_series_and_group_conds(self):
-        data_feed = await self._create_data_feed("adconfiggetasync")
+        data_feed = await self._create_data_feed(create_random_name("adconfiggetasync"))
         async with self.admin_client:
             try:
-                detection_config_name = self.create_random_name("testdetectionconfigetasync")
+                detection_config_name = self.create_random_name(create_random_name("testdetectionasync"))
                 detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
                     name=detection_config_name,
                     metric_id=data_feed.metric_ids[0],
@@ -221,10 +221,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_ad_config_multiple_series_and_group_conds(self):
-        data_feed = await self._create_data_feed("datafeedforconfigasync")
+        data_feed = await self._create_data_feed(create_random_name("datafeedasync"))
         async with self.admin_client:
             try:
-                detection_config_name = self.create_random_name("multipledetectionconfigsasync")
+                detection_config_name = self.create_random_name(create_random_name("multipledetectasync"))
                 detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
                     name=detection_config_name,
                     metric_id=data_feed.metric_ids[0],
@@ -479,9 +479,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     async def test_update_detection_config_with_model(self):
         async with self.admin_client:
             try:
-                detection_config, data_feed = await self._create_detection_config_for_update("updatedetection")
+                detection_config, data_feed = await self._create_detection_config_for_update(create_random_name("updatedetection"))
 
-                detection_config.name = "updated"
+                name = self.get_replayable_random_resource_name("update")
+                detection_config.name = name
                 detection_config.description = "updated"
                 change_threshold_condition = ChangeThresholdCondition(
                     anomaly_detector_direction="Both",
@@ -524,7 +525,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 updated = await self.admin_client.update_metric_anomaly_detection_configuration(detection_config)
 
-                self.assertEqual(updated.name, "updated")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "updated")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.change_percentage, 20)
@@ -580,7 +581,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     async def test_update_detection_config_with_kwargs(self):
         async with self.admin_client:
             try:
-                detection_config, data_feed = await self._create_detection_config_for_update("updatedetection")
+                detection_config, data_feed = await self._create_detection_config_for_update(create_random_name("updatedetection"))
                 change_threshold_condition = ChangeThresholdCondition(
                     anomaly_detector_direction="Both",
                     change_percentage=20,
@@ -607,9 +608,10 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         min_ratio=2
                     )
                 )
+                name = self.get_replayable_random_resource_name("updated")
                 updated = await self.admin_client.update_metric_anomaly_detection_configuration(
                     detection_config.id,
-                    name="updated",
+                    name=name,
                     description="updated",
                     whole_series_detection_condition=MetricDetectionCondition(
                         cross_conditions_operator="OR",
@@ -633,7 +635,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     )]
                 )
 
-                self.assertEqual(updated.name, "updated")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "updated")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.change_percentage, 20)
@@ -691,7 +693,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     async def test_update_detection_config_with_model_and_kwargs(self):
         async with self.admin_client:
             try:
-                detection_config, data_feed = await self._create_detection_config_for_update("updatedetection")
+                detection_config, data_feed = await self._create_detection_config_for_update(create_random_name("updatedetection"))
                 change_threshold_condition = ChangeThresholdCondition(
                     anomaly_detector_direction="Both",
                     change_percentage=20,
@@ -719,7 +721,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     )
                 )
 
-                detection_config.name = "updateMe"
+                name = self.get_replayable_random_resource_name("updateMe")
+                detection_config.name = name
                 detection_config.description = "updateMe"
                 updated = await self.admin_client.update_metric_anomaly_detection_configuration(
                     detection_config,
@@ -745,7 +748,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     )]
                 )
 
-                self.assertEqual(updated.name, "updateMe")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "updateMe")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.anomaly_detector_direction, "Both")
                 self.assertEqual(updated.series_detection_conditions[0].change_threshold_condition.change_percentage, 20)
@@ -803,17 +806,17 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     async def test_update_detection_config_by_resetting_properties(self):
         async with self.admin_client:
             try:
-                detection_config, data_feed = await self._create_detection_config_for_update("updatedetection")
-
+                detection_config, data_feed = await self._create_detection_config_for_update(create_random_name("updatedetection"))
+                name = self.get_replayable_random_resource_name("reset")
                 updated = await self.admin_client.update_metric_anomaly_detection_configuration(
                     detection_config.id,
-                    name="reset",
+                    name=name,
                     description="",
                     # series_detection_conditions=None,
                     # series_group_detection_conditions=None
                 )
 
-                self.assertEqual(updated.name, "reset")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "")  # currently won't update with None
 
                 # service bug says these are required

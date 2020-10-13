@@ -1,13 +1,13 @@
 interactions:
 - request:
-    body: '{"hookType": "Webhook", "hookName": "testwebhooke65613c9", "description":
-      "my web hook", "externalLink": "external link", "hookParameter": {"endpoint":
-      "https://httpbin.org/post", "username": "krista", "password": "123"}}'
+    body: '{"hookType": "Webhook", "hookName": "testwebhookysubbkn2djvq6e65613c9",
+      "description": "my web hook", "externalLink": "external link", "hookParameter":
+      {"endpoint": "https://httpbin.org/post", "username": "krista", "password": "123"}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '221'
+      - '234'
       Content-Type:
       - application/json
       User-Agent:
@@ -18,14 +18,14 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: ee307c02-1537-41a4-bbcf-3c1885e00228
+      apim-request-id: 42d89cdb-3a48-4df0-af27-ceaae6a8034f
       content-length: '0'
-      date: Mon, 21 Sep 2020 23:44:46 GMT
-      location: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+      date: Tue, 13 Oct 2020 16:49:18 GMT
+      location: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '640'
-      x-request-id: ee307c02-1537-41a4-bbcf-3c1885e00228
+      x-envoy-upstream-service-time: '603'
+      x-request-id: 42d89cdb-3a48-4df0-af27-ceaae6a8034f
     status:
       code: 201
       message: Created
@@ -38,26 +38,26 @@ interactions:
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
   response:
     body:
-      string: '{"hookId":"b4053948-d3f0-41d6-8832-d9c75e11e8d3","hookName":"testwebhooke65613c9","hookType":"Webhook","externalLink":"external
+      string: '{"hookId":"74c7e787-c2c0-4cd0-bd56-94c53dea4a01","hookName":"testwebhookysubbkn2djvq6e65613c9","hookType":"Webhook","externalLink":"external
         link","description":"my web hook","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"krista","password":"123","headers":{},"certificateKey":"","certificatePassword":""}}'
     headers:
-      apim-request-id: 496e56ac-2f15-4f40-9569-98d96de21db1
-      content-length: '349'
+      apim-request-id: 025f3302-f325-4423-a8ee-76b6f03c826c
+      content-length: '362'
       content-type: application/json; charset=utf-8
-      date: Mon, 21 Sep 2020 23:44:46 GMT
+      date: Tue, 13 Oct 2020 16:49:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '133'
-      x-request-id: 496e56ac-2f15-4f40-9569-98d96de21db1
+      x-envoy-upstream-service-time: '135'
+      x-request-id: 025f3302-f325-4423-a8ee-76b6f03c826c
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
 - request:
-    body: '{"hookType": "Webhook", "hookName": "update", "description": "update",
+    body: '{"hookType": "Webhook", "hookName": "hookupdate", "description": "update",
       "externalLink": "update", "hookParameter": {"endpoint": "https://httpbin.org/post",
       "username": "myusername", "password": "password", "certificateKey": "", "certificatePassword":
       ""}}'
@@ -65,28 +65,28 @@ interactions:
       Accept:
       - application/json
       Content-Length:
-      - '254'
+      - '258'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 021c52bb-1f9c-4857-881d-f79e5fb52fc2
+      apim-request-id: c213e7ba-1415-45a9-be60-c8f39df1c514
       content-length: '0'
-      date: Mon, 21 Sep 2020 23:44:48 GMT
+      date: Tue, 13 Oct 2020 16:49:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '631'
-      x-request-id: 021c52bb-1f9c-4857-881d-f79e5fb52fc2
+      x-envoy-upstream-service-time: '718'
+      x-request-id: c213e7ba-1415-45a9-be60-c8f39df1c514
     status:
       code: 204
       message: No Content
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
 - request:
     body: null
     headers:
@@ -95,23 +95,23 @@ interactions:
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
   response:
     body:
-      string: '{"hookId":"b4053948-d3f0-41d6-8832-d9c75e11e8d3","hookName":"update","hookType":"Webhook","externalLink":"update","description":"update","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"myusername","password":"password","headers":{},"certificateKey":"","certificatePassword":""}}'
+      string: '{"hookId":"74c7e787-c2c0-4cd0-bd56-94c53dea4a01","hookName":"hookupdate","hookType":"Webhook","externalLink":"update","description":"update","admins":["krpratic@microsoft.com"],"hookParameter":{"endpoint":"https://httpbin.org/post","username":"myusername","password":"password","headers":{},"certificateKey":"","certificatePassword":""}}'
     headers:
-      apim-request-id: 2ffac8e3-2b5e-4b9e-a1ef-4a566933a56b
-      content-length: '333'
+      apim-request-id: 54a0a35c-19fd-4656-8ab4-371948fdd170
+      content-length: '337'
       content-type: application/json; charset=utf-8
-      date: Mon, 21 Sep 2020 23:44:48 GMT
+      date: Tue, 13 Oct 2020 16:49:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '131'
-      x-request-id: 2ffac8e3-2b5e-4b9e-a1ef-4a566933a56b
+      x-envoy-upstream-service-time: '124'
+      x-request-id: 54a0a35c-19fd-4656-8ab4-371948fdd170
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
 - request:
     body: null
     headers:
@@ -120,20 +120,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 32457b89-06c6-449f-8b1d-ea8bcc0a0501
+      apim-request-id: eecba204-b135-4b48-997d-5cfe4742fc3e
       content-length: '0'
-      date: Mon, 21 Sep 2020 23:44:48 GMT
+      date: Tue, 13 Oct 2020 16:49:19 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '150'
-      x-request-id: 32457b89-06c6-449f-8b1d-ea8bcc0a0501
+      x-envoy-upstream-service-time: '167'
+      x-request-id: eecba204-b135-4b48-997d-5cfe4742fc3e
     status:
       code: 204
       message: No Content
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/b4053948-d3f0-41d6-8832-d9c75e11e8d3
+    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/hooks/74c7e787-c2c0-4cd0-bd56-94c53dea4a01
 version: 1

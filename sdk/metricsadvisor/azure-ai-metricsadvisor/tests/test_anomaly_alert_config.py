@@ -7,7 +7,7 @@
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
-
+from azure_devtools.scenario_tests import create_random_name
 from azure.ai.metricsadvisor.models import (
     MetricAlertConfiguration,
     MetricAnomalyAlertScope,
@@ -24,8 +24,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_top_n_alert_direction_both(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("topnup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -85,8 +85,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_top_n_alert_direction_down(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("topnup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -145,8 +145,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_top_n_alert_direction_up(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("topnup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -205,8 +205,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_top_n_severity_condition(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("topnup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -258,8 +258,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_snooze_condition(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("topnup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -311,8 +311,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_whole_series_alert_direction_both(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("wholeseries"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -363,8 +363,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_whole_series_alert_direction_down(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("wholeseries"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -414,8 +414,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_whole_series_alert_direction_up(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("wholeseries")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("wholeseries"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -465,8 +465,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_whole_series_severity_condition(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("topnup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("topnup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -509,8 +509,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_series_group_alert_direction_both(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("seriesgroup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -563,8 +563,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_series_group_alert_direction_down(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("seriesgroup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -616,8 +616,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_series_group_alert_direction_up(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("seriesgroup")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("seriesgroup"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -669,8 +669,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_series_group_severity_condition(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("seriesgroupsev")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("seriesgroupsev"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -715,8 +715,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_create_anomaly_alert_config_multiple_configurations(self):
 
-        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config("multiple")
-        alert_config_name = self.create_random_name("testalert")
+        detection_config, data_feed = self._create_data_feed_and_anomaly_detection_config(create_random_name("multiple"))
+        alert_config_name = self.create_random_name(create_random_name("testalert"))
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
                 name=alert_config_name,
@@ -819,9 +819,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_update_anomaly_alert_config_with_model(self):
         try:
-            alert_config, data_feed, _ = self._create_anomaly_alert_config_for_update("alertupdate")
-
-            alert_config.name = "update"
+            alert_config, data_feed, _ = self._create_anomaly_alert_config_for_update(create_random_name("alertupdate"))
+            name = self.get_replayable_random_resource_name("update")
+            alert_config.name = name
             alert_config.description = "update description"
             alert_config.cross_metrics_operator = "OR"
             alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = \
@@ -841,7 +841,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
             updated = self.admin_client.update_anomaly_alert_configuration(alert_config)
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "update description")
             self.assertEqual(updated.cross_metrics_operator, "OR")
             self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
@@ -858,10 +858,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_update_anomaly_alert_config_with_kwargs(self):
         try:
-            alert_config, data_feed, detection_config = self._create_anomaly_alert_config_for_update("alertupdate")
+            alert_config, data_feed, detection_config = self._create_anomaly_alert_config_for_update(create_random_name("alertupdate"))
+            name = self.get_replayable_random_resource_name("update")
             updated = self.admin_client.update_anomaly_alert_configuration(
                 alert_config.id,
-                name="update",
+                name=name,
                 description="update description",
                 cross_metrics_operator="OR",
                 metric_alert_configurations=[
@@ -923,7 +924,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ]
             )
 
-            self.assertEqual(updated.name, "update")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "update description")
             self.assertEqual(updated.cross_metrics_operator, "OR")
             self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
@@ -940,9 +941,9 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_update_anomaly_alert_config_with_model_and_kwargs(self):
         try:
-            alert_config, data_feed, detection_config = self._create_anomaly_alert_config_for_update("alertupdate")
-
-            alert_config.name = "updateMe"
+            alert_config, data_feed, detection_config = self._create_anomaly_alert_config_for_update(create_random_name("alertupdate"))
+            name = self.get_replayable_random_resource_name("update")
+            alert_config.name = name
             alert_config.description = "updateMe"
             alert_config.cross_metrics_operator = "don't update me"
             alert_config.metric_alert_configurations[0].alert_conditions.severity_condition = None
@@ -1011,7 +1012,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ]
             )
 
-            self.assertEqual(updated.name, "updateMe")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "updateMe")
             self.assertEqual(updated.cross_metrics_operator, "OR")
             self.assertEqual(updated.metric_alert_configurations[0].alert_conditions.severity_condition.max_alert_severity, "High")
@@ -1028,10 +1029,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
 
     def test_update_anomaly_alert_by_resetting_properties(self):
         try:
-            alert_config, data_feed, detection_config = self._create_anomaly_alert_config_for_update("alertupdate")
+            alert_config, data_feed, detection_config = self._create_anomaly_alert_config_for_update(create_random_name("alertupdate"))
+            name = self.get_replayable_random_resource_name("reset")
             updated = self.admin_client.update_anomaly_alert_configuration(
                 alert_config.id,
-                name="reset",
+                name=name,
                 description="",  # can't pass None currently, bug says description is required
                 metric_alert_configurations=[
                     MetricAlertConfiguration(
@@ -1049,7 +1051,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
                 ]
             )
 
-            self.assertEqual(updated.name, "reset")
+            self.assertEqual(updated.name, name)
             self.assertEqual(updated.description, "")
             self.assertEqual(updated.cross_metrics_operator, None)
             self.assertEqual(len(updated.metric_alert_configurations), 1)

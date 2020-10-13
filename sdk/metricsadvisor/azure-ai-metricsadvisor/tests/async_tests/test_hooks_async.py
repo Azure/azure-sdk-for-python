@@ -6,7 +6,7 @@
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
-
+from azure_devtools.scenario_tests import create_random_name
 from azure.ai.metricsadvisor.models import (
     EmailHook,
     WebHook,
@@ -18,7 +18,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_email_hook(self):
-        email_hook_name = self.create_random_name("testemailhookasync")
+        email_hook_name = self.create_random_name(create_random_name("testemailhookasync"))
         async with self.admin_client:
             try:
                 email_hook = await self.admin_client.create_hook(
@@ -44,7 +44,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_create_web_hook(self):
-        web_hook_name = self.create_random_name("testwebhookasync")
+        web_hook_name = self.create_random_name(create_random_name("testwebhookasync"))
         async with self.admin_client:
             try:
                 web_hook = await self.admin_client.create_hook(
@@ -79,18 +79,19 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_email_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_email_hook_for_update(name)
-                hook.name = "update"
+                name = self.get_replayable_random_resource_name("update")
+                hook.name = name
                 hook.description = "update"
                 hook.external_link = "update"
                 hook.emails_to_alert = ["myemail@m.com"]
 
                 updated = await self.admin_client.update_hook(hook)
 
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
@@ -100,20 +101,21 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_email_hook_with_kwargs(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_email_hook_for_update(name)
+                name = self.get_replayable_random_resource_name("update")
                 updated = await self.admin_client.update_hook(
                     hook.id,
                     hook_type="Email",
-                    name="update",
+                    name=name,
                     description="update",
                     external_link="update",
                     emails_to_alert=["myemail@m.com"]
                 )
 
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
@@ -123,24 +125,24 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_email_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_email_hook_for_update(name)
-
+                name = self.get_replayable_random_resource_name("updateme")
                 hook.name = "don't update me"
                 hook.description = "don't update me"
                 hook.emails_to_alert = []
                 updated = await self.admin_client.update_hook(
                     hook,
                     hook_type="Email",
-                    name="update",
+                    name=name,
                     description="update",
                     external_link="update",
                     emails_to_alert=["myemail@m.com"]
                 )
 
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.emails_to_alert, ["myemail@m.com"])
@@ -150,19 +152,20 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_email_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_email_hook_for_update(name)
+                name = self.get_replayable_random_resource_name("reset")
                 updated = await self.admin_client.update_hook(
                     hook.id,
                     hook_type="Email",
-                    name="reset",
+                    name=name,
                     description=None,
                     external_link=None,
                 )
 
-                self.assertEqual(updated.name, "reset")
+                self.assertEqual(updated.name, name)
 
                 # sending null, but not clearing properties
                 # self.assertEqual(updated.description, "")
@@ -173,11 +176,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_web_hook_with_model(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_web_hook_for_update(name)
-                hook.name = "update"
+                name = self.get_replayable_random_resource_name("hookupdate")
+                hook.name = name
                 hook.description = "update"
                 hook.external_link = "update"
                 hook.username = "myusername"
@@ -185,7 +189,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
                 updated = await self.admin_client.update_hook(hook)
 
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
@@ -196,22 +200,23 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_web_hook_with_kwargs(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_web_hook_for_update(name)
+                name = self.get_replayable_random_resource_name("hookupdate")
                 updated = await self.admin_client.update_hook(
                     hook.id,
                     hook_type="Web",
                     endpoint="https://httpbin.org/post",
-                    name="update",
+                    name=name,
                     description="update",
                     external_link="update",
                     username="myusername",
                     password="password"
                 )
 
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "update")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
@@ -222,11 +227,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_web_hook_with_model_and_kwargs(self):
-        name = self.create_random_name("testwebhook")
+        name = self.create_random_name(create_random_name("testwebhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_web_hook_for_update(name)
-
+                name = self.get_replayable_random_resource_name("hookupdate")
                 hook.name = "don't update me"
                 hook.description = "updateMe"
                 hook.username = "don't update me"
@@ -236,13 +241,13 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     hook,
                     hook_type="Web",
                     endpoint="https://httpbin.org/post",
-                    name="update",
+                    name=name,
                     external_link="update",
                     username="myusername",
                     password="password"
                 )
 
-                self.assertEqual(updated.name, "update")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.description, "updateMe")
                 self.assertEqual(updated.external_link, "update")
                 self.assertEqual(updated.username, "myusername")
@@ -253,14 +258,15 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_update_web_hook_by_resetting_properties(self):
-        name = self.create_random_name("testhook")
+        name = self.create_random_name(create_random_name("testhook"))
         async with self.admin_client:
             try:
                 hook = await self._create_web_hook_for_update(name)
+                name = self.get_replayable_random_resource_name("reset")
                 updated = await self.admin_client.update_hook(
                     hook.id,
                     hook_type="Web",
-                    name="reset",
+                    name=name,
                     description=None,
                     endpoint="https://httpbin.org/post",
                     external_link=None,
@@ -268,7 +274,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     password=None
                 )
 
-                self.assertEqual(updated.name, "reset")
+                self.assertEqual(updated.name, name)
                 self.assertEqual(updated.password, "")
 
                 # sending null, but not clearing properties

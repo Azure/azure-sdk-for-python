@@ -10,16 +10,16 @@ interactions:
     uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?dataFeedName=testDataFeed1
   response:
     body:
-      string: '{"value":[{"dataFeedId":"data_feed_id","dataFeedName":"testDataFeed1","metrics":[{"metricId":"metric_id","metricName":"Metric1","metricDisplayName":"Metric1","metricDescription":""},{"metricId":"6b593f73-345c-40eb-a15c-7ec1fc73b028","metricName":"Metric2","metricDisplayName":"Metric2","metricDescription":""}],"dimension":[{"dimensionName":"Dim1","dimensionDisplayName":"Dim1"},{"dimensionName":"Dim2","dimensionDisplayName":"Dim2"}],"dataStartFrom":"2020-08-09T00:00:00Z","dataSourceType":"AzureBlob","timestampColumn":"Timestamp","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"SmartFilling","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["anuchan@microsoft.com","xiangyan@microsoft.com","krpratic@microsoft.com","mayurid@microsoft.com","savaity@microsoft.com","yumeng@microsoft.com","camaiaor@microsoft.com","kaghiya@microsoft.com","johanste@microsoft.com","kaolsze@microsoft.com","chriss@microsoft.com"],"viewers":[],"creator":"savaity@microsoft.com","status":"Active","createdTime":"2020-09-12T00:43:30Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"container":"adsample","connectionString":"connectionstring","blobTemplate":"%Y/%m/%d/%h/JsonFormatV2.json","jsonFormatVersion":"V2"}}],"@nextLink":null}'
+      string: '{"value":[{"dataFeedId":"data_feed_id","dataFeedName":"testDataFeed1","metrics":[{"metricId":"metric_id","metricName":"Metric1","metricDisplayName":"Metric1","metricDescription":""},{"metricId":"6b593f73-345c-40eb-a15c-7ec1fc73b028","metricName":"Metric2","metricDisplayName":"Metric2","metricDescription":""}],"dimension":[{"dimensionName":"Dim1","dimensionDisplayName":"Dim1"},{"dimensionName":"Dim2","dimensionDisplayName":"Dim2"}],"dataStartFrom":"2020-08-09T00:00:00Z","dataSourceType":"AzureBlob","timestampColumn":"Timestamp","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"SmartFilling","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["anuchan@microsoft.com","xiangyan@microsoft.com","krpratic@microsoft.com","mayurid@microsoft.com","savaity@microsoft.com","yumeng@microsoft.com","camaiaor@microsoft.com","kaghiya@microsoft.com","johanste@microsoft.com","kaolsze@microsoft.com","chriss@microsoft.com","elraikhm@microsoft.com","stevencl@microsoft.com"],"viewers":[],"creator":"savaity@microsoft.com","status":"Active","createdTime":"2020-09-12T00:43:30Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"container":"adsample","connectionString":"connectionstring","blobTemplate":"%Y/%m/%d/%h/JsonFormatV2.json","jsonFormatVersion":"V2"}}],"@nextLink":null}'
     headers:
-      apim-request-id: 4d30d448-533d-4f88-b79e-a563260121aa
-      content-length: '1933'
+      apim-request-id: a58de2b3-bfe2-4520-b4fe-a2a56198d578
+      content-length: '1983'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Sep 2020 01:46:22 GMT
+      date: Tue, 13 Oct 2020 16:36:25 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '10318'
-      x-request-id: 4d30d448-533d-4f88-b79e-a563260121aa
+      x-envoy-upstream-service-time: '136'
+      x-request-id: a58de2b3-bfe2-4520-b4fe-a2a56198d578
     status:
       code: 200
       message: OK
