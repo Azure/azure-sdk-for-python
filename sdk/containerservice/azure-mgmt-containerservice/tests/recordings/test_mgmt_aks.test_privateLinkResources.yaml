@@ -27,7 +27,7 @@ interactions:
         ,\n  \"location\": \"eastus\",\n  \"name\": \"2\",\n  \"type\": \"Microsoft.ContainerService/ManagedClusters\"\
         ,\n  \"properties\": {\n   \"provisioningState\": \"Updating\",\n   \"powerState\"\
         : {\n    \"code\": \"Running\"\n   },\n   \"kubernetesVersion\": \"1.17.11\"\
-        ,\n   \"dnsPrefix\": \"akspythonsdk\",\n   \"privateFQDN\": \"akspythonsdk-ab560641.aa8d8505-b377-426a-89d5-8d1bfdb1a8a6.privatelink.eastus.azmk8s.io\"\
+        ,\n   \"dnsPrefix\": \"akspythonsdk\",\n   \"privateFQDN\": \"akspythonsdk-0a1aa5ff.99db5540-f8c4-401b-a0f9-b558dacf4a12.privatelink.eastus.azmk8s.io\"\
         ,\n   \"agentPoolProfiles\": [\n    {\n     \"name\": \"aksagent\",\n    \
         \ \"count\": 1,\n     \"vmSize\": \"Standard_DS2_v2\",\n     \"osDiskSizeGB\"\
         : 128,\n     \"osDiskType\": \"Managed\",\n     \"maxPods\": 110,\n     \"\
@@ -43,20 +43,20 @@ interactions:
         : true,\n   \"networkProfile\": {\n    \"networkPlugin\": \"kubenet\",\n \
         \   \"loadBalancerSku\": \"Standard\",\n    \"loadBalancerProfile\": {\n \
         \    \"managedOutboundIPs\": {\n      \"count\": 1\n     },\n     \"effectiveOutboundIPs\"\
-        : [\n      {\n       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_test_mgmt_aks_test_privateLinkResources407d1004_2_eastus/providers/Microsoft.Network/publicIPAddresses/e17a4ac2-efd0-4305-a16c-9ad17b0a2ec1\"\
+        : [\n      {\n       \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_test_mgmt_aks_test_privateLinkResources407d1004_2_eastus/providers/Microsoft.Network/publicIPAddresses/73161d01-4632-481e-adf9-b0a7472ecb3d\"\
         \n      }\n     ]\n    },\n    \"podCidr\": \"10.244.0.0/16\",\n    \"serviceCidr\"\
         : \"10.0.0.0/16\",\n    \"dnsServiceIP\": \"10.0.0.10\",\n    \"dockerBridgeCidr\"\
         : \"172.17.0.1/16\",\n    \"outboundType\": \"loadBalancer\"\n   },\n   \"\
         maxAgentPools\": 10,\n   \"privateLinkResources\": [\n    {\n     \"name\"\
         : \"management\",\n     \"type\": \"Microsoft.ContainerService/managedClusters/privateLinkResources\"\
         ,\n     \"groupId\": \"management\",\n     \"requiredMembers\": [\n      \"\
-        management\"\n     ],\n     \"privateLinkServiceID\": \"/subscriptions/ed53aee2-e021-4b4c-bba9-1d2ed8dae198/resourceGroups/hcp-underlay-eastus-cx-543/providers/Microsoft.Network/privateLinkServices/ad8a1f2c276e142cba33f70ac3424e3f\"\
+        management\"\n     ],\n     \"privateLinkServiceID\": \"/subscriptions/ed53aee2-e021-4b4c-bba9-1d2ed8dae198/resourceGroups/hcp-underlay-eastus-cx-543/providers/Microsoft.Network/privateLinkServices/a3d67ce48c97348f3974494c2e45b20e\"\
         \n    }\n   ],\n   \"apiServerAccessProfile\": {\n    \"enablePrivateCluster\"\
         : true,\n    \"privateDNSZone\": \"system\"\n   }\n  },\n  \"sku\": {\n  \
         \ \"name\": \"Basic\",\n   \"tier\": \"Free\"\n  }\n }"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a7e889d8-e2a4-4878-a6ba-15ccff9d36c1?api-version=2017-08-31
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/8bc59050-e2e9-4367-8e50-036541691e53?api-version=2017-08-31
       cache-control:
       - no-cache
       content-length:
@@ -64,7 +64,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 12 Oct 2020 08:52:26 GMT
+      - Tue, 13 Oct 2020 05:21:11 GMT
       expires:
       - '-1'
       pragma:
@@ -80,7 +80,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1194'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -111,7 +111,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Mon, 12 Oct 2020 08:52:57 GMT
+      - Tue, 13 Oct 2020 05:21:42 GMT
       expires:
       - '-1'
       pragma:

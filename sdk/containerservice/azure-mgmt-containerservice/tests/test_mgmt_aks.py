@@ -26,6 +26,7 @@
 #   ResolvePrivateLinkServiceIdOperations : 1/1
 
 import unittest
+import time
 
 import azure.mgmt.containerservice
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
@@ -72,9 +73,15 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
             },
             "location": AZURE_LOCATION
         }
-        result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
-                                                                          resource_name=RESOURCE_NAME, parameters=BODY)
-        result.result()
+        for i in range(10):
+            try:
+                result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
+                                                                                  resource_name=RESOURCE_NAME, parameters=BODY)
+                result.result()
+            except azure.core.exceptions.ResourceExistsError:
+                time.sleep(30)
+            else:
+                break
         # 2
         self.mgmt_client.managed_clusters.list_cluster_admin_credentials(resource_group_name=RESOURCE_GROUP,
                                                                          resource_name=RESOURCE_NAME)
@@ -157,9 +164,15 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
             },
             "location": AZURE_LOCATION
         }
-        result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
-                                                                          resource_name=RESOURCE_NAME, parameters=BODY)
-        result.result()
+        for i in range(10):
+            try:
+                result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
+                                                                                  resource_name=RESOURCE_NAME, parameters=BODY)
+                result.result()
+            except azure.core.exceptions.ResourceExistsError:
+                time.sleep(30)
+            else:
+                break
 
         # 1
         self.mgmt_client.private_link_resources.list(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME)
@@ -197,9 +210,15 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
             },
             "location": AZURE_LOCATION
         }
-        result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
-                                                                          resource_name=RESOURCE_NAME, parameters=BODY)
-        result.result()
+        for i in range(10):
+            try:
+                result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
+                                                                                  resource_name=RESOURCE_NAME, parameters=BODY)
+                result.result()
+            except azure.core.exceptions.ResourceExistsError:
+                time.sleep(30)
+            else:
+                break
 
         # 1
         BODY = {
@@ -218,6 +237,33 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         MODE = "System"
         VM_SIZE = "Standard_DS2_v2"
 
+        # Create sample managed cluster
+        BODY = {
+            "dns_prefix": "akspythonsdk",
+            "agent_pool_profiles": [
+                {
+                    "name": "aksagent",
+                    "count": 1,
+                    "vm_size": "Standard_DS2_v2",
+                    "max_pods": 110,
+                    "min_count": 1,
+                    "max_count": 100,
+                    "os_type": "Linux",
+                    "type": "VirtualMachineScaleSets",
+                    "enable_auto_scaling": True,
+                    "mode": "System",
+                }
+            ],
+            "service_principal_profile": {
+                "client_id": CLIENT_ID,
+                "secret": CLIENT_SECRET
+            },
+            "location": AZURE_LOCATION
+        }
+        result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
+                                                                          resource_name=RESOURCE_NAME, parameters=BODY)
+        result.result()
+
         # 1
         BODY = {
             "orchestrator_version": "",
@@ -235,10 +281,17 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
             # "scale_set_eviction_policy": "Delete",
             "node_taints": []
         }
-        result = self.mgmt_client.agent_pools.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
-                                                                     resource_name=RESOURCE_NAME,
-                                                                     agent_pool_name=AGENT_POOL_NAME, parameters=BODY)
-        result = result.result()
+        for i in range(10):
+            try:
+                result = self.mgmt_client.agent_pools.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
+                                                                             resource_name=RESOURCE_NAME,
+                                                                             agent_pool_name=AGENT_POOL_NAME,
+                                                                             parameters=BODY)
+                result = result.result()
+            except azure.core.exceptions.ResourceExistsError:
+                time.sleep(30)
+            else:
+                break
 
         # 2
         self.mgmt_client.agent_pools.get(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME,
