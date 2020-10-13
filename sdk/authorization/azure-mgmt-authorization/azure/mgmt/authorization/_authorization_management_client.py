@@ -43,7 +43,6 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2015-07-01'
@@ -102,7 +101,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-09-01-preview':
             from .v2018_09_01_preview import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def classic_administrators(self):
@@ -117,7 +116,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2015-07-01':
             from .v2015_07_01.operations import ClassicAdministratorsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'classic_administrators'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -130,7 +129,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2018-07-01-preview':
             from .v2018_07_01_preview.operations import DenyAssignmentsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'deny_assignments'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -143,7 +142,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         if api_version == '2015-07-01':
             from .v2015_07_01.operations import GlobalAdministratorOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'global_administrator'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -159,7 +158,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import PermissionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'permissions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -175,7 +174,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import ProviderOperationsMetadataOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'provider_operations_metadata'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -194,7 +193,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-09-01-preview':
             from .v2018_09_01_preview.operations import RoleAssignmentsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'role_assignments'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -210,7 +209,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2018-01-01-preview':
             from .v2018_01_01_preview.operations import RoleDefinitionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation group 'role_definitions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

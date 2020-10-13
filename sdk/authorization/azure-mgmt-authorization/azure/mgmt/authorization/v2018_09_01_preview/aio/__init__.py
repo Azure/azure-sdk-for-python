@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._authorization_management_client_async import AuthorizationManagementClient
+from ._authorization_management_client import AuthorizationManagementClient
 __all__ = ['AuthorizationManagementClient']
