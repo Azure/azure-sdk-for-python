@@ -17,7 +17,7 @@
 # Service team
 ####
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @chlowell @schaabs
+/sdk/identity/                                                       @chlowell @mccoyp @schaabs
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @yunhaoling @KieranBrantnerMagee
@@ -39,7 +39,7 @@
 /sdk/communication/                                                  @RezaJooyandeh @turalf @ankitarorabit @Azure/azure-sdk-communication-code-reviewers
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @schaabs @chlowell @iscai-msft
+/sdk/keyvault/                                                       @schaabs @chlowell @mccoyp
 
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
