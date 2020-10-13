@@ -30,6 +30,27 @@ import sys
 import warnings
 
 from base64 import b64encode
+from six.moves.urllib_parse import urlparse
+from requests.models import Response
+from requests.utils import (
+    DEFAULT_CA_BUNDLE_PATH,
+    extract_zipped_paths,
+    get_encoding_from_headers,
+    prepend_scheme_if_needed,
+    get_auth_from_url,
+    urldefragauth, select_proxy)
+from requests.structures import CaseInsensitiveDict
+from requests.cookies import extract_cookies_to_jar
+from requests.exceptions import (   # pylint: disable=W0622
+    ConnectionError,
+    ConnectTimeout,
+    ReadTimeout,
+    SSLError,
+    ProxyError,
+    RetryError,
+    InvalidSchema,
+    InvalidURL
+)   # mypy: ignore
 from urllib3.poolmanager import PoolManager, proxy_from_url
 from urllib3.response import HTTPResponse
 from urllib3.util import parse_url
@@ -48,28 +69,6 @@ from urllib3.exceptions import (
     ResponseError,
     LocationValueError,
 )
-
-from requests.models import Response
-from requests.utils import (
-    DEFAULT_CA_BUNDLE_PATH,
-    extract_zipped_paths,
-    get_encoding_from_headers,
-    prepend_scheme_if_needed,
-    get_auth_from_url,
-    urldefragauth, select_proxy)
-from six.moves.urllib_parse import urlparse
-from requests.structures import CaseInsensitiveDict
-from requests.cookies import extract_cookies_to_jar
-from requests.exceptions import (   # pylint: disable=W0622
-    ConnectionError,
-    ConnectTimeout,
-    ReadTimeout,
-    SSLError,
-    ProxyError,
-    RetryError,
-    InvalidSchema,
-    InvalidURL
-)   # mypy: ignore
 
 try:
     from urllib3.contrib.socks import SOCKSProxyManager
@@ -482,8 +481,15 @@ class HTTPAdapter(BaseAdapter):
 
         return headers
 
-    # pylint disable=R0912
-    def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None, **kwargs):
+    def send(   # pylint:disable=too-many-branches, too-many-statements
+            self,
+            request,
+            stream=False,
+            timeout=None,
+            verify=True,
+            cert=None,
+            proxies=None,
+            **kwargs):
         """Sends PreparedRequest object. Returns Response object.
 
         :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
