@@ -11,13 +11,14 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
 class MarketplaceAgreementsOperations(object):
     """MarketplaceAgreementsOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -58,7 +59,8 @@ class MarketplaceAgreementsOperations(object):
         :return: AgreementTerms or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.marketplaceordering.models.AgreementTerms or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.marketplaceordering.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -90,12 +92,9 @@ class MarketplaceAgreementsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AgreementTerms', response)
 
@@ -169,7 +168,6 @@ class MarketplaceAgreementsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AgreementTerms', response)
 
@@ -234,7 +232,6 @@ class MarketplaceAgreementsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AgreementTerms', response)
 
@@ -299,7 +296,6 @@ class MarketplaceAgreementsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AgreementTerms', response)
 
@@ -329,7 +325,8 @@ class MarketplaceAgreementsOperations(object):
         :return: AgreementTerms or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.marketplaceordering.models.AgreementTerms or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.marketplaceordering.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_agreement.metadata['url']
@@ -360,12 +357,9 @@ class MarketplaceAgreementsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AgreementTerms', response)
 
@@ -388,7 +382,8 @@ class MarketplaceAgreementsOperations(object):
         :return: list or ClientRawResponse if raw=true
         :rtype: list[~azure.mgmt.marketplaceordering.models.AgreementTerms] or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.marketplaceordering.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -416,12 +411,9 @@ class MarketplaceAgreementsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[AgreementTerms]', response)
 

@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .marketplace_ordering_agreements import MarketplaceOrderingAgreements
-from .version import VERSION
+from ._configuration import MarketplaceOrderingAgreementsConfiguration
+from ._marketplace_ordering_agreements import MarketplaceOrderingAgreements
+__all__ = ['MarketplaceOrderingAgreements', 'MarketplaceOrderingAgreementsConfiguration']
 
-__all__ = ['MarketplaceOrderingAgreements']
+from .version import VERSION
 
 __version__ = VERSION
 
