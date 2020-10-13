@@ -12,7 +12,7 @@ from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -55,7 +55,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'check_name_availability'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -84,7 +84,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'get_publishing_user'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -116,7 +116,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'get_source_control'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -145,7 +145,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'get_subscription_deployment_locations'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -178,7 +178,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'list_billing_meters'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -222,7 +222,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'list_geo_regions'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -251,7 +251,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'list_premier_add_on_offers'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -283,7 +283,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'list_site_identifiers_assigned_to_host_name'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -312,7 +312,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'list_skus'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -341,7 +341,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'list_source_controls'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -376,7 +376,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'move'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -408,7 +408,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'update_publishing_user'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -443,7 +443,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'update_source_control'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -478,7 +478,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'validate'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -509,7 +509,7 @@ class WebSiteManagementClientOperationsMixin(object):
         if api_version == '2018-02-01':
             from .v2018_02_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'validate_container_settings'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -544,7 +544,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'validate_move'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
@@ -577,7 +577,7 @@ class WebSiteManagementClientOperationsMixin(object):
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebSiteManagementClientOperationsMixin as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} does not have operation 'verify_hosting_environment_vnet'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config

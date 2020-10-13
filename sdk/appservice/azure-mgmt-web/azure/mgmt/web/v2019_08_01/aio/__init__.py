@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._web_site_management_client_async import WebSiteManagementClient
+from ._web_site_management_client import WebSiteManagementClient
 __all__ = ['WebSiteManagementClient']
