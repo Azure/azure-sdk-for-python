@@ -5,7 +5,6 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-metrics-advisor
 urlFragment: metricsadvisor-samples
 ---
 
