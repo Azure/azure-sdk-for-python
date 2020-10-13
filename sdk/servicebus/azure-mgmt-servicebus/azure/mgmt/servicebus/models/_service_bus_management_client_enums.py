@@ -32,14 +32,14 @@ class SkuTier(str, Enum):
     premium = "Premium"
 
 
-class KeySource(str, Enum):
-
-    microsoft_key_vault = "Microsoft.KeyVault"
-
-
 class IdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
+
+
+class KeySource(str, Enum):
+
+    microsoft_key_vault = "Microsoft.KeyVault"
 
 
 class PrivateLinkConnectionStatus(str, Enum):
