@@ -4,7 +4,7 @@
 
 **Note**
 
-* Added support for Python 3.9.
+* Updated uAMQP dependency to 1.2.12 adding support for Python 3.9.
 
 
 ## 7.0.0b7 (2020-10-05)
