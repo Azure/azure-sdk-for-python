@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._sql_management_client_async import SqlManagementClient
+from ._sql_management_client import SqlManagementClient
 __all__ = ['SqlManagementClient']

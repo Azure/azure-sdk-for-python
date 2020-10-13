@@ -335,7 +335,7 @@ class EncryptionProtectorName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
 
     CURRENT = "current"
 
-class Enum62(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum65(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     ALL = "All"
     ERROR = "Error"
@@ -603,6 +603,31 @@ class PrimaryAggregationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     MINIMUM = "Minimum"
     MAXIMUM = "Maximum"
     TOTAL = "Total"
+
+class PrivateEndpointProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """State of the private endpoint connection.
+    """
+
+    APPROVING = "Approving"
+    READY = "Ready"
+    DROPPING = "Dropping"
+    FAILED = "Failed"
+    REJECTING = "Rejecting"
+
+class PrivateLinkServiceConnectionStateActionsRequire(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The actions required for private link service connection.
+    """
+
+    NONE = "None"
+
+class PrivateLinkServiceConnectionStateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private link service connection status.
+    """
+
+    APPROVED = "Approved"
+    PENDING = "Pending"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The ARM provisioning state of the job execution.
