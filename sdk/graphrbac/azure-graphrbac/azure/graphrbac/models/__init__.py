@@ -10,149 +10,150 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .informational_url_py3 import InformationalUrl
-    from .oauth2_permission_py3 import OAuth2Permission
-    from .optional_claim_py3 import OptionalClaim
-    from .optional_claims_py3 import OptionalClaims
-    from .pre_authorized_application_permission_py3 import PreAuthorizedApplicationPermission
-    from .pre_authorized_application_extension_py3 import PreAuthorizedApplicationExtension
-    from .pre_authorized_application_py3 import PreAuthorizedApplication
-    from .graph_error_py3 import GraphError, GraphErrorException
-    from .directory_object_py3 import DirectoryObject
-    from .key_credential_py3 import KeyCredential
-    from .password_credential_py3 import PasswordCredential
-    from .resource_access_py3 import ResourceAccess
-    from .required_resource_access_py3 import RequiredResourceAccess
-    from .app_role_py3 import AppRole
-    from .application_base_py3 import ApplicationBase
-    from .application_create_parameters_py3 import ApplicationCreateParameters
-    from .application_update_parameters_py3 import ApplicationUpdateParameters
-    from .application_py3 import Application
-    from .service_principal_object_result_py3 import ServicePrincipalObjectResult
-    from .add_owner_parameters_py3 import AddOwnerParameters
-    from .key_credentials_update_parameters_py3 import KeyCredentialsUpdateParameters
-    from .password_credentials_update_parameters_py3 import PasswordCredentialsUpdateParameters
-    from .group_add_member_parameters_py3 import GroupAddMemberParameters
-    from .group_create_parameters_py3 import GroupCreateParameters
-    from .ad_group_py3 import ADGroup
-    from .group_get_member_groups_parameters_py3 import GroupGetMemberGroupsParameters
-    from .check_group_membership_parameters_py3 import CheckGroupMembershipParameters
-    from .check_group_membership_result_py3 import CheckGroupMembershipResult
-    from .service_principal_base_py3 import ServicePrincipalBase
-    from .service_principal_create_parameters_py3 import ServicePrincipalCreateParameters
-    from .service_principal_update_parameters_py3 import ServicePrincipalUpdateParameters
-    from .service_principal_py3 import ServicePrincipal
-    from .password_profile_py3 import PasswordProfile
-    from .user_base_py3 import UserBase
-    from .user_create_parameters_py3 import UserCreateParameters
-    from .user_update_parameters_py3 import UserUpdateParameters
-    from .sign_in_name_py3 import SignInName
-    from .user_py3 import User
-    from .user_get_member_groups_parameters_py3 import UserGetMemberGroupsParameters
-    from .get_objects_parameters_py3 import GetObjectsParameters
-    from .domain_py3 import Domain
-    from .oauth2_permission_grant_py3 import OAuth2PermissionGrant
+    from ._models_py3 import AddOwnerParameters
+    from ._models_py3 import ADGroup
+    from ._models_py3 import Application
+    from ._models_py3 import ApplicationBase
+    from ._models_py3 import ApplicationCreateParameters
+    from ._models_py3 import ApplicationUpdateParameters
+    from ._models_py3 import AppRole
+    from ._models_py3 import CheckGroupMembershipParameters
+    from ._models_py3 import CheckGroupMembershipResult
+    from ._models_py3 import DirectoryObject
+    from ._models_py3 import Domain
+    from ._models_py3 import GetObjectsParameters
+    from ._models_py3 import GraphError, GraphErrorException
+    from ._models_py3 import GroupAddMemberParameters
+    from ._models_py3 import GroupCreateParameters
+    from ._models_py3 import GroupGetMemberGroupsParameters
+    from ._models_py3 import InformationalUrl
+    from ._models_py3 import KeyCredential
+    from ._models_py3 import KeyCredentialsUpdateParameters
+    from ._models_py3 import OAuth2Permission
+    from ._models_py3 import OAuth2PermissionGrant
+    from ._models_py3 import OptionalClaim
+    from ._models_py3 import OptionalClaims
+    from ._models_py3 import PasswordCredential
+    from ._models_py3 import PasswordCredentialsUpdateParameters
+    from ._models_py3 import PasswordProfile
+    from ._models_py3 import PreAuthorizedApplication
+    from ._models_py3 import PreAuthorizedApplicationExtension
+    from ._models_py3 import PreAuthorizedApplicationPermission
+    from ._models_py3 import RequiredResourceAccess
+    from ._models_py3 import ResourceAccess
+    from ._models_py3 import ServicePrincipal
+    from ._models_py3 import ServicePrincipalBase
+    from ._models_py3 import ServicePrincipalCreateParameters
+    from ._models_py3 import ServicePrincipalObjectResult
+    from ._models_py3 import ServicePrincipalUpdateParameters
+    from ._models_py3 import SignInName
+    from ._models_py3 import User
+    from ._models_py3 import UserBase
+    from ._models_py3 import UserCreateParameters
+    from ._models_py3 import UserGetMemberGroupsParameters
+    from ._models_py3 import UserUpdateParameters
 except (SyntaxError, ImportError):
-    from .informational_url import InformationalUrl
-    from .oauth2_permission import OAuth2Permission
-    from .optional_claim import OptionalClaim
-    from .optional_claims import OptionalClaims
-    from .pre_authorized_application_permission import PreAuthorizedApplicationPermission
-    from .pre_authorized_application_extension import PreAuthorizedApplicationExtension
-    from .pre_authorized_application import PreAuthorizedApplication
-    from .graph_error import GraphError, GraphErrorException
-    from .directory_object import DirectoryObject
-    from .key_credential import KeyCredential
-    from .password_credential import PasswordCredential
-    from .resource_access import ResourceAccess
-    from .required_resource_access import RequiredResourceAccess
-    from .app_role import AppRole
-    from .application_base import ApplicationBase
-    from .application_create_parameters import ApplicationCreateParameters
-    from .application_update_parameters import ApplicationUpdateParameters
-    from .application import Application
-    from .service_principal_object_result import ServicePrincipalObjectResult
-    from .add_owner_parameters import AddOwnerParameters
-    from .key_credentials_update_parameters import KeyCredentialsUpdateParameters
-    from .password_credentials_update_parameters import PasswordCredentialsUpdateParameters
-    from .group_add_member_parameters import GroupAddMemberParameters
-    from .group_create_parameters import GroupCreateParameters
-    from .ad_group import ADGroup
-    from .group_get_member_groups_parameters import GroupGetMemberGroupsParameters
-    from .check_group_membership_parameters import CheckGroupMembershipParameters
-    from .check_group_membership_result import CheckGroupMembershipResult
-    from .service_principal_base import ServicePrincipalBase
-    from .service_principal_create_parameters import ServicePrincipalCreateParameters
-    from .service_principal_update_parameters import ServicePrincipalUpdateParameters
-    from .service_principal import ServicePrincipal
-    from .password_profile import PasswordProfile
-    from .user_base import UserBase
-    from .user_create_parameters import UserCreateParameters
-    from .user_update_parameters import UserUpdateParameters
-    from .sign_in_name import SignInName
-    from .user import User
-    from .user_get_member_groups_parameters import UserGetMemberGroupsParameters
-    from .get_objects_parameters import GetObjectsParameters
-    from .domain import Domain
-    from .oauth2_permission_grant import OAuth2PermissionGrant
-from .directory_object_paged import DirectoryObjectPaged
-from .application_paged import ApplicationPaged
-from .key_credential_paged import KeyCredentialPaged
-from .password_credential_paged import PasswordCredentialPaged
-from .ad_group_paged import ADGroupPaged
-from .str_paged import StrPaged
-from .service_principal_paged import ServicePrincipalPaged
-from .user_paged import UserPaged
-from .domain_paged import DomainPaged
-from .oauth2_permission_grant_paged import OAuth2PermissionGrantPaged
-from .graph_rbac_management_client_enums import (
+    from ._models import AddOwnerParameters
+    from ._models import ADGroup
+    from ._models import Application
+    from ._models import ApplicationBase
+    from ._models import ApplicationCreateParameters
+    from ._models import ApplicationUpdateParameters
+    from ._models import AppRole
+    from ._models import CheckGroupMembershipParameters
+    from ._models import CheckGroupMembershipResult
+    from ._models import DirectoryObject
+    from ._models import Domain
+    from ._models import GetObjectsParameters
+    from ._models import GraphError, GraphErrorException
+    from ._models import GroupAddMemberParameters
+    from ._models import GroupCreateParameters
+    from ._models import GroupGetMemberGroupsParameters
+    from ._models import InformationalUrl
+    from ._models import KeyCredential
+    from ._models import KeyCredentialsUpdateParameters
+    from ._models import OAuth2Permission
+    from ._models import OAuth2PermissionGrant
+    from ._models import OptionalClaim
+    from ._models import OptionalClaims
+    from ._models import PasswordCredential
+    from ._models import PasswordCredentialsUpdateParameters
+    from ._models import PasswordProfile
+    from ._models import PreAuthorizedApplication
+    from ._models import PreAuthorizedApplicationExtension
+    from ._models import PreAuthorizedApplicationPermission
+    from ._models import RequiredResourceAccess
+    from ._models import ResourceAccess
+    from ._models import ServicePrincipal
+    from ._models import ServicePrincipalBase
+    from ._models import ServicePrincipalCreateParameters
+    from ._models import ServicePrincipalObjectResult
+    from ._models import ServicePrincipalUpdateParameters
+    from ._models import SignInName
+    from ._models import User
+    from ._models import UserBase
+    from ._models import UserCreateParameters
+    from ._models import UserGetMemberGroupsParameters
+    from ._models import UserUpdateParameters
+from ._paged_models import ADGroupPaged
+from ._paged_models import ApplicationPaged
+from ._paged_models import DirectoryObjectPaged
+from ._paged_models import DomainPaged
+from ._paged_models import KeyCredentialPaged
+from ._paged_models import OAuth2PermissionGrantPaged
+from ._paged_models import PasswordCredentialPaged
+from ._paged_models import ServicePrincipalPaged
+from ._paged_models import StrPaged
+from ._paged_models import UserPaged
+from ._graph_rbac_management_client_enums import (
+    GroupMembershipClaimTypes,
     UserType,
     ConsentType,
 )
 
 __all__ = [
-    'InformationalUrl',
-    'OAuth2Permission',
-    'OptionalClaim',
-    'OptionalClaims',
-    'PreAuthorizedApplicationPermission',
-    'PreAuthorizedApplicationExtension',
-    'PreAuthorizedApplication',
-    'GraphError', 'GraphErrorException',
-    'DirectoryObject',
-    'KeyCredential',
-    'PasswordCredential',
-    'ResourceAccess',
-    'RequiredResourceAccess',
-    'AppRole',
+    'AddOwnerParameters',
+    'ADGroup',
+    'Application',
     'ApplicationBase',
     'ApplicationCreateParameters',
     'ApplicationUpdateParameters',
-    'Application',
-    'ServicePrincipalObjectResult',
-    'AddOwnerParameters',
-    'KeyCredentialsUpdateParameters',
-    'PasswordCredentialsUpdateParameters',
-    'GroupAddMemberParameters',
-    'GroupCreateParameters',
-    'ADGroup',
-    'GroupGetMemberGroupsParameters',
+    'AppRole',
     'CheckGroupMembershipParameters',
     'CheckGroupMembershipResult',
+    'DirectoryObject',
+    'Domain',
+    'GetObjectsParameters',
+    'GraphError', 'GraphErrorException',
+    'GroupAddMemberParameters',
+    'GroupCreateParameters',
+    'GroupGetMemberGroupsParameters',
+    'InformationalUrl',
+    'KeyCredential',
+    'KeyCredentialsUpdateParameters',
+    'OAuth2Permission',
+    'OAuth2PermissionGrant',
+    'OptionalClaim',
+    'OptionalClaims',
+    'PasswordCredential',
+    'PasswordCredentialsUpdateParameters',
+    'PasswordProfile',
+    'PreAuthorizedApplication',
+    'PreAuthorizedApplicationExtension',
+    'PreAuthorizedApplicationPermission',
+    'RequiredResourceAccess',
+    'ResourceAccess',
+    'ServicePrincipal',
     'ServicePrincipalBase',
     'ServicePrincipalCreateParameters',
+    'ServicePrincipalObjectResult',
     'ServicePrincipalUpdateParameters',
-    'ServicePrincipal',
-    'PasswordProfile',
-    'UserBase',
-    'UserCreateParameters',
-    'UserUpdateParameters',
     'SignInName',
     'User',
+    'UserBase',
+    'UserCreateParameters',
     'UserGetMemberGroupsParameters',
-    'GetObjectsParameters',
-    'Domain',
-    'OAuth2PermissionGrant',
+    'UserUpdateParameters',
     'DirectoryObjectPaged',
     'ApplicationPaged',
     'KeyCredentialPaged',
@@ -163,6 +164,7 @@ __all__ = [
     'UserPaged',
     'DomainPaged',
     'OAuth2PermissionGrantPaged',
+    'GroupMembershipClaimTypes',
     'UserType',
     'ConsentType',
 ]
