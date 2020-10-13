@@ -1774,7 +1774,7 @@ class VirtualMachineScaleSetsOperations(object):
 
     def convert_to_single_placement_group(
             self, resource_group_name, vm_scale_set_name, active_placement_group_id=None, custom_headers=None, raw=False, **operation_config):
-        """Converts SinglePlacementGroup property to false for a existing virtual
+        """Converts SinglePlacementGroup property to true for a existing virtual
         machine scale set.
 
         :param resource_group_name: The name of the resource group.
