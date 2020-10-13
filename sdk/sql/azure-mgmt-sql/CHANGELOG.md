@@ -1,5 +1,19 @@
 # Release History
+## 0.22.0 (2020-10-09)
 
+**Features**
+
+  - Model BackupShortTermRetentionPolicy has a new parameter diff_backup_interval_in_hours
+  - Model ManagedInstance has a new parameter provisioning_state
+  - Model ManagedInstanceUpdate has a new parameter provisioning_state
+  - Added operation group ServerAzureADOnlyAuthenticationsOperations
+
+**Breaking changes**
+
+  - Operation BackupShortTermRetentionPoliciesOperations.create_or_update has a new signature
+  - Operation BackupShortTermRetentionPoliciesOperations.update has a new signature
+  - Removed operation ServerAzureADAdministratorsOperations.disable_azure_ad_only_authentication
+  
 ## 0.21.0 (2020-09-03)
 
 **Features**
