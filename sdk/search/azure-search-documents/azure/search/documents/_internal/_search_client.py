@@ -101,9 +101,9 @@ class SearchClient(HeadersMixin):
         """
         return self._client.close()
 
-    def get_search_index_buffered_sender(self, **kwargs):
+    def get_search_indexing_buffered_sender(self, **kwargs):
         # type: (dict) -> SearchIndexingBufferedSender
-        """Return a Search Indexing Buffered Sender instance
+        """Return a SearchIndexingBufferedSender instance
 
         :rtype: ~azure.search.documents.SearchIndexingBufferedSender
 
