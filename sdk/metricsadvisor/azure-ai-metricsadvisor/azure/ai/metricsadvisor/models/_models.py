@@ -2565,9 +2565,6 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = AnomalyFeedbackValue(anomaly_value=self.value)
         return _AnomalyFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             start_time=self.start_time,
@@ -2675,9 +2672,6 @@ class ChangePointFeedback(msrest.serialization.Model):
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = ChangePointFeedbackValue(change_point_value=self.value)
         return _ChangePointFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             start_time=self.start_time,
@@ -2783,9 +2777,6 @@ class CommentFeedback(msrest.serialization.Model):
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = CommentFeedbackValue(comment_value=self.value)
         return _CommentFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             start_time=self.start_time,
@@ -2885,9 +2876,6 @@ class PeriodFeedback(msrest.serialization.Model):
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = PeriodFeedbackValue(period_type=self.period_type, period_value=self.value)
         return _PeriodFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             value=value,
