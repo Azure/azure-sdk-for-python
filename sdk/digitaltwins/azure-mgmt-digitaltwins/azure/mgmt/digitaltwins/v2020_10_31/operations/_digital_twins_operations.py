@@ -211,9 +211,28 @@ class DigitalTwinsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DigitalTwins/digitalTwinsInstances/{resourceName}'}
 
-
-    def _update_initial(
+    def update(
             self, resource_group_name, resource_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Update metadata of DigitalTwinsInstance.
+
+        :param resource_group_name: The name of the resource group that
+         contains the DigitalTwinsInstance.
+        :type resource_group_name: str
+        :param resource_name: The name of the DigitalTwinsInstance.
+        :type resource_name: str
+        :param tags: Instance tags
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DigitalTwinsDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.digitaltwins.models.DigitalTwinsDescription or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.digitaltwins.models.ErrorResponseException>`
+        """
         digital_twins_patch_description = models.DigitalTwinsPatchDescription(tags=tags)
 
         # Construct URL
@@ -251,7 +270,6 @@ class DigitalTwinsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DigitalTwinsDescription', response)
 
@@ -260,57 +278,6 @@ class DigitalTwinsOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def update(
-            self, resource_group_name, resource_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update metadata of DigitalTwinsInstance.
-
-        :param resource_group_name: The name of the resource group that
-         contains the DigitalTwinsInstance.
-        :type resource_group_name: str
-        :param resource_name: The name of the DigitalTwinsInstance.
-        :type resource_name: str
-        :param tags: Instance tags
-        :type tags: dict[str, str]
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns DigitalTwinsDescription
-         or ClientRawResponse<DigitalTwinsDescription> if raw==True
-        :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.digitaltwins.models.DigitalTwinsDescription]
-         or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.digitaltwins.models.DigitalTwinsDescription]]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.digitaltwins.models.ErrorResponseException>`
-        """
-        raw_result = self._update_initial(
-            resource_group_name=resource_group_name,
-            resource_name=resource_name,
-            tags=tags,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('DigitalTwinsDescription', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DigitalTwins/digitalTwinsInstances/{resourceName}'}
 
 

@@ -178,7 +178,7 @@ class DigitalTwinsEndpointOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, resource_name, endpoint_name, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, endpoint_name, properties, custom_headers=None, raw=False, **operation_config):
         endpoint_description = models.DigitalTwinsEndpointResource(properties=properties)
 
         # Construct URL
@@ -230,7 +230,7 @@ class DigitalTwinsEndpointOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, resource_name, endpoint_name, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, endpoint_name, properties, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update DigitalTwinsInstance endpoint.
 
         :param resource_group_name: The name of the resource group that

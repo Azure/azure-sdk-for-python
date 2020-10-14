@@ -226,13 +226,16 @@ class DigitalTwinsEndpointResource(ExternalResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: Extension resource name.
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param properties: DigitalTwinsInstance endpoint resource properties.
+    :param properties: Required. DigitalTwinsInstance endpoint resource
+     properties.
     :type properties:
      ~azure.mgmt.digitaltwins.models.DigitalTwinsEndpointResourceProperties
     """
@@ -241,6 +244,7 @@ class DigitalTwinsEndpointResource(ExternalResource):
         'id': {'readonly': True},
         'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
         'type': {'readonly': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -250,7 +254,7 @@ class DigitalTwinsEndpointResource(ExternalResource):
         'properties': {'key': 'properties', 'type': 'DigitalTwinsEndpointResourceProperties'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, *, properties, **kwargs) -> None:
         super(DigitalTwinsEndpointResource, self).__init__(**kwargs)
         self.properties = properties
 
