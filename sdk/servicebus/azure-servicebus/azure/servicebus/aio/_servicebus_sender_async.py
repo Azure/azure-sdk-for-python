@@ -4,7 +4,8 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-from typing import Any, TYPE_CHECKING, Union, List, Optional
+import datetime
+from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
 from uamqp import SendClientAsync, types
@@ -22,7 +23,6 @@ from .._common.utils import transform_messages_to_sendable_if_needed
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
-    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)

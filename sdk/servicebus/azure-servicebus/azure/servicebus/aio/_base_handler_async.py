@@ -78,7 +78,7 @@ class BaseHandler:
         self,
         fully_qualified_namespace: str,
         entity_name: str,
-        credential: TokenCredential,
+        credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace

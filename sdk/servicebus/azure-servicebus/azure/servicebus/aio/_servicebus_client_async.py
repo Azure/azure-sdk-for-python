@@ -64,7 +64,7 @@ class ServiceBusClient(object):
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: TokenCredential,
+        credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
