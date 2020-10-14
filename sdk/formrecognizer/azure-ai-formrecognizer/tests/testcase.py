@@ -192,6 +192,10 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertEqual(wp.confidence, wa.confidence if wa.confidence is not None else 1.0)
                     self.assertBoundingBoxTransformCorrect(wp.bounding_box, wa.bounding_box)
 
+            for p, a in zip(page.selection_marks or [], actual_page.selection_marks or []):
+                self.assertEqual(p.kind, "selectionMark")
+                self.assertBoundingBoxTransformCorrect(p.bounding_box, a.bounding_box)
+
         if page_result:
             for page, actual_page in zip(pages, page_result):
                 if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
@@ -546,6 +550,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
         self.training = kwargs.get("training", False)
         self.multipage_test = kwargs.get("multipage", False)
         self.multipage_test_2 = kwargs.get("multipage2", False)
+        self.selection_marks = kwargs.get("selection_marks", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
         self.copy = kwargs.get("copy", False)
 
@@ -593,6 +598,9 @@ class GlobalClientPreparer(AzureMgmtPreparer):
                     blob_sas_url,
                     "blob_sas_url"
                 )
+            elif self.selection_marks:
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL")
+                blob_sas_url = None
             else:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
                 blob_sas_url = None
