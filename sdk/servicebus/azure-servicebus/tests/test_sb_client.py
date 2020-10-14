@@ -142,7 +142,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                 ) as sender:
                     sender.send_messages(Message("test"))
 
-            with ServiceBusSender.from_connection_string(
+            with ServiceBusSender._from_connection_string(
                 servicebus_queue_authorization_rule_connection_string,
                 queue_name=servicebus_queue.name,
             ) as sender:
