@@ -18,14 +18,14 @@ from ._models import (
 )
 
 
-def prepare_receipt(response):
-    receipts = []
+def prepare_prebuilt_models(response):
+    prebuilt_models = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
-    form_page = FormPage._from_generated_receipt(read_result)
+    form_page = FormPage._from_generated_prebuilt_model(read_result)
 
     for page in document_result:
-        receipt = RecognizedForm(
+        prebuilt_model = RecognizedForm(
             page_range=FormPageRange(
                 first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),
@@ -39,8 +39,8 @@ def prepare_receipt(response):
             model_id=page.model_id
         )
 
-        receipts.append(receipt)
-    return receipts
+        prebuilt_models.append(prebuilt_model)
+    return prebuilt_models
 
 
 def prepare_tables(page, read_result):
