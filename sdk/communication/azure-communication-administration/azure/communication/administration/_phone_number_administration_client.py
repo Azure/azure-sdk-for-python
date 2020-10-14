@@ -6,6 +6,8 @@
 # ------------------------------------
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from ._polling import PhoneNumberPolling
 
 from ._phonenumber._generated._phone_number_administration_service\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
@@ -13,7 +15,6 @@ from ._phonenumber._generated._phone_number_administration_service\
 from ._phonenumber._generated.models import (
     AcquiredPhoneNumbers,
     AreaCodes,
-    CreateSearchResponse,
     LocationOptionsResponse,
     NumberConfigurationResponse,
     NumberUpdateCapabilities,
@@ -25,6 +26,7 @@ from ._phonenumber._generated.models import (
     PhonePlansResponse,
     PstnConfiguration,
     ReleaseResponse,
+    SearchStatus,
     UpdateNumberCapabilitiesResponse,
     UpdatePhoneNumberCapabilitiesResponse
 )
@@ -405,21 +407,52 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def create_search(
+    def begin_create_search(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> CreateSearchResponse
-        """Creates a phone number search.
-
+        # type: (...) -> LROPoller
+        """Begins creating a phone number search.
+        Caller must provide either body, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword body will be ignored.
         :keyword azure.communication.administration.CreateSearchOptions body:
-        An optional parameter for defining the search options.
-        The default is None.
-        :rtype: ~azure.communication.administration.CreateSearchResponse
+        A parameter for defining the search options.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        return self._phone_number_administration_client.phone_number_administration.create_search(
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        search_polling = PhoneNumberPolling(
+            is_terminated=lambda status: status in [
+                SearchStatus.Reserved,
+                SearchStatus.Expired,
+                SearchStatus.Success,
+                SearchStatus.Cancelled,
+                SearchStatus.Error
+            ]
+        )
+
+        if cont_token is not None:
+            return LROPoller.from_continuation_token(
+                polling_method=search_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        if "body" not in kwargs:
+            raise ValueError("Either kwarg 'body' or 'continuation_token' needs to be specified")
+
+        create_search_response = self._phone_number_administration_client.phone_number_administration.create_search(
             **kwargs
         )
+        initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
+            search_id=create_search_response.search_id
+        )
+        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=search_polling)
 
     @distributed_trace
     def list_all_searches(
@@ -458,19 +491,47 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def purchase_search(
-            self,
-            search_id,  # type: str
-            **kwargs  # type: Any
+    def begin_purchase_search(
+        self,
+        **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        """Purchases the phone number search.
-
-        :param search_id: The search id to be purchased.
-        :type search_id: str
-        :rtype: None
+        # type: (...) -> LROPoller
+        """Begins the phone number search purchase.
+        Caller must provide either search_id, or continuation_token keywords to use the method.
+        If both body and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword search_id will be ignored.
+        :keyword str search_id: The search id to be purchased.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
-        return self._phone_number_administration_client.phone_number_administration.purchase_search(
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        search_polling = PhoneNumberPolling(
+            is_terminated=lambda status: status in [
+                SearchStatus.Success,
+                SearchStatus.Expired,
+                SearchStatus.Cancelled,
+                SearchStatus.Error
+            ]
+        )
+
+        if cont_token is not None:
+            return LROPoller.from_continuation_token(
+                polling_method=search_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        search_id = kwargs.pop('search_id')  # type: str
+
+        self._phone_number_administration_client.phone_number_administration.purchase_search(
             search_id,
             **kwargs
         )
+        initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
+            search_id=search_id
+        )
+        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=search_polling)
