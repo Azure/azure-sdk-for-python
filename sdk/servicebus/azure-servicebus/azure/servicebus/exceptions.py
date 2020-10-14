@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, Any
 
 from uamqp import errors, constants
 from azure.core.exceptions import AzureError
@@ -158,7 +158,7 @@ class _ServiceBusErrorPolicy(errors.ErrorPolicy):
 class ServiceBusError(AzureError):
     """Base exception for all Service Bus errors which can be used for default error handling.
 
-    :param message: The message object stringified as 'message' attribute
+    :param str message: The message object stringified as 'message' attribute
     :keyword error: The original exception if any
     :paramtype error: Exception
     :ivar inner_exception: The exception passed with the 'error' kwarg
@@ -171,6 +171,7 @@ class ServiceBusError(AzureError):
     """
 
     def __init__(self, message, *args, **kwargs):
+        # type: (str, Any, Any) -> None
         super(ServiceBusError, self).__init__(message, error=kwargs.get("error"))
 
 
