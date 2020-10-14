@@ -13,8 +13,8 @@ from functools import partial
 from devtools_testutils import AzureMgmtPreparer, FakeResource
 
 # from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
-from azure.mgmt.appconfiguration import AppConfigurationManagementClient
-from azure.mgmt.network import NetworkManagementClient
+# from azure.mgmt.appconfiguration import AppConfigurationManagementClient
+# from azure.mgmt.network import NetworkManagementClient
 
 class AppConfigPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='',
