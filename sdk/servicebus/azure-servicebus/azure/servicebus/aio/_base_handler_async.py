@@ -76,12 +76,11 @@ class ServiceBusSharedKeyCredential(object):
 class BaseHandler:
     def __init__(
         self,
-        fully_qualified_namespace,
-        entity_name,
-        credential,
-        **kwargs
-    ):
-        # type: (str, str, TokenCredential, Any) -> None
+        fully_qualified_namespace: str,
+        entity_name: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
 
@@ -263,8 +262,7 @@ class BaseHandler:
             self._handler = None
         self._running = False
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close down the handler connection.
 
         If the handler has already closed, this operation will do nothing. An optional exception can be passed in to
