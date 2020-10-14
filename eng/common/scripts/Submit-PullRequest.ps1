@@ -48,16 +48,12 @@ param(
   [Parameter(Mandatory = $false)]
   [string]$PRBody = $PRTitle,
 
-  [Parameter(Mandatory = $false)]
   [string]$PRLabels,
 
-  [Parameter(Mandatory = $false)]
   [string]$UserReviewers,
 
-  [Parameter(Mandatory = $false)]
   [string]$TeamReviewers,
 
-  [Parameter(Mandatory = $false)]
   [string]$Assignees
 )
 
@@ -81,11 +77,11 @@ if ($resp.Count -gt 0) {
     # setting variable to reference the pull request by number
     Write-Host "##vso[task.setvariable variable=Submitted.PullRequest.Number]$($resp[0].number)"
 
-    $lablesArray = $resp[0].labels.name + ($PRLabels -split ',') | Sort-Object -Unique
-    $AssigneesArray = $resp[0].assignees.login + ($Assignees -split ',') | Sort-Object -Unique
+    Add-GithubIssueLabels -RepoOwner $RepoOwner -RepoName $RepoName -IssueNumber $resp.number`
+    -Labels $PRLabels -AuthToken $AuthToken
 
-    Update-Issue -RepoOwner $RepoOwner -RepoName $RepoName -IssueNumber $resp[0].number`
-    -Labels $lablesArray -Assignees $AssigneesArray -AuthToken $AuthToken
+    Add-GithubIssueAssignees -RepoOwner $RepoOwner -RepoName $RepoName -IssueNumber $resp.number`
+    -Assignees $Assignees -AuthToken $AuthToken
 
     Request-PrReviewer -RepoOwner $RepoOwner -RepoName $RepoName -PrNumber $resp[0].number`
     -Users $UserReviewers -Teams $TeamReviewers -AuthToken $AuthToken
