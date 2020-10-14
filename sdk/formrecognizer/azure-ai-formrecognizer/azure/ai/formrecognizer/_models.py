@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-lines
 
 from enum import Enum
 from collections import namedtuple
