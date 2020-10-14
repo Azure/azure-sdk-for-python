@@ -75,8 +75,8 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         self._settled = True
 
     async def dead_letter(  # type: ignore
-            self, reason: Optional[str] = None,
-            error_description: Optional[str] = None
+        self, reason: Optional[str] = None,
+        error_description: Optional[str] = None
     ) -> None:  # pylint: disable=unused-argument
         """Move the message to the Dead Letter queue.
 
@@ -84,8 +84,8 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
 
-        :param str reason: The reason for dead-lettering the message.
-        :param str error_description: The detailed error description for dead-lettering the message.
+        :param Optional[str] reason: The reason for dead-lettering the message.
+        :param Optional[str] error_description: The detailed error description for dead-lettering the message.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.

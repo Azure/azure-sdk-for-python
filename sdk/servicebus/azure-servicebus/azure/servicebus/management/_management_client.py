@@ -305,7 +305,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         # type: (str, Any) -> None
         """Delete a queue.
 
-        :param str queue: The name of the queue or
+        :param str queue_name: The name of the queue or
          a `QueueProperties` with name.
         :rtype: None
         """

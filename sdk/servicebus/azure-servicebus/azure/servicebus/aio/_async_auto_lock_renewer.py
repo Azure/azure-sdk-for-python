@@ -28,7 +28,7 @@ class AutoLockRenew:
     tokens of messages and/or sessions in the background.
 
     :param loop: An async event loop.
-    :type loop: ~asyncio.BaseEventLoop
+    :type loop: ~asyncio.AbstractEventLoop
 
     .. admonition:: Example:
 
@@ -48,7 +48,7 @@ class AutoLockRenew:
 
     """
 
-    def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None) -> None:
+    def __init__(self, loop: Optional[asyncio.AbstractEventLoop] = None) -> None:
         self._shutdown = asyncio.Event()
         self._futures = [] # type: List[asyncio.Future]
         self._loop = loop or get_running_loop()
@@ -113,10 +113,12 @@ class AutoLockRenew:
             if on_lock_renew_failure and not clean_shutdown:
                 await on_lock_renew_failure(renewable, error)
 
-    def register(self,
-                 renewable: Union[ReceivedMessage, ServiceBusSession],
-                 timeout: float = 300,
-                 on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None) -> None:
+    def register(
+        self,
+        renewable: Union[ReceivedMessage, ServiceBusSession],
+        timeout: float = 300,
+        on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None
+    ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
@@ -126,6 +128,7 @@ class AutoLockRenew:
         :param Optional[AsyncLockRenewFailureCallback] on_lock_renew_failure:
          An async callback may be specified to be called when the lock is lost on the renewable being registered.
          Default value is None (no callback).
+         :rtype: None
         """
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
