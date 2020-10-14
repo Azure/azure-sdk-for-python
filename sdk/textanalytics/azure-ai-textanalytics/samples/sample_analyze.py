@@ -56,10 +56,10 @@ class AnalyzeSample(object):
             documents,
             display_name="Sample Text Analysis",
             entities_recognition_tasks=[EntitiesRecognitionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            entity_linking_tasks=[EntityLinkingTask()],
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            sentiment_analysis_tasks=[SentimentAnalysisTask()]
+            # pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            # entity_linking_tasks=[EntityLinkingTask()],
+            # key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            # sentiment_analysis_tasks=[SentimentAnalysisTask()]
         )
 
         result = poller.result()

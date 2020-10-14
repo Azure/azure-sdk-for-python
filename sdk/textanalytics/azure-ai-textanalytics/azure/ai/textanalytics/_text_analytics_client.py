@@ -691,11 +691,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         try:
             analyze_tasks = self._client.models(api_version='v3.2-preview.1').JobManifestTasks(
-                entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks],
-                entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks],
-                entity_linking_tasks = [t.to_generated() for t in entity_linking_tasks],
-                key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks],
-                sentiment_analysis_tasks = [t.to_generated() for t in sentiment_analysis_tasks]
+                entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks] if entities_recognition_tasks else [],
+                entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks] if pii_entities_recognition_tasks else [],
+                entity_linking_tasks = [t.to_generated() for t in entity_linking_tasks] if entity_linking_tasks else [],
+                key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks] if key_phrase_extraction_tasks else [],
+                sentiment_analysis_tasks = [t.to_generated() for t in sentiment_analysis_tasks] if sentiment_analysis_tasks else []
                 # TODO: add custom task types later
             )
             analyze_body = self._client.models(api_version='v3.2-preview.1').AnalyzeBatchInput(
