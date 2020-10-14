@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-import enum
 from warnings import warn
 from typing import ( # pylint: disable=unused-import
     Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
@@ -297,7 +296,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         delete_include = None
         if delete_snapshots:
             warn("The `delete_snapshots` parameter is being deprecated. "
-                 "Please use the `include_snapshots` parameter instead.")
+                 "Please use the `include_snapshots` parameter instead.", DeprecationWarning)
             delete_include = DeleteSnapshotsOptionType.include
         if include_snapshots:
             if isinstance(include_snapshots, str) and include_snapshots not in ['include', 'include-leased']:
