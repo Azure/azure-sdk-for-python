@@ -44,14 +44,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_managed_clusters(self, resource_group):
-        try:
-            CLIENT_ID = self.settings.CLIENT_ID
-        except:
-            CLIENT_ID = "123"
-        try:
-            CLIENT_SECRET = self.settings.CLIENT_SECRET
-        except:
-            CLIENT_SECRET = "123"
+        CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
+        CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "7"
 
@@ -82,7 +76,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         for i in range(10):
             try:
                 result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
-                                                                                  resource_name=RESOURCE_NAME, parameters=BODY)
+                                                                                  resource_name=RESOURCE_NAME,
+                                                                                  parameters=BODY)
                 result.result()
             except azure.core.exceptions.ResourceExistsError:
                 time.sleep(30)
@@ -139,14 +134,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_privateLinkResources(self, resource_group):
-        try:
-            CLIENT_ID = self.settings.CLIENT_ID
-        except:
-            CLIENT_ID = "123"
-        try:
-            CLIENT_SECRET = self.settings.CLIENT_SECRET
-        except:
-            CLIENT_SECRET = "123"
+        CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
+        CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "2"
 
@@ -179,7 +168,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         for i in range(10):
             try:
                 result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
-                                                                                  resource_name=RESOURCE_NAME, parameters=BODY)
+                                                                                  resource_name=RESOURCE_NAME,
+                                                                                  parameters=BODY)
                 result.result()
             except azure.core.exceptions.ResourceExistsError:
                 time.sleep(30)
@@ -191,14 +181,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_resolvePrivateLinkServiceId(self, resource_group):
-        try:
-            CLIENT_ID = self.settings.CLIENT_ID
-        except:
-            CLIENT_ID = "123"
-        try:
-            CLIENT_SECRET = self.settings.CLIENT_SECRET
-        except:
-            CLIENT_SECRET = "123"
+        CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
+        CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "3"
 
@@ -231,7 +215,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         for i in range(10):
             try:
                 result = self.mgmt_client.managed_clusters.begin_create_or_update(resource_group_name=RESOURCE_GROUP,
-                                                                                  resource_name=RESOURCE_NAME, parameters=BODY)
+                                                                                  resource_name=RESOURCE_NAME,
+                                                                                  parameters=BODY)
                 result.result()
             except azure.core.exceptions.ResourceExistsError:
                 time.sleep(30)
@@ -247,14 +232,8 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_agentPools(self, resource_group):
-        try:
-            CLIENT_ID = self.settings.CLIENT_ID
-        except:
-            CLIENT_ID = "123"
-        try:
-            CLIENT_SECRET = self.settings.CLIENT_SECRET
-        except:
-            CLIENT_SECRET = "123"
+        CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
+        CLIENT_SECRET = getattr(self.settings, 'CLIENT_SECRET', "123")
         RESOURCE_GROUP = resource_group.name
         RESOURCE_NAME = "4"
         AGENT_POOL_NAME = "aksagent"
