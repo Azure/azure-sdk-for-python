@@ -34,43 +34,6 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-async def _do_retryable_operation(handler, operation, timeout=None, **kwargs):
-    # type: (BaseHandler, Callable, Optional[float], Any) -> Any
-    # pylint: disable=protected-access
-    require_last_exception = kwargs.pop("require_last_exception", False)
-    operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
-    retried_times = 0
-    max_retries = handler._config.retry_total
-
-    abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
-
-    while retried_times <= max_retries:
-        try:
-            if operation_requires_timeout and abs_timeout_time:
-                remaining_timeout = abs_timeout_time - time.time()
-                kwargs["timeout"] = remaining_timeout
-            return await operation(**kwargs)
-        except StopAsyncIteration:
-            raise
-        except Exception as exception:  # pylint: disable=broad-except
-            last_exception = await handler._handle_exception(exception, **kwargs)
-            if require_last_exception:
-                kwargs["last_exception"] = last_exception
-            retried_times += 1
-            if retried_times > max_retries:
-                _LOGGER.info(
-                    "%r operation has exhausted retry. Last exception: %r.",
-                    handler._container_id,
-                    last_exception,
-                )
-                raise last_exception
-            await handler._backoff(
-                retried_times=retried_times,
-                last_exception=last_exception,
-                abs_timeout_time=abs_timeout_time
-            )
-
-
 class ServiceBusSASTokenCredential(object):
     """The shared access token credential used for authentication.
     :param str token: The shared access token string
@@ -161,6 +124,42 @@ class BaseHandler:
 
         return error
 
+    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
+        # pylint: disable=protected-access
+        require_last_exception = kwargs.pop("require_last_exception", False)
+        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
+        retried_times = 0
+        max_retries = self._config.retry_total
+
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+
+        while retried_times <= max_retries:
+            try:
+                if operation_requires_timeout and abs_timeout_time:
+                    remaining_timeout = abs_timeout_time - time.time()
+                    kwargs["timeout"] = remaining_timeout
+                return await operation(**kwargs)
+            except StopAsyncIteration:
+                raise
+            except Exception as exception:  # pylint: disable=broad-except
+                last_exception = await self._handle_exception(exception, **kwargs)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
+                retried_times += 1
+                if retried_times > max_retries:
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
+                await self._backoff(
+                    retried_times=retried_times,
+                    last_exception=last_exception,
+                    abs_timeout_time=abs_timeout_time
+                )
+
     async def _backoff(
             self,
             retried_times,
@@ -244,8 +243,7 @@ class BaseHandler:
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
-        return await _do_retryable_operation(
-            self,
+        return await self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
             message=message,
@@ -259,7 +257,7 @@ class BaseHandler:
         raise ValueError("Subclass should override the method.")
 
     async def _open_with_retry(self):
-        return await _do_retryable_operation(self, self._open)
+        return await self._do_retryable_operation(self._open)
 
     async def _close_handler(self):
         if self._handler:

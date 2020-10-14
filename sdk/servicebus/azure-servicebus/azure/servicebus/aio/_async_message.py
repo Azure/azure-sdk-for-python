@@ -7,7 +7,6 @@ import logging
 import datetime
 from typing import Any, Optional
 
-from ._base_handler_async import _do_retryable_operation
 from .._common import message as sync_message
 from .._common.constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
@@ -32,10 +31,11 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         self,
         settle_operation,
         dead_letter_reason=None,
-        dead_letter_error_description=None
+        dead_letter_error_description=None,
+        **kwargs
     ):
-        await _do_retryable_operation(
-            self._receiver,  # type: ignore
+        # pylint: disable=unused-argument, protected-access
+        await self._receiver._do_retryable_operation(
             self._settle_message,
             timeout=None,
             settle_operation=settle_operation,

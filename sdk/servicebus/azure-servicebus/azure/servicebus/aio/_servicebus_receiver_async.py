@@ -13,7 +13,7 @@ import six
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
-from ._base_handler_async import BaseHandler, _do_retryable_operation
+from ._base_handler_async import BaseHandler
 from .._common.message import PeekedMessage
 from ._async_message import ReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
@@ -160,7 +160,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._check_live()
         while True:
             try:
-                return await _do_retryable_operation(self, self._iter_next)
+                return await self._do_retryable_operation(self._iter_next)
             except StopAsyncIteration:
                 self._message_iter = None
                 raise
@@ -403,8 +403,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
-        return await _do_retryable_operation(
-            self,
+        return await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,

@@ -57,7 +57,6 @@ from ..exceptions import (
     MessageSettleFailed,
     MessageContentTooLarge,
     ServiceBusError)
-from .._base_handler import _do_retryable_operation
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
@@ -939,10 +938,11 @@ class ReceivedMessage(ReceivedMessageBase):
         self,
         settle_operation,
         dead_letter_reason=None,
-        dead_letter_error_description=None
+        dead_letter_error_description=None,
+        **kwargs
     ):
-        _do_retryable_operation(
-            self._receiver,
+        # pylint: disable=unused-argument, protected-access
+        self._receiver._do_retryable_operation(
             self._settle_message,
             timeout=None,
             settle_operation=settle_operation,

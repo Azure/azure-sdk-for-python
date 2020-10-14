@@ -112,43 +112,6 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     return _AccessToken(token=token, expires_on=abs_expiry)
 
 
-def _do_retryable_operation(handler, operation, timeout=None, **kwargs):
-    # type: (BaseHandler, Callable, Optional[float], Any) -> Any
-    # pylint: disable=protected-access
-    require_last_exception = kwargs.pop("require_last_exception", False)
-    operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
-    retried_times = 0
-    max_retries = handler._config.retry_total
-
-    abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
-
-    while retried_times <= max_retries:
-        try:
-            if operation_requires_timeout and abs_timeout_time:
-                remaining_timeout = abs_timeout_time - time.time()
-                kwargs["timeout"] = remaining_timeout
-            return operation(**kwargs)
-        except StopIteration:
-            raise
-        except Exception as exception:  # pylint: disable=broad-except
-            last_exception = handler._handle_exception(exception, **kwargs)
-            if require_last_exception:
-                kwargs["last_exception"] = last_exception
-            retried_times += 1
-            if retried_times > max_retries:
-                _LOGGER.info(
-                    "%r operation has exhausted retry. Last exception: %r.",
-                    handler._container_id,
-                    last_exception,
-                )
-                raise last_exception
-            handler._backoff(
-                retried_times=retried_times,
-                last_exception=last_exception,
-                abs_timeout_time=abs_timeout_time
-            )
-
-
 class ServiceBusSASTokenCredential(object):
     """The shared access token credential used for authentication.
     :param str token: The shared access token string
@@ -268,6 +231,42 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         return error
 
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
+        # pylint: disable=protected-access
+        require_last_exception = kwargs.pop("require_last_exception", False)
+        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
+        retried_times = 0
+        max_retries = self._config.retry_total
+
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+
+        while retried_times <= max_retries:
+            try:
+                if operation_requires_timeout and abs_timeout_time:
+                    remaining_timeout = abs_timeout_time - time.time()
+                    kwargs["timeout"] = remaining_timeout
+                return operation(**kwargs)
+            except StopIteration:
+                raise
+            except Exception as exception:  # pylint: disable=broad-except
+                last_exception = self._handle_exception(exception, **kwargs)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
+                retried_times += 1
+                if retried_times > max_retries:
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
+                self._backoff(
+                    retried_times=retried_times,
+                    last_exception=last_exception,
+                    abs_timeout_time=abs_timeout_time
+                )
+
     def _backoff(
         self,
         retried_times,
@@ -355,8 +354,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
-        return _do_retryable_operation(
-            self,
+        return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
             message=message,
@@ -370,7 +368,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         raise ValueError("Subclass should override the method.")
 
     def _open_with_retry(self):
-        return _do_retryable_operation(self, self._open)
+        return self._do_retryable_operation(self._open)
 
     def _close_handler(self):
         if self._handler:

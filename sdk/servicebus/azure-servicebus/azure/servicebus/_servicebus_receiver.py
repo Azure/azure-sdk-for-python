@@ -13,7 +13,7 @@ from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
 
-from ._base_handler import BaseHandler, _do_retryable_operation
+from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
 from ._common.message import PeekedMessage, ReceivedMessage
 from ._common.constants import (
@@ -157,7 +157,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._check_live()
         while True:
             try:
-                return _do_retryable_operation(self, self._iter_next)
+                return self._do_retryable_operation(self._iter_next)
             except StopIteration:
                 self._message_iter = None
                 raise
@@ -413,8 +413,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
-        return _do_retryable_operation(
-            self,
+        return self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
