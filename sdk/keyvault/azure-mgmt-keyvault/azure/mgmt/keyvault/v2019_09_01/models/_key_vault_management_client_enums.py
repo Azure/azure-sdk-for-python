@@ -34,6 +34,7 @@ class AccessPolicyUpdateKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
 
 class CertificatePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+    ALL = "all"
     GET = "get"
     LIST = "list"
     DELETE = "delete"
@@ -60,6 +61,7 @@ class CreateMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class KeyPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+    ALL = "all"
     ENCRYPT = "encrypt"
     DECRYPT = "decrypt"
     WRAP_KEY = "wrapKey"
@@ -123,6 +125,7 @@ class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class SecretPermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+    ALL = "all"
     GET = "get"
     LIST = "list"
     SET = "set"
@@ -147,6 +150,7 @@ class SkuName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class StoragePermissions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+    ALL = "all"
     GET = "get"
     LIST = "list"
     DELETE = "delete"
