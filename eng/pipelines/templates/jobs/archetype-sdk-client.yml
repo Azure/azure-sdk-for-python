@@ -78,7 +78,7 @@ jobs:
     - template: ../../../common/pipelines/templates/steps/verify-links.yml
       parameters:
         Directory: ''
-        Urls: (git diff origin/master HEAD --name-only -- *.md)
+        Urls: (git diff origin/${env:SYSTEM_PULLREQUEST_TARGETBRANCH} HEAD --name-only -- *.md)
         CheckLinkGuidance: $true
 
     - template: ../steps/analyze.yml
