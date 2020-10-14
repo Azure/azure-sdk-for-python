@@ -1,17 +1,27 @@
 # Microsoft Azure SDK for Python
 
+{% if is_arm %}
+This is the Microsoft Azure {{package_pprint_name}} Management Library.
+{% else % }
 This is the Microsoft Azure {{package_pprint_name}} Client Library.
+{% endif %}
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all)
 
 
 # Usage
 
+{% if is_arm %}
 To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk/python/mgmt)
+{% endif %}
 
-For code samples, see [{{package_pprint_name}}](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/{{package_doc_id}}/) on docs.microsoft.com.
-
-Additional code samples can be found [here](https://aka.ms/azsdk/python/mgmt/samples)
+{% if is_arm %} 
+For docs and references, see [{{Python SDK References}}](https://docs.microsoft.com/en-us/python/api/overview/azure/?view=azure-python)
+Code samples for this package can be found at [{{package_pprint_name}}](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/{{package_doc_id}}) on docs.microsoft.com.
+Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+{% else %}
+For code examples, see [{{package_pprint_name}}](https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}) on docs.microsoft.com.
+{% endif %}
 
 # Provide Feedback
 
