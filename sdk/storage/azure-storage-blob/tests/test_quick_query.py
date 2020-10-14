@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import base64
 
 import pytest
 
@@ -17,6 +18,8 @@ from azure.storage.blob import (
 )
 
 # ------------------------------------------------------------------------------
+from azure.storage.blob._models import ArrowDialect, ArrowType
+
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
            b'azure-data-appconfiguration,1,appconfiguration,FALSE\r\nEvent Hubs' \
            b'\r\nEvent Hubs - Azure Storage CheckpointStore,' \
@@ -874,5 +877,63 @@ class StorageQuickQueryTest(StorageTestCase):
         self.assertEqual(resp._size, len(data))
         self.assertEqual(query_result, b'{"name":"owner"}\n{}\n{"name":"owner"}\n')
         self._teardown(bsc)
+
+    @GlobalStorageAccountPreparer()
+    def test_quick_query_output_in_arrow_format(self, resource_group, location, storage_account,
+                                                         storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+
+        data = b'100,200,300,400\n300,400,500,600\n'
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.upload_blob(data, overwrite=True)
+
+        errors = []
+        def on_error(error):
+            errors.append(error)
+
+        output_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+
+        resp = blob_client.query_blob(
+            "SELECT _2 from BlobStorage WHERE _1 > 250",
+            on_error=on_error,
+            output_format=output_format)
+        query_result = base64.b64encode(resp.readall())
+        expected_result = b"/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABAwAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAUAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHJAAAABQAAAAEAAAAAAAAAAgADAAEAAgACAAAAAQAAAACAAAAAwAAAGFiYwD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMDABAAAAAAAAoADAAAAAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAD/////iAAAABQAAAAAAAAADAAWAAYABQAIAAwADAAAAAADAwAYAAAAEAAAAAAAAAAAAAoAGAAMAAQACAAKAAAAPAAAABAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAAAAAACQAQAAAAAAAAAAAAAAAAAA"
+
+        self.assertEqual(len(errors), 0)
+        self.assertEqual(query_result, expected_result)
+        self._teardown(bsc)
+
+    @GlobalStorageAccountPreparer()
+    def test_quick_query_input_in_arrow_format(self, resource_group, location, storage_account,
+                                               storage_account_key):
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=storage_account_key)
+        self._setup(bsc)
+
+        # upload the json file
+        blob_name = self._get_blob_reference()
+        blob_client = bsc.get_blob_client(self.container_name, blob_name)
+
+        errors = []
+        def on_error(error):
+            errors.append(error)
+
+        input_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+
+        with self.assertRaises(ValueError):
+            blob_client.query_blob(
+                "SELECT * from BlobStorage",
+                on_error=on_error,
+                blob_format=input_format)
 
 # ------------------------------------------------------------------------------

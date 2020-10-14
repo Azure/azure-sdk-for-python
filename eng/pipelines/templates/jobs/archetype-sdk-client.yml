@@ -39,6 +39,11 @@ parameters:
       PythonVersion: 'pypy3'
       CoverageArg: '--disablecov'
       RunForPR: false
+    Linux_Python39:
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: '3.9.0'
+      CoverageArg: ''
+      RunForPR: true
   AdditionalTestMatrix: []
   DevFeedName: 'public/azure-sdk-for-python'
 
@@ -111,7 +116,15 @@ jobs:
     pool:
       vmImage: '$(OSVmImage)'
 
-    steps:    
+    steps:
+    - task: PowerShell@2
+      displayName: Prep template pipeline for release
+      condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
+      inputs:
+        pwsh: true
+        workingDirectory: $(Build.SourcesDirectory)
+        filePath: eng/scripts/SetTestPipelineVersion.ps1
+
     - pwsh: |
         $toxenvvar = "whl,sdist"
         if (('$(Build.Reason)' -eq 'Schedule') -and ('$(System.TeamProject)' -eq 'internal')) {

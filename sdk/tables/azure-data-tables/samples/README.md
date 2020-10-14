@@ -54,7 +54,7 @@ what you can do with the Azure Data Tables client library.
 
 
 <!-- LINKS -->
-[api_reference_documentation]: https://aka.ms/azsdk/python/tables/docs
+[api_reference_documentation]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
 
 [sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py

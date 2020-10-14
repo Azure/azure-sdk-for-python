@@ -30,13 +30,13 @@ interactions:
         }"
     headers:
       apim-request-id:
-      - 6f3521e3-668a-4371-b5bc-bf9fbe7a9fc8
+      - ec5ec1b0-7a2e-4846-beba-69c3e878273c
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 10 Sep 2020 15:25:38 GMT
+      - Wed, 30 Sep 2020 16:45:58 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '61'
+      - '54'
     status:
       code: 200
       message: OK

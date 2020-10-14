@@ -10,10 +10,10 @@ from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
-    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
     """The ServiceBusSessionReceiver class defines a high level interface for

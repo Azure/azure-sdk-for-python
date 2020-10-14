@@ -9,21 +9,9 @@ import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.pipeline.transport import HttpTransport
-from azure.core.exceptions import (
-    ResourceNotFoundError,
-    ResourceExistsError,
-    ClientAuthenticationError
-)
 
 POLLING_INTERVAL = 5
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
-
-
-error_map = {
-    404: ResourceNotFoundError,
-    409: ResourceExistsError,
-    401: ClientAuthenticationError
-}
 
 def _get_deserialize():
     from ._generated.v2_1_preview_1 import FormRecognizerClient

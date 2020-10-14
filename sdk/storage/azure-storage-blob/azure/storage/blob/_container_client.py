@@ -782,7 +782,7 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -877,6 +877,13 @@ class ContainerClient(StorageAccountHostsMixin):
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to delete.
+
+            .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -898,7 +905,7 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -963,7 +970,7 @@ class ContainerClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -1163,7 +1170,7 @@ class ContainerClient(StorageAccountHostsMixin):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 
@@ -1332,7 +1339,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :type blobs: list[str], list[dict], or list[~azure.storage.blob.BlobProperties]
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :keyword str if_tags_match_condition
+        :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
             eg. "\"tagname\"='my tag'"
 

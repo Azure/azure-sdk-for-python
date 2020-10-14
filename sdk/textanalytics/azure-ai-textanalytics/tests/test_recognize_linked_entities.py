@@ -50,8 +50,6 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.matches)
                 for match in entity.matches:
                     self.assertIsNotNone(match.offset)
-                    self.assertIsNotNone(match.length)
-                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -73,8 +71,6 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.matches)
                 for match in entity.matches:
                     self.assertIsNotNone(match.offset)
-                    self.assertIsNotNone(match.length)
-                    self.assertNotEqual(match.length, 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
@@ -549,7 +545,7 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer()
-    def test_offset_length(self, client):
+    def test_offset(self, client):
         result = client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         entities = result[0].entities
 
@@ -559,26 +555,20 @@ class TestRecognizeLinkedEntities(TextAnalyticsTest):
         paul_allen_entity = [entity for entity in entities if entity.name == "Paul Allen"][0]
 
         self.assertEqual(microsoft_entity.matches[0].offset, 0)
-        self.assertEqual(microsoft_entity.matches[0].length, 9)
 
         self.assertEqual(bill_gates_entity.matches[0].offset, 25)
-        self.assertEqual(bill_gates_entity.matches[0].length, 10)
 
         self.assertEqual(paul_allen_entity.matches[0].offset, 40)
-        self.assertEqual(paul_allen_entity.matches[0].length, 10)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    def test_no_offset_length_v3_linked_entity_match(self, client):
+    def test_no_offset_v3_linked_entity_match(self, client):
         result = client.recognize_linked_entities(["Microsoft was founded by Bill Gates and Paul Allen"])
         entities = result[0].entities
 
         self.assertIsNone(entities[0].matches[0].offset)
-        self.assertIsNone(entities[0].matches[0].length)
         self.assertIsNone(entities[1].matches[0].offset)
-        self.assertIsNone(entities[1].matches[0].length)
         self.assertIsNone(entities[2].matches[0].offset)
-        self.assertIsNone(entities[2].matches[0].length)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})

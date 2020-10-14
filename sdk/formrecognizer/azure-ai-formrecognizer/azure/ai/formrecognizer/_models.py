@@ -183,6 +183,11 @@ class RecognizedForm(object):
 
     :ivar str form_type:
         The type of form the model identified the submitted form to be.
+    :ivar str form_type_confidence:
+        Confidence of the type of form the model identified the submitted form to be.
+    :ivar str model_id:
+        Model identifier of model used to analyze form if not using a prebuilt
+        model.
     :ivar fields:
         A dictionary of the fields found on the form. The fields dictionary
         keys are the `name` of the field. For models trained with labels,
@@ -194,20 +199,27 @@ class RecognizedForm(object):
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
         words, tables and page metadata.
+    .. versionadded:: v2.1-preview
+        The *form_type_confidence* and *model_id* properties
     """
     def __init__(self, **kwargs):
         self.fields = kwargs.get("fields", None)
         self.form_type = kwargs.get("form_type", None)
         self.page_range = kwargs.get("page_range", None)
         self.pages = kwargs.get("pages", None)
+        self.model_id = kwargs.get('model_id', None)
+        self.form_type_confidence = kwargs.get('form_type_confidence', None)
 
     def __repr__(self):
-        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={})" \
+        return "RecognizedForm(form_type={}, fields={}, page_range={}, pages={}, form_type_confidence={}, " \
+               "model_id={})" \
             .format(
                 self.form_type,
                 repr(self.fields),
                 repr(self.page_range),
-                repr(self.pages)
+                repr(self.pages),
+                self.form_type_confidence,
+                self.model_id
             )[:1024]
 
 
@@ -376,14 +388,14 @@ class FormPage(object):
         self.selection_marks = kwargs.get("selection_marks", None)
 
     @classmethod
-    def _from_generated_receipt(cls, read_result):
+    def _from_generated_prebuilt_model(cls, read_result):
         return [cls(
             page_number=page.page,
             text_angle=adjust_text_angle(page.angle),
             width=page.width,
             height=page.height,
             unit=page.unit,
-            tables=None,  # receipt model does not return tables
+            tables=None,  # prebuilt model does not return tables
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
             if page.lines else None
         ) for page in read_result]
@@ -654,6 +666,11 @@ class CustomFormModel(object):
         List of any training errors.
     :ivar list[~azure.ai.formrecognizer.TrainingDocumentInfo] training_documents:
          Metadata about each of the documents used to train the model.
+    :ivar str model_name: Optional user defined model name.
+    :ivar properties: Optional model properties.
+    :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+    .. versionadded:: v2.1-preview
+        The *model_name* and *properties* properties.
     """
 
     def __init__(self, **kwargs):
@@ -664,25 +681,44 @@ class CustomFormModel(object):
         self.submodels = kwargs.get("submodels", None)
         self.errors = kwargs.get("errors", None)
         self.training_documents = kwargs.get("training_documents", None)
+        self.model_name = kwargs.get("model_name", None)
+        self.properties = kwargs.get("properties", None)
 
     @classmethod
-    def _from_generated(cls, model):
+    def _from_generated(cls, model, api_version):
         return cls(
             model_id=model.model_info.model_id,
             status=model.model_info.status,
             training_started_on=model.model_info.created_date_time,
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
-            if model.keys else CustomFormSubmodel._from_generated_labeled(model),
+            if model.keys else CustomFormSubmodel._from_generated_labeled(
+                model, api_version, model_name=model.model_info.model_name
+            ),
             errors=FormRecognizerError._from_generated(model.train_result.errors)
             if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
-            if model.train_result else None
+            if model.train_result else None,
+            properties=CustomFormModelProperties._from_generated(model.model_info),
+            model_name=model.model_info.model_name
+        )
+
+    @classmethod
+    def _from_generated_composed(cls, model):
+        return cls(
+            model_id=model.model_info.model_id,
+            status=model.model_info.status,
+            training_started_on=model.model_info.created_date_time,
+            training_completed_on=model.model_info.last_updated_date_time,
+            submodels=CustomFormSubmodel._from_generated_composed(model),
+            training_documents=TrainingDocumentInfo._from_generated_composed(model),
+            properties=CustomFormModelProperties._from_generated(model.model_info),
+            model_name=model.model_info.model_name
         )
 
     def __repr__(self):
         return "CustomFormModel(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
-               "submodels={}, errors={}, training_documents={})" \
+               "submodels={}, errors={}, training_documents={}, model_name={}, properties={})" \
                 .format(
                     self.model_id,
                     self.status,
@@ -690,13 +726,16 @@ class CustomFormModel(object):
                     self.training_completed_on,
                     repr(self.submodels),
                     repr(self.errors),
-                    repr(self.training_documents)
+                    repr(self.training_documents),
+                    self.model_name,
+                    repr(self.properties)
                 )[:1024]
 
 
 class CustomFormSubmodel(object):
     """Represents a submodel that extracts fields from a specific type of form.
 
+    :ivar str model_id: Model identifier of the submodel.
     :ivar float accuracy: The mean of the model's field accuracies.
     :ivar fields: A dictionary of the fields that this submodel will recognize
         from the input document. The fields dictionary keys are the `name` of
@@ -705,8 +744,11 @@ class CustomFormSubmodel(object):
         is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
+    .. versionadded:: v2.1-preview
+        The *model_id* property
     """
     def __init__(self, **kwargs):
+        self.model_id = kwargs.get("model_id", None)
         self.accuracy = kwargs.get("accuracy", None)
         self.fields = kwargs.get("fields", None)
         self.form_type = kwargs.get("form_type", None)
@@ -715,6 +757,7 @@ class CustomFormSubmodel(object):
     def _from_generated_unlabeled(cls, model):
         return [
             cls(
+                model_id=model.model_info.model_id,
                 accuracy=None,
                 fields=CustomFormModelField._from_generated_unlabeled(fields),
                 form_type="form-" + cluster_id
@@ -722,22 +765,43 @@ class CustomFormSubmodel(object):
         ]
 
     @classmethod
-    def _from_generated_labeled(cls, model):
+    def _from_generated_labeled(cls, model, api_version, model_name):
+        if api_version == "2.0":
+            form_type = "form-" + model.model_info.model_id
+        elif model_name:
+            form_type = "custom:" + model_name
+        else:
+            form_type = "custom:" + model.model_info.model_id
+
         return [
             cls(
+                model_id=model.model_info.model_id,
                 accuracy=model.train_result.average_model_accuracy,
                 fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
                         for field in model.train_result.fields} if model.train_result.fields else None,
-                form_type="form-" + model.model_info.model_id
+                form_type=form_type
             )
         ] if model.train_result else None
 
+    @classmethod
+    def _from_generated_composed(cls, model):
+        return [
+            cls(
+                accuracy=train_result.average_model_accuracy,
+                fields={field.field_name: CustomFormModelField._from_generated_labeled(field)
+                        for field in train_result.fields} if train_result.fields else None,
+                form_type="custom:" + train_result.model_id,
+                model_id=train_result.model_id
+            ) for train_result in model.composed_train_results
+        ]
+
     def __repr__(self):
-        return "CustomFormSubmodel(accuracy={}, fields={}, form_type={})" \
+        return "CustomFormSubmodel(accuracy={}, model_id={}, fields={}, form_type={})" \
             .format(
                 self.accuracy,
+                self.model_id,
                 repr(self.fields),
-                self.form_type
+                self.form_type,
             )[:1024]
 
 
@@ -792,6 +856,10 @@ class TrainingDocumentInfo(object):
         Total number of pages trained.
     :ivar list[~azure.ai.formrecognizer.FormRecognizerError] errors:
         List of any errors for document.
+    :ivar str model_id:
+        The model ID that used the document to train.
+    .. versionadded:: v2.1-preview
+        The *model_id* property
     """
 
     def __init__(self, **kwargs):
@@ -799,6 +867,7 @@ class TrainingDocumentInfo(object):
         self.status = kwargs.get("status", None)
         self.page_count = kwargs.get("page_count", None)
         self.errors = kwargs.get("errors", None)
+        self.model_id = kwargs.get("model_id", None)
 
     @classmethod
     def _from_generated(cls, train_result):
@@ -807,17 +876,35 @@ class TrainingDocumentInfo(object):
                 name=doc.document_name,
                 status=doc.status,
                 page_count=doc.pages,
-                errors=FormRecognizerError._from_generated(doc.errors)
+                errors=FormRecognizerError._from_generated(doc.errors),
+                model_id=train_result.model_id
             ) for doc in train_result.training_documents
         ] if train_result.training_documents else None
 
+    @classmethod
+    def _from_generated_composed(cls, model):
+        training_document_info = []
+        for train_result in model.composed_train_results:
+            for doc in train_result.training_documents:
+                training_document_info.append(
+                    cls(
+                        name=doc.document_name,
+                        status=doc.status,
+                        page_count=doc.pages,
+                        errors=FormRecognizerError._from_generated(doc.errors),
+                        model_id=train_result.model_id
+                    )
+                )
+        return training_document_info
+
     def __repr__(self):
-        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={})" \
+        return "TrainingDocumentInfo(name={}, status={}, page_count={}, errors={}, model_id={})" \
             .format(
                 self.name,
                 self.status,
                 self.page_count,
-                repr(self.errors)
+                repr(self.errors),
+                self.model_id
             )[:1024]
 
 
@@ -853,6 +940,12 @@ class CustomFormModelInfo(object):
         Date and time (UTC) when model training was started.
     :ivar ~datetime.datetime training_completed_on:
         Date and time (UTC) when model training completed.
+    :ivar model_name: Optional user defined model name.
+    :vartype model_name: str
+    :ivar properties: Optional model properties.
+    :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+    .. versionadded:: v2.1-preview
+        The *model_name* and *properties* properties
     """
 
     def __init__(self, **kwargs):
@@ -860,26 +953,41 @@ class CustomFormModelInfo(object):
         self.status = kwargs.get("status", None)
         self.training_started_on = kwargs.get("training_started_on", None)
         self.training_completed_on = kwargs.get("training_completed_on", None)
+        self.model_name = kwargs.get("model_name", None)
+        self.properties = kwargs.get("properties", None)
 
     @classmethod
     def _from_generated(cls, model, model_id=None):
         if model.status == "succeeded":  # map copy status to model status
             model.status = "ready"
+
+        model_name = None
+        if hasattr(model, "attributes"):
+            properties = CustomFormModelProperties._from_generated(model)
+        else:
+            properties = CustomFormModelProperties(is_composed_model=False)
+        if hasattr(model, "model_name"):
+            model_name = model.model_name
         return cls(
             model_id=model_id if model_id else model.model_id,
             status=model.status,
             training_started_on=model.created_date_time,
-            training_completed_on=model.last_updated_date_time
+            training_completed_on=model.last_updated_date_time,
+            properties=properties,
+            model_name=model_name
         )
 
     def __repr__(self):
-        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={})" \
-            .format(
-                self.model_id,
-                self.status,
-                self.training_started_on,
-                self.training_completed_on
-            )[:1024]
+        return "CustomFormModelInfo(model_id={}, status={}, training_started_on={}, training_completed_on={}, " \
+               "properties={}, model_name={})" \
+                .format(
+                    self.model_id,
+                    self.status,
+                    self.training_started_on,
+                    self.training_completed_on,
+                    repr(self.properties),
+                    self.model_name
+                )[:1024]
 
 
 class AccountProperties(object):
@@ -906,3 +1014,29 @@ class AccountProperties(object):
                 self.custom_model_count,
                 self.custom_model_limit
             )[:1024]
+
+
+class CustomFormModelProperties(object):
+    """Optional model properties.
+
+    :ivar bool is_composed_model: Is this model composed? (default: false).
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.is_composed_model = kwargs.get('is_composed_model', False)
+
+    @classmethod
+    def _from_generated(cls, model_info):
+        if model_info.attributes:
+            return cls(
+                is_composed_model=model_info.attributes.is_composed
+            )
+        return cls(
+            is_composed_model=False
+        )
+
+    def __repr__(self):
+        return "CustomFormModelProperties(is_composed_model={})".format(self.is_composed_model)

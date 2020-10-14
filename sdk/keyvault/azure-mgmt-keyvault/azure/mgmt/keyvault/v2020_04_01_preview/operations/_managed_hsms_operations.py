@@ -68,7 +68,7 @@ class ManagedHsmsOperations(object):
         url = self._create_or_update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str', pattern=r'^[a-zA-Z0-9]{3,24}$'),
+            'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -193,7 +193,7 @@ class ManagedHsmsOperations(object):
         url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'name': self._serialize.url("name", name, 'str', pattern=r'^[a-zA-Z0-9]{3,24}$'),
+            'name': self._serialize.url("name", name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)

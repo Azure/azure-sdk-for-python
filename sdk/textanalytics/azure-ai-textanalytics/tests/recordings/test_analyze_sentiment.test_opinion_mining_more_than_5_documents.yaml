@@ -21,7 +21,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/sentiment?showStats=false&opinionMining=true&stringIndexType=UnicodeCodePoint
   response:
@@ -38,13 +38,13 @@ interactions:
         toilet smelled.","aspects":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":4,"length":6,"text":"toilet","relations":[{"relationType":"opinion","ref":"#/documents/1/sentences/0/opinions/0"}]}],"opinions":[{"sentiment":"negative","confidenceScores":{"positive":0.01,"negative":0.99},"offset":11,"length":7,"text":"smelled","isNegated":false}]}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}'
     headers:
       apim-request-id:
-      - 3114573b-7cce-415e-8fb0-4a40fbb1fdf4
+      - 5becb7d5-b74c-4708-8e0a-cd6ca1cff272
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=7
       date:
-      - Wed, 16 Sep 2020 19:41:48 GMT
+      - Wed, 30 Sep 2020 16:02:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -52,7 +52,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '113'
+      - '434'
     status:
       code: 200
       message: OK

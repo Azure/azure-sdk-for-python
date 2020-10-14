@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: 'b''{"source": "https://fakeuri.com/blank%20space"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '47'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "InvalidImage", "innerError": {"requestId": "dfb63688-5733-466c-a2ab-f42efb30e1ba"},
+        "message": "The input data is not a valid image or password protected."}}'
+    headers:
+      apim-request-id:
+      - dfb63688-5733-466c-a2ab-f42efb30e1ba
+      content-length:
+      - '170'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Oct 2020 21:58:54 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '1525'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

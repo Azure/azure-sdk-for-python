@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/entities/recognition/pii?showStats=false&stringIndexType=UnicodeCodePoint
   response:
@@ -24,11 +24,11 @@ interactions:
         language code. Supported languages: en"}}}],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 4150f7c3-681c-49d6-8c27-356fb089cbcd
+      - 3cff3b0d-739e-4ce0-bccc-97ea49e39112
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 10 Sep 2020 15:25:44 GMT
+      - Wed, 30 Sep 2020 16:03:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:

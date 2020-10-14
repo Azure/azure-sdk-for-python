@@ -323,24 +323,16 @@ class KeyVaultSecretTest(KeyVaultTestCase):
                     # this means the message is not JSON or has no kty property
                     pass
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer()
-    async def test_allowed_headers_passed_to_http_logging_policy(self, client, **kwargs):
-        passed_in_allowed_headers = {
-            "x-ms-keyvault-network-info",
-            "x-ms-keyvault-region",
-            "x-ms-keyvault-service-version"
-        }
-        assert passed_in_allowed_headers.issubset(
-            client._client._config.http_logging_policy.allowed_header_names
-        )
 
-    class _CustomHookPolicy(object):
+def test_service_headers_allowed_in_logs():
+    service_headers = {"x-ms-keyvault-network-info", "x-ms-keyvault-region", "x-ms-keyvault-service-version"}
+    client = SecretClient("...", object())
+    assert service_headers.issubset(client._client._config.http_logging_policy.allowed_header_names)
+
+
+def test_custom_hook_policy():
+    class CustomHookPolicy(object):
         pass
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer()
-    @KeyVaultClientPreparer(client_kwargs={"custom_hook_policy": _CustomHookPolicy()})
-    async def test_custom_hook_policy(self, client, **kwargs):
-        assert isinstance(client._client._config.custom_hook_policy, KeyVaultSecretTest._CustomHookPolicy)
+    client = SecretClient("...", object(), custom_hook_policy=CustomHookPolicy())
+    assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)

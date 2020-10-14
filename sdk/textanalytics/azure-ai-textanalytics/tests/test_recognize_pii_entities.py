@@ -24,8 +24,6 @@ from azure.ai.textanalytics import (
 # the first one
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
-# TODO: add back offset and length checks throughout this test once I add them
-
 class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -56,8 +54,6 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -83,8 +79,6 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.length)
-                self.assertNotEqual(entity.length, 0)
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -571,7 +565,7 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     def test_recognize_pii_entities_v3(self, client):
-        with pytest.raises(NotImplementedError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             client.recognize_pii_entities(["this should fail"])
 
         assert "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up" in str(excinfo.value)

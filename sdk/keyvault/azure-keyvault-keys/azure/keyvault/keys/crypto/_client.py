@@ -40,23 +40,12 @@ class CryptographyClient(KeyVaultClientBase):
     :keyword transport: transport to use. Defaults to :class:`~azure.core.pipeline.transport.RequestsTransport`.
     :paramtype transport: ~azure.core.pipeline.transport.HttpTransport
 
-    Creating a ``CryptographyClient``:
-
-    .. code-block:: python
-
-        from azure.identity import DefaultAzureCredential
-        from azure.keyvault.keys.crypto import CryptographyClient
-
-        credential = DefaultAzureCredential()
-
-        # create a CryptographyClient using a KeyVaultKey instance
-        key = key_client.get_key("mykey")
-        crypto_client = CryptographyClient(key, credential)
-
-        # or a key's id, which must include a version
-        key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
-        crypto_client = CryptographyClient(key_id, credential)
-
+    .. literalinclude:: ../tests/test_examples_crypto.py
+        :start-after: [START create_client]
+        :end-before: [END create_client]
+        :caption: Create a CryptographyClient
+        :language: python
+        :dedent: 8
     """
 
     def __init__(self, key, credential, **kwargs):
@@ -126,18 +115,12 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes plaintext: bytes to encrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import EncryptionAlgorithm
-
-            # the result holds the ciphertext and identifies the encryption key and algorithm used
-            result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
-            ciphertext = result.ciphertext
-            print(result.key_id)
-            print(result.algorithm)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START encrypt]
+            :end-before: [END encrypt]
+            :caption: Encrypt bytes
+            :language: python
+            :dedent: 8
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.encrypt, algorithm):
@@ -169,15 +152,12 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes ciphertext: encrypted bytes to decrypt
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import EncryptionAlgorithm
-
-            result = client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
-            print(result.plaintext)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START decrypt]
+            :end-before: [END decrypt]
+            :caption: Decrypt bytes
+            :language: python
+            :dedent: 8
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.decrypt, algorithm):
@@ -206,18 +186,12 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes key: key to wrap
         :rtype: :class:`~azure.keyvault.keys.crypto.WrapResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import KeyWrapAlgorithm
-
-            # the result holds the encrypted key and identifies the encryption key and algorithm used
-            result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
-            encrypted_key = result.encrypted_key
-            print(result.key_id)
-            print(result.algorithm)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START wrap_key]
+            :end-before: [END wrap_key]
+            :caption: Wrap a key
+            :language: python
+            :dedent: 8
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.wrap_key, algorithm):
@@ -247,15 +221,12 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes encrypted_key: the wrapped key
         :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import KeyWrapAlgorithm
-
-            result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
-            key = result.key
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START unwrap_key]
+            :end-before: [END unwrap_key]
+            :caption: Unwrap a key
+            :language: python
+            :dedent: 8
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.unwrap_key, algorithm):
@@ -283,23 +254,12 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes digest: hashed bytes to sign
         :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
 
-        Example:
-
-        .. code-block:: python
-
-            import hashlib
-            from azure.keyvault.keys.crypto import SignatureAlgorithm
-
-            digest = hashlib.sha256(b"plaintext").digest()
-
-            # sign returns a tuple with the signature and the metadata required to verify it
-            result = client.sign(SignatureAlgorithm.rs256, digest)
-
-            # the result contains the signature and identifies the key and algorithm used
-            signature = result.signature
-            print(result.key_id)
-            print(result.algorithm)
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START sign]
+            :end-before: [END sign]
+            :caption: Sign bytes
+            :language: python
+            :dedent: 8
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.sign, algorithm):
@@ -331,15 +291,12 @@ class CryptographyClient(KeyVaultClientBase):
         :param bytes signature: signature to verify
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
 
-        Example:
-
-        .. code-block:: python
-
-            from azure.keyvault.keys.crypto import SignatureAlgorithm
-
-            verified = client.verify(SignatureAlgorithm.rs256, digest, signature)
-            assert verified.is_valid
-
+        .. literalinclude:: ../tests/test_examples_crypto.py
+            :start-after: [START verify]
+            :end-before: [END verify]
+            :caption: Verify a signature
+            :language: python
+            :dedent: 8
         """
         self._initialize(**kwargs)
         if self._local_provider.supports(KeyOperation.verify, algorithm):

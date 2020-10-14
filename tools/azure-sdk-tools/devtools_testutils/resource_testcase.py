@@ -7,6 +7,7 @@ from collections import namedtuple
 import functools
 import os
 import datetime
+import time
 from functools import partial
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
@@ -50,7 +51,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             self._need_creation = False
         if self.random_name_enabled:
             self.resource_moniker = self.name_prefix + "rgname"
-        self.set_cache(use_cache, parameter_name)
+        self.set_cache(use_cache, parameter_name, name_prefix)
         self.delete_after_tag_timedelta = delete_after_tag_timedelta
 
     def create_resource(self, name, **kwargs):
@@ -97,5 +98,5 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
             except Exception:
                 pass
 
-RandomNameResourceGroupPreparer = partial(ResourceGroupPreparer, random_name_enabled=True)
-CachedResourceGroupPreparer = partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)
+RandomNameResourceGroupPreparer = functools.partial(ResourceGroupPreparer, random_name_enabled=True)
+CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

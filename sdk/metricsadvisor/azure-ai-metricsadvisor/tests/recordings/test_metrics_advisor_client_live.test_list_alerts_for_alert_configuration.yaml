@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
+      "timeMode": "AnomalyTime"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '107'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/query
+  response:
+    body:
+      string: '{"value":[{"alertId":"alert_id","timestamp":"2020-09-08T00:00:00Z","createdTime":"2020-09-12T01:15:16.406Z","modifiedTime":"2020-09-14T20:42:57.048Z"},{"alertId":"17465dcc000","timestamp":"2020-09-07T00:00:00Z","createdTime":"2020-09-12T01:14:17.184Z","modifiedTime":"2020-09-12T01:28:54.26Z"},{"alertId":"17460b66400","timestamp":"2020-09-06T00:00:00Z","createdTime":"2020-09-12T01:14:16.927Z","modifiedTime":"2020-09-12T01:24:16.887Z"}],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - 20612c77-1020-4b0d-865e-1d93796ae9a3
+      content-length:
+      - '459'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 22 Sep 2020 21:48:32 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '98'
+      x-request-id:
+      - 20612c77-1020-4b0d-865e-1d93796ae9a3
+    status:
+      code: 200
+      message: OK
+version: 1

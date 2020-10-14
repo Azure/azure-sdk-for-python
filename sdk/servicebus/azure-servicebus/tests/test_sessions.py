@@ -32,6 +32,7 @@ from azure.servicebus.exceptions import (
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
+    CachedServiceBusQueuePreparer,
     ServiceBusTopicPreparer,
     ServiceBusQueuePreparer,
     ServiceBusSubscriptionPreparer
@@ -555,7 +556,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                         assert m.lock_token is not None
                     time.sleep(5)
                     initial_expiry = receiver.session._locked_until_utc
-                    receiver.session.renew_lock()
+                    receiver.session.renew_lock(timeout=5)
                     assert (receiver.session._locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     messages[0].complete()
@@ -730,7 +731,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 count = 0
                 while not messages and count < 12:
                     messages = receiver.receive_messages(max_wait_time=10)
-                    receiver.session.renew_lock()
+                    receiver.session.renew_lock(timeout=None)
                     count += 1
 
                 data = str(messages[0])
@@ -769,7 +770,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = []
                 count = 0
                 while len(messages) < 2 and count < 12:
-                    receiver.session.renew_lock()
+                    receiver.session.renew_lock(timeout=None)
                     messages = receiver.receive_messages(max_wait_time=15)
                     time.sleep(5)
                     count += 1
@@ -829,8 +830,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     sender.send_messages(message)
 
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5) as session:
-                assert session.session.get_state() == None
-                session.session.set_state("first_state")
+                assert session.session.get_state(timeout=5) == None
+                session.session.set_state("first_state", timeout=5)
                 count = 0
                 for m in session:
                     assert m.session_id == session_id
@@ -1001,7 +1002,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_non_session_send_to_session_queue_should_fail(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:

@@ -32,6 +32,7 @@ setup(
     name=PACKAGE_NAME,
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
+    long_description_content_type='text/markdown',
 
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
@@ -42,7 +43,7 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
@@ -70,6 +71,6 @@ setup(
     },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
-        'Source': 'https://github.com/Azure/azure-sdk-python',
+        'Source': 'https://github.com/Azure/azure-sdk-for-python',
     }
 )

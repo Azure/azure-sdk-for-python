@@ -111,6 +111,8 @@ class AsyncLROBasePolling(LROBasePolling):
 
         :rtype: azure.core.pipeline.PipelineResponse
         """
+        if self._path_format_arguments:
+            status_link = self._client.format_url(status_link, **self._path_format_arguments)
         request = self._client.get(status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:

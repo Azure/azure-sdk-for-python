@@ -17,7 +17,7 @@ import pytest
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     GeneralNameReplacer, RequestUrlNormalizer,
-    OAuthRequestResponsesFilter
+    AuthenticationMetadataFilter, OAuthRequestResponsesFilter
 )
 from azure_devtools.scenario_tests.config import TestConfig
 
@@ -125,6 +125,7 @@ class AzureTestCase(ReplayableTest):
     def _get_recording_processors(self):
         return [
             self.scrubber,
+            AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer()
         ]

@@ -16,7 +16,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
   response:
@@ -24,13 +24,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - eb806ea5-f466-46cb-947d-b3e412da3b45
+      - d7ae8ffa-cb4c-405b-8b09-70916fcbe9d1
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 10 Sep 2020 15:25:28 GMT
+      - Wed, 30 Sep 2020 16:02:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -38,7 +38,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '14'
     status:
       code: 200
       message: OK
@@ -59,7 +59,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
   response:
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '224'
       date:
-      - Thu, 10 Sep 2020 15:25:28 GMT
+      - Wed, 30 Sep 2020 16:02:32 GMT
     status:
       code: 401
       message: PermissionDenied
@@ -92,7 +92,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
     uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v3.1-preview.2/languages?showStats=false
   response:
@@ -100,13 +100,13 @@ interactions:
       string: '{"documents":[{"id":"1","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"2","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]},{"id":"3","detectedLanguage":{"name":"English","iso6391Name":"en","confidenceScore":1.0},"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}'
     headers:
       apim-request-id:
-      - 7b96b6d8-0c91-495f-9ddf-d44a43afc3db
+      - a3e59c2d-03d3-42af-b0de-fdda70529992
       content-type:
       - application/json; charset=utf-8
       csp-billing-usage:
       - CognitiveServices.TextAnalytics.BatchScoring=3
       date:
-      - Thu, 10 Sep 2020 15:25:28 GMT
+      - Wed, 30 Sep 2020 16:02:32 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -114,7 +114,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '13'
     status:
       code: 200
       message: OK
