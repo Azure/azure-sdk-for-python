@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import enum
+from warnings import warn
 from typing import (  # pylint: disable=unused-import
     Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
@@ -384,7 +385,7 @@ class ShareClient(StorageAccountHostsMixin):
     @distributed_trace
     def delete_share(
             self, delete_snapshots=False, # type: Optional[bool]
-            include_leased_snapshots=False, # type: Optional[bool]
+            include_snapshots=None, # type: Optional[Union[enum, str]]
             **kwargs
         ):
         # type: (...) -> None
@@ -392,10 +393,12 @@ class ShareClient(StorageAccountHostsMixin):
         later deleted during garbage collection.
 
         :param bool delete_snapshots:
-            Indicates if snapshots are to be deleted.
-        :param bool include_leased_snapshots:
-            Indicates if leased snapshots are to be deleted.
-            The `delete_snapshots` param must be set to True
+            Indicates if snapshots are to be deleted. This parameter is being deprecated.
+        :param include_snapshots:
+            Specifies which snapshots to delete.
+            Possible values: 'include' which includes non-leased snapshots,
+            and 'include-leased' which includes all snapshots.
+        :type include_snapshots: str or ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
 
             .. versionadded:: 12.6.0
 
@@ -421,12 +424,15 @@ class ShareClient(StorageAccountHostsMixin):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         delete_include = None
-        if include_leased_snapshots and not delete_snapshots:
-            raise ValueError("`delete_snapshots` must be set to True in order to include leased snapshots.")
-        if delete_snapshots and not include_leased_snapshots:
+        if delete_snapshots:
+            warn("The `delete_snapshots` parameter is being deprecated. "
+                 "Please use the `include_snapshots` parameter instead.")
             delete_include = DeleteSnapshotsOptionType.include
-        elif delete_snapshots and include_leased_snapshots:
-            delete_include = DeleteSnapshotsOptionType.include_leased
+        if include_snapshots:
+            if isinstance(include_snapshots, str) and include_snapshots not in ['include', 'include-leased']:
+                raise ValueError("`include_snapshots` must be set to either 'include' or 'include-leased'.")
+            else:
+                delete_include = include_snapshots
         try:
             self._client.share.delete(
                 timeout=timeout,

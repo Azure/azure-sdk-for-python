@@ -34,7 +34,8 @@ from ._models import (
     ContentSettings,
     NTFSAttributes)
 from ._generated.models import (
-    HandleItem
+    HandleItem,
+    DeleteSnapshotsOptionType
 )
 
 __version__ = VERSION
@@ -70,5 +71,6 @@ __all__ = [
     'HandleItem',
     'generate_account_sas',
     'generate_share_sas',
-    'generate_file_sas'
+    'generate_file_sas',
+    'DeleteSnapshotsOptionType'
 ]
