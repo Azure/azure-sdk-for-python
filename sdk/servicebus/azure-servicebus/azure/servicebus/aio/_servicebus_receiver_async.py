@@ -410,8 +410,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             operation_requires_timeout=True
         )
 
-    async def receive_deferred_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int, List[int]], Any) -> List[ReceivedMessage]
+    async def receive_deferred_messages(
+        self,
+        sequence_numbers: Union[int, List[int]],
+        **kwargs: Any
+    ) -> List[ReceivedMessage]:
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
