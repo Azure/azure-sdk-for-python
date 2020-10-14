@@ -53,7 +53,7 @@ def example_create_servicebus_sender_sync():
     from azure.servicebus import ServiceBusSender
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_sender = ServiceBusSender.from_connection_string(
+    queue_sender = ServiceBusSender._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )
@@ -91,7 +91,7 @@ def example_create_servicebus_sender_sync():
     from azure.servicebus import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
+    servicebus_client = ServiceBusClient._from_connection_string(conn_str=servicebus_connection_str)
     with servicebus_client:
         topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
     # [END create_topic_sender_from_sb_client_sync]
@@ -107,7 +107,7 @@ def example_create_servicebus_receiver_sync():
     from azure.servicebus import ServiceBusReceiver
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_receiver = ServiceBusReceiver.from_connection_string(
+    queue_receiver = ServiceBusReceiver._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )
@@ -244,7 +244,7 @@ def example_send_and_receive_sync():
             print("Sequence number: {}".format(message.sequence_number))
             print("Enqueued Sequence numger: {}".format(message.enqueued_sequence_number))
             print("Partition Key: {}".format(message.partition_key))
-            print("Properties: {}".format(message.properties))
+            print("Application Properties: {}".format(message.application_properties))
             print("Delivery count: {}".format(message.delivery_count))
             print("Message ID: {}".format(message.message_id))
             print("Locked until: {}".format(message.locked_until_utc))

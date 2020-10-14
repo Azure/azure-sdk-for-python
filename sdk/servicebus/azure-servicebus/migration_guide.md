@@ -84,6 +84,11 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `azure.servicebus.AutoLockRenew().shutdown()` | `azure.servicebus.AutoLockRenew().close()` | [Close an auto-lock-renewer](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
 
+### Working with Message properties
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.Message.user_properties` | `azure.servicebus.Message.application_properties` | Some message properties have been renamed, e.g. accessing the application specific properties of a message. |
+
 
 ## Migration samples
 

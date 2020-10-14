@@ -306,7 +306,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         return self._IterContextualWrapper(self, max_wait_time)
 
     @classmethod
-    def from_connection_string(
+    def _from_connection_string(
         cls,
         conn_str: str,
         **kwargs: Any

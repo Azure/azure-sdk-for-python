@@ -153,6 +153,6 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10

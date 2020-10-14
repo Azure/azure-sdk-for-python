@@ -137,6 +137,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._iter_contextual_wrapper()
 
     def _iter_contextual_wrapper(self, max_wait_time=None):
+        """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
+        and per-iter argument passing that requires the former."""
         # pylint: disable=protected-access
         original_timeout = None
         while True:
@@ -311,7 +313,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._iter_contextual_wrapper(max_wait_time)
 
     @classmethod
-    def from_connection_string(
+    def _from_connection_string(
         cls,
         conn_str,
         **kwargs

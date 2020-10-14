@@ -59,12 +59,11 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for i in range(3):
                     message = Message("Handler message no. {}".format(i))
                     message.session_id = session_id
-                    message.properties = {'key': 'value'}
-                    message.label = 'label'
+                    message.application_properties = {'key': 'value'}
+                    message.subject = 'label'
                     message.content_type = 'application/text'
                     message.correlation_id = 'cid'
                     message.message_id = str(i)
-                    message.via_partition_key = 'via_pk'
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     message.reply_to_session_id = 'reply_to_session_id'
@@ -78,13 +77,12 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for message in session:
                     print_message(_logger, message)
                     assert message.delivery_count == 0
-                    assert message.properties
-                    assert message.properties[b'key'] == b'value'
-                    assert message.label == 'label'
+                    assert message.application_properties
+                    assert message.application_properties[b'key'] == b'value'
+                    assert message.subject == 'label'
                     assert message.content_type == 'application/text'
                     assert message.correlation_id == 'cid'
                     assert message.partition_key == session_id
-                    assert message.via_partition_key == 'via_pk'
                     assert message.to == 'to'
                     assert message.reply_to == 'reply_to'
                     assert message.sequence_number
@@ -340,8 +338,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     message.complete()
             assert count == 10
 
@@ -455,8 +453,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.complete()
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     count += 1
             assert count == 10
 

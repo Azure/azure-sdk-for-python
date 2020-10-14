@@ -214,7 +214,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     @classmethod
-    def from_connection_string(
+    def _from_connection_string(
         cls,
         conn_str: str,
         **kwargs: Any

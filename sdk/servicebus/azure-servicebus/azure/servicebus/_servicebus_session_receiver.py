@@ -106,7 +106,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         return self._session  # type: ignore
 
     @classmethod
-    def from_connection_string(
+    def _from_connection_string(
         cls,
         conn_str,
         **kwargs
@@ -163,4 +163,4 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
                 :caption: Create a new instance of the ServiceBusReceiver from connection string.
 
         """
-        return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)  # type: ignore
+        return super(ServiceBusSessionReceiver, cls)._from_connection_string(conn_str, **kwargs)  # type: ignore

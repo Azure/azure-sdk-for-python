@@ -57,7 +57,7 @@ async def example_create_servicebus_sender_async():
     from azure.servicebus.aio import ServiceBusSender
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_sender = ServiceBusSender.from_connection_string(
+    queue_sender = ServiceBusSender._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )
@@ -111,7 +111,7 @@ async def example_create_servicebus_receiver_async():
     from azure.servicebus.aio import ServiceBusReceiver
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_receiver = ServiceBusReceiver.from_connection_string(
+    queue_receiver = ServiceBusReceiver._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )

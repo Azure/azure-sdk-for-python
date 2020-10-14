@@ -26,7 +26,6 @@ from .constants import (
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
     _X_OPT_PARTITION_KEY,
-    _X_OPT_VIA_PARTITION_KEY,
     _X_OPT_LOCKED_UNTIL,
     _X_OPT_LOCK_TOKEN,
     _X_OPT_SCHEDULED_ENQUEUE_TIME,
@@ -45,7 +44,6 @@ from .constants import (
     PROPERTIES_DEAD_LETTER_REASON,
     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION,
     ANNOTATION_SYMBOL_PARTITION_KEY,
-    ANNOTATION_SYMBOL_VIA_PARTITION_KEY,
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
     ANNOTATION_SYMBOL_KEY_MAP
 )
@@ -70,23 +68,22 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     :param body: The data to send in a single message.
     :type body: Union[str, bytes]
 
-    :keyword dict properties: The user defined properties on the message.
+    :keyword dict application_properties: The user defined properties on the message.
     :keyword str session_id: The session identifier of the message for a sessionful entity.
     :keyword str message_id: The id to identify the message.
     :keyword datetime.datetime scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
     :keyword datetime.timedelta time_to_live: The life duration of a message.
     :keyword str content_type: The content type descriptor.
     :keyword str correlation_id: The correlation identifier.
-    :keyword str label: The application specific label.
+    :keyword str subject: The application specific subject, sometimes referred to as label.
     :keyword str partition_key: The partition key for sending a message to a partitioned entity.
-    :keyword str via_partition_key: The partition key for sending a message into an entity via a partitioned
-     transfer queue.
     :keyword str to: The `to` address used for auto_forward chaining scenarios.
     :keyword str reply_to: The address of an entity to send replies to.
     :keyword str reply_to_session_id: The session identifier augmenting the `reply_to` address.
     :keyword str encoding: The encoding for string data. Default is UTF-8.
 
-    :ivar AMQPMessage amqp_message: Advanced use only.  The internal AMQP message payload that is sent or received.
+    :ivar AMQPMessage amqp_annotated_message: Advanced use only.
+        The internal AMQP message payload that is sent or received.
 
     .. admonition:: Example:
 
@@ -114,7 +111,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self._amqp_header = self.message.header
         else:
             self._build_message(body)
-            self.properties = kwargs.pop("properties", None)
+            self.application_properties = kwargs.pop("application_properties", None)
             self.session_id = kwargs.pop("session_id", None)
             self.message_id = kwargs.get("message_id", None)
             self.content_type = kwargs.pop("content_type", None)
@@ -122,13 +119,13 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.to = kwargs.pop("to", None)
             self.reply_to = kwargs.pop("reply_to", None)
             self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
-            self.label = kwargs.pop("label", None)
+            self.subject = kwargs.pop("subject", None)
             self.scheduled_enqueue_time_utc = kwargs.pop("scheduled_enqueue_time_utc", None)
             self.time_to_live = kwargs.pop("time_to_live", None)
             self.partition_key = kwargs.pop("partition_key", None)
-            self.via_partition_key = kwargs.pop("via_partition_key", None)
-        # If message is the full message, amqp_message is the "public facing interface" for what we expose.
-        self.amqp_message = AMQPMessage(self.message) # type: AMQPMessage
+
+        # If message is the full message, amqp_annotated_message is the "public facing interface" for what we expose.
+        self.amqp_annotated_message = AMQPMessage(self.message) # type: AMQPMessage
 
     def __str__(self):
         return str(self.message)
@@ -191,7 +188,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._amqp_properties.group_id = value
 
     @property
-    def properties(self):
+    def application_properties(self):
         # type: () -> dict
         """The user defined properties on the message.
 
@@ -199,8 +196,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         """
         return self.message.application_properties
 
-    @properties.setter
-    def properties(self, value):
+    @application_properties.setter
+    def application_properties(self, value):
         # type: (dict) -> None
         self.message.application_properties = value
 
@@ -230,33 +227,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     def partition_key(self, value):
         # type: (str) -> None
         self._set_message_annotations(_X_OPT_PARTITION_KEY, value)
-
-    @property
-    def via_partition_key(self):
-        # type: () -> Optional[str]
-        """ The partition key for sending a message into an entity via a partitioned transfer queue.
-
-        If a message is sent via a transfer queue in the scope of a transaction, this value selects the transfer
-        queue partition: This is functionally equivalent to `partition_key` and ensures that messages are kept
-        together and in order as they are transferred.
-
-        See Transfers and Send Via in
-        `https://docs.microsoft.com/azure/service-bus-messaging/service-bus-transactions#transfers-and-send-via`.
-
-        :rtype: str
-        """
-        via_p_key = None
-        try:
-            via_p_key = self.message.annotations.get(_X_OPT_VIA_PARTITION_KEY) or \
-                self.message.annotations.get(ANNOTATION_SYMBOL_VIA_PARTITION_KEY)
-            return via_p_key.decode('UTF-8')
-        except (AttributeError, UnicodeDecodeError):
-            return via_p_key
-
-    @via_partition_key.setter
-    def via_partition_key(self, value):
-        # type: (str) -> None
-        self._set_message_annotations(_X_OPT_VIA_PARTITION_KEY, value)
 
     @property
     def time_to_live(self):
@@ -373,9 +343,9 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._amqp_properties.correlation_id = val
 
     @property
-    def label(self):
+    def subject(self):
         # type: () -> str
-        """The application specific label.
+        """The application specific subject, sometimes referred to as a label.
 
         This property enables the application to indicate the purpose of the message to the receiver in a standardized
         fashion, similar to an email subject line.
@@ -387,8 +357,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         except (AttributeError, UnicodeDecodeError):
             return self._amqp_properties.subject
 
-    @label.setter
-    def label(self, val):
+    @subject.setter
+    def subject(self, val):
         # type: (str) -> None
         self._amqp_properties.subject = val
 
@@ -605,17 +575,16 @@ class PeekedMessage(Message):
             body=body,
             content_type=self.content_type,
             correlation_id=self.correlation_id,
-            label=self.label,
+            subject=self.subject,
             message_id=self.message_id,
             partition_key=self.partition_key,
-            properties=self.properties,
+            application_properties=self.application_properties,
             reply_to=self.reply_to,
             reply_to_session_id=self.reply_to_session_id,
             session_id=self.session_id,
             scheduled_enqueue_time_utc=self.scheduled_enqueue_time_utc,
             time_to_live=self.time_to_live,
-            to=self.to,
-            via_partition_key=self.via_partition_key
+            to=self.to
         )
 
     @property
