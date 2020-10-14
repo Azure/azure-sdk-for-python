@@ -26,6 +26,7 @@ from azure.servicebus.exceptions import (
     ServiceBusSessionLockExpired,
     ServiceBusMessageLockExpired,
     ServiceBusMessageAlreadySettled,
+    ServiceBusMessageSendFailed,
     AutoLockRenewTimeout,
     ServiceBusMessageSettleFailed)
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
@@ -916,6 +917,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                with pytest.raises(MessageSendFailed):
+                with pytest.raises(ServiceBusMessageSendFailed):
                     message = Message("Handler message")
                     await sender.send_messages(message)
