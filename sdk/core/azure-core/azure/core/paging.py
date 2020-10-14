@@ -35,7 +35,11 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 from enum import Enum
-from .paging_operation import PagingOperation, PagingOperationWithSeparateNextOperation
+from .paging_operation import (
+    PagingAlgorithmIfSeparateNextOperation,
+    PagingAlgorithmContinuationTokenAsNextLink,
+    PagingAlgorithm,
+)
 
 try:
     ABC = abc.ABC
@@ -110,8 +114,7 @@ class PageIterator(PageIteratorABC):
         continuation_token=None,  # type: Optional[str]
         paging_algorithms=None,
         paging_options=None,
-        path_format_arguments=None,
-        **operation_config
+        **kwargs
     ):
         """Return an iterator of pages.
 
@@ -121,17 +124,17 @@ class PageIterator(PageIteratorABC):
         :param str continuation_token: The continuation token needed by get_next
         """
         self._paging_algorithms = paging_algorithms or [
-            PagingOperationWithSeparateNextOperation(), PagingOperation()
+            PagingAlgorithmIfSeparateNextOperation(),
+            PagingAlgorithmContinuationTokenAsNextLink(),
+            PagingAlgorithm(),
         ]
         self._client = None
         self._initial_request = None
         self._did_a_call_already = False
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
-        self._path_format_arguments = path_format_arguments
-        self._operation_config = operation_config
-        self._paging_options = paging_options
-        self._paging_algorithms = paging_algorithms
+        self._prepare_request_to_separate_next_operation = None
+        self._kwargs = kwargs
 
         # these are for back-compat
         self._get_next = get_next
@@ -139,31 +142,25 @@ class PageIterator(PageIteratorABC):
 
 
     def initialize(
-        self, client, initial_request, extract_data
+        self, client, initial_request, extract_data, prepare_request_to_separate_next_operation=None
     ):
+        """
+        prepare_next_requests is only used if there is a separate next operation defined in the swagger.
+        """
         self._client = client
         self._extract_data = extract_data
         self._initial_request = initial_request
-        self._next_link = None
-
-        # TODO: how to pass in next_link_operation_url
-        for operation in self._paging_algorithms:
-            if operation.can_page(**self._operation_config):
-                self._operation = operation(**self._operation_config)
-                break
-        else:
-            raise BadResponse("Unable to find way to retrieve next link.")
+        self._prepare_request_to_separate_next_operation = prepare_request_to_separate_next_operation
 
     def get_next_page(self, next_link):
-        request = self._client.get(next_link)
-        if self._path_format_arguments:
-            request = self._client.format_url(status_link, **self._path_format_arguments)
-        return self._client._pipeline.run(
-            request, stream=False, **self._operation.operation_config
-        )
+        url = next_link
+        api_params = self._algorithm.get_parameters()
+        request = self._client.get(url, **api_params)
+        return self._client._pipeline.run(request, stream=False)
+
 
     def finished(self):
-        if self._operation.next_link is None and self._did_a_call_already:
+        if self._algorithm.continuation_token is None and self._did_a_call_already:
             return True
         return False
 
@@ -193,28 +190,29 @@ class PageIterator(PageIteratorABC):
 
         if not self._did_a_call_already:
             response = self._make_initial_call()
-            self._operation.set_initial_state(response)
+            self._algorithm.set_initial_state(response)
         else:
-            next_link_url = self._operation.get_next_link()
-            response = self.get_next_page(next_link_url)
+            next_link = self._algorithm.get_next_link()
+            response = self.get_next_page(next_link)
+
+
+        self._continuation_token, self._current_page = self._extract_data(response)
+        if not self._did_a_call_already:
+            # we need to first see a continuation token in order to know which paging
+            # algorithm to use
+            for algorithm in self._paging_algorithms:
+                if algorithm.can_page(self._continuation_token, self._prepare_request_to_separate_next_operation):
+                    self._algorithm = algorithm()
+                    break
+            else:
+                raise BadResponse("Unable to find way to retrieve next link.")
 
         self._did_a_call_already = True
-        self._next_link, self._current_page = self._extract_data(response)
-        self._operation.update_state(self._next_link)
+        self._algorithm.update_state(self._continuation_token)
 
         return iter(self._current_page)
 
     next = __next__  # Python 2 compatibility.
-
-class PageIteratorNextLinkTemplate(PageIterator):
-
-    def get_next_page(self, next_link):
-        request = self._client.get(next_link)
-        if self._path_format_arguments:
-            request = self._client.format_url(status_link, **self._path_format_arguments, 'nextLink'=next_link)
-        return self._client._pipeline.run(
-            request, stream=False, **self._operation.operation_config
-        )
 
 
 class PageIteratorWithContinuationToken(PageIterator):
@@ -222,10 +220,10 @@ class PageIteratorWithContinuationToken(PageIterator):
     def _set_continuation_token(self):
         set_continuation_token = False
         continuation_token_input_parameter = self._paging_options[_PagingOption.TOKEN_INPUT_PARAMETER]
-        for api_parameter_type, api_parameters in self._operation.operation_config.items():
+        for api_parameter_type, api_parameters in self._algorithm.operation_config.items():
             for param_name, param_value in api_parameters.items():
                 if param_name.lower() == continuation_token_input_parameter.lower()
-                    self._operation.operation_config[api_parameter_type][param_name] = self._next_link
+                    self._algorithm.operation_config[api_parameter_type][param_name] = self._continuation_token
                     set_continuation_token = True
                     break
 
@@ -236,13 +234,13 @@ class PageIteratorWithContinuationToken(PageIterator):
             )
 
 
-    def get_next_page(self, next_link):
-        request = self._client.get(next_link)
+    def get_next_page(self, continuation_token):
         if self._path_format_arguments:
-            request = self._client.format_url(status_link, **self._path_format_arguments, 'nextLink'=next_link)
+            continuation_token = self._client.format_url(continuation_token, **self._path_format_arguments)
+        request = self._client.get(continuation_token)
         self._set_continuation_token()
         return self._client._pipeline.run(
-            request, stream=False, **self._operation.operation_config
+            request, stream=False, **self._algorithm.operation_config
         )
 
     def __next__(self):
@@ -252,15 +250,19 @@ class PageIteratorWithContinuationToken(PageIterator):
 
         if not self._did_a_call_already:
             response = self._make_initial_call()
-            self._operation.set_initial_state(response)
+            self._algorithm.set_initial_state(response)
         else:
-            next_link_url = self._operation.get_next_link()
-            response = self.get_next_page(next_link_url)
+            continuation_token_url = self._algorithm.get_continuation_token()
+            response = self.get_next_page(continuation_token_url)
 
         self._did_a_call_already = True
-        self._next_link, self._current_page = self._extract_data(response)
+        self._continuation_token, self._current_page = self._extract_data(response)
 
         return iter(self._current_page)
+
+class PageIteratorSearch(PageIterator):
+
+
 
 class ItemPaged(Iterator[ReturnType]):
     def __init__(self, *args, **kwargs):
@@ -281,6 +283,7 @@ class ItemPaged(Iterator[ReturnType]):
             )
         else:
             self._page_iterator_class = None
+        self._raw_response_hook = self._kwargs.pop("raw_response_hook", None)
 
     def by_page(self, continuation_token=None):
         # type: (Optional[str]) -> Iterator[Iterator[ReturnType]]
