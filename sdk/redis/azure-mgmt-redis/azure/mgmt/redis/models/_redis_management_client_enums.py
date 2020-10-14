@@ -32,6 +32,12 @@ class TlsVersion(str, Enum):
     one_full_stop_two = "1.2"
 
 
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class ProvisioningState(str, Enum):
 
     creating = "Creating"
@@ -46,6 +52,21 @@ class ProvisioningState(str, Enum):
     unlinking = "Unlinking"
     unprovisioning = "Unprovisioning"
     updating = "Updating"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"
 
 
 class RedisKeyType(str, Enum):
