@@ -17,6 +17,7 @@ try:
     from ._models_py3 import AutoscaleSettingsResource
     from ._models_py3 import AutoUpgradePolicyResource
     from ._models_py3 import AzureEntityResource
+    from ._models_py3 import BackupPolicy
     from ._models_py3 import Capability
     from ._models_py3 import CassandraKeyspaceCreateUpdateParameters
     from ._models_py3 import CassandraKeyspaceGetPropertiesOptions
@@ -36,16 +37,21 @@ try:
     from ._models_py3 import ConflictResolutionPolicy
     from ._models_py3 import ConsistencyPolicy
     from ._models_py3 import ContainerPartitionKey
+    from ._models_py3 import ContinuousModeBackupPolicy
     from ._models_py3 import CorsPolicy
     from ._models_py3 import CreateUpdateOptions
     from ._models_py3 import DatabaseAccountConnectionString
     from ._models_py3 import DatabaseAccountCreateUpdateParameters
+    from ._models_py3 import DatabaseAccountCreateUpdateProperties
     from ._models_py3 import DatabaseAccountGetResults
     from ._models_py3 import DatabaseAccountListConnectionStringsResult
     from ._models_py3 import DatabaseAccountListKeysResult
     from ._models_py3 import DatabaseAccountListReadOnlyKeysResult
     from ._models_py3 import DatabaseAccountRegenerateKeyParameters
     from ._models_py3 import DatabaseAccountUpdateParameters
+    from ._models_py3 import DatabaseRestoreResource
+    from ._models_py3 import DefaultErrorResponse, DefaultErrorResponseException
+    from ._models_py3 import DefaultRequestDatabaseAccountCreateUpdateProperties
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ExcludedPath
     from ._models_py3 import ExtendedResourceProperties
@@ -66,6 +72,8 @@ try:
     from ._models_py3 import IndexingPolicy
     from ._models_py3 import IpAddressOrRange
     from ._models_py3 import Location
+    from ._models_py3 import ManagedServiceIdentity
+    from ._models_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
     from ._models_py3 import Metric
     from ._models_py3 import MetricAvailability
     from ._models_py3 import MetricDefinition
@@ -94,6 +102,9 @@ try:
     from ._models_py3 import PartitionUsage
     from ._models_py3 import PercentileMetric
     from ._models_py3 import PercentileMetricValue
+    from ._models_py3 import PeriodicModeBackupPolicy
+    from ._models_py3 import PeriodicModeProperties
+    from ._models_py3 import Permission
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointProperty
     from ._models_py3 import PrivateLinkResource
@@ -101,6 +112,9 @@ try:
     from ._models_py3 import ProxyResource
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
+    from ._models_py3 import RestorableDatabaseAccountGetResult
+    from ._models_py3 import RestoreParameters
+    from ._models_py3 import RestoreReqeustDatabaseAccountCreateUpdateProperties
     from ._models_py3 import SpatialSpec
     from ._models_py3 import SqlContainerCreateUpdateParameters
     from ._models_py3 import SqlContainerGetPropertiesOptions
@@ -112,6 +126,10 @@ try:
     from ._models_py3 import SqlDatabaseGetPropertiesResource
     from ._models_py3 import SqlDatabaseGetResults
     from ._models_py3 import SqlDatabaseResource
+    from ._models_py3 import SqlRoleAssignmentCreateUpdateParameters
+    from ._models_py3 import SqlRoleAssignmentGetResults
+    from ._models_py3 import SqlRoleDefinitionCreateUpdateParameters
+    from ._models_py3 import SqlRoleDefinitionGetResults
     from ._models_py3 import SqlStoredProcedureCreateUpdateParameters
     from ._models_py3 import SqlStoredProcedureGetPropertiesResource
     from ._models_py3 import SqlStoredProcedureGetResults
@@ -124,6 +142,7 @@ try:
     from ._models_py3 import SqlUserDefinedFunctionGetPropertiesResource
     from ._models_py3 import SqlUserDefinedFunctionGetResults
     from ._models_py3 import SqlUserDefinedFunctionResource
+    from ._models_py3 import SystemData
     from ._models_py3 import TableCreateUpdateParameters
     from ._models_py3 import TableGetPropertiesOptions
     from ._models_py3 import TableGetPropertiesResource
@@ -147,6 +166,7 @@ except (SyntaxError, ImportError):
     from ._models import AutoscaleSettingsResource
     from ._models import AutoUpgradePolicyResource
     from ._models import AzureEntityResource
+    from ._models import BackupPolicy
     from ._models import Capability
     from ._models import CassandraKeyspaceCreateUpdateParameters
     from ._models import CassandraKeyspaceGetPropertiesOptions
@@ -166,16 +186,21 @@ except (SyntaxError, ImportError):
     from ._models import ConflictResolutionPolicy
     from ._models import ConsistencyPolicy
     from ._models import ContainerPartitionKey
+    from ._models import ContinuousModeBackupPolicy
     from ._models import CorsPolicy
     from ._models import CreateUpdateOptions
     from ._models import DatabaseAccountConnectionString
     from ._models import DatabaseAccountCreateUpdateParameters
+    from ._models import DatabaseAccountCreateUpdateProperties
     from ._models import DatabaseAccountGetResults
     from ._models import DatabaseAccountListConnectionStringsResult
     from ._models import DatabaseAccountListKeysResult
     from ._models import DatabaseAccountListReadOnlyKeysResult
     from ._models import DatabaseAccountRegenerateKeyParameters
     from ._models import DatabaseAccountUpdateParameters
+    from ._models import DatabaseRestoreResource
+    from ._models import DefaultErrorResponse, DefaultErrorResponseException
+    from ._models import DefaultRequestDatabaseAccountCreateUpdateProperties
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import ExcludedPath
     from ._models import ExtendedResourceProperties
@@ -196,6 +221,8 @@ except (SyntaxError, ImportError):
     from ._models import IndexingPolicy
     from ._models import IpAddressOrRange
     from ._models import Location
+    from ._models import ManagedServiceIdentity
+    from ._models import ManagedServiceIdentityUserAssignedIdentitiesValue
     from ._models import Metric
     from ._models import MetricAvailability
     from ._models import MetricDefinition
@@ -224,6 +251,9 @@ except (SyntaxError, ImportError):
     from ._models import PartitionUsage
     from ._models import PercentileMetric
     from ._models import PercentileMetricValue
+    from ._models import PeriodicModeBackupPolicy
+    from ._models import PeriodicModeProperties
+    from ._models import Permission
     from ._models import PrivateEndpointConnection
     from ._models import PrivateEndpointProperty
     from ._models import PrivateLinkResource
@@ -231,6 +261,9 @@ except (SyntaxError, ImportError):
     from ._models import ProxyResource
     from ._models import RegionForOnlineOffline
     from ._models import Resource
+    from ._models import RestorableDatabaseAccountGetResult
+    from ._models import RestoreParameters
+    from ._models import RestoreReqeustDatabaseAccountCreateUpdateProperties
     from ._models import SpatialSpec
     from ._models import SqlContainerCreateUpdateParameters
     from ._models import SqlContainerGetPropertiesOptions
@@ -242,6 +275,10 @@ except (SyntaxError, ImportError):
     from ._models import SqlDatabaseGetPropertiesResource
     from ._models import SqlDatabaseGetResults
     from ._models import SqlDatabaseResource
+    from ._models import SqlRoleAssignmentCreateUpdateParameters
+    from ._models import SqlRoleAssignmentGetResults
+    from ._models import SqlRoleDefinitionCreateUpdateParameters
+    from ._models import SqlRoleDefinitionGetResults
     from ._models import SqlStoredProcedureCreateUpdateParameters
     from ._models import SqlStoredProcedureGetPropertiesResource
     from ._models import SqlStoredProcedureGetResults
@@ -254,6 +291,7 @@ except (SyntaxError, ImportError):
     from ._models import SqlUserDefinedFunctionGetPropertiesResource
     from ._models import SqlUserDefinedFunctionGetResults
     from ._models import SqlUserDefinedFunctionResource
+    from ._models import SystemData
     from ._models import TableCreateUpdateParameters
     from ._models import TableGetPropertiesOptions
     from ._models import TableGetPropertiesResource
@@ -285,8 +323,11 @@ from ._paged_models import PartitionUsagePaged
 from ._paged_models import PercentileMetricPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkResourcePaged
+from ._paged_models import RestorableDatabaseAccountGetResultPaged
 from ._paged_models import SqlContainerGetResultsPaged
 from ._paged_models import SqlDatabaseGetResultsPaged
+from ._paged_models import SqlRoleAssignmentGetResultsPaged
+from ._paged_models import SqlRoleDefinitionGetResultsPaged
 from ._paged_models import SqlStoredProcedureGetResultsPaged
 from ._paged_models import SqlTriggerGetResultsPaged
 from ._paged_models import SqlUserDefinedFunctionGetResultsPaged
@@ -299,6 +340,9 @@ from ._cosmos_db_management_client_enums import (
     ConnectorOffer,
     PublicNetworkAccess,
     ServerVersion,
+    CreateMode,
+    RestoreMode,
+    CreatedByType,
     IndexingMode,
     DataType,
     IndexKind,
@@ -308,9 +352,11 @@ from ._cosmos_db_management_client_enums import (
     ConflictResolutionMode,
     TriggerType,
     TriggerOperation,
+    ResourceIdentityType,
     KeyKind,
     UnitType,
     PrimaryAggregationType,
+    RoleDefinitionType,
 )
 
 __all__ = [
@@ -321,6 +367,7 @@ __all__ = [
     'AutoscaleSettingsResource',
     'AutoUpgradePolicyResource',
     'AzureEntityResource',
+    'BackupPolicy',
     'Capability',
     'CassandraKeyspaceCreateUpdateParameters',
     'CassandraKeyspaceGetPropertiesOptions',
@@ -340,16 +387,21 @@ __all__ = [
     'ConflictResolutionPolicy',
     'ConsistencyPolicy',
     'ContainerPartitionKey',
+    'ContinuousModeBackupPolicy',
     'CorsPolicy',
     'CreateUpdateOptions',
     'DatabaseAccountConnectionString',
     'DatabaseAccountCreateUpdateParameters',
+    'DatabaseAccountCreateUpdateProperties',
     'DatabaseAccountGetResults',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountListKeysResult',
     'DatabaseAccountListReadOnlyKeysResult',
     'DatabaseAccountRegenerateKeyParameters',
     'DatabaseAccountUpdateParameters',
+    'DatabaseRestoreResource',
+    'DefaultErrorResponse', 'DefaultErrorResponseException',
+    'DefaultRequestDatabaseAccountCreateUpdateProperties',
     'ErrorResponse', 'ErrorResponseException',
     'ExcludedPath',
     'ExtendedResourceProperties',
@@ -370,6 +422,8 @@ __all__ = [
     'IndexingPolicy',
     'IpAddressOrRange',
     'Location',
+    'ManagedServiceIdentity',
+    'ManagedServiceIdentityUserAssignedIdentitiesValue',
     'Metric',
     'MetricAvailability',
     'MetricDefinition',
@@ -398,6 +452,9 @@ __all__ = [
     'PartitionUsage',
     'PercentileMetric',
     'PercentileMetricValue',
+    'PeriodicModeBackupPolicy',
+    'PeriodicModeProperties',
+    'Permission',
     'PrivateEndpointConnection',
     'PrivateEndpointProperty',
     'PrivateLinkResource',
@@ -405,6 +462,9 @@ __all__ = [
     'ProxyResource',
     'RegionForOnlineOffline',
     'Resource',
+    'RestorableDatabaseAccountGetResult',
+    'RestoreParameters',
+    'RestoreReqeustDatabaseAccountCreateUpdateProperties',
     'SpatialSpec',
     'SqlContainerCreateUpdateParameters',
     'SqlContainerGetPropertiesOptions',
@@ -416,6 +476,10 @@ __all__ = [
     'SqlDatabaseGetPropertiesResource',
     'SqlDatabaseGetResults',
     'SqlDatabaseResource',
+    'SqlRoleAssignmentCreateUpdateParameters',
+    'SqlRoleAssignmentGetResults',
+    'SqlRoleDefinitionCreateUpdateParameters',
+    'SqlRoleDefinitionGetResults',
     'SqlStoredProcedureCreateUpdateParameters',
     'SqlStoredProcedureGetPropertiesResource',
     'SqlStoredProcedureGetResults',
@@ -428,6 +492,7 @@ __all__ = [
     'SqlUserDefinedFunctionGetPropertiesResource',
     'SqlUserDefinedFunctionGetResults',
     'SqlUserDefinedFunctionResource',
+    'SystemData',
     'TableCreateUpdateParameters',
     'TableGetPropertiesOptions',
     'TableGetPropertiesResource',
@@ -456,6 +521,8 @@ __all__ = [
     'SqlStoredProcedureGetResultsPaged',
     'SqlUserDefinedFunctionGetResultsPaged',
     'SqlTriggerGetResultsPaged',
+    'SqlRoleDefinitionGetResultsPaged',
+    'SqlRoleAssignmentGetResultsPaged',
     'MongoDBDatabaseGetResultsPaged',
     'MongoDBCollectionGetResultsPaged',
     'TableGetResultsPaged',
@@ -463,6 +530,7 @@ __all__ = [
     'CassandraTableGetResultsPaged',
     'GremlinDatabaseGetResultsPaged',
     'GremlinGraphGetResultsPaged',
+    'RestorableDatabaseAccountGetResultPaged',
     'NotebookWorkspacePaged',
     'PrivateLinkResourcePaged',
     'PrivateEndpointConnectionPaged',
@@ -472,6 +540,9 @@ __all__ = [
     'ConnectorOffer',
     'PublicNetworkAccess',
     'ServerVersion',
+    'CreateMode',
+    'RestoreMode',
+    'CreatedByType',
     'IndexingMode',
     'DataType',
     'IndexKind',
@@ -481,7 +552,9 @@ __all__ = [
     'ConflictResolutionMode',
     'TriggerType',
     'TriggerOperation',
+    'ResourceIdentityType',
     'KeyKind',
     'UnitType',
     'PrimaryAggregationType',
+    'RoleDefinitionType',
 ]
