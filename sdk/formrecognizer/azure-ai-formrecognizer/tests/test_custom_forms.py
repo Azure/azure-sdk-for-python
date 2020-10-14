@@ -471,3 +471,24 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.form_type_confidence, 1.0)
             self.assertEqual(form.model_id, model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True)
+    def test_custom_form_selection_mark(self, client, container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = client.begin_training(container_sas_url, use_training_labels=False)
+        with open(self.selection_form_pdf, "rb") as fd:
+            myfile = fd.read()
+
+        poller = fr_client.begin_recognize_custom_forms(
+            model.model_id,
+            myfile,
+            include_field_elements=True
+        )
+        form = poller.result()
+        actual = responses[0]
+        recognized_form = responses[1]
+        read_results = actual.analyze_result.read_results
+        page_results = actual.analyze_result.page_results
+        actual_fields = actual.analyze_result.page_results[0].key_value_pairs

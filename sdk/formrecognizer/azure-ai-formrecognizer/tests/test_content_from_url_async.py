@@ -235,3 +235,14 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_selection_marks(self, client):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)

@@ -341,3 +341,17 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_selection_marks(self, client):
+        with open(self.selection_form_pdf, "rb") as fd:
+            myform = fd.read()
+
+        async with client:
+            poller = await client.begin_recognize_content(myform)
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)

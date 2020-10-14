@@ -307,3 +307,16 @@ class TestContentFromStream(FormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_content_selection_marks(self, client):
+        with open(self.selection_form_pdf, "rb") as fd:
+            myform = fd.read()
+
+        poller = client.begin_recognize_content(myform)
+        result = poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)

@@ -12,6 +12,7 @@ import time
 import pytest
 import re
 import logging
+from azure.ai.formrecognizer import SelectionMarkState
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from azure.ai.formrecognizer._helpers import adjust_value_type
 from devtools_testutils import (
@@ -87,6 +88,7 @@ class FormRecognizerTest(AzureTestCase):
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
         self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
         self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
+        self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -101,6 +103,7 @@ class FormRecognizerTest(AzureTestCase):
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
         self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
         self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
+        self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
 
     def get_oauth_endpoint(self):
         return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
@@ -407,6 +410,13 @@ class FormRecognizerTest(AzureTestCase):
                         self.assertIsNotNone(cell.column_span)
                         self.assertBoundingBoxHasPoints(cell.bounding_box)
                         self.assertFieldElementsHasValues(cell.field_elements, page.page_number)
+
+            if page.selection_marks:
+                for selection_mark in page.selection_marks:
+                    self.assertEqual(selection_mark.page_number, page.page_number)
+                    self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
+                    self.assertIsNotNone(selection_mark.confidence)
+                    self.assertTrue(selection_mark.state in [item.value for item in SelectionMarkState] )
 
     def assertFormWordHasValues(self, word, page_number):
         self.assertEqual(word.kind, "word")
