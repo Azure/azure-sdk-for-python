@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, List, TYPE_CHECKING
+from typing import Any, List, TYPE_CHECKING, Optional
 import logging
 
 import uamqp
@@ -63,11 +63,10 @@ class ServiceBusClient(object):
     """
     def __init__(
         self,
-        fully_qualified_namespace,
-        credential,
-        **kwargs
-    ):
-        # type: (str, TokenCredential, Any) -> None
+        fully_qualified_namespace: str,
+        credential: TokenCredential,
+        **kwargs: Any
+    ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
         self._credential = credential
         self._config = Configuration(**kwargs)
@@ -100,10 +99,9 @@ class ServiceBusClient(object):
     @classmethod
     def from_connection_string(
         cls,
-        conn_str,
-        **kwargs
-    ):
-        # type: (str, Any) -> ServiceBusClient
+        conn_str: str,
+        **kwargs: Any
+    ) -> "ServiceBusClient":
         """
         Create a ServiceBusClient from a connection string.
 
@@ -145,8 +143,7 @@ class ServiceBusClient(object):
             **kwargs
         )
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """
         Close down the ServiceBus client.
         All spawned senders, receivers and underlying connection will be shutdown.
@@ -167,8 +164,7 @@ class ServiceBusClient(object):
         if self._connection_sharing and self._connection:
             await self._connection.destroy_async()
 
-    def get_queue_sender(self, queue_name, **kwargs):
-        # type: (str, Any) -> ServiceBusSender
+    def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -202,8 +198,7 @@ class ServiceBusClient(object):
         self._handlers.append(handler)
         return handler
 
-    def get_queue_receiver(self, queue_name, **kwargs):
-        # type: (str, Any) -> ServiceBusReceiver
+    def get_queue_receiver(self, queue_name: str, **kwargs: Any) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
@@ -261,8 +256,7 @@ class ServiceBusClient(object):
         self._handlers.append(handler)
         return handler
 
-    def get_topic_sender(self, topic_name, **kwargs):
-        # type: (str, Any) -> ServiceBusSender
+    def get_topic_sender(self, topic_name: str, **kwargs: Any) -> ServiceBusSender:
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
@@ -295,8 +289,7 @@ class ServiceBusClient(object):
         self._handlers.append(handler)
         return handler
 
-    def get_subscription_receiver(self, topic_name, subscription_name, **kwargs):
-        # type: (str, str, Any) -> ServiceBusReceiver
+    def get_subscription_receiver(self, topic_name: str, subscription_name: str, **kwargs: Any) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.
@@ -374,14 +367,19 @@ class ServiceBusClient(object):
         self._handlers.append(handler)
         return handler
 
-    def get_subscription_session_receiver(self, topic_name, subscription_name, session_id=None, **kwargs):
-        # type: (str, str, str, Any) -> ServiceBusSessionReceiver
+    def get_subscription_session_receiver(
+        self,
+        topic_name: str,
+        subscription_name: str,
+        session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> ServiceBusSessionReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.
         :param str subscription_name: The name of specific Service Bus Subscription
          under the given Service Bus Topic.
-        :param str session_id: A specific session from which to receive. This must be specified for a
+        :param Optional[str] session_id: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive messages from the next available
          session, set this to None.  The default is None.
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
@@ -432,14 +430,18 @@ class ServiceBusClient(object):
         self._handlers.append(handler)
         return handler
 
-    def get_queue_session_receiver(self, queue_name, session_id=None, **kwargs):
-        # type: (str, str, Any) -> ServiceBusSessionReceiver
+    def get_queue_session_receiver(
+        self,
+        queue_name: str,
+        session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> ServiceBusSessionReceiver:
         """Get ServiceBusSessionReceiver for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
-        :param str session_id: A specific session from which to receive. This must be specified for a
+        :param Optional[str] session_id: A specific session from which to receive. This must be specified for a
          sessionful entity, otherwise it must be None. In order to receive messages from the next available
-         session, set this to None.  The default is None.
+         session, set this to None. The default is None.
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete

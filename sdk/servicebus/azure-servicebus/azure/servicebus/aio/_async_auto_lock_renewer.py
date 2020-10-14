@@ -113,10 +113,12 @@ class AutoLockRenew:
             if on_lock_renew_failure and not clean_shutdown:
                 await on_lock_renew_failure(renewable, error)
 
-    def register(self,
-                 renewable: Union[ReceivedMessage, ServiceBusSession],
-                 timeout: float = 300,
-                 on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None) -> None:
+    def register(
+        self,
+        renewable: Union[ReceivedMessage, ServiceBusSession],
+        timeout: float = 300,
+        on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None
+    ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
