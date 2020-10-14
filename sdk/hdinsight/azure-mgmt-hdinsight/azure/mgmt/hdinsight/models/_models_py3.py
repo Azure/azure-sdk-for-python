@@ -679,8 +679,8 @@ class ClusterCreateProperties(Model):
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
-    :param network_settings: The network settings.
-    :type network_settings: ~azure.mgmt.hdinsight.models.NetworkSettings
+    :param network_properties: The network properties.
+    :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
     """
 
     _attribute_map = {
@@ -695,10 +695,10 @@ class ClusterCreateProperties(Model):
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
-        'network_settings': {'key': 'networkSettings', 'type': 'NetworkSettings'},
+        'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
     }
 
-    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_settings=None, **kwargs) -> None:
+    def __init__(self, *, cluster_version: str=None, os_type=None, tier=None, cluster_definition=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, storage_profile=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, **kwargs) -> None:
         super(ClusterCreateProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
@@ -711,7 +711,7 @@ class ClusterCreateProperties(Model):
         self.disk_encryption_properties = disk_encryption_properties
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
-        self.network_settings = network_settings
+        self.network_properties = network_properties
 
 
 class ClusterDefinition(Model):
@@ -782,6 +782,8 @@ class ClusterGetProperties(Model):
     :param tier: The cluster tier. Possible values include: 'Standard',
      'Premium'
     :type tier: str or ~azure.mgmt.hdinsight.models.Tier
+    :param cluster_id: The cluster id.
+    :type cluster_id: str
     :param cluster_definition: Required. The cluster definition.
     :type cluster_definition: ~azure.mgmt.hdinsight.models.ClusterDefinition
     :param kafka_rest_properties: The cluster kafka rest proxy configuration.
@@ -816,8 +818,8 @@ class ClusterGetProperties(Model):
      ~azure.mgmt.hdinsight.models.EncryptionInTransitProperties
     :param min_supported_tls_version: The minimal supported tls version.
     :type min_supported_tls_version: str
-    :param network_settings: The network settings.
-    :type network_settings: ~azure.mgmt.hdinsight.models.NetworkSettings
+    :param network_properties: The network properties.
+    :type network_properties: ~azure.mgmt.hdinsight.models.NetworkProperties
     """
 
     _validation = {
@@ -828,6 +830,7 @@ class ClusterGetProperties(Model):
         'cluster_version': {'key': 'clusterVersion', 'type': 'str'},
         'os_type': {'key': 'osType', 'type': 'OSType'},
         'tier': {'key': 'tier', 'type': 'Tier'},
+        'cluster_id': {'key': 'clusterId', 'type': 'str'},
         'cluster_definition': {'key': 'clusterDefinition', 'type': 'ClusterDefinition'},
         'kafka_rest_properties': {'key': 'kafkaRestProperties', 'type': 'KafkaRestProperties'},
         'security_profile': {'key': 'securityProfile', 'type': 'SecurityProfile'},
@@ -841,14 +844,15 @@ class ClusterGetProperties(Model):
         'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
         'encryption_in_transit_properties': {'key': 'encryptionInTransitProperties', 'type': 'EncryptionInTransitProperties'},
         'min_supported_tls_version': {'key': 'minSupportedTlsVersion', 'type': 'str'},
-        'network_settings': {'key': 'networkSettings', 'type': 'NetworkSettings'},
+        'network_properties': {'key': 'networkProperties', 'type': 'NetworkProperties'},
     }
 
-    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_settings=None, **kwargs) -> None:
+    def __init__(self, *, cluster_definition, cluster_version: str=None, os_type=None, tier=None, cluster_id: str=None, kafka_rest_properties=None, security_profile=None, compute_profile=None, provisioning_state=None, created_date: str=None, cluster_state: str=None, quota_info=None, errors=None, connectivity_endpoints=None, disk_encryption_properties=None, encryption_in_transit_properties=None, min_supported_tls_version: str=None, network_properties=None, **kwargs) -> None:
         super(ClusterGetProperties, self).__init__(**kwargs)
         self.cluster_version = cluster_version
         self.os_type = os_type
         self.tier = tier
+        self.cluster_id = cluster_id
         self.cluster_definition = cluster_definition
         self.kafka_rest_properties = kafka_rest_properties
         self.security_profile = security_profile
@@ -862,7 +866,7 @@ class ClusterGetProperties(Model):
         self.disk_encryption_properties = disk_encryption_properties
         self.encryption_in_transit_properties = encryption_in_transit_properties
         self.min_supported_tls_version = min_supported_tls_version
-        self.network_settings = network_settings
+        self.network_properties = network_properties
 
 
 class ClusterIdentity(Model):
@@ -1457,30 +1461,27 @@ class LocalizedName(Model):
         self.localized_value = localized_value
 
 
-class NetworkSettings(Model):
-    """The network settings.
+class NetworkProperties(Model):
+    """The network properties.
 
-    :param public_network_access: Specifies whether public network access is
-     enabled for inbound and outbound, or outbound only. Possible values
-     include: 'InboundAndOutbound', 'OutboundOnly'
-    :type public_network_access: str or
-     ~azure.mgmt.hdinsight.models.PublicNetworkAccess
-    :param outbound_only_public_network_access_type: The mechanism through
-     which the cluster will have outbound access to the public network.
-     Possible values include: 'PublicLoadBalancer', 'UDR'
-    :type outbound_only_public_network_access_type: str or
-     ~azure.mgmt.hdinsight.models.OutboundOnlyPublicNetworkAccessType
+    :param resource_provider_connection: The direction for the resource
+     provider connection. Possible values include: 'Inbound', 'Outbound'
+    :type resource_provider_connection: str or
+     ~azure.mgmt.hdinsight.models.ResourceProviderConnection
+    :param private_link: Indicates whether or not private link is enabled.
+     Possible values include: 'Disabled', 'Enabled'
+    :type private_link: str or ~azure.mgmt.hdinsight.models.PrivateLink
     """
 
     _attribute_map = {
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'outbound_only_public_network_access_type': {'key': 'outboundOnlyPublicNetworkAccessType', 'type': 'str'},
+        'resource_provider_connection': {'key': 'resourceProviderConnection', 'type': 'str'},
+        'private_link': {'key': 'privateLink', 'type': 'str'},
     }
 
-    def __init__(self, *, public_network_access=None, outbound_only_public_network_access_type=None, **kwargs) -> None:
-        super(NetworkSettings, self).__init__(**kwargs)
-        self.public_network_access = public_network_access
-        self.outbound_only_public_network_access_type = outbound_only_public_network_access_type
+    def __init__(self, *, resource_provider_connection=None, private_link=None, **kwargs) -> None:
+        super(NetworkProperties, self).__init__(**kwargs)
+        self.resource_provider_connection = resource_provider_connection
+        self.private_link = private_link
 
 
 class Operation(Model):

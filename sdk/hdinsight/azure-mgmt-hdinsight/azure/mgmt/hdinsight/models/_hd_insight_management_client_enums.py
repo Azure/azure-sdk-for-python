@@ -28,16 +28,16 @@ class DaysOfWeek(str, Enum):
     sunday = "Sunday"
 
 
-class PublicNetworkAccess(str, Enum):
+class ResourceProviderConnection(str, Enum):
 
-    inbound_and_outbound = "InboundAndOutbound"
-    outbound_only = "OutboundOnly"
+    inbound = "Inbound"
+    outbound = "Outbound"
 
 
-class OutboundOnlyPublicNetworkAccessType(str, Enum):
+class PrivateLink(str, Enum):
 
-    public_load_balancer = "PublicLoadBalancer"
-    udr = "UDR"
+    disabled = "Disabled"
+    enabled = "Enabled"
 
 
 class OSType(str, Enum):
