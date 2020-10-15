@@ -267,7 +267,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword include_snapshots:
             Specifies which snapshots to delete.
             Possible values: 'include' which includes non-leased snapshots,
-            and 'include-leased' which includes all snapshots.
+            and 'include-with-leased' which includes all snapshots.
         :paramtype include_snapshots: ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
 
             .. versionadded:: 12.6.0
