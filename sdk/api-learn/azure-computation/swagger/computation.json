@@ -167,7 +167,8 @@
           "name": "nodeName",
           "in": "path",
           "type": "string",
-          "required": true
+          "required": true,
+          "x-ms-parameter-location": "method"
       },
       "ClientRequestId": {
           "in": "header",

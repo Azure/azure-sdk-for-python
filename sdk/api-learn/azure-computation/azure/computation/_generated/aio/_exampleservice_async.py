@@ -31,8 +31,6 @@ class ExampleService(ExampleServiceOperationsMixin):
     :vartype computation: azure.computation.aio.operations_async.ComputationOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param node_name: 
-    :type node_name: str
     :param x_ms_client_request_id: Optional client-provided request id.
     :type x_ms_client_request_id: str
     :param str base_url: Service URL
@@ -41,12 +39,11 @@ class ExampleService(ExampleServiceOperationsMixin):
     def __init__(
         self,
         credential: "AsyncTokenCredential",
-        node_name: str,
         x_ms_client_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         base_url = 'None'
-        self._config = ExampleServiceConfiguration(credential, node_name, x_ms_client_request_id, **kwargs)
+        self._config = ExampleServiceConfiguration(credential, x_ms_client_request_id, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

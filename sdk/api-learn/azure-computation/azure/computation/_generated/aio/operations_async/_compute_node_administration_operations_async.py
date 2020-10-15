@@ -85,12 +85,15 @@ class ComputeNodeAdministrationOperations:
 
     async def create(
         self,
+        node_name: str,
         if_match: Optional[str] = None,
         compute_node: Optional["models.ComputeNode"] = None,
         **kwargs
     ) -> "models.ComputeNode":
         """create.
 
+        :param node_name:
+        :type node_name: str
         :param if_match:
         :type if_match: str
         :param compute_node:
@@ -108,7 +111,7 @@ class ComputeNodeAdministrationOperations:
         # Construct URL
         url = self.create.metadata['url']  # type: ignore
         path_format_arguments = {
-            'nodeName': self._serialize.url("self._config.node_name", self._config.node_name, 'str'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -154,10 +157,13 @@ class ComputeNodeAdministrationOperations:
 
     async def get(
         self,
+        node_name: str,
         **kwargs
     ) -> "models.ComputeNode":
         """get.
 
+        :param node_name:
+        :type node_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ComputeNode, or the result of cls(response)
         :rtype: ~azure.computation.models.ComputeNode
@@ -170,7 +176,7 @@ class ComputeNodeAdministrationOperations:
         # Construct URL
         url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'nodeName': self._serialize.url("self._config.node_name", self._config.node_name, 'str'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

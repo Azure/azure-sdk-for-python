@@ -27,8 +27,6 @@ class ExampleServiceConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param node_name: 
-    :type node_name: str
     :param x_ms_client_request_id: Optional client-provided request id.
     :type x_ms_client_request_id: str
     """
@@ -36,19 +34,15 @@ class ExampleServiceConfiguration(Configuration):
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        node_name,  # type: str
         x_ms_client_request_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if node_name is None:
-            raise ValueError("Parameter 'node_name' must not be None.")
         super(ExampleServiceConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
-        self.node_name = node_name
         self.x_ms_client_request_id = x_ms_client_request_id
         self.credential_scopes = kwargs.pop('credential_scopes', [])
         kwargs.setdefault('sdk_moniker', 'exampleservice/{}'.format(VERSION))

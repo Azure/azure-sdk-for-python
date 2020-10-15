@@ -41,11 +41,14 @@ class ComputationOperations:
 
     async def compute_pi(
         self,
+        node_name: str,
         precision: Optional[int] = 17,
         **kwargs
     ) -> None:
         """compute_pi.
 
+        :param node_name:
+        :type node_name: str
         :param precision:
         :type precision: int
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -60,7 +63,7 @@ class ComputationOperations:
         # Construct URL
         url = self.compute_pi.metadata['url']  # type: ignore
         path_format_arguments = {
-            'nodeName': self._serialize.url("self._config.node_name", self._config.node_name, 'str'),
+            'nodeName': self._serialize.url("node_name", node_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 

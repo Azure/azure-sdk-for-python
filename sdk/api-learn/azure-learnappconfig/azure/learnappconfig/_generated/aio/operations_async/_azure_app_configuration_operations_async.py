@@ -182,7 +182,7 @@ class AzureAppConfigurationOperationsMixin:
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, "models.Get6ItemsItem"]]] = None,
+        select: Optional[List[Union[str, "models.SettingFields"]]] = None,
         **kwargs
     ) -> AsyncIterable["models.KeyValueListResult"]:
         """Gets a list of key-values.
@@ -200,7 +200,7 @@ class AzureAppConfigurationOperationsMixin:
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.learnappconfig.models.Get6ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.learnappconfig.models.KeyValueListResult]
@@ -281,7 +281,7 @@ class AzureAppConfigurationOperationsMixin:
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, "models.Head6ItemsItem"]]] = None,
+        select: Optional[List[Union[str, "models.SettingFields"]]] = None,
         **kwargs
     ) -> None:
         """Requests the headers and status of the given resource.
@@ -299,7 +299,7 @@ class AzureAppConfigurationOperationsMixin:
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.learnappconfig.models.Head6ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -359,7 +359,7 @@ class AzureAppConfigurationOperationsMixin:
         accept_datetime: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        select: Optional[List[Union[str, "models.Get7ItemsItem"]]] = None,
+        select: Optional[List[Union[str, "models.SettingFields"]]] = None,
         **kwargs
     ) -> "models.KeyValue":
         """Gets a single key-value.
@@ -380,7 +380,7 @@ class AzureAppConfigurationOperationsMixin:
          not match the value provided.
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.learnappconfig.models.Get7ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyValue, or the result of cls(response)
         :rtype: ~azure.learnappconfig.models.KeyValue
@@ -610,7 +610,7 @@ class AzureAppConfigurationOperationsMixin:
         accept_datetime: Optional[str] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
-        select: Optional[List[Union[str, "models.Head7ItemsItem"]]] = None,
+        select: Optional[List[Union[str, "models.SettingFields"]]] = None,
         **kwargs
     ) -> None:
         """Requests the headers and status of the given resource.
@@ -631,7 +631,7 @@ class AzureAppConfigurationOperationsMixin:
          not match the value provided.
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.learnappconfig.models.Head7ItemsItem]
+        :type select: list[str or ~azure.learnappconfig.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1011,7 +1011,7 @@ class AzureAppConfigurationOperationsMixin:
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, "models.Enum4"]]] = None,
+        select: Optional[List[Union[str, "models.SettingFields"]]] = None,
         **kwargs
     ) -> AsyncIterable["models.KeyValueListResult"]:
         """Gets a list of key-value revisions.
@@ -1029,7 +1029,7 @@ class AzureAppConfigurationOperationsMixin:
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.learnappconfig.models.Enum4]
+        :type select: list[str or ~azure.learnappconfig.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.learnappconfig.models.KeyValueListResult]
@@ -1110,7 +1110,7 @@ class AzureAppConfigurationOperationsMixin:
         label: Optional[str] = None,
         after: Optional[str] = None,
         accept_datetime: Optional[str] = None,
-        select: Optional[List[Union[str, "models.Enum5"]]] = None,
+        select: Optional[List[Union[str, "models.SettingFields"]]] = None,
         **kwargs
     ) -> None:
         """Requests the headers and status of the given resource.
@@ -1128,7 +1128,7 @@ class AzureAppConfigurationOperationsMixin:
          specified time.
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
-        :type select: list[str or ~azure.learnappconfig.models.Enum5]
+        :type select: list[str or ~azure.learnappconfig.models.SettingFields]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
