@@ -14,9 +14,17 @@ def test_convert_datetime():
     date_time = convert_datetime(input)
     assert date_time == datetime.datetime(2000,1,1)
 
+    input = "2000-01-01T00:00:00Z"
+    date_time = convert_datetime(input)
+    assert date_time == datetime.datetime(2000, 1, 1)
+
     input = "2000-01-01"
     date_time = convert_datetime(input)
     assert date_time == datetime.datetime(2000, 1, 1)
+
+    input = "2000-01-01T"
+    date_time = convert_datetime(input)
+    assert date_time == "2000-01-01T"
 
     input = datetime.datetime(2000, 1, 1)
     date_time = convert_datetime(input)
