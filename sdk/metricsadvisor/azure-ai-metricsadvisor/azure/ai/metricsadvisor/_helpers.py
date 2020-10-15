@@ -189,8 +189,9 @@ def convert_to_sub_feedback(feedback):
     raise HttpResponseError("Invalid feedback type returned in the response.")
 
 def convert_datetime(date_time):
+    # type: (Union[str, datetime.datetime]) -> datetime.datetime
     if not date_time:
-        return date_time
+        return None
     if isinstance(date_time, datetime.datetime):
         return date_time
     if isinstance(date_time, str):
@@ -200,8 +201,5 @@ def convert_datetime(date_time):
             try:
                 return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
             except ValueError:
-                try:
-                    return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
-                except ValueError:
-                    return date_time
+                return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     raise ValueError("Bad datetime value")
