@@ -293,8 +293,14 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_alerts_for_alert_configuration(self, alert_configuration_id, start_time, end_time, time_mode, **kwargs):
-        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Union[str, TimeMode], Any) -> AsyncItemPaged[Alert]
+    def list_alerts_for_alert_configuration(self,
+                                            alert_configuration_id,     # type: str
+                                            start_time,     # type: Union[str, datetime.datetime]
+                                            end_time,       # type: Union[str, datetime.datetime]
+                                            time_mode,      # type: Union[str, TimeMode]
+                                            **kwargs        # type: Any
+                                            ):
+        # type: (...) -> AsyncItemPaged[Alert]
         """Query alerts under anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -611,8 +617,13 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metric_enrichment_status(self, metric_id, start_time, end_time, **kwargs):
-        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> AsyncItemPaged[EnrichmentStatus]
+    def list_metric_enrichment_status(self,
+                                      metric_id,    # type: str
+                                      start_time,   # type: Union[str, datetime.datetime]
+                                      end_time,     # type: Union[str, datetime.datetime]
+                                      **kwargs      # type: Any
+                                      ):
+        # type: (...) -> AsyncItemPaged[EnrichmentStatus]
 
         """Query anomaly detection status.
 

@@ -535,8 +535,14 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metrics_series_data(self, metric_id, start_time, end_time, series_to_filter, **kwargs):
-        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], List[Dict[str, str]], Any) -> ItemPaged[MetricSeriesData]
+    def list_metrics_series_data(self,
+                                 metric_id,     # type: str
+                                 start_time,    # type: Union[str, datetime.datetime]
+                                 end_time,  # type: Union[str, datetime.datetime]
+                                 series_to_filter,  # type: List[Dict[str, str]]
+                                 **kwargs   # type: Any
+                                 ):
+        # type: (...) -> ItemPaged[MetricSeriesData]
 
         """Get time series data from metric.
 
