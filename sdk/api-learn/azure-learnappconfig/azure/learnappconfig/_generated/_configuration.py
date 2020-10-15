@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
 
+VERSION = "unknown"
 
 class AzureAppConfigurationConfiguration(Configuration):
     """Configuration for AzureAppConfiguration.

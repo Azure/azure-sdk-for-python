@@ -2,7 +2,6 @@
 
 > see https://aka.ms/autorest
 
-
 ### Generation
 ```ps
 cd <swagger-folder>
