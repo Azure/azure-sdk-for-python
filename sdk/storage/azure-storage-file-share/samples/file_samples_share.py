@@ -22,7 +22,7 @@ USAGE:
 """
 
 import os
-from azure.storage.fileshare import ShareAccessTier
+from azure.storage.fileshare import ShareSetPropertiesOptions, ShareAccessTier
 
 SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
@@ -38,7 +38,8 @@ class ShareSamples(object):
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples1")
 
         # [START create_share]
-        share.create_share()
+        # Create share with Access Tier set to Hot
+        share.create_share(access_tier=ShareAccessTier("Hot"))
         # [END create_share]
         try:
             # [START create_share_snapshot]
@@ -76,7 +77,7 @@ class ShareSamples(object):
             # Delete the share
             share.delete_share()
 
-    def set_share_tier(self):
+    def set_share_properties(self):
         from azure.storage.fileshare import ShareClient
         share1 = ShareClient.from_connection_string(self.connection_string, "sharesamples3a")
         share2 = ShareClient.from_connection_string(self.connection_string, "sharesamples3b")
@@ -86,16 +87,20 @@ class ShareSamples(object):
         share2.create_share()
 
         try:
-            # [START set_share_tier]
+            # [START set_share_properties]
             # Set the tier for the first share to Hot
-            share1.set_share_tier(access_tier="Hot")
-            # Set the tier for the second share to Hot
-            share2.set_share_tier(access_tier=ShareAccessTier("Cool"))
+            share1.set_share_properties(ShareSetPropertiesOptions(access_tier="Hot"))
+            # Set the quota for the first share to 3
+            share1.set_share_properties(ShareSetPropertiesOptions(quota=3))
+            # Set the tier for the second share to Cool and quota to 2
+            share2.set_share_properties(ShareSetPropertiesOptions(access_tier=ShareAccessTier("Cool"), quota=2))
 
             # Get the shares' properties
             print(share1.get_share_properties().access_tier)
+            print(share1.get_share_properties().quota)
             print(share2.get_share_properties().access_tier)
-            # [END set_share_tier]
+            print(share2.get_share_properties().quota)
+            # [END set_share_properties]
 
         finally:
             # Delete the shares
@@ -156,9 +161,9 @@ class ShareSamples(object):
 
 if __name__ == '__main__':
     sample = ShareSamples()
-    sample.create_share_snapshot()
-    sample.set_share_quota_and_metadata()
-    sample.set_share_tier()
-    sample.list_directories_and_files()
-    sample.get_directory_or_file_client()
-    sample.acquire_share_lease()
+    # sample.create_share_snapshot()
+    # sample.set_share_quota_and_metadata()
+    sample.set_share_properties()
+    # sample.list_directories_and_files()
+    # sample.get_directory_or_file_client()
+    # sample.acquire_share_lease()

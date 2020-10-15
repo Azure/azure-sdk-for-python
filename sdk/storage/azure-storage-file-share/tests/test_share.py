@@ -21,6 +21,7 @@ from azure.storage.fileshare import (
     AccessPolicy,
     ShareSasPermissions,
     ShareAccessTier,
+    ShareSetPropertiesOptions,
     ShareServiceClient,
     ShareDirectoryClient,
     ShareFileClient,
@@ -791,11 +792,10 @@ class StorageShareTest(StorageTestCase):
         share1 = self._create_share("share1")
         share2 = self._create_share("share2")
 
-        share1.set_share_quota(1)
-        share1.set_share_tier("Hot")
+        share1.set_share_quota(3)
+        share1.set_share_properties(ShareSetPropertiesOptions(access_tier="Hot"))
 
-        share2.set_share_tier(ShareAccessTier("Cool"))
-        share2.set_share_quota(2)
+        share2.set_share_properties(ShareSetPropertiesOptions(access_tier=ShareAccessTier("Cool"), quota=2))
 
         # Act
         props1 = share1.get_share_properties()
@@ -807,8 +807,8 @@ class StorageShareTest(StorageTestCase):
         share2_quota = props2.quota
         share2_tier = props2.access_tier
 
-        # Assert quotas and access tiers don't change by calling the other method.
-        self.assertEqual(share1_quota, 1)
+        # Assert
+        self.assertEqual(share1_quota, 3)
         self.assertEqual(share1_tier, "Hot")
         self.assertEqual(share2_quota, 2)
         self.assertEqual(share2_tier, "Cool")

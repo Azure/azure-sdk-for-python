@@ -23,7 +23,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.storage.fileshare import ShareAccessTier
+from azure.storage.fileshare import ShareSetPropertiesOptions, ShareAccessTier
 
 SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
@@ -40,7 +40,8 @@ class ShareSamplesAsync(object):
 
         async with share:
             # [START create_share]
-            await share.create_share()
+            # Create share with Access Tier set to Hot
+            await share.create_share(access_tier=ShareAccessTier("Hot"))
             # [END create_share]
             try:
                 # [START create_share_snapshot]
@@ -79,7 +80,7 @@ class ShareSamplesAsync(object):
                 # Delete the share
                 await share.delete_share()
 
-    async def set_share_tier(self):
+    async def set_share_properties(self):
         from azure.storage.fileshare.aio import ShareClient
         share1 = ShareClient.from_connection_string(self.connection_string, "sharesamples3a")
         share2 = ShareClient.from_connection_string(self.connection_string, "sharesamples3b")
@@ -90,18 +91,22 @@ class ShareSamplesAsync(object):
             await share2.create_share()
 
             try:
-                # [START set_share_tier]
+                # [START set_share_properties]
                 # Set the tier for the first share to Hot
-                await share1.set_share_tier(access_tier="Hot")
-                # Set the tier for the second share to Hot
-                await share2.set_share_tier(access_tier=ShareAccessTier("Cool"))
+                await share1.set_share_properties(ShareSetPropertiesOptions(access_tier="Hot"))
+                # Set the quota for the first share to 3
+                await share1.set_share_properties(ShareSetPropertiesOptions(quota=3))
+                # Set the tier for the second share to Cool and quota to 2
+                await share2.set_share_properties(ShareSetPropertiesOptions(access_tier=ShareAccessTier("Cool"), quota=2))
 
                 # Get the shares' properties
                 props1 = await share1.get_share_properties()
-                print(props1.access_tier)
                 props2 = await share2.get_share_properties()
+                print(props1.access_tier)
+                print(props1.quota)
                 print(props2.access_tier)
-                # [END set_share_tier]
+                print(props2.quota)
+                # [END set_share_properties]
 
             finally:
                 # Delete the shares
@@ -152,7 +157,7 @@ async def main():
     sample = ShareSamplesAsync()
     await sample.create_share_snapshot_async()
     await sample.set_share_quota_and_metadata_async()
-    await sample.set_share_tier()
+    await sample.set_share_properties()
     await sample.list_directories_and_files_async()
     await sample.get_directory_or_file_client_async()
 

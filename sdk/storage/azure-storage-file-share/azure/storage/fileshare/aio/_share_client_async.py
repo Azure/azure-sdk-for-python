@@ -18,7 +18,6 @@ from .._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
-from .._generated.models import ShareAccessTier
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
 from .._generated.models import (
@@ -34,7 +33,7 @@ from ..aio._lease_async import ShareLeaseClient
 
 
 if TYPE_CHECKING:
-    from .._models import ShareProperties, AccessPolicy
+    from .._models import ShareProperties, AccessPolicy, ShareSetPropertiesOptions
 
 
 class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
@@ -391,16 +390,15 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def set_share_tier(self, access_tier, **kwargs):
-        # type: (Union[str, ShareAccessTier], Any) ->  Dict[str, Any]
-        """Sets the tier for the share.
+    async def set_share_properties(self, options, **kwargs):
+        # type: (ShareSetPropertiesOptions, Any) ->  Dict[str, Any]
+        """Sets the share properties.
 
         .. versionadded:: 12.6.0
 
-        :param int access_tier:
-            Specifies the access tier of the share.
-            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
-        :type access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :param options:
+            Specifies the properties to set on the share.
+        :type options: ~azure.storage.fileshare.models.ShareSetPropertiesOptions
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -412,21 +410,21 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/file_samples_share_async.py
-                :start-after: [START set_share_tier]
-                :end-before: [END set_share_tier]
+                :start-after: [START set_share_properties]
+                :end-before: [END set_share_properties]
                 :language: python
                 :dedent: 16
-                :caption: Sets the share tier.
+                :caption: Sets the share properties.
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.share.set_properties( # type: ignore
                 timeout=timeout,
-                quota=None,
-                access_tier=access_tier,
-                cls=return_response_headers,
+                quota=options.quota,
+                access_tier=options.access_tier,
                 lease_access_conditions=access_conditions,
+                cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
