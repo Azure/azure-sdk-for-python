@@ -5,7 +5,9 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime
+from msrest import Serializer
 
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from ._generated import AzureAppConfiguration
@@ -48,6 +50,7 @@ class AppConfigurationClient(object):
         """
         pass
 
+    @distributed_trace
     def get_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, Optional[str]) -> ConfigurationSetting
         """Get the value of a particular configuration settings.
@@ -59,7 +62,24 @@ class AppConfigurationClient(object):
         :paramtype select: List[Union[str, ~azure.learnappconfig.SettingFields]]
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
         """
-        pass
+        accept_datetime = kwargs.pop('accept_datetime', None)
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = Serializer.serialize_rfc(accept_datetime)
+        result = self._client.get_key_value(
+            key=key,
+            label=label,
+            accept_datetime=accept_datetime,
+            **kwargs)
+        return ConfigurationSetting(
+            key=result.key,
+            label=result.label,
+            value=result.value,
+            etag=result.etag,
+            last_modified=result.last_modified,
+            read_only=result.locked,
+            content_type=result.content_type,
+            tags=result.tags
+        )
 
     def close(self):
         # type: () -> None

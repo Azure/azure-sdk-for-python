@@ -24,6 +24,7 @@ def main():
         text_setting = client.get_configuration_setting(os.environ['API-LEARN_SETTING_TEXT_KEY'])
         greeting = text_setting.value
     except:
+        raise
         color = 'RED'
         greeting = 'Default greeting'
 

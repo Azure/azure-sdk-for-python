@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime
+from msrest import Serializer
+from azure.core.tracing.decorator_async import distributed_trace_async
 from typing import Optional, List, Union
 
 from azure.core import MatchConditions
@@ -13,6 +15,7 @@ from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SettingFields
 from .._models import ConfigurationSetting
 from .._version import VERSION
+from .._utils import get_match_headers
 
 
 class AppConfigurationClient(object):
@@ -61,7 +64,29 @@ class AppConfigurationClient(object):
         :paramtype select: List[Union[str, ~azure.learnappconfig.SettingFields]]
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
         """
-        pass
+        if_match, if_none_match, errors = get_match_headers(etag, match_condition)
+        accept_datetime = kwargs.pop('accept_datetime', None)
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = Serializer.serialize_rfc(accept_datetime)
+        result = await self._client.get_key_value(
+            key=key,
+            label=label,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            select=select,
+            accept_datetime=accept_datetime,
+            error_map=errors,
+            **kwargs)
+        return ConfigurationSetting(
+            key=result.key,
+            label=result.label,
+            value=result.value,
+            etag=result.etag,
+            last_modified=result.last_modified,
+            read_only=result.locked,
+            content_type=result.content_type,
+            tags=result.tags
+        )
 
     async def close(self):
         # type: () -> None
