@@ -9,8 +9,11 @@ from typing import Optional, List, Union
 
 from azure.core import MatchConditions
 
+from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SettingFields
 from .._models import ConfigurationSetting
+from .._version import VERSION
+
 
 class AppConfigurationClient(object):
     """A Client for the AppConfiguration Service.
@@ -20,7 +23,21 @@ class AppConfigurationClient(object):
     """
 
     def __init__(self, account_url: str, credential: "AsyncTokenCredential", **kwargs):
-        pass
+        try:
+            if not account_url.lower().startswith('http'):
+                full_url = "https://" + account_url
+            else:
+                full_url = account_url
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        user_agent_moniker = "learnappconfig/{}".format(VERSION)
+        self._client = AzureAppConfiguration(
+            credential=credential,
+            endpoint=account_url,
+            credential_scopes=[account_url.strip("/") + "/.default"],
+            sdk_moniker=user_agent_moniker,
+            **kwargs)
 
     async def get_configuration_setting(
         self,
@@ -45,3 +62,16 @@ class AppConfigurationClient(object):
         :raises ~azure.core.exceptions.ResourceNotFoundError: If no matching configuration setting exists.
         """
         pass
+
+    async def close(self):
+        # type: () -> None
+        await self._client.close()
+
+    async def __aenter__(self):
+        # type: () -> AppConfigurationClient
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details):
+        # type: (Any) -> None
+        await self._client.__aexit__(*exc_details)
