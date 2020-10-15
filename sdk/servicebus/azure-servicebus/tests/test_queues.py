@@ -16,7 +16,7 @@ import calendar
 
 import uamqp
 from uamqp import compat
-from azure.servicebus import ServiceBusClient, AutoLockRenew, TransportType
+from azure.servicebus import ServiceBusClient, AutoLockRenewer, TransportType
 from azure.servicebus._common.message import Message, PeekedMessage, ReceivedMessage, BatchMessage
 from azure.servicebus._common.constants import (
     ReceiveMode,
@@ -909,7 +909,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message = Message("{}".format(i))
                     sender.send_messages(message)
     
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                                  max_wait_time=5, 
@@ -1408,7 +1408,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             if error:
                 errors.append(error)
 
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1 # So we can run the test fast.
         with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1419,7 +1419,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that in normal operation it does not get called
             auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
@@ -1429,7 +1429,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1441,7 +1441,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is called when there is an overt renew failure
             message = MockReceivedMessage(exception_on_renew_lock=True)
@@ -1452,7 +1452,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is not called when the renewer is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1464,7 +1464,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is not called when the receiver is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1476,7 +1476,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
 
     def test_queue_mock_no_reusing_auto_lock_renew(self):
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1 # So we can run the test fast.
         with auto_lock_renew:
             auto_lock_renew.register(renewable=MockReceivedMessage())
@@ -1489,7 +1489,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with pytest.raises(ServiceBusError):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
         with auto_lock_renew:

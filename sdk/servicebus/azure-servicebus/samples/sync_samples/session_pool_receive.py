@@ -8,7 +8,7 @@ import os
 import uuid
 import concurrent
 
-from azure.servicebus import ServiceBusClient, Message, AutoLockRenew
+from azure.servicebus import ServiceBusClient, Message, AutoLockRenewer
 from azure.servicebus.exceptions import NoActiveSession
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -20,7 +20,7 @@ def message_processing(sb_client, queue_name, messages):
     while True:
         try:
             with sb_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
-                renewer = AutoLockRenew()
+                renewer = AutoLockRenewer()
                 renewer.register(receiver.session)
                 receiver.session.set_state("OPEN")
                 for message in receiver:

@@ -137,7 +137,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
         the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
         locked, and therefore cannot be renewed. This operation can also be performed as an asynchronous
-        background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
+        background task by registering the message with an `azure.servicebus.aio.AutoLockRenewer` instance.
         This operation is only available for non-sessionful messages.
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
