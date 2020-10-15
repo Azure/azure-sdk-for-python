@@ -139,7 +139,7 @@ class CorsRule(GeneratedCorsRule):
 
 
 class DeleteSnapshotsOption(str, Enum):
-    """The types of snapshots to delete."""
+    """The type of snapshots to delete."""
     include = "include"
     include_with_leased = "include-with-leased"
 
