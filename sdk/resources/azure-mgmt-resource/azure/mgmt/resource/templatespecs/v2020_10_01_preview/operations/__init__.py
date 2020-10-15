@@ -9,12 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._applications_operations import ApplicationsOperations
-from ._application_definitions_operations import ApplicationDefinitionsOperations
-from ._application_client_operations import ApplicationClientOperationsMixin
+from ._template_specs_operations import TemplateSpecsOperations
+from ._template_spec_versions_operations import TemplateSpecVersionsOperations
 
 __all__ = [
-    'ApplicationsOperations',
-    'ApplicationDefinitionsOperations',
-    'ApplicationClientOperationsMixin',
+    'TemplateSpecsOperations',
+    'TemplateSpecVersionsOperations',
 ]

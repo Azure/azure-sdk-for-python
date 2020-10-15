@@ -12,28 +12,25 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import ApplicationClientConfiguration
-from .operations import ApplicationClientOperationsMixin
-from .operations import ApplicationsOperations
-from .operations import ApplicationDefinitionsOperations
+from ._configuration import DeploymentScriptsClientConfiguration
+from .operations import DeploymentScriptsOperations
 from . import models
 
 
-class ApplicationClient(ApplicationClientOperationsMixin, SDKClient):
-    """ARM applications
+class DeploymentScriptsClient(SDKClient):
+    """The APIs listed in this specification can be used to manage Deployment Scripts resource through the Azure Resource Manager.
 
     :ivar config: Configuration for client.
-    :vartype config: ApplicationClientConfiguration
+    :vartype config: DeploymentScriptsClientConfiguration
 
-    :ivar applications: Applications operations
-    :vartype applications: azure.mgmt.resource.managedapplications.operations.ApplicationsOperations
-    :ivar application_definitions: ApplicationDefinitions operations
-    :vartype application_definitions: azure.mgmt.resource.managedapplications.operations.ApplicationDefinitionsOperations
+    :ivar deployment_scripts: DeploymentScripts operations
+    :vartype deployment_scripts: azure.mgmt.resource.deploymentscripts.v2020_10_01.operations.DeploymentScriptsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: Subscription Id which forms part of the URI for
+     every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -41,15 +38,13 @@ class ApplicationClient(ApplicationClientOperationsMixin, SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = ApplicationClientConfiguration(credentials, subscription_id, base_url)
-        super(ApplicationClient, self).__init__(self.config.credentials, self.config)
+        self.config = DeploymentScriptsClientConfiguration(credentials, subscription_id, base_url)
+        super(DeploymentScriptsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-06-01'
+        self.api_version = '2020-10-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.applications = ApplicationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.application_definitions = ApplicationDefinitionsOperations(
+        self.deployment_scripts = DeploymentScriptsOperations(
             self._client, self.config, self._serialize, self._deserialize)
