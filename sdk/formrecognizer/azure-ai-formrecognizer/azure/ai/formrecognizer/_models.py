@@ -69,8 +69,6 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
 
 class SelectionMarkState(str, Enum):
     """State of the selection mark.
-
-    .. versionadded:: v3.1.0b1
     """
 
     SELECTED = "selected"

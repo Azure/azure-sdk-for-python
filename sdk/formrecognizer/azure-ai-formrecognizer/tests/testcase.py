@@ -417,10 +417,11 @@ class FormRecognizerTest(AzureTestCase):
 
             if page.selection_marks:
                 for selection_mark in page.selection_marks:
+                    self.assertIsNone(selection_mark.text)
                     self.assertEqual(selection_mark.page_number, page.page_number)
                     self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
                     self.assertIsNotNone(selection_mark.confidence)
-                    self.assertTrue(selection_mark.state in [item.value for item in SelectionMarkState] )
+                    self.assertTrue(selection_mark.state in [item.value for item in SelectionMarkState])
 
     def assertFormWordHasValues(self, word, page_number):
         self.assertEqual(word.kind, "word")
