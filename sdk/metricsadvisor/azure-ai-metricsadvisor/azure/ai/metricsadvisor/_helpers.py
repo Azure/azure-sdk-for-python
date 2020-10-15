@@ -8,7 +8,6 @@
 
 from typing import (
     Union,
-    Any,
     TYPE_CHECKING
 )
 import datetime
@@ -202,8 +201,5 @@ def convert_datetime(date_time):
             try:
                 return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
             except ValueError:
-                try:
-                    return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
-                except ValueError:
-                    return date_time
+                return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     raise ValueError("Bad datetime value")
