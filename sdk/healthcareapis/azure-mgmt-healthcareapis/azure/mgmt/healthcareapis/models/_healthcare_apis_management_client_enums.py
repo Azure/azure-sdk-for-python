@@ -25,11 +25,38 @@ class ProvisioningState(str, Enum):
     deprovisioned = "Deprovisioned"
 
 
+class PrivateEndpointServiceConnectionStatus(str, Enum):
+
+    pending = "Pending"
+    approved = "Approved"
+    rejected = "Rejected"
+
+
+class PrivateEndpointConnectionProvisioningState(str, Enum):
+
+    succeeded = "Succeeded"
+    creating = "Creating"
+    deleting = "Deleting"
+    failed = "Failed"
+
+
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class Kind(str, Enum):
 
     fhir = "fhir"
     fhir_stu3 = "fhir-Stu3"
     fhir_r4 = "fhir-R4"
+
+
+class ManagedServiceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    none = "None"
 
 
 class ServiceNameUnavailabilityReason(str, Enum):
