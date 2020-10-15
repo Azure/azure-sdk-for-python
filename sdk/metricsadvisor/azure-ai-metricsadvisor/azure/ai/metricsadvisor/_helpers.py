@@ -8,6 +8,7 @@
 
 from typing import (
     Union,
+    Any,
     TYPE_CHECKING
 )
 import datetime
@@ -187,3 +188,16 @@ def convert_to_sub_feedback(feedback):
     if feedback.feedback_type == "Period":
         return PeriodFeedback._from_generated(feedback)  # type: ignore
     raise HttpResponseError("Invalid feedback type returned in the response.")
+
+def convert_datetime(date_time):
+    # type: Any -> datetime.datetime
+    if not date_time:
+        return date_time
+    if isinstance(date_time, datetime.datetime):
+        return date_time
+    if isinstance(date_time, str):
+        try:
+            return datetime.datetime.strptime(date_time, "%Y-%m-%d")
+        except ValueError:
+            return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+    raise ValueError("Bad datetime value")

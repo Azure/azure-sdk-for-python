@@ -34,7 +34,8 @@ from .._helpers import (
     construct_alert_config_dict,
     construct_detection_config_dict,
     construct_hook_dict,
-    construct_data_feed_dict
+    construct_data_feed_dict,
+    convert_datetime
 )
 from ..models import (
     DataFeed,
@@ -466,8 +467,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     async def refresh_data_feed_ingestion(
         self,
         data_feed_id: str,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
         **kwargs: Any
     ) -> None:
         """Refreshes data ingestion by data feed to backfill data.
@@ -475,9 +476,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :param start_time: The start point of time range to refresh data ingestion.
-        :type start_time: ~datetime.datetime
+        :type start_time: Union[str, ~datetime.datetime]
         :param end_time: The end point of time range to refresh data ingestion.
-        :type end_time: ~datetime.datetime
+        :type end_time: Union[str, ~datetime.datetime]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -491,6 +492,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Refresh data feed ingestion over a period of time
         """
+        start_time = convert_datetime(start_time)
+        end_time = convert_datetime(end_time)
         await self._client.reset_data_feed_ingestion_status(
             data_feed_id,
             body=_IngestionProgressResetOptions(
@@ -1072,8 +1075,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     def list_data_feed_ingestion_status(
         self,
         data_feed_id,  # type: str
-        start_time,  # type: datetime.datetime
-        end_time,  # type: datetime.datetime
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
         **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[DataFeedIngestionStatus]
@@ -1081,9 +1084,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         :param str data_feed_id: The data feed unique id.
         :param start_time: Required. the start point of time range to query data ingestion status.
-        :type start_time: ~datetime.datetime
+        :type start_time: Union[str, ~datetime.datetime]
         :param end_time: Required. the end point of time range to query data ingestion status.
-        :type end_time: ~datetime.datetime
+        :type end_time: Union[str, ~datetime.datetime]
         :keyword int skip:
         :return: Pageable of DataFeedIngestionStatus
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeedIngestionStatus]
@@ -1100,6 +1103,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         skip = kwargs.pop("skip", None)
+        start_time = convert_datetime(start_time)
+        end_time = convert_datetime(end_time)
 
         return self._client.get_data_feed_ingestion_status(  # type: ignore
             data_feed_id=data_feed_id,
