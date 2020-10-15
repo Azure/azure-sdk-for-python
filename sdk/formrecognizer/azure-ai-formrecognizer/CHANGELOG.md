@@ -17,6 +17,9 @@ improved results
 - Added property `model_id` to `CustomFormSubmodel` and `TrainingDocumentInfo`
 - Added properties `model_id` and `form_type_confidence` to `RecognizedForm`
 
+**Dependency updates**
+
+- Package now requires [azure-common](https://pypi.org/project/azure-common/) version 1.1
 
 ## 3.0.0 (2020-08-20)
 
