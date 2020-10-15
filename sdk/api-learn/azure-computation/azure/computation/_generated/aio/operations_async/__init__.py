@@ -8,10 +8,10 @@
 
 from ._compute_node_administration_operations_async import ComputeNodeAdministrationOperations
 from ._computation_operations_async import ComputationOperations
-from ._exampleservice_operations_async import ExampleServiceOperationsMixin
+from ._exampleserviceclient_operations_async import ExampleServiceClientOperationsMixin
 
 __all__ = [
     'ComputeNodeAdministrationOperations',
     'ComputationOperations',
-    'ExampleServiceOperationsMixin',
+    'ExampleServiceClientOperationsMixin',
 ]

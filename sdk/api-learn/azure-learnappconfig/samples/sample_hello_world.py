@@ -14,14 +14,14 @@ from azure.identity import DefaultAzureCredential
 from azure.learnappconfig import AppConfigurationClient
 
 def main():
-    url = os.environ.get('API-LEARN_ENDPOINT')
+    url = os.environ.get('API_LEARN_ENDPOINT')
     credential = DefaultAzureCredential()
     client = AppConfigurationClient(account_url=url, credential=credential)
 
     try:
-        color_setting = client.get_configuration_setting(os.environ['API-LEARN_SETTING_COLOR_KEY'])
+        color_setting = client.get_configuration_setting(os.environ['API_LEARN_SETTING_COLOR_KEY'])
         color = color_setting.value.upper()
-        text_setting = client.get_configuration_setting(os.environ['API-LEARN_SETTING_TEXT_KEY'])
+        text_setting = client.get_configuration_setting(os.environ['API_LEARN_SETTING_TEXT_KEY'])
         greeting = text_setting.value
     except:
         color = 'RED'

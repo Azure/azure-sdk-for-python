@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._exampleservice_async import ExampleService
-__all__ = ['ExampleService']
+from ._exampleserviceclient_async import ExampleServiceClient
+__all__ = ['ExampleServiceClient']

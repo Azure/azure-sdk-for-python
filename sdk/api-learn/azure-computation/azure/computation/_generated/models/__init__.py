@@ -19,7 +19,7 @@ except (SyntaxError, ImportError):
     from ._models import PageOfComputeNodes  # type: ignore
     from ._models import WindowsComputeNode  # type: ignore
 
-from ._exampleservice_enums import (
+from ._exampleserviceclient_enums import (
     OperationStatus,
 )
 

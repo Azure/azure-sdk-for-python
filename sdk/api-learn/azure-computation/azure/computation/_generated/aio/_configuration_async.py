@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class ExampleServiceConfiguration(Configuration):
-    """Configuration for ExampleService.
+class ExampleServiceClientConfiguration(Configuration):
+    """Configuration for ExampleServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -42,13 +42,13 @@ class ExampleServiceConfiguration(Configuration):
             raise ValueError("Parameter 'credential' must not be None.")
         if node_name is None:
             raise ValueError("Parameter 'node_name' must not be None.")
-        super(ExampleServiceConfiguration, self).__init__(**kwargs)
+        super(ExampleServiceClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.node_name = node_name
         self.x_ms_client_request_id = x_ms_client_request_id
         self.credential_scopes = kwargs.pop('credential_scopes', [])
-        kwargs.setdefault('sdk_moniker', 'exampleservice/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'exampleserviceclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

@@ -18,20 +18,20 @@ from azure.core import MatchConditions
 
 
 async def main():
-    url = os.environ.get('API-LEARN_ENDPOINT')
+    url = os.environ.get('API_LEARN_ENDPOINT')
     credential = DefaultAzureCredential()
     async with AppConfigurationClient(account_url=url, credential=credential) as client:
 
         # Retrieve initial color value
         try:
-            first_color = await client.get_configuration_setting(os.environ['API-LEARN_SETTING_COLOR_KEY'])
+            first_color = await client.get_configuration_setting(os.environ['API_LEARN_SETTING_COLOR_KEY'])
         except ResourceNotFoundError:
             raise
 
         # Get latest color value, only if it has changed
         try:
             new_color = await client.get_configuration_setting(
-                key=os.environ['API-LEARN_SETTING_COLOR_KEY'],
+                key=os.environ['API_LEARN_SETTING_COLOR_KEY'],
                 match_condition=MatchConditions.IfModified,
                 etag=first_color.etag
             )

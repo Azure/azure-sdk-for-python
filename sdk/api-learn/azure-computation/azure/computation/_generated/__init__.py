@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._exampleservice import ExampleService
-__all__ = ['ExampleService']
+from ._exampleserviceclient import ExampleServiceClient
+__all__ = ['ExampleServiceClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore
