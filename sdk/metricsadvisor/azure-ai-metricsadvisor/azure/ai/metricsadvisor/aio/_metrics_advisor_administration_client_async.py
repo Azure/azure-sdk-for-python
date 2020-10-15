@@ -492,13 +492,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Refresh data feed ingestion over a period of time
         """
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         await self._client.reset_data_feed_ingestion_status(
             data_feed_id,
             body=_IngestionProgressResetOptions(
-                start_time=start_time,
-                end_time=end_time
+                start_time=converted_start_time,
+                end_time=converted_end_time
             ),
             **kwargs
         )
@@ -1103,14 +1103,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         skip = kwargs.pop("skip", None)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
 
         return self._client.get_data_feed_ingestion_status(  # type: ignore
             data_feed_id=data_feed_id,
             body=_IngestionStatusQueryOptions(
-                start_time=start_time,
-                end_time=end_time
+                start_time=converted_start_time,
+                end_time=converted_end_time
             ),
             skip=skip,
             **kwargs

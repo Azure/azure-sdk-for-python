@@ -207,15 +207,15 @@ class MetricsAdvisorClient(object):
         feedback_type = kwargs.pop('feedback_type', None)
         start_time = kwargs.pop('start_time', None)
         end_time = kwargs.pop('end_time', None)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         time_mode = kwargs.pop('time_mode', None)
         feedback_filter = MetricFeedbackFilter(
             metric_id=metric_id,
             dimension_filter=dimension_filter,
             feedback_type=feedback_type,
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             time_mode=time_mode,
         )
 
@@ -279,11 +279,11 @@ class MetricsAdvisorClient(object):
             ] or series
 
         series_list = cast(List[SeriesIdentity], series_list)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         detection_series_query = DetectionSeriesQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             series=series_list
         )
 
@@ -326,12 +326,12 @@ class MetricsAdvisorClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
 
         alerting_result_query = AlertingResultQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             time_mode=time_mode,
         )
 
@@ -396,11 +396,11 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
         filter_condition = kwargs.pop('filter', None)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             filter=filter_condition,
         )
 
@@ -438,11 +438,11 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
         dimension_filter = kwargs.pop('dimension_filter', None)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             dimension_name=dimension_name,
             dimension_filter=dimension_filter,
         )
@@ -496,12 +496,12 @@ class MetricsAdvisorClient(object):
         """
 
         filter_condition = kwargs.pop('filter', None)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
 
         detection_incident_result_query = DetectionIncidentResultQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             filter=filter_condition,
         )
 
@@ -566,12 +566,12 @@ class MetricsAdvisorClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
 
         metric_data_query_options = MetricDataQueryOptions(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             series=series_to_filter,
         )
 
@@ -638,11 +638,11 @@ class MetricsAdvisorClient(object):
         """
 
         skip = kwargs.pop('skip', None)
-        start_time = convert_datetime(start_time)
-        end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         enrichment_status_query_option = EnrichmentStatusQueryOption(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
         )
 
         return self._client.get_enrichment_status_by_metric(  # type: ignore
