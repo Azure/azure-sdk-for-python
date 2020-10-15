@@ -28,8 +28,8 @@
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99
 
-/sdk/applicationinsights/azure-applicationinsights/                  @divya-jay @geneh @alongafni
-/sdk/loganalytics/azure-loganalytics/                                @divya-jay @geneh @alongafni
+/sdk/applicationinsights/azure-applicationinsights/                  @divyajay @geneh @alongafni
+/sdk/loganalytics/azure-loganalytics/                                @divyajay @geneh @alongafni
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @bgklein @xingwu1
