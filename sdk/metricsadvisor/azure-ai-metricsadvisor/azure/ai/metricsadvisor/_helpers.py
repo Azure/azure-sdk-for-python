@@ -8,7 +8,6 @@
 
 from typing import (
     Union,
-    Optional,
     TYPE_CHECKING
 )
 import datetime
