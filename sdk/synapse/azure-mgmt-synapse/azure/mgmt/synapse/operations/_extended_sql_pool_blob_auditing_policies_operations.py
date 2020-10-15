@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class SqlPoolBlobAuditingPoliciesOperations(object):
-    """SqlPoolBlobAuditingPoliciesOperations operations.
+class ExtendedSqlPoolBlobAuditingPoliciesOperations(object):
+    """ExtendedSqlPoolBlobAuditingPoliciesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -43,9 +43,7 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
 
     def get(
             self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Get a SQL pool's blob auditing policy.
-
-        Get a SQL pool's blob auditing policy.
+        """Gets an extended Sql pool's blob auditing policy.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -59,9 +57,10 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlPoolBlobAuditingPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.SqlPoolBlobAuditingPolicy or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ExtendedSqlPoolBlobAuditingPolicy or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.synapse.models.ExtendedSqlPoolBlobAuditingPolicy
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -100,20 +99,18 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPoolBlobAuditingPolicy', response)
+            deserialized = self._deserialize('ExtendedSqlPoolBlobAuditingPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/auditingSettings/{blobAuditingPolicyName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/extendedAuditingSettings/{blobAuditingPolicyName}'}
 
     def create_or_update(
             self, resource_group_name, workspace_name, sql_pool_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a SQL pool's blob auditing policy.
-
-        Creates or updates a SQL pool's blob auditing policy.
+        """Creates or updates an extended Sql pool's blob auditing policy.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -122,16 +119,18 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
         :type workspace_name: str
         :param sql_pool_name: SQL pool name
         :type sql_pool_name: str
-        :param parameters: The database blob auditing policy.
-        :type parameters: ~azure.mgmt.synapse.models.SqlPoolBlobAuditingPolicy
+        :param parameters: The extended Sql pool blob auditing policy.
+        :type parameters:
+         ~azure.mgmt.synapse.models.ExtendedSqlPoolBlobAuditingPolicy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlPoolBlobAuditingPolicy or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.SqlPoolBlobAuditingPolicy or
-         ~msrest.pipeline.ClientRawResponse
+        :return: ExtendedSqlPoolBlobAuditingPolicy or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.mgmt.synapse.models.ExtendedSqlPoolBlobAuditingPolicy
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -161,7 +160,7 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'SqlPoolBlobAuditingPolicy')
+        body_content = self._serialize.body(parameters, 'ExtendedSqlPoolBlobAuditingPolicy')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -174,20 +173,20 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPoolBlobAuditingPolicy', response)
+            deserialized = self._deserialize('ExtendedSqlPoolBlobAuditingPolicy', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('SqlPoolBlobAuditingPolicy', response)
+            deserialized = self._deserialize('ExtendedSqlPoolBlobAuditingPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/auditingSettings/{blobAuditingPolicyName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/extendedAuditingSettings/{blobAuditingPolicyName}'}
 
     def list_by_sql_pool(
             self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Lists auditing settings of a Sql pool.
+        """Lists extended auditing settings of a Sql pool.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -201,9 +200,10 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlPoolBlobAuditingPolicy
+        :return: An iterator like instance of
+         ExtendedSqlPoolBlobAuditingPolicy
         :rtype:
-         ~azure.mgmt.synapse.models.SqlPoolBlobAuditingPolicyPaged[~azure.mgmt.synapse.models.SqlPoolBlobAuditingPolicy]
+         ~azure.mgmt.synapse.models.ExtendedSqlPoolBlobAuditingPolicyPaged[~azure.mgmt.synapse.models.ExtendedSqlPoolBlobAuditingPolicy]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -256,7 +256,7 @@ class SqlPoolBlobAuditingPoliciesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SqlPoolBlobAuditingPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ExtendedSqlPoolBlobAuditingPolicyPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_sql_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/auditingSettings'}
+    list_by_sql_pool.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/extendedAuditingSettings'}
