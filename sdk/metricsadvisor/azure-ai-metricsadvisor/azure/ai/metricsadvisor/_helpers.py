@@ -192,7 +192,7 @@ def convert_datetime(date_time):
     # type: (Union[str, datetime.datetime]) -> datetime.datetime
     if isinstance(date_time, datetime.datetime):
         return date_time
-    if isinstance(date_time, str):
+    if isinstance(date_time, six.string_types):
         try:
             return datetime.datetime.strptime(date_time, "%Y-%m-%d")
         except ValueError:
@@ -200,4 +200,4 @@ def convert_datetime(date_time):
                 return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
             except ValueError:
                 return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
-    raise ValueError("Bad datetime value")
+    raise TypeError("Bad datetime type")
