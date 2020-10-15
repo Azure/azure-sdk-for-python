@@ -7,7 +7,6 @@
 # pylint: disable=protected-access
 
 from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
-import datetime  # pylint:disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
@@ -38,6 +37,7 @@ from .models._models import (
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
+    import datetime
     from ._generated.models import (
         SeriesResult,
         EnrichmentStatus,
@@ -203,8 +203,8 @@ class MetricsAdvisorClient(object):
         feedback_type = kwargs.pop('feedback_type', None)
         start_time = kwargs.pop('start_time', None)
         end_time = kwargs.pop('end_time', None)
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+        converted_start_time = convert_datetime(start_time) if start_time else None
+        converted_end_time = convert_datetime(end_time) if end_time else None
         time_mode = kwargs.pop('time_mode', None)
         feedback_filter = MetricFeedbackFilter(
             metric_id=metric_id,

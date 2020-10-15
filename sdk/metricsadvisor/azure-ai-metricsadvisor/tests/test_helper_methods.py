@@ -25,7 +25,3 @@ def test_convert_datetime():
     input = datetime.datetime(2000, 1, 1)
     date_time = convert_datetime(input)
     assert date_time == datetime.datetime(2000, 1, 1)
-
-    input = None
-    date_time = convert_datetime(input)
-    assert date_time is None
