@@ -416,12 +416,12 @@ class PhoneNumberAdministrationClient(object):
 
 
     @distributed_trace_async
-    async def begin_create_search(
+    async def begin_reserve_phone_numbers(
             self,
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncLROPoller
-        """Begins creating a phone number search.
+        """Begins creating a phone number search to reserve phone numbers.
         Caller must provide either body, or continuation_token keywords to use the method.
         If both body and continuation_token are specified, only continuation_token will be used to
         restart a poller from a saved state, and keyword body will be ignored.
@@ -501,13 +501,13 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace_async
-    async def begin_purchase_search(
+    async def begin_purchase_reservation(
             self,
             **kwargs  # type: Any
     ):
 
         # type: (...) -> AsyncLROPoller
-        """Begins the phone number search purchase.
+        """Begins purchase the reserved phone numbers of a phone number search.
         Caller must provide either search_id, or continuation_token keywords to use the method.
         If both body and continuation_token are specified, only continuation_token will be used to
         restart a poller from a saved state, and keyword search_id will be ignored.
