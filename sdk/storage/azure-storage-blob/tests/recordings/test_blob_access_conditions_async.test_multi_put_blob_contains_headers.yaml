@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.5.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 05 Oct 2020 21:56:32 GMT
+      - Thu, 15 Oct 2020 05:58:09 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 05 Oct 2020 21:56:32 GMT
-      etag: '"0x8D8697985C76465"'
-      last-modified: Mon, 05 Oct 2020 21:56:32 GMT
+      date: Thu, 15 Oct 2020 05:58:09 GMT
+      etag: '"0x8D870CF4B18E6DC"'
+      last-modified: Thu, 15 Oct 2020 05:58:09 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-12-12'
     status:
@@ -33,10 +33,10 @@ interactions:
       - application/octet-stream
       User-Agent:
       - azsdk-python-storage-blob/12.5.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 05 Oct 2020 21:56:32 GMT
-      x-ms-meta-customheader:
+      x-custom-header:
       - test_value
+      x-ms-date:
+      - Thu, 15 Oct 2020 05:58:09 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -46,7 +46,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 05 Oct 2020 21:56:32 GMT
+      date: Thu, 15 Oct 2020 05:58:09 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: 0RQSXzCtkGE=
       x-ms-request-server-encrypted: 'true'
@@ -68,10 +68,10 @@ interactions:
       - '*'
       User-Agent:
       - azsdk-python-storage-blob/12.5.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 05 Oct 2020 21:56:32 GMT
-      x-ms-meta-customheader:
+      x-custom-header:
       - test_value
+      x-ms-date:
+      - Thu, 15 Oct 2020 05:58:09 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -81,9 +81,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 05 Oct 2020 21:56:32 GMT
-      etag: '"0x8D8697985DB04BF"'
-      last-modified: Mon, 05 Oct 2020 21:56:33 GMT
+      date: Thu, 15 Oct 2020 05:58:09 GMT
+      etag: '"0x8D870CF4B2DE989"'
+      last-modified: Thu, 15 Oct 2020 05:58:09 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: 7XagkOrfW/A=
       x-ms-request-server-encrypted: 'true'

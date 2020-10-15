@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.5.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 05 Oct 2020 21:56:44 GMT
+      - Thu, 15 Oct 2020 05:57:11 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 05 Oct 2020 21:56:45 GMT
+      - Thu, 15 Oct 2020 05:57:10 GMT
       etag:
-      - '"0x8D869798D38A3A6"'
+      - '"0x8D870CF28CB3443"'
       last-modified:
-      - Mon, 05 Oct 2020 21:56:45 GMT
+      - Thu, 15 Oct 2020 05:57:11 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,10 +52,10 @@ interactions:
       - application/octet-stream
       User-Agent:
       - azsdk-python-storage-blob/12.5.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 05 Oct 2020 21:56:45 GMT
-      x-ms-meta-customheader:
+      x-custom-header:
       - test_value
+      x-ms-date:
+      - Thu, 15 Oct 2020 05:57:12 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -67,7 +67,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 05 Oct 2020 21:56:45 GMT
+      - Thu, 15 Oct 2020 05:57:11 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -98,10 +98,10 @@ interactions:
       - '*'
       User-Agent:
       - azsdk-python-storage-blob/12.5.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-date:
-      - Mon, 05 Oct 2020 21:56:45 GMT
-      x-ms-meta-customheader:
+      x-custom-header:
       - test_value
+      x-ms-date:
+      - Thu, 15 Oct 2020 05:57:12 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -113,11 +113,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 05 Oct 2020 21:56:45 GMT
+      - Thu, 15 Oct 2020 05:57:11 GMT
       etag:
-      - '"0x8D869798D5E3B57"'
+      - '"0x8D870CF28F7D6FD"'
       last-modified:
-      - Mon, 05 Oct 2020 21:56:45 GMT
+      - Thu, 15 Oct 2020 05:57:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:

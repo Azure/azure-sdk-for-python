@@ -320,7 +320,7 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_multi_put_blob_contains_headers(self, resource_group, location, storage_account, storage_account_key):
         def _validate_headers(request):
-            header = request.http_request.headers.get('x-ms-meta-customheader')
+            header = request.http_request.headers.get('x-custom-header')
             self.assertEqual(header, 'test_value')
 
         bsc = BlobServiceClient(
@@ -331,7 +331,7 @@ class StorageBlobAccessConditionsAsyncTest(AsyncStorageTestCase):
         blob = bsc.get_blob_client(self.container_name, "blob1")
         await blob.upload_blob(
             data,
-            metadata={'customheader': 'test_value'},
+            headers={'x-custom-header': 'test_value'},
             raw_request_hook=_validate_headers
         )
 
