@@ -334,7 +334,7 @@ class ApplicationsOperations:
         self,
         resource_group_name: str,
         application_name: str,
-        parameters: Optional["models.Application"] = None,
+        parameters: Optional["models.ApplicationPatchable"] = None,
         **kwargs
     ) -> "models.Application":
         """Updates an existing managed application. The only value that can be updated via PATCH currently
@@ -345,7 +345,7 @@ class ApplicationsOperations:
         :param application_name: The name of the managed application.
         :type application_name: str
         :param parameters: Parameters supplied to update an existing managed application.
-        :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
+        :type parameters: ~azure.mgmt.resource.managedapplications.models.ApplicationPatchable
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Application, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.Application
@@ -380,7 +380,7 @@ class ApplicationsOperations:
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'Application')
+            body_content = self._serialize.body(parameters, 'ApplicationPatchable')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
