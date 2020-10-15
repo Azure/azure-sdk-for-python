@@ -24,7 +24,7 @@ class ClustersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-03-01-preview".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-10-01".
     """
 
     models = models
@@ -34,11 +34,11 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-01-preview"
+        self.api_version = "2020-10-01"
 
         self.config = config
 
-    def list(
+    def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
         """List all HCI clusters in a subscription.
 
@@ -56,7 +56,7 @@ class ClustersOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1)
                 }
@@ -101,7 +101,7 @@ class ClustersOperations(object):
         deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/clusters'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AzureStackHCI/clusters'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
