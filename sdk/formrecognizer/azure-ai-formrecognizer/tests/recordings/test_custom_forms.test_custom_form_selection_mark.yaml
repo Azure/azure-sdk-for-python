@@ -10,7 +10,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '315'
+      - '294'
       Content-Type:
       - application/json
       User-Agent:
@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 33eada82-b063-409d-b152-716a8cb4f5e2
+      - 6d9b356c-ce89-46a7-814b-396a77afaffa
       content-length:
       - '0'
       date:
-      - Wed, 14 Oct 2020 23:33:53 GMT
+      - Thu, 15 Oct 2020 21:00:24 GMT
       location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61f5e3e7-2a4c-449d-9aa8-9e961eee6a86
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/748d1cd6-0282-436a-9d48-f681cc3d7093
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '39'
+      - '38'
     status:
       code: 201
       message: Created
@@ -50,39 +50,26 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61f5e3e7-2a4c-449d-9aa8-9e961eee6a86?includeKeys=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/748d1cd6-0282-436a-9d48-f681cc3d7093?includeKeys=true
   response:
     body:
-      string: '{"modelInfo": {"modelId": "61f5e3e7-2a4c-449d-9aa8-9e961eee6a86", "attributes":
-        {"isComposed": false}, "status": "ready", "createdDateTime": "2020-10-14T23:33:53Z",
-        "lastUpdatedDateTime": "2020-10-14T23:33:56Z"}, "trainResult": {"averageModelAccuracy":
-        0.936, "trainingDocuments": [{"documentName": "selectionmark_form1.pdf", "pages":
-        1, "status": "succeeded"}, {"documentName": "selectionmark_form2.pdf", "pages":
-        1, "status": "succeeded"}, {"documentName": "selectionmark_form3.pdf", "pages":
-        1, "status": "succeeded"}, {"documentName": "selectionmark_form4.pdf", "pages":
-        1, "status": "succeeded"}, {"documentName": "selectionmark_form5.pdf", "pages":
-        1, "status": "succeeded"}, {"documentName": "selectionmark_form6.pdf", "pages":
-        1, "status": "succeeded"}], "fields": [{"fieldName": "Check Box_Paramedic
-        Subscription_Household Income", "accuracy": 1.0}, {"fieldName": "Check Box_Paramedic
-        Subscription_Residential", "accuracy": 1.0}, {"fieldName": "Checkbox_Paramedic
-        Subscription_Amount Enclosed", "accuracy": 1.0}, {"fieldName": "CheckBox_Paramedic
-        Subscription_Business", "accuracy": 0.667}, {"fieldName": "Field_Enrollment
-        Application First Name", "accuracy": 1.0}, {"fieldName": "Field_Enrollment
-        Application Last Name", "accuracy": 0.833}, {"fieldName": "Field_Enrollment
-        Application Mailing Address_Zip Code", "accuracy": 1.0}, {"fieldName": "Field_Enrollment
-        Application Zip Code", "accuracy": 1.0}, {"fieldName": "Field_Enrollment Application_#
-        of Employees", "accuracy": 0.667}, {"fieldName": "Field_Enrollment Application_Business
-        Name", "accuracy": 1.0}, {"fieldName": "Field_Enrollment Application_Phone",
-        "accuracy": 1.0}, {"fieldName": "Field_Enrollment Application_Signature",
-        "accuracy": 1.0}, {"fieldName": "Field_Paramedic Subscription_Amount Enclosed",
-        "accuracy": 1.0}], "errors": []}}'
+      string: '{"modelInfo": {"modelId": "748d1cd6-0282-436a-9d48-f681cc3d7093", "attributes":
+        {"isComposed": false}, "status": "ready", "createdDateTime": "2020-10-15T21:00:24Z",
+        "lastUpdatedDateTime": "2020-10-15T21:00:27Z"}, "trainResult": {"averageModelAccuracy":
+        1.0, "trainingDocuments": [{"documentName": "CCAuth-1.pdf", "pages": 1, "status":
+        "succeeded"}, {"documentName": "CCAuth-2.pdf", "pages": 1, "status": "succeeded"},
+        {"documentName": "CCAuth-3.pdf", "pages": 1, "status": "succeeded"}, {"documentName":
+        "CCAuth-4.pdf", "pages": 1, "status": "succeeded"}, {"documentName": "CCAuth-5.pdf",
+        "pages": 1, "status": "succeeded"}], "fields": [{"fieldName": "AMEX_SELECTION_MARK",
+        "accuracy": 1.0}, {"fieldName": "MASTERCARD_SELECTION_MARK", "accuracy": 1.0},
+        {"fieldName": "VISA_SELECTION_MARK", "accuracy": 1.0}], "errors": []}}'
     headers:
       apim-request-id:
-      - 99c20fc6-ef64-4d4b-974d-8a6f56f97b3d
+      - 4b119184-0eb7-400c-a7c3-74a0ae86d673
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 14 Oct 2020 23:33:58 GMT
+      - Thu, 15 Oct 2020 21:00:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -90,7 +77,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '15'
+      - '14'
     status:
       code: 200
       message: OK
@@ -4518,25 +4505,25 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61f5e3e7-2a4c-449d-9aa8-9e961eee6a86/analyze?includeTextDetails=true
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/748d1cd6-0282-436a-9d48-f681cc3d7093/analyze?includeTextDetails=true
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - a50d3c20-5e86-4934-a460-4e3fce29420b
+      - c0301285-e253-48e7-82f1-b97fbc79c007
       content-length:
       - '0'
       date:
-      - Wed, 14 Oct 2020 23:33:58 GMT
+      - Thu, 15 Oct 2020 21:00:29 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61f5e3e7-2a4c-449d-9aa8-9e961eee6a86/analyzeresults/dda07b7a-71fa-41e6-b2ac-dba9c8070f39
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/748d1cd6-0282-436a-9d48-f681cc3d7093/analyzeresults/57f56409-119a-47a2-91b5-d003ce235927
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '93'
+      - '53'
     status:
       code: 202
       message: Accepted
@@ -4552,55 +4539,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61f5e3e7-2a4c-449d-9aa8-9e961eee6a86/analyzeresults/dda07b7a-71fa-41e6-b2ac-dba9c8070f39
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/748d1cd6-0282-436a-9d48-f681cc3d7093/analyzeresults/57f56409-119a-47a2-91b5-d003ce235927
   response:
     body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-10-14T23:33:59Z",
-        "lastUpdatedDateTime": "2020-10-14T23:34:03Z"}'
+      string: '{"status": "notStarted", "createdDateTime": "2020-10-15T21:00:30Z",
+        "lastUpdatedDateTime": "2020-10-15T21:00:34Z"}'
     headers:
       apim-request-id:
-      - c4786b75-e24d-48be-88fe-725ce8ea8511
+      - 4e7d5686-17d4-4503-ab49-d17b087db60b
       content-length:
       - '109'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 14 Oct 2020 23:34:04 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '73'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
-    method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61f5e3e7-2a4c-449d-9aa8-9e961eee6a86/analyzeresults/dda07b7a-71fa-41e6-b2ac-dba9c8070f39
-  response:
-    body:
-      string: '{"status": "notStarted", "createdDateTime": "2020-10-14T23:33:59Z",
-        "lastUpdatedDateTime": "2020-10-14T23:34:06Z"}'
-    headers:
-      apim-request-id:
-      - 13907855-6f7c-4f5b-9328-efc343e8b5cd
-      content-length:
-      - '109'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 14 Oct 2020 23:34:09 GMT
+      - Thu, 15 Oct 2020 21:00:34 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
@@ -4622,11 +4574,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/61f5e3e7-2a4c-449d-9aa8-9e961eee6a86/analyzeresults/dda07b7a-71fa-41e6-b2ac-dba9c8070f39
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/748d1cd6-0282-436a-9d48-f681cc3d7093/analyzeresults/57f56409-119a-47a2-91b5-d003ce235927
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-14T23:33:59Z",
-        "lastUpdatedDateTime": "2020-10-14T23:34:10Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-10-15T21:00:30Z",
+        "lastUpdatedDateTime": "2020-10-15T21:00:37Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"boundingBox": [3.2791, 0.7167, 5.0584, 0.7167,
         5.0584, 0.8109, 3.2791, 0.8109], "text": "STATE OF CALIFORNIA: CONTOSO", "words":
@@ -4977,7 +4929,7 @@ interactions:
         8.27, 3.2333, 8.5567, 1.89, 8.5533], "text": "John Singer", "words": [{"boundingBox":
         [1.9698, 8.2645, 2.519, 8.2845, 2.5195, 8.5409, 1.9695, 8.5567], "text": "John",
         "confidence": 0.97}, {"boundingBox": [2.5778, 8.2865, 3.2251, 8.3065, 3.2268,
-        8.5309, 2.5784, 8.5396], "text": "Singer", "confidence": 0.948}]}, {"boundingBox":
+        8.5309, 2.5784, 8.5396], "text": "Singer", "confidence": 0.947}]}, {"boundingBox":
         [0.8059, 8.3968, 6.1697, 8.3968, 6.1697, 8.5421, 0.8059, 8.5421], "text":
         "Signature: ___________________________________________ Date: ______", "words":
         [{"boundingBox": [0.8059, 8.3968, 1.5333, 8.3968, 1.5333, 8.5421, 0.8059,
@@ -5115,57 +5067,32 @@ interactions:
         {"rowIndex": 3, "columnIndex": 3, "text": "Zip Code: 98712", "boundingBox":
         [6.4104, 6.5021, 8.2604, 6.5021, 8.2604, 6.7146, 6.4104, 6.7146], "elements":
         ["#/readResults/0/lines/33/words/0", "#/readResults/0/lines/33/words/1", "#/readResults/0/lines/34/words/0"]}]}]}],
-        "documentResults": [{"docType": "custom:61f5e3e7-2a4c-449d-9aa8-9e961eee6a86",
-        "modelId": "61f5e3e7-2a4c-449d-9aa8-9e961eee6a86", "pageRange": [1, 1], "fields":
-        {"Field_Paramedic Subscription_Amount Enclosed": {"type": "string", "valueString":
-        "4872876432425423", "text": "4872876432425423", "page": 1, "boundingBox":
-        [0.9, 7.845, 2.215, 7.845, 2.215, 7.96, 0.9, 7.96], "confidence": 0.305, "elements":
-        ["#/readResults/0/lines/37/words/0"]}, "Field_Enrollment Application Mailing
-        Address_Zip Code": {"type": "string", "valueString": "779 3479", "text": "779
-        3479", "page": 1, "boundingBox": [7.13, 5.82, 7.81, 5.82, 7.81, 5.965, 7.13,
-        5.965], "confidence": 0.147, "elements": ["#/readResults/0/lines/24/words/0",
-        "#/readResults/0/lines/24/words/1"]}, "Field_Enrollment Application_Business
-        Name": {"type": "string", "valueString": "WA", "text": "WA", "page": 1, "boundingBox":
-        [4.745, 6.55, 4.97, 6.55, 4.97, 6.65, 4.745, 6.65], "confidence": 0.363, "elements":
-        ["#/readResults/0/lines/32/words/0"]}, "Field_Enrollment Application_# of
-        Employees": {"type": "string", "valueString": "/", "text": "/", "page": 1,
-        "boundingBox": [6.72, 8.395, 6.765, 8.395, 6.765, 8.51, 6.72, 8.51], "confidence":
-        0.1, "elements": ["#/readResults/0/lines/51/words/0"]}, "Field_Enrollment
-        Application_Signature": {"type": "string", "valueString": "(Card number \u2013
-        Please print clearly)", "text": "(Card number \u2013 Please print clearly)",
-        "page": 1, "boundingBox": [0.805, 8.075, 2.62, 8.075, 2.62, 8.19, 0.805, 8.19],
-        "confidence": 0.213, "elements": ["#/readResults/0/lines/45/words/0", "#/readResults/0/lines/45/words/1",
-        "#/readResults/0/lines/45/words/2", "#/readResults/0/lines/45/words/3", "#/readResults/0/lines/45/words/4",
-        "#/readResults/0/lines/45/words/5"]}, "Field_Enrollment Application First
-        Name": {"type": "string", "valueString": "Balance on Account", "text": "Balance
-        on Account", "page": 1, "boundingBox": [5.085, 4.93, 6.31, 4.93, 6.31, 5.035,
-        5.085, 5.035], "confidence": 0.109, "elements": ["#/readResults/0/lines/13/words/0",
-        "#/readResults/0/lines/13/words/1", "#/readResults/0/lines/13/words/2"]},
-        "Checkbox_Paramedic Subscription_Amount Enclosed": {"type": "selectionMark",
+        "documentResults": [{"docType": "custom:748d1cd6-0282-436a-9d48-f681cc3d7093",
+        "modelId": "748d1cd6-0282-436a-9d48-f681cc3d7093", "pageRange": [1, 1], "fields":
+        {"MASTERCARD_SELECTION_MARK": {"type": "selectionMark", "text": "unselected",
+        "page": 1, "boundingBox": [3.07, 5.44, 3.25, 5.44, 3.25, 5.61, 3.07, 5.61],
+        "confidence": 1.0, "elements": ["#/readResults/0/selectionMarks/0"]}, "AMEX_SELECTION_MARK":
+        {"type": "selectionMark", "text": "selected", "page": 1, "boundingBox": [2.285,
+        5.42, 2.465, 5.42, 2.465, 5.595, 2.285, 5.595], "confidence": 1.0, "elements":
+        ["#/readResults/0/selectionMarks/2"]}, "VISA_SELECTION_MARK": {"type": "selectionMark",
         "text": "unselected", "page": 1, "boundingBox": [1.605, 5.425, 1.775, 5.425,
-        1.775, 5.595, 1.605, 5.595], "confidence": 0.114, "elements": ["#/readResults/0/selectionMarks/1"]},
-        "Field_Enrollment Application Zip Code": {"type": "string", "valueString":
-        "98712", "text": "98712", "page": 1, "boundingBox": [7.255, 6.545, 7.63, 6.545,
-        7.63, 6.645, 7.255, 6.645], "confidence": 0.21, "elements": ["#/readResults/0/lines/34/words/0"]},
-        "Check Box_Paramedic Subscription_Household Income": null, "Check Box_Paramedic
-        Subscription_Residential": null, "CheckBox_Paramedic Subscription_Business":
-        null, "Field_Enrollment Application Last Name": null, "Field_Enrollment Application_Phone":
-        null}, "docTypeConfidence": 1.0}], "errors": []}}'
+        1.775, 5.595, 1.605, 5.595], "confidence": 1.0, "elements": ["#/readResults/0/selectionMarks/1"]}},
+        "docTypeConfidence": 1.0}], "errors": []}}'
     headers:
       apim-request-id:
-      - fd4bcb42-2c2d-4c85-97a9-caddd1f47ac1
+      - 6f3ca62f-97f1-40cd-aa48-cfc75fa15009
       content-length:
-      - '37293'
+      - '35389'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 14 Oct 2020 23:34:14 GMT
+      - Thu, 15 Oct 2020 21:00:40 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '30'
+      - '24'
     status:
       code: 200
       message: OK
