@@ -43,6 +43,8 @@ async def main():
         print(f'{color}{greeting}{Style.RESET_ALL}')
 
 
+
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
+

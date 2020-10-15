@@ -2,7 +2,6 @@
 
 > see https://aka.ms/autorest
 
-
 ### Generation
 ```ps
 cd <swagger-folder>
@@ -22,4 +21,5 @@ clear-output-folder: true
 add-credentials: true
 python: true
 package-version: "1.0"
+
 ```

@@ -10,6 +10,7 @@ from ._azure_app_configuration import AzureAppConfiguration
 from ._version import VERSION
 
 __version__ = VERSION
+
 __all__ = ['AzureAppConfiguration']
 
 try:

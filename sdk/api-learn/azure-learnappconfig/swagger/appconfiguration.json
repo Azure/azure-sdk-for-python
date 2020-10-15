@@ -197,6 +197,7 @@
                 "name": "SettingFields",
                 "modelAsString": true
               }
+
             },
             "collectionFormat": "csv"
           }
@@ -291,6 +292,7 @@
                 "name": "SettingFields",
                 "modelAsString": true
               }
+
             },
             "collectionFormat": "csv"
           }
@@ -388,6 +390,7 @@
                 "name": "SettingFields",
                 "modelAsString": true
               }
+
             },
             "collectionFormat": "csv"
           }
@@ -673,6 +676,9 @@
                 "name": "SettingFields",
                 "modelAsString": true
               }
+
+              ]
+
             },
             "collectionFormat": "csv"
           }
@@ -1085,6 +1091,7 @@
                 "name": "SettingFields",
                 "modelAsString": true
               }
+
             },
             "collectionFormat": "csv"
           }
@@ -1179,6 +1186,7 @@
                 "name": "SettingFields",
                 "modelAsString": true
               }
+
             },
             "collectionFormat": "csv"
           }

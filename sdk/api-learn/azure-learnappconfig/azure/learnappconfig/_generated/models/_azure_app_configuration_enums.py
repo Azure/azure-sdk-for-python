@@ -28,6 +28,63 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
 
 class SettingFields(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+class Enum4(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY = "key"
+    LABEL = "label"
+    CONTENT_TYPE = "content_type"
+    VALUE = "value"
+    LAST_MODIFIED = "last_modified"
+    TAGS = "tags"
+    LOCKED = "locked"
+    ETAG = "etag"
+
+class Enum5(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY = "key"
+    LABEL = "label"
+    CONTENT_TYPE = "content_type"
+    VALUE = "value"
+    LAST_MODIFIED = "last_modified"
+    TAGS = "tags"
+    LOCKED = "locked"
+    ETAG = "etag"
+
+class Get6ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY = "key"
+    LABEL = "label"
+    CONTENT_TYPE = "content_type"
+    VALUE = "value"
+    LAST_MODIFIED = "last_modified"
+    TAGS = "tags"
+    LOCKED = "locked"
+    ETAG = "etag"
+
+class Get7ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY = "key"
+    LABEL = "label"
+    CONTENT_TYPE = "content_type"
+    VALUE = "value"
+    LAST_MODIFIED = "last_modified"
+    TAGS = "tags"
+    LOCKED = "locked"
+    ETAG = "etag"
+
+class Head6ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    KEY = "key"
+    LABEL = "label"
+    CONTENT_TYPE = "content_type"
+    VALUE = "value"
+    LAST_MODIFIED = "last_modified"
+    TAGS = "tags"
+    LOCKED = "locked"
+    ETAG = "etag"
+
+class Head7ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
     KEY = "key"
     LABEL = "label"
     CONTENT_TYPE = "content_type"

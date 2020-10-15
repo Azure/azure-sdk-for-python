@@ -208,6 +208,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
         :type select: list[str or ~azure.learnappconfig.models.SettingFields]
+
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.learnappconfig.models.KeyValueListResult]
@@ -289,6 +290,7 @@ class AzureAppConfigurationOperationsMixin(object):
         after=None,  # type: Optional[str]
         accept_datetime=None,  # type: Optional[str]
         select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
+
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -308,6 +310,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
         :type select: list[str or ~azure.learnappconfig.models.SettingFields]
+
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -368,6 +371,7 @@ class AzureAppConfigurationOperationsMixin(object):
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
+
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.KeyValue"
@@ -622,6 +626,7 @@ class AzureAppConfigurationOperationsMixin(object):
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
+
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -644,6 +649,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type if_none_match: str
         :param select: Used to select what fields are present in the returned resource(s).
         :type select: list[str or ~azure.learnappconfig.models.SettingFields]
+
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1028,6 +1034,7 @@ class AzureAppConfigurationOperationsMixin(object):
         after=None,  # type: Optional[str]
         accept_datetime=None,  # type: Optional[str]
         select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
+
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.KeyValueListResult"]
@@ -1047,6 +1054,7 @@ class AzureAppConfigurationOperationsMixin(object):
         :type accept_datetime: str
         :param select: Used to select what fields are present in the returned resource(s).
         :type select: list[str or ~azure.learnappconfig.models.SettingFields]
+
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.learnappconfig.models.KeyValueListResult]
@@ -1128,6 +1136,7 @@ class AzureAppConfigurationOperationsMixin(object):
         after=None,  # type: Optional[str]
         accept_datetime=None,  # type: Optional[str]
         select=None,  # type: Optional[List[Union[str, "models.SettingFields"]]]
+
         **kwargs  # type: Any
     ):
         # type: (...) -> None

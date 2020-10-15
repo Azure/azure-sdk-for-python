@@ -25,6 +25,13 @@ except (SyntaxError, ImportError):
 
 from ._azure_app_configuration_enums import (
     SettingFields,
+    Enum4,
+    Enum5,
+    Get6ItemsItem,
+    Get7ItemsItem,
+    Head6ItemsItem,
+    Head7ItemsItem,
+
 )
 
 __all__ = [
@@ -36,4 +43,10 @@ __all__ = [
     'Label',
     'LabelListResult',
     'SettingFields',
+    'Enum4',
+    'Enum5',
+    'Get6ItemsItem',
+    'Get7ItemsItem',
+    'Head6ItemsItem',
+    'Head7ItemsItem',
 ]
