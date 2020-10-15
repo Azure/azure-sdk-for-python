@@ -210,7 +210,7 @@ class _ServiceBusErrorPolicy(errors.ErrorPolicy):
 
 
 class ServiceBusError(Exception):
-    """An error occured.
+    """An error occurred.
 
     This is the parent of all Service Bus errors and can
     be used for default error handling.
@@ -223,20 +223,16 @@ class ServiceBusError(Exception):
         super(ServiceBusError, self).__init__(message)
 
 
-class ServiceBusResourceNotFound(ServiceBusError):
-    """The Service Bus entity could not be reached."""
-
-
 class ServiceBusConnectionError(ServiceBusError):
-    """An error occured in the connection."""
+    """An error occurred in the connection."""
 
 
 class ServiceBusAuthorizationError(ServiceBusError):
-    """An error occured when authorizing the connection."""
+    """An error occurred when authorizing the connection."""
 
 
 class ServiceBusAuthenticationError(ServiceBusError):
-    """An error occured when authenticate the connection."""
+    """An error occurred when authenticate the connection."""
 
 
 class NoActiveSession(ServiceBusError):
@@ -248,11 +244,11 @@ class OperationTimeoutError(ServiceBusError):
 
 
 class MessageError(ServiceBusError):
-    """A message failed to send because the message is in a wrong state"""
+    """An error occurred when operation on message failed because the message is in a wrong state."""
 
 
 class MessageContentTooLarge(MessageError, ValueError):
-    """Message content is larger than the service bus frame size"""
+    """Message content is larger than the service bus frame size."""
 
 
 class MessageAlreadySettled(MessageError):
@@ -271,8 +267,8 @@ class MessageAlreadySettled(MessageError):
         super(MessageAlreadySettled, self).__init__(message)
 
 
-class MessageSettleFailed(ServiceBusError):
-    """Attempt to settle a message failed."""
+class MessageSettleFailed(MessageError):
+    """An attempt to settle a message failed."""
 
     def __init__(self, action, inner_exception):
         # type: (str, Exception) -> None
@@ -281,7 +277,7 @@ class MessageSettleFailed(ServiceBusError):
         super(MessageSettleFailed, self).__init__(message, inner_exception)
 
 
-class MessageSendFailed(ServiceBusError):
+class MessageSendFailed(MessageError):
     """A message failed to send to the Service Bus entity."""
 
     def __init__(self, inner_exception):
@@ -290,13 +286,13 @@ class MessageSendFailed(ServiceBusError):
         self.condition = None
         self.description = None
         if hasattr(inner_exception, 'condition'):
-            self.condition = inner_exception.condition      # type: ignore
+            self.condition = inner_exception.condition  # type: ignore
             self.description = inner_exception.description  # type: ignore
         self.inner_exception = inner_exception
         super(MessageSendFailed, self).__init__(message, inner_exception)
 
 
-class MessageLockExpired(ServiceBusError):
+class MessageLockExpired(MessageError):
     """The lock on the message has expired and it has been released back to the queue.
 
     It will need to be received again in order to settle it.

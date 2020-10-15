@@ -369,6 +369,24 @@ a generator-style receive will run for before exiting if there are no messages. 
 
 ### Common Exceptions
 
+The Service Bus APIs generate the following exceptions in azure.servicebus.exceptions:
+
+- **ServiceBusConnectionError:** An error occurred in the connection.
+- **ServiceBusAuthorizationError:** An error occurred when authorizing the connection.
+- **ServiceBusAuthenticationError:** An error occurred when authenticate the connection.
+- **NoActiveSession:** No active Sessions are available to receive from.
+- **OperationTimeoutError:** Service request operation timed out.
+- **MessageContentTooLarge:** Message content is larger than the service bus frame size.
+- **MessageAlreadySettled:** Failed to settle the message.
+- **MessageSettleFailed:** An attempt to settle a message failed.
+- **MessageSendFailed:** A message failed to send to the Service Bus entity.
+- **MessageLockExpired:** The lock on the message has expired and it has been released back to the queue. It will need to be received again in order to settle it.
+- **SessionLockExpired:** The lock on the session has expired. All unsettled messages that have been received can no longer be settled.
+- **AutoLockRenewFailed:** An attempt to renew a lock on a message or session in the background has failed.
+- **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed.
+- **MessageError:** Operation on message failed because the message is in a wrong state. It is the root error class of message related errors described above.
+- **ServiceBusError:** All other Service Bus related errors. It is the root error class of all the errors described above.
+
 Please view the [exceptions reference docs][exception_reference] for detailed descriptions of our common Exception types.
 
 ## Next steps
