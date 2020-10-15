@@ -34,7 +34,7 @@ from ..aio._lease_async import ShareLeaseClient
 
 
 if TYPE_CHECKING:
-    from .._models import ShareProperties, AccessPolicy
+    from .._models import ShareProperties, AccessPolicy, DeleteSnapshotsOption
 
 
 class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
@@ -256,7 +256,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     @distributed_trace_async
     async def delete_share(
             self, delete_snapshots=False, # type: Optional[bool]
-            include_snapshots=None, # type: Optional[Union[enum, str]]
             **kwargs
         ):
         # type: (...) -> None
@@ -265,11 +264,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
 
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted. This parameter is being deprecated.
-        :param include_snapshots:
+        :keyword include_snapshots:
             Specifies which snapshots to delete.
             Possible values: 'include' which includes non-leased snapshots,
             and 'include-leased' which includes all snapshots.
-        :type include_snapshots: str or ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
+        :paramtype include_snapshots: ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
 
             .. versionadded:: 12.6.0
 
@@ -278,6 +277,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
 
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
@@ -293,16 +293,17 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
+        include_snapshots = kwargs.pop('include_snapshots', None)
         delete_include = None
         if delete_snapshots:
             warn("The `delete_snapshots` parameter is being deprecated. "
                  "Please use the `include_snapshots` parameter instead.", DeprecationWarning)
             delete_include = DeleteSnapshotsOptionType.include
         if include_snapshots:
-            if isinstance(include_snapshots, str) and include_snapshots not in ['include', 'include-leased']:
-                raise ValueError("`include_snapshots` must be set to either 'include' or 'include-leased'.")
-            else:
-                delete_include = include_snapshots
+            if include_snapshots == DeleteSnapshotsOption.include:
+                delete_include = DeleteSnapshotsOptionType.include
+            elif include_snapshots == DeleteSnapshotsOption.include_with_leased:
+                delete_include = DeleteSnapshotsOptionType.include_leased
         try:
             await self._client.share.delete(
                 timeout=timeout,
@@ -325,6 +326,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
 
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
@@ -369,6 +371,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
 
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
@@ -414,6 +417,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
 
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
@@ -455,6 +459,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
 
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
@@ -494,6 +499,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
 
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.
@@ -538,6 +544,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
 
             .. versionadded:: 12.6.0
             This keyword argument was introduced in API version '2020-02-02'.

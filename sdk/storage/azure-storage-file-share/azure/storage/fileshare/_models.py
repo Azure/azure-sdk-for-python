@@ -6,6 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+from enum import Enum
 from azure.core.paging import PageIterator
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -135,6 +136,12 @@ class CorsRule(GeneratedCorsRule):
             exposed_headers=[generated.exposed_headers],
             max_age_in_seconds=generated.max_age_in_seconds,
         )
+
+
+class DeleteSnapshotsOption(str, Enum):
+    """The types of snapshots to delete."""
+    include = "include"
+    include_with_leased = "include-with-leased"
 
 
 class ShareSmbSettings(GeneratedShareSmbSettings):
