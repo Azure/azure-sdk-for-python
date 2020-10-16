@@ -75,10 +75,12 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    - template: ../../../common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        Directory: "sdk/${{ parameters.ServiceDirectory }}"
-        CheckLinkGuidance: $true
+    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - template: /eng/common/pipelines/templates/steps/verify-links.yml
+        parameters:
+          Directory: ''
+          Urls: (git diff origin/${env:SYSTEM_PULLREQUEST_TARGETBRANCH} HEAD --name-only -- '*.md')
+          CheckLinkGuidance: $true
 
     - template: ../steps/analyze.yml
       parameters: 
