@@ -20,6 +20,7 @@ try:
     from ._models_py3 import ResourceProviderOperationDisplay
     from ._models_py3 import Result
     from ._models_py3 import SourceControlConfiguration
+    from ._models_py3 import SystemData
 except (SyntaxError, ImportError):
     from ._models import ComplianceStatus
     from ._models import ErrorDefinition
@@ -31,15 +32,15 @@ except (SyntaxError, ImportError):
     from ._models import ResourceProviderOperationDisplay
     from ._models import Result
     from ._models import SourceControlConfiguration
+    from ._models import SystemData
 from ._paged_models import ResourceProviderOperationPaged
 from ._paged_models import SourceControlConfigurationPaged
 from ._source_control_configuration_client_enums import (
-    ComplianceState,
-    MessageLevel,
+    ComplianceStateType,
+    MessageLevelType,
     OperatorType,
-    OperatorScope,
-    EnableHelmOperator,
-    ProvisioningState,
+    OperatorScopeType,
+    ProvisioningStateType,
 )
 
 __all__ = [
@@ -53,12 +54,12 @@ __all__ = [
     'ResourceProviderOperationDisplay',
     'Result',
     'SourceControlConfiguration',
+    'SystemData',
     'SourceControlConfigurationPaged',
     'ResourceProviderOperationPaged',
-    'ComplianceState',
-    'MessageLevel',
+    'ComplianceStateType',
+    'MessageLevelType',
     'OperatorType',
-    'OperatorScope',
-    'EnableHelmOperator',
-    'ProvisioningState',
+    'OperatorScopeType',
+    'ProvisioningStateType',
 ]

@@ -31,7 +31,7 @@ class ComplianceStatus(Model):
      Possible values include: 'Pending', 'Compliant', 'Noncompliant',
      'Installed', 'Failed'
     :vartype compliance_state: str or
-     ~azure.mgmt.kubernetesconfiguration.models.ComplianceState
+     ~azure.mgmt.kubernetesconfiguration.models.ComplianceStateType
     :param last_config_applied: Datetime the configuration was last applied.
     :type last_config_applied: datetime
     :param message: Message from when the configuration was applied.
@@ -39,7 +39,7 @@ class ComplianceStatus(Model):
     :param message_level: Level of the message. Possible values include:
      'Error', 'Warning', 'Information'
     :type message_level: str or
-     ~azure.mgmt.kubernetesconfiguration.models.MessageLevel
+     ~azure.mgmt.kubernetesconfiguration.models.MessageLevelType
     """
 
     _validation = {
@@ -64,36 +64,29 @@ class ComplianceStatus(Model):
 class ErrorDefinition(Model):
     """Error definition.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Service specific error code which serves as the substatus for
-     the HTTP error code.
-    :vartype code: str
-    :ivar message: Description of the error.
-    :vartype message: str
-    :ivar details: Internal error details.
-    :vartype details:
-     list[~azure.mgmt.kubernetesconfiguration.models.ErrorDefinition]
+    :param code: Required. Service specific error code which serves as the
+     substatus for the HTTP error code.
+    :type code: str
+    :param message: Required. Description of the error.
+    :type message: str
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        'code': {'required': True},
+        'message': {'required': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, code: str, message: str, **kwargs) -> None:
         super(ErrorDefinition, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.details = None
+        self.code = code
+        self.message = message
 
 
 class ErrorResponse(Model):
@@ -156,6 +149,9 @@ class Resource(Model):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :param system_data: Top level metadata
+     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources
+    :type system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
     """
 
     _validation = {
@@ -168,13 +164,15 @@ class Resource(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, system_data=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = system_data
 
 
 class ProxyResource(Resource):
@@ -189,6 +187,9 @@ class ProxyResource(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :param system_data: Top level metadata
+     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources
+    :type system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
     """
 
     _validation = {
@@ -201,10 +202,11 @@ class ProxyResource(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, *, system_data=None, **kwargs) -> None:
+        super(ProxyResource, self).__init__(system_data=system_data, **kwargs)
 
 
 class ResourceProviderOperation(Model):
@@ -274,7 +276,7 @@ class Result(Model):
 
 
 class SourceControlConfiguration(ProxyResource):
-    """The SourceControl Configuration object.
+    """The SourceControl Configuration object returned in Get & Put response.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -285,6 +287,9 @@ class SourceControlConfiguration(ProxyResource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :param system_data: Top level metadata
+     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources
+    :type system_data: ~azure.mgmt.kubernetesconfiguration.models.SystemData
     :param repository_url: Url of the SourceControl Repository.
     :type repository_url: str
     :param operator_namespace: The namespace to which this operator is
@@ -301,19 +306,24 @@ class SourceControlConfiguration(ProxyResource):
     :param operator_params: Any Parameters for the Operator instance in string
      format.
     :type operator_params: str
+    :param configuration_protected_settings: Name-value pairs of protected
+     configuration settings for the configuration
+    :type configuration_protected_settings: dict[str, str]
     :param operator_scope: Scope at which the operator will be installed.
      Possible values include: 'cluster', 'namespace'. Default value: "cluster"
      .
     :type operator_scope: str or
-     ~azure.mgmt.kubernetesconfiguration.models.OperatorScope
+     ~azure.mgmt.kubernetesconfiguration.models.OperatorScopeType
     :ivar repository_public_key: Public Key associated with this SourceControl
      configuration (either generated within the cluster or provided by the
      user).
     :vartype repository_public_key: str
+    :param ssh_known_hosts_contents: Base64-encoded known_hosts contents
+     containing public SSH keys required to access private Git instances
+    :type ssh_known_hosts_contents: str
     :param enable_helm_operator: Option to enable Helm Operator for this git
-     configuration. Possible values include: 'true', 'false'
-    :type enable_helm_operator: str or
-     ~azure.mgmt.kubernetesconfiguration.models.EnableHelmOperator
+     configuration.
+    :type enable_helm_operator: bool
     :param helm_operator_properties: Properties for Helm operator.
     :type helm_operator_properties:
      ~azure.mgmt.kubernetesconfiguration.models.HelmOperatorProperties
@@ -321,7 +331,7 @@ class SourceControlConfiguration(ProxyResource):
      Possible values include: 'Accepted', 'Deleting', 'Running', 'Succeeded',
      'Failed'
     :vartype provisioning_state: str or
-     ~azure.mgmt.kubernetesconfiguration.models.ProvisioningState
+     ~azure.mgmt.kubernetesconfiguration.models.ProvisioningStateType
     :ivar compliance_status: Compliance Status of the Configuration
     :vartype compliance_status:
      ~azure.mgmt.kubernetesconfiguration.models.ComplianceStatus
@@ -340,29 +350,87 @@ class SourceControlConfiguration(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
         'operator_namespace': {'key': 'properties.operatorNamespace', 'type': 'str'},
         'operator_instance_name': {'key': 'properties.operatorInstanceName', 'type': 'str'},
         'operator_type': {'key': 'properties.operatorType', 'type': 'str'},
         'operator_params': {'key': 'properties.operatorParams', 'type': 'str'},
+        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
         'operator_scope': {'key': 'properties.operatorScope', 'type': 'str'},
         'repository_public_key': {'key': 'properties.repositoryPublicKey', 'type': 'str'},
-        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'str'},
+        'ssh_known_hosts_contents': {'key': 'properties.sshKnownHostsContents', 'type': 'str'},
+        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'bool'},
         'helm_operator_properties': {'key': 'properties.helmOperatorProperties', 'type': 'HelmOperatorProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'compliance_status': {'key': 'properties.complianceStatus', 'type': 'ComplianceStatus'},
     }
 
-    def __init__(self, *, repository_url: str=None, operator_namespace: str="default", operator_instance_name: str=None, operator_type=None, operator_params: str=None, operator_scope="cluster", enable_helm_operator=None, helm_operator_properties=None, **kwargs) -> None:
-        super(SourceControlConfiguration, self).__init__(**kwargs)
+    def __init__(self, *, system_data=None, repository_url: str=None, operator_namespace: str="default", operator_instance_name: str=None, operator_type=None, operator_params: str=None, configuration_protected_settings=None, operator_scope="cluster", ssh_known_hosts_contents: str=None, enable_helm_operator: bool=None, helm_operator_properties=None, **kwargs) -> None:
+        super(SourceControlConfiguration, self).__init__(system_data=system_data, **kwargs)
         self.repository_url = repository_url
         self.operator_namespace = operator_namespace
         self.operator_instance_name = operator_instance_name
         self.operator_type = operator_type
         self.operator_params = operator_params
+        self.configuration_protected_settings = configuration_protected_settings
         self.operator_scope = operator_scope
         self.repository_public_key = None
+        self.ssh_known_hosts_contents = ssh_known_hosts_contents
         self.enable_helm_operator = enable_helm_operator
         self.helm_operator_properties = helm_operator_properties
         self.provisioning_state = None
         self.compliance_status = None
+
+
+class SystemData(Model):
+    """Top level metadata
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar created_by: A string identifier for the identity that created the
+     resource
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource:
+     user, application, managedIdentity, key
+    :vartype created_by_type: str
+    :ivar created_at: The timestamp of resource creation (UTC)
+    :vartype created_at: datetime
+    :ivar last_modified_by: A string identifier for the identity that last
+     modified the resource
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the
+     resource: user, application, managedIdentity, key
+    :vartype last_modified_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC)
+    :vartype last_modified_at: datetime
+    """
+
+    _validation = {
+        'created_by': {'readonly': True},
+        'created_by_type': {'readonly': True},
+        'created_at': {'readonly': True},
+        'last_modified_by': {'readonly': True},
+        'last_modified_by_type': {'readonly': True},
+        'last_modified_at': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = None
+        self.created_by_type = None
+        self.created_at = None
+        self.last_modified_by = None
+        self.last_modified_by_type = None
+        self.last_modified_at = None
