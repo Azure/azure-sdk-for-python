@@ -12,6 +12,7 @@ from ._helpers import (
     adjust_value_type,
     adjust_text_angle,
     adjust_confidence,
+    adjust_page_number,
     get_element
 )
 
@@ -53,9 +54,7 @@ def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too
     if value.type == "array":
         # business cards pre-built model doesn't return a page number for the `ContactNames` field
         if "business_card" in kwargs and field == "ContactNames":
-            for val in value.value_array:
-                page_number = val.value_object["FirstName"].page
-                val.page = page_number
+            value = adjust_page_number(value)
         return [
             FormField._from_generated(field, value, read_result, **kwargs)
             for value in value.value_array
