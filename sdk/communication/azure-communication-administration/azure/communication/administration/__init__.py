@@ -6,7 +6,7 @@
 
 from ._communication_identity_client import CommunicationIdentityClient
 from ._phone_number_administration_client import PhoneNumberAdministrationClient
-from ._polling import PhoneNumberPolling
+from ._polling import ReservePhoneNumberPolling, PurchaseReservationPolling, ReleasePhoneNumberPolling
 
 from ._identity._generated.models import (
     CommunicationTokenRequest,
@@ -45,7 +45,9 @@ from ._shared.models import (
 __all__ = [
     'CommunicationIdentityClient',
     'PhoneNumberAdministrationClient',
-    'PhoneNumberPolling',
+    'ReservePhoneNumberPolling',
+    'PurchaseReservationPolling',
+    'ReleasePhoneNumberPolling',
 
     # from _identity
     'CommunicationTokenRequest',

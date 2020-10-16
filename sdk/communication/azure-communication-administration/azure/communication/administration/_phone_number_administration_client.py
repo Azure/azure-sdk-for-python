@@ -4,10 +4,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.communication.administration._phonenumber._generated.models import ReleaseStatus
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-from ._polling import PhoneNumberPolling
+from ._polling import ReleasePhoneNumberPolling, ReservePhoneNumberPolling, PurchaseReservationPolling
 
 from ._phonenumber._generated._phone_number_administration_service\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
@@ -25,7 +26,6 @@ from ._phonenumber._generated.models import (
     PhonePlanGroups,
     PhonePlansResponse,
     PstnConfiguration,
-    ReleaseResponse,
     SearchStatus,
     UpdateNumberCapabilitiesResponse,
     UpdatePhoneNumberCapabilitiesResponse
@@ -353,22 +353,53 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def release_phone_numbers(
+    def begin_release_phone_numbers(
             self,
-            phone_numbers,  # type: List[str]
             **kwargs  # type: Any
     ):
-        # type: (...) -> ReleaseResponse
-        """Creates a release for the given phone numbers.
+        # type: (...) -> LROPoller
+        """Begins creating a release for the given phone numbers.
+        Caller must provide either phone_numbers, or continuation_token keywords to use the method.
+        If both phone_numbers and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword phone_numbers will be ignored.
 
-        :param phone_numbers: The list of phone numbers in the release request.
-        :type phone_numbers: list[str]
-        :rtype: ~azure.communication.administration.ReleaseResponse
+        :keyword list[str] phone_numbers: The list of phone numbers in the release request.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberRelease]
         """
-        return self._phone_number_administration_client.phone_number_administration.release_phone_numbers(
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        search_polling = ReleasePhoneNumberPolling(
+            is_terminated=lambda status: status in [
+                ReleaseStatus.Complete,
+                ReleaseStatus.Failed,
+                ReleaseStatus.Expired
+            ]
+        )
+
+        if cont_token is not None:
+            return LROPoller.from_continuation_token(
+                polling_method=search_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        phone_numbers = kwargs.pop('phone_numbers')  # type: str
+
+        create_release_response = self._phone_number_administration_client.\
+            phone_number_administration.release_phone_numbers(
             phone_numbers,
             **kwargs
         )
+
+        initial_state = self._phone_number_administration_client.phone_number_administration.get_release_by_id(
+            release_id=create_release_response.release_id
+        )
+
+        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=search_polling)
 
     @distributed_trace
     def list_all_releases(
@@ -423,7 +454,7 @@ class PhoneNumberAdministrationClient(object):
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
-        search_polling = PhoneNumberPolling(
+        search_polling = ReservePhoneNumberPolling(
             is_terminated=lambda status: status in [
                 SearchStatus.Reserved,
                 SearchStatus.Expired,
@@ -506,7 +537,7 @@ class PhoneNumberAdministrationClient(object):
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
-        search_polling = PhoneNumberPolling(
+        search_polling = PurchaseReservationPolling(
             is_terminated=lambda status: status in [
                 SearchStatus.Success,
                 SearchStatus.Expired,

@@ -18,7 +18,9 @@ from ._phonenumber._generated.models import (
     PhoneNumberRelease
 )
 
-class PhoneNumberPolling(PollingMethod):
+class PhoneNumberBasePolling(PollingMethod):
+    """ABC class for reserve/purchase/release phone number related polling.
+    """
     def __init__(self, is_terminated, interval=5):
         self._response = None
         self._client = None
@@ -30,13 +32,12 @@ class PhoneNumberPolling(PollingMethod):
         # type: () -> None
         if self._query_status is None:
             raise Exception("this poller has not been initialized")
-        self._response = self._query_status()
+        self._response = self._query_status() # pylint: disable=E1102
 
-    def initialize(self, client, initial_response, _):
+    def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
         self._client = client
         self._response = initial_response
-        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
 
     def run(self):
         # type: () -> None
@@ -74,3 +75,21 @@ class PhoneNumberPolling(PollingMethod):
             raise ValueError("Kwarg 'client' needs to be specified")
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, None
+
+class ReservePhoneNumberPolling(PhoneNumberBasePolling):
+    def initialize(self, client, initial_response, deserialization_callback):
+        # type: (Any, Any, Callable) -> None
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
+        super().initialize(client, initial_response, deserialization_callback)
+
+class PurchaseReservationPolling(PhoneNumberBasePolling):
+    def initialize(self, client, initial_response, deserialization_callback):
+        # type: (Any, Any, Callable) -> None
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
+        super().initialize(client, initial_response, deserialization_callback)
+
+class ReleasePhoneNumberPolling(PhoneNumberBasePolling):
+    def initialize(self, client, initial_response, deserialization_callback):
+        # type: (Any, Any, Callable) -> None
+        self._query_status = partial(self._client.get_release_by_id, search_id=initial_response.release_id)
+        super().initialize(client, initial_response, deserialization_callback)
