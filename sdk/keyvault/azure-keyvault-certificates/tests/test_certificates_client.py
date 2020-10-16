@@ -24,9 +24,8 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
-    ApiVersion,
+    parse_key_vault_certificate_id
 )
-from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
 from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
@@ -85,7 +84,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation)
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(original_cert_policy.issuer_name, pending_cert_operation.issuer_name)
-        pending_id = parse_vault_id(pending_cert_operation.id)
+        pending_id = parse_key_vault_certificate_id(pending_cert_operation.id)
         self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
@@ -260,9 +259,10 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)
-                parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name
-                expected[cid.strip("/")] = cert_bundle
+                # Going to remove the ID from the last '/' onwards. This is because list_properties_of_certificates
+                # doesn't return the version in the ID
+                cid = "/".join(cert_bundle.id.split("/")[:-1])
+                expected[cid] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
                     error_count += 1
@@ -289,9 +289,7 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = self._import_common_certificate(client=client, cert_name=cert_name)
-                parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
-                expected[cid.strip("/")] = cert_bundle
+                expected[cert_bundle.id] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
                     error_count += 1
@@ -357,7 +355,7 @@ class CertificateClientTests(KeyVaultTestCase):
             client.begin_delete_certificate(certificate_name=cert_name).wait()
 
         # validate all our deleted certificates are returned by list_deleted_certificates
-        deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [parse_key_vault_certificate_id(source_id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates
@@ -372,7 +370,7 @@ class CertificateClientTests(KeyVaultTestCase):
             time.sleep(50)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
-        deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]
+        deleted = [parse_key_vault_certificate_id(source_id=c.id).name for c in client.list_deleted_certificates()]
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
