@@ -5,7 +5,7 @@ from form documents. It includes the following main functionalities:
 
 * Custom models - Recognize field values and table data from forms. These models are trained with your own data, so they're tailored to your forms.
 * Content API - Recognize text and table structures, along with their bounding box coordinates, from documents. Corresponds to the REST service's Layout API.
-* Prebuilt receipt model - Recognize data from USA sales receipts using a prebuilt model.
+* Prebuilt receipt model - Recognize data from sales receipts using a prebuilt model.
 * Prebuilt business card model - Recognize data from business cards using a prebuilt model.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
@@ -132,7 +132,7 @@ form_recognizer_client = FormRecognizerClient(
 `FormRecognizerClient` provides operations for:
 
  - Recognizing form fields and content using custom models trained to recognize your custom forms. These values are returned in a collection of `RecognizedForm` objects.
- - Recognizing common fields from US receipts, using a pre-trained receipt model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
+ - Recognizing common fields from sales receipts, using a pre-trained receipt model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
  - Recognizing common fields from business cards, using a pre-trained business card model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
  - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
@@ -242,7 +242,7 @@ for cell in table.cells:
 ```
 
 ### Recognize Receipts
-Recognize data from USA sales receipts using a prebuilt model. Receipt fields recognized by the service can be found [here][service_recognize_receipt].
+Recognize data from sales receipts using a prebuilt model. Receipt fields recognized by the service can be found [here][service_recognize_receipt].
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient

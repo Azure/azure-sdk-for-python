@@ -71,7 +71,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             receipt: Union[bytes, IO[bytes]],
             **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given US sales receipt.
+        """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
@@ -79,7 +79,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         https://aka.ms/formrecognizer/receiptfields
 
         :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
-            Currently only supports US sales receipts.
         :type receipt: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -106,7 +105,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 :end-before: [END recognize_receipts_async]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields.
+                :caption: Recognize sales receipt fields.
         """
         locale = kwargs.pop("locale", None)
         content_type = kwargs.pop("content_type", None)
@@ -140,15 +139,14 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             receipt_url: str,
             **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given US sales receipt.
+        """Extract field text and semantic values from a given sales receipt.
         The input document must be the location (URL) of the receipt to be analyzed.
 
         See fields found on a receipt here:
         https://aka.ms/formrecognizer/receiptfields
 
         :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
-            US sales receipts.
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -170,7 +168,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 :end-before: [END recognize_receipts_from_url_async]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields from a URL.
+                :caption: Recognize sales receipt fields from a URL.
         """
         locale = kwargs.pop("locale", None)
 
