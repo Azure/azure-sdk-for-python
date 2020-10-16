@@ -2,6 +2,9 @@
 
 ## 5.2.1 (Unreleased)
 
+**New Features**
+
+- `azure.eventhub.exceptions.EventHubError` now inherits from `azure.core.exceptions.AzureError`.
 
 ## 5.2.0 (2020-09-08)
 
