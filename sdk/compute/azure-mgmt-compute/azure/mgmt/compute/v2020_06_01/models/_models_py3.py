@@ -996,7 +996,7 @@ class DedicatedHost(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
+        'platform_fault_domain': {'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
@@ -1134,7 +1134,7 @@ class DedicatedHostGroup(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'platform_fault_domain_count': {'maximum': 3, 'minimum': 1},
+        'platform_fault_domain_count': {'minimum': 1},
         'hosts': {'readonly': True},
         'instance_view': {'readonly': True},
     }
@@ -1251,7 +1251,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain_count': {'maximum': 3, 'minimum': 1},
+        'platform_fault_domain_count': {'minimum': 1},
         'hosts': {'readonly': True},
         'instance_view': {'readonly': True},
     }
@@ -1423,7 +1423,7 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
+        'platform_fault_domain': {'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
@@ -5810,6 +5810,317 @@ class VirtualMachineReimageParameters(msrest.serialization.Model):
     ):
         super(VirtualMachineReimageParameters, self).__init__(**kwargs)
         self.temp_disk = temp_disk
+
+
+class VirtualMachineRunCommand(Resource):
+    """Describes a Virtual Machine run command.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param source: The source of the run command script.
+    :type source: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandScriptSource
+    :param parameters: The parameters used by the script.
+    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param protected_parameters: The parameters used by the script.
+    :type protected_parameters:
+     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param async_execution: Optional. If set to true, provisioning will complete as soon as the
+     script starts and will not wait for script to complete.
+    :type async_execution: bool
+    :param run_as_user: Specifies the user account on the VM when executing the run command.
+    :type run_as_user: str
+    :param run_as_password: Specifies the user account password on the VM when executing the run
+     command.
+    :type run_as_password: str
+    :param timeout_in_seconds: The timeout in seconds to execute the run command.
+    :type timeout_in_seconds: int
+    :param output_blob_uri: Specifies the Azure storage blob where script output stream will be
+     uploaded.
+    :type output_blob_uri: str
+    :param error_blob_uri: Specifies the Azure storage blob where script error stream will be
+     uploaded.
+    :type error_blob_uri: str
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The virtual machine run command instance view.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandInstanceView
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'instance_view': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'source': {'key': 'properties.source', 'type': 'VirtualMachineRunCommandScriptSource'},
+        'parameters': {'key': 'properties.parameters', 'type': '[RunCommandInputParameter]'},
+        'protected_parameters': {'key': 'properties.protectedParameters', 'type': '[RunCommandInputParameter]'},
+        'async_execution': {'key': 'properties.asyncExecution', 'type': 'bool'},
+        'run_as_user': {'key': 'properties.runAsUser', 'type': 'str'},
+        'run_as_password': {'key': 'properties.runAsPassword', 'type': 'str'},
+        'timeout_in_seconds': {'key': 'properties.timeoutInSeconds', 'type': 'int'},
+        'output_blob_uri': {'key': 'properties.outputBlobUri', 'type': 'str'},
+        'error_blob_uri': {'key': 'properties.errorBlobUri', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineRunCommandInstanceView'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        source: Optional["VirtualMachineRunCommandScriptSource"] = None,
+        parameters: Optional[List["RunCommandInputParameter"]] = None,
+        protected_parameters: Optional[List["RunCommandInputParameter"]] = None,
+        async_execution: Optional[bool] = False,
+        run_as_user: Optional[str] = None,
+        run_as_password: Optional[str] = None,
+        timeout_in_seconds: Optional[int] = None,
+        output_blob_uri: Optional[str] = None,
+        error_blob_uri: Optional[str] = None,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommand, self).__init__(location=location, tags=tags, **kwargs)
+        self.source = source
+        self.parameters = parameters
+        self.protected_parameters = protected_parameters
+        self.async_execution = async_execution
+        self.run_as_user = run_as_user
+        self.run_as_password = run_as_password
+        self.timeout_in_seconds = timeout_in_seconds
+        self.output_blob_uri = output_blob_uri
+        self.error_blob_uri = error_blob_uri
+        self.provisioning_state = None
+        self.instance_view = None
+
+
+class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
+    """The instance view of a virtual machine run command.
+
+    :param execution_state: Script execution status. Possible values include: "Unknown", "Pending",
+     "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
+    :type execution_state: str or ~azure.mgmt.compute.v2020_06_01.models.ExecutionState
+    :param execution_message: Communicate script configuration errors or execution messages.
+    :type execution_message: str
+    :param exit_code: Exit code returned from script execution.
+    :type exit_code: int
+    :param output: Script output stream.
+    :type output: str
+    :param error: Script error stream.
+    :type error: str
+    :param start_time: Script start time.
+    :type start_time: ~datetime.datetime
+    :param end_time: Script end time.
+    :type end_time: ~datetime.datetime
+    :param statuses: The resource status information.
+    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    """
+
+    _attribute_map = {
+        'execution_state': {'key': 'executionState', 'type': 'str'},
+        'execution_message': {'key': 'executionMessage', 'type': 'str'},
+        'exit_code': {'key': 'exitCode', 'type': 'int'},
+        'output': {'key': 'output', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        execution_state: Optional[Union[str, "ExecutionState"]] = None,
+        execution_message: Optional[str] = None,
+        exit_code: Optional[int] = None,
+        output: Optional[str] = None,
+        error: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        statuses: Optional[List["InstanceViewStatus"]] = None,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandInstanceView, self).__init__(**kwargs)
+        self.execution_state = execution_state
+        self.execution_message = execution_message
+        self.exit_code = exit_code
+        self.output = output
+        self.error = error
+        self.start_time = start_time
+        self.end_time = end_time
+        self.statuses = statuses
+
+
+class VirtualMachineRunCommandScriptSource(msrest.serialization.Model):
+    """Describes the script sources for run command.
+
+    :param script: Specifies the script content to be executed on the VM.
+    :type script: str
+    :param script_uri: Specifies the script download location.
+    :type script_uri: str
+    :param command_id: Specifies a commandId of predefined built-in script.
+    :type command_id: str
+    """
+
+    _attribute_map = {
+        'script': {'key': 'script', 'type': 'str'},
+        'script_uri': {'key': 'scriptUri', 'type': 'str'},
+        'command_id': {'key': 'commandId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        script: Optional[str] = None,
+        script_uri: Optional[str] = None,
+        command_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandScriptSource, self).__init__(**kwargs)
+        self.script = script
+        self.script_uri = script_uri
+        self.command_id = command_id
+
+
+class VirtualMachineRunCommandsListResult(msrest.serialization.Model):
+    """The List run command operation response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The list of run commands.
+    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]
+    :param next_link: The uri to fetch the next page of run commands.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[VirtualMachineRunCommand]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["VirtualMachineRunCommand"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandsListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class VirtualMachineRunCommandUpdate(UpdateResource):
+    """Describes a Virtual Machine run command.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param source: The source of the run command script.
+    :type source: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandScriptSource
+    :param parameters: The parameters used by the script.
+    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param protected_parameters: The parameters used by the script.
+    :type protected_parameters:
+     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param async_execution: Optional. If set to true, provisioning will complete as soon as the
+     script starts and will not wait for script to complete.
+    :type async_execution: bool
+    :param run_as_user: Specifies the user account on the VM when executing the run command.
+    :type run_as_user: str
+    :param run_as_password: Specifies the user account password on the VM when executing the run
+     command.
+    :type run_as_password: str
+    :param timeout_in_seconds: The timeout in seconds to execute the run command.
+    :type timeout_in_seconds: int
+    :param output_blob_uri: Specifies the Azure storage blob where script output stream will be
+     uploaded.
+    :type output_blob_uri: str
+    :param error_blob_uri: Specifies the Azure storage blob where script error stream will be
+     uploaded.
+    :type error_blob_uri: str
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The virtual machine run command instance view.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandInstanceView
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'instance_view': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'source': {'key': 'properties.source', 'type': 'VirtualMachineRunCommandScriptSource'},
+        'parameters': {'key': 'properties.parameters', 'type': '[RunCommandInputParameter]'},
+        'protected_parameters': {'key': 'properties.protectedParameters', 'type': '[RunCommandInputParameter]'},
+        'async_execution': {'key': 'properties.asyncExecution', 'type': 'bool'},
+        'run_as_user': {'key': 'properties.runAsUser', 'type': 'str'},
+        'run_as_password': {'key': 'properties.runAsPassword', 'type': 'str'},
+        'timeout_in_seconds': {'key': 'properties.timeoutInSeconds', 'type': 'int'},
+        'output_blob_uri': {'key': 'properties.outputBlobUri', 'type': 'str'},
+        'error_blob_uri': {'key': 'properties.errorBlobUri', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineRunCommandInstanceView'},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        source: Optional["VirtualMachineRunCommandScriptSource"] = None,
+        parameters: Optional[List["RunCommandInputParameter"]] = None,
+        protected_parameters: Optional[List["RunCommandInputParameter"]] = None,
+        async_execution: Optional[bool] = False,
+        run_as_user: Optional[str] = None,
+        run_as_password: Optional[str] = None,
+        timeout_in_seconds: Optional[int] = None,
+        output_blob_uri: Optional[str] = None,
+        error_blob_uri: Optional[str] = None,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandUpdate, self).__init__(tags=tags, **kwargs)
+        self.source = source
+        self.parameters = parameters
+        self.protected_parameters = protected_parameters
+        self.async_execution = async_execution
+        self.run_as_user = run_as_user
+        self.run_as_password = run_as_password
+        self.timeout_in_seconds = timeout_in_seconds
+        self.output_blob_uri = output_blob_uri
+        self.error_blob_uri = error_blob_uri
+        self.provisioning_state = None
+        self.instance_view = None
 
 
 class VirtualMachineScaleSet(Resource):
