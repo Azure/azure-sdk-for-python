@@ -1,5 +1,24 @@
 # Release History
 
+## 14.0.0 (2020-10-15)
+
+**Features**
+
+  - Model GalleryImageUpdate has a new parameter features
+  - Model GalleryArtifactVersionSource has a new parameter uri
+  - Model GalleryUpdate has a new parameter sharing_profile
+  - Model GalleryImage has a new parameter features
+  - Model Gallery has a new parameter sharing_profile
+  - Added operation group GallerySharingProfileOperations
+  - Added operation group SharedGalleryImageVersionsOperations
+  - Added operation group SharedGalleryImagesOperations
+  - Added operation group SharedGalleriesOperations
+
+**Breaking changes**
+
+  - Operation GalleriesOperations.get has a new signature
+  - Operation VirtualMachinesOperations.delete has a new signature
+  
 ## 13.1.1 (2020-09-22)
 
 **Bugfixes**
