@@ -145,7 +145,7 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     def __init__(self, **kwargs):
         self.multichannel = kwargs.get('multichannel')
         if self.multichannel is None:
-            raise ValueError("multichannel must be specified.")
+            raise ValueError("The value 'multichannel' must be specified.")
 
 
 class SmbMultichannel(GeneratedSmbMultichannel):
@@ -156,7 +156,7 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     def __init__(self, **kwargs):
         self.enabled = kwargs.get('enabled')
         if self.enabled is None:
-            raise ValueError("enabled must be specified.")
+            raise ValueError("The value 'enabled' must be specified.")
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
@@ -169,7 +169,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     def __init__(self, **kwargs):
         self.smb = kwargs.get('smb')
         if self.smb is None:
-            raise ValueError("smb must be specified.")
+            raise ValueError("The value 'smb' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
