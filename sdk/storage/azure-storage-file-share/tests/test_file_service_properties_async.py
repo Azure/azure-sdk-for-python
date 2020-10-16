@@ -106,11 +106,11 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self._assert_cors_equal(props['cors'], list())
         self.assertEqual(props['protocol'].smb.multichannel.enabled, False)
         # Assert
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings())
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(ValueError):
             ShareProtocolSettings()
 
         # Act
