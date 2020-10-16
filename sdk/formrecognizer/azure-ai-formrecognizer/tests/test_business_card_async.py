@@ -258,6 +258,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         business_card = result[0]
         # check dict values
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
 
@@ -304,6 +305,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         business_card = result[0]
         # check dict values
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
 
@@ -349,8 +351,8 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(business_card.pages)
 
         for name, field in business_card.fields.items():
-            if field.value_type not in ["list", "dictionary"]:
-                self.assertFieldElementsHasValues(field.value_data.field_elements, receipt.page_range.first_page_number)
+            for f in field.value:
+                self.assertFieldElementsHasValues(f.value_data.field_elements, business_card.page_range.first_page_number)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
