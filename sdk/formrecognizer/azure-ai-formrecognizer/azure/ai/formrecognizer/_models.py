@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-lines
 
 from enum import Enum
 from collections import namedtuple
@@ -31,7 +31,8 @@ def resolve_element(element, read_result):
         return FormWord._from_generated(element, page=page)
     if element_type == "line":
         return FormLine._from_generated(element, page=page)
-
+    if element_type == "selectionMark":
+        return FormSelectionMark._from_generated(element, page=page)
     raise ValueError("Failed to parse element reference.")
 
 
@@ -60,7 +61,18 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
             key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
         }
+    if value.type == "selectionMark":
+        return value.text
+
     return None
+
+
+class SelectionMarkState(str, Enum):
+    """State of the selection mark.
+    """
+
+    SELECTED = "selected"
+    UNSELECTED = "unselected"
 
 
 class FieldValueType(str, Enum):
@@ -75,6 +87,7 @@ class FieldValueType(str, Enum):
     INTEGER = "integer"
     LIST = "list"
     DICTIONARY = "dictionary"
+    SELECTION_MARK = "selectionMark"
 
 
 class LengthUnit(str, Enum):
@@ -152,9 +165,9 @@ class FormElement(object):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind:
-        The kind of form element. Possible kinds are "word" or "line" which
-        correspond to a :class:`~azure.ai.formrecognizer.FormWord` or
-        :class:`~azure.ai.formrecognizer.FormLine`, respectively.
+        The kind of form element. Possible kinds are "word", "line", or "selectionMark" which
+        correspond to a :class:`~azure.ai.formrecognizer.FormWord` :class:`~azure.ai.formrecognizer.FormLine`,
+        or :class:`~azure.ai.formrecognizer.FormSelectionMark`, respectively.
     """
     def __init__(self, **kwargs):
         self.bounding_box = kwargs.get("bounding_box", None)
@@ -213,7 +226,7 @@ class FormField(object):
 
     :ivar str value_type: The type of `value` found on FormField. Described in
         :class:`~azure.ai.formrecognizer.FieldValueType`, possible types include: 'string',
-        'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', or 'list'.
+        'date', 'time', 'phoneNumber', 'float', 'integer', 'dictionary', 'list', or 'selectionMark'.
     :ivar ~azure.ai.formrecognizer.FieldData label_data:
         Contains the text, bounding box, and field elements for the field label.
         Note that this is not returned for forms analyzed by models trained with labels.
@@ -289,7 +302,7 @@ class FieldData(object):
         elements constituting this field or value is returned. The list
         constitutes of elements such as lines and words.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
-        ~azure.ai.formrecognizer.FormLine]]
+        ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
     """
 
     def __init__(self, **kwargs):
@@ -356,6 +369,10 @@ class FormPage(object):
         certain cases proximity is treated with higher priority. As the sorting order depends on
         the detected text, it may change across images and OCR version updates. Thus, business
         logic should be built upon the actual line location instead of order.
+    :ivar selection_marks: List of selection marks extracted from the page.
+    :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
+    .. versionadded:: v2.1-preview
+        *selection_marks* property
     """
 
     def __init__(self, **kwargs):
@@ -366,6 +383,7 @@ class FormPage(object):
         self.unit = kwargs.get("unit", None)
         self.tables = kwargs.get("tables", None)
         self.lines = kwargs.get("lines", None)
+        self.selection_marks = kwargs.get("selection_marks", None)
 
     @classmethod
     def _from_generated_prebuilt_model(cls, read_result):
@@ -381,7 +399,8 @@ class FormPage(object):
         ) for page in read_result]
 
     def __repr__(self):
-        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={})" \
+        return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={}," \
+               "selection_marks={})" \
             .format(
                 self.page_number,
                 self.text_angle,
@@ -389,7 +408,8 @@ class FormPage(object):
                 self.height,
                 self.unit,
                 repr(self.tables),
-                repr(self.lines)
+                repr(self.lines),
+                repr(self.selection_marks)
             )[:1024]
 
 
@@ -474,6 +494,52 @@ class FormWord(FormElement):
             )[:1024]
 
 
+class FormSelectionMark(FormElement):
+    """Information about the extracted selection mark.
+
+    :ivar str text: The text content - not returned for FormSelectionMark.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the text. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
+        Units are in pixels for images and inches for PDF.
+    :ivar float confidence: Confidence value.
+    :ivar state: Required. State of the selection mark. Possible values include: "selected",
+     "unselected".
+    :type state: str or ~azure.ai.formrecognizer.SelectionMarkState
+    :ivar int page_number:
+        The 1-based number of the page in which this content is present.
+    :ivar str kind: For FormSelectionMark, this is "selectionMark".
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(FormSelectionMark, self).__init__(kind="selectionMark", **kwargs)
+        self.confidence = kwargs['confidence']
+        self.state = kwargs['state']
+
+    @classmethod
+    def _from_generated(cls, mark, page):
+        return cls(
+            confidence=mark.confidence,
+            state=mark.state,
+            bounding_box=get_bounding_box(mark),
+            page_number=page
+        )
+
+    def __repr__(self):
+        return "FormSelectionMark(text={}, bounding_box={}, confidence={}, page_number={}, state={})" \
+            .format(
+                self.text,
+                self.bounding_box,
+                self.confidence,
+                self.page_number,
+                self.state
+            )[:1024]
+
+
 class FormTable(object):
     """Information about the extracted table contained on a page.
 
@@ -528,7 +594,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         constitutes of elements such as lines and words.
         For calls to begin_recognize_content(), this list is always populated.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
-        ~azure.ai.formrecognizer.FormLine]]
+        ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
     """
 
     def __init__(self, **kwargs):
