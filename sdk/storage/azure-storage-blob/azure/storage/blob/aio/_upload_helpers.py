@@ -237,6 +237,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                headers=headers,
                 **kwargs)
         except StorageErrorException as error:
             if error.response.status_code != 404:
@@ -264,6 +265,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                headers=headers,
                 **kwargs)
     except StorageErrorException as error:
         process_storage_error(error)
