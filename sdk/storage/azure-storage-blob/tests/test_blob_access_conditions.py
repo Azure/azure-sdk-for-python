@@ -286,13 +286,16 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @GlobalStorageAccountPreparer()
-    def test_multi_put_blob_contains_headers(self, resource_group, location, storage_account, storage_account_key):
+    def test_multi_put_block_contains_headers(self, resource_group, location, storage_account, storage_account_key):
+        counter = list()
+
         def _validate_headers(request):
+            counter.append(request)
             header = request.http_request.headers.get('x-custom-header')
             self.assertEqual(header, 'test_value')
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"), storage_account_key, max_single_put_size=100)
+            self.account_url(storage_account, "blob"), storage_account_key, max_single_put_size=100, max_block_size=50)
         self._setup()
         data = self.get_random_bytes(2 * 100)
         self._create_container(self.container_name, bsc)
@@ -302,6 +305,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             headers={'x-custom-header': 'test_value'},
             raw_request_hook=_validate_headers
         )
+        self.assertEqual(len(counter), 5)
 
     @GlobalStorageAccountPreparer()
     def test_put_blob_with_if_modified(self, resource_group, location, storage_account, storage_account_key):
