@@ -26,7 +26,7 @@ class StreamingEndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2018-07-01".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2020-05-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class StreamingEndpointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
@@ -44,7 +44,7 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """List StreamingEndpoints.
 
-        Lists the StreamingEndpoints in the account.
+        Lists the streaming endpoints in the account.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
@@ -118,14 +118,15 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, streaming_endpoint_name, custom_headers=None, raw=False, **operation_config):
         """Get StreamingEndpoint.
 
-        Gets a StreamingEndpoint.
+        Gets a streaming endpoint.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param streaming_endpoint_name: The name of the StreamingEndpoint.
+        :param streaming_endpoint_name: The name of the streaming endpoint,
+         maximum length is 24.
         :type streaming_endpoint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -217,14 +218,14 @@ class StreamingEndpointsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 201]:
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('StreamingEndpoint', response)
-        if response.status_code == 202:
+        if response.status_code == 201:
             deserialized = self._deserialize('StreamingEndpoint', response)
 
         if raw:
@@ -237,16 +238,17 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, streaming_endpoint_name, parameters, auto_start=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create StreamingEndpoint.
 
-        Creates a StreamingEndpoint.
+        Creates a streaming endpoint.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param streaming_endpoint_name: The name of the StreamingEndpoint.
+        :param streaming_endpoint_name: The name of the streaming endpoint,
+         maximum length is 24.
         :type streaming_endpoint_name: str
-        :param parameters: StreamingEndpoint properties needed for creation.
+        :param parameters: Streaming endpoint properties needed for creation.
         :type parameters: ~azure.mgmt.media.models.StreamingEndpoint
         :param auto_start: The flag indicates if the resource should be
          automatically started on creation.
@@ -349,16 +351,17 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, streaming_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update StreamingEndpoint.
 
-        Updates a existing StreamingEndpoint.
+        Updates a existing streaming endpoint.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param streaming_endpoint_name: The name of the StreamingEndpoint.
+        :param streaming_endpoint_name: The name of the streaming endpoint,
+         maximum length is 24.
         :type streaming_endpoint_name: str
-        :param parameters: StreamingEndpoint properties needed for creation.
+        :param parameters: Streaming endpoint properties needed for creation.
         :type parameters: ~azure.mgmt.media.models.StreamingEndpoint
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -443,14 +446,15 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, streaming_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete StreamingEndpoint.
 
-        Deletes a StreamingEndpoint.
+        Deletes a streaming endpoint.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param streaming_endpoint_name: The name of the StreamingEndpoint.
+        :param streaming_endpoint_name: The name of the streaming endpoint,
+         maximum length is 24.
         :type streaming_endpoint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -528,14 +532,15 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, streaming_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Start StreamingEndpoint.
 
-        Starts an existing StreamingEndpoint.
+        Starts an existing streaming endpoint.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param streaming_endpoint_name: The name of the StreamingEndpoint.
+        :param streaming_endpoint_name: The name of the streaming endpoint,
+         maximum length is 24.
         :type streaming_endpoint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -613,14 +618,15 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, streaming_endpoint_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Stop StreamingEndpoint.
 
-        Stops an existing StreamingEndpoint.
+        Stops an existing streaming endpoint.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param streaming_endpoint_name: The name of the StreamingEndpoint.
+        :param streaming_endpoint_name: The name of the streaming endpoint,
+         maximum length is 24.
         :type streaming_endpoint_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -704,16 +710,17 @@ class StreamingEndpointsOperations(object):
             self, resource_group_name, account_name, streaming_endpoint_name, scale_unit=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Scale StreamingEndpoint.
 
-        Scales an existing StreamingEndpoint.
+        Scales an existing streaming endpoint.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param streaming_endpoint_name: The name of the StreamingEndpoint.
+        :param streaming_endpoint_name: The name of the streaming endpoint,
+         maximum length is 24.
         :type streaming_endpoint_name: str
-        :param scale_unit: The scale unit number of the StreamingEndpoint.
+        :param scale_unit: The scale unit number of the streaming endpoint.
         :type scale_unit: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
