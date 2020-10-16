@@ -299,6 +299,10 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type node_count: int
     :param library_requirements: Library version requirements
     :type library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+    :param spark_config_properties: Spark configuration file to specify
+     additional properties
+    :type spark_config_properties:
+     ~azure.mgmt.synapse.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will
@@ -306,7 +310,7 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type default_spark_log_folder: str
     :param node_size: The level of compute power that each node in the Big
      Data pool has. Possible values include: 'None', 'Small', 'Medium',
-     'Large', 'XLarge', 'XXLarge'
+     'Large', 'XLarge', 'XXLarge', 'XXXLarge'
     :type node_size: str or ~azure.mgmt.synapse.models.NodeSize
     :param node_size_family: The kind of nodes that the Big Data pool
      provides. Possible values include: 'None', 'MemoryOptimized'
@@ -334,6 +338,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
@@ -350,6 +355,7 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.spark_events_folder = kwargs.get('spark_events_folder', None)
         self.node_count = kwargs.get('node_count', None)
         self.library_requirements = kwargs.get('library_requirements', None)
+        self.spark_config_properties = kwargs.get('spark_config_properties', None)
         self.spark_version = kwargs.get('spark_version', None)
         self.default_spark_log_folder = kwargs.get('default_spark_log_folder', None)
         self.node_size = kwargs.get('node_size', None)
@@ -628,6 +634,197 @@ class ProxyResource(Resource):
         super(ProxyResource, self).__init__(**kwargs)
 
 
+class DataMaskingPolicy(ProxyResource):
+    """Represents a database data masking policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param data_masking_state: Required. The state of the data masking policy.
+     Possible values include: 'Disabled', 'Enabled'
+    :type data_masking_state: str or
+     ~azure.mgmt.synapse.models.DataMaskingState
+    :param exempt_principals: The list of the exempt principals. Specifies the
+     semicolon-separated list of database users for which the data masking
+     policy does not apply. The specified users receive data results without
+     masking for all of the database queries.
+    :type exempt_principals: str
+    :ivar application_principals: The list of the application principals. This
+     is a legacy parameter and is no longer used.
+    :vartype application_principals: str
+    :ivar masking_level: The masking level. This is a legacy parameter and is
+     no longer used.
+    :vartype masking_level: str
+    :ivar location: The location of the data masking policy.
+    :vartype location: str
+    :ivar kind: The kind of data masking policy. Metadata, used for Azure
+     portal.
+    :vartype kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'data_masking_state': {'required': True},
+        'application_principals': {'readonly': True},
+        'masking_level': {'readonly': True},
+        'location': {'readonly': True},
+        'kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'data_masking_state': {'key': 'properties.dataMaskingState', 'type': 'DataMaskingState'},
+        'exempt_principals': {'key': 'properties.exemptPrincipals', 'type': 'str'},
+        'application_principals': {'key': 'properties.applicationPrincipals', 'type': 'str'},
+        'masking_level': {'key': 'properties.maskingLevel', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataMaskingPolicy, self).__init__(**kwargs)
+        self.data_masking_state = kwargs.get('data_masking_state', None)
+        self.exempt_principals = kwargs.get('exempt_principals', None)
+        self.application_principals = None
+        self.masking_level = None
+        self.location = None
+        self.kind = None
+
+
+class DataMaskingRule(ProxyResource):
+    """Represents a Sql pool data masking rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar data_masking_rule_id: The rule Id.
+    :vartype data_masking_rule_id: str
+    :param alias_name: The alias name. This is a legacy parameter and is no
+     longer used.
+    :type alias_name: str
+    :param rule_state: The rule state. Used to delete a rule. To delete an
+     existing rule, specify the schemaName, tableName, columnName,
+     maskingFunction, and specify ruleState as disabled. However, if the rule
+     doesn't already exist, the rule will be created with ruleState set to
+     enabled, regardless of the provided value of ruleState. Possible values
+     include: 'Disabled', 'Enabled'
+    :type rule_state: str or ~azure.mgmt.synapse.models.DataMaskingRuleState
+    :param schema_name: Required. The schema name on which the data masking
+     rule is applied.
+    :type schema_name: str
+    :param table_name: Required. The table name on which the data masking rule
+     is applied.
+    :type table_name: str
+    :param column_name: Required. The column name on which the data masking
+     rule is applied.
+    :type column_name: str
+    :param masking_function: Required. The masking function that is used for
+     the data masking rule. Possible values include: 'Default', 'CCN', 'Email',
+     'Number', 'SSN', 'Text'
+    :type masking_function: str or
+     ~azure.mgmt.synapse.models.DataMaskingFunction
+    :param number_from: The numberFrom property of the masking rule. Required
+     if maskingFunction is set to Number, otherwise this parameter will be
+     ignored.
+    :type number_from: str
+    :param number_to: The numberTo property of the data masking rule. Required
+     if maskingFunction is set to Number, otherwise this parameter will be
+     ignored.
+    :type number_to: str
+    :param prefix_size: If maskingFunction is set to Text, the number of
+     characters to show unmasked in the beginning of the string. Otherwise,
+     this parameter will be ignored.
+    :type prefix_size: str
+    :param suffix_size: If maskingFunction is set to Text, the number of
+     characters to show unmasked at the end of the string. Otherwise, this
+     parameter will be ignored.
+    :type suffix_size: str
+    :param replacement_string: If maskingFunction is set to Text, the
+     character to use for masking the unexposed part of the string. Otherwise,
+     this parameter will be ignored.
+    :type replacement_string: str
+    :ivar location: The location of the data masking rule.
+    :vartype location: str
+    :ivar kind: The kind of Data Masking Rule. Metadata, used for Azure
+     portal.
+    :vartype kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'data_masking_rule_id': {'readonly': True},
+        'schema_name': {'required': True},
+        'table_name': {'required': True},
+        'column_name': {'required': True},
+        'masking_function': {'required': True},
+        'location': {'readonly': True},
+        'kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'data_masking_rule_id': {'key': 'properties.id', 'type': 'str'},
+        'alias_name': {'key': 'properties.aliasName', 'type': 'str'},
+        'rule_state': {'key': 'properties.ruleState', 'type': 'DataMaskingRuleState'},
+        'schema_name': {'key': 'properties.schemaName', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+        'column_name': {'key': 'properties.columnName', 'type': 'str'},
+        'masking_function': {'key': 'properties.maskingFunction', 'type': 'DataMaskingFunction'},
+        'number_from': {'key': 'properties.numberFrom', 'type': 'str'},
+        'number_to': {'key': 'properties.numberTo', 'type': 'str'},
+        'prefix_size': {'key': 'properties.prefixSize', 'type': 'str'},
+        'suffix_size': {'key': 'properties.suffixSize', 'type': 'str'},
+        'replacement_string': {'key': 'properties.replacementString', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataMaskingRule, self).__init__(**kwargs)
+        self.data_masking_rule_id = None
+        self.alias_name = kwargs.get('alias_name', None)
+        self.rule_state = kwargs.get('rule_state', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.column_name = kwargs.get('column_name', None)
+        self.masking_function = kwargs.get('masking_function', None)
+        self.number_from = kwargs.get('number_from', None)
+        self.number_to = kwargs.get('number_to', None)
+        self.prefix_size = kwargs.get('prefix_size', None)
+        self.suffix_size = kwargs.get('suffix_size', None)
+        self.replacement_string = kwargs.get('replacement_string', None)
+        self.location = None
+        self.kind = None
+
+
 class DataWarehouseUserActivities(ProxyResource):
     """User activities of a data warehouse.
 
@@ -843,6 +1040,177 @@ class ErrorResponse(Model):
         self.target = None
         self.details = None
         self.additional_info = None
+
+
+class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
+    """An extended Sql pool blob auditing policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param predicate_expression: Specifies condition of where clause when
+     creating an audit.
+    :type predicate_expression: str
+    :param state: Required. Specifies the state of the policy. If state is
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
+     Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+     https://MyAccount.blob.core.windows.net). If state is Enabled,
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
+    :type storage_endpoint: str
+    :param storage_account_access_key: Specifies the identifier key of the
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
+    :type storage_account_access_key: str
+    :param retention_days: Specifies the number of days to keep in the audit
+     logs in the storage account.
+    :type retention_days: int
+    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions
+     to audit.
+     The recommended set of action groups to use is the following combination -
+     this will audit all the queries and stored procedures executed against the
+     database, as well as successful and failed logins:
+     BATCH_COMPLETED_GROUP,
+     SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+     FAILED_DATABASE_AUTHENTICATION_GROUP.
+     This above combination is also the set that is configured by default when
+     enabling auditing from the Azure portal.
+     The supported action groups to audit are (note: choose only specific
+     groups that cover your auditing needs. Using unnecessary groups could lead
+     to very large quantities of audit records):
+     APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+     BACKUP_RESTORE_GROUP
+     DATABASE_LOGOUT_GROUP
+     DATABASE_OBJECT_CHANGE_GROUP
+     DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+     DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+     DATABASE_OPERATION_GROUP
+     DATABASE_PERMISSION_CHANGE_GROUP
+     DATABASE_PRINCIPAL_CHANGE_GROUP
+     DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+     DATABASE_ROLE_MEMBER_CHANGE_GROUP
+     FAILED_DATABASE_AUTHENTICATION_GROUP
+     SCHEMA_OBJECT_ACCESS_GROUP
+     SCHEMA_OBJECT_CHANGE_GROUP
+     SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+     SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+     SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+     USER_CHANGE_PASSWORD_GROUP
+     BATCH_STARTED_GROUP
+     BATCH_COMPLETED_GROUP
+     These are groups that cover all sql statements and stored procedures
+     executed against the database, and should not be used in combination with
+     other groups as this will result in duplicate audit logs.
+     For more information, see [Database-Level Audit Action
+     Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
+     For Database auditing policy, specific Actions can also be specified (note
+     that Actions cannot be specified for Server auditing policy). The
+     supported actions to audit are:
+     SELECT
+     UPDATE
+     INSERT
+     DELETE
+     EXECUTE
+     RECEIVE
+     REFERENCES
+     The general form for defining an action to be audited is:
+     {action} ON {object} BY {principal}
+     Note that <object> in the above format can refer to an object like a
+     table, view, or stored procedure, or an entire database or schema. For the
+     latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are
+     used, respectively.
+     For example:
+     SELECT on dbo.myTable by public
+     SELECT on DATABASE::myDatabase by public
+     SELECT on SCHEMA::mySchema by public
+     For more information, see [Database-Level Audit
+     Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
+    :type audit_actions_and_groups: list[str]
+    :param storage_account_subscription_id: Specifies the blob storage
+     subscription Id.
+    :type storage_account_subscription_id: str
+    :param is_storage_secondary_key_in_use: Specifies whether
+     storageAccountAccessKey value is the storage's secondary key.
+    :type is_storage_secondary_key_in_use: bool
+    :param is_azure_monitor_target_enabled: Specifies whether audit events are
+     sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
+     and 'isAzureMonitorTargetEnabled' as true.
+     When using REST API to configure auditing, Diagnostic Settings with
+     'SQLSecurityAuditEvents' diagnostic logs category on the database should
+     be also created.
+     Note that for server level audit you should use the 'master' database as
+     {databaseName}.
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     For more information, see [Diagnostic Settings REST
+     API](https://go.microsoft.com/fwlink/?linkid=2033207)
+     or [Diagnostic Settings
+     PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
+    :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'predicate_expression': {'key': 'properties.predicateExpression', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
+        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
+        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'audit_actions_and_groups': {'key': 'properties.auditActionsAndGroups', 'type': '[str]'},
+        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
+        'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
+        'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExtendedSqlPoolBlobAuditingPolicy, self).__init__(**kwargs)
+        self.predicate_expression = kwargs.get('predicate_expression', None)
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.retention_days = kwargs.get('retention_days', None)
+        self.audit_actions_and_groups = kwargs.get('audit_actions_and_groups', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
+        self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
+        self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
 
 
 class GeoBackupPolicy(ProxyResource):
@@ -2187,6 +2555,32 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.other_errors = None
         self.last_operation = None
         self.type = 'Managed'
+
+
+class ManagedVirtualNetworkSettings(Model):
+    """Managed Virtual Network Settings.
+
+    :param prevent_data_exfiltration: Prevent Data Exfiltration
+    :type prevent_data_exfiltration: bool
+    :param linked_access_check_on_target_resource: Linked Access Check On
+     Target Resource
+    :type linked_access_check_on_target_resource: bool
+    :param allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For
+     Linking
+    :type allowed_aad_tenant_ids_for_linking: list[str]
+    """
+
+    _attribute_map = {
+        'prevent_data_exfiltration': {'key': 'preventDataExfiltration', 'type': 'bool'},
+        'linked_access_check_on_target_resource': {'key': 'linkedAccessCheckOnTargetResource', 'type': 'bool'},
+        'allowed_aad_tenant_ids_for_linking': {'key': 'allowedAadTenantIdsForLinking', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedVirtualNetworkSettings, self).__init__(**kwargs)
+        self.prevent_data_exfiltration = kwargs.get('prevent_data_exfiltration', None)
+        self.linked_access_check_on_target_resource = kwargs.get('linked_access_check_on_target_resource', None)
+        self.allowed_aad_tenant_ids_for_linking = kwargs.get('allowed_aad_tenant_ids_for_linking', None)
 
 
 class MetadataSyncConfig(ProxyResource):
@@ -5028,6 +5422,9 @@ class Workspace(TrackedResource):
      list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
     :ivar extra_properties: Workspace level configs and feature flags
     :vartype extra_properties: dict[str, object]
+    :param managed_virtual_network_settings: Managed Virtual Network Settings
+    :type managed_virtual_network_settings:
+     ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
     :param identity: Identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
     """
@@ -5057,6 +5454,7 @@ class Workspace(TrackedResource):
         'managed_virtual_network': {'key': 'properties.managedVirtualNetwork', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'extra_properties': {'key': 'properties.extraProperties', 'type': '{object}'},
+        'managed_virtual_network_settings': {'key': 'properties.managedVirtualNetworkSettings', 'type': 'ManagedVirtualNetworkSettings'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
@@ -5072,6 +5470,7 @@ class Workspace(TrackedResource):
         self.managed_virtual_network = kwargs.get('managed_virtual_network', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
         self.extra_properties = None
+        self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -5134,6 +5533,9 @@ class WorkspacePatchInfo(Model):
     :type tags: dict[str, str]
     :param identity: The identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
+    :param managed_virtual_network_settings: Managed Virtual Network Settings
+    :type managed_virtual_network_settings:
+     ~azure.mgmt.synapse.models.WorkspacePatchInfoManagedVirtualNetworkSettings
     :param sql_administrator_login_password: SQL administrator login password
     :type sql_administrator_login_password: str
     :ivar provisioning_state: Resource provisioning state
@@ -5147,6 +5549,7 @@ class WorkspacePatchInfo(Model):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
+        'managed_virtual_network_settings': {'key': 'managedVirtualNetworkSettings', 'type': 'WorkspacePatchInfoManagedVirtualNetworkSettings'},
         'sql_administrator_login_password': {'key': 'properties.sqlAdministratorLoginPassword', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -5155,5 +5558,32 @@ class WorkspacePatchInfo(Model):
         super(WorkspacePatchInfo, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.identity = kwargs.get('identity', None)
+        self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
         self.sql_administrator_login_password = kwargs.get('sql_administrator_login_password', None)
         self.provisioning_state = None
+
+
+class WorkspacePatchInfoManagedVirtualNetworkSettings(Model):
+    """Managed Virtual Network Settings.
+
+    :param prevent_data_exfiltration: Prevent Data Exfiltration
+    :type prevent_data_exfiltration: bool
+    :param linked_access_check_on_target_resource: Linked Access Check On
+     Target Resource
+    :type linked_access_check_on_target_resource: bool
+    :param allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For
+     Linking
+    :type allowed_aad_tenant_ids_for_linking: list[str]
+    """
+
+    _attribute_map = {
+        'prevent_data_exfiltration': {'key': 'preventDataExfiltration', 'type': 'bool'},
+        'linked_access_check_on_target_resource': {'key': 'linkedAccessCheckOnTargetResource', 'type': 'bool'},
+        'allowed_aad_tenant_ids_for_linking': {'key': 'allowedAadTenantIdsForLinking', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkspacePatchInfoManagedVirtualNetworkSettings, self).__init__(**kwargs)
+        self.prevent_data_exfiltration = kwargs.get('prevent_data_exfiltration', None)
+        self.linked_access_check_on_target_resource = kwargs.get('linked_access_check_on_target_resource', None)
+        self.allowed_aad_tenant_ids_for_linking = kwargs.get('allowed_aad_tenant_ids_for_linking', None)
