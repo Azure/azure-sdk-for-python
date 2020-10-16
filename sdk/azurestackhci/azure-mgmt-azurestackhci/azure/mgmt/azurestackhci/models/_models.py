@@ -36,7 +36,7 @@ class AvailableOperations(Model):
 
 
 class Resource(Model):
-    """Resource.
+    """The resource model definition for a ARM tracked top level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
