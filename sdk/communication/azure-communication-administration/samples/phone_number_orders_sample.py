@@ -68,43 +68,43 @@ def get_search_by_id():
     print(phone_number_search_response)
 
 
-def create_search():
-    # [START create_search]
-    searchOptions = CreateSearchOptions(
+def begin_reserve_phone_numbers():
+    # [START begin_reserve_phone_numbers]
+    reservationOptions = CreateSearchOptions(
         area_code=area_code_for_search,
         description="testsearch20200014",
         display_name="testsearch20200014",
         phone_plan_ids=[phone_plan_id],
         quantity=1
     )
-    search_response = phone_number_administration_client.create_search(
-        body=searchOptions
+    reserve_phone_numbers_response = phone_number_administration_client.begin_reserve_phone_numbers(
+        body=reservationOptions
     )
-    # [END create_search]
-    print('search_response:')
-    print(search_response)
+    # [END begin_reserve_phone_numbers]
+    print('reserve phone numbers status:')
+    print(reserve_phone_numbers_response.status())
 
 
 def cancel_search():
     # [START cancel_search]
-    phone_number_administration_client.cancel_search(
+    phone_number_administration_client.begin_cancel_search(
         search_id=search_id_to_cancel
     )
     # [START cancel_search]
 
 
-def purchase_search():
-    # [START cancel_search]
-    phone_number_administration_client.purchase_search(
+def begin_purchase_reservation():
+    # [START begin_purchase_reservation]
+    phone_number_administration_client.begin_purchase_reservation(
         search_id=search_id_to_purchase
     )
-    # [END cancel_search]
+    # [END begin_purchase_reservation]
 
 
 if __name__ == '__main__':
     get_release_by_id()
     list_all_releases()
     get_search_by_id()
-    create_search()
+    begin_reserve_phone_numbers()
     cancel_search()
-    # purchase_search() #currently throws error if purchase an already purchased number
+    # begin_purchase_reservation() #currently throws error if purchase an already purchased number

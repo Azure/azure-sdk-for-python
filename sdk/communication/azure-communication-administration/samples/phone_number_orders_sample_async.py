@@ -72,10 +72,10 @@ async def get_search_by_id():
     # [END get_search_by_id]
 
 
-async def create_search():
-    # [START create_search]
+async def begin_reserve_phone_numbers():
+    # [START begin_reserve_phone_numbers]
     phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
-    searchOptions = CreateSearchOptions(
+    reservationOptions = CreateSearchOptions(
         area_code=area_code_for_search,
         description="testsearch20200014",
         display_name="testsearch20200014",
@@ -83,12 +83,12 @@ async def create_search():
         quantity=1
     )
     async with phone_number_administration_client:
-        search_response = await phone_number_administration_client.create_search(
-            body=searchOptions
+        reserve_phone_numbers_response = await phone_number_administration_client.begin_reserve_phone_numbers(
+            body=reservationOptions
         )
-        print('search_response:')
-        print(search_response)
-    # [END create_search]
+        print('reserve phone numbers status:')
+        print(reserve_phone_numbers_response.status())
+    # [END begin_reserve_phone_numbers]
 
 
 async def cancel_search():
@@ -101,23 +101,23 @@ async def cancel_search():
     # [END cancel_search]
 
 
-async def purchase_search():
-    # [START purchase_search]
+async def begin_purchase_reservation():
+    # [START begin_purchase_reservation]
     phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
     async with phone_number_administration_client:
-        await phone_number_administration_client.purchase_search(
+        await phone_number_administration_client.begin_purchase_reservation(
             search_id=search_id_to_purchase
         )
-    # [END purchase_search]
+    # [END begin_purchase_reservation]
 
 
 async def main():
     await get_release_by_id()
     await list_all_releases()
     await get_search_by_id()
-    await create_search()
+    await begin_reserve_phone_numbers()
     await cancel_search()
-    # await purchase_search() #currently throws error if purchase an already purchased number
+    # await begin_purchase_reservation() #currently throws error if purchase an already purchased number
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
