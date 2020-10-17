@@ -21,7 +21,6 @@ from azure.storage.fileshare import (
     AccessPolicy,
     ShareSasPermissions,
     ShareAccessTier,
-    ShareSetPropertiesOptions,
     ShareServiceClient,
     ShareDirectoryClient,
     ShareFileClient,
@@ -793,9 +792,9 @@ class StorageShareTest(StorageTestCase):
         share2 = self._create_share("share2")
 
         share1.set_share_quota(3)
-        share1.set_share_properties(ShareSetPropertiesOptions(access_tier="Hot"))
+        share1.set_share_properties(access_tier="Hot")
 
-        share2.set_share_properties(ShareSetPropertiesOptions(access_tier=ShareAccessTier("Cool"), quota=2))
+        share2.set_share_properties(access_tier=ShareAccessTier("Cool"), quota=2)
 
         # Act
         props1 = share1.get_share_properties()

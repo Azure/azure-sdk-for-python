@@ -22,7 +22,7 @@ USAGE:
 """
 
 import os
-from azure.storage.fileshare import ShareSetPropertiesOptions, ShareAccessTier
+from azure.storage.fileshare import ShareAccessTier
 
 SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
@@ -89,11 +89,11 @@ class ShareSamples(object):
         try:
             # [START set_share_properties]
             # Set the tier for the first share to Hot
-            share1.set_share_properties(ShareSetPropertiesOptions(access_tier="Hot"))
+            share1.set_share_properties(access_tier="Hot")
             # Set the quota for the first share to 3
-            share1.set_share_properties(ShareSetPropertiesOptions(quota=3))
+            share1.set_share_properties(quota=3)
             # Set the tier for the second share to Cool and quota to 2
-            share2.set_share_properties(ShareSetPropertiesOptions(access_tier=ShareAccessTier("Cool"), quota=2))
+            share2.set_share_properties(access_tier=ShareAccessTier("Cool"), quota=2)
 
             # Get the shares' properties
             print(share1.get_share_properties().access_tier)

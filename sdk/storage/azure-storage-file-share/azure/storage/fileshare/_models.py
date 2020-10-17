@@ -171,22 +171,6 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
             smb=generated.smb)
 
 
-class ShareSetPropertiesOptions(object):
-    """Sets the properties for the share.
-
-    :param access_tier:
-        Specifies the access tier of the share.
-        Possible values: 'TransactionOptimized', 'Hot', and 'Cool'
-    :type access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
-    :param int quota:
-        Specifies the maximum size of the share, in gigabytes.
-        Must be greater than 0, and less than or equal to 5TB.
-    """
-    def __init__(self, quota=None, access_tier=None):
-        self.quota = quota
-        self.access_tier = access_tier
-
-
 class AccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get acl methods in each service.
 

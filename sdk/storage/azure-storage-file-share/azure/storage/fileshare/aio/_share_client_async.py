@@ -33,7 +33,7 @@ from ..aio._lease_async import ShareLeaseClient
 
 
 if TYPE_CHECKING:
-    from .._models import ShareProperties, AccessPolicy, ShareSetPropertiesOptions
+    from .._models import ShareProperties, AccessPolicy
 
 
 class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
@@ -390,15 +390,19 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    async def set_share_properties(self, options, **kwargs):
-        # type: (ShareSetPropertiesOptions, Any) ->  Dict[str, Any]
+    async def set_share_properties(self, **kwargs):
+        # type: (Any) ->  Dict[str, Any]
         """Sets the share properties.
 
         .. versionadded:: 12.6.0
 
-        :param options:
-            Specifies the properties to set on the share.
-        :type options: ~azure.storage.fileshare.models.ShareSetPropertiesOptions
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', and 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :keyword int quota:
+            Specifies the maximum size of the share, in gigabytes.
+            Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -418,11 +422,15 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
+        access_tier = kwargs.pop('access_tier', None)
+        quota = kwargs.pop('quota', None)
+        if all(parameter is None for parameter in [access_tier, quota]):
+            raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
             return await self._client.share.set_properties( # type: ignore
                 timeout=timeout,
-                quota=options.quota,
-                access_tier=options.access_tier,
+                quota=quota,
+                access_tier=access_tier,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 **kwargs)
