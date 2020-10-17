@@ -384,11 +384,11 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
-        phone_numbers = kwargs.pop('phone_numbers')  # type: str
+        if "phone_numbers" not in kwargs:
+            raise ValueError("Either kwarg 'phone_numbers' or 'continuation_token' needs to be specified")
 
         create_release_response = self._phone_number_administration_client.\
             phone_number_administration.release_phone_numbers(
-                phone_numbers,
                 **kwargs
         )
 
@@ -553,10 +553,12 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
+        if "search_id" not in kwargs:
+            raise ValueError("Either kwarg 'search_id' or 'continuation_token' needs to be specified")
+
         search_id = kwargs.pop('search_id')  # type: str
 
         self._phone_number_administration_client.phone_number_administration.purchase_search(
-            search_id,
             **kwargs
         )
         initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(

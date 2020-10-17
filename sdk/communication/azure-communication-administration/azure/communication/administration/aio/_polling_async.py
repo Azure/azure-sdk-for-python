@@ -16,7 +16,9 @@ from .._phonenumber._generated.models import (
     PhoneNumberRelease
 )
 
-class PhoneNumberPollingAsync(AsyncPollingMethod):
+class PhoneNumberBasePollingAsync(AsyncPollingMethod):
+    """ABC class for reserve/purchase/release phone number related polling.
+    """
     def __init__(self, is_terminated, interval=5):
         self._response = None
         self._client = None
@@ -28,13 +30,12 @@ class PhoneNumberPollingAsync(AsyncPollingMethod):
         # type: () -> None
         if self._query_status is None:
             raise Exception("this poller has not been initialized")
-        self._response = await self._query_status()
+        self._response = await self._query_status()  # pylint: disable=E1102
 
-    def initialize(self, client, initial_response, _):
+    def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
         self._client = client
         self._response = initial_response
-        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
 
     async def run(self):
         # type: () -> None
@@ -74,3 +75,21 @@ class PhoneNumberPollingAsync(AsyncPollingMethod):
         import pickle
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, None
+
+class ReservePhoneNumberPollingAsync(PhoneNumberBasePollingAsync):
+    def initialize(self, client, initial_response, deserialization_callback):
+        # type: (Any, Any, Callable) -> None
+        super().initialize(client, initial_response, deserialization_callback)
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
+
+class PurchaseReservationPollingAsync(PhoneNumberBasePollingAsync):
+    def initialize(self, client, initial_response, deserialization_callback):
+        # type: (Any, Any, Callable) -> None
+        super().initialize(client, initial_response, deserialization_callback)
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
+
+class ReleasePhoneNumberPollingAsync(PhoneNumberBasePollingAsync):
+    def initialize(self, client, initial_response, deserialization_callback):
+        # type: (Any, Any, Callable) -> None
+        super().initialize(client, initial_response, deserialization_callback)
+        self._query_status = partial(self._client.get_release_by_id, release_id=initial_response.release_id)

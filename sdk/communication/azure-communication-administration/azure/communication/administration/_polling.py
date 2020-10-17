@@ -32,7 +32,7 @@ class PhoneNumberBasePolling(PollingMethod):
         # type: () -> None
         if self._query_status is None:
             raise Exception("this poller has not been initialized")
-        self._response = self._query_status() # pylint: disable=E1102
+        self._response = self._query_status()  # pylint: disable=E1102
 
     def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None

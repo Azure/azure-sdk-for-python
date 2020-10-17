@@ -5,13 +5,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Dict, List
+
+from azure.communication.administration._phonenumber._generated.models import ReleaseStatus
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 
 from .._version import SDK_MONIKER
-from ._polling_async import PhoneNumberPollingAsync
+from ._polling_async import ReleasePhoneNumberPollingAsync, \
+    ReservePhoneNumberPollingAsync, \
+    PurchaseReservationPollingAsync
 
 from .._phonenumber._generated.aio._phone_number_administration_service_async\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
@@ -29,7 +33,6 @@ from .._phonenumber._generated.models import (
     PhonePlanGroups,
     PhonePlansResponse,
     PstnConfiguration,
-    ReleaseResponse,
     SearchStatus,
     UpdateNumberCapabilitiesResponse,
     UpdatePhoneNumberCapabilitiesResponse
@@ -361,22 +364,51 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace_async
-    async def release_phone_numbers(
+    async def begin_release_phone_numbers(
             self,
-            phone_numbers,  # type: List[str]
             **kwargs  # type: Any
     ):
-        # type: (...) -> ReleaseResponse
-        """Creates a release for the given phone numbers.
+        # type: (...) -> AsyncLROPoller
+        """Begins creating a release for the given phone numbers.
+        Caller must provide either phone_numbers, or continuation_token keywords to use the method.
+        If both phone_numbers and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword phone_numbers will be ignored.
 
-        :param phone_numbers: The list of phone numbers in the release request.
-        :type phone_numbers: list[str]
-        :rtype: ~azure.communication.administration.ReleaseResponse
+        :keyword list[str] phone_numbers: The list of phone numbers in the release request.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberRelease]
         """
-        return await self._phone_number_administration_client.phone_number_administration.release_phone_numbers(
-            phone_numbers,
-            **kwargs
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        release_polling = ReleasePhoneNumberPollingAsync(
+            is_terminated=lambda status: status in [
+                ReleaseStatus.Complete,
+                ReleaseStatus.Failed,
+                ReleaseStatus.Expired
+            ]
         )
+
+        if cont_token is not None:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=release_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        if "phone_numbers" not in kwargs:
+            raise ValueError("Either kwarg 'phone_numbers' or 'continuation_token' needs to be specified")
+
+        create_release_response = await self._phone_number_administration_client.\
+            phone_number_administration.release_phone_numbers(
+                **kwargs
+            )
+        initial_state = await self._phone_number_administration_client.phone_number_administration.get_release_by_id(
+            release_id=create_release_response.release_id
+        )
+        return AsyncLROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=release_polling)
 
     @distributed_trace
     def list_all_releases(
@@ -432,7 +464,7 @@ class PhoneNumberAdministrationClient(object):
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
-        search_polling = PhoneNumberPollingAsync(
+        search_polling = ReservePhoneNumberPollingAsync(
             is_terminated=lambda status: status in [
                 SearchStatus.Reserved,
                 SearchStatus.Expired,
@@ -517,7 +549,7 @@ class PhoneNumberAdministrationClient(object):
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
-        search_polling = PhoneNumberPollingAsync(
+        search_polling = PurchaseReservationPollingAsync(
             is_terminated=lambda status: status in [
                 SearchStatus.Success,
                 SearchStatus.Expired,
