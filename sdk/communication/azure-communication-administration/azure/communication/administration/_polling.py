@@ -79,17 +79,17 @@ class PhoneNumberBasePolling(PollingMethod):
 class ReservePhoneNumberPolling(PhoneNumberBasePolling):
     def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
-        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
         super().initialize(client, initial_response, deserialization_callback)
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
 
 class PurchaseReservationPolling(PhoneNumberBasePolling):
     def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
-        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
         super().initialize(client, initial_response, deserialization_callback)
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
 
 class ReleasePhoneNumberPolling(PhoneNumberBasePolling):
     def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
-        self._query_status = partial(self._client.get_release_by_id, search_id=initial_response.release_id)
         super().initialize(client, initial_response, deserialization_callback)
+        self._query_status = partial(self._client.get_release_by_id, release_id=initial_response.release_id)

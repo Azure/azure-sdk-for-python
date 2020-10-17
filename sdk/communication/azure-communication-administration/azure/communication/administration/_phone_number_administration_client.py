@@ -369,7 +369,7 @@ class PhoneNumberAdministrationClient(object):
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
-        search_polling = ReleasePhoneNumberPolling(
+        release_polling = ReleasePhoneNumberPolling(
             is_terminated=lambda status: status in [
                 ReleaseStatus.Complete,
                 ReleaseStatus.Failed,
@@ -379,7 +379,7 @@ class PhoneNumberAdministrationClient(object):
 
         if cont_token is not None:
             return LROPoller.from_continuation_token(
-                polling_method=search_polling,
+                polling_method=release_polling,
                 continuation_token=cont_token,
                 client=self._phone_number_administration_client.phone_number_administration
             )
@@ -388,8 +388,8 @@ class PhoneNumberAdministrationClient(object):
 
         create_release_response = self._phone_number_administration_client.\
             phone_number_administration.release_phone_numbers(
-            phone_numbers,
-            **kwargs
+                phone_numbers,
+                **kwargs
         )
 
         initial_state = self._phone_number_administration_client.phone_number_administration.get_release_by_id(
@@ -399,7 +399,7 @@ class PhoneNumberAdministrationClient(object):
         return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
                          initial_response=initial_state,
                          deserialization_callback=None,
-                         polling_method=search_polling)
+                         polling_method=release_polling)
 
     @distributed_trace
     def list_all_releases(
