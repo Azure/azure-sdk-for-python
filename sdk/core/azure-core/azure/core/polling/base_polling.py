@@ -28,7 +28,7 @@ import base64
 import json
 from typing import TYPE_CHECKING, Optional, Any, Union
 
-from ..exceptions import HttpResponseError, DecodeError
+from ..exceptions import HttpResponseError, DecodeError, AzureError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
 
@@ -481,10 +481,16 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
     def run(self):
         try:
             self._poll()
+        except AzureError as err:
+            err.continuation_token = self.get_continuation_token()
+            raise
+
         except BadStatus as err:
             self._status = "Failed"
             raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
+                response=self._pipeline_response.http_response,
+                error=err,
+                continuation_token=self.get_continuation_token()
             )
 
         except BadResponse as err:
@@ -493,11 +499,14 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
                 response=self._pipeline_response.http_response,
                 message=str(err),
                 error=err,
+                continuation_token=self.get_continuation_token()
             )
 
         except OperationFailed as err:
             raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
+                response=self._pipeline_response.http_response,
+                error=err,
+                continuation_token=self.get_continuation_token()
             )
 
     def _poll(self):
