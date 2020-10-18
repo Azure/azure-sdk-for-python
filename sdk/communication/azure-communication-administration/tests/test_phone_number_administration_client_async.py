@@ -268,10 +268,10 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
     @pytest.mark.live_test_only
     async def test_release_phone_numbers(self):
         async with self._phone_number_administration_client:
-            releases_response = await self._phone_number_administration_client.release_phone_numbers(
+            poller = await self._phone_number_administration_client.begin_release_phone_numbers(
                 [self.phonenumber_to_release]
             )
-            assert releases_response.release_id
+        assert not poller.status()
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -293,10 +293,10 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             quantity=1
         )
         async with self._phone_number_administration_client:
-            search_response = await self._phone_number_administration_client.create_search(
+            poller = await self._phone_number_administration_client.begin_reserve_phone_numbers(
                 body=searchOptions
             )
-        assert search_response.search_id
+        assert not poller.status()
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -311,7 +311,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
     @pytest.mark.live_test_only
     async def test_purchase_search(self):
         async with self._phone_number_administration_client:
-            purchase_search_response = await self._phone_number_administration_client.purchase_search(
+            poller = await self._phone_number_administration_client.begin_purchase_reservation(
                 search_id=self.search_id_to_purchase
             )
-        assert not purchase_search_response
+        assert not poller.status()
