@@ -293,12 +293,10 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         timeout = kwargs.pop('timeout', None)
         delete_include = None
         if delete_snapshots:
-            if delete_snapshots is True:
+            if delete_snapshots is True or delete_snapshots == DeleteSnapshotsOption.include_with_leased:
                 delete_include = DeleteSnapshotsOptionType.include_leased
             elif delete_snapshots == DeleteSnapshotsOption.include:
                 delete_include = DeleteSnapshotsOptionType.include
-            elif delete_snapshots == DeleteSnapshotsOption.include_with_leased:
-                delete_include = DeleteSnapshotsOptionType.include_leased
         try:
             await self._client.share.delete(
                 timeout=timeout,
