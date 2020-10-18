@@ -228,7 +228,7 @@ class TestArmPolling(object):
         response = Response()
         response._content_consumed = True
         response._content = json.dumps(body).encode('ascii') if body is not None else None
-        response.request = mock.create_autospec(Request)
+        response.request = Request()
         response.request.method = method
         response.request.url = RESOURCE_URL
         response.request.headers = {
