@@ -55,7 +55,7 @@ class ServiceBusAdministrationClientSubscriptionAsyncTests(AzureMgmtTestCase):
             await mgmt_service.create_topic(topic_name)
             await mgmt_service.create_subscription(
                 topic_name,
-                name=subscription_name,
+                subscription_name=subscription_name,
                 auto_delete_on_idle=datetime.timedelta(minutes=10),
                 dead_lettering_on_message_expiration=True,
                 default_message_time_to_live=datetime.timedelta(minutes=11),

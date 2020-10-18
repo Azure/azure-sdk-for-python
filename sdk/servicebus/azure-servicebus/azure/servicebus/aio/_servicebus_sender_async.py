@@ -4,7 +4,8 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
-from typing import Any, TYPE_CHECKING, Union, List, Optional
+import datetime
+from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
 from uamqp import SendClientAsync, types
@@ -22,7 +23,6 @@ from .._common.utils import transform_messages_to_sendable_if_needed
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
-    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -138,8 +138,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         finally:  # reset the timeout of the handler back to the default value
             self._set_msg_timeout(default_timeout, None)
 
-    async def schedule_messages(self, messages, schedule_time_utc, **kwargs):
-        # type: (Union[Message, List[Message]], datetime.datetime, Any) -> List[int]
+    async def schedule_messages(
+        self,
+        messages: Union[Message, List[Message]],
+        schedule_time_utc: datetime.datetime,
+        **kwargs: Any
+    ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
@@ -175,8 +179,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             timeout=timeout
         )
 
-    async def cancel_scheduled_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int, List[int]], Any) -> None
+    async def cancel_scheduled_messages(self, sequence_numbers: Union[int, List[int]], **kwargs: Any) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
@@ -253,8 +256,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send_messages(self, message, **kwargs):
-        # type: (Union[Message, BatchMessage, List[Message]], Any) -> None
+    async def send_messages(self, message: Union[Message, BatchMessage, List[Message]], **kwargs: Any) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
@@ -307,8 +309,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             require_last_exception=True
         )
 
-    async def create_batch(self, max_size_in_bytes=None):
-        # type: (int) -> BatchMessage
+    async def create_batch(self, max_size_in_bytes: int = None) -> BatchMessage:
         """Create a BatchMessage object with the max size of all content being constrained by max_size_in_bytes.
         The max_size should be no greater than the max allowed message size defined by the service.
 

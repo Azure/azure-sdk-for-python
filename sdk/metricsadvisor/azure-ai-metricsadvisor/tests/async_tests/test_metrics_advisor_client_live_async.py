@@ -88,7 +88,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @TestMetricsAdvisorClientBaseAsync.await_prepared_test
     async def test_list_metric_enriched_series_data(self):
         async with self.client:
-            series_identity = {"city":"city"}
+            series_identity = {"Dim1": "Common Lime"}
             results = self.client.list_metric_enriched_series_data(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
                 start_time=datetime.datetime(2020, 1, 1),
@@ -135,7 +135,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 9, 9),
                 series_to_filter=[
-                    {"city": "Mumbai", "category": "Shoes Handbags & Sunglasses"}
+                    {"Dim1": "Common Lime", "Dim2": "African buffalo"}
                 ]
             )
             tolist = []

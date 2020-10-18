@@ -187,3 +187,17 @@ def convert_to_sub_feedback(feedback):
     if feedback.feedback_type == "Period":
         return PeriodFeedback._from_generated(feedback)  # type: ignore
     raise HttpResponseError("Invalid feedback type returned in the response.")
+
+def convert_datetime(date_time):
+    # type: (Union[str, datetime.datetime]) -> datetime.datetime
+    if isinstance(date_time, datetime.datetime):
+        return date_time
+    if isinstance(date_time, six.string_types):
+        try:
+            return datetime.datetime.strptime(date_time, "%Y-%m-%d")
+        except ValueError:
+            try:
+                return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
+            except ValueError:
+                return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+    raise TypeError("Bad datetime type")
