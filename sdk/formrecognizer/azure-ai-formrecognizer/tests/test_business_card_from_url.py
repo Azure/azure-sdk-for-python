@@ -98,24 +98,11 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         read_results = raw_response.analyze_result.read_results
         document_results = raw_response.analyze_result.document_results
 
-        # check dict values
-        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), actual.get("ContactNames"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), actual.get("JobTitles"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), actual.get("Departments"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), actual.get("Emails"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), actual.get("Websites"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), actual.get("MobilePhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), actual.get("OtherPhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), actual.get("Faxes"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
+        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(business_card.page_range.last_page_number, document_results[0].page_range[1])
-
-        # Check page metadata
-        self.assertFormPagesTransformCorrect(business_card.pages, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -143,24 +130,11 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        # check dict values
-        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), actual.get("ContactNames"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), actual.get("JobTitles"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), actual.get("Departments"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), actual.get("Emails"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), actual.get("Websites"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), actual.get("MobilePhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), actual.get("OtherPhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), actual.get("Faxes"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
+        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(business_card.page_range.last_page_number, document_results[0].page_range[1])
-
-        # Check page metadata
-        self.assertFormPagesTransformCorrect(business_card.pages, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
