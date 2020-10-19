@@ -87,7 +87,7 @@ def begin_reserve_phone_numbers():
 
 def cancel_search():
     # [START cancel_search]
-    phone_number_administration_client.begin_cancel_search(
+    phone_number_administration_client.cancel_search(
         search_id=search_id_to_cancel
     )
     # [START cancel_search]
