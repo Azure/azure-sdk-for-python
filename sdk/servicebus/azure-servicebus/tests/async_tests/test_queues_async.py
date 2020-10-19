@@ -1139,6 +1139,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 errors.append(error)
 
         auto_lock_renew = AutoLockRenew()
+        with pytest.raises(TypeError):
+            auto_lock_renew.register(Exception()) # an arbitrary invalid type.
+
+        auto_lock_renew = AutoLockRenew()
         auto_lock_renew._renew_period = 1 # So we can run the test fast.
         async with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
             message = MockReceivedMessage(prevent_renew_lock=True)

@@ -1,12 +1,13 @@
 from datetime import timedelta
 
 from azure.servicebus._common.utils import utc_now
+from azure.servicebus import ReceivedMessage
 
 class MockReceiver:
     def __init__(self):
         self._running = True
 
-class MockReceivedMessage:
+class MockReceivedMessage(ReceivedMessage):
     def __init__(self, prevent_renew_lock=False, exception_on_renew_lock=False):
         self._lock_duration = 2
 
@@ -30,3 +31,11 @@ class MockReceivedMessage:
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True
         return False
+
+    @property
+    def locked_until_utc(self):
+        return self._locked_until_utc
+
+    @locked_until_utc.setter
+    def locked_until_utc(self, value):
+        self._locked_until_utc = value

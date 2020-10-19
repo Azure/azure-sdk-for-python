@@ -1409,6 +1409,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 errors.append(error)
 
         auto_lock_renew = AutoLockRenew()
+        with pytest.raises(TypeError):
+            auto_lock_renew.register(Exception()) # an arbitrary invalid type.
+
+        auto_lock_renew = AutoLockRenew()
         auto_lock_renew._renew_period = 1 # So we can run the test fast.
         with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1546,7 +1550,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert message.scheduled_enqueue_time_utc == new_scheduled_time
 
         message.partition_key = None
-        message.via_partition_key = None
         message.scheduled_enqueue_time_utc = None
 
         assert message.partition_key is None
