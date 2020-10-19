@@ -12,7 +12,8 @@
 
 **BugFixes**
 
-* Updated uAMQP dependency to 1.2.11.
+* Updated uAMQP dependency to 1.2.12.
+  - Added support for Python 3.9.
   - Fixed bug where amqp message `footer` and `delivery_annotation` were not encoded into the outgoing payload.
 
 ## 7.0.0b7 (2020-10-05)

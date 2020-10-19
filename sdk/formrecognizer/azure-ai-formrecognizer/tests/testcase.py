@@ -12,6 +12,7 @@ import time
 import pytest
 import re
 import logging
+from azure.ai.formrecognizer import SelectionMarkState
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from azure.ai.formrecognizer._helpers import adjust_value_type
 from devtools_testutils import (
@@ -88,6 +89,7 @@ class FormRecognizerTest(AzureTestCase):
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
         self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
         self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
+        self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
@@ -103,6 +105,7 @@ class FormRecognizerTest(AzureTestCase):
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
         self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
         self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
+        self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
 
     def get_oauth_endpoint(self):
         return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
@@ -190,6 +193,10 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertEqual(wp.text, wa.text)
                     self.assertEqual(wp.confidence, wa.confidence if wa.confidence is not None else 1.0)
                     self.assertBoundingBoxTransformCorrect(wp.bounding_box, wa.bounding_box)
+
+            for p, a in zip(page.selection_marks or [], actual_page.selection_marks or []):
+                self.assertEqual(p.kind, "selectionMark")
+                self.assertBoundingBoxTransformCorrect(p.bounding_box, a.bounding_box)
 
         if page_result:
             for page, actual_page in zip(pages, page_result):
@@ -425,6 +432,14 @@ class FormRecognizerTest(AzureTestCase):
                         self.assertBoundingBoxHasPoints(cell.bounding_box)
                         self.assertFieldElementsHasValues(cell.field_elements, page.page_number)
 
+            if page.selection_marks:
+                for selection_mark in page.selection_marks:
+                    self.assertIsNone(selection_mark.text)
+                    self.assertEqual(selection_mark.page_number, page.page_number)
+                    self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
+                    self.assertIsNotNone(selection_mark.confidence)
+                    self.assertTrue(selection_mark.state in [item.value for item in SelectionMarkState])
+
     def assertFormWordHasValues(self, word, page_number):
         self.assertEqual(word.kind, "word")
         self.assertIsNotNone(word.confidence)
@@ -553,6 +568,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
         self.training = kwargs.get("training", False)
         self.multipage_test = kwargs.get("multipage", False)
         self.multipage_test_2 = kwargs.get("multipage2", False)
+        self.selection_marks = kwargs.get("selection_marks", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
         self.copy = kwargs.get("copy", False)
 
@@ -600,6 +616,9 @@ class GlobalClientPreparer(AzureMgmtPreparer):
                     blob_sas_url,
                     "blob_sas_url"
                 )
+            elif self.selection_marks:
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL")
+                blob_sas_url = None
             else:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
                 blob_sas_url = None

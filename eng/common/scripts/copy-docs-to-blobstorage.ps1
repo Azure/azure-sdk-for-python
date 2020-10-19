@@ -205,10 +205,10 @@ function Upload-Blobs
     if ($ReleaseTag) {
         foreach ($htmlFile in (Get-ChildItem $DocDir -include *.html -r)) 
         {
-            $fileContent = Get-Content -Path $htmlFile
+            $fileContent = Get-Content -Path $htmlFile -Raw
             $updatedFileContent = $fileContent -replace $RepoReplaceRegex, "`${1}$ReleaseTag"
             if ($updatedFileContent -ne $fileContent) {
-                Set-Content -Path $htmlFile -Value $updatedFileContent
+                Set-Content -Path $htmlFile -Value $updatedFileContent -NoNewLine
             }
         }
     } 
