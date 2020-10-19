@@ -12,9 +12,9 @@ PACKAGE_NAME = "azure-digitaltwins-nspkg"
 PACKAGE_PPRINT_NAME = "Azure DigitalTwins Nspkg"
 VERSION = "1.0.0"
 
-with open("README.md", encoding="utf-8") as f:
+with open("README.md") as f:
     README = f.read()
-with open("CHANGELOG.md", encoding="utf-8") as f:
+with open("CHANGELOG.md") as f:
     CHANGELOG = f.read()
 
 PACKAGES = []
