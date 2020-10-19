@@ -559,6 +559,7 @@ class PhoneNumberAdministrationClient(object):
         search_id = kwargs.pop('search_id')  # type: str
 
         self._phone_number_administration_client.phone_number_administration.purchase_search(
+            search_id=search_id,
             **kwargs
         )
         initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
