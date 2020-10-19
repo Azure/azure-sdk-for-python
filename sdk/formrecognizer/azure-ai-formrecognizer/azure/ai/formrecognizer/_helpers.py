@@ -14,7 +14,7 @@ POLLING_INTERVAL = 5
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 def _get_deserialize():
-    from ._generated.v2_1_preview_1 import FormRecognizerClient
+    from ._generated.v2_1_preview_2 import FormRecognizerClient
     return FormRecognizerClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
 
 

@@ -109,6 +109,40 @@ class AnalyzeResult(msrest.serialization.Model):
         self.errors = errors
 
 
+class Appearance(msrest.serialization.Model):
+    """The appearance of extracted text.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param style: Required. Style of the extracted text: handwriting or printed. Possible values
+     include: "handwriting", "printed".
+    :type style: str or ~azure.ai.formrecognizer.models.TextStyle
+    :param style_confidence: Required. Confidence value of predicted style.
+    :type style_confidence: float
+    """
+
+    _validation = {
+        'style': {'required': True},
+        'style_confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'style': {'key': 'style', 'type': 'str'},
+        'style_confidence': {'key': 'styleConfidence', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        *,
+        style: Union[str, "TextStyle"],
+        style_confidence: float,
+        **kwargs
+    ):
+        super(Appearance, self).__init__(**kwargs)
+        self.style = style
+        self.style_confidence = style_confidence
+
+
 class Attributes(msrest.serialization.Model):
     """Optional model attributes.
 
@@ -331,18 +365,22 @@ class DataTable(msrest.serialization.Model):
     :type columns: int
     :param cells: Required. List of cells contained in the table.
     :type cells: list[~azure.ai.formrecognizer.models.DataTableCell]
+    :param bounding_box: Required. Bounding box of the table.
+    :type bounding_box: list[float]
     """
 
     _validation = {
         'rows': {'required': True, 'minimum': 1},
         'columns': {'required': True, 'minimum': 1},
         'cells': {'required': True},
+        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
     }
 
     _attribute_map = {
         'rows': {'key': 'rows', 'type': 'int'},
         'columns': {'key': 'columns', 'type': 'int'},
         'cells': {'key': 'cells', 'type': '[DataTableCell]'},
+        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
     }
 
     def __init__(
@@ -351,12 +389,14 @@ class DataTable(msrest.serialization.Model):
         rows: int,
         columns: int,
         cells: List["DataTableCell"],
+        bounding_box: List[float],
         **kwargs
     ):
         super(DataTable, self).__init__(**kwargs)
         self.rows = rows
         self.columns = columns
         self.cells = cells
+        self.bounding_box = bounding_box
 
 
 class DataTableCell(msrest.serialization.Model):
@@ -449,7 +489,7 @@ class DocumentResult(msrest.serialization.Model):
     :type model_id: str
     :param page_range: Required. First and last page number where the document is found.
     :type page_range: list[int]
-    :param doc_type_confidence: Predicted document type confidence.
+    :param doc_type_confidence: Confidence score.
     :type doc_type_confidence: float
     :param fields: Required. Dictionary of named field values.
     :type fields: dict[str, ~azure.ai.formrecognizer.models.FieldValue]
@@ -1206,6 +1246,8 @@ class TextWord(msrest.serialization.Model):
     :type bounding_box: list[float]
     :param confidence: Confidence value.
     :type confidence: float
+    :param appearance: Text appearance properties.
+    :type appearance: ~azure.ai.formrecognizer.models.Appearance
     """
 
     _validation = {
@@ -1218,6 +1260,7 @@ class TextWord(msrest.serialization.Model):
         'text': {'key': 'text', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
+        'appearance': {'key': 'appearance', 'type': 'Appearance'},
     }
 
     def __init__(
@@ -1226,12 +1269,14 @@ class TextWord(msrest.serialization.Model):
         text: str,
         bounding_box: List[float],
         confidence: Optional[float] = None,
+        appearance: Optional["Appearance"] = None,
         **kwargs
     ):
         super(TextWord, self).__init__(**kwargs)
         self.text = text
         self.bounding_box = bounding_box
         self.confidence = confidence
+        self.appearance = appearance
 
 
 class TrainingDocumentInfo(msrest.serialization.Model):

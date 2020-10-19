@@ -22,6 +22,7 @@ from ._response_handlers import (
     prepare_form_result
 )
 from ._helpers import get_content_type
+from ._api_versions import FormRecognizerApiVersion
 from ._form_base_client import FormRecognizerClientBase
 from ._polling import AnalyzePolling
 if TYPE_CHECKING:
@@ -119,7 +120,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self.api_version == "2.1-preview.1":
+            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
@@ -174,7 +175,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
         if locale:
-            if self.api_version == "2.1-preview.1":
+            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
                 kwargs.update({"locale": locale})
             else:
                 raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")

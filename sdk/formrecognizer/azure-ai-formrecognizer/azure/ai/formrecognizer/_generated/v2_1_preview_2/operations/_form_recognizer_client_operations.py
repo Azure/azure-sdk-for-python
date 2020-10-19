@@ -19,7 +19,7 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, IO, Iterable, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -126,7 +126,11 @@ class FormRecognizerClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -341,6 +345,8 @@ class FormRecognizerClientOperationsMixin(object):
         :type include_text_details: bool
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
+         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -374,7 +380,12 @@ class FormRecognizerClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -547,7 +558,12 @@ class FormRecognizerClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'modelId': self._serialize.url("model_id", model_id, 'str'),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -769,7 +785,11 @@ class FormRecognizerClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -871,6 +891,8 @@ class FormRecognizerClientOperationsMixin(object):
         :type locale: str
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
+         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -904,7 +926,11 @@ class FormRecognizerClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -973,6 +999,203 @@ class FormRecognizerClientOperationsMixin(object):
 
         return deserialized
     get_analyze_business_card_result.metadata = {'url': '/prebuilt/businessCard/analyzeResults/{resultId}'}  # type: ignore
+
+    def _analyze_invoice_async_initial(
+        self,
+        include_text_details=False,  # type: Optional[bool]
+        locale=None,  # type: Optional[str]
+        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._analyze_invoice_async_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        if include_text_details is not None:
+            query_parameters['includeTextDetails'] = self._serialize.query("include_text_details", include_text_details, 'bool')
+        if locale is not None:
+            query_parameters['locale'] = self._serialize.query("locale", locale, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
+            body_content_kwargs['stream_content'] = file_stream
+        elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
+            if file_stream is not None:
+                body_content = self._serialize.body(file_stream, 'SourcePath')
+            else:
+                body_content = None
+            body_content_kwargs['content'] = body_content
+        else:
+            raise ValueError(
+                "The content_type '{}' is not one of the allowed values: "
+                "['application/pdf', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
+            )
+        request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _analyze_invoice_async_initial.metadata = {'url': '/prebuilt/invoice/analyze'}  # type: ignore
+
+    def begin_analyze_invoice_async(
+        self,
+        include_text_details=False,  # type: Optional[bool]
+        locale=None,  # type: Optional[str]
+        file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Analyze Invoice Document.
+
+        Extract field text and semantic values from a given invoice document. The input document must
+        be of one of the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or
+        'image/tiff'. Alternatively, use 'application/json' type to specify the location (Uri) of the
+        document to be analyzed.
+
+        :param include_text_details: Include text lines and element references in the result.
+        :type include_text_details: bool
+        :param locale: Locale of the invoice. Supported locales include: en-AU, en-CA, en-GB, en-IN,
+         en-US(default).
+        :type locale: str
+        :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
+        :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
+         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._analyze_invoice_async_initial(
+                include_text_details=include_text_details,
+                locale=locale,
+                file_stream=file_stream,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_analyze_invoice_async.metadata = {'url': '/prebuilt/invoice/analyze'}  # type: ignore
+
+    def get_analyze_invoice_result(
+        self,
+        result_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "models.AnalyzeOperationResult"
+        """Get Analyze Invoice Result.
+
+        Track the progress and obtain the result of the analyze invoice operation.
+
+        :param result_id: Analyze operation result identifier.
+        :type result_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalyzeOperationResult, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.models.AnalyzeOperationResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeOperationResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        accept = "application/json"
+
+        # Construct URL
+        url = self.get_analyze_invoice_result.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'resultId': self._serialize.url("result_id", result_id, 'str'),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize(models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('AnalyzeOperationResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    get_analyze_invoice_result.metadata = {'url': '/prebuilt/invoice/analyzeResults/{resultId}'}  # type: ignore
 
     def _analyze_receipt_async_initial(
         self,
@@ -1062,6 +1285,8 @@ class FormRecognizerClientOperationsMixin(object):
         :type locale: str
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
+         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -1095,7 +1320,11 @@ class FormRecognizerClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -1167,6 +1396,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def _analyze_layout_async_initial(
         self,
+        page_range=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -1188,6 +1418,8 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if page_range is not None:
+            query_parameters['pageRange'] = self._serialize.query("page_range", page_range, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -1195,7 +1427,7 @@ class FormRecognizerClientOperationsMixin(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
+        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
             body_content_kwargs['stream_content'] = file_stream
         elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
             if file_stream is not None:
@@ -1206,7 +1438,7 @@ class FormRecognizerClientOperationsMixin(object):
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
+                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
             )
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -1227,6 +1459,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def begin_analyze_layout_async(
         self,
+        page_range=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -1234,12 +1467,16 @@ class FormRecognizerClientOperationsMixin(object):
         """Analyze Layout.
 
         Extract text and layout information from a given document. The input document must be of one of
-        the supported content types - 'application/pdf', 'image/jpeg', 'image/png' or 'image/tiff'.
-        Alternatively, use 'application/json' type to specify the location (Uri or local path) of the
-        document to be analyzed.
+        the supported content types - 'application/pdf', 'image/jpeg', 'image/png', 'image/tiff' or
+        'image/bmp'. Alternatively, use 'application/json' type to specify the location (Uri or local
+        path) of the document to be analyzed.
 
+        :param page_range: Specify page number or range of page numbers to process, e.g: 1, 5, 7, 9-10.
+        :type page_range: list[str]
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
+        :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
+         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -1259,6 +1496,7 @@ class FormRecognizerClientOperationsMixin(object):
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_layout_async_initial(
+                page_range=page_range,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -1271,7 +1509,11 @@ class FormRecognizerClientOperationsMixin(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
