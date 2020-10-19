@@ -108,7 +108,7 @@ try:
     service_client.update_component(digital_twin_id, component_path, options)
 
     # Get component
-    get_component = await service_client.get_component(digital_twin_id, component_path)
+    get_component = service_client.get_component(digital_twin_id, component_path)
     print('Get Component:')
     print(get_component)
 
