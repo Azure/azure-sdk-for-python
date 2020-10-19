@@ -69,7 +69,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
-    :type body: Union[str, bytes]
+    :type body: Optional[Union[str, bytes]]
 
     :keyword dict properties: The user defined properties on the message.
     :keyword str session_id: The session identifier of the message for a sessionful entity.
@@ -100,8 +100,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     """
 
-    def __init__(self, body, **kwargs):
-        # type: (Union[str, bytes], Any) -> None
+    def __init__(self, body=None, **kwargs):
+        # type: (Optional[Union[str, bytes]], Any) -> None
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", 'UTF-8')
@@ -139,8 +139,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
-        elif body is None:
-            raise ValueError("Message body cannot be None.")
         else:
             self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
