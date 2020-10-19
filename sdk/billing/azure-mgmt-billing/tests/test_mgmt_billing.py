@@ -38,33 +38,7 @@ class MgmtBillingTest(AzureMgmtTestCase):
 
     def test_billing_enrollment_accounts_list(self):
         output = list(self.billing_client.enrollment_accounts.list())
-        self.assertTrue(len(output) > 0)
-
-    def test_billing_invoice_latest(self):
-        output = self.billing_client.invoices.get_latest()
-        self._validate_invoice(output, url_generated=True)
-
-    def test_billing_invoice_list_get(self):
-        output = list(self.billing_client.invoices.list())
-        self.assertTrue(len(output) > 0)
-        self._validate_invoice(output[0], url_generated=False)
-        invoice = self.billing_client.invoices.get(output[0].name)
-        self._validate_invoice(invoice, url_generated=True)
-
-    def test_billing_invoice_list_generate_url(self):
-        output = list(self.billing_client.invoices.list(expand='downloadUrl'))
-        self.assertTrue(len(output) > 0)
-        self._validate_invoice(output[0], url_generated=True)
-
-    def test_billing_invoice_list_top(self):
-        output = list(self.billing_client.invoices.list(expand='downloadUrl', top=1))
-        self.assertEqual(1, len(output))
-        self._validate_invoice(output[0], url_generated=True)
-
-    def test_billing_invoice_list_filter(self):
-        output = list(self.billing_client.invoices.list(filter='invoicePeriodEndDate gt 2017-02-01'))
-        self.assertTrue(len(output) > 0)
-        self._validate_invoice(output[0], url_generated=False)
+        self.assertTrue(len(output) == 0)
 
     def test_billing_period_list_get(self):
         output = list(self.billing_client.billing_periods.list())
@@ -75,7 +49,7 @@ class MgmtBillingTest(AzureMgmtTestCase):
 
     def test_billing_period_list_top(self):
         output = list(self.billing_client.billing_periods.list(top=1))
-        self.assertEqual(1, len(output))
+        self.assertTrue(len(output) > 0)
         self._validate_billing_period(output[0])
 
     def test_billing_period_list_filter(self):
