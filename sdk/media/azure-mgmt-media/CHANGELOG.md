@@ -1,5 +1,38 @@
 # Release History
 
+## 3.0.0 (2020-10-19)
+
+**Features**
+
+  - Model Image has a new parameter sync_mode
+  - Model ServiceSpecification has a new parameter log_specifications
+  - Model AudioAnalyzerPreset has a new parameter mode
+  - Model LiveEvent has a new parameter transcriptions
+  - Model LiveEvent has a new parameter hostname_prefix
+  - Model LiveEvent has a new parameter use_static_hostname
+  - Model PngImage has a new parameter sync_mode
+  - Model JpgImage has a new parameter sprite_column
+  - Model JpgImage has a new parameter sync_mode
+  - Model H264Video has a new parameter sync_mode
+  - Model Video has a new parameter sync_mode
+  - Model MediaService has a new parameter encryption
+  - Model MediaService has a new parameter identity
+  - Model MediaService has a new parameter storage_authentication
+  - Model VideoAnalyzerPreset has a new parameter mode
+  - Model LiveEventEncoding has a new parameter stretch_mode
+  - Model LiveEventEncoding has a new parameter key_frame_interval
+  - Added operation LiveEventsOperations.allocate
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+
+**Breaking changes**
+
+  - Parameter location of model StreamingEndpoint is now required
+  - Parameter location of model TrackedResource is now required
+  - Parameter location of model LiveEvent is now required
+  - Parameter location of model MediaService is now required
+  - Model LiveEvent no longer has parameter vanity_url
+
 ## 2.2.0 (2020-05-29)
 
 **Features**
