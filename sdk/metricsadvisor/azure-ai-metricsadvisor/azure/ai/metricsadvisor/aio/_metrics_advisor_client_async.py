@@ -29,7 +29,7 @@ from .._generated.models import (
     FeedbackDimensionFilter,
 )
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2
-from .._helpers import convert_to_sub_feedback
+from .._helpers import convert_to_sub_feedback, convert_datetime
 from ..models._models import (
     Incident,
     Anomaly,
@@ -179,8 +179,8 @@ class MetricsAdvisorClient(object):
         :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
                 "ChangePoint", "Period", "Comment".
         :paramtype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-        :keyword ~datetime.datetime start_time: start time filter under chosen time mode.
-        :keyword ~datetime.datetime end_time: end time filter under chosen time mode.
+        :keyword Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
                 "FeedbackCreatedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
@@ -207,13 +207,15 @@ class MetricsAdvisorClient(object):
         feedback_type = kwargs.pop('feedback_type', None)
         start_time = kwargs.pop('start_time', None)
         end_time = kwargs.pop('end_time', None)
+        converted_start_time = convert_datetime(start_time) if start_time else None
+        converted_end_time = convert_datetime(end_time) if end_time else None
         time_mode = kwargs.pop('time_mode', None)
         feedback_filter = MetricFeedbackFilter(
             metric_id=metric_id,
             dimension_filter=dimension_filter,
             feedback_type=feedback_type,
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             time_mode=time_mode,
         )
 
@@ -253,8 +255,8 @@ class MetricsAdvisorClient(object):
     def list_metric_enriched_series_data(
         self, detection_configuration_id,  # type: str
         series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
-        start_time,  # type: datetime.datetime
-        end_time,  # type: datetime.datetime
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
         **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[SeriesResult]
@@ -263,8 +265,8 @@ class MetricsAdvisorClient(object):
         :param str detection_configuration_id: anomaly alerting configuration unique id.
         :param series: List of dimensions specified for series.
         :type series: ~azure.ai.metricsadvisor.models.SeriesIdentity or list[dict[str, str]]
-        :param ~datetime.datetime start_time: start time filter under chosen time mode.
-        :param ~datetime.datetime end_time: end time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :return: Pageable of SeriesResult
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.SeriesResult]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -277,9 +279,11 @@ class MetricsAdvisorClient(object):
             ] or series
 
         series_list = cast(List[SeriesIdentity], series_list)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         detection_series_query = DetectionSeriesQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             series=series_list
         )
 
@@ -289,14 +293,20 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_alerts_for_alert_configuration(self, alert_configuration_id, start_time, end_time, time_mode, **kwargs):
-        # type: (str, datetime.datetime, datetime.datetime, Union[str, TimeMode], Any) -> AsyncItemPaged[Alert]
+    def list_alerts_for_alert_configuration(self,
+                                            alert_configuration_id,     # type: str
+                                            start_time,     # type: Union[str, datetime.datetime]
+                                            end_time,       # type: Union[str, datetime.datetime]
+                                            time_mode,      # type: Union[str, TimeMode]
+                                            **kwargs        # type: Any
+                                            ):
+        # type: (...) -> AsyncItemPaged[Alert]
         """Query alerts under anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
         :type alert_configuration_id: str
-        :param ~datetime.datetime start_time: start time.
-        :param ~datetime.datetime end_time: end time.
+        :param Union[str, ~datetime.datetime] start_time: start time.
+        :param Union[str, ~datetime.datetime] end_time: end time.
         :param time_mode: time mode. Possible values include: "AnomalyTime", "CreatedTime",
                 "ModifiedTime".
         :type time_mode: str or ~azure.ai.metricsadvisor.models.TimeMode
@@ -316,10 +326,12 @@ class MetricsAdvisorClient(object):
         """
 
         skip = kwargs.pop('skip', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
 
         alerting_result_query = AlertingResultQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             time_mode=time_mode,
         )
 
@@ -366,14 +378,14 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[Anomaly]
+        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> AsyncItemPaged[Anomaly]
 
         """Query anomalies under anomaly detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
-        :param ~datetime.datetime start_time: start time filter under chosen time mode.
-        :param ~datetime.datetime end_time: end time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
@@ -384,9 +396,11 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
         filter_condition = kwargs.pop('filter', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             filter=filter_condition,
         )
 
@@ -405,15 +419,15 @@ class MetricsAdvisorClient(object):
             end_time,
             **kwargs
     ):
-        # type: (str, str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[str]
+        # type: (str, str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> AsyncItemPaged[str]
 
         """Query dimension values of anomalies.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
         :param str dimension_name: dimension to query.
-        :param ~datetime.datetime start_time: start time filter under chosen time mode.
-        :param ~datetime.datetime end_time: end time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :keyword str dimension_name: The dimension name to query.
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
@@ -424,9 +438,11 @@ class MetricsAdvisorClient(object):
 
         skip = kwargs.pop('skip', None)
         dimension_filter = kwargs.pop('dimension_filter', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             dimension_name=dimension_name,
             dimension_filter=dimension_filter,
         )
@@ -464,14 +480,14 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[Incident]
+        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> AsyncItemPaged[Incident]
 
         """Query incidents under a specific alert.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
-        :param ~datetime.datetime start_time: start time filter under chosen time mode.
-        :param ~datetime.datetime end_time: end time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         :return: Incidents under a specific alert.
@@ -480,10 +496,12 @@ class MetricsAdvisorClient(object):
         """
 
         filter_condition = kwargs.pop('filter', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
 
         detection_incident_result_query = DetectionIncidentResultQuery(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             filter=filter_condition,
         )
 
@@ -528,8 +546,8 @@ class MetricsAdvisorClient(object):
     @distributed_trace
     def list_metrics_series_data(
         self, metric_id,  # type: str
-        start_time,  # type: datetime.datetime
-        end_time,  # type: datetime.datetime
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
         series_to_filter,  # type: List[Dict[str, str]]
         **kwargs  # type: Any
     ):
@@ -539,8 +557,8 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: metric unique id.
         :type metric_id: str
-        :param ~datetime.datetime start_time: start time filter under chosen time mode.
-        :param ~datetime.datetime end_time: end time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :param series_to_filter: query specific series.
         :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
@@ -548,9 +566,12 @@ class MetricsAdvisorClient(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+
         metric_data_query_options = MetricDataQueryOptions(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
             series=series_to_filter,
         )
 
@@ -596,15 +617,20 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_metric_enrichment_status(self, metric_id, start_time, end_time, **kwargs):
-        # type: (str, datetime.datetime, datetime.datetime, Any) -> AsyncItemPaged[EnrichmentStatus]
+    def list_metric_enrichment_status(self,
+                                      metric_id,    # type: str
+                                      start_time,   # type: Union[str, datetime.datetime]
+                                      end_time,     # type: Union[str, datetime.datetime]
+                                      **kwargs      # type: Any
+                                      ):
+        # type: (...) -> AsyncItemPaged[EnrichmentStatus]
 
         """Query anomaly detection status.
 
         :param metric_id: filter feedbacks by metric id.
         :type metric_id: str
-        :param ~datetime.datetime start_time: start time filter under chosen time mode.
-        :param ~datetime.datetime end_time: end time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :return: Anomaly detection status.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
@@ -612,9 +638,11 @@ class MetricsAdvisorClient(object):
         """
 
         skip = kwargs.pop('skip', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
         enrichment_status_query_option = EnrichmentStatusQueryOption(
-            start_time=start_time,
-            end_time=end_time,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
         )
 
         return self._client.get_enrichment_status_by_metric(  # type: ignore

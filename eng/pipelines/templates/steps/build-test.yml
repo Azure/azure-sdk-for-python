@@ -19,9 +19,8 @@ steps:
   - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
 
-  - task: UsePythonVersion@0
-    displayName: 'Use Python ${{ parameters.PythonVersion }}'
-    inputs:
+  - template: /eng/pipelines/templates/steps/use-python-version.yml
+    parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml

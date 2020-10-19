@@ -14,33 +14,34 @@ from ._models import (
     FormTable,
     FormTableCell,
     FormPageRange,
-    RecognizedForm
+    RecognizedForm,
+    FormSelectionMark
 )
 
 
-def prepare_receipt(response):
-    receipts = []
+def prepare_prebuilt_models(response, **kwargs):
+    prebuilt_models = []
     read_result = response.analyze_result.read_results
     document_result = response.analyze_result.document_results
-    form_page = FormPage._from_generated_receipt(read_result)
+    form_page = FormPage._from_generated_prebuilt_model(read_result)
 
     for page in document_result:
-        receipt = RecognizedForm(
+        prebuilt_model = RecognizedForm(
             page_range=FormPageRange(
                 first_page_number=page.page_range[0], last_page_number=page.page_range[1]
             ),
             pages=form_page[page.page_range[0]-1:page.page_range[1]],
             form_type=page.doc_type,
             fields={
-                key: FormField._from_generated(key, value, read_result)
+                key: FormField._from_generated(key, value, read_result, **kwargs)
                 for key, value in page.fields.items()
             } if page.fields else None,
             form_type_confidence=page.doc_type_confidence,
             model_id=page.model_id
         )
 
-        receipts.append(receipt)
-    return receipts
+        prebuilt_models.append(prebuilt_model)
+    return prebuilt_models
 
 
 def prepare_tables(page, read_result):
@@ -71,6 +72,8 @@ def prepare_content_result(response):
             unit=page.unit,
             lines=[FormLine._from_generated(line, page=page.page) for line in page.lines] if page.lines else None,
             tables=prepare_tables(page_result[idx], read_result),
+            selection_marks=[FormSelectionMark._from_generated(mark, page.page) for mark in page.selection_marks]
+            if page.selection_marks else None
         )
         pages.append(form_page)
     return pages

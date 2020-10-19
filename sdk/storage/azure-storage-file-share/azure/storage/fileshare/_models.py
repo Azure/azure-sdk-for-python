@@ -308,6 +308,8 @@ class ShareProperties(DictMixin):
         conditionally.
     :ivar int quota:
         The allocated quota.
+    :ivar str access_tier:
+        The share's access tier.
     :ivar dict metadata: A dict with name_value pairs to associate with the
         share as metadata.
     :ivar str snapshot:
@@ -331,6 +333,7 @@ class ShareProperties(DictMixin):
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.quota = kwargs.get('x-ms-share-quota')
+        self.access_tier = kwargs.get('x-ms-access-tier')
         self.next_allowed_quota_downgrade_time = kwargs.get('x-ms-share-next-allowed-quota-downgrade-time')
         self.metadata = kwargs.get('metadata')
         self.snapshot = None
@@ -350,6 +353,7 @@ class ShareProperties(DictMixin):
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
         props.quota = generated.properties.quota
+        props.access_tier = generated.properties.access_tier
         props.next_allowed_quota_downgrade_time = generated.properties.next_allowed_quota_downgrade_time
         props.metadata = generated.metadata
         props.snapshot = generated.snapshot
