@@ -15,6 +15,9 @@ from _shared.testcase import (
     ResponseReplacerProcessor
 )
 
+SKIP_PHONE_NUMBER_TESTS = True
+PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number infra for live tests not ready yet"
+
 class SMSClientTest(CommunicationTestCase):
     def __init__(self, method_name):
         super(SMSClientTest, self).__init__(method_name)
@@ -34,6 +37,7 @@ class SMSClientTest(CommunicationTestCase):
         self.sms_client = SmsClient.from_connection_string(self.connection_str)
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_send_sms(self):
 
         # calling send() with sms values
