@@ -11,7 +11,6 @@ from typing import (
 from uuid import uuid4
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 
 from ._error import _process_table_error
