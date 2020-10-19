@@ -34,7 +34,7 @@ class MgmtHealthcareApisTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_healthcareapis(self, resource_group):
 
-        SERVICE_NAME = "myapimrndxyzabc"
+        SERVICE_NAME = "myapimrndxyzabc1"
         OPERATIONRESULT_NAME = "read"
         LOCATION_NAME = AZURE_LOCATION
 

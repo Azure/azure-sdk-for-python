@@ -24,19 +24,23 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc?api-version=2020-03-15
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1?api-version=2020-03-15
   response:
     body:
-      string: '{"error":{"code":"BadRequest","message":"Service name is not available."}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1","name":"myapimrndxyzabc1","type":"Microsoft.HealthcareApis/services","etag":"\"07007aad-0000-0400-0000-5f8cf27d0000\"","location":"eastus","kind":"fhir","properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"},{"objectId":"5b307da8-43d4-492b-8b66-b0294ade872f"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","audience":"https://azurehealthcareapis.com","smartProxyEnabled":true},"corsConfiguration":{"origins":["*"],"headers":["*"],"methods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"maxAge":1440,"allowCredentials":false},"exportConfiguration":{"storageAccountName":null},"privateEndpointConnections":[],"publicNetworkAccess":null,"provisioningState":"Creating"}}'
     headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
       cache-control:
       - no-cache
       content-length:
-      - '74'
+      - '1037'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 09 Oct 2020 08:32:56 GMT
+      - Mon, 19 Oct 2020 01:57:18 GMT
+      etag:
+      - '"07007aad-0000-0400-0000-5f8cf27d0000"'
       expires:
       - '-1'
       pragma:
@@ -52,8 +56,2902 @@ interactions:
       x-ms-ratelimit-remaining-subscription-writes:
       - '1199'
       x-request-id:
-      - 34ff3aabae998845a4de1f92badecf6a
+      - a97fd756fef432418ccee7cec79f407c
     status:
-      code: 400
-      message: Bad Request
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 01:57:49 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 0a3bfd5a28a9e34f8c8fa0d9bbf0a4b9
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 01:58:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 70e499977d737c44ac4a0f29f11f16c1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 01:58:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 9572d24989ffbf4cb386380b9887c53f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 01:59:20 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 09912b2efd696b47ba0fbf2c7c311ffe
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 01:59:50 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 90f7c6f8c84ac84c9a5d4dfdbddcefbe
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:00:21 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - cbb3a929bee97e45b68ffd42da13bcf5
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:00:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 3df5b666ff8b3543bf5ed0850ca4af2c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:01:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 38f4c59c032a174f89cb77982ca3e8c3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:01:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2de500658f601b4582c28ebf56a0281e
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:02:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 0ec4c8542ab1544d86c45e2870121fdd
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:02:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 67108cae5f52f542971da724e4b0fc79
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:03:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - c75bddcd0bb4184f8722e051689a08f0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:03:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - d0a676db5537b74eba0937a804252f69
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:04:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 64df70d9cfa068448669fdc784a89229
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:04:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - b75c22f4f3ee6b4fa52af9bbe240bd5a
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:05:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2de73dce9b8fd04da1eaa494ecd53ea9
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:05:54 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 7f47334164a3b144b422528fc50032ff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:06:24 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 8e94535a7d6691438bd256c7fad1eb97
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:06:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 38935547c3eaf84fa0d7b060d8096595
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:07:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 4e27a3feeb104e42a29bc5a56f812462
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:07:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - f85ee86ba4e3ac48b0252a05cbaea5ef
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:08:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 1d798da8c8fb58468d3c8a8549fd910b
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:08:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - ebb41c0030dddd4cb8baf6ce2311aadf
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:09:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 05465f077f442c42b9a4c88db3307b04
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:09:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 02e8fcf079d0734cbed906e6a776d762
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:10:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 81a409bcd6e50a4ab1469763f4982f2f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:10:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - fe6e3c70b8972943b84e80e892399991
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Running","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:11:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 78eabbed0c0ba64eba0f0a42f34a346d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/481955d9-7e8f-4a3e-b3c0-3b3376634fb1","name":"481955d9-7e8f-4a3e-b3c0-3b3376634fb1","status":"Succeeded","startTime":"2020-10-19T01:57:17.5407769Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '276'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:11:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - d013a7c844ecc640b787fea94bf18b33
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1","name":"myapimrndxyzabc1","type":"Microsoft.HealthcareApis/services","etag":"\"0700c1c8-0000-0400-0000-5f8cf5d10000\"","location":"eastus","kind":"fhir","tags":{},"properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"},{"objectId":"5b307da8-43d4-492b-8b66-b0294ade872f"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","audience":"https://azurehealthcareapis.com","smartProxyEnabled":true},"corsConfiguration":{"origins":["*"],"headers":["*"],"methods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"maxAge":1440,"allowCredentials":false},"exportConfiguration":{"storageAccountName":null},"privateEndpointConnections":[],"publicNetworkAccess":"Enabled","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1053'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:12:02 GMT
+      etag:
+      - '"0700c1c8-0000-0400-0000-5f8cf5d10000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - fba40099eb572e40a865438a4463eb58
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/read?api-version=2020-03-15
+  response:
+    body:
+      string: '{"error":{"code":"OperationResultNotFound","message":"The operation
+        result was not found."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '92'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:12:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 59a13d8102823647b8b421a195db7930
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1","name":"myapimrndxyzabc1","type":"Microsoft.HealthcareApis/services","etag":"\"0700c1c8-0000-0400-0000-5f8cf5d10000\"","location":"eastus","kind":"fhir","tags":{},"properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"},{"objectId":"5b307da8-43d4-492b-8b66-b0294ade872f"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","audience":"https://azurehealthcareapis.com","smartProxyEnabled":true},"corsConfiguration":{"origins":["*"],"headers":["*"],"methods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"maxAge":1440,"allowCredentials":false},"exportConfiguration":{"storageAccountName":null},"privateEndpointConnections":[],"publicNetworkAccess":"Enabled","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1053'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:12:07 GMT
+      etag:
+      - '"0700c1c8-0000-0400-0000-5f8cf5d10000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 0c69c0bff769b641a7a6a0dba94cd0f1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"tags": {"tags": "{''tag1'': ''value1'', ''tag2'': ''value2''}"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '58'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1","name":"myapimrndxyzabc1","type":"Microsoft.HealthcareApis/services","etag":"\"07006eca-0000-0400-0000-5f8cf6010000\"","location":"eastus","kind":"fhir","tags":{"tags":"{''tag1'':
+        ''value1'', ''tag2'': ''value2''}"},"properties":{"secondaryLocations":null,"accessPolicies":[{"objectId":"c487e7d1-3210-41a3-8ccc-e9372b78da47"},{"objectId":"5b307da8-43d4-492b-8b66-b0294ade872f"}],"cosmosDbConfiguration":{"offerThroughput":1000},"authenticationConfiguration":{"authority":"https://login.microsoftonline.com/abfde7b2-df0f-47e6-aabf-2462b07508dc","audience":"https://azurehealthcareapis.com","smartProxyEnabled":true},"corsConfiguration":{"origins":["*"],"headers":["*"],"methods":["DELETE","GET","OPTIONS","PATCH","POST","PUT"],"maxAge":1440,"allowCredentials":false},"exportConfiguration":{"storageAccountName":null},"privateEndpointConnections":[],"publicNetworkAccess":"Enabled","provisioningState":"Succeeded"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1098'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:12:22 GMT
+      etag:
+      - '"07006eca-0000-0400-0000-5f8cf6010000"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+      x-request-id:
+      - 51c5b088309c7f43a31da80304d25ddb
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "myapimrndxyzabc1ABC", "type": "Microsoft.HealthcareApis/services"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '76'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/checkNameAvailability?api-version=2020-03-15
+  response:
+    body:
+      string: '{"nameAvailable":false,"reason":"Invalid","message":"Name can contain
+        only lowercase letters, numbers and the ''-'' character."}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:12:22 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2e6edd48c0aa1a4f82c8b4772b8558d1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_healthcareapis_test_healthcareapise0d71394/providers/Microsoft.HealthcareApis/services/myapimrndxyzabc1?api-version=2020-03-15
+  response:
+    body:
+      string: ''
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Mon, 19 Oct 2020 02:12:27 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15&operationResultResponseType=Location
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+      x-request-id:
+      - 2b0c832d97c21245a20d57d4a26621ce
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:12:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2022cd05e9dbe24590d90e119d99a8b6
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:13:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - ca3d6d2d728a29458340090f5682e8f2
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:13:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - d6a8075e3b9fa146ab421438f73871a9
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:14:28 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - d38db26c2e84c642b333d3518c9fe7f4
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:14:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 714011012a007d49bb02d3aef6bb379c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:15:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 404bb5e9e4dec5409271fe69fbc30c1d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:16:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - cfd1a0b30bc1d440982d645a39cf19a8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:16:30 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 5f74ed9d67991649abdd6ac61eacc76a
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:17:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e072bf6d316aa745a95f681f6313ed2d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:17:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 206d4882aacfa843ae0d7c1c29a55eec
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:18:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 75043f830bd8494cb8d9c0f8ffc6ab7f
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:18:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e26016ead60d35499c6f407c6e7c1da1
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:19:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 6e327c059666694f93928a243559bcb0
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:19:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - c62492b7e730df43942625814fdaf14e
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:20:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2e6eee67293436459c09d84f3042f221
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:20:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - ac8f6a5dfcd6174ebab30555199a3948
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:21:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 69a774b9d998454b85756a86da721fab
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:21:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 4e98f31ee2848549985a2b26187db33a
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:22:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - aa76c61eb8aa6841aee5ff92b8e8bff8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:22:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 6464dca7ff65e54ab04a06094ddeeb84
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:23:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 32e3bafb0f8b5b45926e6a00a48c6a65
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:23:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 43e69468b92f8e4eaa95096d85030f1d
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:24:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - cf71ac3fb2294948a24fcb6ab881ce26
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:24:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - fcbc134ab9d0044caafdae277644b602
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Running","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '274'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:25:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - e3c7ea6ed7c1c74b9ca72cdbd41b1ac5
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-healthcareapis/0.2.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac?api-version=2020-03-15
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.HealthcareApis/locations/eastus/operationresults/848e552c-5230-4214-a157-e4e9afe65dac","name":"848e552c-5230-4214-a157-e4e9afe65dac","status":"Succeeded","startTime":"2020-10-19T02:12:27.5572898Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '276'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 02:25:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      request-context:
+      - appId=cid-v1:3de0b58a-5b02-4f39-a0b3-83315651f823
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-request-id:
+      - 2cdd8ee6d0f22740bf0e17b9d4d8e93d
+    status:
+      code: 200
+      message: OK
 version: 1
