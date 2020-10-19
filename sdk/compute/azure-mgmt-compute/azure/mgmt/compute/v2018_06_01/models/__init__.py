@@ -19,8 +19,6 @@ try:
     from ._models_py3 import AvailabilitySetUpdate
     from ._models_py3 import BootDiagnostics
     from ._models_py3 import BootDiagnosticsInstanceView
-    from ._models_py3 import Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties
-    from ._models_py3 import ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import ComputeOperationListResult
     from ._models_py3 import ComputeOperationValue
     from ._models_py3 import CreationData
@@ -125,6 +123,7 @@ try:
     from ._models_py3 import UpgradePolicy
     from ._models_py3 import Usage
     from ._models_py3 import UsageName
+    from ._models_py3 import UserAssignedIdentitiesValue
     from ._models_py3 import VaultCertificate
     from ._models_py3 import VaultSecretGroup
     from ._models_py3 import VirtualHardDisk
@@ -152,6 +151,7 @@ try:
     from ._models_py3 import VirtualMachineScaleSetExtensionProfile
     from ._models_py3 import VirtualMachineScaleSetIPConfiguration
     from ._models_py3 import VirtualMachineScaleSetIdentity
+    from ._models_py3 import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
     from ._models_py3 import VirtualMachineScaleSetInstanceView
     from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
     from ._models_py3 import VirtualMachineScaleSetIpTag
@@ -208,8 +208,6 @@ except (SyntaxError, ImportError):
     from ._models import AvailabilitySetUpdate  # type: ignore
     from ._models import BootDiagnostics  # type: ignore
     from ._models import BootDiagnosticsInstanceView  # type: ignore
-    from ._models import Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
-    from ._models import ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import ComputeOperationListResult  # type: ignore
     from ._models import ComputeOperationValue  # type: ignore
     from ._models import CreationData  # type: ignore
@@ -314,6 +312,7 @@ except (SyntaxError, ImportError):
     from ._models import UpgradePolicy  # type: ignore
     from ._models import Usage  # type: ignore
     from ._models import UsageName  # type: ignore
+    from ._models import UserAssignedIdentitiesValue  # type: ignore
     from ._models import VaultCertificate  # type: ignore
     from ._models import VaultSecretGroup  # type: ignore
     from ._models import VirtualHardDisk  # type: ignore
@@ -341,6 +340,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineScaleSetExtensionProfile  # type: ignore
     from ._models import VirtualMachineScaleSetIPConfiguration  # type: ignore
     from ._models import VirtualMachineScaleSetIdentity  # type: ignore
+    from ._models import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue  # type: ignore
     from ._models import VirtualMachineScaleSetInstanceView  # type: ignore
     from ._models import VirtualMachineScaleSetInstanceViewStatusesSummary  # type: ignore
     from ._models import VirtualMachineScaleSetIpTag  # type: ignore
@@ -436,8 +436,6 @@ __all__ = [
     'AvailabilitySetUpdate',
     'BootDiagnostics',
     'BootDiagnosticsInstanceView',
-    'Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties',
-    'ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties',
     'ComputeOperationListResult',
     'ComputeOperationValue',
     'CreationData',
@@ -542,6 +540,7 @@ __all__ = [
     'UpgradePolicy',
     'Usage',
     'UsageName',
+    'UserAssignedIdentitiesValue',
     'VaultCertificate',
     'VaultSecretGroup',
     'VirtualHardDisk',
@@ -569,6 +568,7 @@ __all__ = [
     'VirtualMachineScaleSetExtensionProfile',
     'VirtualMachineScaleSetIPConfiguration',
     'VirtualMachineScaleSetIdentity',
+    'VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue',
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetInstanceViewStatusesSummary',
     'VirtualMachineScaleSetIpTag',

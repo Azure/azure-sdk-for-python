@@ -38,6 +38,7 @@ from .operations import VirtualMachineScaleSetVMExtensionsOperations
 from .operations import VirtualMachineScaleSetVMsOperations
 from .operations import LogAnalyticsOperations
 from .operations import VirtualMachineRunCommandsOperations
+from .operations import VirtualMachineScaleSetVMRunCommandsOperations
 from . import models
 
 
@@ -84,6 +85,8 @@ class ComputeManagementClient(object):
     :vartype log_analytics: azure.mgmt.compute.v2020_06_01.operations.LogAnalyticsOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommandsOperations operations
     :vartype virtual_machine_run_commands: azure.mgmt.compute.v2020_06_01.operations.VirtualMachineRunCommandsOperations
+    :ivar virtual_machine_scale_set_vm_run_commands: VirtualMachineScaleSetVMRunCommandsOperations operations
+    :vartype virtual_machine_scale_set_vm_run_commands: azure.mgmt.compute.v2020_06_01.operations.VirtualMachineScaleSetVMRunCommandsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -107,7 +110,6 @@ class ComputeManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.operations = Operations(
@@ -149,6 +151,8 @@ class ComputeManagementClient(object):
         self.log_analytics = LogAnalyticsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
