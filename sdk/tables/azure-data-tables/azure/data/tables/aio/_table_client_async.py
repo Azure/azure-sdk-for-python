@@ -579,18 +579,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ) -> TableBatchOperations:
         """Update/Merge or Insert entity into table.
 
-        .. admonition:: Example:
-            # TODO:
-
-            .. literalinclude:: ../samples/.py
-                :start-after: [START abcd]
-                :end-before: [END abcd]
-                :language: python
-                :dedent: 8
-                :caption: abcd
         return: Table batch operation for inserting new operations
         rtype: ~azure.data.tables.TableBatchOperations
         :raises: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_batching_async.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Creating and adding an entity to a Table
         """
         return TableBatchOperations(
             self._client,
@@ -611,7 +611,6 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Commit a TableBatchOperations to send requests to the server
 
         .. admonition:: Example:
-            # TODO:
 
             .. literalinclude:: ../samples/async_samples/sample_batching_async.py
                 :start-after: [START batching]

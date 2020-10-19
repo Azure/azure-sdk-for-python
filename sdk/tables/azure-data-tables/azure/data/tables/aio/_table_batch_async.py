@@ -41,7 +41,6 @@ class TableBatchOperations(object):
     supported within a single transaction. The batch can include at most 100
     entities, and its total payload may be no more than 4 MB in size.
 
-    TODO: confirm # of entities, payload size, partition group
     '''
 
     def __init__(
@@ -87,15 +86,12 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
-        :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        # TODO: update the example here
+
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_insert_delete_entities.py
-                :start-after: [START create_entity]
-                :end-before: [END create_entity]
+            .. literalinclude:: ../samples/async_samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
@@ -227,11 +223,11 @@ class TableBatchOperations(object):
         table: str,
         partition_key: str,
         row_key: str,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        if_match: Optional[str] = None,
-        table_entity_properties: Optional[Dict[str, object]] = None,
-        query_options: Optional["models.QueryOptions"] = None,
+        timeout=None, # type: Optional[int]
+        request_id_parameter=None, # type: Optional[str]
+        if_match=None, # type: Optional[str]
+        table_entity_properties=None, # type: Optional[Dict[str, object]]
+        query_options=None, # type: Optional["models.QueryOptions"]
         **kwargs
     ) -> None:
         """Update entity in a table.
@@ -316,11 +312,11 @@ class TableBatchOperations(object):
         table: str,
         partition_key: str,
         row_key: str,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        if_match: Optional[str] = None,
-        table_entity_properties: Optional[Dict[str, object]] = None,
-        query_options: Optional["models.QueryOptions"] = None,
+        timeout=None, # type: Optional[int]
+        request_id_parameter=None, # type: Optional[str]
+        if_match=None, # type: Optional[str]
+        table_entity_properties=None, # type: Optional[Dict[str, object]]
+        query_options=None, # type: Optional["models.QueryOptions"]
         **kwargs
     ) -> None:
         """Merge entity in a table.
@@ -415,18 +411,15 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_insert_delete_entities.py
-                :start-after: [START delete_entity]
-                :end-before: [END delete_entity]
+            .. literalinclude:: ../samples/async_samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Deleting an entity to a Table
+                :caption: Creating and adding an entity to a Table
         """
         if self._partition_key:
             if partition_key != self._partition_key:
@@ -458,9 +451,9 @@ class TableBatchOperations(object):
         partition_key: str,
         row_key: str,
         if_match: str,
-        timeout: Optional[int] = None,
-        request_id_parameter: Optional[str] = None,
-        query_options: Optional["models.QueryOptions"] = None
+        timeout=None, # type: Optional[int]
+        request_id_parameter=None, # type: Optional[str]
+        query_options=None, # type: Optional["models.QueryOptions"]
     ) -> None:
         """Deletes the specified entity in a table.
 
@@ -539,18 +532,15 @@ class TableBatchOperations(object):
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
-                :start-after: [START upsert_entity]
-                :end-before: [END upsert_entity]
+            .. literalinclude:: ../samples/async_samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Update/merge or insert an entity into a table
+                :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
 

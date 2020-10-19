@@ -28,6 +28,7 @@ from ._models import (
 from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
 from ._deserialize import TableErrorCode
+from ._table_batch import TableBatchOperations
 
 __version__ = VERSION
 
@@ -55,5 +56,6 @@ __all__ = [
     'RetentionPolicy',
     'generate_table_sas',
     'SASProtocol',
-    'BatchTransactionResult'
+    'BatchTransactionResult',
+    'TableBatchOperations'
 ]

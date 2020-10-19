@@ -603,17 +603,14 @@ class TableClient(TableClientBase):
         :rtype: BatchTransactionResult
         :raises: ~azure.data.tables.PartialBatchErrorException
 
-        .. admonition:: Example:
-            # TODO:
 
-            .. literalinclude:: ../samples/.py
-                :start-after: [START abcd]
-                :end-before: [END abcd]
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: abcd
-        return: Table batch operation for inserting new operations
-        rtype: ~azure.data.tables.TableBatchOperations
-        :raises: None
+                :caption: Using batches to send multiple requests at once
         """
         return self._batch_send(batch._entities, *batch._requests, **kwargs) # pylint:disable=protected-access

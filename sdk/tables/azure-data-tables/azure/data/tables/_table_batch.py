@@ -29,7 +29,6 @@ class TableBatchOperations(object):
     supported within a single transaction. The batch can include at most 100
     entities, and its total payload may be no more than 4 MB in size.
 
-    TODO: confirm # of entities, payload size, partition group
     '''
 
     def __init__(
@@ -42,6 +41,23 @@ class TableBatchOperations(object):
         table_client, # type: TableClient
         **kwargs # type: Dict[str, Any]
     ):
+        """Create TableClient from a Credential.
+
+        :param client: an AzureTable object
+        :type client: AzureTable
+        :param serializer: serializer object for request serialization
+        :type serializer: msrest.Serializer
+        :param deserializer: deserializer object for request serialization
+        :type deserializer: msrest.Deserializer
+        :param config: Azure Table Configuration object
+        :type config: AzureTableConfiguration
+        :param table_name: name of the Table to perform operations on
+        :type table_name: str
+        :param table_client: TableClient object to perform operations on
+        :type table_client: TableClient
+
+        :returns: None
+        """
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -71,19 +87,17 @@ class TableBatchOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Insert entity in a table.
+        """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
-        :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        # TODO: update the example here
+        :raises: ValueError
+
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_insert_delete_entities.py
-                :start-after: [START create_entity]
-                :end-before: [END create_entity]
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
@@ -183,6 +197,27 @@ class TableBatchOperations(object):
             **kwargs  # type: Any
     ):
         # (...) -> None
+
+        """Adds an update operation to the current batch.
+
+        :param entity: The properties for the table entity.
+        :type entity: Union[TableEntity, dict[str,str]]
+        :param mode: Merge or Replace entity
+        :type mode: ~azure.data.tables.UpdateMode
+        :keyword str etag: Etag of the entity
+        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :return: None
+        :raises: ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Creating and adding an entity to a Table
+        """
         self._verify_partition_key(entity)
 
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
@@ -396,7 +431,7 @@ class TableBatchOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Deletes the specified entity in a table.
+        """Adds a delete operation to the current branch.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
@@ -404,18 +439,16 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises: ValueError
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_insert_delete_entities.py
-                :start-after: [START delete_entity]
-                :end-before: [END delete_entity]
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Deleting an entity to a Table
+                :caption: Creating and adding an entity to a Table
         """
         if self._partition_key:
             if partition_key != self._partition_key:
@@ -522,24 +555,22 @@ class TableBatchOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Update/Merge or Insert entity into table.
+        """Adds an upsert (update/merge) operation to the batch.
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises: ValueError
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_update_upsert_merge_entities.py
-                :start-after: [START upsert_entity]
-                :end-before: [END upsert_entity]
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
                 :language: python
                 :dedent: 8
-                :caption: Update/merge or insert an entity into a table
+                :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
 
@@ -567,6 +598,22 @@ class TableBatchOperations(object):
 
     def send_batch(self, **kwargs):
         # (...) -> BatchTransactionResult:
+        """ Sends the operations of a batch to the service as a single request
+
+        :returns: A BatchTransactionResult object
+        :rtype: ~azure.data.tables.BatchTransactionResult
+        :raises: azure.data.tables.BatchErrorException
+        :raises: azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Creating and adding an entity to a Table
+        """
         return self._batch_send(**kwargs)
 
 

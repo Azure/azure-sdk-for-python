@@ -85,7 +85,6 @@ class TableTestAsync(AsyncTableTestCase):
         # Assert
         self.assertIsInstance(created, TableClient)
         # self.assertEqual(len(existing), 1)
-        # TODO: the AsyncItemPaged does not have a length property, and cannot be used as an iterator
         await ts.delete_table(table_name=table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
