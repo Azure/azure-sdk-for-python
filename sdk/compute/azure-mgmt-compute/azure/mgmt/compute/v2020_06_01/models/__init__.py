@@ -141,6 +141,11 @@ try:
     from ._models_py3 import VirtualMachineListResult
     from ._models_py3 import VirtualMachinePatchStatus
     from ._models_py3 import VirtualMachineReimageParameters
+    from ._models_py3 import VirtualMachineRunCommand
+    from ._models_py3 import VirtualMachineRunCommandInstanceView
+    from ._models_py3 import VirtualMachineRunCommandScriptSource
+    from ._models_py3 import VirtualMachineRunCommandUpdate
+    from ._models_py3 import VirtualMachineRunCommandsListResult
     from ._models_py3 import VirtualMachineScaleSet
     from ._models_py3 import VirtualMachineScaleSetDataDisk
     from ._models_py3 import VirtualMachineScaleSetExtension
@@ -330,6 +335,11 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineListResult  # type: ignore
     from ._models import VirtualMachinePatchStatus  # type: ignore
     from ._models import VirtualMachineReimageParameters  # type: ignore
+    from ._models import VirtualMachineRunCommand  # type: ignore
+    from ._models import VirtualMachineRunCommandInstanceView  # type: ignore
+    from ._models import VirtualMachineRunCommandScriptSource  # type: ignore
+    from ._models import VirtualMachineRunCommandUpdate  # type: ignore
+    from ._models import VirtualMachineRunCommandsListResult  # type: ignore
     from ._models import VirtualMachineScaleSet  # type: ignore
     from ._models import VirtualMachineScaleSetDataDisk  # type: ignore
     from ._models import VirtualMachineScaleSetExtension  # type: ignore
@@ -392,6 +402,7 @@ from ._compute_management_client_enums import (
     DiffDiskOptions,
     DiffDiskPlacement,
     DiskCreateOptionTypes,
+    ExecutionState,
     HyperVGenerationType,
     HyperVGenerationTypes,
     IPVersion,
@@ -561,6 +572,11 @@ __all__ = [
     'VirtualMachineListResult',
     'VirtualMachinePatchStatus',
     'VirtualMachineReimageParameters',
+    'VirtualMachineRunCommand',
+    'VirtualMachineRunCommandInstanceView',
+    'VirtualMachineRunCommandScriptSource',
+    'VirtualMachineRunCommandUpdate',
+    'VirtualMachineRunCommandsListResult',
     'VirtualMachineScaleSet',
     'VirtualMachineScaleSetDataDisk',
     'VirtualMachineScaleSetExtension',
@@ -621,6 +637,7 @@ __all__ = [
     'DiffDiskOptions',
     'DiffDiskPlacement',
     'DiskCreateOptionTypes',
+    'ExecutionState',
     'HyperVGenerationType',
     'HyperVGenerationTypes',
     'IPVersion',
