@@ -42,6 +42,7 @@ stages:
         SkipPythonVersion: ${{parameters.SkipPythonVersion}}
         AdditionalTestMatrix: ${{parameters.AdditionalTestMatrix}}
         DevFeedName: ${{parameters.DevFeedName}}
+        Artifacts: ${{ parameters.Artifacts }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -49,7 +50,7 @@ stages:
       parameters:
         DependsOn: Build
         ServiceDirectory: ${{parameters.ServiceDirectory}}
-        Artifacts: ${{parameters.Artifacts}}
+        Artifacts: ${{ parameters.Artifacts }}
         ArtifactName: packages
         DocArtifact: documentation
         TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}

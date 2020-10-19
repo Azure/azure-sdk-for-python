@@ -3,15 +3,10 @@ parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
   AdditionalTestArgs: ''
+  Artifacts: []
 
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
-
-  - task: PythonScript@0
-    displayName: 'Verify Change Log'
-    inputs:
-     scriptPath: 'scripts/devops_tasks/verify_change_log.py'
-     arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
 
     # Using --always-succeed so as not to block the build. Once package
     # target is based on data available per-package the --always-succeed should

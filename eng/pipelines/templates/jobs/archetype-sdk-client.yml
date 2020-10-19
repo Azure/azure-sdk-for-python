@@ -8,6 +8,7 @@ parameters:
   InjectedPackages: ''
   BuildDocs: true
   SkipPythonVersion: ''
+  Artifacts: []
   TestMatrix:
     Linux_Python27:
       OSVmImage: 'ubuntu-18.04'
@@ -88,6 +89,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
