@@ -358,14 +358,15 @@ class ApplicationDefinitionsOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions'}
 
     def get_by_id(
-            self, application_definition_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, application_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the
-         managed application definition, including the managed application name
-         and the managed application definition resource type. Use the format,
-         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed
+         application definition.
+        :type application_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -381,7 +382,9 @@ class ApplicationDefinitionsOperations(object):
         # Construct URL
         url = self.get_by_id.metadata['url']
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True)
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -415,15 +418,17 @@ class ApplicationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_id.metadata = {'url': '/{applicationDefinitionId}'}
+    get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}
 
 
     def _delete_by_id_initial(
-            self, application_definition_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, application_definition_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_by_id.metadata['url']
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True)
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -452,14 +457,15 @@ class ApplicationDefinitionsOperations(object):
             return client_raw_response
 
     def delete_by_id(
-            self, application_definition_id, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, application_definition_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the
-         managed application definition, including the managed application name
-         and the managed application definition resource type. Use the format,
-         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed
+         application definition.
+        :type application_definition_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -473,7 +479,8 @@ class ApplicationDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         raw_result = self._delete_by_id_initial(
-            application_definition_id=application_definition_id,
+            resource_group_name=resource_group_name,
+            application_definition_name=application_definition_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -491,15 +498,17 @@ class ApplicationDefinitionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_by_id.metadata = {'url': '/{applicationDefinitionId}'}
+    delete_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}
 
 
     def _create_or_update_by_id_initial(
-            self, application_definition_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, application_definition_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update_by_id.metadata['url']
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True)
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -542,14 +551,15 @@ class ApplicationDefinitionsOperations(object):
         return deserialized
 
     def create_or_update_by_id(
-            self, application_definition_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, application_definition_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates a new managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the
-         managed application definition, including the managed application name
-         and the managed application definition resource type. Use the format,
-         /subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed
+         application definition.
+        :type application_definition_name: str
         :param parameters: Parameters supplied to the create or update a
          managed application definition.
         :type parameters:
@@ -569,7 +579,8 @@ class ApplicationDefinitionsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.resource.managedapplications.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_by_id_initial(
-            application_definition_id=application_definition_id,
+            resource_group_name=resource_group_name,
+            application_definition_name=application_definition_name,
             parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
@@ -592,4 +603,4 @@ class ApplicationDefinitionsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update_by_id.metadata = {'url': '/{applicationDefinitionId}'}
+    create_or_update_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}

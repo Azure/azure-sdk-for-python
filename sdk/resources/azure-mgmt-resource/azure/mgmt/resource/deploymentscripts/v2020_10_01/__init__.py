@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._applications_operations import ApplicationsOperations
-from ._application_definitions_operations import ApplicationDefinitionsOperations
-from ._application_client_operations import ApplicationClientOperationsMixin
+from ._configuration import DeploymentScriptsClientConfiguration
+from ._deployment_scripts_client import DeploymentScriptsClient
+__all__ = ['DeploymentScriptsClient', 'DeploymentScriptsClientConfiguration']
 
-__all__ = [
-    'ApplicationsOperations',
-    'ApplicationDefinitionsOperations',
-    'ApplicationClientOperationsMixin',
-]
+from .version import VERSION
+
+__version__ = VERSION
+
