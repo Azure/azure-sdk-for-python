@@ -126,7 +126,7 @@ from ._compute_management_client_enums import (
     StorageAccountType,
     HostCaching,
     SharingUpdateOperationTypes,
-    Permissions,
+    SelectPermissions,
     ReplicationStatusTypes,
     SharedToValues,
 )
@@ -198,7 +198,7 @@ __all__ = [
     'StorageAccountType',
     'HostCaching',
     'SharingUpdateOperationTypes',
-    'Permissions',
+    'SelectPermissions',
     'ReplicationStatusTypes',
     'SharedToValues',
 ]
