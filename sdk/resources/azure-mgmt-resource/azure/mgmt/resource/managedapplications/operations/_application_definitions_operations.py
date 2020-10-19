@@ -414,17 +414,17 @@ class ApplicationDefinitionsOperations(object):
 
     def get_by_id(
         self,
-        application_definition_id,  # type: str
+        resource_group_name,  # type: str
+        application_definition_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["models.ApplicationDefinition"]
         """Gets the managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the managed application definition,
-         including the managed application name and the managed application definition resource type.
-         Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}.
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed application definition.
+        :type application_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationDefinition, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition or None
@@ -441,7 +441,9 @@ class ApplicationDefinitionsOperations(object):
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -470,11 +472,12 @@ class ApplicationDefinitionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_by_id.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     def _delete_by_id_initial(
         self,
-        application_definition_id,  # type: str
+        resource_group_name,  # type: str
+        application_definition_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -489,7 +492,9 @@ class ApplicationDefinitionsOperations(object):
         # Construct URL
         url = self._delete_by_id_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -513,21 +518,21 @@ class ApplicationDefinitionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_by_id_initial.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    _delete_by_id_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     def begin_delete_by_id(
         self,
-        application_definition_id,  # type: str
+        resource_group_name,  # type: str
+        application_definition_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
         """Deletes the managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the managed application definition,
-         including the managed application name and the managed application definition resource type.
-         Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}.
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed application definition.
+        :type application_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -547,7 +552,8 @@ class ApplicationDefinitionsOperations(object):
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._delete_by_id_initial(
-                application_definition_id=application_definition_id,
+                resource_group_name=resource_group_name,
+                application_definition_name=application_definition_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -571,11 +577,12 @@ class ApplicationDefinitionsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete_by_id.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    begin_delete_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     def _create_or_update_by_id_initial(
         self,
-        application_definition_id,  # type: str
+        resource_group_name,  # type: str
+        application_definition_name,  # type: str
         parameters,  # type: "models.ApplicationDefinition"
         **kwargs  # type: Any
     ):
@@ -592,7 +599,9 @@ class ApplicationDefinitionsOperations(object):
         # Construct URL
         url = self._create_or_update_by_id_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'applicationDefinitionId': self._serialize.url("application_definition_id", application_definition_id, 'str', skip_quote=True),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationDefinitionName': self._serialize.url("application_definition_name", application_definition_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -627,22 +636,22 @@ class ApplicationDefinitionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_by_id_initial.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    _create_or_update_by_id_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
 
     def begin_create_or_update_by_id(
         self,
-        application_definition_id,  # type: str
+        resource_group_name,  # type: str
+        application_definition_name,  # type: str
         parameters,  # type: "models.ApplicationDefinition"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["models.ApplicationDefinition"]
         """Creates a new managed application definition.
 
-        :param application_definition_id: The fully qualified ID of the managed application definition,
-         including the managed application name and the managed application definition resource type.
-         Use the format, /subscriptions/{guid}/resourceGroups/{resource-group-
-         name}/Microsoft.Solutions/applicationDefinitions/{applicationDefinition-name}.
-        :type application_definition_id: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param application_definition_name: The name of the managed application definition.
+        :type application_definition_name: str
         :param parameters: Parameters supplied to the create or update a managed application
          definition.
         :type parameters: ~azure.mgmt.resource.managedapplications.models.ApplicationDefinition
@@ -665,7 +674,8 @@ class ApplicationDefinitionsOperations(object):
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._create_or_update_by_id_initial(
-                application_definition_id=application_definition_id,
+                resource_group_name=resource_group_name,
+                application_definition_name=application_definition_name,
                 parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -693,4 +703,4 @@ class ApplicationDefinitionsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update_by_id.metadata = {'url': '/{applicationDefinitionId}'}  # type: ignore
+    begin_create_or_update_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Solutions/applicationDefinitions/{applicationDefinitionName}'}  # type: ignore
