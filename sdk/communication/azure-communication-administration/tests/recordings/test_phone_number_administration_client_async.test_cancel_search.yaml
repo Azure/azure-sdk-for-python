@@ -3,9 +3,9 @@ interactions:
     body: ''
     headers:
       Date:
-      - Sat, 10 Oct 2020 02:21:03 GMT
+      - Mon, 19 Oct 2020 17:17:31 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Sat, 10 Oct 2020 02:21:02 GMT
-      ms-cv: S0C//fSJm0WSuLAGwi42LA.0
-      x-processing-time: 265ms
+      date: Mon, 19 Oct 2020 17:17:32 GMT
+      ms-cv: zFZGv5iF6kinmMSvQYGBYQ.0
+      x-processing-time: 1062ms
     status:
       code: 202
       message: Accepted

@@ -219,9 +219,9 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
     @pytest.mark.live_test_only
     def test_release_phone_numbers(self):
         poller = self._phone_number_administration_client.begin_release_phone_numbers(
-            [self.phonenumber_to_release]
+            phone_numbers=[self.phonenumber_to_release]
         )
-        assert not poller.status()
+        assert poller.result()
 
     @pytest.mark.live_test_only
     def test_get_search_by_id(self):
@@ -242,7 +242,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         poller = self._phone_number_administration_client.begin_reserve_phone_numbers(
             body=searchOptions
         )
-        assert poller.status()
+        assert poller.result()
 
     @pytest.mark.live_test_only
     def test_cancel_search(self):
@@ -256,4 +256,4 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         poller = self._phone_number_administration_client.begin_purchase_reservation(
             search_id=self.search_id_to_purchase
         )
-        assert not poller.status()
+        assert poller.result()

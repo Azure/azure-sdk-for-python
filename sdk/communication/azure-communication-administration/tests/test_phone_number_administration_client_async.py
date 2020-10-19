@@ -269,9 +269,10 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
     async def test_release_phone_numbers(self):
         async with self._phone_number_administration_client:
             poller = await self._phone_number_administration_client.begin_release_phone_numbers(
-                [self.phonenumber_to_release]
+                phone_numbers=[self.phonenumber_to_release]
             )
-        assert not poller.status()
+            result = await poller.result()
+        assert result
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -296,7 +297,8 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             poller = await self._phone_number_administration_client.begin_reserve_phone_numbers(
                 body=searchOptions
             )
-        assert not poller.status()
+            result = await poller.result()
+        assert result
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -314,4 +316,5 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             poller = await self._phone_number_administration_client.begin_purchase_reservation(
                 search_id=self.search_id_to_purchase
             )
-        assert not poller.status()
+            result = await poller.result()
+        assert result

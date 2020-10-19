@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 10 Oct 2020 02:20:54 GMT
+      - Mon, 19 Oct 2020 17:13:59 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -27,13 +27,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 10 Oct 2020 02:20:55 GMT
+      - Mon, 19 Oct 2020 17:13:58 GMT
       ms-cv:
-      - U8yvCboQLkaGeO0j5SolRw.0
+      - JMhYUT5VQkek8sE17zDwRQ.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 467ms
+      - 296ms
     status:
       code: 200
       message: OK

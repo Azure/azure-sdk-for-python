@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"phoneNumbers": "sanitized"}'
+    body: 'b''{"phoneNumbers": ["+1area_code_for_search7840394"]}'''
     headers:
       Accept:
       - application/json
@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 10 Oct 2020 02:21:01 GMT
+      - Mon, 19 Oct 2020 17:14:07 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -26,13 +26,116 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 10 Oct 2020 02:21:01 GMT
+      - Mon, 19 Oct 2020 17:14:08 GMT
       ms-cv:
-      - E0nSh9NvQE+M0euiVHCmyg.0
+      - fGbnyHDpjkWq7yvV/V3jMg.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 583ms
+      - 1737ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 19 Oct 2020 17:14:09 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/ca59d11c-4025-4676-add2-f3f5b0f4ec78?api-version=2020-07-20-preview1
+  response:
+    body: '{"releaseId": "sanitized", "createdAt": "2020-10-19T17:14:08.8489737+00:00",
+      "status": "Pending", "phoneNumberReleaseStatusDetails": "sanitized"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 17:14:08 GMT
+      ms-cv:
+      - rYkAZmW98Uav8w7ZbQsNkg.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 260ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 19 Oct 2020 17:14:09 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/ca59d11c-4025-4676-add2-f3f5b0f4ec78?api-version=2020-07-20-preview1
+  response:
+    body: '{"releaseId": "sanitized", "createdAt": "2020-10-19T17:14:08.8489737+00:00",
+      "status": "Pending", "phoneNumberReleaseStatusDetails": "sanitized"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 17:14:09 GMT
+      ms-cv:
+      - YBO5fG88DEenEiqo1WJTMQ.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 185ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 19 Oct 2020 17:14:14 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/ca59d11c-4025-4676-add2-f3f5b0f4ec78?api-version=2020-07-20-preview1
+  response:
+    body: '{"releaseId": "sanitized", "createdAt": "2020-10-19T17:14:08.8489737+00:00",
+      "status": "Failed", "errorMessage": "Unknown exception in BeginReleaseQueueProcessor
+      : No acquired numbers to process", "phoneNumberReleaseStatusDetails": "sanitized"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 19 Oct 2020 17:14:14 GMT
+      ms-cv:
+      - hZYAipSeLU+rBjpr1kuemA.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 286ms
     status:
       code: 200
       message: OK
