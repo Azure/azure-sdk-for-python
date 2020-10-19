@@ -1550,6 +1550,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert message.scheduled_enqueue_time_utc == new_scheduled_time
 
         message.partition_key = None
+        message.via_partition_key = None
         message.scheduled_enqueue_time_utc = None
 
         assert message.partition_key is None
