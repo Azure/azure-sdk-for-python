@@ -1558,3 +1558,20 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                 message = (await receiver.receive_messages(max_wait_time=6))[0]
                 await message.complete()
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_async_send_message_no_body(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string) as sb_client:
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send_messages(Message())
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name,  
+                                            max_wait_time=10) as receiver:
+                message = await receiver.__anext__()
+                assert message.body is None

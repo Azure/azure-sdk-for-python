@@ -2032,7 +2032,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_send_message_no_body(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False)
+            servicebus_namespace_connection_string)
 
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
             sender.send_messages(Message())
