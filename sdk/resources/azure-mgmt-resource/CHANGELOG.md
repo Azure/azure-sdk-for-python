@@ -1,5 +1,15 @@
 # Release History
 
+## 10.3.0 (2020-10-16)
+
+**Features**
+
+  - Added operation ProvidersOperations.register_at_management_group_scope
+  - Added operation ApplicationDefinitionsOperations.get_by_id
+  - Added operation ApplicationDefinitionsOperations.create_or_update_by_id
+  - Added operation ApplicationDefinitionsOperations.delete_by_id
+  - Added operation group ApplicationClientOperationsMixin
+
 ## 10.2.0 (2020-08-03)
 
 **Features**
