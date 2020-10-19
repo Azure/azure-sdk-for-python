@@ -454,7 +454,7 @@ class DigitalTwinsClient(object):
         results_per_page = kwargs.pop('results_per_page', None)
         digital_twin_models_list_options = None
         if results_per_page is not None:
-            digital_twin_models_list_options= {'max_item_count': results_per_page}
+            digital_twin_models_list_options = {'max_item_count': results_per_page}
 
         return self._client.digital_twin_models.list(
             dependencies_for=dependencies_for,
