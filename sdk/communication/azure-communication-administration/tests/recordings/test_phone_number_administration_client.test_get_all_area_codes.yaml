@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:13:59 GMT
+      - Tue, 20 Oct 2020 17:54:22 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -21,19 +21,19 @@ interactions:
     method: POST
     uri: https://sanitized.communication.azure.com/administration/phonenumbers/countries/US/areacodes?locationType=NotRequired&phonePlanId=phone_plan_id_area_codes&api-version=2020-07-20-preview1
   response:
-    body: '{"primaryAreaCodes": ["area_code_for_search"], "secondaryAreaCodes": [],
-      "nextLink": null}'
+    body: '{"primaryAreaCodes": ["area_code_for_reservation"], "secondaryAreaCodes":
+      [], "nextLink": null}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:13:58 GMT
+      - Tue, 20 Oct 2020 17:54:22 GMT
       ms-cv:
-      - JMhYUT5VQkek8sE17zDwRQ.0
+      - b8HcK8cf/km+umjvjymCiA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 296ms
+      - 632ms
     status:
       code: 200
       message: OK

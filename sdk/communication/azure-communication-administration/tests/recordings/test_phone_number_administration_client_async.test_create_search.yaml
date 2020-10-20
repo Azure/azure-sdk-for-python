@@ -1,17 +1,17 @@
 interactions:
 - request:
-    body: 'b''b\''{"displayName": "testsearch20200014", "description": "testsearch20200014",
-      "phonePlanIds": ["phone_plan_id"], "areaCode": "area_code_for_search", "quantity":
-      1}\'''''
+    body: 'b''b\''{"displayName": "testreservation20200014", "description": "testreservation20200014",
+      "phonePlanIds": ["phone_plan_id"], "areaCode": "area_code_for_reservation",
+      "quantity": 1}\'''''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '166'
+      - '176'
       Content-Type:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:17:33 GMT
+      - Tue, 20 Oct 2020 17:55:03 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -22,10 +22,10 @@ interactions:
     body: '{"searchId": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Oct 2020 17:17:34 GMT
-      ms-cv: hS5TUMkNlkqTUzdi9/fh3w.0
+      date: Tue, 20 Oct 2020 17:55:04 GMT
+      ms-cv: p/rd6jbhEk2LujnytXCS4g.0
       transfer-encoding: chunked
-      x-processing-time: 1795ms
+      x-processing-time: 788ms
     status:
       code: 201
       message: Created
@@ -36,24 +36,24 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:17:35 GMT
+      - Tue, 20 Oct 2020 17:55:04 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/f68b7886-19a5-4766-bf7e-d99a5a776776?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/9996676b-649d-402e-9997-cf38d1477186?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:17:33.7627997+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "Pending", "phoneNumbers": "sanitized"}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:55:04.0382658+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Oct 2020 17:17:35 GMT
-      ms-cv: BjEx8uIla0WmOwbTLVbHAw.0
+      date: Tue, 20 Oct 2020 17:55:04 GMT
+      ms-cv: 1X0wvotHD0ugZZqoSp45xw.0
       transfer-encoding: chunked
-      x-processing-time: 517ms
+      x-processing-time: 288ms
     status:
       code: 200
       message: OK
@@ -64,24 +64,24 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:17:35 GMT
+      - Tue, 20 Oct 2020 17:55:04 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/f68b7886-19a5-4766-bf7e-d99a5a776776?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/9996676b-649d-402e-9997-cf38d1477186?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:17:33.7627997+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "Pending", "phoneNumbers": "sanitized"}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:55:04.0382658+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Oct 2020 17:17:35 GMT
-      ms-cv: P+e0hJHLpUqxYg7uPF6WCA.0
+      date: Tue, 20 Oct 2020 17:55:04 GMT
+      ms-cv: U4akd5ne80OhooaZtXA6xw.0
       transfer-encoding: chunked
-      x-processing-time: 321ms
+      x-processing-time: 301ms
     status:
       code: 200
       message: OK
@@ -92,24 +92,24 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:17:41 GMT
+      - Tue, 20 Oct 2020 17:55:10 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/f68b7886-19a5-4766-bf7e-d99a5a776776?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/9996676b-649d-402e-9997-cf38d1477186?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:17:33.7627997+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "Pending", "phoneNumbers": "sanitized"}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:55:04.0382658+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "InProgress", "phoneNumbers": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Oct 2020 17:17:41 GMT
-      ms-cv: wwhzKUgQ70a/u5RebgVNgg.0
+      date: Tue, 20 Oct 2020 17:55:10 GMT
+      ms-cv: 3sGKvGG44EWQVcQqCkC8dQ.0
       transfer-encoding: chunked
-      x-processing-time: 640ms
+      x-processing-time: 295ms
     status:
       code: 200
       message: OK
@@ -120,24 +120,25 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:17:46 GMT
+      - Tue, 20 Oct 2020 17:55:15 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/f68b7886-19a5-4766-bf7e-d99a5a776776?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/9996676b-649d-402e-9997-cf38d1477186?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:17:33.7627997+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "Error", "phoneNumbers": "sanitized", "errorCode": 1000}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:55:04.0382658+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Error", "phoneNumbers": "sanitized", "errorCode":
+      1000}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 19 Oct 2020 17:17:46 GMT
-      ms-cv: ZcqoOoHTm06k+55AvAitvQ.0
+      date: Tue, 20 Oct 2020 17:55:15 GMT
+      ms-cv: l3ZCAOQKs0GayjUzop1sAg.0
       transfer-encoding: chunked
-      x-processing-time: 337ms
+      x-processing-time: 291ms
     status:
       code: 200
       message: OK

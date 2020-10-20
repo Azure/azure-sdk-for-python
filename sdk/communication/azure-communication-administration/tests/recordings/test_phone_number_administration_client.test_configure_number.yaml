@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: 'b''{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
-      "ApplicationId"}, "phoneNumber": "+1area_code_for_search7840394"}'''
+      "ApplicationId"}, "phoneNumber": "+1area_code_for_reservation7840394"}'''
     headers:
       Accept:
       - '*/*'
@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:13:45 GMT
+      - Tue, 20 Oct 2020 17:53:34 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -28,11 +28,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 19 Oct 2020 17:13:45 GMT
+      - Tue, 20 Oct 2020 17:53:35 GMT
       ms-cv:
-      - Y5nee4Wz3k282vGB0DeMZg.0
+      - RXf7XVM+hUS1Nk2NOrxtCg.0
       x-processing-time:
-      - 486ms
+      - 1126ms
     status:
       code: 200
       message: OK

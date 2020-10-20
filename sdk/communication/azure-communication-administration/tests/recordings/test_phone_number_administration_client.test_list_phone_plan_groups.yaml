@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 19 Oct 2020 17:14:03 GMT
+      - Tue, 20 Oct 2020 17:54:30 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -22,13 +22,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:14:04 GMT
+      - Tue, 20 Oct 2020 17:54:30 GMT
       ms-cv:
-      - QPaVLTCLLkuDhwCYARpepQ.0
+      - oti3BOdIiEWvYkpuMgM1KA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 680ms
+      - 964ms
     status:
       code: 200
       message: OK

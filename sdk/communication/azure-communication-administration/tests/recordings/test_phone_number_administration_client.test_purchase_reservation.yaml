@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 19 Oct 2020 17:14:06 GMT
+      - Tue, 20 Oct 2020 17:54:32 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/search_id/purchase?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/reservation_id/purchase?api-version=2020-07-20-preview1
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 19 Oct 2020 17:14:06 GMT
+      - Tue, 20 Oct 2020 17:54:32 GMT
       ms-cv:
-      - hTg0bTfZeU+MtZxNAmbLTQ.0
+      - AHn5wwlcgUSQUcOubuJ08Q.0
       x-processing-time:
-      - 287ms
+      - 365ms
     status:
       code: 202
       message: Accepted
@@ -43,30 +43,30 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 19 Oct 2020 17:14:07 GMT
+      - Tue, 20 Oct 2020 17:54:33 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/search_id?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/reservation_id?api-version=2020-07-20-preview1
   response:
     body: '{"searchId": "sanitized", "displayName": "mysearch20200928", "createdAt":
       "2020-10-02T21:39:32.6878583+00:00", "description": "mydescription", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
+      "sanitized", "areaCode": "area_code_for_reservation", "quantity": 1, "locationOptions":
       [], "status": "Success", "phoneNumbers": "sanitized", "reservationExpiryDate":
       "2020-10-02T21:55:47.9734151+00:00"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:14:06 GMT
+      - Tue, 20 Oct 2020 17:54:32 GMT
       ms-cv:
-      - RsAuXFVIaUOeUy+vnRwmFQ.0
+      - v+HM71avZEWSEQOrL6w06A.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 296ms
+      - 289ms
     status:
       code: 200
       message: OK

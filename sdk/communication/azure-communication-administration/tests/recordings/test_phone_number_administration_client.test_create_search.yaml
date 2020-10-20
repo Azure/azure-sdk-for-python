@@ -1,8 +1,8 @@
 interactions:
 - request:
-    body: 'b''b\''{"displayName": "testsearch20200014", "description": "testsearch20200014",
-      "phonePlanIds": ["phone_plan_id"], "areaCode": "area_code_for_search", "quantity":
-      1}\'''''
+    body: 'b''b\''{"displayName": "testreservation20200014", "description": "testreservation20200014",
+      "phonePlanIds": ["phone_plan_id"], "areaCode": "area_code_for_reservation",
+      "quantity": 1}\'''''
     headers:
       Accept:
       - application/json
@@ -11,11 +11,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '166'
+      - '176'
       Content-Type:
       - application/json
       Date:
-      - Mon, 19 Oct 2020 17:13:46 GMT
+      - Tue, 20 Oct 2020 17:53:36 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -28,13 +28,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:13:47 GMT
+      - Tue, 20 Oct 2020 17:53:43 GMT
       ms-cv:
-      - dOilIGjyhEyTzEcV7qWXoA.0
+      - Rtmp0viYd0aLofaS4CT+vA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 831ms
+      - 7748ms
     status:
       code: 201
       message: Created
@@ -48,29 +48,29 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 19 Oct 2020 17:13:47 GMT
+      - Tue, 20 Oct 2020 17:53:44 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/145a6db2-1c3f-4543-b5c2-74b99fe79f3c?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:13:46.8606366+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "Pending", "phoneNumbers": "sanitized"}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:13:47 GMT
+      - Tue, 20 Oct 2020 17:53:49 GMT
       ms-cv:
-      - WRiM+No44EOUo69RISxMSg.0
+      - ZQxEr45MOEi13zMYKDe8oQ.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 277ms
+      - 5699ms
     status:
       code: 200
       message: OK
@@ -84,29 +84,29 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 19 Oct 2020 17:13:47 GMT
+      - Tue, 20 Oct 2020 17:53:50 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/145a6db2-1c3f-4543-b5c2-74b99fe79f3c?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:13:46.8606366+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "Pending", "phoneNumbers": "sanitized"}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:13:47 GMT
+      - Tue, 20 Oct 2020 17:53:49 GMT
       ms-cv:
-      - lx7iL1+Zj06eD0SeP2QZMA.0
+      - SzLQhTpVJk63h+bK+dBawQ.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 425ms
+      - 301ms
     status:
       code: 200
       message: OK
@@ -120,29 +120,29 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 19 Oct 2020 17:13:53 GMT
+      - Tue, 20 Oct 2020 17:53:55 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/145a6db2-1c3f-4543-b5c2-74b99fe79f3c?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:13:46.8606366+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "InProgress", "phoneNumbers": "sanitized"}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:13:53 GMT
+      - Tue, 20 Oct 2020 17:53:55 GMT
       ms-cv:
-      - EfILYvHnaECjDFXxaiM4Nw.0
+      - 1LSyw0x2bkKHODwnx4ZTLg.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 266ms
+      - 325ms
     status:
       code: 200
       message: OK
@@ -156,29 +156,174 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 19 Oct 2020 17:13:58 GMT
+      - Tue, 20 Oct 2020 17:54:00 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/145a6db2-1c3f-4543-b5c2-74b99fe79f3c?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
   response:
-    body: '{"searchId": "sanitized", "displayName": "testsearch20200014", "createdAt":
-      "2020-10-19T17:13:46.8606366+00:00", "description": "testsearch20200014", "phonePlanIds":
-      "sanitized", "areaCode": "area_code_for_search", "quantity": 1, "locationOptions":
-      [], "status": "Error", "phoneNumbers": "sanitized", "errorCode": 1000}'
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 19 Oct 2020 17:13:58 GMT
+      - Tue, 20 Oct 2020 17:54:00 GMT
       ms-cv:
-      - Abi3bnlT50uKBsiSymImrQ.0
+      - MopMk4217Uul/Me8YpfbCQ.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 319ms
+      - 313ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 20 Oct 2020 17:54:06 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
+  response:
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 20 Oct 2020 17:54:05 GMT
+      ms-cv:
+      - Fkia568B3UCJ9wA2/HV0pw.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 298ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 20 Oct 2020 17:54:11 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
+  response:
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Pending", "phoneNumbers": "sanitized"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 20 Oct 2020 17:54:11 GMT
+      ms-cv:
+      - aztfkDPCskaNpCP+L1UPEw.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 300ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 20 Oct 2020 17:54:16 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
+  response:
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "InProgress", "phoneNumbers": "sanitized"}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 20 Oct 2020 17:54:16 GMT
+      ms-cv:
+      - /UJOhXLhhE2TgD3vNYekMg.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 306ms
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 20 Oct 2020 17:54:22 GMT
+      User-Agent:
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
+      x-ms-return-client-request-id:
+      - 'true'
+    method: GET
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/searches/455f65c5-90c6-44b0-98e3-f51a733deeee?api-version=2020-07-20-preview1
+  response:
+    body: '{"searchId": "sanitized", "displayName": "testreservation20200014", "createdAt":
+      "2020-10-20T17:53:42.9058498+00:00", "description": "testreservation20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_reservation", "quantity":
+      1, "locationOptions": [], "status": "Error", "phoneNumbers": "sanitized", "errorCode":
+      1000}'
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 20 Oct 2020 17:54:21 GMT
+      ms-cv:
+      - 4bAgVfjrQEu8ok6DnQapyA.0
+      transfer-encoding:
+      - chunked
+      x-processing-time:
+      - 302ms
     status:
       code: 200
       message: OK
