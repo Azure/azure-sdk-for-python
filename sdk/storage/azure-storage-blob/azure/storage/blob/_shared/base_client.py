@@ -236,7 +236,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             config.transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
-            config.headers_policy,
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
@@ -245,6 +244,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             RedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs),
             config.retry_policy,
+            config.headers_policy,
             self._credential_policy,
             config.logging_policy,
             StorageResponseHook(**kwargs),
