@@ -20,7 +20,6 @@ try:
     from ._models_py3 import TemplateSpecTemplateArtifact
     from ._models_py3 import TemplateSpecUpdateModel
     from ._models_py3 import TemplateSpecVersion
-    from ._models_py3 import TemplateSpecVersionInfo
     from ._models_py3 import TemplateSpecVersionUpdateModel
 except (SyntaxError, ImportError):
     from ._models import AzureResourceBase
@@ -33,13 +32,11 @@ except (SyntaxError, ImportError):
     from ._models import TemplateSpecTemplateArtifact
     from ._models import TemplateSpecUpdateModel
     from ._models import TemplateSpecVersion
-    from ._models import TemplateSpecVersionInfo
     from ._models import TemplateSpecVersionUpdateModel
 from ._paged_models import TemplateSpecPaged
 from ._paged_models import TemplateSpecVersionPaged
 from ._template_specs_client_enums import (
     CreatedByType,
-    TemplateSpecExpandKind,
 )
 
 __all__ = [
@@ -53,10 +50,8 @@ __all__ = [
     'TemplateSpecTemplateArtifact',
     'TemplateSpecUpdateModel',
     'TemplateSpecVersion',
-    'TemplateSpecVersionInfo',
     'TemplateSpecVersionUpdateModel',
     'TemplateSpecPaged',
     'TemplateSpecVersionPaged',
     'CreatedByType',
-    'TemplateSpecExpandKind',
 ]

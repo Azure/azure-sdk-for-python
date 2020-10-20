@@ -12,28 +12,28 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import ApplicationClientConfiguration
-from .operations import ApplicationClientOperationsMixin
-from .operations import ApplicationsOperations
-from .operations import ApplicationDefinitionsOperations
+from ._configuration import TemplateSpecsClientConfiguration
+from .operations import TemplateSpecsOperations
+from .operations import TemplateSpecVersionsOperations
 from . import models
 
 
-class ApplicationClient(ApplicationClientOperationsMixin, SDKClient):
-    """ARM applications
+class TemplateSpecsClient(SDKClient):
+    """The APIs listed in this specification can be used to manage Template Spec resources through the Azure Resource Manager.
 
     :ivar config: Configuration for client.
-    :vartype config: ApplicationClientConfiguration
+    :vartype config: TemplateSpecsClientConfiguration
 
-    :ivar applications: Applications operations
-    :vartype applications: azure.mgmt.resource.managedapplications.operations.ApplicationsOperations
-    :ivar application_definitions: ApplicationDefinitions operations
-    :vartype application_definitions: azure.mgmt.resource.managedapplications.operations.ApplicationDefinitionsOperations
+    :ivar template_specs: TemplateSpecs operations
+    :vartype template_specs: azure.mgmt.resource.templatespecs.v2020_10_01_preview.operations.TemplateSpecsOperations
+    :ivar template_spec_versions: TemplateSpecVersions operations
+    :vartype template_spec_versions: azure.mgmt.resource.templatespecs.v2020_10_01_preview.operations.TemplateSpecVersionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: Subscription Id which forms part of the URI for
+     every service call.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -41,15 +41,15 @@ class ApplicationClient(ApplicationClientOperationsMixin, SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = ApplicationClientConfiguration(credentials, subscription_id, base_url)
-        super(ApplicationClient, self).__init__(self.config.credentials, self.config)
+        self.config = TemplateSpecsClientConfiguration(credentials, subscription_id, base_url)
+        super(TemplateSpecsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-06-01'
+        self.api_version = '2020-10-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.applications = ApplicationsOperations(
+        self.template_specs = TemplateSpecsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.application_definitions = ApplicationDefinitionsOperations(
+        self.template_spec_versions = TemplateSpecVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

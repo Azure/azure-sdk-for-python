@@ -46,7 +46,7 @@ class DeploymentScriptsClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2019-10-01-preview'
+    DEFAULT_API_VERSION = '2020-10-01'
     _PROFILE_TAG = "azure.mgmt.resource.deploymentscripts.DeploymentScriptsClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -72,10 +72,18 @@ class DeploymentScriptsClient(MultiApiClientMixin, SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
+           * 2019-10-01-preview: :mod:`v2019_10_01_preview.models<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models>`
            * 2019-10-01-preview: :mod:`v2019_10_preview.models<azure.mgmt.resource.deploymentscripts.v2019_10_preview.models>`
+           * 2020-10-01: :mod:`v2020_10_01.models<azure.mgmt.resource.deploymentscripts.v2020_10_01.models>`
         """
         if api_version == '2019-10-01-preview':
+            from .v2019_10_01_preview import models
+            return models
+        elif api_version == '2019-10-01-preview':
             from .v2019_10_preview import models
+            return models
+        elif api_version == '2020-10-01':
+            from .v2020_10_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
 
@@ -83,11 +91,17 @@ class DeploymentScriptsClient(MultiApiClientMixin, SDKClient):
     def deployment_scripts(self):
         """Instance depends on the API version:
 
+           * 2019-10-01-preview: :class:`DeploymentScriptsOperations<azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.operations.DeploymentScriptsOperations>`
            * 2019-10-01-preview: :class:`DeploymentScriptsOperations<azure.mgmt.resource.deploymentscripts.v2019_10_preview.operations.DeploymentScriptsOperations>`
+           * 2020-10-01: :class:`DeploymentScriptsOperations<azure.mgmt.resource.deploymentscripts.v2020_10_01.operations.DeploymentScriptsOperations>`
         """
         api_version = self._get_api_version('deployment_scripts')
         if api_version == '2019-10-01-preview':
+            from .v2019_10_01_preview.operations import DeploymentScriptsOperations as OperationClass
+        elif api_version == '2019-10-01-preview':
             from .v2019_10_preview.operations import DeploymentScriptsOperations as OperationClass
+        elif api_version == '2020-10-01':
+            from .v2020_10_01.operations import DeploymentScriptsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
