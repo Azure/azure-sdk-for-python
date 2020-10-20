@@ -71,7 +71,10 @@ class EventHubError(AzureError):
                     self.message += "\n{}".format(detail)
             except:  # pylint: disable=bare-except
                 self.message += "\n{}".format(details)
-        super(EventHubError, self).__init__(self.message)
+        if details and isinstance(details, Exception):
+             super(EventHubError, self).__init__(self.message, error=details)
+        else:
+             super(EventHubError, self).__init__(self.message)
 
     def _parse_error(self, error_list):
         details = []
