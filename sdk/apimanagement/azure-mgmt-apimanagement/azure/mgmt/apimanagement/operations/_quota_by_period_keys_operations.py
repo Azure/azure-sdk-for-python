@@ -24,7 +24,7 @@ class QuotaByPeriodKeysOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class QuotaByPeriodKeysOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-06-01-preview"
 
         self.config = config
 
@@ -137,12 +137,13 @@ class QuotaByPeriodKeysOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :return: QuotaCounterContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.QuotaCounterContract or
+         ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.QuotaCounterValueContractProperties(calls_count=calls_count, kb_transferred=kb_transferred)
+        parameters = models.QuotaCounterValueUpdateContract(calls_count=calls_count, kb_transferred=kb_transferred)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -161,6 +162,7 @@ class QuotaByPeriodKeysOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -170,16 +172,22 @@ class QuotaByPeriodKeysOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'QuotaCounterValueContractProperties')
+        body_content = self._serialize.body(parameters, 'QuotaCounterValueUpdateContract')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('QuotaCounterContract', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
+
+        return deserialized
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/quotas/{quotaCounterKey}/periods/{quotaPeriodKey}'}
