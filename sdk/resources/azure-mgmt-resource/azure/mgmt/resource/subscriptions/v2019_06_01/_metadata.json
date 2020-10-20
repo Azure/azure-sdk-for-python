@@ -41,7 +41,7 @@
     "operation_groups": {
         "operations": "Operations",
         "subscriptions": "SubscriptionsOperations",
-        "tenants": "TenantsOperations"
+        "tenants": "TenantsOperations",
     },
     "operation_mixins": {
         "check_resource_name" : {
