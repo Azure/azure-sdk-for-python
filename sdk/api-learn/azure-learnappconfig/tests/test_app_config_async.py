@@ -1,15 +1,26 @@
+import pytest
 import asyncio
 import functools
 import os
 
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from devtools_testutils.azure_testcase import _is_autorest_v3
+from devtools_testutils import AzureTestCase
 
-from .testcase import AppConfigTestCase
+APP_CONFIG_URL = "https://fake-app-config-url.azconfig.io"
 
-class AsyncAppConfigTestCase(AppConfigTestCase):
+class AsyncAppConfigTestCase(AzureTestCase):
     def __init__(self, *args, **kwargs):
-        super(AppConfigTestCase, self).__init__(*args, **kwargs)
+        super(AsyncAppConfigTestCase, self).__init__(*args, **kwargs)
+        self.env_color = os.environ.get('API-LEARN_SETTING_COLOR_VALUE', "Green")
+        self.env_color_key = os.environ.get('API-LEARN_SETTING_COLOR_KEY', "FontColor")
+        self.env_greeting = os.environ.get('API-LEARN_SETTING_TEXT_VALUE', "Hello World!")
+        self.env_greeting_key = os.environ.get('API-LEARN_SETTING_TEXT_KEY', "Greeting")
+
+    def setUp(self):
+        super(AppConfigurationClientTest, self).setUp()
+        # Set the env variable AZURE_APP_CONFIG_URL or put APP_CONFIG_URL in your "mgmt_settings_real.py" file
+        self.app_config_url = self.set_value_to_scrub('APP_CONFIG_URL', APP_CONFIG_URL)
 
     class AsyncFakeCredential(object):
         # fake async credential
