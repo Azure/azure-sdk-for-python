@@ -12,7 +12,6 @@
   - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
-* `Message` now supports None as the body.
 
 **Breaking Changes**
 

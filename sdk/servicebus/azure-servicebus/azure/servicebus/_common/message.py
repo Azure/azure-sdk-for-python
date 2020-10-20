@@ -69,7 +69,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
-    :type body: Optional[Union[str, bytes]]
+    :type body: Union[str, bytes]
 
     :keyword dict properties: The user defined properties on the message.
     :keyword str session_id: The session identifier of the message for a sessionful entity.
@@ -100,8 +100,8 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
 
     """
 
-    def __init__(self, body=None, **kwargs):
-        # type: (Optional[Union[str, bytes]], Any) -> None
+    def __init__(self, body, **kwargs):
+        # type: (Union[str, bytes], Any) -> None
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", 'UTF-8')

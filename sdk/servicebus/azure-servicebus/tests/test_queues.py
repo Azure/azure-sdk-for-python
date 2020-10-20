@@ -2030,14 +2030,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_send_message_no_body(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string)
 
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-            sender.send_messages(Message())
+            sender.send_messages(Message(body=None))
 
         with sb_client.get_queue_receiver(servicebus_queue.name,  
                                           max_wait_time=10) as receiver:
             message = receiver.next()
             assert message.body is None
+            message.complete()
