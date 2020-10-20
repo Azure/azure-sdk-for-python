@@ -586,6 +586,8 @@ class Operation(Model):
      operation or action.
     :vartype display:
      ~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationDisplay
+    :param is_data_action: Indicates whether the operation is a data action
+    :type is_data_action: bool
     :ivar origin: The intended executor of the operation. Possible values
      include: 'NotSpecified', 'user', 'system'
     :vartype origin: str or
@@ -604,6 +606,7 @@ class Operation(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'origin': {'key': 'origin', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{object}'},
     }
@@ -612,6 +615,7 @@ class Operation(Model):
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
+        self.is_data_action = kwargs.get('is_data_action', None)
         self.origin = None
         self.properties = None
 
@@ -657,18 +661,24 @@ class OperationDisplay(Model):
 class OperationListResult(Model):
     """A list of resource provider operations.
 
-    :param value: The list of resource provider operations.
+    :param value: Collection of available operation details
     :type value:
      list[~azure.mgmt.rdbms.mysql_flexibleservers.models.Operation]
+    :param next_link: URL client should use to fetch the next page (per server
+     side paging).
+     It's null for now, added for future use.
+    :type next_link: str
     """
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(OperationListResult, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class Plan(Model):
