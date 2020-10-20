@@ -282,6 +282,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
 
         to_update = queue._to_internal_entity()
+        to_update.__dict__.update((k, v) for k, v in kwargs.items() if k in to_update.__dict__.keys()) 
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -484,7 +485,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
 
         to_update = topic._to_internal_entity()
-
+        to_update.__dict__.update((k, v) for k, v in kwargs.items() if k in to_update.__dict__.keys()) 
         to_update.default_message_time_to_live = kwargs.get(
             "default_message_time_to_live") or topic.default_message_time_to_live
         to_update.duplicate_detection_history_time_window = kwargs.get(
@@ -694,6 +695,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_entity_name_type(topic_name, display_name='topic_name')
 
         to_update = subscription._to_internal_entity()
+        to_update.__dict__.update((k, v) for k, v in kwargs.items() if k in to_update.__dict__.keys()) 
 
         to_update.default_message_time_to_live = avoid_timedelta_overflow(to_update.default_message_time_to_live)
         to_update.auto_delete_on_idle = avoid_timedelta_overflow(to_update.auto_delete_on_idle)
@@ -858,6 +860,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         to_update = rule._to_internal_entity()
+        to_update.__dict__.update((k, v) for k, v in kwargs.items() if k in to_update.__dict__.keys()) 
 
         create_entity_body = CreateRuleBody(
             content=CreateRuleBodyContent(
