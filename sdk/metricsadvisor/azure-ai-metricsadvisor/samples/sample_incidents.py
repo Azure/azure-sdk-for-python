@@ -10,7 +10,7 @@
 FILE: sample_incidents.py
 
 DESCRIPTION:
-    This sample demonstrates how to list incidents.
+    This sample demonstrates how to list incidents and root causes.
 
 USAGE:
     python sample_incidents.py
