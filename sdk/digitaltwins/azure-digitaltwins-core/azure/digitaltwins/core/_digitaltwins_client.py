@@ -19,7 +19,7 @@ from ._utils import (
 from ._generated import models
 from ._generated import AzureDigitalTwinsAPI
 
-class DigitalTwinsClient(object):
+class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-public-methods
     """Creates an instance of AzureDigitalTwinsAPI.
 
     :param str endpoint: The URL endpoint of an Azure search service
