@@ -30,7 +30,7 @@ from azure.storage.fileshare.aio import (
     ShareFileClient,
     ShareClient
 )
-from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
+from azure.storage.fileshare import DeleteSnapshotsOption
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import (
     LogCaptured,
@@ -169,6 +169,36 @@ class StorageShareTest(AsyncStorageTestCase):
         deleted = await share.delete_share(delete_snapshots=True)
         self.assertIsNone(deleted)
         await self._delete_shares(share.share_name)
+
+    @pytest.mark.skip("Share leased snapshots is not currently available.")
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_delete_share_with_leased_snapshots(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = self._get_share_reference()
+        await share.create_share()
+
+        snapshot1 = await share.create_snapshot()
+        snapshot2 = await share.create_snapshot()
+
+        snapshot2_client = ShareClient(
+            self.account_url(storage_account, "file"),
+            share_name=share.share_name,
+            snapshot=snapshot2,
+            credential=storage_account_key
+        )
+        await snapshot2_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            await share.delete_share()
+
+        with self.assertRaises(HttpResponseError):
+            await share.delete_share(DeleteSnapshotsOption.include)
+
+        deleted = await share.delete_share(DeleteSnapshotsOption.include_with_leased)
+        self.assertIsNone(deleted)
+        await self._delete_shares()
 
     @pytest.mark.playback_test_only
     @GlobalStorageAccountPreparer()

@@ -157,6 +157,7 @@ class StorageShareTest(StorageTestCase):
         self.assertIsNone(deleted)
         self._delete_shares()
 
+    @pytest.mark.skip("Share leased snapshots is not currently available.")
     @GlobalStorageAccountPreparer()
     def test_delete_share_with_leased_snapshots(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
