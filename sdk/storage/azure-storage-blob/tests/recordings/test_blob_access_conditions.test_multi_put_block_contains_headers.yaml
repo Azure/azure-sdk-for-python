@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.5.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 16 Oct 2020 20:45:31 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Oct 2020 20:45:29 GMT
+      - Tue, 20 Oct 2020 22:22:58 GMT
       etag:
-      - '"0x8D872146BD381BF"'
+      - '"0x8D87546B343A39E"'
       last-modified:
-      - Fri, 16 Oct 2020 20:45:30 GMT
+      - Tue, 20 Oct 2020 22:22:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       x-custom-header:
       - test_value
       x-ms-date:
-      - Fri, 16 Oct 2020 20:45:31 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -67,7 +67,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Oct 2020 20:45:29 GMT
+      - Tue, 20 Oct 2020 22:22:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -97,7 +97,7 @@ interactions:
       x-custom-header:
       - test_value
       x-ms-date:
-      - Fri, 16 Oct 2020 20:45:31 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -109,7 +109,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Oct 2020 20:45:30 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -139,7 +139,7 @@ interactions:
       x-custom-header:
       - test_value
       x-ms-date:
-      - Fri, 16 Oct 2020 20:45:31 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -151,7 +151,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Oct 2020 20:45:30 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -181,7 +181,7 @@ interactions:
       x-custom-header:
       - test_value
       x-ms-date:
-      - Fri, 16 Oct 2020 20:45:31 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -193,7 +193,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Oct 2020 20:45:30 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -227,7 +227,7 @@ interactions:
       x-custom-header:
       - test_value
       x-ms-date:
-      - Fri, 16 Oct 2020 20:45:31 GMT
+      - Tue, 20 Oct 2020 22:23:00 GMT
       x-ms-version:
       - '2019-12-12'
     method: PUT
@@ -239,11 +239,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Oct 2020 20:45:30 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       etag:
-      - '"0x8D872146C347E8B"'
+      - '"0x8D87546B3A2AFF8"'
       last-modified:
-      - Fri, 16 Oct 2020 20:45:31 GMT
+      - Tue, 20 Oct 2020 22:22:59 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
