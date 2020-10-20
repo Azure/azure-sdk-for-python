@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show usage of AutoLockRenew asynchronously:
+Example to show usage of AutoLockRenewer asynchronously:
     1. Automatically renew locks on messages received from non-sessionful entity
     2. Automatically renew locks on the session of sessionful entity
 """
@@ -17,7 +17,7 @@ import os
 import asyncio
 
 from azure.servicebus import Message
-from azure.servicebus.aio import ServiceBusClient, AutoLockRenew
+from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
 from azure.servicebus.exceptions import MessageLockExpired
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -34,8 +34,8 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
             await sender.send_messages(msgs_to_send)
             print('Send messages to non-sessionful queue.')
 
-        # Can also be called via "with AutoLockRenew() as renewer" to automate shutdown.
-        renewer = AutoLockRenew()
+        # Can also be called via "with AutoLockRenewer() as renewer" to automate shutdown.
+        renewer = AutoLockRenewer()
 
         async with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch_count=10) as receiver:
             received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
@@ -43,7 +43,7 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
                 renewer.register(msg, timeout=100)
-            print('Register messages into AutoLockRenew done.')
+            print('Register messages into AutoLockRenewer done.')
 
             await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
 
@@ -64,7 +64,7 @@ async def renew_lock_on_session_of_the_sessionful_entity():
             await sender.send_messages(msgs_to_send)
             print('Send messages to sessionful queue.')
 
-        renewer = AutoLockRenew()
+        renewer = AutoLockRenewer()
 
         async with servicebus_client.get_queue_session_receiver(
             queue_name=SESSION_QUEUE_NAME,
@@ -73,7 +73,7 @@ async def renew_lock_on_session_of_the_sessionful_entity():
         ) as receiver:
             # automatically renew the lock on the session for 100 seconds
             renewer.register(receiver.session, timeout=100)
-            print('Register session into AutoLockRenew.')
+            print('Register session into AutoLockRenewer.')
 
             received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
             await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
@@ -90,7 +90,7 @@ async def renew_lock_with_lock_renewal_failure_callback():
         async with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
             await sender.send_messages(Message("message"))
         
-        async with AutoLockRenew() as renewer:
+        async with AutoLockRenewer() as renewer:
             # For this sample we're going to set the renewal recurrence of the autolockrenewer to greater than the
             # service side message lock duration, to demonstrate failure.  Normally, this should not be adjusted.
             renewer._sleep_time = 40
@@ -109,7 +109,7 @@ async def renew_lock_with_lock_renewal_failure_callback():
                 for msg in received_msgs:
                     # automatically renew the lock on each message for 120 seconds
                     renewer.register(msg, timeout=90, on_lock_renew_failure=on_lock_renew_failure_callback)
-                print('Register messages into AutoLockRenew done.')
+                print('Register messages into AutoLockRenewer done.')
 
                 # Cause the messages and autorenewal to time out.
                 # Other reasons for renew failure could include a network or service outage.

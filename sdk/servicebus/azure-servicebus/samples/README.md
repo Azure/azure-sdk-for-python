@@ -37,7 +37,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - Receive messages by iterating over ServiceBusReceiver
 - [session_pool_receive.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/session_pool_receive_async.py)) - Examples to receive messages from multiple available sessions in parallel with a thread pool:
     - Receive messages from multiple available sessions in parallel with a thread pool
-    - Automatically renew the lock on the session through AutoLockRenew
+    - Automatically renew the lock on the session through AutoLockRenewer
 - [session_send_receive.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/session_send_receive_async.py)) - Examples to send messages to and receive messages from a session-enabled service bus queue:
     - Send messages to a session-enabled queue
     - Receive messages from session-enabled queue
@@ -53,7 +53,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - Authenticate and create the client utilizing the connection string available in the Azure portal or via Azure CLI.
 - [proxy.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/proxy.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/async_samples/proxy_async.py)) - Examples to send message behind a proxy:
     - Send message behind a proxy
-- [auto_lock_renew.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/auto_lock_renew_async.py)) - Examples to show usage of AutoLockRenew:
+- [auto_lock_renew.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/auto_lock_renew_async.py)) - Examples to show usage of AutoLockRenewer:
     - Automatically renew lock on message received from non-sessionful entity
     - Automatically renew lock on the session of sessionful entity
     - Configure a callback to be triggered on auto lock renew failures.

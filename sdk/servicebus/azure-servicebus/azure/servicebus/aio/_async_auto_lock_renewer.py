@@ -21,10 +21,10 @@ AsyncLockRenewFailureCallback = Callable[[Union[ServiceBusSession, ReceivedMessa
 _log = logging.getLogger(__name__)
 
 
-class AutoLockRenew:
+class AutoLockRenewer:
     """Auto lock renew.
 
-    An asynchronous AutoLockRenew handler for renewing the lock
+    An asynchronous AutoLockRenewer handler for renewing the lock
     tokens of messages and/or sessions in the background.
 
     :param loop: An async event loop.
@@ -55,9 +55,9 @@ class AutoLockRenew:
         self._sleep_time = 1
         self._renew_period = 10
 
-    async def __aenter__(self) -> "AutoLockRenew":
+    async def __aenter__(self) -> "AutoLockRenewer":
         if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+            raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         return self
 
@@ -131,7 +131,7 @@ class AutoLockRenew:
          :rtype: None
         """
         if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+            raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         renew_future = asyncio.ensure_future(
