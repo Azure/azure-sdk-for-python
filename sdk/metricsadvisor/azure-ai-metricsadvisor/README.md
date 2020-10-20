@@ -376,6 +376,64 @@ for result in results:
     print("Status: {}".format(result.status))
 ```
 
+### Query incidents
+
+We can query the incidents for a detection configuration.
+
+```py
+import datetime
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+anomaly_detection_configuration_id = os.getenv("DETECTION_CONFIGURATION_ID")
+
+client = MetricsAdvisorClient(service_endpoint,
+    MetricsAdvisorKeyCredential(subscription_key, api_key)
+)
+
+results = self.client.list_incidents_for_detection_configuration(
+            detection_configuration_id=self.anomaly_detection_configuration_id,
+            start_time=datetime.datetime(2020, 1, 1),
+            end_time=datetime.datetime(2020, 9, 9),
+        )
+for result in results:
+    print("Metric id: {}".format(result.metric_id))
+    print("Incident ID: {}".format(result.id))
+    print("Severity: {}".format(result.severity))
+    print("Status: {}".format(result.status))
+```
+
+### Query root causes
+
+We can also query the root causes of an incident
+
+```py
+import datetime
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+anomaly_detection_configuration_id = os.getenv("DETECTION_CONFIGURATION_ID")
+incident_id = os.getenv("INCIDENT_ID")
+
+client = MetricsAdvisorClient(service_endpoint,
+    MetricsAdvisorKeyCredential(subscription_key, api_key)
+)
+
+results = self.client.list_incident_root_causes(
+            detection_configuration_id=self.anomaly_detection_configuration_id,
+            incident_id=self.incident_id,
+        )
+for result in results:
+    print("Score: {}".format(result.score))
+    print("Description: {}".format(result.description))
+
+```
+
+
 ### Add hooks for receiving anomaly alerts
 
 We can add some hooks so when an alert is triggered, we can get call back.
