@@ -2,6 +2,9 @@
 
 ## 7.0.0b8 (Unreleased)
 
+**Breaking Changes**
+  - Renamed `AutoLockRenew` to `AutoLockRenewer`
+
 **New Features**
 
 * Added support for `timeout` parameter on the following operations:
