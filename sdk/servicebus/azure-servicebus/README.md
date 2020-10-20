@@ -371,19 +371,43 @@ a generator-style receive will run for before exiting if there are no messages. 
 
 The Service Bus APIs generate the following exceptions in azure.servicebus.exceptions:
 
-- **ServiceBusConnectionError:** An error occurred in the connection.
-- **ServiceBusAuthorizationError:** An error occurred when authorizing the connection.
-- **ServiceBusAuthenticationError:** An error occurred when authenticate the connection.
-- **NoActiveSession:** No active Sessions are available to receive from.
-- **OperationTimeoutError:** Service request operation timed out.
-- **MessageContentTooLarge:** Message content is larger than the service bus frame size.
-- **MessageAlreadySettled:** Failed to settle the message.
-- **MessageSettleFailed:** An attempt to settle a message failed.
-- **MessageSendFailed:** A message failed to send to the Service Bus entity.
-- **MessageLockExpired:** The lock on the message has expired and it has been released back to the queue. It will need to be received again in order to settle it.
-- **SessionLockExpired:** The lock on the session has expired. All unsettled messages that have been received can no longer be settled.
+- **ServiceBusConnectionError:** An error occurred in the connection to the service.
+This may have been caused by a transient network issue or service problem. It is recommended to retry.
+- **ServiceBusAuthorizationError:** An error occurred when authorizing the connection to the service.
+This may have been caused by the credentials not having the right permission to perform the operation.
+It is recommended to check the permission of the credentials.
+- **ServiceBusAuthenticationError:** An error occurred when authenticate the connection to the service.
+This may have been caused by the credentials being incorrect. It is recommended to check the credentials.
+- **NoActiveSession:** This indicates that there is no active sessions receive from.
+This may have been caused by all sessions in the entity have been occupied by other receiver instances.
+It is recommended to retry if necessary.
+- **OperationTimeoutError:** This indicates that the service did not respond to an operation within the expected amount of time.
+This may have been caused by a transient network issue or service problem. The service may or may not have successfully completed the request; the status is not known.
+It is recommended to attempt to verify the current state and retry if necessary.
+- **MessageContentTooLarge:** This indicate that the message content is larger than the service bus frame size.
+This could happen when too many service bus messages are sent in a batch or the content passed into
+the body of a `Message` is too large. It is recommended to reduce the count of messages being sent in a batch or the size of content being passed into a single `Message`. 
+- **MessageAlreadySettled:** This indicates failure to settle the message.
+This could happen when trying to settle an already-settled message.
+- **MessageSettleFailed:** The attempt to settle a message failed.
+This could happen when the service is unable to process the request.
+It is recommended to retry or receive and settle the message again.
+- **MessageSendFailed:** A message failed to be sent to the Service Bus entity.
+This could happen when the service is unable to process the request.
+It is recommended to retry, check the message content or reduce the count of messages in a batch.
+- **MessageLockExpired:** The lock on the message has expired and it has been released back to the queue.
+It will need to be received again in order to settle it.
+You should be aware of the lock duration of a message and keep renewing the lock before expiration in case of long processing time.
+`AutoLockRenewer` could help on keeping the lock of the message automatically renewed.
+- **SessionLockExpired:** The lock on the session has expired.
+All unsettled messages that have been received can no longer be settled.
+It is recommended to reconnect to the session if receive messages again if necessary.
+You should be aware of the lock duration of a session and keep renewing the lock before expiration in case of long processing time.
+`AutoLockRenewer` could help on keeping the lock of the session automatically renewed.
 - **AutoLockRenewFailed:** An attempt to renew a lock on a message or session in the background has failed.
-- **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed.
+This could happen when the receiver used by `AutoLockRenerer` is closed or the lock of the renewable has expired.
+It is recommended to re-register the renewable message or session by receiving the message or connect to the sessionful entity again.
+- **AutoLockRenewTimeout:** The time allocated to renew the message or session lock has elapsed. You could re-register the object that wants be auto lock renewed or extend the timeout in advance.
 - **MessageError:** Operation on message failed because the message is in a wrong state. It is the root error class of message related errors described above.
 - **ServiceBusError:** All other Service Bus related errors. It is the root error class of all the errors described above.
 
