@@ -17,6 +17,13 @@ with open("README.md", encoding="utf-8") as f:
 with open("CHANGELOG.md", encoding="utf-8") as f:
     CHANGELOG = f.read()
 
+PACKAGES = []
+# Do an empty package on Python 3 and not python_requires, since not everybody is ready
+# https://github.com/Azure/azure-sdk-for-python/issues/3447
+# https://github.com/Azure/azure-sdk-for-python/issues/3481
+if sys.version_info[0] < 3:
+    PACKAGES = ['azure.digitaltwins']
+
 setup(
     name=PACKAGE_NAME,
     version=VERSION,
@@ -40,6 +47,5 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=['azure-digitaltwins'],
     install_requires=["azure-nspkg>=3.0.0"],
 )
