@@ -76,7 +76,16 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
+            'azure.digitaltwins',
         ]
     ),
-    install_requires=["azure-core<2.0.0,>=1.7.0", "cryptography>=2.1.4", "msrest>=0.6.0"],
+    install_requires=[
+        "azure-core<2.0.0,>=1.7.0", 
+        "msrest>=0.6.0"
+    ],
+    extras_require={
+        ":python_version<'3.0'": ['futures', 'azure-digitaltwins-nspkg'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ["typing"]
+    },
 )

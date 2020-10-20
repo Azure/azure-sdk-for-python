@@ -7,10 +7,10 @@
 # --------------------------------------------------------------------------
 
 from ._digitaltwins_client import DigitalTwinsClient
-from ._generated.models._models import DigitalTwinsModelData
-from ._generated.models._models import QueryResult
-from ._generated.models._models import IncomingRelationship
-from ._generated.models._models import EventRoute
+from ._generated.models import DigitalTwinsModelData
+from ._generated.models import QueryResult
+from ._generated.models import IncomingRelationship
+from ._generated.models import EventRoute
 
 __all__ = [
     'DigitalTwinsClient',
