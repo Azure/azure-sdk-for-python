@@ -107,7 +107,7 @@ class AutoLockRenew:
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(
                 "Failed to auto-renew lock",
-                inner_exception=e)
+                error=e)
             renewable.auto_renew_error = error
         finally:
             if on_lock_renew_failure and not clean_shutdown:

@@ -17,7 +17,7 @@ from ._common.constants import (
     MGMT_REQUEST_SESSION_ID,
     MGMT_REQUEST_SESSION_STATE,
 )
-from .exceptions import ServiceBusSessionLockExpired
+from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ class BaseSession(object):
 
     def _check_live(self):
         if self._lock_expired:
-            raise ServiceBusSessionLockExpired(error=self.auto_renew_error)
+            raise SessionLockExpired(error=self.auto_renew_error)
 
     @property
     def _lock_expired(self):

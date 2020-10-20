@@ -9,7 +9,7 @@ import uuid
 import concurrent
 
 from azure.servicebus import ServiceBusClient, Message, AutoLockRenew
-from azure.servicebus.exceptions import ServiceBusNoActiveSession
+from azure.servicebus.exceptions import NoActiveSession
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 # Note: This must be a session-enabled queue.
@@ -37,7 +37,7 @@ def message_processing(sb_client, queue_name, messages):
                     if str(message) == 'shutdown':
                         receiver.session.set_state("CLOSED")
                 renewer.close()
-        except ServiceBusNoActiveSession:
+        except NoActiveSession:
             print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
             return
 

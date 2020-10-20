@@ -15,14 +15,12 @@
 * `azure.servicebus.ServiceBusError` now inherits from `azure.core.exception.AzureError`.
 * The parameter `inner_exception` that `ServiceBusError` takes is now renamed to `error`.
 * The following Service Bus errors are renamed:
-  - `NoActiveSession` to `ServiceBusNoActiveSession`
+  - `ServiceBusConnectionError` to `ConnectionError`
+  - `ServiceBusAuthorizationError` to `AuthorizationError`
+  - `ServiceBusAuthenticationError` to `AuthenticationError`
   - `MessageError` to `ServiceBusMessageError`
-  - `MessageContentTooLarge` to `ServiceBusMessageContentTooLarge`
-  - `MessageAlreadySettled` to `ServiceBusMessageAlreadySettled`
-  - `MessageSettleFailed` to `ServiceBusMessageSettleFailed`
-  - `MessageSendFailed` to `ServiceBusMessageSendFailed`
-  - `MessageLockExpired` to `ServiceBusMessageLockExpired`
-  - `SessionLockExpired` to `ServiceBusSessionLockExpired`
+* Removed error `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus
+resource does not exist when using the `ServiceBusAdministrationClient`.
 
 **BugFixes**
 

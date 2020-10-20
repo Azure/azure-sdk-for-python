@@ -23,7 +23,7 @@ from azure.core.credentials import AccessToken
 from ._common._configuration import Configuration
 from .exceptions import (
     ServiceBusError,
-    ServiceBusAuthenticationError,
+    AuthenticationError,
     OperationTimeoutError,
     _create_servicebus_exception
 )
@@ -193,7 +193,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
-            raise ServiceBusAuthenticationError(
+            raise AuthenticationError(
                 "Entity names do not match, the entity name in connection string is {};"
                 " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
             )
@@ -347,8 +347,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
-            raise ServiceBusError("Management request failed: {}".format(exp), exp)
+                raise OperationTimeoutError("Management operation timed out.", error=exp)
+            raise ServiceBusError("Management request failed: {}".format(exp), error=exp)
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any

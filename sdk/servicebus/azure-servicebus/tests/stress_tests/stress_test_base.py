@@ -12,7 +12,7 @@ import uuid
 
 from azure.servicebus import ServiceBusClient, Message, BatchMessage
 from azure.servicebus._common.constants import ReceiveMode
-from azure.servicebus.exceptions import ServiceBusMessageAlreadySettled
+from azure.servicebus.exceptions import MessageAlreadySettled
 
 class ReceiveType:
     push="push"
@@ -156,7 +156,7 @@ class StressTestRunner:
                         try:
                             if self.should_complete_messages:
                                 message.complete()
-                        except ServiceBusMessageAlreadySettled: # It may have been settled in the plugin callback.
+                        except MessageAlreadySettled: # It may have been settled in the plugin callback.
                             pass
                         self._state.total_received += 1
                         #TODO: Get EnqueuedTimeUtc out of broker properties and calculate latency. Should properties/app properties be mostly None?

@@ -133,8 +133,8 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
          (if provided) within its request to the service.
         :rtype: ~azure.servicebus.aio.ServiceBusSessionReceiver
 
-        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+        :raises ~azure.servicebus.AuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.AuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 

@@ -17,7 +17,7 @@ import os
 import time
 
 from azure.servicebus import ServiceBusClient, AutoLockRenew, Message
-from azure.servicebus.exceptions import ServiceBusMessageLockExpired
+from azure.servicebus.exceptions import MessageLockExpired
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
@@ -121,7 +121,7 @@ def renew_lock_with_lock_renewal_failure_callback():
                 try:
                     for msg in received_msgs:
                         msg.complete()
-                except ServiceBusMessageLockExpired as e:
+                except MessageLockExpired as e:
                     print('Messages cannot be settled if they have timed out. (This is expected)')
                 
                 print('Lock renew failure demonstration complete.')

@@ -18,10 +18,9 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import Message, PeekedMessage
 from azure.servicebus.exceptions import (
     ServiceBusError,
-    ServiceBusConnectionError,
-    ServiceBusAuthenticationError,
-    ServiceBusAuthorizationError,
-    ServiceBusResourceNotFound
+    ConnectionError,
+    AuthenticationError,
+    AuthorizationError    
 )
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -46,7 +45,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             credential=ServiceBusSharedKeyCredential('invalid', 'invalid'),
             logging_enable=False)
         with client:
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(AuthenticationError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
                     sender.send_messages(Message("test"))
 
@@ -72,7 +71,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
         with client:
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(AuthenticationError):
                 with client.get_queue_sender("invalid") as sender:
                     sender.send_messages(Message("test"))
 
@@ -89,7 +88,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
-            with pytest.raises(ServiceBusAuthorizationError): 
+            with pytest.raises(AuthorizationError): 
                 with client.get_queue_sender(servicebus_queue.name) as sender:
                     sender.send_messages(Message("test"))
 
@@ -126,7 +125,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
         with client:
             # Validate that the wrong queue with the right credentials fails.
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(AuthenticationError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
                     sender.send_messages(Message("test"))
 
@@ -135,7 +134,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                 sender.send_messages(Message("test")) 
 
             # Now do the same but with direct connstr initialization.
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(AuthenticationError):
                 with ServiceBusSender.from_connection_string(
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,

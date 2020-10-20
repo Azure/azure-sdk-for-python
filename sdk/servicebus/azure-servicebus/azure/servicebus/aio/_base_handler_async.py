@@ -236,8 +236,8 @@ class BaseHandler:
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
-            raise ServiceBusError("Management request failed: {}".format(exp), exp)
+                raise OperationTimeoutError("Management operation timed out.", error=exp)
+            raise ServiceBusError("Management request failed: {}".format(exp), error=exp)
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any

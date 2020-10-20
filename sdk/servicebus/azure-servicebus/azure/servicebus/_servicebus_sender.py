@@ -296,8 +296,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :rtype: ~azure.servicebus.ServiceBusSender
 
-        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+        :raises ~azure.servicebus.AuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.AuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 
@@ -329,9 +329,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
-                :class: ~azure.servicebus.exceptions.ServiceBusMessageContentTooLarge if the size of the message is over
+                :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
                   service bus frame size limit.
-                :class: ~azure.servicebus.exceptions.ServiceBusMessageSendFailed if the message fails to send
+                :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
                 :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happen such as connection
                  error, authentication error, and any unexpected errors.
                  It's also the top-level root class of above errors.
