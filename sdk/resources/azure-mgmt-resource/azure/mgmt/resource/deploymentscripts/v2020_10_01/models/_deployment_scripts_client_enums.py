@@ -12,6 +12,11 @@
 from enum import Enum
 
 
+class ManagedServiceIdentityType(str, Enum):
+
+    user_assigned = "UserAssigned"
+
+
 class CreatedByType(str, Enum):
 
     user = "User"
@@ -20,6 +25,18 @@ class CreatedByType(str, Enum):
     key = "Key"
 
 
-class TemplateSpecExpandKind(str, Enum):
+class CleanupOptions(str, Enum):
 
-    versions = "versions"  #: Includes version information with the Template Spec.
+    always = "Always"
+    on_success = "OnSuccess"
+    on_expiration = "OnExpiration"
+
+
+class ScriptProvisioningState(str, Enum):
+
+    creating = "Creating"
+    provisioning_resources = "ProvisioningResources"
+    running = "Running"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"

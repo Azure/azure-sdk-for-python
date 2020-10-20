@@ -9,17 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from ._template_specs_operations import TemplateSpecsOperations
+from ._template_spec_versions_operations import TemplateSpecVersionsOperations
 
-
-class CreatedByType(str, Enum):
-
-    user = "User"
-    application = "Application"
-    managed_identity = "ManagedIdentity"
-    key = "Key"
-
-
-class TemplateSpecExpandKind(str, Enum):
-
-    versions = "versions"  #: Includes version information with the Template Spec.
+__all__ = [
+    'TemplateSpecsOperations',
+    'TemplateSpecVersionsOperations',
+]

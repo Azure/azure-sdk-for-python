@@ -9,17 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+VERSION = "2020-10-01"
 
-
-class CreatedByType(str, Enum):
-
-    user = "User"
-    application = "Application"
-    managed_identity = "ManagedIdentity"
-    key = "Key"
-
-
-class TemplateSpecExpandKind(str, Enum):
-
-    versions = "versions"  #: Includes version information with the Template Spec.

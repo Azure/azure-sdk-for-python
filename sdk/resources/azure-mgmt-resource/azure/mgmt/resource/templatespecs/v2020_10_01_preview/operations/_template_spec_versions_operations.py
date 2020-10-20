@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TemplateSpecsOperations(object):
-    """TemplateSpecsOperations operations.
+class TemplateSpecVersionsOperations(object):
+    """TemplateSpecVersionsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -24,7 +24,7 @@ class TemplateSpecsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api version. Constant value: "2019-06-01-preview".
+    :ivar api_version: Client Api version. Constant value: "2020-10-01-preview".
     """
 
     models = models
@@ -34,40 +34,44 @@ class TemplateSpecsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01-preview"
+        self.api_version = "2020-10-01-preview"
 
         self.config = config
 
     def create_or_update(
-            self, resource_group_name, template_spec_name, template_spec, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a Template Spec.
+            self, resource_group_name, template_spec_name, template_spec_version, template_spec_version_model, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a Template Spec version.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec.
         :type template_spec_name: str
-        :param template_spec: Template Spec supplied to the operation.
-        :type template_spec:
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
+        :param template_spec_version: The version of the Template Spec.
+        :type template_spec_version: str
+        :param template_spec_version_model: Template Spec Version supplied to
+         the operation.
+        :type template_spec_version_model:
+         ~azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecVersion
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TemplateSpec or ClientRawResponse if raw=true
+        :return: TemplateSpecVersion or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
+         ~azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecVersion
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecsErrorException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'templateSpecVersion': self._serialize.url("template_spec_version", template_spec_version, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -87,7 +91,7 @@ class TemplateSpecsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(template_spec, 'TemplateSpec')
+        body_content = self._serialize.body(template_spec_version_model, 'TemplateSpecVersion')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -98,26 +102,28 @@ class TemplateSpecsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TemplateSpec', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('TemplateSpec', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}/versions/{templateSpecVersion}'}
 
     def update(
-            self, resource_group_name, template_spec_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates Template Spec tags with specified values.
+            self, resource_group_name, template_spec_name, template_spec_version, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Updates Template Spec Version tags with specified values.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec.
         :type template_spec_name: str
+        :param template_spec_version: The version of the Template Spec.
+        :type template_spec_version: str
         :param tags: Resource tags.
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
@@ -125,23 +131,24 @@ class TemplateSpecsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TemplateSpec or ClientRawResponse if raw=true
+        :return: TemplateSpecVersion or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
+         ~azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecVersion
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecsErrorException>`
         """
-        template_spec = None
+        template_spec_version_update_model = None
         if tags is not None:
-            template_spec = models.TemplateSpecUpdateModel(tags=tags)
+            template_spec_version_update_model = models.TemplateSpecVersionUpdateModel(tags=tags)
 
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'templateSpecVersion': self._serialize.url("template_spec_version", template_spec_version, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -161,8 +168,8 @@ class TemplateSpecsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        if template_spec is not None:
-            body_content = self._serialize.body(template_spec, 'TemplateSpecUpdateModel')
+        if template_spec_version_update_model is not None:
+            body_content = self._serialize.body(template_spec_version_update_model, 'TemplateSpecVersionUpdateModel')
         else:
             body_content = None
 
@@ -175,53 +182,50 @@ class TemplateSpecsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TemplateSpec', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}/versions/{templateSpecVersion}'}
 
     def get(
-            self, resource_group_name, template_spec_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a Template Spec with a given name.
+            self, resource_group_name, template_spec_name, template_spec_version, custom_headers=None, raw=False, **operation_config):
+        """Gets a Template Spec version from a specific Template Spec.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec.
         :type template_spec_name: str
-        :param expand: Allows for expansion of additional Template Spec
-         details in the response. Optional. Possible values include: 'versions'
-        :type expand: str or
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
+        :param template_spec_version: The version of the Template Spec.
+        :type template_spec_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TemplateSpec or ClientRawResponse if raw=true
+        :return: TemplateSpecVersion or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
+         ~azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecVersion
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecsErrorException>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'templateSpecVersion': self._serialize.url("template_spec_version", template_spec_version, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -243,25 +247,27 @@ class TemplateSpecsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('TemplateSpec', response)
+            deserialized = self._deserialize('TemplateSpecVersion', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}/versions/{templateSpecVersion}'}
 
     def delete(
-            self, resource_group_name, template_spec_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a Template Spec by name. When operation completes, status code
-        200 returned without content.
+            self, resource_group_name, template_spec_name, template_spec_version, custom_headers=None, raw=False, **operation_config):
+        """Deletes a specific version from a Template Spec. When operation
+        completes, status code 200 returned without content.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec.
         :type template_spec_name: str
+        :param template_spec_version: The version of the Template Spec.
+        :type template_spec_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -270,14 +276,15 @@ class TemplateSpecsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecsErrorException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+            'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'templateSpecVersion': self._serialize.url("template_spec_version", template_spec_version, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -304,115 +311,41 @@ class TemplateSpecsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}/versions/{templateSpecVersion}'}
 
-    def list_by_subscription(
-            self, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all the Template Specs within the specified subscriptions.
-
-        :param expand: Allows for expansion of additional Template Spec
-         details in the response. Optional. Possible values include: 'versions'
-        :type expand: str or
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of TemplateSpec
-        :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec]
-        :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
-        """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_subscription.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-
-                # Construct parameters
-                query_parameters = {}
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-            else:
-                url = next_link
-                query_parameters = {}
-
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
-
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                raise models.TemplateSpecsErrorException(self._deserialize, response)
-
-            return response
-
-        # Deserialize response
-        header_dict = None
-        if raw:
-            header_dict = {}
-        deserialized = models.TemplateSpecPaged(internal_paging, self._deserialize.dependencies, header_dict)
-
-        return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/templateSpecs/'}
-
-    def list_by_resource_group(
-            self, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all the Template Specs within the specified resource group.
+    def list(
+            self, resource_group_name, template_spec_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all the Template Spec versions in the specified Template Spec.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param expand: Allows for expansion of additional Template Spec
-         details in the response. Optional. Possible values include: 'versions'
-        :type expand: str or
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
+        :param template_spec_name: Name of the Template Spec.
+        :type template_spec_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of TemplateSpec
+        :return: An iterator like instance of TemplateSpecVersion
         :rtype:
-         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec]
+         ~azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecVersionPaged[~azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecVersion]
         :raises:
-         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsErrorException>`
+         :class:`TemplateSpecsErrorException<azure.mgmt.resource.templatespecs.v2020_10_01_preview.models.TemplateSpecsErrorException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_resource_group.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'templateSpecName': self._serialize.url("template_spec_name", template_spec_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -447,7 +380,7 @@ class TemplateSpecsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.TemplateSpecPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.TemplateSpecVersionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}/versions'}

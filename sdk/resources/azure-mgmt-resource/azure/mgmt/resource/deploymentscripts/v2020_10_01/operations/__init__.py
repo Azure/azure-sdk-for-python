@@ -9,17 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from ._deployment_scripts_operations import DeploymentScriptsOperations
 
-
-class CreatedByType(str, Enum):
-
-    user = "User"
-    application = "Application"
-    managed_identity = "ManagedIdentity"
-    key = "Key"
-
-
-class TemplateSpecExpandKind(str, Enum):
-
-    versions = "versions"  #: Includes version information with the Template Spec.
+__all__ = [
+    'DeploymentScriptsOperations',
+]
