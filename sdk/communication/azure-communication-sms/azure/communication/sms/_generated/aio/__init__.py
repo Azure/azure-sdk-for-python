@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_communication_sms_service_async import AzureCommunicationSMSService
+from ._azure_communication_sms_service import AzureCommunicationSMSService
 __all__ = ['AzureCommunicationSMSService']

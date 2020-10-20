@@ -307,7 +307,7 @@ print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```
 
 
-### Retrieve a specific document from an index
+### Retrieving a specific document from your index
 
 In addition to querying for documents using keywords and optional filters,
 you can retrieve a specific document from your index if you already know the
