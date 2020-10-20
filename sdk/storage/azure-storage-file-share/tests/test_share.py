@@ -26,7 +26,7 @@ from azure.storage.fileshare import (
     ShareClient,
     generate_share_sas)
 
-from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
+from azure.storage.fileshare import DeleteSnapshotsOption
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import (
     StorageTestCase,
@@ -154,6 +154,34 @@ class StorageShareTest(StorageTestCase):
             share.delete_share()
 
         deleted = share.delete_share(delete_snapshots=True)
+        self.assertIsNone(deleted)
+        self._delete_shares()
+
+    @GlobalStorageAccountPreparer()
+    def test_delete_share_with_leased_snapshots(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share = self._get_share_reference()
+        share.create_share()
+
+        snapshot1 = share.create_snapshot()
+        snapshot2 = share.create_snapshot()
+
+        snapshot2_client = ShareClient(
+            self.account_url(storage_account, "file"),
+            share_name=share.share_name,
+            snapshot=snapshot2,
+            credential=storage_account_key
+        )
+        snapshot2_client.acquire_lease()
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            share.delete_share()
+
+        with self.assertRaises(HttpResponseError):
+            share.delete_share(DeleteSnapshotsOption.include)
+
+        deleted = share.delete_share(DeleteSnapshotsOption.include_with_leased)
         self.assertIsNone(deleted)
         self._delete_shares()
 
