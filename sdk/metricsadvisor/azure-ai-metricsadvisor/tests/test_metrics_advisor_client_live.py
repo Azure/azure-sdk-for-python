@@ -63,7 +63,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         assert len(results) == 0
 
     def test_list_metric_enriched_series_data(self):
-        series_identity = {"city":"city"}
+        series_identity = {"Dim1":"Common Lime"}
         results = list(self.client.list_metric_enriched_series_data(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
@@ -95,7 +95,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 9, 9),
             series_to_filter=[
-                {"city": "Mumbai", "category": "Shoes Handbags & Sunglasses"}
+                {"Dim1": "Common Lime", "Dim2": "African buffalo"}
             ]
         ))
         assert len(results) > 0

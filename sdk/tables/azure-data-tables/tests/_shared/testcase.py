@@ -26,7 +26,7 @@ import random
 import re
 import logging
 from devtools_testutils import (
-    AzureMgmtTestCase,
+    AzureTestCase,
     AzureMgmtPreparer,
     ResourceGroupPreparer,
     StorageAccountPreparer,
@@ -140,7 +140,7 @@ class GlobalResourceGroupPreparer(AzureMgmtPreparer):
         }
 
 
-class TableTestCase(AzureMgmtTestCase):
+class TableTestCase(AzureTestCase):
 
     def __init__(self, *args, **kwargs):
         super(TableTestCase, self).__init__(*args, **kwargs)
@@ -341,7 +341,7 @@ class LogCaptured(object):
 
 @pytest.fixture(scope="session")
 def storage_account():
-    test_case = AzureMgmtTestCase("__init__")
+    test_case = AzureTestCase("__init__")
     rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pystorage')
     storage_preparer = StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage')
     cosmos_preparer = CosmosAccountPreparer(random_name_enabled=True, name_prefix='pycosmos')

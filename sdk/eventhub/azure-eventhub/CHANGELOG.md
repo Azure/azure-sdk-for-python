@@ -6,6 +6,10 @@
 
 - `azure.eventhub.exceptions.EventHubError` now inherits from `azure.core.exceptions.AzureError`.
 
+**Note**
+
+* Updated uAMQP dependency to 1.2.12 adding support for Python 3.9.
+
 ## 5.2.0 (2020-09-08)
 
 **New Features**

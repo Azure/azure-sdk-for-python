@@ -127,6 +127,12 @@ class ServicePropertiesTest(StorageTestCase):
 
     # --Test cases per feature ---------------------------------------
     @GlobalStorageAccountPreparer()
+    def test_empty_set_service_properties_exception(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        with self.assertRaises(ValueError):
+            bsc.set_service_properties()
+
+    @GlobalStorageAccountPreparer()
     def test_set_default_service_version(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)

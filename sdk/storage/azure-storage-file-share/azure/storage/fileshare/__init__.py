@@ -34,7 +34,8 @@ from ._models import (
     ContentSettings,
     NTFSAttributes)
 from ._generated.models import (
-    HandleItem
+    HandleItem,
+    ShareAccessTier
 )
 
 __version__ = VERSION
@@ -56,6 +57,7 @@ __all__ = [
     'RetentionPolicy',
     'CorsRule',
     'ShareSmbSettings',
+    'ShareAccessTier',
     'SmbMultichannel',
     'ShareProtocolSettings',
     'AccessPolicy',

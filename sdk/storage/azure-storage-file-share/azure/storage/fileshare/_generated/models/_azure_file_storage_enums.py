@@ -119,6 +119,7 @@ class PermissionCopyModeType(str, Enum):
 class DeleteSnapshotsOptionType(str, Enum):
 
     include = "include"
+    include_leased = "include-leased"
 
 
 class ListSharesIncludeType(str, Enum):
