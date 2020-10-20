@@ -40,9 +40,9 @@ from azure.ai.metricsadvisor import (
     MetricsAdvisorAdministrationClient,
 )
 
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
 
 client = MetricsAdvisorClient(service_endpoint,
                             MetricsAdvisorKeyCredential(subscription_key, api_key))
@@ -125,11 +125,11 @@ from azure.ai.metricsadvisor.models import (
         DataFeedMissingDataPointFillSettings
     )
 
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-sql_server_connection_string = os.getenv("METRICS_ADVISOR_SQL_SERVER_CONNECTION_STRING")
-query = os.getenv("METRICS_ADVISOR_SQL_SERVER_QUERY")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+sql_server_connection_string = os.getenv("SQL_SERVER_CONNECTION_STRING")
+query = os.getenv("SQL_SERVER_QUERY")
 
 client = MetricsAdvisorAdministrationClient(
     service_endpoint,
@@ -180,10 +180,10 @@ After we start the data ingestion, we can check the ingestion status.
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-data_feed_id = os.getenv("METRICS_ADVISOR_DATA_FEED_ID")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+data_feed_id = os.getenv("DATA_FEED_ID")
 
 client = MetricsAdvisorAdministrationClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
@@ -214,10 +214,10 @@ from azure.ai.metricsadvisor.models import (
     MetricDetectionCondition,
 )
 
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-metric_id = os.getenv("METRICS_ADVISOR_METRIC_ID")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+metric_id = os.getenv("METRIC_ID")
 
 client = MetricsAdvisorAdministrationClient(
     service_endpoint,
@@ -281,11 +281,11 @@ from azure.ai.metricsadvisor.models import (
     MetricBoundaryCondition,
     MetricAnomalyAlertSnoozeCondition
 )
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-anomaly_detection_configuration_id = os.getenv("METRICS_ADVISOR_DETECTION_CONFIGURATION_ID")
-hook_id = os.getenv("METRICS_ADVISOR_HOOK_ID")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+anomaly_detection_configuration_id = os.getenv("DETECTION_CONFIGURATION_ID")
+hook_id = os.getenv("HOOK_ID")
 
 client = MetricsAdvisorAdministrationClient(
     service_endpoint,
@@ -346,10 +346,11 @@ We can query the alerts and anomalies.
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
-alert_id = os.getenv("METRICS_ADVISOR_ALERT_ID")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+alert_config_id = os.getenv("ALERT_CONFIG_ID")
+alert_id = os.getenv("ALERT_ID")
 
 client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
@@ -383,9 +384,9 @@ We can add some hooks so when an alert is triggered, we can get call back.
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import EmailHook
 
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
 
 client = MetricsAdvisorAdministrationClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key))
