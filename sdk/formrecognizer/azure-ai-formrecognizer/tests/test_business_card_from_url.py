@@ -104,6 +104,9 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(business_card.page_range.last_page_number, document_results[0].page_range[1])
 
+        # Check page metadata
+        self.assertFormPagesTransformCorrect(business_card.pages, read_results)
+
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
     def test_business_card_url_transform_jpg(self, client):
@@ -135,6 +138,46 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(business_card.page_range.last_page_number, document_results[0].page_range[1])
+
+        # Check page metadata
+        self.assertFormPagesTransformCorrect(business_card.pages, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_url_multipage_transform_pdf(self, client):
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            responses.append(analyze_result)
+            responses.append(extracted_business_card)
+
+        poller = client.begin_recognize_business_cards_from_url(
+            business_card_url=self.business_card_multipage_url_pdf,
+            include_field_elements=True,
+            cls=callback
+        )
+
+        result = poller.result()
+        raw_response = responses[0]
+        returned_model = responses[1]
+        read_results = raw_response.analyze_result.read_results
+        document_results = raw_response.analyze_result.document_results
+        page_results = raw_response.analyze_result.page_results
+
+        self.assertEqual(2, len(returned_model))
+        self.assertEqual(2, len(document_results))
+
+        for i in range(len(returned_model)):
+            business_card = returned_model[i]
+            actual = document_results[i]
+            self.assertBusinessCardTransformCorrect(business_card, actual.fields, read_results)
+            self.assertEqual(i + 1, business_card.page_range.first_page_number)
+            self.assertEqual(i + 1, business_card.page_range.last_page_number)
+
+        # Check page metadata
+        self.assertFormPagesTransformCorrect(returned_model, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()

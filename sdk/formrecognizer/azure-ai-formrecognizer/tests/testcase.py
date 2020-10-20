@@ -344,9 +344,6 @@ class FormRecognizerTest(AzureTestCase):
         self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
         self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
 
-        # Check page metadata
-        self.assertFormPagesTransformCorrect(business_card.pages, read_results)
-
     def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None, **kwargs):
         for table, actual_table in zip(layout, actual_layout):
             self.assertEqual(table.row_count, actual_table.rows)
