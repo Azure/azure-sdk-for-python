@@ -47,5 +47,6 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
+    packages=PACKAGES,
     install_requires=["azure-nspkg>=3.0.0"],
 )
