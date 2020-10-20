@@ -32,3 +32,5 @@ extends:
       safeName: azuremgmtdigitaltwins
     - name: azure_digitaltwins_core
       safeName: azuredigitaltwinscore
+    - name: azure_digitaltwins_nspkg
+      safeName: azuredigitaltwinsnspkg
