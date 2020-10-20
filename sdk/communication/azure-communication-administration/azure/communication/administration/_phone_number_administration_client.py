@@ -420,20 +420,20 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def get_search_by_id(
+    def get_reservation_by_id(
         self,
-        search_id,  # type: str
+        reservation_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> PhoneNumberSearch
-        """Get search by search id.
+        """Get reservation by reservation id.
 
-        :param search_id: The search id to be searched for.
-        :type search_id: str
+        :param reservation_id: The reservation id to get reservation.
+        :type reservation_id: str
         :rtype: ~azure.communication.administration.PhoneNumberSearch
         """
         return self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id,
+            search_id=reservation_id,
             **kwargs
         )
 
@@ -503,20 +503,20 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace
-    def cancel_search(
+    def cancel_reservation(
         self,
-        search_id,  # type: str
+        reservation_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Cancels the search. This means existing numbers in the search will be made available.
+        """Cancels the reservation. This means existing numbers in the reservation will be made available.
 
-        :param search_id: The search id to be canceled.
-        :type search_id: str
+        :param reservation_id: The reservation id to be canceled.
+        :type reservation_id: str
         :rtype: None
         """
         return self._phone_number_administration_client.phone_number_administration.cancel_search(
-            search_id,
+            search_id=reservation_id,
             **kwargs
         )
 
@@ -527,10 +527,10 @@ class PhoneNumberAdministrationClient(object):
     ):
         # type: (...) -> LROPoller
         """Begins purchase the reserved phone numbers of a phone number search.
-        Caller must provide either search_id, or continuation_token keywords to use the method.
+        Caller must provide either reservation_id, or continuation_token keywords to use the method.
         If both body and continuation_token are specified, only continuation_token will be used to
-        restart a poller from a saved state, and keyword search_id will be ignored.
-        :keyword str search_id: The search id to be purchased.
+        restart a poller from a saved state, and keyword reservation_id will be ignored.
+        :keyword str reservation_id: The reservation id to be purchased.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
@@ -552,17 +552,17 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
-        if "search_id" not in kwargs:
-            raise ValueError("Either kwarg 'search_id' or 'continuation_token' needs to be specified")
+        if "reservation_id" not in kwargs:
+            raise ValueError("Either kwarg 'reservation_id' or 'continuation_token' needs to be specified")
 
-        search_id = kwargs.pop('search_id')  # type: str
+        reservation_id = kwargs.pop('reservation_id')  # type: str
 
         self._phone_number_administration_client.phone_number_administration.purchase_search(
-            search_id=search_id,
+            search_id=reservation_id,
             **kwargs
         )
         initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id=search_id
+            search_id=reservation_id
         )
         return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
                          initial_response=initial_state,
