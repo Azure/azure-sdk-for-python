@@ -7,7 +7,7 @@ or execute the various commands available in the toolbox.
 
 1.  If you don't already have it, install Python:
 
-    - Windows: https://www.python.org/downloads/ or from the windows store https://www.microsoft.com/p/python-37/9nj46sx7x90p
+    - Windows: https://www.python.org/downloads/ or from the [Windows store](ht tps://www.microsoft.com/p/python-37/9nj46sx7x90p)
     - Ubuntu/Debian `sudo apt-get install python3`
     - RHEL/CentOS `sudo yum install python3`
 
@@ -30,14 +30,24 @@ or execute the various commands available in the toolbox.
     ./env/scripts/activate.bat   # Windows CMD only
     ```
 
-4.  Setup your env (installing dependencies, etc.)
+4. Setup your development environment
+
+    Install the development requirements for a specific library (e.g. Azure Form Recognizer) and [Tox](https://tox.readthedocs.io/en/latest/):
+    ```
+    azure-sdk-for-python> cd sdk/formrecognizer/azure-ai-formrecognizer
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -r dev_requirements.txt
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install tox tox-monorepo
+    ```
+
+<!-- Do we still follow this recommendation or should we be recommending pip install dev_reqs and tox? -->
+<!-- 4.  Setup your env (installing dependencies, etc.)
 
     ```
-    python scripts/dev_setup.py
+    azure-sdk-for-python> python scripts/dev_setup.py
     ```
 
     If you work on a particular package, you can setup only this package to save some installation time:
 
     ```
-    python scripts/dev_setup.py -p azure-mgmt-service
-    ```
+    azure-sdk-for-python> python scripts/dev_setup.py -p azure-mgmt-service
+    ``` -->
