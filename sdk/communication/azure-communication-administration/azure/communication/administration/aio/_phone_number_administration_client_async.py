@@ -457,8 +457,7 @@ class PhoneNumberAdministrationClient(object):
         Caller must provide either body, or continuation_token keywords to use the method.
         If both body and continuation_token are specified, only continuation_token will be used to
         restart a poller from a saved state, and keyword body will be ignored.
-        :keyword azure.communication.administration.CreateSearchOptions body:
-        A parameter for defining the search options.
+        :keyword azure.communication.administration.CreateSearchOptions body: search options.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberSearch]
         """
