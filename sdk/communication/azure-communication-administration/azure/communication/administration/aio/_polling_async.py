@@ -66,12 +66,8 @@ class PhoneNumberBasePollingAsync(AsyncPollingMethod):
         return base64.b64encode(pickle.dumps(self._response)).decode('ascii')
 
     @classmethod
-    def from_continuation_token(cls, continuation_token, **kwargs):
-        # type(str, Any) -> Tuple
-        try:
-            client = kwargs["client"]
-        except KeyError:
-            raise ValueError("Kwarg 'client' needs to be specified")
+    def from_continuation_token(cls, continuation_token, client, **kwargs):
+        # type(str, PhoneNumberAdministrationClient, Any) -> Tuple
         import pickle
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return client, initial_response, None
