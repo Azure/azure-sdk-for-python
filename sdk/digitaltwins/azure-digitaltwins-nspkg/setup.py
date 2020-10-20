@@ -8,8 +8,8 @@
 import sys
 from setuptools import setup
 
-PACKAGE_NAME = "azure-digitaltwins"
-PACKAGE_PPRINT_NAME = "Azure DigitalTwins"
+PACKAGE_NAME = "azure-digitaltwins-nspkg"
+PACKAGE_PPRINT_NAME = "Azure DigitalTwins Nspkg"
 VERSION = "1.0.0"
 
 setup(
@@ -20,7 +20,7 @@ setup(
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
-    author_email="azure-digitaltwins-core@microsoft.com",
+    author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/azure-digitaltwins-core",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -36,5 +36,5 @@ setup(
     ],
     zip_safe=False,
     packages=['azure-digitaltwins'],
-    install_requires=["azure-core<2.0.0,>=1.7.0", "cryptography>=2.1.4", "msrest>=0.6.0"],
+    install_requires=["azure-nspkg>=3.0.0"],
 )
