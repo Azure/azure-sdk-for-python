@@ -44,7 +44,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
-         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
+         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -90,7 +90,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
-         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
+         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -180,7 +180,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
-         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
+         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -231,7 +231,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
-         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
+         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
