@@ -294,6 +294,109 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 )
             raise e
 
+    @distributed_trace
+    def begin_recognize_invoices(
+            self,
+            invoice,
+            **kwargs
+    ):
+        # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given invoice.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png' or 'image/tiff'.
+
+        See fields found on a invoice here:
+        https://aka.ms/formrecognizer/invoicefields
+
+        :param invoice: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :type invoice: bytes or IO[bytes]
+        :keyword str locale: Locale of the invoice. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
+        :keyword bool include_field_elements:
+            Whether or not to include field elements such as lines and words in addition to form fields.
+        :keyword content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError("Call begin_recognize_invoice_from_url() to analyze a invoice from a URL.")
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        if content_type is None:
+            content_type = get_content_type(invoice)
+
+        try:
+            return self._client.begin_analyze_invoice_async(  # type: ignore
+                file_stream=invoice,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_invoice_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_invoices' is only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+    @distributed_trace
+    def begin_recognize_invoices_from_url(
+            self,
+            invoice_url,
+            **kwargs
+    ):
+        # type: (str, Any) -> LROPoller[List[RecognizedForm]]
+        """Extract field text and semantic values from a given invoice.
+        The input document must be the location (URL) of the invoice to be analyzed.
+
+        See fields found on a invoice card here:
+        https://aka.ms/formrecognizer/invoicefields
+
+        :param str invoice_url: The URL of the invoice to analyze. The input must be a valid, encoded URL
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+        :keyword str locale: Locale of the invoice. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
+        :keyword bool include_field_elements:
+            Whether or not to include field elements such as lines and words in addition to form fields.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return self._client.begin_analyze_invoice_async(  # type: ignore
+                file_stream={"source": invoice_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", self._prebuilt_callback),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_invoice_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_invoices_from_url' is "
+                    "only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
         return prepare_content_result(analyze_result)
