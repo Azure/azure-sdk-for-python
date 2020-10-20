@@ -7,6 +7,11 @@
    application.
    ([#14354](https://github.com/Azure/azure-sdk-for-python/issues/14354))
 
+### Fixed
+- Prevent `VisualStudioCodeCredential` using invalid authentication data when
+  no user is signed in to Visual Studio Code
+  ([#14438](https://github.com/Azure/azure-sdk-for-python/issues/14438))
+
 ## 1.5.0b2 (2020-10-07)
 ### Fixed
 - `AzureCliCredential.get_token` correctly sets token expiration time,
