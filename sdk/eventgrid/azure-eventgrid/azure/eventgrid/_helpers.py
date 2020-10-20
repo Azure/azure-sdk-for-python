@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from typing import TYPE_CHECKING, Any
 import hashlib
 import hmac
 import base64
 import six
-from typing import TYPE_CHECKING, Any
 try:
     from urllib.parse import quote
 except ImportError:
