@@ -319,7 +319,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.Relationship]
+        # type: (str, Optional[str], **Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.Relationship]
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -340,7 +340,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_incoming_relationships(self, digital_twin_id, **kwargs):
-        # type: (str, str, **Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.IncomingRelationship]
+        # type: (str, str, **Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.IncomingRelationship]
         """Retrieve all incoming relationships for a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
@@ -445,7 +445,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_models(self, dependencies_for, **kwargs):
-        # type: (str, bool, int, **Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.ModelData]
+        # type: (str, bool, int, **Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.ModelData]
         """Get the list of models.
 
         :param List[str] dependencies_for: The model Ids to have dependencies retrieved.
@@ -455,7 +455,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
         :return: An iterator instance of list of ModelData.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.ModelData]
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.ModelData]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
         """
@@ -551,7 +551,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_event_routes(self, **kwargs):
-        # type: (**Any) -> ~azure.core.paging.ItemPaged[~azure.digitaltwins.models.EventRoute]
+        # type: (**Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.EventRoute]
         """Retrieves all event routes.
 
         :keyword int results_per_page: The maximum number of items to retrieve per request.
@@ -607,12 +607,12 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def query_twins(self, query_expression, **kwargs):
-        # type: (str, **Any) -> ~azure.core.async_paging.ItemPaged[Dict[str, object]]
+        # type: (str, **Any) -> ~azure.core.async_paging.AsyncItemPaged[Dict[str, object]]
         """Query for digital twins.
 
         :param str query_expression: The query expression to execute.
         :return: The QueryResult object.
-        :rtype: ~azure.core.async_paging.ItemPaged[Dict[str, object]]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[Dict[str, object]]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         """
         def extract_data(pipeline_response):
