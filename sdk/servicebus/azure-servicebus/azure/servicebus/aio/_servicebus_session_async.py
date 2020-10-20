@@ -112,7 +112,7 @@ class ServiceBusSession(BaseSession):
         Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
 
         This operation can also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.aio.AutoLockRenew` instance.
+        with an `azure.servicebus.aio.AutoLockRenewer` instance.
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.

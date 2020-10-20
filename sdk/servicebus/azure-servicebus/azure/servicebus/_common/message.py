@@ -740,7 +740,7 @@ class ReceivedMessageBase(PeekedMessage):
     """
     A Service Bus Message received from service side.
 
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
+    :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the message lock.
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 
     .. admonition:: Example:
@@ -1057,7 +1057,7 @@ class ReceivedMessage(ReceivedMessageBase):
         This operation is only available for non-sessionful messages as well.
 
         Lock renewal can be performed as a background task by registering the message with an
-        `azure.servicebus.AutoLockRenew` instance.
+        `azure.servicebus.AutoLockRenewer` instance.
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
