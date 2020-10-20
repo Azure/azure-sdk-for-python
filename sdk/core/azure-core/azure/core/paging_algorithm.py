@@ -30,20 +30,6 @@ try:
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
-try:
-    # python2
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    # python3
-    from urllib.parse import urlparse
-
-
-def _is_url(value: str) -> bool:
-    parsed = urlparse(value)
-    if not parsed.scheme or not parsed.netloc: # if not a full url
-        return value[0] == '/'  # if it's a partial url, still return True
-    return True
-
 
 class PagingAlgorithmABC(ABC):
     """Provides default logic for getting next links and prepares the parametrers
@@ -67,14 +53,14 @@ class PagingAlgorithmABC(ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def can_page(self):
+    def can_page(self, page_iterator):
         # type: (PipelineResponseType) -> str
         """Can this paging operation be used in this case.
         """
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_parameters(self):
+    def get_request_parameters(self):
         # type: () -> str
         """Return the next link
         """
@@ -99,10 +85,16 @@ class PagingAlgorithm(PagingAlgorithmABC):
     def update_state(self, continuation_token):
         pass
 
-    def can_page(self, continuation_token, **kwargs):
-        return not _is_url(continuation_token)
+    def can_page(self, page_iterator):
+        # we only use this algorithm for paging if we know
+        # there's a way to insert the returned continuation token
+        from .paging import _PagingOption
+        return bool(
+            page_iterator._paging_options and
+            page_iterator._paging_options.get(_PagingOption.TOKEN_INPUT_PARAMETER)
+        )
 
-    def get_parameters(self):
+    def get_request_parameters(self):
         query_parameters = self._initial_request.query
         header_parameters = self._initial_request.headers
         body_parameters = self._initial_request.body
@@ -133,11 +125,10 @@ class PagingAlgorithmContinuationTokenAsNextLink(PagingAlgorithmABC):
     def update_state(self, continuation_token):
         self._continuation_token = continuation_token
 
-    def can_page(self, **kwargs):
-        # return's True if continuation token from initial request 
-        return _is_url(continuation_token)
+    def can_page(self, page_iterator):
+        return True
 
-    def get_parameters(self):
+    def get_request_parameters(self):
         query_parameters = self._initial_request.query
         header_parameters = self._initial_request.headers
         body_parameters = self._initial_request.body
@@ -168,11 +159,11 @@ class PagingAlgorithmIfSeparateNextOperation(PagingAlgorithmABC):
     def update_state(self, continuation_token):
         self._next_request = self._prepare_request_to_separate_next_operation(continuation_token)
 
-    def can_page(self, prepare_request_to_separate_next_operation):
-        self._prepare_request_to_separate_next_operation = prepare_request_to_separate_next_operation
-        return bool(request_to_separate_next_operation)
+    def can_page(self, page_iterator):
+        self._prepare_request_to_separate_next_operation = page_iterator._prepare_request_to_separate_next_operation
+        return bool(page_iterator._prepare_request_to_separate_next_operation)
 
-    def get_parameters(self):
+    def get_request_parameters(self):
         query_parameters = self._next_request.query or self._initial_request.query
         header_parameters = self._next_request.headers or self._initial_request.headers
         body_parameters =self._next_request.body or  self._initial_request.body
