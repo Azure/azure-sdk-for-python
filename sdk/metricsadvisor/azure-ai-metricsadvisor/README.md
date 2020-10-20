@@ -107,6 +107,8 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 * [Configure anomaly detection configuration](#configure-anomaly-detection-configuration "Configure anomaly detection configuration")
 * [Configure alert configuration](#configure-alert-configuration "Configure alert configuration")
 * [Query anomaly detection results](#query-anomaly-detection-results "Query anomaly detection results")
+* [Query incidents](#query-incidents "Query incidents")
+* [Query root causes](#query-root-causes "Query root causes")
 * [Add hooks for receiving anomaly alerts](#add-hooks-for-receiving-anomaly-alerts "Add hooks for receiving anomaly alerts")
 
 ### Add a data feed from a sample or data source
