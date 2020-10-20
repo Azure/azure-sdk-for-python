@@ -41,6 +41,12 @@ class LanguageExtensionName(str, Enum):
     r = "R"
 
 
+class EngineType(str, Enum):
+
+    v2 = "V2"
+    v3 = "V3"
+
+
 class AzureSkuName(str, Enum):
 
     standard_ds13_v21_tb_ps = "Standard_DS13_v2+1TB_PS"
@@ -55,6 +61,7 @@ class AzureSkuName(str, Enum):
     standard_d12_v2 = "Standard_D12_v2"
     standard_l4s = "Standard_L4s"
     dev_no_sla_standard_d11_v2 = "Dev(No SLA)_Standard_D11_v2"
+    standard_e64i_v3 = "Standard_E64i_v3"
     standard_e2a_v4 = "Standard_E2a_v4"
     standard_e4a_v4 = "Standard_E4a_v4"
     standard_e8a_v4 = "Standard_E8a_v4"
@@ -169,6 +176,8 @@ class IdentityType(str, Enum):
 
     none = "None"
     system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
 
 
 class DatabasePrincipalRole(str, Enum):
