@@ -125,9 +125,10 @@ temporary_model = {
     ]
 }
 
-const newModels = [temporaryComponent, temporaryModel];
-const models = await serviceClient.createModels(newModels);
-console.log(models);
+new_models = [temporary_component, temporary_model]
+models = service_client.create_models(new_models)
+print('Created Models:')
+print(models)
 ```
 
 ### List models
@@ -191,7 +192,7 @@ print(get_twin)
 
 ### Query digital twins
 
-Query the Azure Digital Twins instance for digital twins using the [Azure Digital Twins Query Store lanaguage](https://review.docs.microsoft.com/en-us/azure/digital-twins/concepts-query-language). Query calls support paging. Here's an example of how to query for digital twins and how to iterate over the results.
+Query the Azure Digital Twins instance for digital twins using the [Azure Digital Twins Query Store lanaguage](https://review.docs.microsoft.com/azure/digital-twins/concepts-query-language). Query calls support paging. Here's an example of how to query for digital twins and how to iterate over the results.
 
 ```Python Snippet:dt_digitaltwins_query
 query_expression = 'SELECT * FROM digitaltwins'
