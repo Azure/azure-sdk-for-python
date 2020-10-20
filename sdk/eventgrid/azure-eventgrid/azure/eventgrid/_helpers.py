@@ -90,14 +90,12 @@ def _is_cloud_event(event):
     except TypeError:
         return False
 
-def _eventgrid_event_options(event):
+def _eventgrid_data_typecheck(event):
     try:
-        exists = 'data' in event
-        data = event['data']
-    except TypeError:
-        exists = hasattr(event, 'data')
+        data = event.get('data')
+    except AttributeError:
         data = event.data
 
-    if exists and isinstance(data, six.binary_type):
+    if isinstance(data, six.binary_type):
         raise TypeError("Data in EventGridEvent cannot be bytes. Please refer to"\
             "https://docs.microsoft.com/en-us/azure/event-grid/event-schema")

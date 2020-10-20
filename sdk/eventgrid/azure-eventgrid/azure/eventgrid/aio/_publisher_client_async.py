@@ -28,7 +28,7 @@ from .._helpers import (
     _get_topic_hostname_only_fqdn,
     _get_authentication_policy,
     _is_cloud_event,
-    _eventgrid_event_options
+    _eventgrid_data_typecheck
 )
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
 from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
@@ -118,7 +118,7 @@ class EventGridPublisherClient():
         elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
             kwargs.setdefault("content_type", "application/json; charset=utf-8")
             for event in events:
-                _eventgrid_event_options(event)
+                _eventgrid_data_typecheck(event)
             await self._client.publish_events(self._topic_hostname, events, **kwargs)
         elif all(isinstance(e, CustomEvent) for e in events):
             serialized_events = [dict(e) for e in events]
