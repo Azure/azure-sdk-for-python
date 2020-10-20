@@ -66,7 +66,7 @@ class PhoneNumberBasePollingAsync(AsyncPollingMethod):
         return base64.b64encode(pickle.dumps(self._response)).decode('ascii')
 
     @classmethod
-    def from_continuation_token(cls, continuation_token, client, **kwargs):
+    def from_continuation_token(cls, continuation_token, client, **kwargs):  # pylint: disable=W0221
         # type(str, PhoneNumberAdministrationClient, Any) -> Tuple
         import pickle
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
