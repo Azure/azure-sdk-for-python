@@ -19,9 +19,8 @@ SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 def message_processing(sb_client, queue_name, messages):
     while True:
         try:
-            with sb_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
-                renewer = AutoLockRenewer()
-                renewer.register(receiver.session)
+            renewer = AutoLockRenewer()
+            with sb_client.get_queue_receiver(queue_name, session=NEXT_SESSION, max_wait_time=1, auto_lock_renew=renewer) as receiver:
                 receiver.session.set_state("OPEN")
                 for message in receiver:
                     messages.append(message)

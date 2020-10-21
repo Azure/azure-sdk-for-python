@@ -767,22 +767,16 @@ class ReceivedMessageBase(PeekedMessage):
             "initialized by a user; the Message class should be utilized instead.")
         self._expiry = None # type: Optional[datetime.datetime]
 
-    def _check_live(self, action):
+    def _get_token(self, action):
         # pylint: disable=no-member
-        if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
-            raise MessageSettleFailed(action, "Orphan message had no open connection.")
         if self._settled:
             raise MessageAlreadySettled(action)
-        try:
-            if self._lock_expired:
-                raise MessageLockExpired(inner_exception=self.auto_renew_error)
-        except TypeError:
-            pass
-        try:
-            if self._receiver.session._lock_expired:  # pylint: disable=protected-access
-                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
-        except AttributeError:
-            pass
+        if self._lock_expired:
+            raise MessageLockExpired(inner_exception=self.auto_renew_error)
+        token = self.lock_token
+        if not token:
+            raise ValueError("Unable to renew lock - no lock token found.")
+        return token
 
     def _settle_via_mgmt_link(self, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
         # type: (str, Optional[str], Optional[str]) -> Callable
@@ -1041,50 +1035,6 @@ class ReceivedMessage(ReceivedMessageBase):
         self._check_live(MESSAGE_DEFER)
         self._settle_message(MESSAGE_DEFER)
         self._settled = True
-
-    def renew_lock(self, **kwargs):
-        # type: (Any) -> datetime.datetime
-        # pylint: disable=protected-access,no-member
-        """Renew the message lock.
-
-        This will maintain the lock on the message to ensure it is not returned to the queue
-        to be reprocessed.
-
-        In order to complete (or otherwise settle) the message, the lock must be maintained,
-        and cannot already have expired; an expired lock cannot be renewed.
-
-        Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
-        This operation is only available for non-sessionful messages as well.
-
-        Lock renewal can be performed as a background task by registering the message with an
-        `azure.servicebus.AutoLockRenewer` instance.
-
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
-        :returns: The utc datetime the lock is set to expire at.
-        :rtype: datetime.datetime
-        :raises: TypeError if the message is sessionful.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
-        """
-        try:
-            if self._receiver.session:  # type: ignore
-                raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
-        except AttributeError:
-            pass
-        self._check_live(MESSAGE_RENEW_LOCK)
-        token = self.lock_token
-        if not token:
-            raise ValueError("Unable to renew lock - no lock token found.")
-
-        timeout = kwargs.pop("timeout", None)
-        if timeout is not None and timeout <= 0:
-            raise ValueError("The timeout must be greater than 0.")
-
-        expiry = self._receiver._renew_locks(token, timeout=timeout)  # type: ignore
-        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: datetime.datetime
-
-        return self._expiry
 
 
 class AMQPMessage(object):

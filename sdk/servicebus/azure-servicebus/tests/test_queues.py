@@ -314,7 +314,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     with pytest.raises(MessageAlreadySettled):
                         message.complete()
                     with pytest.raises(MessageAlreadySettled):
-                        message.renew_lock()
+                        receiver.renew_locks()
                     count += 1
 
                 with pytest.raises(StopIteration):
@@ -474,7 +474,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert message.lock_token
                     assert message.locked_until_utc
                     assert message._receiver
-                    message.renew_lock()
+                    receiver.renew_locks(message)
                     message.complete()
 
     @pytest.mark.liveTest
@@ -884,7 +884,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert not m._lock_expired
                         time.sleep(5)
                         initial_expiry = m.locked_until_utc
-                        m.renew_lock()
+                        receiver.renew_locks(m)
                         assert (m.locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     messages[0].complete()
@@ -909,17 +909,17 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message = Message("{}".format(i))
                     sender.send_messages(message)
     
-            renewer = AutoLockRenewer()
+            renewer = AutoLockRenewer(timeout=60)
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                                  max_wait_time=5, 
-                                                 receive_mode=ReceiveMode.PeekLock, 
+                                                 receive_mode=ReceiveMode.PeekLock,
+                                                 auto_lock_renew=renewer,
                                                  prefetch_count=10) as receiver:
                 for message in receiver:
                     if not messages:
                         messages.append(message)
                         assert not message._lock_expired
-                        renewer.register(message, timeout=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         time.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
@@ -1056,7 +1056,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(MessageLockExpired):
                     messages[0].complete()
                 with pytest.raises(MessageLockExpired):
-                    messages[0].renew_lock()
+                    receiver.renew_locks(messages[0])
     
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_wait_time=30)
@@ -1085,9 +1085,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(15)
-                messages[0].renew_lock()
+                receiver.renew_locks(messages[0])
                 time.sleep(15)
-                messages[0].renew_lock()
+                receiver.renew_locks(messages[0])
                 time.sleep(15)
                 assert not messages[0]._lock_expired
                 messages[0].complete()
@@ -1126,7 +1126,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(MessageAlreadySettled):
                     received.dead_letter()
                 with pytest.raises(MessageAlreadySettled):
-                    received.renew_lock()
+                    receiver.renew_locks(received)
     
             time.sleep(30)
     
@@ -1733,7 +1733,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver_handler = receiver._handler
                 assert len(messages) == 2
                 time.sleep(4 * 60 + 5)  # 240s is the service defined connection idle timeout
-                messages[0].renew_lock()  # check mgmt link operation
+                receiver.renew_locks(messages[0])  # check mgmt link operation
                 messages[0].complete()
                 messages[1].complete()  # check receiver link operation
 

@@ -49,7 +49,7 @@ def receive_batch_message(receiver):
     for msg in received_msgs:
         print(str(msg))
         msg.complete()
-        session.renew_lock()
+        receiver.renew_locks()
     session.set_state("END")
     print("Session state:", session.get_state())
 

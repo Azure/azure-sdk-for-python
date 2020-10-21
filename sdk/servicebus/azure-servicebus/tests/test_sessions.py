@@ -292,8 +292,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     assert message.lock_token
                     assert not message.locked_until_utc
                     assert message._receiver
-                    with pytest.raises(TypeError):
-                        message.renew_lock()
                     message.complete()
 
     @pytest.mark.liveTest
@@ -556,7 +554,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                         assert m.lock_token is not None
                     time.sleep(5)
                     initial_expiry = receiver.session._locked_until_utc
-                    receiver.session.renew_lock(timeout=5)
+                    receiver.renew_locks(timeout=5)
                     assert (receiver.session._locked_until_utc - initial_expiry) >= timedelta(seconds=5)
                 finally:
                     messages[0].complete()
@@ -591,10 +589,15 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             def lock_lost_callback(renewable, error):
                 results.append(renewable)
 
-            renewer = AutoLockRenewer()
+            renewer = AutoLockRenewer(timeout=60, on_lock_renew_failure = lock_lost_callback)
             messages = []
-            with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
-                renewer.register(receiver.session, timeout=60, on_lock_renew_failure = lock_lost_callback)
+            with sb_client.get_queue_receiver(
+                    servicebus_queue.name,
+                    session=session_id,
+                    max_wait_time=5,
+                    receive_mode=ReceiveMode.PeekLock,
+                    auto_lock_renew=renewer,
+                    prefetch_count=10) as receiver:
                 print("Registered lock renew thread", receiver.session._locked_until_utc, utc_now())
                 with pytest.raises(SessionLockExpired):
                     for message in receiver:
@@ -606,8 +609,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                             with pytest.raises(TypeError):
                                 message._lock_expired
                             assert message.locked_until_utc is None
-                            with pytest.raises(TypeError):
-                                message.renew_lock()
                             assert message.lock_token is not None
                             message.complete()
                             messages.append(message)
@@ -689,14 +690,11 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 time.sleep(60)
                 with pytest.raises(TypeError):
                     messages[0]._lock_expired
-                with pytest.raises(TypeError):
-                    messages[0].renew_lock()
-                    #TODO: Bug: Why was this 30s sleep before?  compare with T1.
                 assert receiver.session._lock_expired
                 with pytest.raises(SessionLockExpired):
                     messages[0].complete()
                 with pytest.raises(SessionLockExpired):
-                    receiver.session.renew_lock()
+                    receiver.renew_locks()
 
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = receiver.receive_messages(max_wait_time=30)
@@ -731,7 +729,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 count = 0
                 while not messages and count < 12:
                     messages = receiver.receive_messages(max_wait_time=10)
-                    receiver.session.renew_lock(timeout=None)
+                    receiver.renew_locks(timeout=None)
                     count += 1
 
                 data = str(messages[0])
@@ -770,7 +768,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = []
                 count = 0
                 while len(messages) < 2 and count < 12:
-                    receiver.session.renew_lock(timeout=None)
+                    receiver.renew_locks(timeout=None)
                     messages = receiver.receive_messages(max_wait_time=15)
                     time.sleep(5)
                     count += 1
@@ -808,7 +806,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 count = 0
                 while not messages and count < 13:
                     messages = receiver.receive_messages(max_wait_time=10)
-                    receiver.session.renew_lock()
+                    receiver.renew_locks()
                     count += 1
                 assert len(messages) == 0
 

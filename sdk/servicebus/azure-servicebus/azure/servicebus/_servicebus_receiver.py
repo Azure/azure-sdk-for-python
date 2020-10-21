@@ -106,6 +106,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     ):
         # type: (str, TokenCredential, Any) -> None
         self._message_iter = None # type: Optional[Iterator[ReceivedMessage]]
+        self._current_message = None
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -157,9 +158,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._check_live()
         while True:
             try:
-                return self._do_retryable_operation(self._iter_next)
+                self._current_message = self._do_retryable_operation(self._iter_next)
+                return self._current_message
             except StopIteration:
                 self._message_iter = None
+                self._current_message = None
                 raise
 
     next = __next__  # for python2.7
@@ -271,16 +274,41 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.default
         )
 
-    def _renew_locks(self, *lock_tokens, **kwargs):
+    def renew_locks(self, *messages, **kwargs):
         # type: (str, Any) -> Any
+        if not self._running:  # pylint: disable=protected-access
+            raise MessageSettleFailed(action, "No open connection.")
         timeout = kwargs.pop("timeout", None)
-        message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
-        return self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_RENEWLOCK_OPERATION,
-            message,
-            mgmt_handlers.lock_renew_op,
-            timeout=timeout
-        )
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        if self.session:
+            if self.session._lock_expired:
+                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
+            expiry = self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
+                {MGMT_REQUEST_SESSION_ID: self.session._session_id},
+                mgmt_handlers.default,
+                timeout=timeout
+            )
+            expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0  # type: ignore
+            self.session._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
+            return self._locked_until_utc
+
+        else:
+            renew = messages or [self._current_message]
+            tokens = [m._get_token() for m in renew]
+            message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(tokens)}
+            expiry = self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_RENEWLOCK_OPERATION,
+                message,
+                mgmt_handlers.lock_renew_op,
+                timeout=timeout
+            )
+            expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: datetime.datetime
+            for message in renew:
+                message._expiry = expiry
+            return expiry
 
     def close(self):
         # type: () -> None

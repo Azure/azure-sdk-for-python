@@ -335,7 +335,7 @@ def example_session_ops_sync():
         # [START session_renew_lock_sync]
         with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = session.renew_lock()
+            lock_expiry = receiver.renew_locks()
         # [END session_renew_lock_sync]
 
         # [START auto_lock_renew_session_sync]
