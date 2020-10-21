@@ -9,27 +9,324 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/query
   response:
     body:
-      string: '{"value":[{"feedbackId":"feedback_id","createdTime":"2020-09-22T00:24:18.629Z","userPrincipal":"xiangyan@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
-        Lime","Dim2":"Amphibian"}},"feedbackType":"Anomaly","startTime":"2020-08-30T00:00:00Z","endTime":"2020-08-30T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"2fe9e687-4c9e-4e1b-8ec8-6541553db969","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"2fe9e687-4c9e-4e1b-8ec8-6541553db969","name":"new
-        Name","description":"new description","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"OR","hardThresholdCondition":{"upperBound":500.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minAlertNumber":5,"minAlertRatio":5.0}},"changeThresholdCondition":{"changePercentage":44.0,"shiftPoint":2,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minAlertNumber":4,"minAlertRatio":4.0}}},"dimensionGroupOverrideConfigurations":[{"group":{"seriesGroupConfigurationId":"51242ee0b8c72df4e537ffdfe0e8af69","tagSet":{"dimension_name":"Common
-        Lime"}},"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minAlertNumber":2,"minAlertRatio":2.0}}}],"seriesOverrideConfigurations":[{"series":{"seriesConfigurationId":"54bdef99c03c71c764fd3ea671cd1260","tagSet":{"dimension_name":"Common
-        Beech","Dim2":"Ant"}},"conditionOperator":"OR","changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minAlertNumber":2,"minAlertRatio":2.0}}}],"favoriteSeries":[],"disabledSeries":[]}}],"@nextLink":null}'
+      string: '{"value":[{"feedbackId":"2b63b7ab-d482-4614-a8e5-349b993f64b4","createdTime":"2020-10-21T20:20:08.663Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"6b0b14c2-33a2-4a1e-8f80-d9fd2f8d5a74","createdTime":"2020-10-21T20:19:57.158Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"65cd9bb3-c2df-41f1-b9ee-39b8cbfc7b61","createdTime":"2020-10-21T20:19:56.596Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"39967500-c72a-4450-93b6-1a90459e28f5","createdTime":"2020-10-21T20:19:56.087Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"73da65dd-093a-4ea6-be00-bbe98349c34f","createdTime":"2020-10-21T20:12:22.525Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"fd9daa83-b1b6-4143-a7bd-71fb14816a9c","createdTime":"2020-10-21T20:12:22.044Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"190380a1-cd61-4b47-8118-915c93ddccaf","createdTime":"2020-10-21T20:12:21.473Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"1e6851b5-68d4-421a-bd62-51fb39094b14","createdTime":"2020-10-21T20:12:20.944Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"af886e1b-9c1c-4d2e-af00-398e1877a037","createdTime":"2020-10-16T21:43:19.308Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"9058ec20-dece-479f-970f-5a9a215be81e","createdTime":"2020-10-16T21:43:18.421Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"0bdae0eb-b1a0-4a91-8555-e0c89e8d2bc8","createdTime":"2020-10-16T21:43:17.483Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"8d659f74-2243-4326-8539-b37025d34df9","createdTime":"2020-10-16T21:43:16.53Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"fe7d2fb1-b2cd-4fc5-9fae-5899eea6d1a5","createdTime":"2020-10-16T21:42:46.838Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"ae3e507e-c698-4ac4-9738-094ab8582446","createdTime":"2020-10-16T21:42:46.369Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"4cc85869-75e2-4f16-bf3e-a13e9e707db4","createdTime":"2020-10-16T21:42:45.814Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"c5eadac4-1ecb-42d9-8ae2-27c3a7832687","createdTime":"2020-10-16T21:42:45.225Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"cde6578a-0ac1-43f4-b48b-8ce17784870a","createdTime":"2020-10-16T21:37:19.124Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"e5c0ac94-6a27-43b7-9399-838c8d6e9720","createdTime":"2020-10-16T21:37:18.44Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"5b651018-24bc-4fef-95ef-6fb7b0837e67","createdTime":"2020-10-16T21:37:17.731Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"6524edec-da1e-4fbc-be84-998357245053","createdTime":"2020-10-16T21:37:17.012Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"6efa66ba-25f3-4e0a-bce2-5f84bd18637a","createdTime":"2020-10-16T21:37:14.087Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"4e2aa5d9-cb49-4e62-8b57-084d5218a00a","createdTime":"2020-10-16T21:37:13.413Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"33939f5e-1a83-4182-aabe-00b44a4847c9","createdTime":"2020-10-16T21:37:12.674Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"f6555413-b23d-4148-b0aa-437f5c6cb88b","createdTime":"2020-10-16T21:37:11.887Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"e8094539-a6c0-4ad2-8e6a-54d767bea7e6","createdTime":"2020-10-16T16:45:13.339Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"a893f5df-3619-4f77-96a9-80d03231f888","createdTime":"2020-10-16T16:45:05.607Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"f8b94271-656c-44fb-a8f4-8fdbe51db9b3","createdTime":"2020-10-16T16:44:58.948Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"e0ec941c-75dd-488c-9648-b210b1344ee0","createdTime":"2020-10-16T16:44:51.777Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"feedback_id","createdTime":"2020-10-16T16:31:46.014Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Anomaly","startTime":"2020-09-07T00:00:00Z","endTime":"2020-09-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":80.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}},{"feedbackId":"4d622668-3010-4681-8edf-1ad0b3d113f2","createdTime":"2020-10-12T06:18:09.857Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"092cbd9e-358c-4fed-abec-d824adaf6d40","createdTime":"2020-10-12T06:18:09.793Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"6f383edf-c90b-4f5f-a8cd-2fca1aa94931","createdTime":"2020-10-12T06:18:09.707Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"2fb55f32-069f-4f86-adab-57d9497a7ae2","createdTime":"2020-10-12T06:17:22.409Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"a1cb2f5d-4c4f-45c9-8fe4-9c9a9377cca4","createdTime":"2020-10-12T06:17:17.46Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"0f3e43b7-b575-408b-a298-26f8e3331922","createdTime":"2020-10-12T06:17:17.442Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"a9163b7d-bbe8-4392-a07d-961a1d295da3","createdTime":"2020-10-12T06:16:19.251Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"eab72598-04ef-40b1-b59d-e498e4b5e554","createdTime":"2020-10-12T06:16:14.323Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"372b5944-7fd6-49d8-906c-f8cdcdf65c2d","createdTime":"2020-10-12T06:16:14.24Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"08c9af6a-553c-4f43-ad16-b305f3e43fc1","createdTime":"2020-10-12T06:15:50.474Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"7931f3b9-1014-4057-b0e0-426ac6abadd9","createdTime":"2020-10-12T06:15:23.181Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"c6a9a49c-0e49-4928-9cf3-b157707b7c70","createdTime":"2020-10-12T06:15:23.069Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"388dbbcc-6971-4908-af39-c760e15b1224","createdTime":"2020-10-12T06:15:11.805Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"a2867c49-9e2b-4267-8161-5aac58b48b44","createdTime":"2020-10-12T06:15:06.824Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"74466561-2b73-442f-a117-9f88732217f6","createdTime":"2020-10-12T06:12:57.994Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"ee11e90b-64e4-406a-bb8b-639a30ddcd11","createdTime":"2020-10-12T06:12:55.029Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"1ba72d15-2033-45ea-be50-752f8192618c","createdTime":"2020-10-12T06:12:55.032Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"0dc8a5cb-2b81-4045-8a70-b7a0274f0df0","createdTime":"2020-10-12T06:11:37.852Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"b3166a10-a18e-4bbd-8527-b8ec0efc600b","createdTime":"2020-10-12T06:11:35.833Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"dcf70e95-a5e3-444a-a666-57b2b885cb98","createdTime":"2020-10-12T06:11:33.179Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"c0bd04bc-6964-403a-9d41-b338e80af189","createdTime":"2020-10-12T05:59:14.778Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"9b6947b5-f905-4d61-8d07-7ca139bd0d09","createdTime":"2020-10-12T05:59:14.716Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"cb9e0293-a998-4a92-b995-9261026210c0","createdTime":"2020-10-12T05:59:14.704Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"291783f5-d07d-437d-97f5-946f49ca6edd","createdTime":"2020-10-12T05:57:46.875Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"6602a4d9-47da-4a6f-8f42-382410800e6d","createdTime":"2020-10-12T05:57:42.969Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"edfa3a03-9b3a-43aa-8fdf-158bae05d2ce","createdTime":"2020-10-12T05:57:39.995Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"3139a7eb-46b9-4283-9950-6e84060de1cf","createdTime":"2020-10-12T05:56:09.14Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"ac805c20-b0f9-43f7-a4b8-bf6021d899fa","createdTime":"2020-10-12T05:54:15.059Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"170e79e6-536f-4009-b553-3c987468a42b","createdTime":"2020-10-12T05:51:36.034Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"227f0340-d301-4446-8f71-72e3beb0556f","createdTime":"2020-10-12T05:51:31.03Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"e1f31d82-97ff-4002-ac9a-23f27b99d67c","createdTime":"2020-10-12T05:50:47.838Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"33463046-1e87-4cbf-83b2-4fda6b559186","createdTime":"2020-10-12T05:50:47.572Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"194142ba-5499-4b4e-908d-a16bfd6bb507","createdTime":"2020-10-12T05:01:11.503Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Beetle"}},"feedbackType":"ChangePoint","startTime":"2020-09-17T00:00:00Z","endTime":"2020-09-17T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"4ac14328-8245-4c9f-8280-19cc1cd23594","createdTime":"2020-10-07T00:18:00.652Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"eabab917-9020-4512-96bc-4314b7e1e62f","createdTime":"2020-10-07T00:18:00.26Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"101658bb-51b3-4d19-9c39-dae524add11b","createdTime":"2020-10-07T00:17:59.825Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"1b07f219-d2c4-4b30-bec4-8b8d6c850d58","createdTime":"2020-10-07T00:17:59.186Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-07T07:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"34f4aafe-23c9-469d-be7f-3ce7090dc847","createdTime":"2020-10-06T17:36:01.813Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"0ab935f8-e0a8-4afd-a72d-2bb1876ef4f1","createdTime":"2020-10-06T17:36:01.353Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"c00e6272-3fe4-442c-b37b-f09d65bd3245","createdTime":"2020-10-06T17:36:00.829Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"c548b874-e17f-46a5-8eb4-ad3eb7bee74e","createdTime":"2020-10-06T17:36:00.191Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"ec87990c-aaf1-4f15-97b2-523ee50e6bc6","createdTime":"2020-10-05T19:53:41.378Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"83789098-43db-484b-a395-9bd38d1c3b0e","createdTime":"2020-10-05T19:53:40.937Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"3129946c-0a28-4736-b484-ac673b338cf9","createdTime":"2020-10-05T19:53:40.463Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"19aca8e8-4ea2-4389-86e2-41ca9e45f197","createdTime":"2020-10-05T19:53:39.966Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"7ddc5e09-4512-48dc-a80d-6ab4b2678955","createdTime":"2020-10-05T19:08:09.756Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"e98a5c73-b0a6-4a1a-9a7a-5d799e1d3602","createdTime":"2020-10-05T19:08:08.763Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"2492bb62-3177-4fd5-b80c-fd6048a027b8","createdTime":"2020-10-05T19:08:08.172Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"329a7a98-73f7-4647-b59c-138f313c3e21","createdTime":"2020-10-05T19:08:07.5Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"18be46db-b5ae-4706-bd35-12fef9226014","createdTime":"2020-10-05T18:40:52.345Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"0ff5bb6b-9791-4e6b-b26b-9b6cf425b58a","createdTime":"2020-10-05T18:40:51.785Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"2042ea70-cb40-42a3-a482-0eaafd7179c2","createdTime":"2020-10-05T18:40:51.141Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"61d19f8a-f62a-4bcf-a0bd-911b4c92055d","createdTime":"2020-10-05T18:40:49.547Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=20"}'
     headers:
-      apim-request-id: f6b2da4c-5d3c-49ef-bf35-2d2000453335
-      content-length: '1794'
+      apim-request-id: f93f49bc-2694-4521-8289-12dac716c038
+      content-length: '31620'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Sep 2020 00:42:56 GMT
+      date: Wed, 21 Oct 2020 20:20:10 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '89'
-      x-request-id: f6b2da4c-5d3c-49ef-bf35-2d2000453335
+      x-envoy-upstream-service-time: '99'
+      x-request-id: f93f49bc-2694-4521-8289-12dac716c038
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric/query
+- request:
+    body: '{"metricId": "metric_id"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '52'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=20
+  response:
+    body:
+      string: '{"value":[{"feedbackId":"6efa66ba-25f3-4e0a-bce2-5f84bd18637a","createdTime":"2020-10-16T21:37:14.087Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"4e2aa5d9-cb49-4e62-8b57-084d5218a00a","createdTime":"2020-10-16T21:37:13.413Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"33939f5e-1a83-4182-aabe-00b44a4847c9","createdTime":"2020-10-16T21:37:12.674Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"f6555413-b23d-4148-b0aa-437f5c6cb88b","createdTime":"2020-10-16T21:37:11.887Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"e8094539-a6c0-4ad2-8e6a-54d767bea7e6","createdTime":"2020-10-16T16:45:13.339Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"a893f5df-3619-4f77-96a9-80d03231f888","createdTime":"2020-10-16T16:45:05.607Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"f8b94271-656c-44fb-a8f4-8fdbe51db9b3","createdTime":"2020-10-16T16:44:58.948Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"e0ec941c-75dd-488c-9648-b210b1344ee0","createdTime":"2020-10-16T16:44:51.777Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"feedback_id","createdTime":"2020-10-16T16:31:46.014Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Anomaly","startTime":"2020-09-07T00:00:00Z","endTime":"2020-09-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":80.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}},{"feedbackId":"4d622668-3010-4681-8edf-1ad0b3d113f2","createdTime":"2020-10-12T06:18:09.857Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"092cbd9e-358c-4fed-abec-d824adaf6d40","createdTime":"2020-10-12T06:18:09.793Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"6f383edf-c90b-4f5f-a8cd-2fca1aa94931","createdTime":"2020-10-12T06:18:09.707Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"2fb55f32-069f-4f86-adab-57d9497a7ae2","createdTime":"2020-10-12T06:17:22.409Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"a1cb2f5d-4c4f-45c9-8fe4-9c9a9377cca4","createdTime":"2020-10-12T06:17:17.46Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"0f3e43b7-b575-408b-a298-26f8e3331922","createdTime":"2020-10-12T06:17:17.442Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"a9163b7d-bbe8-4392-a07d-961a1d295da3","createdTime":"2020-10-12T06:16:19.251Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"eab72598-04ef-40b1-b59d-e498e4b5e554","createdTime":"2020-10-12T06:16:14.323Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"372b5944-7fd6-49d8-906c-f8cdcdf65c2d","createdTime":"2020-10-12T06:16:14.24Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"08c9af6a-553c-4f43-ad16-b305f3e43fc1","createdTime":"2020-10-12T06:15:50.474Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"7931f3b9-1014-4057-b0e0-426ac6abadd9","createdTime":"2020-10-12T06:15:23.181Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=40"}'
+    headers:
+      apim-request-id: ab917a4a-5ad6-43f5-9de5-f7a1320438ff
+      content-length: '8092'
+      content-type: application/json; charset=utf-8
+      date: Wed, 21 Oct 2020 20:20:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '77'
+      x-request-id: ab917a4a-5ad6-43f5-9de5-f7a1320438ff
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=20
+- request:
+    body: '{"metricId": "metric_id"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '52'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=40
+  response:
+    body:
+      string: '{"value":[{"feedbackId":"c6a9a49c-0e49-4928-9cf3-b157707b7c70","createdTime":"2020-10-12T06:15:23.069Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"388dbbcc-6971-4908-af39-c760e15b1224","createdTime":"2020-10-12T06:15:11.805Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"a2867c49-9e2b-4267-8161-5aac58b48b44","createdTime":"2020-10-12T06:15:06.824Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"74466561-2b73-442f-a117-9f88732217f6","createdTime":"2020-10-12T06:12:57.994Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"ee11e90b-64e4-406a-bb8b-639a30ddcd11","createdTime":"2020-10-12T06:12:55.029Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"1ba72d15-2033-45ea-be50-752f8192618c","createdTime":"2020-10-12T06:12:55.032Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"0dc8a5cb-2b81-4045-8a70-b7a0274f0df0","createdTime":"2020-10-12T06:11:37.852Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"b3166a10-a18e-4bbd-8527-b8ec0efc600b","createdTime":"2020-10-12T06:11:35.833Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"dcf70e95-a5e3-444a-a666-57b2b885cb98","createdTime":"2020-10-12T06:11:33.179Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"c0bd04bc-6964-403a-9d41-b338e80af189","createdTime":"2020-10-12T05:59:14.778Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"9b6947b5-f905-4d61-8d07-7ca139bd0d09","createdTime":"2020-10-12T05:59:14.716Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"cb9e0293-a998-4a92-b995-9261026210c0","createdTime":"2020-10-12T05:59:14.704Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"291783f5-d07d-437d-97f5-946f49ca6edd","createdTime":"2020-10-12T05:57:46.875Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"6602a4d9-47da-4a6f-8f42-382410800e6d","createdTime":"2020-10-12T05:57:42.969Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"edfa3a03-9b3a-43aa-8fdf-158bae05d2ce","createdTime":"2020-10-12T05:57:39.995Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"3139a7eb-46b9-4283-9950-6e84060de1cf","createdTime":"2020-10-12T05:56:09.14Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"ac805c20-b0f9-43f7-a4b8-bf6021d899fa","createdTime":"2020-10-12T05:54:15.059Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"170e79e6-536f-4009-b553-3c987468a42b","createdTime":"2020-10-12T05:51:36.034Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"227f0340-d301-4446-8f71-72e3beb0556f","createdTime":"2020-10-12T05:51:31.03Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"e1f31d82-97ff-4002-ac9a-23f27b99d67c","createdTime":"2020-10-12T05:50:47.838Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=60"}'
+    headers:
+      apim-request-id: e4b0e3c1-66e9-4b84-95c2-dec4b624c0ed
+      content-length: '7457'
+      content-type: application/json; charset=utf-8
+      date: Wed, 21 Oct 2020 20:20:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '98'
+      x-request-id: e4b0e3c1-66e9-4b84-95c2-dec4b624c0ed
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=40
+- request:
+    body: '{"metricId": "metric_id"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '52'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=60
+  response:
+    body:
+      string: '{"value":[{"feedbackId":"33463046-1e87-4cbf-83b2-4fda6b559186","createdTime":"2020-10-12T05:50:47.572Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"194142ba-5499-4b4e-908d-a16bfd6bb507","createdTime":"2020-10-12T05:01:11.503Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Beetle"}},"feedbackType":"ChangePoint","startTime":"2020-09-17T00:00:00Z","endTime":"2020-09-17T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"4ac14328-8245-4c9f-8280-19cc1cd23594","createdTime":"2020-10-07T00:18:00.652Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"eabab917-9020-4512-96bc-4314b7e1e62f","createdTime":"2020-10-07T00:18:00.26Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"101658bb-51b3-4d19-9c39-dae524add11b","createdTime":"2020-10-07T00:17:59.825Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-05T07:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"1b07f219-d2c4-4b30-bec4-8b8d6c850d58","createdTime":"2020-10-07T00:17:59.186Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T07:00:00Z","endTime":"2020-08-07T07:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"34f4aafe-23c9-469d-be7f-3ce7090dc847","createdTime":"2020-10-06T17:36:01.813Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"0ab935f8-e0a8-4afd-a72d-2bb1876ef4f1","createdTime":"2020-10-06T17:36:01.353Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"c00e6272-3fe4-442c-b37b-f09d65bd3245","createdTime":"2020-10-06T17:36:00.829Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"c548b874-e17f-46a5-8eb4-ad3eb7bee74e","createdTime":"2020-10-06T17:36:00.191Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"ec87990c-aaf1-4f15-97b2-523ee50e6bc6","createdTime":"2020-10-05T19:53:41.378Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"83789098-43db-484b-a395-9bd38d1c3b0e","createdTime":"2020-10-05T19:53:40.937Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"3129946c-0a28-4736-b484-ac673b338cf9","createdTime":"2020-10-05T19:53:40.463Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"19aca8e8-4ea2-4389-86e2-41ca9e45f197","createdTime":"2020-10-05T19:53:39.966Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"7ddc5e09-4512-48dc-a80d-6ab4b2678955","createdTime":"2020-10-05T19:08:09.756Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"e98a5c73-b0a6-4a1a-9a7a-5d799e1d3602","createdTime":"2020-10-05T19:08:08.763Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}},{"feedbackId":"2492bb62-3177-4fd5-b80c-fd6048a027b8","createdTime":"2020-10-05T19:08:08.172Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"329a7a98-73f7-4647-b59c-138f313c3e21","createdTime":"2020-10-05T19:08:07.5Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"18be46db-b5ae-4706-bd35-12fef9226014","createdTime":"2020-10-05T18:40:52.345Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Amphibian"}},"feedbackType":"Comment","startTime":null,"endTime":null,"value":{"commentValue":"This
+        is a comment"}},{"feedbackId":"0ff5bb6b-9791-4e6b-b26b-9b6cf425b58a","createdTime":"2020-10-05T18:40:51.785Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Period","value":{"periodType":"AutoDetect","periodValue":4}}],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=80"}'
+    headers:
+      apim-request-id: 3dd41bbf-05b7-4583-8759-4dee6df242ab
+      content-length: '7791'
+      content-type: application/json; charset=utf-8
+      date: Wed, 21 Oct 2020 20:20:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '87'
+      x-request-id: 3dd41bbf-05b7-4583-8759-4dee6df242ab
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=60
+- request:
+    body: '{"metricId": "metric_id"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '52'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=80
+  response:
+    body:
+      string: '{"value":[{"feedbackId":"2042ea70-cb40-42a3-a482-0eaafd7179c2","createdTime":"2020-10-05T18:40:51.141Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-05T00:00:00Z","value":{"changePointValue":"ChangePoint"}},{"feedbackId":"61d19f8a-f62a-4bcf-a0bd-911b4c92055d","createdTime":"2020-10-05T18:40:49.547Z","userPrincipal":"kaghiya@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
+        Lime","Dim2":"Ant"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null}],"@nextLink":null}'
+    headers:
+      apim-request-id: 3b00b4b4-2c60-46b3-9622-751c848162ce
+      content-length: '889'
+      content-type: application/json; charset=utf-8
+      date: Wed, 21 Oct 2020 20:20:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '81'
+      x-request-id: 3b00b4b4-2c60-46b3-9622-751c848162ce
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/feedback/metric/query?$top=20&$skip=80
 version: 1

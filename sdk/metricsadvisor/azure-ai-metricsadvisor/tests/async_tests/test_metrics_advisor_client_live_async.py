@@ -83,7 +83,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             tolist = []
             async for result in results:
                 tolist.append(result)
-            assert len(tolist) == 0
+            assert len(tolist) > 0
 
     @TestMetricsAdvisorClientBaseAsync.await_prepared_test
     async def test_list_metric_enriched_series_data(self):
@@ -119,7 +119,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             results = self.client.list_alerts_for_alert_configuration(
                 alert_configuration_id=self.anomaly_alert_configuration_id,
                 start_time=datetime.datetime(2020, 1, 1),
-                end_time=datetime.datetime(2020, 9, 9),
+                end_time=datetime.datetime(2020, 10, 21),
                 time_mode="AnomalyTime",
             )
             tolist = []

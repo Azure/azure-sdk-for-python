@@ -15,29 +15,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - f9af4b73-266e-4a66-953e-649942dae2de
+      - 6e0718ac-9c02-437a-9860-848829dd11b6
       content-length:
       - '0'
       date:
-      - Tue, 22 Sep 2020 20:37:33 GMT
+      - Wed, 21 Oct 2020 20:12:20 GMT
       location:
-      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/82c6ee69-0d99-45a5-9674-67833b126da7
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/1e6851b5-68d4-421a-bd62-51fb39094b14
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '291'
+      - '545'
       x-request-id:
-      - f9af4b73-266e-4a66-953e-649942dae2de
+      - 6e0718ac-9c02-437a-9860-848829dd11b6
     status:
       code: 201
       message: Created

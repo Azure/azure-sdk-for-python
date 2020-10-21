@@ -10,23 +10,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/series/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/series/query
   response:
     body:
       string: '{"value":[{"series":{"dimension":{"dimension_name":"Common Lime"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
     headers:
-      apim-request-id: a6634fbd-31a3-4db2-b7b2-934f2fa4a127
+      apim-request-id: c121dba4-0914-4989-ad83-e4fbabcff349
       content-length: '197'
       content-type: application/json; charset=utf-8
-      date: Mon, 12 Oct 2020 19:26:30 GMT
+      date: Wed, 21 Oct 2020 20:20:15 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '5701'
-      x-request-id: a6634fbd-31a3-4db2-b7b2-934f2fa4a127
+      x-envoy-upstream-service-time: '185'
+      x-request-id: c121dba4-0914-4989-ad83-e4fbabcff349
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/c0f2539f-b804-4ab9-a70f-0da0c89c76d8/series/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/92a65351-5352-4650-80cf-045c34fb9e5c/series/query
 version: 1

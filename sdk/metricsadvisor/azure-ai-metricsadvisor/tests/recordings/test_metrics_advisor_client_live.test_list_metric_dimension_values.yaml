@@ -13,33 +13,33 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query
   response:
     body:
       string: '{"value":["Algerian Fir","Almond","Aspen","Austrian Pine","Bastard
         Service Tree","Birch","Black Birch (River Birch)","Black Mulberry","Black
         Poplar","Blackthorn","Blue Atlas Cedar","Box elder","Cabbage Palm","Caucasian
         Fir","Caucasian Lime","Cherry","Cherry Laurel","Chinese red-barked birch","Cider
-        gum","Cockspur Thorn"],"@nextLink":"https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20"}'
+        gum","Cockspur Thorn"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20"}'
     headers:
       apim-request-id:
-      - de769b65-714e-4958-9c62-1a67ff37dfdf
+      - e4f53fe1-a178-4617-986c-0e65a94118da
       content-length:
-      - '497'
+      - '494'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Sep 2020 16:54:10 GMT
+      - Wed, 21 Oct 2020 20:12:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '96'
+      - '73'
       x-request-id:
-      - de769b65-714e-4958-9c62-1a67ff37dfdf
+      - e4f53fe1-a178-4617-986c-0e65a94118da
     status:
       code: 200
       message: OK
@@ -57,30 +57,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20
   response:
     body:
       string: '{"value":["Common Alder","Common Ash","Common Beech","Common Hazel","Common
-        Juniper","Common Lime","Common Walnut","Common Yew","Copper Beech","Cotoneaster"],"@nextLink":null}'
+        Juniper","Common Lime","Common Walnut","Common Yew","Copper Beech","__SUM__"],"@nextLink":null}'
     headers:
       apim-request-id:
-      - 8d5197eb-33ca-47cd-9229-411d07d52982
+      - 5539cc94-4d62-4c48-82b1-bc5e99f116dc
       content-length:
-      - '175'
+      - '171'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Sep 2020 16:54:10 GMT
+      - Wed, 21 Oct 2020 20:12:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '97'
+      - '91'
       x-request-id:
-      - 8d5197eb-33ca-47cd-9229-411d07d52982
+      - 5539cc94-4d62-4c48-82b1-bc5e99f116dc
     status:
       code: 200
       message: OK

@@ -60,7 +60,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             detection_configuration_id=self.anomaly_detection_configuration_id,
             incident_id=self.incident_id,
         ))
-        assert len(results) == 0
+        assert len(results) > 0
 
     def test_list_metric_enriched_series_data(self):
         series_identity = {"Dim1":"Common Lime"}
@@ -84,7 +84,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         results = list(self.client.list_alerts_for_alert_configuration(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
             time_mode="AnomalyTime",
         ))
         assert len(list(results)) > 0
