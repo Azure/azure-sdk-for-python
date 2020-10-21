@@ -122,7 +122,9 @@ from azure.ai.metricsadvisor.models import (
         Dimension,
         DataFeedOptions,
         DataFeedRollupSettings,
-        DataFeedMissingDataPointFillSettings
+        DataFeedMissingDataPointFillSettings,
+        DataFeedGranularity,
+        DataFeed
     )
 
 service_endpoint = os.getenv("ENDPOINT")
@@ -136,13 +138,13 @@ client = MetricsAdvisorAdministrationClient(
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-data_feed = client.create_data_feed(
+data_feed = DataFeed(
     name="My data feed",
     source=SQLServerDataFeed(
         connection_string=sql_server_connection_string,
         query=query,
     ),
-    granularity="Daily",
+    granularity=DataFeedGranularity("Daily"),
     schema=DataFeedSchema(
         metrics=[
             Metric(name="cost", display_name="Cost"),
@@ -154,7 +156,9 @@ data_feed = client.create_data_feed(
         ],
         timestamp_column="Timestamp"
     ),
-    ingestion_settings=datetime.datetime(2019, 10, 1),
+    ingestion_settings=DataFeedIngestionSettings(
+        ingestion_begin_time=datetime.datetime(2019, 10, 1)
+    ),
     options=DataFeedOptions(
         data_feed_description="cost/revenue data feed",
         rollup_settings=DataFeedRollupSettings(
@@ -169,7 +173,9 @@ data_feed = client.create_data_feed(
     )
 )
 
-return data_feed
+my_sql_data_feed = client.create_data_feed(data_feed)
+
+return my_sql_data_feed
 ```
 
 ### Check ingestion status
@@ -212,6 +218,7 @@ from azure.ai.metricsadvisor.models import (
     SmartDetectionCondition,
     SuppressCondition,
     MetricDetectionCondition,
+    AnomalyDetectionConfiguration
 )
 
 service_endpoint = os.getenv("ENDPOINT")
@@ -251,7 +258,7 @@ smart_detection_condition = SmartDetectionCondition(
     )
 )
 
-detection_config = client.create_metric_anomaly_detection_configuration(
+anomaly_detection_config = AnomalyDetectionConfiguration(
     name="my_detection_config",
     metric_id=metric_id,
     description="anomaly detection config for metric",
@@ -262,6 +269,8 @@ detection_config = client.create_metric_anomaly_detection_configuration(
         smart_detection_condition=smart_detection_condition
     )
 )
+
+detection_config = client.create_metric_anomaly_detection_configuration(anomaly_detection_config)
 
 return detection_config
 ```
@@ -279,7 +288,8 @@ from azure.ai.metricsadvisor.models import (
     MetricAnomalyAlertConditions,
     SeverityCondition,
     MetricBoundaryCondition,
-    MetricAnomalyAlertSnoozeCondition
+    MetricAnomalyAlertSnoozeCondition,
+    AnomalyAlertConfiguration
 )
 service_endpoint = os.getenv("ENDPOINT")
 subscription_key = os.getenv("SUBSCRIPTION_KEY")
@@ -292,7 +302,7 @@ client = MetricsAdvisorAdministrationClient(
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-alert_config = client.create_anomaly_alert_configuration(
+anomaly_alert_configuration = AnomalyAlertConfiguration(
     name="my alert config",
     description="alert config description",
     cross_metrics_operator="AND",
@@ -334,6 +344,8 @@ alert_config = client.create_anomaly_alert_configuration(
     ],
     hook_ids=[hook_id]
 )
+
+alert_config = client.create_anomaly_alert_configuration(anomaly_alert_configuration)
 
 return alert_config
 ```
@@ -392,8 +404,8 @@ client = MetricsAdvisorAdministrationClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key))
 
 hook = client.create_hook(
-    name="email hook",
     hook=EmailHook(
+        name="email hook",
         description="my email hook",
         emails_to_alert=["alertme@alertme.com"],
         external_link="https://adwiki.azurewebsites.net/articles/howto/alerts/create-hooks.html"
