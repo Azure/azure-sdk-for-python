@@ -117,7 +117,7 @@ class StorageTableTest(TableTestCase):
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table_name = self._get_table_reference()
 
