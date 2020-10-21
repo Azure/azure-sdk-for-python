@@ -184,50 +184,30 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
-    def get_credential(self, client_class):
+    def _create_credential(self, client_secret_credential):
+        return client_secret_credential(
+            tenant_id=self.tenant_id,
+            client_id=self.client_id,
+            client_secret=self.secret
+        )
 
-        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
-        client_id = os.environ.get("AZURE_CLIENT_ID", None)
-        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+    def _get_real_credential(self, **kwargs):
+        is_async = kwargs.pop("is_async", False)
+        from azure.identity import ClientSecretCredential
+        if is_async:
+            from azure.identity.aio import ClientSecretCredential
+        return self._create_credential(ClientSecretCredential)
 
-        if tenant_id and client_id and secret and self.is_live:
+    def get_credential(self, client_class, **kwargs):
+
+        self.tenant_id = os.environ.get("AZURE_TENANT_ID", None)
+        self.client_id = os.environ.get("AZURE_CLIENT_ID", None)
+        self.secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+
+        if self.tenant_id and self.client_id and self.secret and self.is_live:
             if _is_autorest_v3(client_class):
                 # Create azure-identity class
-                from azure.identity import ClientSecretCredential
-                return ClientSecretCredential(
-                    tenant_id=tenant_id,
-                    client_id=client_id,
-                    client_secret=secret
-                )
-            else:
-                # Create msrestazure class
-                from msrestazure.azure_active_directory import ServicePrincipalCredentials
-                return ServicePrincipalCredentials(
-                    tenant=tenant_id,
-                    client_id=client_id,
-                    secret=secret
-                )
-        else:
-            if _is_autorest_v3(client_class):
-                return self.settings.get_azure_core_credentials()
-            else:
-                return self.settings.get_credentials()
-
-    def get_async_credential(self, client_class):
-
-        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
-        client_id = os.environ.get("AZURE_CLIENT_ID", None)
-        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
-
-        if tenant_id and client_id and secret and self.is_live:
-            if _is_autorest_v3(client_class):
-                # Create azure-identity class
-                from azure.identity.aio import ClientSecretCredential
-                return ClientSecretCredential(
-                    tenant_id=tenant_id,
-                    client_id=client_id,
-                    client_secret=secret
-                )
+                return self._get_real_credential(**kwargs)
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
