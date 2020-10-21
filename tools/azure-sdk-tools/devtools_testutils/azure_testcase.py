@@ -26,6 +26,11 @@ from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_functi
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
 
+try:
+    # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
+    from .fake_async_credential import AsyncFakeCredential
+except SyntaxError:
+    pass
 
 class HttpStatusCode(object):
     OK = 200
@@ -184,13 +189,7 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
-    class AsyncFakeCredential(object):
-        async def get_token(self, *scopes, **kwargs):
-            from azure.core.credentials import AccessToken
-            return AccessToken('fake_token', 2527537086)
 
-        async def close(self):
-            pass
 
     def _create_credential(self, client_secret_credential):
         return client_secret_credential(
@@ -207,7 +206,7 @@ class AzureTestCase(ReplayableTest):
 
     def _get_fake_credential(self, is_async):
         if is_async:
-            return self.AsyncFakeCredential()
+            return AsyncFakeCredential()
         return self.settings.get_azure_core_credentials()
 
     def get_credential(self, client_class, **kwargs):
