@@ -76,6 +76,22 @@ if TYPE_CHECKING:
         RootCause,
     )
 
+    DataFeedSourceUnion = Union[
+        "AzureApplicationInsightsDataFeed",
+        "AzureBlobDataFeed",
+        "AzureCosmosDBDataFeed",
+        "AzureDataExplorerDataFeed",
+        "AzureTableDataFeed",
+        "HttpRequestDataFeed",
+        "InfluxDBDataFeed",
+        "MySqlDataFeed",
+        "PostgreSqlDataFeed",
+        "SQLServerDataFeed",
+        "MongoDBDataFeed",
+        "AzureDataLakeStorageGen2DataFeed",
+        "ElasticsearchDataFeed"
+    ]
+
 
 class MetricAnomalyAlertScopeType(str, Enum):
     """Anomaly scope

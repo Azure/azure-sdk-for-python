@@ -66,20 +66,7 @@ from .models._models import (
     WebHook,
     AnomalyAlertConfiguration,
     AnomalyDetectionConfiguration,
-    DataFeedIngestionProgress,
-    AzureApplicationInsightsDataFeed,
-    AzureBlobDataFeed,
-    AzureCosmosDBDataFeed,
-    AzureDataExplorerDataFeed,
-    AzureTableDataFeed,
-    HttpRequestDataFeed,
-    InfluxDBDataFeed,
-    MySqlDataFeed,
-    PostgreSqlDataFeed,
-    SQLServerDataFeed,
-    MongoDBDataFeed,
-    AzureDataLakeStorageGen2DataFeed,
-    ElasticsearchDataFeed
+    DataFeedIngestionProgress
 )
 
 if TYPE_CHECKING:
@@ -87,23 +74,6 @@ if TYPE_CHECKING:
     from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from ._generated.models import IngestionStatus as DataFeedIngestionStatus
     from .models._models import Hook
-
-
-DataFeedSourceUnion = Union[
-    AzureApplicationInsightsDataFeed,
-    AzureBlobDataFeed,
-    AzureCosmosDBDataFeed,
-    AzureDataExplorerDataFeed,
-    AzureTableDataFeed,
-    HttpRequestDataFeed,
-    InfluxDBDataFeed,
-    MySqlDataFeed,
-    PostgreSqlDataFeed,
-    SQLServerDataFeed,
-    MongoDBDataFeed,
-    AzureDataLakeStorageGen2DataFeed,
-    ElasticsearchDataFeed
-]
 
 
 DATA_FEED = {

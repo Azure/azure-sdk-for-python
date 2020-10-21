@@ -15,11 +15,6 @@ import six
 from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
 from .models import (
-    DataFeedGranularityType,
-    DataFeedGranularity,
-    DataFeedSchema,
-    Metric,
-    DataFeedIngestionSettings,
     AnomalyFeedback,
     ChangePointFeedback,
     CommentFeedback,
