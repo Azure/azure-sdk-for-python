@@ -182,6 +182,14 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
+    class AsyncFakeCredential(object):
+        async def get_token(self, *scopes, **kwargs):
+            from azure.core.credentials import AccessToken
+            return AccessToken('fake_token', 2527537086)
+
+        async def close(self):
+            pass
+
     def _create_credential(self, client_secret_credential):
         return client_secret_credential(
             tenant_id=self.tenant_id,
@@ -189,23 +197,28 @@ class AzureTestCase(ReplayableTest):
             client_secret=self.secret
         )
 
-    def _get_real_credential(self, **kwargs):
-        is_async = kwargs.pop("is_async", False)
+    def _get_real_credential(self, is_async):
         from azure.identity import ClientSecretCredential
         if is_async:
             from azure.identity.aio import ClientSecretCredential
         return self._create_credential(ClientSecretCredential)
+
+    def _get_fake_credential(self, is_async):
+        if is_async:
+            return self.AsyncFakeCredential()
+        return self.settings.get_azure_core_credentials()
 
     def get_credential(self, client_class, **kwargs):
 
         self.tenant_id = os.environ.get("AZURE_TENANT_ID", None)
         self.client_id = os.environ.get("AZURE_CLIENT_ID", None)
         self.secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+        is_async = kwargs.pop("is_async", False)
 
         if self.tenant_id and self.client_id and self.secret and self.is_live:
             if _is_autorest_v3(client_class):
                 # Create azure-identity class
-                return self._get_real_credential(**kwargs)
+                return self._get_real_credential(is_async)
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
@@ -216,7 +229,7 @@ class AzureTestCase(ReplayableTest):
                 )
         else:
             if _is_autorest_v3(client_class):
-                return self.settings.get_azure_core_credentials()
+                return self._get_fake_credential(is_async)
             else:
                 return self.settings.get_credentials()
 
