@@ -227,12 +227,12 @@ def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, ba
     generated_config = {
         "markdown": readme_full_path,
     }
-    sdk_git_short_id = sdk_git_id.split("/")[-1].lower()
+    sdk_git_short_id = sdk_git_id.split("/")[-1].lower() + "-track2"
     _LOGGER.info("Looking for tag {} in readme {}".format(sdk_git_short_id, readme_file))
     for swagger_to_sdk_conf in readme_as_conf:
         repo = swagger_to_sdk_conf.get("repo", "")
         repo = repo.split("/")[-1].lower() # Be sure there is no org/login part
-        if repo == sdk_git_short_id + "-track2":
+        if repo == sdk_git_short_id:
             _LOGGER.info("This Readme contains a swagger-to-sdk section for repo {}".format(repo))
             generated_config.update({
                 "autorest_options": swagger_to_sdk_conf.get("autorest_options", {}),
