@@ -26,7 +26,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
     :param ~azure.core.credentials.AzureKeyCredential credential:
         A credential to authenticate requests to the service
     """
-    def __init__(self, endpoint, credential, **kwargs: any):
+    def __init__(self, endpoint, credential, **kwargs):
         # type: (str, AzureKeyCredential, **Any) -> None
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
