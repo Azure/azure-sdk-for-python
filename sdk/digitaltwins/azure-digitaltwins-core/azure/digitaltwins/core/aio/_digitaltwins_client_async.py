@@ -319,7 +319,8 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_relationships(self, digital_twin_id, relationship_id=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.Relationship]
+        # type: (str, Optional[str], **Any) 
+        #   -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.Relationship]
         """Retrieve relationships for a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
