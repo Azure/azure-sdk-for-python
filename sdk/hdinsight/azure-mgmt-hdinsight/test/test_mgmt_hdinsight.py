@@ -317,6 +317,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         cluster = create_poller.result()
         self.validate_cluster(cluster_name, create_params, cluster)
 
+    @unittest.skip("HDInsight will not support to create MLService cluster after 1/1/2021.")
     @ResourceGroupPreparer(name_prefix='hdipy-', location=LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=LOCATION)
     def test_create_mlservices_cluster(self, resource_group, location, storage_account, storage_account_key):
