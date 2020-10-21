@@ -209,9 +209,38 @@ class AzureTestCase(ReplayableTest):
             if _is_autorest_v3(client_class):
                 return self.settings.get_azure_core_credentials()
             else:
-                return self.settings.get_credentials()    
-    
-    def create_client_from_credential(self, client_class, credential, **kwargs):
+                return self.settings.get_credentials()
+
+    def get_async_credential(self, client_class):
+
+        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
+        client_id = os.environ.get("AZURE_CLIENT_ID", None)
+        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+
+        if tenant_id and client_id and secret and self.is_live:
+            if _is_autorest_v3(client_class):
+                # Create azure-identity class
+                from azure.identity.aio import ClientSecretCredential
+                return ClientSecretCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    client_secret=secret
+                )
+            else:
+                # Create msrestazure class
+                from msrestazure.azure_active_directory import ServicePrincipalCredentials
+                return ServicePrincipalCredentials(
+                    tenant=tenant_id,
+                    client_id=client_id,
+                    secret=secret
+                )
+        else:
+            if _is_autorest_v3(client_class):
+                return self.settings.get_azure_core_credentials()
+            else:
+                return self.settings.get_credentials()
+
+    def create_client_from_credential(self, client_class, credential, *args, **kwargs):
 
         # Real client creation
         # FIXME decide what is the final argument for that
@@ -221,6 +250,7 @@ class AzureTestCase(ReplayableTest):
             kwargs.setdefault("logging_enable", True)
             client = client_class(
                 credential=credential,
+                *args,
                 **kwargs
             )
         else:
@@ -241,10 +271,10 @@ class AzureTestCase(ReplayableTest):
             client.config.enable_http_logger = True
         return client
 
-    def create_basic_client(self, client_class, **kwargs):
+    def create_basic_client(self, client_class, *args, **kwargs):
         """ DO NOT USE ME ANYMORE."""
         credentials = self.get_credential(client_class)
-        return self.create_client_from_credential(client_class, credentials, **kwargs)
+        return self.create_client_from_credential(client_class, credentials, *args, **kwargs)
 
     def create_random_name(self, name):
         return get_resource_name(name, self.qualified_test_name.encode())
