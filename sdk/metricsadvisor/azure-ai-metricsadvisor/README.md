@@ -395,8 +395,8 @@ client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-results = self.client.list_incidents_for_detection_configuration(
-            detection_configuration_id=self.anomaly_detection_configuration_id,
+results = client.list_incidents_for_detection_configuration(
+            detection_configuration_id=anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 9, 9),
         )
@@ -425,9 +425,9 @@ client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-results = self.client.list_incident_root_causes(
-            detection_configuration_id=self.anomaly_detection_configuration_id,
-            incident_id=self.incident_id,
+results = client.list_incident_root_causes(
+            detection_configuration_id=anomaly_detection_configuration_id,
+            incident_id=incident_id,
         )
 for result in results:
     print("Score: {}".format(result.score))
