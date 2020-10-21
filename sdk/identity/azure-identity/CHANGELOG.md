@@ -2,8 +2,8 @@
 
 ## 1.5.0b3 (Unreleased)
 ### Breaking Changes
-- Renamed optional `CertificateCredential` keyword argument "send_certificate"
-  to "send_certificate_chain"
+- Renamed optional `CertificateCredential` keyword argument `send_certificate`
+  to `send_certificate_chain`
 
 ### Changed
 - `DeviceCodeCredential` parameter `client_id` is now optional. When not
