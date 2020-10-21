@@ -485,7 +485,6 @@ class FileSasPermissions(object):
         self.create = create
         self.write = write
         self.delete = delete
-        self.list = list
         self.move = kwargs.pop('move', None)
         self.execute = kwargs.pop('execute', None)
         self.manage_ownership = kwargs.pop('manage_ownership', None)

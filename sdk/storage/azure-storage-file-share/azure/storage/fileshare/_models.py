@@ -845,12 +845,17 @@ class ShareSasPermissions(object):
         an account SAS instead.
     :param bool list:
         List files and directories in the share.
+    :param bool create:
+        Write a file to the share, snapshot a share, or copy a file to
+        a new file in the share. Note: You cannot grant permissions to create a share
+        with a share SAS. Use an account SAS to create a share instead.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False, list=False, create=False):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
         self.list = list
+        self.create = create
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
@@ -877,8 +882,9 @@ class ShareSasPermissions(object):
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_list = 'l' in permission
+        p_create = 'c' in permission
 
-        parsed = cls(p_read, p_write, p_delete, p_list)
+        parsed = cls(p_read, p_write, p_delete, p_list, p_create)
 
         return parsed
 

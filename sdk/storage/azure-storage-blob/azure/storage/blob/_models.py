@@ -894,6 +894,13 @@ class ContainerSasPermissions(object):
         List blobs in the container.
     :param bool tag:
         Set or get tags on the blobs in the container.
+    :param bool add:
+        Add a block to any append blob in the container.
+    :param bool create:
+        Write a new blob to the container, snapshot any blob in the container, or copy a blob to
+        a new blob in the container. Note: You cannot grant permissions to create a container
+        with a container SAS. Use an account SAS to create a container instead.
+    :param bool write:
     """
     def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False, add=False, create=False):  # pylint: disable=redefined-builtin
         self.read = read
