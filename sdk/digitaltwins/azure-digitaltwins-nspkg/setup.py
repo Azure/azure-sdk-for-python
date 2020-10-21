@@ -5,48 +5,36 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import sys
+
 from setuptools import setup
 
-PACKAGE_NAME = "azure-digitaltwins-nspkg"
-PACKAGE_PPRINT_NAME = "Azure DigitalTwins Nspkg"
-VERSION = "1.0.0"
-
-with open("README.md") as f:
-    README = f.read()
-with open("CHANGELOG.md") as f:
-    CHANGELOG = f.read()
-
-PACKAGES = []
-# Do an empty package on Python 3 and not python_requires, since not everybody is ready
-# https://github.com/Azure/azure-sdk-for-python/issues/3447
-# https://github.com/Azure/azure-sdk-for-python/issues/3481
-if sys.version_info[0] < 3:
-    PACKAGES = ['azure.digitaltwins']
-
 setup(
-    name=PACKAGE_NAME,
-    version=VERSION,
-    description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=README + "\n\n" + CHANGELOG,
-    long_description_content_type="text/markdown",
-    license="MIT License",
-    author="Microsoft Corporation",
-    author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/digitaltwins/azure-digitaltwins-core",
+    name='azure-digitaltwins-nspkg',
+    version='1.0.0',
+    description='Microsoft Azure DigitalTwins Namespace Package [Internal]',
+    long_description=open('README.md', 'r').read(),
+    license='MIT License',
+    author='Microsoft Corporation',
+    author_email='azurepysdk@microsoft.com',
+    url='https://github.com/Azure/azure-sdk-for-python/',
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        'Development Status :: 5 - Production/Stable',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        "License :: OSI Approved :: MIT License",
+        'Programming Language :: Python :: 3.9',
+        'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=PACKAGES,
-    install_requires=["azure-nspkg>=3.0.0"],
+    packages=[
+        'azure.digitaltwins',
+    ],
+    install_requires=[
+        'azure-nspkg>=2.0.0',
+    ]
 )
