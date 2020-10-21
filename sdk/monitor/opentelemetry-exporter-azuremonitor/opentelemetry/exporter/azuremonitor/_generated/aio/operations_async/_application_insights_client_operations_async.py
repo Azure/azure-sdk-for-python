@@ -17,7 +17,7 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class AzureMonitorExporterOperationsMixin:
+class ApplicationInsightsClientOperationsMixin:
 
     async def track(
         self,
@@ -29,10 +29,10 @@ class AzureMonitorExporterOperationsMixin:
         This operation sends a sequence of telemetry events that will be monitored by Azure Monitor.
 
         :param body: The list of telemetry events to track.
-        :type body: list[~azure_monitor_exporter.models.TelemetryItem]
+        :type body: list[~application_insights_client.models.TelemetryItem]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TrackResponse, or the result of cls(response)
-        :rtype: ~azure_monitor_exporter.models.TrackResponse
+        :rtype: ~application_insights_client.models.TrackResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.TrackResponse"]

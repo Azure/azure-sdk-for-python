@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_monitor_exporter import AzureMonitorExporter
-__all__ = ['AzureMonitorExporter']
+from ._application_insights_client import ApplicationInsightsClient
+__all__ = ['ApplicationInsightsClient']
 
 try:
     from ._patch import patch_sdk  # type: ignore

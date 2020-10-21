@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_monitor_exporter_async import AzureMonitorExporter
-__all__ = ['AzureMonitorExporter']
+from ._application_insights_client_async import ApplicationInsightsClient
+__all__ = ['ApplicationInsightsClient']
