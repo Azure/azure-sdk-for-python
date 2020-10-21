@@ -895,19 +895,23 @@ class ContainerSasPermissions(object):
     :param bool tag:
         Set or get tags on the blobs in the container.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False, add=False, create=False):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
         self.list = list
         self.delete_previous_version = delete_previous_version
         self.tag = tag
+        self.add = add
+        self.create = create
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
                      ('l' if self.list else '') +
-                     ('t' if self.tag else ''))
+                     ('t' if self.tag else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else ''))
 
     def __str__(self):
         return self._str
@@ -931,8 +935,10 @@ class ContainerSasPermissions(object):
         p_list = 'l' in permission
         p_delete_previous_version = 'x' in permission
         p_tag = 't' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add, create=p_create)
 
         return parsed
 
