@@ -232,7 +232,7 @@ def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, ba
     for swagger_to_sdk_conf in readme_as_conf:
         repo = swagger_to_sdk_conf.get("repo", "")
         repo = repo.split("/")[-1].lower() # Be sure there is no org/login part
-        if repo == sdk_git_short_id:
+        if repo == sdk_git_short_id + "-track2":
             _LOGGER.info("This Readme contains a swagger-to-sdk section for repo {}".format(repo))
             generated_config.update({
                 "autorest_options": swagger_to_sdk_conf.get("autorest_options", {}),

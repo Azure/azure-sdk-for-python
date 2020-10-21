@@ -123,8 +123,6 @@ def execute_after_script(sdk_root, global_conf, local_conf):
     local_envs.update(global_conf.get("envs", {}))
 
     for script in after_scripts:
-        if script.find("multiapi_init_gen.py") >= 0:
-            continue
         _LOGGER.info("Execute after script: %s", script)
         execute_simple_command(script, cwd=sdk_root, shell=True, env=local_envs)
 
