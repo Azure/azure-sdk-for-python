@@ -906,7 +906,7 @@ class ContainerSasPermissions(object):
                  read=False,
                  write=False,
                  delete=False,
-                 list=False,
+                 list=False,    # pylint: disable=redefined-builtin
                  delete_previous_version=False,
                  tag=False,
                  add=False,
