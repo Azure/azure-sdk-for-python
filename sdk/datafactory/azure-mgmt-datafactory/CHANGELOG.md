@@ -1,5 +1,23 @@
 # Release History
 
+## 0.14.0 (2020-10-23)
+
+**Features**
+
+  - Model OrcSink has a new parameter format_settings
+  - Model DelimitedTextWriteSettings has a new parameter max_rows_per_file
+  - Model DelimitedTextWriteSettings has a new parameter file_name_prefix
+  - Model RestSink has a new parameter http_compression_type
+  - Model ParquetSink has a new parameter format_settings
+  - Model AvroWriteSettings has a new parameter max_rows_per_file
+  - Model AvroWriteSettings has a new parameter file_name_prefix
+
+**Breaking changes**
+
+  - Model RestSink no longer has parameter wrap_request_json_in_an_object
+  - Model RestSink no longer has parameter compression_type
+  
+
 ## 0.13.0 (2020-08-25)
 
 **Features**
