@@ -84,7 +84,7 @@ setup(
         "msrest>=0.5.0"
     ],
     extras_require={
-        ":python_version<'3.0'": ['futures', 'azure-digitaltwins-nspkg'],
+        ":python_version<'3.0'": ['futures', 'azure-digitaltwins-nspkg>=1.0.0'],
         ":python_version<'3.4'": ['enum34>=1.0.4'],
         ":python_version<'3.5'": ["typing"]
     },
