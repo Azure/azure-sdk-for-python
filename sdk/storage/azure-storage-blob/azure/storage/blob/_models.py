@@ -902,7 +902,15 @@ class ContainerSasPermissions(object):
         with a container SAS. Use an account SAS to create a container instead.
     :param bool write:
     """
-    def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False, add=False, create=False):  # pylint: disable=redefined-builtin
+    def __init__(self,
+                 read=False,
+                 write=False,
+                 delete=False,
+                 list=False,
+                 delete_previous_version=False,
+                 tag=False,
+                 add=False,
+                 create=False):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
