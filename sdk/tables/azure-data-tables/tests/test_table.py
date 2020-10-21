@@ -93,7 +93,7 @@ class StorageTableTest(TableTestCase):
     def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
         # Act
         created = ts.create_table(table_name)
@@ -133,7 +133,7 @@ class StorageTableTest(TableTestCase):
     def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -152,7 +152,7 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_if_exists(self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         t0 = ts.create_table(table_name)
@@ -167,7 +167,7 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_if_exists_new_table(self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         t = ts.create_table_if_not_exists(table_name)
@@ -181,7 +181,7 @@ class StorageTableTest(TableTestCase):
     def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -195,7 +195,7 @@ class StorageTableTest(TableTestCase):
     def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -209,7 +209,7 @@ class StorageTableTest(TableTestCase):
     def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         t = self._create_table(ts)
 
         # Act
@@ -229,7 +229,7 @@ class StorageTableTest(TableTestCase):
     def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         t = self._create_table(ts)
 
         # Act
@@ -250,7 +250,7 @@ class StorageTableTest(TableTestCase):
         # Arrange
         prefix = 'listtable'
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_list = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_list)
@@ -272,7 +272,7 @@ class StorageTableTest(TableTestCase):
     def test_query_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -298,7 +298,7 @@ class StorageTableTest(TableTestCase):
     def test_delete_table_with_existing_table(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = self._create_table(ts)
 
         # Act
@@ -315,7 +315,7 @@ class StorageTableTest(TableTestCase):
                                                                  storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -333,7 +333,7 @@ class StorageTableTest(TableTestCase):
         if 'cosmos' in account_url:
             pytest.skip("Cosmos URLs do notsupport unicode table names")
 
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table_name = u'啊齄丂狛狜'
 
@@ -352,7 +352,7 @@ class StorageTableTest(TableTestCase):
         if 'cosmos' in url:
             pytest.skip("Cosmos endpoint does not support this")
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = self._create_table(ts)
         try:
             # Act
@@ -374,7 +374,7 @@ class StorageTableTest(TableTestCase):
         if 'cosmos' in account_url:
             pytest.skip("Cosmos URLs do notsupport unicode table names")
 
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table = self._create_table(ts)
         try:
@@ -398,7 +398,7 @@ class StorageTableTest(TableTestCase):
         if 'cosmos' in account_url:
             pytest.skip("Cosmos URLs do notsupport unicode table names")
 
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table = self._create_table(ts)
         try:
@@ -425,7 +425,7 @@ class StorageTableTest(TableTestCase):
         if 'cosmos' in account_url:
             pytest.skip("Cosmos URLs do notsupport unicode table names")
 
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table = self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
@@ -453,7 +453,7 @@ class StorageTableTest(TableTestCase):
         if 'cosmos' in account_url:
             pytest.skip("Cosmos URLs do notsupport unicode table names")
 
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table = self._create_table(ts)
         try:
@@ -479,7 +479,7 @@ class StorageTableTest(TableTestCase):
         if 'cosmos' in account_url:
             pytest.skip("Cosmos Tables does not yet support sas")
 
-        tsc = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        tsc = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table = self._create_table(tsc)
         try:
@@ -528,7 +528,7 @@ class StorageTableTest(TableTestCase):
     def test_locale(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url)
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
         if os.name == "nt":
