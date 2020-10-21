@@ -39,8 +39,6 @@ known_presence_issues:
   - ['sdk/core/azure/README.md', '#4554']
   - ['sdk/core/azure-servicemanagement-legacy/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
-  - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
-
 
 known_content_issues:
   # data plane. common issue filed to azure-sdk-for-python
@@ -101,9 +99,10 @@ known_content_issues:
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
   - ['sdk/monitor/opentelemetry-exporter-azuremonitor/swagger/README.md', '#4554']
   - ['sdk/monitor/opentelemetry-exporter-azuremonitor/README.md', '#4554']
+  - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
 
   # nspckg and common.
-  - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
+  - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/samples/README.md', 'nspkg and common']
   - ['sdk/cognitiveservices/azure-cognitiveservices-knowledge-nspkg/README.rst', 'nspkg and common']
   - ['sdk/cognitiveservices/azure-cognitiveservices-language-nspkg/README.rst', 'nspkg and common']
