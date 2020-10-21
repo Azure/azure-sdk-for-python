@@ -30,7 +30,7 @@ from ._generated.models import (
     DeleteSnapshotsOptionType,
     SharePermission)
 from ._deserialize import deserialize_share_properties, deserialize_permission_key, deserialize_permission
-from ._serialize import get_api_version, get_access_conditions
+from ._serialize import get_api_version
 from ._directory_client import ShareDirectoryClient
 from ._file_client import ShareFileClient
 from ._lease import ShareLeaseClient

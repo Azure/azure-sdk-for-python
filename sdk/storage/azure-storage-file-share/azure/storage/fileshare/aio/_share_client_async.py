@@ -25,7 +25,7 @@ from .._generated.models import (
     SignedIdentifier,
     DeleteSnapshotsOptionType)
 from .._deserialize import deserialize_share_properties, deserialize_permission
-from .._serialize import get_api_version, get_access_conditions
+from .._serialize import get_api_version
 from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
