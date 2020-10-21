@@ -1,5 +1,89 @@
 # Release History
 
+## 14.0.0b1 (2020-10-23)
+
+This is beta preview version.
+For detailed changelog please refer to equivalent stable version 9.4.0 (https://pypi.org/project/azure-mgmt-containerservice/9.4.0/)
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+
+## 9.4.0 (2020-09-11)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfile has a new parameter power_state
+  - Model ManagedClusterAgentPoolProfile has a new parameter os_disk_type
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_empty_bulk_delete
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter skip_nodes_with_local_storage
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter max_total_unready_percentage
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter ok_total_unready_count
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter expander
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter skip_nodes_with_system_pods
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter new_pod_scale_up_delay
+  - Model AgentPool has a new parameter power_state
+  - Model AgentPool has a new parameter os_disk_type
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter power_state
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter os_disk_type
+  - Model ManagedCluster has a new parameter power_state
+  - Added operation ManagedClustersOperations.start
+  - Added operation ManagedClustersOperations.stop
+  - Added operation group ResolvePrivateLinkServiceIdOperations
+  - Added operation group PrivateLinkResourcesOperations
+
+## 9.3.0 (2020-08-24)
+
+**Features**
+
+  - Model ManagedClusterWindowsProfile has a new parameter license_type
+  - Added operation ManagedClustersOperations.upgrade_node_image_version
+
+## 9.2.0 (2020-06-24)
+
+**Features**
+ 
+  - Model ManagedClusterIdentity has a new parameter user_assigned_identities
+  - Model ManagedClusterAADProfile has a new parameter enable_azure_rbac
+  - Model ManagedClusterAgentPoolProfile has a new parameter proximity_placement_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter proximity_placement_group_id
+  - Model AgentPool has a new parameter proximity_placement_group_id
+  - Added operation group PrivateEndpointConnectionsOperations
+
+## 9.1.0 (2020-06-03)
+
+**Features**
+
+  - Model AgentPool has a new parameter node_image_version
+  - Model AgentPool has a new parameter upgrade_settings
+  - Model AgentPoolUpgradeProfile has a new parameter latest_node_image_version
+  - Model ManagedClusterAgentPoolProfile has a new parameter node_image_version
+  - Model ManagedClusterAgentPoolProfile has a new parameter upgrade_settings
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter node_image_version
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter upgrade_settings
+
 ## 9.0.1 (2020-04-09)
 
 **Bugfixes**
