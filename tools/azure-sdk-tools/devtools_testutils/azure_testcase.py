@@ -242,7 +242,7 @@ class AzureTestCase(ReplayableTest):
             else:
                 return self.settings.get_credentials()
 
-    def create_client_from_credential(self, client_class, credential, *args, **kwargs):
+    def create_client_from_credential(self, client_class, credential, **kwargs):
 
         # Real client creation
         # FIXME decide what is the final argument for that
@@ -252,7 +252,6 @@ class AzureTestCase(ReplayableTest):
             kwargs.setdefault("logging_enable", True)
             client = client_class(
                 credential=credential,
-                *args,
                 **kwargs
             )
         else:
@@ -273,10 +272,10 @@ class AzureTestCase(ReplayableTest):
             client.config.enable_http_logger = True
         return client
 
-    def create_basic_client(self, client_class, *args, **kwargs):
+    def create_basic_client(self, client_class, **kwargs):
         """ DO NOT USE ME ANYMORE."""
         credentials = self.get_credential(client_class)
-        return self.create_client_from_credential(client_class, credentials, *args, **kwargs)
+        return self.create_client_from_credential(client_class, credentials, **kwargs)
 
     def create_random_name(self, name):
         return get_resource_name(name, self.qualified_test_name.encode())
