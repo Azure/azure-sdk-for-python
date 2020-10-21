@@ -39,50 +39,6 @@ from base_testcase import TestMetricsAdvisorAdministrationClientBase
 
 class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationClientBase):
 
-    def test_create_simple_data_feed(self):
-        data_feed_name = self.create_random_name("testfeed")
-        try:
-            data_feed = self.admin_client.create_data_feed(
-                DataFeed(
-                    name=data_feed_name,
-                    source=SQLServerDataFeed(
-                        connection_string=self.sql_server_connection_string,
-                        query='select * from adsample2 where Timestamp = @StartTime'
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                        timestamp_column="Timestamp"
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    )
-                )
-            )
-
-            self.assertIsNotNone(data_feed.id)
-            self.assertIsNotNone(data_feed.created_time)
-            self.assertIsNotNone(data_feed.name)
-            self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-            self.assertIsNotNone(data_feed.source.connection_string)
-            self.assertIsNotNone(data_feed.source.query)
-            self.assertEqual(data_feed.granularity.granularity_type, "Daily")
-            self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-            self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-            self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                             datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-        finally:
-            self.admin_client.delete_data_feed(data_feed.id)
-
     def test_create_data_feed_from_sql_server(self):
 
         data_feed_name = self.create_random_name("testfeed")
