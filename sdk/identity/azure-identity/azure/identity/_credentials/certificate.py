@@ -29,8 +29,9 @@ class CertificateCredential(ClientCredentialBase):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword bool send_certificate_chain: if True, the credential will send public certificate material with token
-          requests. This is required to use Subject Name/Issuer (SNI) authentication. Defaults to False.
+    :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
+          header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults
+          to False.
     :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
           False.
     :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
