@@ -130,21 +130,6 @@ def convert_to_generated_data_feed_type(
     :return: The generated model for the data source type
     """
 
-    if isinstance(granularity, (DataFeedGranularityType, six.string_types)):
-        granularity = DataFeedGranularity(
-            granularity_type=granularity,
-        )
-
-    if isinstance(schema, list):
-        schema = DataFeedSchema(
-            metrics=[Metric(name=metric_name) for metric_name in schema]
-        )
-
-    if isinstance(ingestion_settings, (datetime.datetime, six.string_types)):
-        ingestion_settings = DataFeedIngestionSettings(
-            ingestion_begin_time=ingestion_settings
-        )
-
     return generated_feed_type(
         data_source_parameter=source.__dict__,
         data_feed_name=name,

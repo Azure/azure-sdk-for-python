@@ -31,7 +31,8 @@ from azure.ai.metricsadvisor.models import (
     MongoDBDataFeed,
     MySqlDataFeed,
     PostgreSqlDataFeed,
-    ElasticsearchDataFeed
+    ElasticsearchDataFeed,
+    DataFeed
 )
 from base_testcase import TestMetricsAdvisorAdministrationClientBase
 
@@ -42,14 +43,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         data_feed_name = self.create_random_name("testfeed")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=data_feed_name,
-                source=SQLServerDataFeed(
-                    connection_string=self.sql_server_connection_string,
-                    query="select * from adsample2 where Timestamp = @StartTime"
-                ),
-                granularity="Daily",
-                schema=["cost", "revenue"],
-                ingestion_settings=datetime.datetime(2019, 10, 1)
+                DataFeed(
+                    name=data_feed_name,
+                    source=SQLServerDataFeed(
+                        connection_string=self.sql_server_connection_string,
+                        query='select * from adsample2 where Timestamp = @StartTime'
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                        timestamp_column="Timestamp"
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                    )
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -71,45 +88,47 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         data_feed_name = self.create_random_name("testfeed")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=data_feed_name,
-                source=SQLServerDataFeed(
-                    connection_string=self.sql_server_connection_string,
-                    query=u"select * from adsample2 where Timestamp = @StartTime"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost", display_name="display cost", description="the cost"),
-                        Metric(name="revenue", display_name="display revenue", description="the revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category", display_name="display category"),
-                        Dimension(name="city", display_name="display city")
-                    ],
-                    timestamp_column="Timestamp"
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    data_source_request_concurrency=0,
-                    ingestion_retry_delay=-1,
-                    ingestion_start_offset=-1,
-                    stop_retry_after=-1,
-                ),
-                options=DataFeedOptions(
-                    admins=["yournamehere@microsoft.com"],
-                    data_feed_description="my first data feed",
-                    missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                        fill_type="SmartFilling"
+                DataFeed(
+                    name=data_feed_name,
+                    source=SQLServerDataFeed(
+                        connection_string=self.sql_server_connection_string,
+                        query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
-                    rollup_settings=DataFeedRollupSettings(
-                        rollup_type="NoRollup",
-                        rollup_method="None",
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
                     ),
-                    viewers=["viewers"],
-                    access_mode="Private",
-                    action_link_template="action link template"
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost", display_name="display cost", description="the cost"),
+                            Metric(name="revenue", display_name="display revenue", description="the revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category", display_name="display category"),
+                            Dimension(name="city", display_name="display city")
+                        ],
+                        timestamp_column="Timestamp"
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                        data_source_request_concurrency=0,
+                        ingestion_retry_delay=-1,
+                        ingestion_start_offset=-1,
+                        stop_retry_after=-1,
+                    ),
+                    options=DataFeedOptions(
+                        admins=["yournamehere@microsoft.com"],
+                        data_feed_description="my first data feed",
+                        missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                            fill_type="SmartFilling"
+                        ),
+                        rollup_settings=DataFeedRollupSettings(
+                            rollup_type="NoRollup",
+                            rollup_method="None",
+                        ),
+                        viewers=["viewers"],
+                        access_mode="Private",
+                        action_link_template="action link template"
+                    )
                 )
 
             )
@@ -160,50 +179,51 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         data_feed_name = self.create_random_name("testfeed")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=data_feed_name,
-                source=SQLServerDataFeed(
-                    connection_string=self.sql_server_connection_string,
-                    query=u"select * from adsample2 where Timestamp = @StartTime"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Custom",
-                    custom_granularity_value=20
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost", display_name="display cost", description="the cost"),
-                        Metric(name="revenue", display_name="display revenue", description="the revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category", display_name="display category"),
-                        Dimension(name="city", display_name="display city")
-                    ],
-                    timestamp_column="Timestamp"
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    data_source_request_concurrency=0,
-                    ingestion_retry_delay=-1,
-                    ingestion_start_offset=-1,
-                    stop_retry_after=-1,
-                ),
-                options=DataFeedOptions(
-                    admins=["yournamehere@microsoft.com"],
-                    data_feed_description="my first data feed",
-                    missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                        fill_type="CustomValue",
-                        custom_fill_value=10
+                DataFeed(
+                    name=data_feed_name,
+                    source=SQLServerDataFeed(
+                        connection_string=self.sql_server_connection_string,
+                        query=u"select * from adsample2 where Timestamp = @StartTime"
                     ),
-                    rollup_settings=DataFeedRollupSettings(
-                        rollup_type="AlreadyRollup",
-                        rollup_method="Sum",
-                        rollup_identification_value="sumrollup"
+                    granularity=DataFeedGranularity(
+                        granularity_type="Custom",
+                        custom_granularity_value=20
                     ),
-                    viewers=["viewers"],
-                    access_mode="Private",
-                    action_link_template="action link template"
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost", display_name="display cost", description="the cost"),
+                            Metric(name="revenue", display_name="display revenue", description="the revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category", display_name="display category"),
+                            Dimension(name="city", display_name="display city")
+                        ],
+                        timestamp_column="Timestamp"
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                        data_source_request_concurrency=0,
+                        ingestion_retry_delay=-1,
+                        ingestion_start_offset=-1,
+                        stop_retry_after=-1,
+                    ),
+                    options=DataFeedOptions(
+                        admins=["yournamehere@microsoft.com"],
+                        data_feed_description="my first data feed",
+                        missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                            fill_type="CustomValue",
+                            custom_fill_value=10
+                        ),
+                        rollup_settings=DataFeedRollupSettings(
+                            rollup_type="AlreadyRollup",
+                            rollup_method="Sum",
+                            rollup_identification_value="sumrollup"
+                        ),
+                        viewers=["viewers"],
+                        access_mode="Private",
+                        action_link_template="action link template"
+                    )
                 )
-
             )
             self.assertIsNotNone(data_feed.id)
             self.assertIsNotNone(data_feed.created_time)
@@ -253,29 +273,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("tablefeed")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=AzureTableDataFeed(
-                    connection_string=self.azure_table_connection_string,
-                    query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
-                    table="adsample"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=AzureTableDataFeed(
+                        connection_string=self.azure_table_connection_string,
+                        query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
+                        table="adsample"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -292,29 +313,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("blobfeed")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=AzureBlobDataFeed(
-                    connection_string=self.azure_blob_connection_string,
-                    container="adsample",
-                    blob_template="%Y/%m/%d/%h/JsonFormatV2.json"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=AzureBlobDataFeed(
+                        connection_string=self.azure_blob_connection_string,
+                        container="adsample",
+                        blob_template="%Y/%m/%d/%h/JsonFormatV2.json"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -331,30 +353,31 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("cosmosfeed")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=AzureCosmosDBDataFeed(
-                    connection_string=self.azure_cosmosdb_connection_string,
-                    sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
-                    database="adsample",
-                    collection_id="adsample"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=AzureCosmosDBDataFeed(
+                        connection_string=self.azure_cosmosdb_connection_string,
+                        sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
+                        database="adsample",
+                        collection_id="adsample"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -372,28 +395,29 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("httprequestfeedget")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=HttpRequestDataFeed(
-                    url=self.http_request_get_url,
-                    http_method="GET"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=HttpRequestDataFeed(
+                        url=self.http_request_get_url,
+                        http_method="GET"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -409,29 +433,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("httprequestfeedpost")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=HttpRequestDataFeed(
-                    url=self.http_request_post_url,
-                    http_method="POST",
-                    payload="{'startTime': '@StartTime'}"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=HttpRequestDataFeed(
+                        url=self.http_request_post_url,
+                        http_method="POST",
+                        payload="{'startTime': '@StartTime'}"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -447,35 +472,36 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_create_data_feed_with_application_insights(self):
         name = self.create_random_name("applicationinsights")
         try:
-            query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
-                "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
-                "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
-                "duration_max_ms = max(duration) by resultCode"
+            query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
+                "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
+                "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
+                "duration_max_ms = max(duration) by resultCode"
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=AzureApplicationInsightsDataFeed(
-                    azure_cloud="Azure",
-                    application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
-                    api_key=self.application_insights_api_key,
-                    query=query
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2020, 7, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=AzureApplicationInsightsDataFeed(
+                        azure_cloud="Azure",
+                        application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
+                        api_key=self.application_insights_api_key,
+                        query=query
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2020, 7, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -495,28 +521,29 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
             query = "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime + 1d; " \
                     "adsample | where Timestamp >= StartDateTime and Timestamp < EndDateTime"
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=AzureDataExplorerDataFeed(
-                    connection_string=self.azure_data_explorer_connection_string,
-                    query=query
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=AzureDataExplorerDataFeed(
+                        connection_string=self.azure_data_explorer_connection_string,
+                        query=query
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -533,31 +560,32 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("influxdb")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=InfluxDBDataFeed(
-                    connection_string=self.influxdb_connection_string,
-                    database="adsample",
-                    user_name="adreadonly",
-                    password=self.influxdb_password,
-                    query="'select * from adsample2 where Timestamp = @StartTime'"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=InfluxDBDataFeed(
+                        connection_string=self.influxdb_connection_string,
+                        database="adsample",
+                        user_name="adreadonly",
+                        password=self.influxdb_password,
+                        query="'select * from adsample2 where Timestamp = @StartTime'"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -577,31 +605,32 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("datalake")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=AzureDataLakeStorageGen2DataFeed(
-                    account_name="adsampledatalakegen2",
-                    account_key=self.azure_datalake_account_key,
-                    file_system_name="adsample",
-                    directory_template="%Y/%m/%d",
-                    file_template="adsample.json"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost", display_name="Cost"),
-                        Metric(name="revenue", display_name="Revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category", display_name="Category"),
-                        Dimension(name="city", display_name="City")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=AzureDataLakeStorageGen2DataFeed(
+                        account_name="adsampledatalakegen2",
+                        account_key=self.azure_datalake_account_key,
+                        file_system_name="adsample",
+                        directory_template="%Y/%m/%d",
+                        file_template="adsample.json"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost", display_name="Cost"),
+                            Metric(name="revenue", display_name="Revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category", display_name="Category"),
+                            Dimension(name="city", display_name="City")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -621,29 +650,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("mongodb")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=MongoDBDataFeed(
-                    connection_string=self.mongodb_connection_string,
-                    database="adsample",
-                    command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=MongoDBDataFeed(
+                        connection_string=self.mongodb_connection_string,
+                        database="adsample",
+                        command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -661,28 +691,29 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("mysql")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=MySqlDataFeed(
-                    connection_string=self.mysql_connection_string,
-                    query="'select * from adsample2 where Timestamp = @StartTime'"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=MySqlDataFeed(
+                        connection_string=self.mysql_connection_string,
+                        query="'select * from adsample2 where Timestamp = @StartTime'"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -699,28 +730,29 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("postgresql")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=PostgreSqlDataFeed(
-                    connection_string=self.postgresql_connection_string,
-                    query="'select * from adsample2 where Timestamp = @StartTime'"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=PostgreSqlDataFeed(
+                        connection_string=self.postgresql_connection_string,
+                        query="'select * from adsample2 where Timestamp = @StartTime'"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost"),
+                            Metric(name="revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category"),
+                            Dimension(name="city")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
@@ -737,30 +769,31 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         name = self.create_random_name("elastic")
         try:
             data_feed = self.admin_client.create_data_feed(
-                name=name,
-                source=ElasticsearchDataFeed(
-                    host="ad-sample-es.westus2.cloudapp.azure.com",
-                    port="9200",
-                    auth_header=self.elasticsearch_auth_header,
-                    query="'select * from adsample where timestamp = @StartTime'"
-                ),
-                granularity=DataFeedGranularity(
-                    granularity_type="Daily",
-                ),
-                schema=DataFeedSchema(
-                    metrics=[
-                        Metric(name="cost", display_name="Cost"),
-                        Metric(name="revenue", display_name="Revenue")
-                    ],
-                    dimensions=[
-                        Dimension(name="category", display_name="Category"),
-                        Dimension(name="city", display_name="City")
-                    ],
-                ),
-                ingestion_settings=DataFeedIngestionSettings(
-                    ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                ),
-
+                DataFeed(
+                    name=name,
+                    source=ElasticsearchDataFeed(
+                        host="ad-sample-es.westus2.cloudapp.azure.com",
+                        port="9200",
+                        auth_header=self.elasticsearch_auth_header,
+                        query="'select * from adsample where timestamp = @StartTime'"
+                    ),
+                    granularity=DataFeedGranularity(
+                        granularity_type="Daily",
+                    ),
+                    schema=DataFeedSchema(
+                        metrics=[
+                            Metric(name="cost", display_name="Cost"),
+                            Metric(name="revenue", display_name="Revenue")
+                        ],
+                        dimensions=[
+                            Dimension(name="category", display_name="Category"),
+                            Dimension(name="city", display_name="City")
+                        ],
+                    ),
+                    ingestion_settings=DataFeedIngestionSettings(
+                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                    ),
+                )
             )
 
             self.assertIsNotNone(data_feed.id)
