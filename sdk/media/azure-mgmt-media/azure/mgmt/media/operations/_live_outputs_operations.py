@@ -26,7 +26,7 @@ class LiveOutputsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2018-07-01".
+    :ivar api_version: The version of the API to be used with the client request. Constant value: "2020-05-01".
     """
 
     models = models
@@ -36,7 +36,7 @@ class LiveOutputsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01"
+        self.api_version = "2020-05-01"
 
         self.config = config
 
@@ -44,14 +44,15 @@ class LiveOutputsOperations(object):
             self, resource_group_name, account_name, live_event_name, custom_headers=None, raw=False, **operation_config):
         """List Live Outputs.
 
-        Lists the Live Outputs in the Live Event.
+        Lists the live outputs of a live event.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param live_event_name: The name of the Live Event.
+        :param live_event_name: The name of the live event, maximum length is
+         32.
         :type live_event_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -121,16 +122,17 @@ class LiveOutputsOperations(object):
             self, resource_group_name, account_name, live_event_name, live_output_name, custom_headers=None, raw=False, **operation_config):
         """Get Live Output.
 
-        Gets a Live Output.
+        Gets a live output.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param live_event_name: The name of the Live Event.
+        :param live_event_name: The name of the live event, maximum length is
+         32.
         :type live_event_name: str
-        :param live_output_name: The name of the Live Output.
+        :param live_output_name: The name of the live output.
         :type live_output_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -222,14 +224,14 @@ class LiveOutputsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 201]:
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
             deserialized = self._deserialize('LiveOutput', response)
-        if response.status_code == 202:
+        if response.status_code == 201:
             deserialized = self._deserialize('LiveOutput', response)
 
         if raw:
@@ -242,16 +244,17 @@ class LiveOutputsOperations(object):
             self, resource_group_name, account_name, live_event_name, live_output_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create Live Output.
 
-        Creates a Live Output.
+        Creates a new live output.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param live_event_name: The name of the Live Event.
+        :param live_event_name: The name of the live event, maximum length is
+         32.
         :type live_event_name: str
-        :param live_output_name: The name of the Live Output.
+        :param live_output_name: The name of the live output.
         :type live_output_name: str
         :param parameters: Live Output properties needed for creation.
         :type parameters: ~azure.mgmt.media.models.LiveOutput
@@ -340,16 +343,18 @@ class LiveOutputsOperations(object):
             self, resource_group_name, account_name, live_event_name, live_output_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete Live Output.
 
-        Deletes a Live Output.
+        Deletes a live output. Deleting a live output does not delete the asset
+        the live output is writing to.
 
         :param resource_group_name: The name of the resource group within the
          Azure subscription.
         :type resource_group_name: str
         :param account_name: The Media Services account name.
         :type account_name: str
-        :param live_event_name: The name of the Live Event.
+        :param live_event_name: The name of the live event, maximum length is
+         32.
         :type live_event_name: str
-        :param live_output_name: The name of the Live Output.
+        :param live_output_name: The name of the live output.
         :type live_output_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
