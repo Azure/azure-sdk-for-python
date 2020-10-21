@@ -14,25 +14,26 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
     body:
-      string: '{"value":[{"rootCause":{"dimension":{"dimension_name":"Caucasian Lime","Dim2":"Arctic
-        Wolf"}},"path":[],"score":1.0,"description":"No root cause insight."}]}'
+      string: '{"value":[{"rootCause":{"dimension":{"dimension_name":"Delhi","category":"Shoes
+        Handbags & Sunglasses"}},"path":[],"score":1.0,"description":"No root cause
+        insight."}]}'
     headers:
       apim-request-id:
-      - 5694827a-b305-4c04-9b51-6832d2040610
+      - 8fa88e36-f866-48c1-825d-1861135b9584
       content-length:
-      - '147'
+      - '158'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Oct 2020 20:12:30 GMT
+      - Wed, 21 Oct 2020 21:42:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '228'
+      - '211'
       x-request-id:
-      - 5694827a-b305-4c04-9b51-6832d2040610
+      - 8fa88e36-f866-48c1-825d-1861135b9584
     status:
       code: 200
       message: OK

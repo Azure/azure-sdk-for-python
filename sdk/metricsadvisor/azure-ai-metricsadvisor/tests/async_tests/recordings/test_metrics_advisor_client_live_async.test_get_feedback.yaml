@@ -10,19 +10,19 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/feedback_id
   response:
     body:
-      string: '{"feedbackId":"feedback_id","createdTime":"2020-10-16T16:31:46.014Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
-        Lime","Dim2":"Amphibian"}},"feedbackType":"Anomaly","startTime":"2020-09-07T00:00:00Z","endTime":"2020-09-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":80.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}'
+      string: '{"feedbackId":"feedback_id","createdTime":"2020-10-21T20:53:05.91Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Mumbai","category":"Shoes
+        Handbags & Sunglasses"}},"feedbackType":"Anomaly","startTime":"2020-10-01T00:00:00Z","endTime":"2020-10-01T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}'
     headers:
-      apim-request-id: 2fdda07d-f4a9-4da4-81fd-68facd73de53
-      content-length: '901'
+      apim-request-id: 26c5a8eb-12c5-4c51-8e49-d7fecdffede5
+      content-length: '927'
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Oct 2020 20:20:08 GMT
+      date: Wed, 21 Oct 2020 21:37:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '116'
-      x-request-id: 2fdda07d-f4a9-4da4-81fd-68facd73de53
+      x-envoy-upstream-service-time: '84'
+      x-request-id: 26c5a8eb-12c5-4c51-8e49-d7fecdffede5
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric/6d3c9fe5-4834-4a43-af96-cb89b4104719
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/feedback/metric/c9bbd66a-e695-425a-91fe-f24fca53f28c
 version: 1

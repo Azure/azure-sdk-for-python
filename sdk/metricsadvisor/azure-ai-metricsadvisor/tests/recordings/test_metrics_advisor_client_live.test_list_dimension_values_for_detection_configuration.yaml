@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
       "dimensionName": "dimension_name"}'
     headers:
       Accept:
@@ -19,28 +19,25 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
   response:
     body:
-      string: '{"value":["__SUM__","Common Lime","Cabbage Palm","Cherry Laurel","Blackthorn","Bastard
-        Service Tree","Chinese red-barked birch","Caucasian Fir","Common Beech","Cherry","Algerian
-        Fir","Blue Atlas Cedar","Common Walnut","Cider gum","Common Alder","Common
-        Ash","Austrian Pine","Cockspur Thorn","Birch","Almond","Caucasian Lime","Common
-        Hazel","Black Poplar","Black Birch (River Birch)","Box elder","Common Juniper"],"@nextLink":null}'
+      string: '{"value":["Karachi","Los Angeles","Manila","Delhi","Seoul","Beijing","Mumbai","New
+        York","Tianjin"],"@nextLink":null}'
     headers:
       apim-request-id:
-      - 7acea058-75ff-4486-ba27-b186d25ad22c
+      - e3b5d9e0-3876-4aeb-b2be-6e1e688cce0c
       content-length:
-      - '430'
+      - '117'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Oct 2020 20:12:28 GMT
+      - Wed, 21 Oct 2020 21:42:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '174'
+      - '164'
       x-request-id:
-      - 7acea058-75ff-4486-ba27-b186d25ad22c
+      - e3b5d9e0-3876-4aeb-b2be-6e1e688cce0c
     status:
       code: 200
       message: OK

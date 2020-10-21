@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
       "dimensionName": "dimension_name"}'
     headers:
       Accept:
@@ -15,22 +15,19 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
   response:
     body:
-      string: '{"value":["__SUM__","Common Lime","Cabbage Palm","Cherry Laurel","Blackthorn","Bastard
-        Service Tree","Chinese red-barked birch","Caucasian Fir","Common Beech","Cherry","Algerian
-        Fir","Blue Atlas Cedar","Common Walnut","Cider gum","Common Alder","Common
-        Ash","Austrian Pine","Cockspur Thorn","Birch","Almond","Caucasian Lime","Common
-        Hazel","Black Poplar","Black Birch (River Birch)","Box elder","Common Juniper"],"@nextLink":null}'
+      string: '{"value":["Karachi","Los Angeles","Manila","Delhi","Seoul","Beijing","Mumbai","New
+        York","Tianjin"],"@nextLink":null}'
     headers:
-      apim-request-id: c9e34a0e-3cbd-4582-a186-7fbc73a67f8b
-      content-length: '430'
+      apim-request-id: 291b22b2-b0e7-4e95-aebf-ac99050eb316
+      content-length: '117'
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Oct 2020 20:20:10 GMT
+      date: Wed, 21 Oct 2020 21:37:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '181'
-      x-request-id: c9e34a0e-3cbd-4582-a186-7fbc73a67f8b
+      x-envoy-upstream-service-time: '195'
+      x-request-id: 291b22b2-b0e7-4e95-aebf-ac99050eb316
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/92a65351-5352-4650-80cf-045c34fb9e5c/anomalies/dimension/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/anomalies/dimension/query
 version: 1

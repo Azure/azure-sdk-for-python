@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"feedbackType": "Period", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Common Lime"}}, "value": {"periodType": "AssignValue",
+      {"dimension": {"dimension_name": "Los Angeles"}}, "value": {"periodType": "AssignValue",
       "periodValue": 2}}'
     headers:
       Accept:
@@ -23,21 +23,21 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 17571efa-51aa-4ee5-bf47-ab6717362700
+      - a06de399-3290-4ee9-a4dd-e4bc3bbd5574
       content-length:
       - '0'
       date:
-      - Wed, 21 Oct 2020 20:12:22 GMT
+      - Wed, 21 Oct 2020 21:42:36 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/73da65dd-093a-4ea6-be00-bbe98349c34f
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/43b71917-d9ea-48b2-bbd5-31450b42e9c8
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '270'
+      - '282'
       x-request-id:
-      - 17571efa-51aa-4ee5-bf47-ab6717362700
+      - a06de399-3290-4ee9-a4dd-e4bc3bbd5574
     status:
       code: 201
       message: Created

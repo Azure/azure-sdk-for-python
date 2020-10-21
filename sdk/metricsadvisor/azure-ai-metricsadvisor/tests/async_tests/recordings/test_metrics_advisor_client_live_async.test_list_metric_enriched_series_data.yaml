@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
-      "series": [{"dimension": {"dimension_name": "Common Lime"}}]}'
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+      "series": [{"dimension": {"dimension_name": "Los Angeles"}}]}'
     headers:
       Accept:
       - application/json
@@ -15,18 +15,18 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/series/query
   response:
     body:
-      string: '{"value":[{"series":{"dimension":{"dimension_name":"Common Lime"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
+      string: '{"value":[{"series":{"dimension":{"dimension_name":"Los Angeles"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
     headers:
-      apim-request-id: c121dba4-0914-4989-ad83-e4fbabcff349
+      apim-request-id: e9058632-e277-42c1-aab2-db54eac233c6
       content-length: '197'
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Oct 2020 20:20:15 GMT
+      date: Wed, 21 Oct 2020 21:37:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '185'
-      x-request-id: c121dba4-0914-4989-ad83-e4fbabcff349
+      x-envoy-upstream-service-time: '180'
+      x-request-id: e9058632-e277-42c1-aab2-db54eac233c6
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/92a65351-5352-4650-80cf-045c34fb9e5c/series/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/series/query
 version: 1

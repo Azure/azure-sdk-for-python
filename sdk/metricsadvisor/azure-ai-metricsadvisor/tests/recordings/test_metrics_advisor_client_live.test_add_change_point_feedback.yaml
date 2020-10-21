@@ -1,8 +1,8 @@
 interactions:
 - request:
     body: '{"feedbackType": "ChangePoint", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Common Lime"}}, "startTime": "2020-08-05T00:00:00.000Z",
-      "endTime": "2020-08-07T00:00:00.000Z", "value": {"changePointValue": "NotChangePoint"}}'
+      {"dimension": {"dimension_name": "Los Angeles"}}, "startTime": "2020-08-05T00:00:00.000Z",
+      "endTime": "2020-10-21T00:00:00.000Z", "value": {"changePointValue": "NotChangePoint"}}'
     headers:
       Accept:
       - application/json
@@ -23,21 +23,21 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 9a006f88-af51-422d-b073-7d8fc7d92dd8
+      - 267d1a40-a148-4ed4-b465-1567fa72657b
       content-length:
       - '0'
       date:
-      - Wed, 21 Oct 2020 20:12:20 GMT
+      - Wed, 21 Oct 2020 21:42:36 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/190380a1-cd61-4b47-8118-915c93ddccaf
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/66d68377-b9ea-41e8-9d1c-19f369fa2342
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '270'
+      - '257'
       x-request-id:
-      - 9a006f88-af51-422d-b073-7d8fc7d92dd8
+      - 267d1a40-a148-4ed4-b465-1567fa72657b
     status:
       code: 201
       message: Created

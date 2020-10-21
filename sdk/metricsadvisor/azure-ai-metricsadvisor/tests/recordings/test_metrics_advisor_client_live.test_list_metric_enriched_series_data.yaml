@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
-      "series": [{"dimension": {"dimension_name": "Common Lime"}}]}'
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+      "series": [{"dimension": {"dimension_name": "Los Angeles"}}]}'
     headers:
       Accept:
       - application/json
@@ -19,24 +19,24 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/series/query
   response:
     body:
-      string: '{"value":[{"series":{"dimension":{"dimension_name":"Common Lime"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
+      string: '{"value":[{"series":{"dimension":{"dimension_name":"Los Angeles"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
     headers:
       apim-request-id:
-      - cc70004e-639a-4458-ac70-e35f7d5bd6d0
+      - 4ff82f22-54ef-4a91-86ab-651180288df4
       content-length:
       - '197'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Oct 2020 20:12:32 GMT
+      - Wed, 21 Oct 2020 21:42:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '166'
+      - '174'
       x-request-id:
-      - cc70004e-639a-4458-ac70-e35f7d5bd6d0
+      - 4ff82f22-54ef-4a91-86ab-651180288df4
     status:
       code: 200
       message: OK

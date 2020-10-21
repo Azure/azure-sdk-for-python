@@ -14,25 +14,25 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/feedback_id
   response:
     body:
-      string: '{"feedbackId":"feedback_id","createdTime":"2020-10-16T16:31:46.014Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
-        Lime","Dim2":"Amphibian"}},"feedbackType":"Anomaly","startTime":"2020-09-07T00:00:00Z","endTime":"2020-09-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":80.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}'
+      string: '{"feedbackId":"feedback_id","createdTime":"2020-10-21T20:53:05.91Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Mumbai","category":"Shoes
+        Handbags & Sunglasses"}},"feedbackType":"Anomaly","startTime":"2020-10-01T00:00:00Z","endTime":"2020-10-01T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}'
     headers:
       apim-request-id:
-      - c438b064-f51b-4c19-bf8c-aa21890fdd45
+      - 88ab67f3-28fe-4a81-9a0d-e2954cd80ad2
       content-length:
-      - '901'
+      - '927'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Oct 2020 20:12:21 GMT
+      - Wed, 21 Oct 2020 21:42:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '91'
+      - '69'
       x-request-id:
-      - c438b064-f51b-4c19-bf8c-aa21890fdd45
+      - 88ab67f3-28fe-4a81-9a0d-e2954cd80ad2
     status:
       code: 200
       message: OK

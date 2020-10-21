@@ -10,17 +10,17 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/alert_id/anomalies
   response:
     body:
-      string: '{"value":[{"metricId":"27e3015f-04fd-44ba-a20b-bc529a0aebae","anomalyDetectionConfigurationId":"fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"city":"Delhi","category":"Shoes
-        Handbags & Sunglasses"},"property":{"anomalySeverity":"High","anomalyStatus":"Active"}},{"metricId":"27e3015f-04fd-44ba-a20b-bc529a0aebae","anomalyDetectionConfigurationId":"fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"city":"Karachi","category":"Handmade"},"property":{"anomalySeverity":"High","anomalyStatus":"Active"}}],"@nextLink":null}'
+      string: '{"value":[{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Delhi","category":"Shoes
+        Handbags & Sunglasses"},"property":{"anomalySeverity":"High","anomalyStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","timestamp":"2020-10-20T00:00:00Z","createdTime":"2020-10-21T15:54:37.73Z","modifiedTime":"2020-10-21T15:54:37.73Z","dimension":{"dimension_name":"Karachi","category":"Handmade"},"property":{"anomalySeverity":"High","anomalyStatus":"Active"}}],"@nextLink":null}'
     headers:
-      apim-request-id: 25ac7531-3975-4df8-bc50-c8c8efefbf79
+      apim-request-id: 450f2c87-b088-481e-b2e6-2628a853b3a0
       content-length: '759'
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Oct 2020 20:20:09 GMT
+      date: Wed, 21 Oct 2020 21:37:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '198'
-      x-request-id: 25ac7531-3975-4df8-bc50-c8c8efefbf79
+      x-envoy-upstream-service-time: '58'
+      x-request-id: 450f2c87-b088-481e-b2e6-2628a853b3a0
     status:
       code: 200
       message: OK

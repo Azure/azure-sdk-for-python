@@ -1,8 +1,8 @@
 interactions:
 - request:
     body: '{"feedbackType": "Anomaly", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Common Lime"}}, "startTime": "2020-08-05T00:00:00.000Z",
-      "endTime": "2020-08-07T00:00:00.000Z", "value": {"anomalyValue": "NotAnomaly"}}'
+      {"dimension": {"dimension_name": "Los Angeles"}}, "startTime": "2020-08-05T00:00:00.000Z",
+      "endTime": "2020-10-21T00:00:00.000Z", "value": {"anomalyValue": "NotAnomaly"}}'
     headers:
       Accept:
       - application/json
@@ -23,21 +23,21 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 6e0718ac-9c02-437a-9860-848829dd11b6
+      - 37f6e9d7-23bc-4a7e-85c6-5876bccd3626
       content-length:
       - '0'
       date:
-      - Wed, 21 Oct 2020 20:12:20 GMT
+      - Wed, 21 Oct 2020 21:42:36 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/1e6851b5-68d4-421a-bd62-51fb39094b14
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/5294fd3e-5826-45be-b9c9-0bb556d3e99b
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '545'
+      - '338'
       x-request-id:
-      - 6e0718ac-9c02-437a-9860-848829dd11b6
+      - 37f6e9d7-23bc-4a7e-85c6-5876bccd3626
     status:
       code: 201
       message: Created
