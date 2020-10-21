@@ -182,7 +182,7 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
-    def create_basic_client(self, client_class, **kwargs):
+    def get_credential(self, client_class):
 
         tenant_id = os.environ.get("AZURE_TENANT_ID", None)
         client_id = os.environ.get("AZURE_CLIENT_ID", None)
@@ -192,7 +192,7 @@ class AzureTestCase(ReplayableTest):
             if _is_autorest_v3(client_class):
                 # Create azure-identity class
                 from azure.identity import ClientSecretCredential
-                credentials = ClientSecretCredential(
+                return ClientSecretCredential(
                     tenant_id=tenant_id,
                     client_id=client_id,
                     client_secret=secret
@@ -200,16 +200,18 @@ class AzureTestCase(ReplayableTest):
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
-                credentials = ServicePrincipalCredentials(
+                return ServicePrincipalCredentials(
                     tenant=tenant_id,
                     client_id=client_id,
                     secret=secret
                 )
         else:
             if _is_autorest_v3(client_class):
-                credentials = self.settings.get_azure_core_credentials()
+                return self.settings.get_azure_core_credentials()
             else:
-                credentials = self.settings.get_credentials()
+                return self.settings.get_credentials()    
+    
+    def create_client_from_credential(self, client_class, credential, **kwargs):
 
         # Real client creation
         # FIXME decide what is the final argument for that
@@ -218,12 +220,12 @@ class AzureTestCase(ReplayableTest):
         if _is_autorest_v3(client_class):
             kwargs.setdefault("logging_enable", True)
             client = client_class(
-                credential=credentials,
+                credential=credential,
                 **kwargs
             )
         else:
             client = client_class(
-                credentials=credentials,
+                credentials=credential,
                 **kwargs
             )
 
@@ -238,6 +240,11 @@ class AzureTestCase(ReplayableTest):
                 client.config.long_running_operation_timeout = 0
             client.config.enable_http_logger = True
         return client
+
+    def create_basic_client(self, client_class, **kwargs):
+        """ DO NOT USE ME ANYMORE."""
+        credentials = self.get_credential(client_class)
+        return self.create_client_from_credential(client_class, credentials, **kwargs)
 
     def create_random_name(self, name):
         return get_resource_name(name, self.qualified_test_name.encode())
