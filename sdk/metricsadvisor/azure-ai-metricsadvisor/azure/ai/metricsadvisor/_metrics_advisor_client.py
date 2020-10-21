@@ -236,6 +236,15 @@ class MetricsAdvisorClient(object):
         :return: Pageable of root cause for incident
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentRootCause]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_incidents.py
+                :start-after: [START list_incident_root_cause]
+                :end-before: [END list_incident_root_cause]
+                :language: python
+                :dedent: 4
+                :caption: Query incident root causes.
         """
 
         return self._client.get_root_cause_of_incident_by_anomaly_detection_configuration(  # type: ignore
@@ -458,6 +467,15 @@ class MetricsAdvisorClient(object):
         :return: Incidents under a specific alert.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.Incident]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_incidents.py
+                :start-after: [START list_incidents_for_alert]
+                :end-before: [END list_incidents_for_alert]
+                :language: python
+                :dedent: 4
+                :caption: Query incidents for alert.
         """
 
         skip = kwargs.pop('skip', None)
@@ -484,6 +502,15 @@ class MetricsAdvisorClient(object):
         :return: Incidents under a specific alert.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.Incident]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_incidents.py
+                :start-after: [START list_incidents_for_detection_configuration]
+                :end-before: [END list_incidents_for_detection_configuration]
+                :language: python
+                :dedent: 4
+                :caption: Query incidents for detection configuration.
         """
 
         filter_condition = kwargs.pop('filter', None)
