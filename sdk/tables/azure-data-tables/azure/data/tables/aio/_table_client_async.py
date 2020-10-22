@@ -577,10 +577,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     def create_batch(
         self, **kwargs: Dict[str, Any]
     ) -> TableBatchOperations:
-        """Update/Merge or Insert entity into table.
+        """Create a Batching object from a Table Client
 
         return: Table batch operation for inserting new operations
-        rtype: ~azure.data.tables.TableBatchOperations
+        :rtype: ~azure.data.tables.TableBatchOperations
         :raises: None
 
         .. admonition:: Example:
@@ -610,6 +610,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ) -> None:
         """Commit a TableBatchOperations to send requests to the server
 
+        return: Table batch operation for inserting new operations
+        :rtype: ~azure.data.tables.BatchTransactionResult
+        :raises: ~azure.data.tables.BatchErrorException
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_batching_async.py
@@ -618,8 +622,5 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
                 :language: python
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
-        return: Table batch operation for inserting new operations
-        rtype: ~azure.data.tables.TableBatchOperations
-        :raises: None
         """
         return await self._batch_send(batch._entities, *batch._requests, **kwargs) # pylint:disable=protected-access

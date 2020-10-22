@@ -24,6 +24,7 @@ from ._models import (
     ResourceTypes,
     AccountSasPermissions,
     BatchTransactionResult,
+    BatchErrorException
 )
 from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
@@ -57,5 +58,6 @@ __all__ = [
     'generate_table_sas',
     'SASProtocol',
     'BatchTransactionResult',
-    'TableBatchOperations'
+    'TableBatchOperations',
+    'BatchErrorException'
 ]

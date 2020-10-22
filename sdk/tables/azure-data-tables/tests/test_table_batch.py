@@ -163,9 +163,8 @@ class StorageTableBatchTest(TableTestCase):
         self.assertFalse(hasattr(entity, "clsid"))
         self.assertIsNotNone(entity['_metadata']['etag'])
 
-    def _assert_valid_batch_transaction(self, transaction):
+    def _assert_valid_batch_transaction(self, transaction, length):
         self.assertIsInstance(transaction, BatchTransactionResult)
-        length = len(transaction.entities)
         self.assertEqual(length, len(transaction.entities))
         self.assertEqual(length, len(transaction.results))
         self.assertEqual(length, len(transaction.requests))
@@ -218,7 +217,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             sent_entity = transaction_result.get_entity(entity.RowKey)
             self.assertIsNotNone(sent_entity)
             e = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
@@ -261,7 +260,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
             result = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
             self.assertEqual(result.PartitionKey, u'001')
@@ -297,7 +296,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
             result = self.table.get_entity('001', 'batch_update')
             self.assertEqual('value1', result.test2.value)
@@ -336,7 +335,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
             resp_entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
@@ -370,7 +369,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(sent_entity['RowKey']))
 
             entity = self.table.get_entity(partition_key=entity['PartitionKey'], row_key=entity['RowKey'])
@@ -385,6 +384,50 @@ class StorageTableBatchTest(TableTestCase):
         # Arrange
         self._set_up(storage_account, storage_account_key)
         try:
+            entity = self._create_random_entity_dict()
+            self.table.create_entity(entity)
+
+            # Act
+            sent_entity1 = self._create_updated_entity_dict(entity['PartitionKey'], entity['RowKey'])
+
+            batch = self.table.create_batch()
+            batch.update_entity(
+                sent_entity1,
+                etag=u'W/"datetime\'2012-06-15T22%3A51%3A44.9662825Z\'"',
+                match_condition=MatchConditions.IfNotModified
+            )
+
+            with self.assertRaises(HttpResponseError):
+                self.table.send_batch(batch)
+
+            # Assert
+            received_entity = self.table.get_entity(entity['PartitionKey'], entity['RowKey'])
+            self._assert_default_entity(received_entity)
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_batch_single_op_if_doesnt_match(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            # Act
+            entity = TableEntity()
+            entity.PartitionKey = 'batch_inserts'
+            entity.test = EntityProperty(True)
+            entity.test2 = 'value'
+            entity.test3 = 3
+            entity.test4 = EntityProperty(1234567890)
+
+            batch = self.table.create_batch()
+            transaction_count = 0
+            for i in range(10):
+                entity.RowKey = str(i)
+                batch.create_entity(entity)
+                transaction_count += 1
+
             entity = self._create_random_entity_dict()
             self.table.create_entity(entity)
 
@@ -429,7 +472,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
             entity = self.table.get_entity('001', 'batch_insert_replace')
@@ -461,7 +504,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
             entity = self.table.get_entity('001', 'batch_insert_merge')
@@ -497,7 +540,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
             with self.assertRaises(ResourceNotFoundError):
@@ -521,13 +564,15 @@ class StorageTableBatchTest(TableTestCase):
             entity.test4 = EntityProperty(1234567890)
 
             batch = self.table.create_batch()
+            transaction_count = 0
             for i in range(100):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
+                transaction_count += 1
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, transaction_count)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
             entities = list(self.table.query_entities("PartitionKey eq 'batch_inserts'"))
@@ -562,27 +607,40 @@ class StorageTableBatchTest(TableTestCase):
             self.table.create_entity(entity)
             entity.RowKey = 'batch_all_operations_together-4'
             self.table.create_entity(entity)
+            transaction_count = 0
 
             batch = self.table.create_batch()
             entity.RowKey = 'batch_all_operations_together'
             batch.create_entity(entity)
+            transaction_count += 1
+
             entity.RowKey = 'batch_all_operations_together-1'
             batch.delete_entity(entity.PartitionKey, entity.RowKey)
+            transaction_count += 1
+
             entity.RowKey = 'batch_all_operations_together-2'
             entity.test3 = 10
             batch.update_entity(entity)
+            transaction_count += 1
+
             entity.RowKey = 'batch_all_operations_together-3'
             entity.test3 = 100
             batch.update_entity(entity, mode=UpdateMode.MERGE)
+            transaction_count += 1
+
             entity.RowKey = 'batch_all_operations_together-4'
             entity.test3 = 10
             batch.upsert_entity(entity)
+            transaction_count += 1
+
             entity.RowKey = 'batch_all_operations_together-5'
             batch.upsert_entity(entity, mode=UpdateMode.MERGE)
+            transaction_count += 1
+
             transaction_result = self.table.send_batch(batch)
 
             # Assert
-            self._assert_valid_batch_transaction(transaction_result)
+            self._assert_valid_batch_transaction(transaction_result, transaction_count)
             self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together'))
             self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together-1'))
             self.assertIsNotNone(transaction_result.get_entity('batch_all_operations_together-2'))

@@ -600,9 +600,8 @@ class TableClient(TableClientBase):
         """Commit a TableBatchOperations to send requests to the server
 
         :return: Object containing requests and responses
-        :rtype: BatchTransactionResult
-        :raises: ~azure.data.tables.PartialBatchErrorException
-
+        :rtype: ~azure.data.tables.BatchTransactionResult
+        :raises: ~azure.data.tables.BatchErrorException
 
         .. admonition:: Example:
 
