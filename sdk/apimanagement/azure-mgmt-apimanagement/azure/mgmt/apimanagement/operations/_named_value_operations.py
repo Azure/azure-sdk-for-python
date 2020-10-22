@@ -26,7 +26,7 @@ class NamedValueOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01-preview".
     """
 
     models = models
@@ -36,24 +36,24 @@ class NamedValueOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-06-01-preview"
 
         self.config = config
 
     def list_by_service(
             self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists a collection of NamedValues defined within a service instance.
+        """Lists a collection of named values defined within a service instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          tags | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith, any, all | </br>| displayName | filter | ge, le,
-         eq, ne, gt, lt | substringof, contains, startswith, endswith | </br>
+         startswith, endswith, any, all |</br>| displayName | filter | ge, le,
+         eq, ne, gt, lt | substringof, contains, startswith, endswith |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -130,8 +130,8 @@ class NamedValueOperations(object):
 
     def get_entity_tag(
             self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the entity state (Etag) version of the NamedValue specified by its
-        identifier.
+        """Gets the entity state (Etag) version of the named value specified by
+        its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -189,7 +189,7 @@ class NamedValueOperations(object):
 
     def get(
             self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of the NamedValue specified by its identifier.
+        """Gets the details of the named value specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -318,7 +318,7 @@ class NamedValueOperations(object):
 
     def create_or_update(
             self, resource_group_name, service_name, named_value_id, parameters, if_match=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a NamedValue.
+        """Creates or updates named value.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -415,7 +415,7 @@ class NamedValueOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -436,7 +436,7 @@ class NamedValueOperations(object):
 
     def update(
             self, resource_group_name, service_name, named_value_id, parameters, if_match, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates the specific NamedValue.
+        """Updates the specific named value.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -500,7 +500,7 @@ class NamedValueOperations(object):
 
     def delete(
             self, resource_group_name, service_name, named_value_id, if_match, custom_headers=None, raw=False, **operation_config):
-        """Deletes specific NamedValue from the API Management service instance.
+        """Deletes specific named value from the API Management service instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -560,7 +560,7 @@ class NamedValueOperations(object):
 
     def list_value(
             self, resource_group_name, service_name, named_value_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the secret value of the NamedValue.
+        """Gets the secret of the named value specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -573,8 +573,8 @@ class NamedValueOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: PropertyValueContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.PropertyValueContract or
+        :return: NamedValueSecretContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.NamedValueSecretContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
@@ -610,12 +610,17 @@ class NamedValueOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
+        header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('PropertyValueContract', response)
+            deserialized = self._deserialize('NamedValueSecretContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
