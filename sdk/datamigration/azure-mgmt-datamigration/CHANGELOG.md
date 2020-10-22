@@ -1,5 +1,17 @@
 # Release History
 
+## 4.1.0 (2020-10-23)
+
+**Features**
+
+  - Model PostgreSqlConnectionInfo has a new parameter encrypt_connection
+  - Model PostgreSqlConnectionInfo has a new parameter trust_server_certificate
+  - Model MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel has a new parameter source_server_type
+  - Model MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel has a new parameter state
+  - Model MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel has a new parameter target_server_type
+  - Model MigrateMySqlAzureDbForMySqlSyncDatabaseInput has a new parameter table_map
+  - Model MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput has a new parameter selected_tables
+  
 ## 4.0.0 (2019-10-24)
 
 **Features**
