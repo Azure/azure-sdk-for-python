@@ -22,6 +22,12 @@ class GlobalParameterType(str, Enum):
     array = "Array"
 
 
+class PublicNetworkAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class IntegrationRuntimeState(str, Enum):
 
     initial = "Initial"
@@ -320,6 +326,7 @@ class OrcCompressionCodec(str, Enum):
     none = "none"
     zlib = "zlib"
     snappy = "snappy"
+    lzo = "lzo"
 
 
 class AvroCompressionCodec(str, Enum):
@@ -335,6 +342,7 @@ class TumblingWindowFrequency(str, Enum):
 
     minute = "Minute"
     hour = "Hour"
+    month = "Month"
 
 
 class BlobEventTypes(str, Enum):
@@ -499,6 +507,11 @@ class SalesforceSinkWriteBehavior(str, Enum):
     upsert = "Upsert"
 
 
+class DynamicsSinkWriteBehavior(str, Enum):
+
+    upsert = "Upsert"
+
+
 class AzureSearchIndexWriteBehaviorType(str, Enum):
 
     merge = "Merge"
@@ -605,3 +618,10 @@ class IntegrationRuntimeAuthKeyName(str, Enum):
 
     auth_key1 = "authKey1"
     auth_key2 = "authKey2"
+
+
+class CopyBehaviorType(str, Enum):
+
+    preserve_hierarchy = "PreserveHierarchy"
+    flatten_hierarchy = "FlattenHierarchy"
+    merge_files = "MergeFiles"
