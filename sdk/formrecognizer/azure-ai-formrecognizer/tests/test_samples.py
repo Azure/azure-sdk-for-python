@@ -82,6 +82,8 @@ class TestSamples(FormRecognizerTest):
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_recognize_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        if sys.version_info < (3, 5):
+            pytest.skip("py2.7 is unable to print the checkbox character found on the line")
         _test_file('sample_recognize_content.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only

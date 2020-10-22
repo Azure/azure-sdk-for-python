@@ -805,7 +805,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_list_data_feeds_with_data_feed_name(self):
         async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(data_feed_name="testDataFeed1")
+            feeds = self.admin_client.list_data_feeds(data_feed_name="azsqlDatafeed")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
@@ -823,7 +823,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
     @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
     async def test_list_data_feeds_with_source_type(self):
         async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(data_source_type="AzureBlob")
+            feeds = self.admin_client.list_data_feeds(data_source_type="SqlServer")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)

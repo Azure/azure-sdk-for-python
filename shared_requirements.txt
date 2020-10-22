@@ -12,6 +12,7 @@ azure-core<2.0.0,>=1.2.2
 azure-cosmosdb-table~=1.0
 azure-datalake-store~=0.0.18
 azure-data-nspkg<2.0.0,>=1.0.0
+azure-digitaltwins-nspkg>=1.0.0
 azure-eventhub<6.0.0,>=5.0.0
 azure-eventgrid~=1.1
 azure-graphrbac~=0.40.0
