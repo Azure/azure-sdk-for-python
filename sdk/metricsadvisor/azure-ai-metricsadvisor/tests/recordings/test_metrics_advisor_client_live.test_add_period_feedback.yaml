@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"feedbackType": "Comment", "metricId": "metric_id", "dimensionFilter":
-      {"dimension": {"dimension_name": "Common Lime"}}, "value": {"periodType": "AssignValue",
+    body: '{"feedbackType": "Period", "metricId": "metric_id", "dimensionFilter":
+      {"dimension": {"dimension_name": "Los Angeles"}}, "value": {"periodType": "AssignValue",
       "periodValue": 2}}'
     headers:
       Accept:
@@ -11,33 +11,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '196'
+      - '195'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 741abfc4-0329-4b18-8d8e-86f115ab09d5
+      - a06de399-3290-4ee9-a4dd-e4bc3bbd5574
       content-length:
       - '0'
       date:
-      - Tue, 22 Sep 2020 20:31:30 GMT
+      - Wed, 21 Oct 2020 21:42:36 GMT
       location:
-      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/a5bc8268-cc9f-4cdb-82b4-a75acc465774
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/43b71917-d9ea-48b2-bbd5-31450b42e9c8
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '356'
+      - '282'
       x-request-id:
-      - 741abfc4-0329-4b18-8d8e-86f115ab09d5
+      - a06de399-3290-4ee9-a4dd-e4bc3bbd5574
     status:
       code: 201
       message: Created
