@@ -131,6 +131,10 @@ def prepare_labeled_result(response, model_id):
     for doc in response.analyze_result.document_results:
         model_id = doc.model_id if hasattr(doc, "model_id") else model_id
         doc_type_confidence = doc.doc_type_confidence if hasattr(doc, "doc_type_confidence") else None
+        if response.analyze_result.version == "2.0.0":
+            form_type_confidence = None
+        else:
+            form_type_confidence = adjust_confidence(doc_type_confidence)
         form = RecognizedForm(
             page_range=FormPageRange(
                 first_page_number=doc.page_range[0],
@@ -142,7 +146,7 @@ def prepare_labeled_result(response, model_id):
             },
             pages=form_pages[doc.page_range[0]-1:doc.page_range[1]],
             form_type=form_type if form_type else doc.doc_type,
-            form_type_confidence=adjust_confidence(doc_type_confidence),
+            form_type_confidence=form_type_confidence,
             model_id=model_id
         )
         result.append(form)

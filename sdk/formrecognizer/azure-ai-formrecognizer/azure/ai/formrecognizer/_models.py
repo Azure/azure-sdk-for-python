@@ -698,7 +698,7 @@ class CustomFormModel(object):
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubmodel._from_generated_labeled(
-                model, api_version, model_name=model.model_info.model_name
+                model, api_version, model_name=model_name
             ),
             errors=FormRecognizerError._from_generated(model.train_result.errors)
             if model.train_result else None,
