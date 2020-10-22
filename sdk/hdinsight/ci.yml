@@ -23,6 +23,8 @@ pr:
   paths:
     include:
     - sdk/hdinsight/
+    
+    
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
