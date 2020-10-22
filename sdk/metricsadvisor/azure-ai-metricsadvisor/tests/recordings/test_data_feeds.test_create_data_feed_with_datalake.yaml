@@ -21,29 +21,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - b17cd23f-1987-464f-b2fe-034f5936af62
+      - f1144970-ed25-4e2e-a45c-cf0b4161d13a
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 17:44:11 GMT
+      - Thu, 22 Oct 2020 15:49:59 GMT
       location:
-      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/af6786b1-726f-48e4-b841-75aae6bc6f4f
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/42c8aa6e-c11e-4385-94db-675f4fbd2a60
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '402'
+      - '516'
       x-request-id:
-      - b17cd23f-1987-464f-b2fe-034f5936af62
+      - f1144970-ed25-4e2e-a45c-cf0b4161d13a
     status:
       code: 201
       message: Created
@@ -57,29 +57,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/af6786b1-726f-48e4-b841-75aae6bc6f4f
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/42c8aa6e-c11e-4385-94db-675f4fbd2a60
   response:
     body:
-      string: '{"dataFeedId":"af6786b1-726f-48e4-b841-75aae6bc6f4f","dataFeedName":"datalake1595147e","metrics":[{"metricId":"294a3324-62ce-4c13-8c83-fa99932c3a86","metricName":"cost","metricDisplayName":"Cost","metricDescription":""},{"metricId":"a941518c-c225-4d8d-a217-345034aad4d6","metricName":"revenue","metricDisplayName":"Revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"Category"},{"dimensionName":"city","dimensionDisplayName":"City"}],"dataStartFrom":"2019-01-01T00:00:00Z","dataSourceType":"AzureDataLakeStorageGen2","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["krpratic@microsoft.com"],"viewers":[],"creator":"krpratic@microsoft.com","status":"Active","createdTime":"2020-09-25T17:44:12Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"fileTemplate":"adsample.json","accountName":"adsampledatalakegen2","directoryTemplate":"%Y/%m/%d","fileSystemName":"adsample","accountKey":"connectionstring"}}'
+      string: '{"dataFeedId":"42c8aa6e-c11e-4385-94db-675f4fbd2a60","dataFeedName":"datalake1595147e","metrics":[{"metricId":"20938d17-6a44-4925-92b3-4b5bcacb17de","metricName":"cost","metricDisplayName":"Cost","metricDescription":""},{"metricId":"c46ee9e6-4f9d-470c-bd6f-d0d5a2bd8da7","metricName":"revenue","metricDisplayName":"Revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"Category"},{"dimensionName":"city","dimensionDisplayName":"City"}],"dataStartFrom":"2019-01-01T00:00:00Z","dataSourceType":"AzureDataLakeStorageGen2","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["krpratic@microsoft.com"],"viewers":[],"creator":"krpratic@microsoft.com","status":"Active","createdTime":"2020-10-22T15:49:59Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"fileTemplate":"adsample.json","accountName":"adsampledatalakegen2","directoryTemplate":"%Y/%m/%d","fileSystemName":"adsample","accountKey":"connectionstring"}}'
     headers:
       apim-request-id:
-      - e4899221-12af-4b28-b5b0-cb67f3fa436d
+      - 3a6e1b04-c8be-4367-8ea1-345f9e52ff58
       content-length:
       - '1404'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 25 Sep 2020 17:44:11 GMT
+      - Thu, 22 Oct 2020 15:49:59 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '143'
+      - '202'
       x-request-id:
-      - e4899221-12af-4b28-b5b0-cb67f3fa436d
+      - 3a6e1b04-c8be-4367-8ea1-345f9e52ff58
     status:
       code: 200
       message: OK
@@ -95,27 +95,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/af6786b1-726f-48e4-b841-75aae6bc6f4f
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/42c8aa6e-c11e-4385-94db-675f4fbd2a60
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 57af76ab-4a5c-48e0-ba75-43b876dee357
+      - debac527-1d11-4b46-aa35-c5112b875bdb
       content-length:
       - '0'
       date:
-      - Fri, 25 Sep 2020 17:44:12 GMT
+      - Thu, 22 Oct 2020 15:50:00 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '270'
+      - '304'
       x-request-id:
-      - 57af76ab-4a5c-48e0-ba75-43b876dee357
+      - debac527-1d11-4b46-aa35-c5112b875bdb
     status:
       code: 204
       message: No Content

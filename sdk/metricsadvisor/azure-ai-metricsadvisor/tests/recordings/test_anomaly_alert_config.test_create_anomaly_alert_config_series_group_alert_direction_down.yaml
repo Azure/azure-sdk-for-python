@@ -1,12 +1,12 @@
 interactions:
 - request:
-    body: 'b''{"dataSourceType": "SqlServer", "dataFeedName": "seriesgroupdb6925de",
+    body: '{"dataSourceType": "SqlServer", "dataFeedName": "seriesgroupdb6925de",
       "granularityName": "Daily", "metrics": [{"metricName": "cost"}, {"metricName":
       "revenue"}], "dimension": [{"dimensionName": "category"}, {"dimensionName":
       "city"}], "dataStartFrom": "2019-10-01T00:00:00.000Z", "startOffsetInSeconds":
       0, "maxConcurrency": -1, "minRetryIntervalInSeconds": -1, "stopRetryAfterInSeconds":
       -1, "dataSourceParameter": {"connectionString": "connectionstring", "query":
-      "select\\u202f*\\u202ffrom\\u202fadsample2\\u202fwhere\\u202fTimestamp\\u202f=\\u202f@StartTime"}}'''
+      "select\u202f*\u202ffrom\u202fadsample2\u202fwhere\u202fTimestamp\u202f=\u202f@StartTime"}}'
     headers:
       Accept:
       - application/json
@@ -19,29 +19,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 00cecf28-5907-4d17-a49c-97bd18b6abb9
+      - 741d8369-de23-4ecb-b85a-89f540a77988
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 23:42:46 GMT
+      - Thu, 22 Oct 2020 15:48:21 GMT
       location:
-      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/f779fa3e-7981-43d3-9963-f3b4379cecf3
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/63721223-2f38-4f0e-b96e-d3f094dad56c
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5448'
+      - '596'
       x-request-id:
-      - 00cecf28-5907-4d17-a49c-97bd18b6abb9
+      - 741d8369-de23-4ecb-b85a-89f540a77988
     status:
       code: 201
       message: Created
@@ -55,34 +55,52 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/f779fa3e-7981-43d3-9963-f3b4379cecf3
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/63721223-2f38-4f0e-b96e-d3f094dad56c
   response:
     body:
-      string: "{\"dataFeedId\":\"f779fa3e-7981-43d3-9963-f3b4379cecf3\",\"dataFeedName\":\"seriesgroupdb6925de\",\"metrics\":[{\"metricId\":\"ac379d67-94d3-4e8a-b9fe-0ef9636a4f4a\",\"metricName\":\"cost\",\"metricDisplayName\":\"cost\",\"metricDescription\":\"\"},{\"metricId\":\"45ea825d-050d-42b4-83fd-bcfdbb7d7a53\",\"metricName\":\"revenue\",\"metricDisplayName\":\"revenue\",\"metricDescription\":\"\"}],\"dimension\":[{\"dimensionName\":\"category\",\"dimensionDisplayName\":\"category\"},{\"dimensionName\":\"city\",\"dimensionDisplayName\":\"city\"}],\"dataStartFrom\":\"2019-10-01T00:00:00Z\",\"dataSourceType\":\"SqlServer\",\"timestampColumn\":\"\",\"startOffsetInSeconds\":0,\"maxQueryPerMinute\":30.0,\"granularityName\":\"Daily\",\"granularityAmount\":null,\"allUpIdentification\":null,\"needRollup\":\"NoRollup\",\"fillMissingPointType\":\"PreviousValue\",\"fillMissingPointValue\":0.0,\"rollUpMethod\":\"None\",\"rollUpColumns\":[],\"dataFeedDescription\":\"\",\"stopRetryAfterInSeconds\":-1,\"minRetryIntervalInSeconds\":-1,\"maxConcurrency\":-1,\"viewMode\":\"Private\",\"admins\":[\"krpratic@microsoft.com\"],\"viewers\":[],\"creator\":\"krpratic@microsoft.com\",\"status\":\"Active\",\"createdTime\":\"2020-09-11T23:42:46Z\",\"isAdmin\":true,\"actionLinkTemplate\":\"\",\"dataSourceParameter\":{\"connectionString\":\"connectionstring\",\"query\":\"select\u202F*\u202Ffrom\u202Fadsample2\u202Fwhere\u202FTimestamp\u202F=\u202F@StartTime\"}}"
+      string: "{\"dataFeedId\":\"63721223-2f38-4f0e-b96e-d3f094dad56c\",\"dataFeedName\"\
+        :\"seriesgroupdb6925de\",\"metrics\":[{\"metricId\":\"0fd25d08-ad67-4af7-843a-caa746c3d0b0\"\
+        ,\"metricName\":\"cost\",\"metricDisplayName\":\"cost\",\"metricDescription\"\
+        :\"\"},{\"metricId\":\"8afbd432-9e54-458b-9ba4-a5a82237f883\",\"metricName\"\
+        :\"revenue\",\"metricDisplayName\":\"revenue\",\"metricDescription\":\"\"\
+        }],\"dimension\":[{\"dimensionName\":\"category\",\"dimensionDisplayName\"\
+        :\"category\"},{\"dimensionName\":\"city\",\"dimensionDisplayName\":\"city\"\
+        }],\"dataStartFrom\":\"2019-10-01T00:00:00Z\",\"dataSourceType\":\"SqlServer\"\
+        ,\"timestampColumn\":\"\",\"startOffsetInSeconds\":0,\"maxQueryPerMinute\"\
+        :30.0,\"granularityName\":\"Daily\",\"granularityAmount\":null,\"allUpIdentification\"\
+        :null,\"needRollup\":\"NoRollup\",\"fillMissingPointType\":\"PreviousValue\"\
+        ,\"fillMissingPointValue\":0.0,\"rollUpMethod\":\"None\",\"rollUpColumns\"\
+        :[],\"dataFeedDescription\":\"\",\"stopRetryAfterInSeconds\":-1,\"minRetryIntervalInSeconds\"\
+        :-1,\"maxConcurrency\":-1,\"viewMode\":\"Private\",\"admins\":[\"krpratic@microsoft.com\"\
+        ],\"viewers\":[],\"creator\":\"krpratic@microsoft.com\",\"status\":\"Active\"\
+        ,\"createdTime\":\"2020-10-22T15:48:21Z\",\"isAdmin\":true,\"actionLinkTemplate\"\
+        :\"\",\"dataSourceParameter\":{\"connectionString\":\"connectionstring\",\"\
+        query\":\"select\u202F*\u202Ffrom\u202Fadsample2\u202Fwhere\u202FTimestamp\u202F\
+        =\u202F@StartTime\"}}"
     headers:
       apim-request-id:
-      - 002ec5c3-783c-4ac6-a81b-f16724283ae8
+      - b5be6bec-0778-46c5-8073-fc5ddc6dd60f
       content-length:
       - '1492'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 23:42:46 GMT
+      - Thu, 22 Oct 2020 15:48:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '156'
+      - '228'
       x-request-id:
-      - 002ec5c3-783c-4ac6-a81b-f16724283ae8
+      - b5be6bec-0778-46c5-8073-fc5ddc6dd60f
     status:
       code: 200
       message: OK
 - request:
-    body: '{"name": "seriesgroupdb6925de", "description": "testing", "metricId": "ac379d67-94d3-4e8a-b9fe-0ef9636a4f4a",
+    body: '{"name": "seriesgroupdb6925de", "description": "testing", "metricId": "0fd25d08-ad67-4af7-843a-caa746c3d0b0",
       "wholeMetricConfiguration": {"smartDetectionCondition": {"sensitivity": 50.0,
       "anomalyDetectorDirection": "Both", "suppressCondition": {"minNumber": 50, "minRatio":
       50.0}}}}'
@@ -98,29 +116,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - a105e206-f579-4fac-859a-9ccb83ea96f1
+      - b0e63154-586c-4379-8ac5-ad48d1867ea6
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 23:42:47 GMT
+      - Thu, 22 Oct 2020 15:48:21 GMT
       location:
-      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/9c77024e-fdb3-4145-a3c5-8c5ce12738d4
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/0dd4ba7a-cdad-4240-b6ea-e19ba58903f4
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '102'
+      - '156'
       x-request-id:
-      - a105e206-f579-4fac-859a-9ccb83ea96f1
+      - b0e63154-586c-4379-8ac5-ad48d1867ea6
     status:
       code: 201
       message: Created
@@ -134,38 +152,38 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/9c77024e-fdb3-4145-a3c5-8c5ce12738d4
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/0dd4ba7a-cdad-4240-b6ea-e19ba58903f4
   response:
     body:
-      string: '{"anomalyDetectionConfigurationId":"9c77024e-fdb3-4145-a3c5-8c5ce12738d4","name":"seriesgroupdb6925de","description":"testing","metricId":"ac379d67-94d3-4e8a-b9fe-0ef9636a4f4a","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":50.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":50,"minRatio":50.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}'
+      string: '{"anomalyDetectionConfigurationId":"0dd4ba7a-cdad-4240-b6ea-e19ba58903f4","name":"seriesgroupdb6925de","description":"testing","metricId":"0fd25d08-ad67-4af7-843a-caa746c3d0b0","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":50.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":50,"minRatio":50.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}'
     headers:
       apim-request-id:
-      - 6b912cb6-72f6-44ab-a524-df2dbc4944bd
+      - 3efe2032-5613-4a3f-b955-b26d6811d2d2
       content-length:
       - '416'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 23:42:47 GMT
+      - Thu, 22 Oct 2020 15:48:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '72'
+      - '81'
       x-request-id:
-      - 6b912cb6-72f6-44ab-a524-df2dbc4944bd
+      - 3efe2032-5613-4a3f-b955-b26d6811d2d2
     status:
       code: 200
       message: OK
 - request:
     body: '{"name": "testalertdb6925de", "hookIds": [], "metricAlertingConfigurations":
-      [{"anomalyDetectionConfigurationId": "9c77024e-fdb3-4145-a3c5-8c5ce12738d4",
+      [{"anomalyDetectionConfigurationId": "0dd4ba7a-cdad-4240-b6ea-e19ba58903f4",
       "anomalyScopeType": "Dimension", "dimensionAnomalyScope": {"dimension": {"city":
       "Shenzhen"}}, "valueFilter": {"lower": 1.0, "direction": "Down", "metricId":
-      "ac379d67-94d3-4e8a-b9fe-0ef9636a4f4a"}}]}'
+      "0fd25d08-ad67-4af7-843a-caa746c3d0b0"}}]}'
     headers:
       Accept:
       - application/json
@@ -178,29 +196,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 4971abe6-5019-4828-a6e6-8761fbf6f0c5
+      - 9bc11474-af9a-4d2f-bb13-50b0daf3db1c
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 23:42:47 GMT
+      - Thu, 22 Oct 2020 15:48:22 GMT
       location:
-      - https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/b3935d77-9752-479f-b084-8f94bf860d1e
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/5a26cdc1-641d-4b57-931d-08d94bd066ca
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '156'
+      - '190'
       x-request-id:
-      - 4971abe6-5019-4828-a6e6-8761fbf6f0c5
+      - 9bc11474-af9a-4d2f-bb13-50b0daf3db1c
     status:
       code: 201
       message: Created
@@ -214,29 +232,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/b3935d77-9752-479f-b084-8f94bf860d1e
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/5a26cdc1-641d-4b57-931d-08d94bd066ca
   response:
     body:
-      string: '{"anomalyAlertingConfigurationId":"b3935d77-9752-479f-b084-8f94bf860d1e","name":"testalertdb6925de","description":"","hookIds":[],"metricAlertingConfigurations":[{"anomalyDetectionConfigurationId":"9c77024e-fdb3-4145-a3c5-8c5ce12738d4","anomalyScopeType":"Dimension","negationOperation":false,"dimensionAnomalyScope":{"dimension":{"city":"Shenzhen"}},"valueFilter":{"lower":1.0,"direction":"Down","metricId":"ac379d67-94d3-4e8a-b9fe-0ef9636a4f4a","triggerForMissing":false}}]}'
+      string: '{"anomalyAlertingConfigurationId":"5a26cdc1-641d-4b57-931d-08d94bd066ca","name":"testalertdb6925de","description":"","hookIds":[],"metricAlertingConfigurations":[{"anomalyDetectionConfigurationId":"0dd4ba7a-cdad-4240-b6ea-e19ba58903f4","anomalyScopeType":"Dimension","negationOperation":false,"dimensionAnomalyScope":{"dimension":{"city":"Shenzhen"}},"valueFilter":{"lower":1.0,"direction":"Down","metricId":"0fd25d08-ad67-4af7-843a-caa746c3d0b0","triggerForMissing":false}}]}'
     headers:
       apim-request-id:
-      - a4d66221-73b0-40a2-a58f-9ebb327298e0
+      - 8bdeeaa5-9fd1-43c9-9e97-2321c34e9fd1
       content-length:
       - '476'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 23:42:47 GMT
+      - Thu, 22 Oct 2020 15:48:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '115'
+      - '119'
       x-request-id:
-      - a4d66221-73b0-40a2-a58f-9ebb327298e0
+      - 8bdeeaa5-9fd1-43c9-9e97-2321c34e9fd1
     status:
       code: 200
       message: OK
@@ -252,27 +270,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/b3935d77-9752-479f-b084-8f94bf860d1e
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/5a26cdc1-641d-4b57-931d-08d94bd066ca
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - fa90633e-388e-42a0-b3aa-9a281d965128
+      - 85b17c5f-5226-4a69-a2c2-b7cf4420139b
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 23:42:48 GMT
+      - Thu, 22 Oct 2020 15:48:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '83'
+      - '236'
       x-request-id:
-      - fa90633e-388e-42a0-b3aa-9a281d965128
+      - 85b17c5f-5226-4a69-a2c2-b7cf4420139b
     status:
       code: 204
       message: No Content
@@ -286,30 +304,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/b3935d77-9752-479f-b084-8f94bf860d1e
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/5a26cdc1-641d-4b57-931d-08d94bd066ca
   response:
     body:
       string: '{"code":"Not Found","message":"Not found this AnomalyAlertingConfiguration.
-        TraceId: 01f74466-9daf-40bb-bd27-cf1c92281bd4"}'
+        TraceId: acb7d967-a26b-4caf-af33-ddd8137a8071"}'
     headers:
       apim-request-id:
-      - e42f9134-73a7-411c-856d-b88da6c3ad4b
+      - 592e56c9-cab1-424a-a7a9-e64ef999bcba
       content-length:
       - '123'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 23:42:48 GMT
+      - Thu, 22 Oct 2020 15:48:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '44'
+      - '86'
       x-request-id:
-      - e42f9134-73a7-411c-856d-b88da6c3ad4b
+      - 592e56c9-cab1-424a-a7a9-e64ef999bcba
     status:
       code: 404
       message: Not Found
@@ -325,27 +343,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/9c77024e-fdb3-4145-a3c5-8c5ce12738d4
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/0dd4ba7a-cdad-4240-b6ea-e19ba58903f4
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - b8fc53e0-bcc7-4317-a2cc-d93cbd8e6773
+      - c835ef3b-212e-406e-81ff-fc51a35784d3
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 23:42:48 GMT
+      - Thu, 22 Oct 2020 15:48:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '79'
+      - '144'
       x-request-id:
-      - b8fc53e0-bcc7-4317-a2cc-d93cbd8e6773
+      - c835ef3b-212e-406e-81ff-fc51a35784d3
     status:
       code: 204
       message: No Content
@@ -361,27 +379,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/f779fa3e-7981-43d3-9963-f3b4379cecf3
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/63721223-2f38-4f0e-b96e-d3f094dad56c
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - c7ef0225-6f76-4362-ab35-16062b5e8fa9
+      - ef3784c8-9b8d-4115-b6a4-9549795529f5
       content-length:
       - '0'
       date:
-      - Fri, 11 Sep 2020 23:42:50 GMT
+      - Thu, 22 Oct 2020 15:48:23 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '285'
+      - '563'
       x-request-id:
-      - c7ef0225-6f76-4362-ab35-16062b5e8fa9
+      - ef3784c8-9b8d-4115-b6a4-9549795529f5
     status:
       code: 204
       message: No Content
