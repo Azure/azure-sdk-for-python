@@ -61,7 +61,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
                         )
                     )
                     return
-                except Exception as exception:  # pylint: disable=broad-except
+                except RuntimeError as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",

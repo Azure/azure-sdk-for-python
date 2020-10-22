@@ -916,7 +916,7 @@ class ReceivedMessage(ReceivedMessageBase):
                                                    dead_letter_reason=dead_letter_reason,
                                                    dead_letter_error_description=dead_letter_error_description)()
                     return
-                except Exception as exception:  # pylint: disable=broad-except
+                except RuntimeError as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
