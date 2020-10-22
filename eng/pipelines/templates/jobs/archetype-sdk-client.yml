@@ -1,5 +1,6 @@
 parameters:
   ServiceDirectory: ''
+  TestPipeline: false
   BeforePublishSteps: []
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
@@ -119,13 +120,14 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-    - task: PowerShell@2
-      displayName: Prep template pipeline for release
-      condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
-      inputs:
-        pwsh: true
-        workingDirectory: $(Build.SourcesDirectory)
-        filePath: eng/scripts/SetTestPipelineVersion.ps1
+    - ${{if eq(parameters.TestPipeline, 'true')}}:
+      - task: PowerShell@2
+        displayName: Prep template pipeline for release
+        condition: succeeded()
+        inputs:
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          filePath: eng/scripts/SetTestPipelineVersion.ps1
 
     - pwsh: |
         $toxenvvar = "whl,sdist"
