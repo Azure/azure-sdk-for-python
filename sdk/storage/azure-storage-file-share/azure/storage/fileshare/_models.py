@@ -228,7 +228,7 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class LeaseProperties(DictMixin):
-    """File Lease Properties.
+    """File or Share Lease Properties.
 
     :ivar str status:
         The lease status of the file or share. Possible values: locked|unlocked
