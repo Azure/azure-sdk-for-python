@@ -60,5 +60,5 @@ class FormRecognizerClientBase(object):
             polling_interval=polling_interval,
             **kwargs
         )
-        self._deserialize = _get_deserialize()
+        self._deserialize = _get_deserialize(self.api_version)
         self._generated_models = self._client.models(self.api_version)
