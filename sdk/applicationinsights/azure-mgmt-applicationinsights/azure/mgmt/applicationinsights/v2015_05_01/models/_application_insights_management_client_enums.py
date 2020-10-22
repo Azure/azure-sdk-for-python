@@ -28,6 +28,13 @@ class RequestSource(str, Enum):
     rest = "rest"
 
 
+class IngestionMode(str, Enum):
+
+    application_insights = "ApplicationInsights"
+    application_insights_with_diagnostic_settings = "ApplicationInsightsWithDiagnosticSettings"
+    log_analytics = "LogAnalytics"
+
+
 class PurgeState(str, Enum):
 
     pending = "pending"
