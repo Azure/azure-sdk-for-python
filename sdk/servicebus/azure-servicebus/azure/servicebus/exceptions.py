@@ -244,7 +244,7 @@ class OperationTimeoutError(ServiceBusError):
 
 
 class MessageError(ServiceBusError):
-    """An error occurred when operation on message failed because the message is in a wrong state."""
+    """An error occurred when an operation on a message failed because the message is in an incorrect state."""
 
 
 class MessageContentTooLarge(MessageError, ValueError):
