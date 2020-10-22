@@ -24,7 +24,6 @@ namespace_name = PACKAGE_NAME.replace('-', '.')
 # azure v0.x used to have a __version__ attribute (newer versions don't)
 try:
     import azure
-
     try:
         ver = azure.__version__
         raise Exception(
