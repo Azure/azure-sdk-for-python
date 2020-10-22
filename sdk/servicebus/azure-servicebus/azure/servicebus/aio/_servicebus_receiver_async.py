@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import datetime
 import asyncio
 import collections
 import functools
 import logging
-from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator, Union
+from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator, Union, Callable
 
 import six
 
@@ -14,8 +15,7 @@ from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandler
-from .._common.message import PeekedMessage
-from ._async_message import ReceivedMessage
+from .._common.message import PeekedMessage, ReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -28,10 +28,21 @@ from .._common.constants import (
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     MGMT_REQUEST_RECEIVER_SETTLE_MODE,
     MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
-    MGMT_REQUEST_MAX_MESSAGE_COUNT
+    MGMT_REQUEST_MAX_MESSAGE_COUNT,
+    MESSAGE_COMPLETE,
+    MESSAGE_DEAD_LETTER,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER,
+    MESSAGE_RENEW_LOCK,
+    MESSAGE_MGMT_SETTLEMENT_TERM_MAP,
+    MGMT_REQUEST_DEAD_LETTER_REASON,
+    MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
+    MGMT_RESPONSE_MESSAGE_EXPIRATION
 )
 from .._common import mgmt_handlers
-from ._async_utils import create_authentication
+from .._common.utils import utc_from_timestamp
+from ._async_utils import create_authentication, get_running_loop
+from ..exceptions import MessageSettleFailed
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -170,7 +181,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if not self._message_iter:
             self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
-        message = self._build_message(uamqp_message, ReceivedMessage)
+        message = self._build_message(uamqp_message)
         return message
 
     def _create_handler(self, auth):
@@ -251,12 +262,53 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
 
-        return [self._build_message(message, ReceivedMessage) for message in batch]
+        return [self._build_message(message) for message in batch]
 
-    async def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
+    async def _settle_message(  # type: ignore
+        self,
+        message: ReceivedMessage,
+        settle_operation: str,
+        dead_letter_reason: Optional[str] = None,
+        dead_letter_error_description: Optional[str] =None
+    ):
+        # pylint: disable=protected-access
+        try:
+            if not message._is_deferred_message:
+                try:
+                    await get_running_loop().run_in_executor(
+                        None,
+                        self._settle_message_via_receiver_link(
+                            message,
+                            settle_operation,
+                            dead_letter_reason=dead_letter_reason,
+                            dead_letter_error_description=dead_letter_error_description
+                        )
+                    )
+                    return
+                except RuntimeError as exception:
+                    _LOGGER.info(
+                        "Message settling: %r has encountered an exception (%r)."
+                        "Trying to settle through management link",
+                        settle_operation,
+                        exception
+                    )
+            dead_letter_details = {
+                MGMT_REQUEST_DEAD_LETTER_REASON: dead_letter_reason or "",
+                MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description or ""
+            } if settle_operation == MESSAGE_DEAD_LETTER else None
+            await self._settle_message_via_mgmt_link(
+                MESSAGE_MGMT_SETTLEMENT_TERM_MAP[settle_operation],
+                [message.lock_token],
+                dead_letter_details=dead_letter_details
+            )
+        except Exception as e:
+            raise MessageSettleFailed(settle_operation, e)
+
+    async def _settle_message_via_mgmt_link(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
-            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
+            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
+        }
 
         self._populate_message_properties(message)
         if dead_letter_details:
@@ -519,3 +571,131 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             mgmt_handlers.peek_op,
             timeout=timeout
         )
+
+    async def complete_message(self, message):
+        """Complete the message.
+
+        This removes the message from the queue.
+
+        :param message: The received message to be completed.
+        :type message: ~azure.servicebus.ReceivedMessage
+        :rtype: None
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        """
+        if not isinstance(message, ReceivedMessage):
+            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+        self._check_message_alive(message, MESSAGE_COMPLETE)
+        await self._settle_message(message, MESSAGE_COMPLETE)
+        message._settled = True  # pylint: disable=protected-access
+
+    async def abandon_message(self, message):
+        """Abandon the message.
+
+        This message will be returned to the queue and made available to be received again.
+
+        :param message: The received message to be abandoned.
+        :type message: ~azure.servicebus.ReceivedMessage
+        :rtype: None
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        """
+        if not isinstance(message, ReceivedMessage):
+            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+        self._check_message_alive(message, MESSAGE_ABANDON)
+        await self._settle_message(message, MESSAGE_ABANDON)
+        message._settled = True  # pylint: disable=protected-access
+
+    async def defer_message(self, message):
+        """Defers the message.
+
+        This message will remain in the queue but must be requested
+        specifically by its sequence number in order to be received.
+
+        :param message: The received message to be deferred.
+        :type message: ~azure.servicebus.ReceivedMessage
+        :rtype: None
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        """
+        if not isinstance(message, ReceivedMessage):
+            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+        self._check_message_alive(message, MESSAGE_DEFER)
+        await self._settle_message(message, MESSAGE_DEFER)
+        message._settled = True  # pylint: disable=protected-access
+
+    async def dead_letter_message(self, message, reason=None, error_description=None):
+        """Move the message to the Dead Letter queue.
+
+        The Dead Letter queue is a sub-queue that can be
+        used to store messages that failed to process correctly, or otherwise require further inspection
+        or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
+
+        :param message: The received message to be dead-lettered.
+        :type message: ~azure.servicebus.ReceivedMessage
+        :param Optional[str] reason: The reason for dead-lettering the message.
+        :param Optional[str] error_description: The detailed error description for dead-lettering the message.
+        :rtype: None
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        """
+        if not isinstance(message, ReceivedMessage):
+            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+        self._check_message_alive(message, MESSAGE_DEAD_LETTER)
+        await self._settle_message(
+            message,
+            MESSAGE_DEAD_LETTER,
+            dead_letter_reason=reason,
+            dead_letter_error_description=error_description
+        )
+        message._settled = True  # pylint: disable=protected-access
+
+    async def renew_lock(self, message, **kwargs):
+        # type: (ReceivedMessage, Any) -> datetime.datetime
+        # pylint: disable=protected-access,no-member
+        """Renew the message lock.
+
+        This will maintain the lock on the message to ensure it is not returned to the queue
+        to be reprocessed.
+
+        In order to complete (or otherwise settle) the message, the lock must be maintained,
+        and cannot already have expired; an expired lock cannot be renewed.
+
+        Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
+        This operation is only available for non-sessionful messages as well.
+
+        TODO: define autolockrenewer
+        Lock renewal can be performed as a background task by setting `auto_lock_renewer` parameter when
+        getting the receiver.
+
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
+        :returns: The utc datetime the lock is set to expire at.
+        :rtype: datetime.datetime
+        :raises: TypeError if the message is sessionful.
+        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
+        """
+        # TODO: raise error in sessionful receiver?
+        #
+        # if self.session is not None:  # type: ignore
+        #     raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
+
+        self._check_message_alive(message, MESSAGE_RENEW_LOCK)
+        token = message.lock_token
+        if not token:
+            raise ValueError("Unable to renew lock - no lock token found.")
+
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        expiry = self._renew_locks(token, timeout=timeout)  # type: ignore
+        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
+
+        return message._expiry

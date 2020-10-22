@@ -9,7 +9,7 @@ import logging
 import datetime
 from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
 
-from ._async_message import ReceivedMessage
+from .._common.message import ReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
 from .._common.utils import renewable_start_time, utc_now
 from ._async_utils import get_running_loop
