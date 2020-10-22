@@ -550,7 +550,7 @@ class SeverityCondition(object):
     """
 
     def __init__(self, min_alert_severity, max_alert_severity, **kwargs):  # pylint: disable=unused-argument
-        # type: (Union[str, AnomalySeverity], Union[str, Severity], Any) -> None
+        # type: (Union[str, AnomalySeverity], Union[str, AnomalySeverity], Any) -> None
         self.min_alert_severity = min_alert_severity
         self.max_alert_severity = max_alert_severity
 
