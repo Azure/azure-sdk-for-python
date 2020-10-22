@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import re
 import os.path
@@ -24,6 +24,7 @@ namespace_name = PACKAGE_NAME.replace('-', '.')
 # azure v0.x used to have a __version__ attribute (newer versions don't)
 try:
     import azure
+
     try:
         ver = azure.__version__
         raise Exception(
@@ -79,8 +80,8 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
+        'azure-mgmt-core>=1.2.0,2.0.0'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-mgmt-nspkg'],
