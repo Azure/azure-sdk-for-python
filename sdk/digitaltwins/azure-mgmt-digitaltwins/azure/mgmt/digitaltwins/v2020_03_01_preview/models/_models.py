@@ -13,29 +13,6 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class DigitalTwinsSkuInfo(Model):
-    """Information about the SKU of the DigitalTwinsInstance.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Required. The name of the SKU. Default value: "F1" .
-    :vartype name: str
-    """
-
-    _validation = {
-        'name': {'required': True, 'constant': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    name = "F1"
-
-
 class CheckNameRequest(Model):
     """The result returned from a database check name availability request.
 
@@ -64,9 +41,9 @@ class CheckNameRequest(Model):
 
     type = "Microsoft.DigitalTwins/digitalTwinsInstances"
 
-    def __init__(self, *, name: str, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CheckNameRequest, self).__init__(**kwargs)
-        self.name = name
+        self.name = kwargs.get('name', None)
 
 
 class CheckNameResult(Model):
@@ -92,12 +69,12 @@ class CheckNameResult(Model):
         'reason': {'key': 'reason', 'type': 'str'},
     }
 
-    def __init__(self, *, name_available: bool=None, name: str=None, message: str=None, reason=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(CheckNameResult, self).__init__(**kwargs)
-        self.name_available = name_available
-        self.name = name
-        self.message = message
-        self.reason = reason
+        self.name_available = kwargs.get('name_available', None)
+        self.name = kwargs.get('name', None)
+        self.message = kwargs.get('message', None)
+        self.reason = kwargs.get('reason', None)
 
 
 class CloudError(Model):
@@ -106,6 +83,29 @@ class CloudError(Model):
 
     _attribute_map = {
     }
+
+
+class DigitalTwinsSkuInfo(Model):
+    """Information about the SKU of the DigitalTwinsInstance.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The name of the SKU. Default value: "F1" .
+    :vartype name: str
+    """
+
+    _validation = {
+        'name': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    name = "F1"
 
 
 class DigitalTwinsResource(Model):
@@ -150,13 +150,13 @@ class DigitalTwinsResource(Model):
 
     sku = DigitalTwinsSkuInfo()
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DigitalTwinsResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class DigitalTwinsDescription(DigitalTwinsResource):
@@ -217,8 +217,8 @@ class DigitalTwinsDescription(DigitalTwinsResource):
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
-        super(DigitalTwinsDescription, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, **kwargs):
+        super(DigitalTwinsDescription, self).__init__(**kwargs)
         self.created_time = None
         self.last_updated_time = None
         self.provisioning_state = None
@@ -251,7 +251,7 @@ class ExternalResource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ExternalResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -288,9 +288,9 @@ class DigitalTwinsEndpointResource(ExternalResource):
         'properties': {'key': 'properties', 'type': 'DigitalTwinsEndpointResourceProperties'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DigitalTwinsEndpointResource, self).__init__(**kwargs)
-        self.properties = properties
+        self.properties = kwargs.get('properties', None)
 
 
 class DigitalTwinsEndpointResourceProperties(Model):
@@ -334,11 +334,11 @@ class DigitalTwinsEndpointResourceProperties(Model):
         'endpoint_type': {'ServiceBus': 'ServiceBus', 'EventHub': 'EventHub', 'EventGrid': 'EventGrid'}
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DigitalTwinsEndpointResourceProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.created_time = None
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)
         self.endpoint_type = None
 
 
@@ -353,9 +353,9 @@ class DigitalTwinsPatchDescription(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(DigitalTwinsPatchDescription, self).__init__(**kwargs)
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)
 
 
 class ErrorDefinition(Model):
@@ -385,7 +385,7 @@ class ErrorDefinition(Model):
         'details': {'key': 'details', 'type': '[ErrorDefinition]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ErrorDefinition, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -403,9 +403,9 @@ class ErrorResponse(Model):
         'error': {'key': 'error', 'type': 'ErrorDefinition'},
     }
 
-    def __init__(self, *, error=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
+        self.error = kwargs.get('error', None)
 
 
 class ErrorResponseException(HttpOperationError):
@@ -467,11 +467,11 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
         'access_key2': {'key': 'accessKey2', 'type': 'str'},
     }
 
-    def __init__(self, *, access_key1: str, access_key2: str, tags=None, topic_endpoint: str=None, **kwargs) -> None:
-        super(EventGrid, self).__init__(tags=tags, **kwargs)
-        self.topic_endpoint = topic_endpoint
-        self.access_key1 = access_key1
-        self.access_key2 = access_key2
+    def __init__(self, **kwargs):
+        super(EventGrid, self).__init__(**kwargs)
+        self.topic_endpoint = kwargs.get('topic_endpoint', None)
+        self.access_key1 = kwargs.get('access_key1', None)
+        self.access_key2 = kwargs.get('access_key2', None)
         self.endpoint_type = 'EventGrid'
 
 
@@ -519,10 +519,10 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
         'connection_string_secondary_key': {'key': 'connectionString-SecondaryKey', 'type': 'str'},
     }
 
-    def __init__(self, *, connection_string_primary_key: str, connection_string_secondary_key: str, tags=None, **kwargs) -> None:
-        super(EventHub, self).__init__(tags=tags, **kwargs)
-        self.connection_string_primary_key = connection_string_primary_key
-        self.connection_string_secondary_key = connection_string_secondary_key
+    def __init__(self, **kwargs):
+        super(EventHub, self).__init__(**kwargs)
+        self.connection_string_primary_key = kwargs.get('connection_string_primary_key', None)
+        self.connection_string_secondary_key = kwargs.get('connection_string_secondary_key', None)
         self.endpoint_type = 'EventHub'
 
 
@@ -548,10 +548,10 @@ class Operation(Model):
         'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, *, display=None, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.display = display
+        self.display = kwargs.get('display', None)
 
 
 class OperationDisplay(Model):
@@ -584,7 +584,7 @@ class OperationDisplay(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = None
         self.resource = None
@@ -636,8 +636,8 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
         'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
     }
 
-    def __init__(self, *, primary_connection_string: str, secondary_connection_string: str, tags=None, **kwargs) -> None:
-        super(ServiceBus, self).__init__(tags=tags, **kwargs)
-        self.primary_connection_string = primary_connection_string
-        self.secondary_connection_string = secondary_connection_string
+    def __init__(self, **kwargs):
+        super(ServiceBus, self).__init__(**kwargs)
+        self.primary_connection_string = kwargs.get('primary_connection_string', None)
+        self.secondary_connection_string = kwargs.get('secondary_connection_string', None)
         self.endpoint_type = 'ServiceBus'

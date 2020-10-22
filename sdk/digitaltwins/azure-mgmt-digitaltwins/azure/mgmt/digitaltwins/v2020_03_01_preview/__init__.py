@@ -9,4 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0"
+from ._configuration import AzureDigitalTwinsManagementClientConfiguration
+from ._azure_digital_twins_management_client import AzureDigitalTwinsManagementClient
+__all__ = ['AzureDigitalTwinsManagementClient', 'AzureDigitalTwinsManagementClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
+

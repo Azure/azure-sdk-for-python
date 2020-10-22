@@ -9,4 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0"
+from ._digital_twins_operations import DigitalTwinsOperations
+from ._digital_twins_endpoint_operations import DigitalTwinsEndpointOperations
+from ._operations import Operations
+
+__all__ = [
+    'DigitalTwinsOperations',
+    'DigitalTwinsEndpointOperations',
+    'Operations',
+]
