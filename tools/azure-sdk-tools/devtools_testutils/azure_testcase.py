@@ -189,8 +189,8 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
-    def _get_credential(self, is_async, is_real):
-        if is_real:
+    def _get_credential(self, is_async):
+        if self.is_live:
             from azure.identity import ClientSecretCredential
             if is_async:
                 from azure.identity.aio import ClientSecretCredential
@@ -214,7 +214,7 @@ class AzureTestCase(ReplayableTest):
         if self.tenant_id and self.client_id and self.secret and self.is_live:
             if _is_autorest_v3(client_class):
                 # Create azure-identity class
-                return self._get_credential(is_async=is_async, is_real=True)
+                return self._get_credential(is_async=is_async)
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
@@ -225,7 +225,7 @@ class AzureTestCase(ReplayableTest):
                 )
         else:
             if _is_autorest_v3(client_class):
-                return self._get_credential(is_async, is_real=False)
+                return self._get_credential(is_async)
             else:
                 return self.settings.get_credentials()
 
