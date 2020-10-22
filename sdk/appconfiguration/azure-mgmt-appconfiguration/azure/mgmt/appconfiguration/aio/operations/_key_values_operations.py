@@ -21,8 +21,8 @@ from ... import models
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class PrivateEndpointConnectionsOperations:
-    """PrivateEndpointConnectionsOperations async operations.
+class KeyValuesOperations:
+    """KeyValuesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,21 +47,27 @@ class PrivateEndpointConnectionsOperations:
         self,
         resource_group_name: str,
         config_store_name: str,
+        skip_token: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.PrivateEndpointConnectionListResult"]:
-        """Lists all private endpoint connections for a configuration store.
+    ) -> AsyncIterable["models.KeyValueListResult"]:
+        """Lists the key-values for a given configuration store.
 
         :param resource_group_name: The name of the resource group to which the container registry
          belongs.
         :type resource_group_name: str
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
+        :param skip_token: A skip token is used to continue retrieving items after an operation returns
+         a partial result. If a previous response contains a nextLink element, the value of the nextLink
+         element will include a skipToken parameter that specifies a starting point to use for
+         subsequent calls.
+        :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.PrivateEndpointConnectionListResult]
+        :return: An iterator like instance of either KeyValueListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~app_configuration_management_client.models.KeyValueListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnectionListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValueListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -86,6 +92,8 @@ class PrivateEndpointConnectionsOperations:
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -95,7 +103,7 @@ class PrivateEndpointConnectionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('PrivateEndpointConnectionListResult', pipeline_response)
+            deserialized = self._deserialize('KeyValueListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -117,30 +125,31 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_configuration_store.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections'}  # type: ignore
+    list_by_configuration_store.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/keyValues'}  # type: ignore
 
     async def get(
         self,
         resource_group_name: str,
         config_store_name: str,
-        private_endpoint_connection_name: str,
+        key_value_name: str,
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
-        """Gets the specified private endpoint connection associated with the configuration store.
+    ) -> "models.KeyValue":
+        """Gets the properties of the specified key-value.
 
         :param resource_group_name: The name of the resource group to which the container registry
          belongs.
         :type resource_group_name: str
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
-        :param private_endpoint_connection_name: Private endpoint connection name.
-        :type private_endpoint_connection_name: str
+        :param key_value_name: Identifier of key and label combination. Key and label are joined by $
+         character. Label is optional.
+        :type key_value_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateEndpointConnection, or the result of cls(response)
-        :rtype: ~app_configuration_management_client.models.PrivateEndpointConnection
+        :return: KeyValue, or the result of cls(response)
+        :rtype: ~app_configuration_management_client.models.KeyValue
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -154,7 +163,7 @@ class PrivateEndpointConnectionsOperations:
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'configStoreName': self._serialize.url("config_store_name", config_store_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9_-]*$'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'keyValueName': self._serialize.url("key_value_name", key_value_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -175,23 +184,40 @@ class PrivateEndpointConnectionsOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('KeyValue', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/keyValues/{keyValueName}'}  # type: ignore
 
-    async def _create_or_update_initial(
+    async def create_or_update(
         self,
         resource_group_name: str,
         config_store_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "models.PrivateEndpointConnection",
+        key_value_name: str,
+        key_value_parameters: Optional["models.KeyValue"] = None,
         **kwargs
-    ) -> "models.PrivateEndpointConnection":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
+    ) -> "models.KeyValue":
+        """Creates a key-value.
+
+        :param resource_group_name: The name of the resource group to which the container registry
+         belongs.
+        :type resource_group_name: str
+        :param config_store_name: The name of the configuration store.
+        :type config_store_name: str
+        :param key_value_name: Identifier of key and label combination. Key and label are joined by $
+         character. Label is optional.
+        :type key_value_name: str
+        :param key_value_parameters: The parameters for creating a key-value.
+        :type key_value_parameters: ~app_configuration_management_client.models.KeyValue
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyValue, or the result of cls(response)
+        :rtype: ~app_configuration_management_client.models.KeyValue
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyValue"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -201,12 +227,12 @@ class PrivateEndpointConnectionsOperations:
         accept = "application/json"
 
         # Construct URL
-        url = self._create_or_update_initial.metadata['url']  # type: ignore
+        url = self.create_or_update.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'configStoreName': self._serialize.url("config_store_name", config_store_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9_-]*$'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'keyValueName': self._serialize.url("key_value_name", key_value_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -220,105 +246,33 @@ class PrivateEndpointConnectionsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(private_endpoint_connection, 'PrivateEndpointConnection')
+        if key_value_parameters is not None:
+            body_content = self._serialize.body(key_value_parameters, 'KeyValue')
+        else:
+            body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
+        deserialized = self._deserialize('KeyValue', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
-
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        config_store_name: str,
-        private_endpoint_connection_name: str,
-        private_endpoint_connection: "models.PrivateEndpointConnection",
-        **kwargs
-    ) -> AsyncLROPoller["models.PrivateEndpointConnection"]:
-        """Update the state of the specified private endpoint connection associated with the configuration
-        store.
-
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs.
-        :type resource_group_name: str
-        :param config_store_name: The name of the configuration store.
-        :type config_store_name: str
-        :param private_endpoint_connection_name: Private endpoint connection name.
-        :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The private endpoint connection properties.
-        :type private_endpoint_connection: ~app_configuration_management_client.models.PrivateEndpointConnection
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~app_configuration_management_client.models.PrivateEndpointConnection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointConnection"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                config_store_name=config_store_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
-                private_endpoint_connection=private_endpoint_connection,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-
-        kwargs.pop('error_map', None)
-        kwargs.pop('content_type', None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('PrivateEndpointConnection', pipeline_response)
-
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/keyValues/{keyValueName}'}  # type: ignore
 
     async def _delete_initial(
         self,
         resource_group_name: str,
         config_store_name: str,
-        private_endpoint_connection_name: str,
+        key_value_name: str,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -335,7 +289,7 @@ class PrivateEndpointConnectionsOperations:
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'configStoreName': self._serialize.url("config_store_name", config_store_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9_-]*$'),
-            'privateEndpointConnectionName': self._serialize.url("private_endpoint_connection_name", private_endpoint_connection_name, 'str'),
+            'keyValueName': self._serialize.url("key_value_name", key_value_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -359,24 +313,25 @@ class PrivateEndpointConnectionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/keyValues/{keyValueName}'}  # type: ignore
 
     async def begin_delete(
         self,
         resource_group_name: str,
         config_store_name: str,
-        private_endpoint_connection_name: str,
+        key_value_name: str,
         **kwargs
     ) -> AsyncLROPoller[None]:
-        """Deletes a private endpoint connection.
+        """Deletes a key-value.
 
         :param resource_group_name: The name of the resource group to which the container registry
          belongs.
         :type resource_group_name: str
         :param config_store_name: The name of the configuration store.
         :type config_store_name: str
-        :param private_endpoint_connection_name: Private endpoint connection name.
-        :type private_endpoint_connection_name: str
+        :param key_value_name: Identifier of key and label combination. Key and label are joined by $
+         character. Label is optional.
+        :type key_value_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -398,7 +353,7 @@ class PrivateEndpointConnectionsOperations:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 config_store_name=config_store_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
+                key_value_name=key_value_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -422,4 +377,4 @@ class PrivateEndpointConnectionsOperations:
             )
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/privateEndpointConnections/{privateEndpointConnectionName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppConfiguration/configurationStores/{configStoreName}/keyValues/{keyValueName}'}  # type: ignore

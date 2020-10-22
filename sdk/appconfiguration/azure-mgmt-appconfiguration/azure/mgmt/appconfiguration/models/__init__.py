@@ -14,10 +14,11 @@ try:
     from ._models_py3 import ConfigurationStoreListResult
     from ._models_py3 import ConfigurationStoreUpdateParameters
     from ._models_py3 import EncryptionProperties
-    from ._models_py3 import Error
+    from ._models_py3 import ErrorDetails
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import KeyValue
+    from ._models_py3 import KeyValueListResult
     from ._models_py3 import KeyVaultProperties
-    from ._models_py3 import ListKeyValueParameters
     from ._models_py3 import NameAvailabilityStatus
     from ._models_py3 import OperationDefinition
     from ._models_py3 import OperationDefinitionDisplay
@@ -42,10 +43,11 @@ except (SyntaxError, ImportError):
     from ._models import ConfigurationStoreListResult  # type: ignore
     from ._models import ConfigurationStoreUpdateParameters  # type: ignore
     from ._models import EncryptionProperties  # type: ignore
-    from ._models import Error  # type: ignore
+    from ._models import ErrorDetails  # type: ignore
+    from ._models import ErrorResponse  # type: ignore
     from ._models import KeyValue  # type: ignore
+    from ._models import KeyValueListResult  # type: ignore
     from ._models import KeyVaultProperties  # type: ignore
-    from ._models import ListKeyValueParameters  # type: ignore
     from ._models import NameAvailabilityStatus  # type: ignore
     from ._models import OperationDefinition  # type: ignore
     from ._models import OperationDefinitionDisplay  # type: ignore
@@ -80,10 +82,11 @@ __all__ = [
     'ConfigurationStoreListResult',
     'ConfigurationStoreUpdateParameters',
     'EncryptionProperties',
-    'Error',
+    'ErrorDetails',
+    'ErrorResponse',
     'KeyValue',
+    'KeyValueListResult',
     'KeyVaultProperties',
-    'ListKeyValueParameters',
     'NameAvailabilityStatus',
     'OperationDefinition',
     'OperationDefinitionDisplay',

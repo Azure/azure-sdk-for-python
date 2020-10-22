@@ -281,10 +281,6 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
     :type tags: dict[str, str]
     :param encryption: The encryption settings of the configuration store.
     :type encryption: ~app_configuration_management_client.models.EncryptionProperties
-    :param public_network_access: Control permission for data plane traffic coming from public
-     networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or
-     ~app_configuration_management_client.models.PublicNetworkAccess
     """
 
     _attribute_map = {
@@ -292,7 +288,6 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(
@@ -304,7 +299,6 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
         self.encryption = kwargs.get('encryption', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
 
 
 class EncryptionProperties(msrest.serialization.Model):
@@ -326,14 +320,21 @@ class EncryptionProperties(msrest.serialization.Model):
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
 
 
-class Error(msrest.serialization.Model):
-    """AppConfiguration error object.
+class ErrorDetails(msrest.serialization.Model):
+    """The details of the error.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message.
-    :type message: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+    }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
@@ -344,28 +345,53 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(Error, self).__init__(**kwargs)
-        self.code = kwargs.get('code', None)
-        self.message = kwargs.get('message', None)
+        super(ErrorDetails, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+
+
+class ErrorResponse(msrest.serialization.Model):
+    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+
+    :param error: The details of the error.
+    :type error: ~app_configuration_management_client.models.ErrorDetails
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorDetails'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class KeyValue(msrest.serialization.Model):
-    """The result of a request to retrieve a key-value from the specified configuration store.
+    """The key-value resource along with all resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
     :ivar key: The primary identifier of a key-value.
      The key is used in unison with the label to uniquely identify a key-value.
     :vartype key: str
     :ivar label: A value used to group key-values.
      The label is used in unison with the key to uniquely identify a key-value.
     :vartype label: str
-    :ivar value: The value of the key-value.
-    :vartype value: str
-    :ivar content_type: The content type of the key-value's value.
+    :param value: The value of the key-value.
+    :type value: str
+    :param content_type: The content type of the key-value's value.
      Providing a proper content-type can enable transformations of values when they are retrieved
      by applications.
-    :vartype content_type: str
+    :type content_type: str
     :ivar e_tag: An ETag indicating the state of a key-value within a configuration store.
     :vartype e_tag: str
     :ivar last_modified: The last time a modifying operation was performed on the given key-value.
@@ -373,31 +399,34 @@ class KeyValue(msrest.serialization.Model):
     :ivar locked: A value indicating whether the key-value is locked.
      A locked key-value may not be modified until it is unlocked.
     :vartype locked: bool
-    :ivar tags: A set of tags. A dictionary of tags that can help identify what a key-value may be
+    :param tags: A set of tags. A dictionary of tags that can help identify what a key-value may be
      applicable for.
-    :vartype tags: dict[str, str]
+    :type tags: dict[str, str]
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'key': {'readonly': True},
         'label': {'readonly': True},
-        'value': {'readonly': True},
-        'content_type': {'readonly': True},
         'e_tag': {'readonly': True},
         'last_modified': {'readonly': True},
         'locked': {'readonly': True},
-        'tags': {'readonly': True},
     }
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'locked': {'key': 'locked', 'type': 'bool'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'key': {'key': 'properties.key', 'type': 'str'},
+        'label': {'key': 'properties.label', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'content_type': {'key': 'properties.contentType', 'type': 'str'},
+        'e_tag': {'key': 'properties.eTag', 'type': 'str'},
+        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
+        'locked': {'key': 'properties.locked', 'type': 'bool'},
+        'tags': {'key': 'properties.tags', 'type': '{str}'},
     }
 
     def __init__(
@@ -405,14 +434,40 @@ class KeyValue(msrest.serialization.Model):
         **kwargs
     ):
         super(KeyValue, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.key = None
         self.label = None
-        self.value = None
-        self.content_type = None
+        self.value = kwargs.get('value', None)
+        self.content_type = kwargs.get('content_type', None)
         self.e_tag = None
         self.last_modified = None
         self.locked = None
-        self.tags = None
+        self.tags = kwargs.get('tags', None)
+
+
+class KeyValueListResult(msrest.serialization.Model):
+    """The result of a request to list key-values.
+
+    :param value: The collection value.
+    :type value: list[~app_configuration_management_client.models.KeyValue]
+    :param next_link: The URI that can be used to request the next set of paged results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[KeyValue]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(KeyValueListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class KeyVaultProperties(msrest.serialization.Model):
@@ -437,35 +492,6 @@ class KeyVaultProperties(msrest.serialization.Model):
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_identifier = kwargs.get('key_identifier', None)
         self.identity_client_id = kwargs.get('identity_client_id', None)
-
-
-class ListKeyValueParameters(msrest.serialization.Model):
-    """The parameters used to list a configuration store key-value.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param key: Required. The key to retrieve.
-    :type key: str
-    :param label: The label of the key.
-    :type label: str
-    """
-
-    _validation = {
-        'key': {'required': True},
-    }
-
-    _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ListKeyValueParameters, self).__init__(**kwargs)
-        self.key = kwargs['key']
-        self.label = kwargs.get('label', None)
 
 
 class NameAvailabilityStatus(msrest.serialization.Model):
