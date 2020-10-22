@@ -8,14 +8,8 @@ from typing import (
     Any,
     Dict,
 )
-from uuid import uuid4
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.transport import HttpRequest
-
-from ._error import _process_table_error
-from ._models import PartialBatchErrorException, UpdateMode, BatchTransactionResult
-from ._policies import StorageHeadersPolicy
+from ._models import UpdateMode
 from ._serialize import _get_match_headers, _add_entity_properties
 
 class TableBatchOperations(object):
@@ -113,7 +107,6 @@ class TableBatchOperations(object):
             **kwargs)
         self._entities.append(entity)
 
-
     def _batch_create_entity(
         self,
         table, # type: str
@@ -188,7 +181,6 @@ class TableBatchOperations(object):
         self._requests.append(request)
     _batch_create_entity.metadata = {'url': '/{table}'}  # type: ignore
 
-
     def update_entity(
             self,
             entity,  # type: Union[TableEntity, Dict[str,str]]
@@ -243,7 +235,6 @@ class TableBatchOperations(object):
                 table_entity_properties=entity,
                 **kwargs)
         self._entities.append(entity)
-
 
     def _batch_update_entity(
         self,
@@ -333,7 +324,6 @@ class TableBatchOperations(object):
     _batch_update_entity.metadata = {
         'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}  # type: ignore
 
-
     def _batch_merge_entity(
         self,
         table,  # type: str
@@ -422,7 +412,6 @@ class TableBatchOperations(object):
         self._requests.append(request)
     _batch_merge_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}
 
-
     def delete_entity(
         self,
         partition_key,  # type: str
@@ -471,7 +460,6 @@ class TableBatchOperations(object):
             "RowKey": row_key
         }
         self._entities.append(_add_entity_properties(temp_entity))
-
 
     def _batch_delete_entity(
         self,
@@ -546,7 +534,6 @@ class TableBatchOperations(object):
         self._requests.append(request)
     _batch_delete_entity.metadata = {'url': '/{table}(PartitionKey=\'{partitionKey}\',RowKey=\'{rowKey}\')'}
 
-
     def upsert_entity(
         self,
         entity,  # type: Union[TableEntity, Dict[str,str]]
@@ -594,85 +581,9 @@ class TableBatchOperations(object):
                 **kwargs)
         self._entities.append(entity)
 
-
-    def send_batch(self, **kwargs):
-        # (...) -> BatchTransactionResult:
-        """ Sends the operations of a batch to the service as a single request
-
-        :returns: A BatchTransactionResult object
-        :rtype: ~azure.data.tables.BatchTransactionResult
-        :raises: azure.data.tables.BatchErrorException
-        :raises: azure.core.exceptions.HttpResponseError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_batching.py
-                :start-after: [START batching]
-                :end-before: [END batching]
-                :language: python
-                :dedent: 8
-                :caption: Creating and adding an entity to a Table
-        """
-        return self._batch_send(**kwargs)
-
-
-    def _batch_send(
-        self, **kwargs # type: Dict[str,Any]
-    ):
-        # (...) -> BatchTransactionResult
-        """Given a series of request, do a Storage batch call.
-        """
-        # Pop it here, so requests doesn't feel bad about additional kwarg
-        raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        policies = [StorageHeadersPolicy()]
-
-        changeset = HttpRequest('POST', None)
-        changeset.set_multipart_mixed(
-            *self._requests,
-            policies=policies,
-            boundary="changeset_{}".format(uuid4())
-        )
-        request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/$batch'.format(self._table_client._primary_hostname),  # pylint: disable=protected-access
-            headers={
-                'x-ms-version': self._table_client.api_version,
-                'DataServiceVersion': '3.0',
-                'MaxDataServiceVersion': '3.0;NetFx',
-            }
-        )
-        request.set_multipart_mixed(
-            changeset,
-            policies=policies,
-            enforce_https=False,
-            boundary="batch_{}".format(uuid4())
-        )
-
-        pipeline_response = self._table_client._pipeline.run(  # pylint: disable=protected-access
-            request, **kwargs
-        )
-        response = pipeline_response.http_response
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts()
-            transaction_result = BatchTransactionResult(self._requests, parts, self._entities)
-            if raise_on_any_failure:
-                parts = list(response.parts())
-                if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = PartialBatchErrorException(
-                        message="There is a failure in the batch operation.",
-                        response=response, parts=parts
-                    )
-                    raise error
-            return transaction_result
-        except HttpResponseError as error:
-            _process_table_error(error)
-
-
     def __enter__(self):
         # type: (...) -> TableBatchOperations
         return self
-
 
     def __exit__(
             self, *args, # type: Any

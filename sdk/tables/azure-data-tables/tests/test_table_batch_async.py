@@ -63,6 +63,7 @@ class StorageTableBatchTest(TableTestCase):
                     await self.ts.delete_table(table_name)
                 except:
                     pass
+        await self.table.close()
 
     #--Helpers-----------------------------------------------------------------
 
