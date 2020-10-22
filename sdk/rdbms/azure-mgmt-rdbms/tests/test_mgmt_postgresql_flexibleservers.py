@@ -122,7 +122,7 @@ class MgmtPostgresFlexibleServerTest(AzureMgmtTestCase):
 
       result = self.mgmt_client.servers.list()
 
-      result = self.mgmt_client.operations.list()
+      # result = self.mgmt_client.operations.list()
 
       result = self.mgmt_client.location_based_capabilities.execute(self.location)
 

@@ -141,7 +141,7 @@ class MgmtMySqlFlexibleServerTest(AzureMgmtTestCase):
 
       result = self.mgmt_client.location_based_capabilities.list(self.location)
 
-      result = self.mgmt_client.operations.list()
+      # result = self.mgmt_client.operations.list()
 
       result = self.mgmt_client.check_name_availability.execute(create_random_name(prefix="servernamethatdoesnotexist", length=40), type="Microsoft.DBforMySQL/flexibleServers")
       self.assertEqual(result.name_available, True)
@@ -180,7 +180,7 @@ class MgmtMySqlFlexibleServerTest(AzureMgmtTestCase):
       flexible_server_database_mgmt_test(self, resource_group_name, server_name)
       flexible_server_firewall_rule_mgmt_test(self, resource_group_name, server_name)
       flexible_server_configuration_mgmt_test(self, resource_group_name, server_name, "wait_timeout", 28800, 30000)
-      # test_mysql_flexible_server_key_mgmt(self, resource_group_name, server_name)
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
