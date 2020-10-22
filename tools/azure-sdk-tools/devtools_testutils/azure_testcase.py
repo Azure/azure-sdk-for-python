@@ -189,22 +189,17 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
+    def _get_credential(self, is_async, is_real):
+        if is_real:
+            from azure.identity import ClientSecretCredential
+            if is_async:
+                from azure.identity.aio import ClientSecretCredential
+            return ClientSecretCredential(
+                tenant_id=self.tenant_id,
+                client_id=self.client_id,
+                client_secret=self.secret
+            )
 
-
-    def _create_credential(self, client_secret_credential):
-        return client_secret_credential(
-            tenant_id=self.tenant_id,
-            client_id=self.client_id,
-            client_secret=self.secret
-        )
-
-    def _get_real_credential(self, is_async):
-        from azure.identity import ClientSecretCredential
-        if is_async:
-            from azure.identity.aio import ClientSecretCredential
-        return self._create_credential(ClientSecretCredential)
-
-    def _get_fake_credential(self, is_async):
         if is_async:
             return AsyncFakeCredential()
         return self.settings.get_azure_core_credentials()
@@ -219,7 +214,7 @@ class AzureTestCase(ReplayableTest):
         if self.tenant_id and self.client_id and self.secret and self.is_live:
             if _is_autorest_v3(client_class):
                 # Create azure-identity class
-                return self._get_real_credential(is_async)
+                return self._get_credential(is_async=is_async, is_real=True)
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
@@ -230,7 +225,7 @@ class AzureTestCase(ReplayableTest):
                 )
         else:
             if _is_autorest_v3(client_class):
-                return self._get_fake_credential(is_async)
+                return self._get_credential(is_async, is_real=False)
             else:
                 return self.settings.get_credentials()
 
