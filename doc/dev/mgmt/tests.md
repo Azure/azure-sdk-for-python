@@ -15,58 +15,43 @@ IMPORTANT NOTE: All the commands in this page assumes you have loaded the [dev_s
 
 # Overview
 
-This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests.
-The Azure SDK test framework uses the [`azure-devtools`](https://pypi.python.org/pypi/azure-devtools) package,
-which in turn rests upon on a HTTP recording system ([vcrpy](https://pypi.python.org/pypi/vcrpy))
-that enables tests depending on network interaction
-to be run offline.
+This page is to help you write tests for Azure Python SDK when these tests require Azure HTTP requests. The Azure SDK test framework uses the [`azure-devtools`](https://pypi.python.org/pypi/azure-devtools) package, which in turn rests upon on a HTTP recording system ([vcrpy](https://pypi.python.org/pypi/vcrpy)) that enables tests dependent on network interaction to be run offline.
 
 In this document, we will describe:
--   How to run the tests offline, using previously recorded HTTP interactions,
-    or online, by authenticating with Azure to record new HTTP interactions
+-   How to run the tests offline (using previously recorded HTTP interactions)
+-   How to run the tests online (by authenticating with Azure to record new HTTP interactions)
 -   How to write new tests using our utility classes
 
 # Getting the tests to run
 
-This section describes how to run the SDK tests,
-by installing dependencies into a virtual environment
-and using a helper script and the [pytest](https://docs.pytest.org/en/latest/) test runner
-to choose which tests to run.
+This section describes how to run the SDK tests, by installing dependencies into a virtual environment and using a helper script and the [pytest](https://docs.pytest.org/en/latest/) test runner to choose which tests to run.
 
 ## Running the tests
 
-Azure SDK tests use [pytest](https://docs.pytest.org/en/latest/) test runner.
-To run all the tests, you can use the following command:
+Azure SDK tests use [pytest](https://docs.pytest.org/en/latest/) test runner. To run all the tests, you can use the following command:
 
 ```Shell
 pytest
 ```
 
-You can provide directories or individual files as positional arguments
-to specify particular tests to run
-rather than running the entire test suite. For example:
+You can provide directories or individual files as positional arguments to specify particular tests to run rather than running the entire test suite. For example:
 ```Shell
-pytest -s sdk/storage/azure-mgmt-storage/
+pytest sdk/storage/azure-mgmt-storage/
 pytest sdk/storage/azure-mgmt-storage/tests/test_mgmt_storage.py
 ```
 
-By default, tests run in playback mode,
-using recordings of HTTP interactions to simulate
-requests made against Azure and allow the tests to run offline.
-To run the tests in live (or "recording") mode,
-you'll need to set up token-based Azure authentication.
+By default, tests run in playback mode, using recordings of HTTP interactions to simulate requests made against Azure and allow the tests to run offline. To run the tests in live (or "recording") mode, you'll need to set up token-based Azure authentication.
 
 ## Getting Azure credentials
 
-There are several ways to authenticate to Azure,
-but to be able to record test HTTP interactions,
-you must use an OAuth authentication method which gives you a token:
+There are several ways to authenticate to Azure, but to be able to record test HTTP interactions, you must use an OAuth authentication method which gives you a token:
 - Azure Active Directory user/password
 - Active Directory application and service principal
 
 Certificate authentication does not allow you to record HTTP queries for testing.
 
-### Get a token with Azure Active Directory user/password. This is considered deprecated and should not be used anymore (https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate?view=azure-python#mgmt-auth-legacy).
+<!-- If it's deprecated, we should remove it right? -->
+<!-- ### Get a token with Azure Active Directory user/password. This is considered deprecated and should not be used anymore (https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate?view=azure-python#mgmt-auth-legacy).
 
 1.  Connect to the [Azure Classic Portal](https://manage.windowsazure.com/) with your admin account.
 2.  Create a user in your default AAD https://azure.microsoft.com/documentation/articles/active-directory-create-users/
@@ -84,21 +69,20 @@ credentials = UserPassCredentials(
     'user@domain.com',     # Your new user
     'my_smart_password',   # Your password
 )
-```
+``` -->
 
 ### Get a token with Active Directory application and service principal
 
 Follow this detailed tutorial to set up an Active Directory application and service principal:
 https://azure.microsoft.com/documentation/articles/resource-group-create-service-principal-portal/
 
-To use the credentials from Python,
-you need the application ID (a.k.a. client ID),
-authentication key (a.k.a. client secret),
-tenant ID and subscription ID from the Azure portal for use in the next step.
-[This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
-describes where to find them
-(besides the subscription ID,
-which is in the "Overview" section of the "Subscriptions" blade.)
+To use the credentials from Python, you need the application ID (a.k.a. client ID), authentication key (a.k.a. client secret), tenant ID and subscription ID from the Azure portal for use in the next step. [This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
+
+The recommended practice is to store these environment variables in environment variables. To set an environment variable use the following commands:
+```Shell
+set
+
+```
 
 You are now able to log in from Python using OAuth.
 You can test with this code:
