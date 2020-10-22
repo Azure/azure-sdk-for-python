@@ -6,10 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._job_collections_operations import JobCollectionsOperations
-from ._jobs_operations import JobsOperations
-
-__all__ = [
-    'JobCollectionsOperations',
-    'JobsOperations',
-]
+from ._scheduler_management_client import SchedulerManagementClient
+__all__ = ['SchedulerManagementClient']
