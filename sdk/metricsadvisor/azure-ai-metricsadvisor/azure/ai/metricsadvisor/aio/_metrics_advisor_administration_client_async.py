@@ -19,8 +19,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
-    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
-    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     IngestionStatus as DataFeedIngestionStatus,
     IngestionProgressResetOptions as _IngestionProgressResetOptions,
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
@@ -130,15 +128,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         response_headers = await self._client.create_anomaly_alerting_configuration(
-            _AnomalyAlertingConfiguration(
-                name=alert_configuration.name,
-                metric_alerting_configurations=[
-                    config._to_generated() for config in alert_configuration.metric_alert_configurations
-                ],
-                hook_ids=alert_configuration.hook_ids,
-                cross_metrics_operator=alert_configuration.cross_metrics_operator,
-                description=alert_configuration.description
-            ),
+            alert_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -252,21 +242,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create an anomaly detection configuration
         """
 
-        config = _AnomalyDetectionConfiguration(
-            name=detection_configuration.name,
-            metric_id=detection_configuration.metric_id,
-            description=detection_configuration.description,
-            whole_metric_configuration=detection_configuration.whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in detection_configuration.series_group_detection_conditions
-            ] if detection_configuration.series_group_detection_conditions else None,
-            series_override_configurations=[
-                series._to_generated() for series in detection_configuration.series_detection_conditions]
-            if detection_configuration.series_detection_conditions else None,
-        )
-
         response_headers = await self._client.create_anomaly_detection_configuration(
-            config,
+            detection_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )

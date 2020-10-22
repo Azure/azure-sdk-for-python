@@ -59,6 +59,8 @@ from .._generated.models import (
     ElasticsearchParameter as _ElasticsearchParameter,
     DimensionGroupIdentity as _DimensionGroupIdentity,
     SeriesIdentity as _SeriesIdentity,
+    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
+    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     AnomalyAlertingConfigurationPatch as _AnomalyAlertingConfigurationPatch,
     AnomalyDetectionConfigurationPatch as _AnomalyDetectionConfigurationPatch
 )
@@ -804,6 +806,17 @@ class AnomalyAlertConfiguration(object):
             ]
         )
 
+    def _to_generated(self):
+        return _AnomalyAlertingConfiguration(
+            name=self.name,
+            metric_alerting_configurations=[
+                config._to_generated() for config in self.metric_alert_configurations
+            ],
+            hook_ids=self.hook_ids,
+            cross_metrics_operator=self.cross_metrics_operator,
+            description=self.description
+        )
+
     def _to_generated_patch(
             self, name,
             metric_alert_configurations,
@@ -883,6 +896,20 @@ class AnomalyDetectionConfiguration(object):
                 MetricSingleSeriesDetectionCondition._from_generated(conf)
                 for conf in config.series_override_configurations]
             if config.series_override_configurations else None,
+        )
+
+    def _to_generated(self):
+        return _AnomalyDetectionConfiguration(
+            name=self.name,
+            metric_id=self.metric_id,
+            description=self.description,
+            whole_metric_configuration=self.whole_series_detection_condition._to_generated(),
+            dimension_group_override_configurations=[
+                group._to_generated() for group in self.series_group_detection_conditions
+            ] if self.series_group_detection_conditions else None,
+            series_override_configurations=[
+                series._to_generated() for series in self.series_detection_conditions]
+            if self.series_detection_conditions else None,
         )
 
     def _to_generated_patch(

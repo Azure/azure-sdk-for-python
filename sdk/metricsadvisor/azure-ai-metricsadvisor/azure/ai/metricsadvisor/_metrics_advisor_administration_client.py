@@ -19,7 +19,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
     import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
-    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
     AzureBlobDataFeed as _AzureBlobDataFeed,
     AzureCosmosDBDataFeed as _AzureCosmosDBDataFeed,
@@ -46,7 +45,6 @@ from ._generated.models import (
     PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch,
     MongoDBDataFeedPatch as _MongoDBDataFeedPatch,
     SQLServerDataFeedPatch as _SQLServerDataFeedPatch,
-    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     IngestionProgressResetOptions as _IngestionProgressResetOptions,
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
@@ -194,15 +192,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         """
 
         response_headers = self._client.create_anomaly_alerting_configuration(  # type: ignore
-            _AnomalyAlertingConfiguration(
-                name=alert_configuration.name,
-                metric_alerting_configurations=[
-                    config._to_generated() for config in alert_configuration.metric_alert_configurations
-                ],
-                hook_ids=alert_configuration.hook_ids,
-                cross_metrics_operator=alert_configuration.cross_metrics_operator,
-                description=alert_configuration.description
-            ),
+            alert_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -314,21 +304,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create an anomaly detection configuration
         """
 
-        config = _AnomalyDetectionConfiguration(
-            name=detection_configuration.name,
-            metric_id=detection_configuration.metric_id,
-            description=detection_configuration.description,
-            whole_metric_configuration=detection_configuration.whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in detection_configuration.series_group_detection_conditions
-            ] if detection_configuration.series_group_detection_conditions else None,
-            series_override_configurations=[
-                series._to_generated() for series in detection_configuration.series_detection_conditions]
-            if detection_configuration.series_detection_conditions else None,
-        )
-
         response_headers = self._client.create_anomaly_detection_configuration(  # type: ignore
-            config,
+            detection_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
