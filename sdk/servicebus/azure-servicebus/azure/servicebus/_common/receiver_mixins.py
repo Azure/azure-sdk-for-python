@@ -5,6 +5,8 @@
 # -------------------------------------------------------------------------
 import uuid
 import functools
+from typing import Optional, Callable
+
 from uamqp import Source
 from .message import ReceivedMessage
 from .constants import (

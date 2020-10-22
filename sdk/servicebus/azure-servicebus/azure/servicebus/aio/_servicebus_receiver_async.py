@@ -655,7 +655,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         message._settled = True  # pylint: disable=protected-access
 
-    async def renew_lock(self, message, **kwargs):
+    async def renew_message_lock(self, message, **kwargs):
         # type: (ReceivedMessage, Any) -> datetime.datetime
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
@@ -669,10 +669,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
         This operation is only available for non-sessionful messages as well.
 
-        TODO: define autolockrenewer
-        Lock renewal can be performed as a background task by setting `auto_lock_renewer` parameter when
-        getting the receiver.
-
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
@@ -681,10 +677,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
-        # TODO: raise error in sessionful receiver?
-        #
-        # if self.session is not None:  # type: ignore
-        #     raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
 
         self._check_message_alive(message, MESSAGE_RENEW_LOCK)
         token = message.lock_token

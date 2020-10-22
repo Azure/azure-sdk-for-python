@@ -6,6 +6,7 @@ import datetime
 import time
 import logging
 import functools
+import uuid
 from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator, Union, Callable
 
 import six
@@ -300,7 +301,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise MessageSettleFailed(settle_operation, e)
 
     def _settle_message_via_mgmt_link(self, settlement, lock_tokens, dead_letter_details=None):
-        # type: (str, List[str], Optional[Dict[str, Any]]) -> Any
+        # type: (str, List[Union[uuid.UUID, str]], Optional[Dict[str, Any]]) -> Any
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -649,7 +650,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
         message._settled = True  # pylint: disable=protected-access
 
-    def renew_lock(self, message, **kwargs):
+    def renew_message_lock(self, message, **kwargs):
         # type: (ReceivedMessage, Any) -> datetime.datetime
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
@@ -663,10 +664,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
         This operation is only available for non-sessionful messages as well.
 
-        TODO: define autolockrenewer
-        Lock renewal can be performed as a background task by setting `auto_lock_renewer` parameter when
-        getting the receiver.
-
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
@@ -675,11 +672,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
-        # TODO: raise error in sessionful receiver?
-        #
-        # if self.session is not None:  # type: ignore
-        #     raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
-
         self._check_message_alive(message, MESSAGE_RENEW_LOCK)
         token = message.lock_token
         if not token:
@@ -690,6 +682,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise ValueError("The timeout must be greater than 0.")
 
         expiry = self._renew_locks(token, timeout=timeout)  # type: ignore
-        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
+        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: ignore
 
         return message._expiry
