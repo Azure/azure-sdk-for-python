@@ -1,0 +1,26 @@
+parameters:
+  versionSpec: ''
+
+steps:
+  # use python 3.8 for tooling. packaging. platform.
+  - task: UsePythonVersion@0
+    displayName: "Use Python 3.8"
+    inputs:
+      versionSpec: 3.8
+
+  - pwsh: |
+      pip install packaging
+    displayName: Prep Environment
+
+  # select the appropriate version from manifest if present
+  - task: PythonScript@0
+    displayName: 'Install ${{ parameters.versionSpec }} from Python Manifest If Necessary'
+    inputs:
+     scriptPath: 'scripts/devops_tasks/install_python_version.py'
+     arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
+
+  # use
+  - task: UsePythonVersion@0
+    displayName: "Use Python $(PythonVersion)"
+    inputs:
+      versionSpec: ${{ parameters.versionSpec }}

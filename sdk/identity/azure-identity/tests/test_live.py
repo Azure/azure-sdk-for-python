@@ -12,7 +12,7 @@ from azure.identity import (
     InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._constants import AZURE_CLI_CLIENT_ID
+from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 
 ARM_SCOPE = "https://management.azure.com/.default"
 
@@ -74,11 +74,11 @@ def test_device_code():
         print("opening a browser to '{}', enter device code {}".format(url, user_code))
         webbrowser.open_new_tab(url)
 
-    credential = DeviceCodeCredential(client_id=AZURE_CLI_CLIENT_ID, prompt_callback=prompt, timeout=40)
+    credential = DeviceCodeCredential(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, prompt_callback=prompt, timeout=40)
     get_token(credential)
 
 
 @pytest.mark.manual
 def test_browser_auth():
-    credential = InteractiveBrowserCredential(client_id=AZURE_CLI_CLIENT_ID, timeout=40)
+    credential = InteractiveBrowserCredential(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, timeout=40)
     get_token(credential)

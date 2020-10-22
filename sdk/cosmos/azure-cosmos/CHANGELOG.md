@@ -1,4 +1,7 @@
-## 4.1.1 (unreleased)
+## 4.2.1 (Unreleased)
+
+
+## 4.2.0 (2020-10-08)
 
 **Bug fixes**
 - Fixed bug where continuation token is not honored when query_iterable is used to get results by page. Issue #13265.

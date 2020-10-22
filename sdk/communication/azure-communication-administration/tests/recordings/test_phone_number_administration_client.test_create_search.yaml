@@ -1,8 +1,8 @@
 interactions:
 - request:
-    body: 'b''b\''{"displayName": "testsearch20200014", "description": "testsearch20200014",
-      "phonePlanIds": ["phone_plan_id"], "areaCode": "area_code_for_search", "quantity":
-      1}\'''''
+    body: '{"displayName": "testsearch20200014", "description": "testsearch20200014",
+      "phonePlanIds": "sanitized", "areaCode": "area_code_for_search", "quantity":
+      1}'
     headers:
       Accept:
       - application/json
@@ -15,9 +15,9 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Mon, 28 Sep 2020 20:58:50 GMT
+      - Sat, 10 Oct 2020 02:20:53 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -28,13 +28,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Sep 2020 20:58:51 GMT
+      - Sat, 10 Oct 2020 02:20:54 GMT
       ms-cv:
-      - zBQqWRmiSEyC+AsrLoxytg.0
+      - oP2Gcu9PuEOAjDZgB58T7Q.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1555ms
+      - 1475ms
     status:
       code: 201
       message: Created

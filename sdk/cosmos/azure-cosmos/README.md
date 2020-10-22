@@ -83,14 +83,26 @@ For more information about these resources, see [Working with Azure Cosmos datab
 
 ## Limitations
 
-As of August 2020 the features below are not yet supported.
+As of August 2020 the features below are **not supported**.
 
-* Bulk/Batch processing
-* Group By queries
+* Group By queries (in roadmap for 2021)
+* Language Native async i/o (in roadmap for 2021)
+* Bulk/Transactional batch processing
 * Direct TCP Mode access
-* Language Native async i/o
+* Continuation token for cross partitions queries
+* Change Feed: Processor
+* Change Feed: Read multiple partitions key values
+* Change Feed: Read specific time 
+* Change Feed: Read from the beggining
+* Change Feed: Pull model
+* Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
+* Create User
+* Create Geospatial Index
+* Provision Autoscale DBs or containers
+* Cross-partition ORDER BY for mixed types
+* Get the connection string
 
-## Limitations Workaround
+## Bulk processing limitation workaround
 
 If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 

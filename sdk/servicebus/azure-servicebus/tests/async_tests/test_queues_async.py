@@ -8,15 +8,18 @@ import asyncio
 import logging
 import sys
 import os
+import types
 import pytest
 import time
 import uuid
 from datetime import datetime, timedelta
 
+import uamqp
+from uamqp import compat
 from azure.servicebus.aio import (
     ServiceBusClient,
     ReceivedMessage,
-    AutoLockRenew)
+    AutoLockRenewer)
 from azure.servicebus import TransportType
 from azure.servicebus._common.message import Message, BatchMessage, PeekedMessage
 from azure.servicebus._common.constants import ReceiveMode, SubQueue
@@ -29,7 +32,9 @@ from azure.servicebus.exceptions import (
     AutoLockRenewTimeout,
     MessageSendFailed,
     MessageSettleFailed,
-    MessageContentTooLarge)
+    MessageContentTooLarge,
+    OperationTimeoutError
+)
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
@@ -52,7 +57,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = Message("Handler message no. {}".format(i))
-                    await sender.send_messages(message)
+                    await sender.send_messages(message, timeout=5)
 
             with pytest.raises(ServiceBusConnectionError):
                 await (sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
@@ -65,7 +70,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.complete()
 
             assert count == 10
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -81,6 +85,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i))
                     messages.append(message)
                 await sender.send_messages(messages)
+                assert sender._handler._msg_timeout == 0
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                 count = 0
@@ -90,7 +95,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.complete()
 
                 assert count == 10
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -132,7 +136,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     _logger.debug(message._lock_expired)
                     await message.complete()
                     await asyncio.sleep(40)
-
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -327,7 +330,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
                 assert count == 10
 
-                deferred = await receiver.receive_deferred_messages(deferred_messages)
+                deferred = await receiver.receive_deferred_messages(deferred_messages, timeout=5)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
@@ -360,6 +363,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             assert count == 10
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as session:
+                with pytest.raises(ValueError):
+                    await session.receive_deferred_messages(deferred_messages, timeout=0)
                 deferred = await session.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -395,7 +400,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             assert count == 10
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as session:
-                deferred = await session.receive_deferred_messages(deferred_messages)
+                deferred = await session.receive_deferred_messages(deferred_messages, timeout=None)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ReceivedMessage)
@@ -628,7 +633,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         message = Message("Test message no. {}".format(i))
                         await sender.send_messages(message)
 
-                messages = await receiver.peek_messages(5)
+                messages = await receiver.peek_messages(5, timeout=5)
                 assert len(messages) > 0
                 assert all(isinstance(m, PeekedMessage) for m in messages)
                 for message in messages:
@@ -701,7 +706,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message = Message("{}".format(i))
                     await sender.send_messages(message)
 
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
                 async for message in receiver:
@@ -883,7 +888,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=10)
                 assert len(messages) == 1
                 time.sleep(15)
-                await messages[0].renew_lock()
+                await messages[0].renew_lock(timeout=5)
                 time.sleep(15)
                 await messages[0].renew_lock()
                 time.sleep(15)
@@ -1019,7 +1024,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     received_messages.append(message)
                     await message.complete()
 
-                tokens = await sender.schedule_messages(received_messages, scheduled_enqueue_time)
+                tokens = await sender.schedule_messages(received_messages, scheduled_enqueue_time, timeout=5)
                 assert len(tokens) == 2
 
                 messages = await receiver.receive_messages(max_wait_time=120)
@@ -1056,7 +1061,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     tokens = await sender.schedule_messages([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
-                    await sender.cancel_scheduled_messages(tokens)
+                    await sender.cancel_scheduled_messages(tokens, timeout=None)
 
                 messages = await receiver.receive_messages(max_wait_time=120)
                 assert len(messages) == 0
@@ -1133,7 +1138,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             if error:
                 errors.append(error)
 
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1 # So we can run the test fast.
         async with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1144,7 +1149,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that in normal operation it does not get called
             auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
@@ -1154,7 +1159,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1166,7 +1171,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that it is called when there is an overt renew failure
             message = MockReceivedMessage(exception_on_renew_lock=True)
@@ -1177,7 +1182,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that it is not called when the renewer is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1189,7 +1194,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that it is not called when the receiver is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1202,7 +1207,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.asyncio
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
         async with auto_lock_renew:
@@ -1216,7 +1221,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         with pytest.raises(ServiceBusError):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
         auto_lock_renew.register(renewable=MockReceivedMessage())
@@ -1444,3 +1449,66 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     async for message in receiver:
                         messages.append(message)
                 assert len(messages) == 2
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_async_queue_send_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async def _hack_amqp_sender_run_async(cls):
+            await asyncio.sleep(6)  # sleep until timeout
+            await cls.message_handler.work_async()
+            cls._waiting_messages = 0
+            cls._pending_messages = cls._filter_pending()
+            if cls._backoff and not cls._waiting_messages:
+                _logger.info("Client told to backoff - sleeping for %r seconds", cls._backoff)
+                await cls._connection.sleep_async(cls._backoff)
+                cls._backoff = 0
+            await cls._connection.work_async()
+            return True
+
+        async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # this one doesn't need to reset the method, as it's hacking the method on the instance
+                sender._handler._client_run_async = types.MethodType(_hack_amqp_sender_run_async, sender._handler)
+                with pytest.raises(OperationTimeoutError):
+                    await sender.send_messages(Message("body"), timeout=5)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_async_queue_mgmt_operation_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async def hack_mgmt_execute_async(self, operation, op_type, message, timeout=0):
+            start_time = self._counter.get_current_ms()
+            operation_id = str(uuid.uuid4())
+            self._responses[operation_id] = None
+
+            await asyncio.sleep(6)  # sleep until timeout
+            while not self._responses[operation_id] and not self.mgmt_error:
+                if timeout > 0:
+                    now = self._counter.get_current_ms()
+                    if (now - start_time) >= timeout:
+                        raise compat.TimeoutException("Failed to receive mgmt response in {}ms".format(timeout))
+                await self.connection.work_async()
+            if self.mgmt_error:
+                raise self.mgmt_error
+            response = self._responses.pop(operation_id)
+            return response
+
+        original_execute_method = uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async
+        # hack the mgmt method on the class, not on an instance, so it needs reset
+        try:
+            uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = hack_mgmt_execute_async
+            async with ServiceBusClient.from_connection_string(
+                    servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    with pytest.raises(OperationTimeoutError):
+                        scheduled_time_utc = utc_now() + timedelta(seconds=30)
+                        await sender.schedule_messages(Message("Message to be scheduled"), scheduled_time_utc, timeout=5)
+        finally:
+            # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
+            uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = original_execute_method

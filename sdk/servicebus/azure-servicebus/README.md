@@ -320,20 +320,20 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 ### [Automatically renew Message or Session locks][autolockrenew_reference]
 
-`AutoLockRenew` is a simple method for ensuring your message or session remains locked even over long periods of time, if calling `renew_lock()` is impractical or undesired.
+`AutoLockRenewer` is a simple method for ensuring your message or session remains locked even over long periods of time, if calling `renew_lock()` is impractical or undesired.
 Internally, it is not much more than shorthand for creating a concurrent watchdog to call `renew_lock()` if the object is nearing expiry.
 It should be used as follows:
 
 ```python
-from azure.servicebus import ServiceBusClient, AutoLockRenew
+from azure.servicebus import ServiceBusClient, AutoLockRenewer
 
 import os
 connstr = os.environ['SERVICE_BUS_CONN_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
-# Can also be called via "with AutoLockRenew() as renewer" to automate closing.
-renewer = AutoLockRenew()
+# Can also be called via "with AutoLockRenewer() as renewer" to automate closing.
+renewer = AutoLockRenewer()
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_session_receiver(queue_name, session_id=session_id) as receiver:
         renewer.register(receiver.session, timeout=300) # Timeout for how long to maintain the lock for, in seconds.
@@ -365,7 +365,7 @@ link will extend this timeout.
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
 
 > **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `renew_lock()` manually, one can
-> leverage the `AutoLockRenew` functionality detailed [above](#automatically-renew-message-or-session-locks).
+> leverage the `AutoLockRenewer` functionality detailed [above](#automatically-renew-message-or-session-locks).
 
 ### Common Exceptions
 
@@ -441,7 +441,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [abandon_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=abandon#azure.servicebus.ReceivedMessage.abandon
 [defer_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=defer#azure.servicebus.ReceivedMessage.defer
 [deadletter_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=dead_letter#azure.servicebus.ReceivedMessage.dead_letter
-[autolockrenew_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.AutoLockRenew
+[autolockrenew_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.AutoLockRenewer
 [exception_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#module-azure.servicebus.exceptions
 [subscription_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html?highlight=subscription#azure.servicebus.aio.ServiceBusClient.get_subscription_receiver
 [topic_reference]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html?highlight=topic#azure.servicebus.ServiceBusClient.get_topic_sender

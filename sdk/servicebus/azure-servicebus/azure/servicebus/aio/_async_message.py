@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import logging
 import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from .._common import message as sync_message
 from .._common.constants import (
@@ -75,8 +75,8 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         self._settled = True
 
     async def dead_letter(  # type: ignore
-            self, reason: Optional[str] = None,
-            error_description: Optional[str] = None
+        self, reason: Optional[str] = None,
+        error_description: Optional[str] = None
     ) -> None:  # pylint: disable=unused-argument
         """Move the message to the Dead Letter queue.
 
@@ -84,8 +84,8 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         used to store messages that failed to process correctly, or otherwise require further inspection
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
 
-        :param str reason: The reason for dead-lettering the message.
-        :param str error_description: The detailed error description for dead-lettering the message.
+        :param Optional[str] reason: The reason for dead-lettering the message.
+        :param Optional[str] error_description: The detailed error description for dead-lettering the message.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
@@ -129,7 +129,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         await self._settle_message(MESSAGE_DEFER)
         self._settled = True
 
-    async def renew_lock(self) -> datetime.datetime:
+    async def renew_lock(self, **kwargs: Any) -> datetime.datetime:
         # pylint: disable=protected-access
         """Renew the message lock.
 
@@ -137,9 +137,11 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         it is not returned to the queue to be reprocessed. In order to complete (or otherwise settle)
         the message, the lock must be maintained. Messages received via ReceiveAndDelete mode are not
         locked, and therefore cannot be renewed. This operation can also be performed as an asynchronous
-        background task by registering the message with an `azure.servicebus.aio.AutoLockRenew` instance.
+        background task by registering the message with an `azure.servicebus.aio.AutoLockRenewer` instance.
         This operation is only available for non-sessionful messages.
 
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
@@ -157,7 +159,11 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        expiry = await self._receiver._renew_locks(token) # type: ignore
-        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0) # type: datetime.datetime
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        expiry = await self._receiver._renew_locks(token, timeout=timeout)  # type: ignore
+        self._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: datetime.datetime
 
         return self._expiry

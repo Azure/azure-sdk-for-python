@@ -48,7 +48,7 @@ class ServiceBusAdministrationClientTopicTests(AzureMgmtTestCase):
         topic_name = "iweidk"
         try:
             mgmt_service.create_topic(
-                name=topic_name,
+                topic_name=topic_name,
                 auto_delete_on_idle=datetime.timedelta(minutes=10),
                 default_message_time_to_live=datetime.timedelta(minutes=11),
                 duplicate_detection_history_time_window=datetime.timedelta(minutes=12),

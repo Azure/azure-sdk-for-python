@@ -11,5 +11,6 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-servicebus",
   "azure-ai-textanalytics",
   "azure-ai-formrecognizer",
-  "azure-ai-metricsadvisor"
+  "azure-ai-metricsadvisor",
+  "azure-eventgrid",
 ]

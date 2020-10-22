@@ -496,8 +496,8 @@ class ManagedHsmProperties(msrest.serialization.Model):
     :param initial_admin_object_ids: Array of initial administrators object ids for this managed
      hsm pool.
     :type initial_admin_object_ids: list[str]
-    :param hsm_pool_uri: The URI of the managed hsm pool for performing operations on keys.
-    :type hsm_pool_uri: str
+    :param hsm_uri: The URI of the managed hsm pool for performing operations on keys.
+    :type hsm_uri: str
     :param enable_soft_delete: Property to specify whether the 'soft delete' functionality is
      enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
      new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
@@ -531,7 +531,7 @@ class ManagedHsmProperties(msrest.serialization.Model):
     _attribute_map = {
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'initial_admin_object_ids': {'key': 'initialAdminObjectIds', 'type': '[str]'},
-        'hsm_pool_uri': {'key': 'hsmPoolUri', 'type': 'str'},
+        'hsm_uri': {'key': 'hsmUri', 'type': 'str'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
         'soft_delete_retention_in_days': {'key': 'softDeleteRetentionInDays', 'type': 'int'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
@@ -545,7 +545,7 @@ class ManagedHsmProperties(msrest.serialization.Model):
         *,
         tenant_id: Optional[str] = None,
         initial_admin_object_ids: Optional[List[str]] = None,
-        hsm_pool_uri: Optional[str] = None,
+        hsm_uri: Optional[str] = None,
         enable_soft_delete: Optional[bool] = True,
         soft_delete_retention_in_days: Optional[int] = 90,
         enable_purge_protection: Optional[bool] = None,
@@ -555,7 +555,7 @@ class ManagedHsmProperties(msrest.serialization.Model):
         super(ManagedHsmProperties, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.initial_admin_object_ids = initial_admin_object_ids
-        self.hsm_pool_uri = hsm_pool_uri
+        self.hsm_uri = hsm_uri
         self.enable_soft_delete = enable_soft_delete
         self.soft_delete_retention_in_days = soft_delete_retention_in_days
         self.enable_purge_protection = enable_purge_protection

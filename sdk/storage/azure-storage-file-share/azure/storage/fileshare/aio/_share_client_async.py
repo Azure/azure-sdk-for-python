@@ -176,6 +176,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Name-value pairs associated with the share as metadata.
         :keyword int quota:
             The quota to be allotted.
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+
+            .. versionadded:: 12.6.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
@@ -192,6 +199,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """
         metadata = kwargs.pop('metadata', None)
         quota = kwargs.pop('quota', None)
+        access_tier = kwargs.pop('access_tier', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
@@ -201,6 +209,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
+                access_tier=access_tier,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -371,11 +380,59 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.share.set_quota( # type: ignore
+            return await self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
+                access_tier=None,
                 cls=return_response_headers,
                 lease_access_conditions=access_conditions,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    async def set_share_properties(self, **kwargs):
+        # type: (Any) ->  Dict[str, Any]
+        """Sets the share properties.
+
+        .. versionadded:: 12.6.0
+
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', and 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :keyword int quota:
+            Specifies the maximum size of the share, in gigabytes.
+            Must be greater than 0, and less than or equal to 5TB.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword lease:
+            Required if the share has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :returns: Share-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share_async.py
+                :start-after: [START set_share_properties]
+                :end-before: [END set_share_properties]
+                :language: python
+                :dedent: 16
+                :caption: Sets the share properties.
+        """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        timeout = kwargs.pop('timeout', None)
+        access_tier = kwargs.pop('access_tier', None)
+        quota = kwargs.pop('quota', None)
+        if all(parameter is None for parameter in [access_tier, quota]):
+            raise ValueError("set_share_properties should be called with at least one parameter.")
+        try:
+            return await self._client.share.set_properties( # type: ignore
+                timeout=timeout,
+                quota=quota,
+                access_tier=access_tier,
+                lease_access_conditions=access_conditions,
+                cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
