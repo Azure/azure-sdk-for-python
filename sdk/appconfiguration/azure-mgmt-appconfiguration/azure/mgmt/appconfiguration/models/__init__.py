@@ -15,10 +15,10 @@ try:
     from ._models_py3 import ConfigurationStore
     from ._models_py3 import ConfigurationStoreUpdateParameters
     from ._models_py3 import EncryptionProperties
-    from ._models_py3 import Error, ErrorException
+    from ._models_py3 import ErrorDetails
+    from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import KeyValue
     from ._models_py3 import KeyVaultProperties
-    from ._models_py3 import ListKeyValueParameters
     from ._models_py3 import NameAvailabilityStatus
     from ._models_py3 import OperationDefinition
     from ._models_py3 import OperationDefinitionDisplay
@@ -38,10 +38,10 @@ except (SyntaxError, ImportError):
     from ._models import ConfigurationStore
     from ._models import ConfigurationStoreUpdateParameters
     from ._models import EncryptionProperties
-    from ._models import Error, ErrorException
+    from ._models import ErrorDetails
+    from ._models import ErrorResponse, ErrorResponseException
     from ._models import KeyValue
     from ._models import KeyVaultProperties
-    from ._models import ListKeyValueParameters
     from ._models import NameAvailabilityStatus
     from ._models import OperationDefinition
     from ._models import OperationDefinitionDisplay
@@ -57,6 +57,7 @@ except (SyntaxError, ImportError):
     from ._models import UserIdentity
 from ._paged_models import ApiKeyPaged
 from ._paged_models import ConfigurationStorePaged
+from ._paged_models import KeyValuePaged
 from ._paged_models import OperationDefinitionPaged
 from ._paged_models import PrivateEndpointConnectionPaged
 from ._paged_models import PrivateLinkResourcePaged
@@ -74,10 +75,10 @@ __all__ = [
     'ConfigurationStore',
     'ConfigurationStoreUpdateParameters',
     'EncryptionProperties',
-    'Error', 'ErrorException',
+    'ErrorDetails',
+    'ErrorResponse', 'ErrorResponseException',
     'KeyValue',
     'KeyVaultProperties',
-    'ListKeyValueParameters',
     'NameAvailabilityStatus',
     'OperationDefinition',
     'OperationDefinitionDisplay',
@@ -96,6 +97,7 @@ __all__ = [
     'OperationDefinitionPaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
+    'KeyValuePaged',
     'IdentityType',
     'ProvisioningState',
     'ConnectionStatus',
