@@ -50,7 +50,7 @@ There are several ways to authenticate to Azure, but to be able to record test H
 
 Certificate authentication does not allow you to record HTTP queries for testing.
 
-<!-- If it's deprecated, we should remove it right? -->
+<!-- If it's deprecated, do we want to have it in docs? -->
 <!-- ### Get a token with Azure Active Directory user/password. This is considered deprecated and should not be used anymore (https://docs.microsoft.com/python/azure/python-sdk-azure-authenticate?view=azure-python#mgmt-auth-legacy).
 
 1.  Connect to the [Azure Classic Portal](https://manage.windowsazure.com/) with your admin account.
@@ -78,46 +78,57 @@ https://azure.microsoft.com/documentation/articles/resource-group-create-service
 
 To use the credentials from Python, you need the application ID (a.k.a. client ID), authentication key (a.k.a. client secret), tenant ID and subscription ID from the Azure portal for use in the next step. [This section of the above tutorial](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
 
-The recommended practice is to store these environment variables in environment variables. To set an environment variable use the following commands:
+The recommended practice is to store these three values in environment variables called `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`. To set an environment variable use the following commands:
 ```Shell
-set
-
+$env:AZURE_TENANT_ID=<value>        # PowerShell only
+set AZURE_TENANT_ID=<value>         # Windows CMD (alternatively, use export AZURE_TENANT_ID=<value> to export to the global env)
+export AZURE_TENANT_ID=<value>      # Linux shell only
 ```
+*** Note: when setting these variables, do not wrap the value in quotation marks ***
 
 You are now able to log in from Python using OAuth.
 You can test with this code:
 ```python
+import os
 from azure.common.credentials import ServicePrincipalCredentials
 
 credentials = ServicePrincipalCredentials(
-    client_id =  'ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL',
-    secret = 'XXXXXXXXXXXXXXXXXXXXXXXX',
-    tenant = 'ABCDEFGH-1234-ABCD-1234-ABCDEFGHIJKL'
+    client_id = os.environ['AZURE_CLIENT_ID'],
+    secret = os.environ['AZURE_CLIENT_SECRET'],
+    tenant = os.environ['AZURE_TENANT_ID']
 )
 ```
 
 ## Providing credentials to the tests
 
-When you run tests in playback mode,
-they use a fake credentials file,
-located at `tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`,
-to simulate authenticating with Azure.
+When you run tests in playback mode, they use a fake credentials file, located at `tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`, to simulate authenticating with Azure.
 
-In live mode, you need to use actual credentials
-like those you obtained in the previous section.
-To enable the tests to use them,
-make a copy of the `mgmt_settings_fake.py` file in the same location,
-and rename it `mgmt_settings_real.py`.
+In live mode, you need to use real credentials like those you obtained in the previous section. To enable the tests to use them, make a copy of the `mgmt_settings_fake.py` file in the same location, and rename it `mgmt_settings_real.py`.
 Then make the following changes:
 
-*   Change the value of the `SUBSCRIPTION_ID` constant to your subscription ID.
-    (If you don't have it,
-    you can find it in the "Overview" section of the "Subscriptions" blade
-    in the [Azure portal](https://portal.azure.com/).)
-*   Change the `get_credentials()` function to construct and return
-    a `UserPassCredentials` or `ServicePrincipalCredentials` object
-    such as you constructed in the samples in the previous section.
-    (Don't forget to make sure the necessary imports are present as well!)
+* Change the value of the `SUBSCRIPTION_ID` constant to your subscription ID. (If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal](https://portal.azure.com/).)
+* Change the `get_credentials()` function to construct and return a `UserPassCredentials` or `ServicePrincipalCredentials` object such as you constructed in the samples in the previous section. (Don't forget to make sure the necessary imports are present as well!)
+```python
+def get_credentials(**kwargs):
+    import os
+    from azure.common.credentials import ServicePrincipalCredentials
+
+    return ServicePrincipalCredentials(
+        client_id = os.environ['AZURE_CLIENT_ID'],
+        secret = os.environ['AZURE_CLIENT_SECRET'],
+        tenant = os.environ['AZURE_TENANT_ID']
+    )
+```
+* Change the `get_azure_core_credentials()` function to construct and return a `ClientSecretCredential:
+```python
+def get_azure_core_credentials(**kwargs):
+    from azure.identity import ClientSecretCredential
+    return ClientSecretCredential(
+        client_id = os.environ['AZURE_CLIENT_ID'],
+        client_secret = os.environ['AZURE_CLIENT_SECRET'],
+        tenant_id = os.environ['AZURE_TENANT_ID']
+    )
+```
 
 **Important: `mgmt_settings_real.py` should not be committed since it contains your actual credentials! To prevent this, it is included in `.gitignore`.**
 
@@ -125,52 +136,29 @@ Then make the following changes:
 
 To configure the tests to run in live mode, you have two options:
 
-*   Set the environment variable `AZURE_TEST_RUN_LIVE` to "true" or "yes".
-    If you want to go back to playback mode you can either unset it entirely
-    or set it to "false" or "no".
-*   Create a `testsettings_local.cfg` file in the same directory as
-    `mgmt_settings_real.py`. It should look like the following:
+* Set the environment variable `AZURE_TEST_RUN_LIVE` to "true" or "yes". If you want to go back to playback mode you can either unset it entirely or set it to "false" or "no".
+* Create a `testsettings_local.cfg` file in the same directory as `mgmt_settings_real.py`. It should look like the following:
     ```
     live-mode: true
     ```
-    To go back to playback mode using the config file,
-    change the "true" to "false" or delete the file.
-    (`testsettings_local.cfg` is listed in `.gitignore`
-    and not present in the repo; if it's missing,
-    the tests default to playback mode.)
+    To go back to playback mode using the config file, change the "true" to "false" or delete the file. (`testsettings_local.cfg` is listed in `.gitignore` and not present in the repo; if it's missing, the tests default to playback mode.)
 
-Now you can run tests using the same method described in
-[Running the tests](#running-the-tests).
-You would be well-advised to specify a limited number of tests to run.
-Running every existing test in live mode will take a very long time
-and produce a great deal of changes to recording files in your Git repository.
+Now you can run tests using the same method described in [Running the tests](#running-the-tests). You would be well-advised to specify a limited number of tests to run. Running every existing test in live mode will take a very long time and produce a great deal of changes to recording files in your Git repository. However, for changes in the client code, the recordings will need to be committed to the Git repository.
 
 # Writing new tests
 
-SDK tests are based on the `scenario_tests` subpackage of the
-[`azure-devtools`](https://pypi.python.org/pypi/azure-devtools) package.
-`scenario_tests` is a general, mostly abstract framework
-providing several features useful for the SDK tests, for example:
+SDK tests are based on the `scenario_tests` subpackage of the [`azure-devtools`](https://pypi.python.org/pypi/azure-devtools) package. `scenario_tests` is a general, mostly abstract framework providing several features useful for the SDK tests, for example:
 
-*   HTTP interaction recording and playback using [vcrpy](https://pypi.python.org/pypi/vcrpy)
-*   Creation and cleanup of helper resources, such as resource groups,
-    for tests that need them in order to test other services
-*   Processors for modifying requests and responses when writing or reading recordings
-    (for example, to avoid recording credential information)
-*   Patches for overriding functions and methods that don't work well with tests
-    (such as long-running operations)
+* HTTP interaction recording and playback using [vcrpy](https://pypi.python.org/pypi/vcrpy)
+* Creation and cleanup of helper resources, such as resource groups, for tests that need them in order to test other services
+* Processors for modifying requests and responses when writing or reading recordings (for example, to avoid recording credential information)
+* Patches for overriding functions and methods that don't work well with tests (such as long-running operations)
 
-Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils) directory
-provides concrete implementations of the features provided in `scenario_tests`
-that are oriented around use in SDK testing
-and that you can use directly in your unit tests.
+Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/master/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
 ## Test structure
 
-New tests should be located alongside the packages containing the code they test.
-For example, the tests for `azure-mgmt-media` are in `azure-mgmt-media/tests`.
-Each test folder also has a `recordings` subfolder containing one .yaml recording file
-for each test that has HTTP interactions to record.
+New tests should be located alongside the packages containing the code they test. For example, the tests for `azure-mgmt-media` are in `azure-mgmt-media/tests`. Each test folder also has a `recordings` subfolder containing one `.yaml` recording file for each test that has the HTTP interactions for the single test (with the authentication secrets scrubbed from the recordings).
 
 There are also legacy tests in the following three locations:
 
@@ -179,11 +167,9 @@ There are also legacy tests in the following three locations:
 
 For more information about legacy tests, see [Legacy tests](https://github.com/Azure/azure-sdk-for-python/wiki/Legacy-tests).
 
-## Using the Azure Python SDK test framework
+## Writing management plane test with the the Azure Python SDK test framework
 
-This section will demonstrate writing tests using `devtools_testutils`
-with a few increasingly sophisticated examples
-to show how to use some of the features of the underlying test frameworks.
+This section will demonstrate writing tests using `devtools_testutils` with a few increasingly sophisticated examples to show how to use some of the features of the underlying test frameworks.
 
 ### Example 1: Basic Azure service interaction and recording
 
@@ -206,35 +192,13 @@ class ExampleResourceGroupTestCase(AzureMgmtTestCase):
         self.client.resource_groups.delete(group.name).wait()
 ```
 
-This simple test creates a resource group and checks that its name
-is assigned correctly.
+This simple test creates a resource group and checks that its name is assigned correctly.
 
 Notes:
-
-1.  This test inherits all necessary behavior for HTTP recording and playback
-    described previously in this document
-    from its `AzureMgmtTestCase` superclass.
-    You don't need to do anything special to implement it.
-2.  The `get_resource_name()` helper method of `AzureMgmtTestCase`
-    creates a pseudorandom name based on the parameter
-    and the names of the test file and method.
-    This ensures that the name generated is the same for each run
-    of the same test, thereby ensuring reproducability,
-    but prevents name collisions if the tests are run live
-    and the same parameter is used from several different tests.
-3.  The `create_mgmt_client()` helper method of `AzureMgmtTestCase`
-    creates a client object using the credentials
-    from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate,
-    with some checks to make sure it's created successfully
-    and cause the unit test to fail if not.
-    You should use it for any clients you create.
-4.  Note that this test cleans up the resource group it creates!
-    If you create resources yourself as part of the test,
-    make sure to delete them afterwards.
-    But if you need something like a resource group
-    as a prerequisite for what you're actually trying to test,
-    you should use a "preparer" as demonstrated in the following two examples.
-    Preparers will create and clean up helper resources for you.
+1. This test inherits all necessary behavior for HTTP recording and playback described previously in this document from its `AzureMgmtTestCase` superclass. You don't need to do anything special to implement it.
+2. The `get_resource_name()` helper method of `AzureMgmtTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducability and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
+3. The `create_mgmt_client()` helper method of `AzureMgmtTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
+4. Note that this test cleans up the resource group it creates! If you create resources yourself as part of the test, make sure to delete them afterwards. But if you need something like a resource group as a prerequisite for what you're actually trying to test, you should use a "preparer" as demonstrated in the following two examples. Preparers will create and clean up helper resources for you.
 
 
 ### Example 2: Basic preparer usage
@@ -265,44 +229,21 @@ class ExampleSqlServerTestCase(AzureMgmtTestCase):
         self.assertEqual(server.name, test_server_name)
 ```
 
-This test creates a SQL server and confirms that its name is set correctly.
-Because a SQL server must be created in a resource group,
-the test uses a `ResourceGroupPreparer` to create a group for use in the test.
+This test creates a SQL server and confirms that its name is set correctly. Because a SQL server must be created in a resource group, the test uses a `ResourceGroupPreparer` to create a group for use in the test.
 
-Preparers are [decorators](https://www.python.org/dev/peps/pep-0318/)
-that "wrap" a test method,
-transparently replacing it with another function that has some additional functionality
-before and after it's run.
-For example, the `@ResourceGroupPreparer` decorator adds the following to the wrapped method:
-*   creates a resource group
-*   inspects the argument signature of the wrapped method
-    and passes in information about the created resource group
-    if appropriately-named parameters
-    (here, `resource_group` and `location`) are present
-*   deletes the resource group after the test is run
+Preparers are [decorators](https://www.python.org/dev/peps/pep-0318/) that "wrap" a test method, transparently replacing it with another function that has some additional functionality before and after it's run. For example, the `@ResourceGroupPreparer` decorator adds the following to the wrapped method:
+* creates a resource group
+* inspects the argument signature of the wrapped method and passes in information about the created resource group if appropriately-named parameters (here, `resource_group` and `location`) are present
+* deletes the resource group after the test is run
 
 Notes:
+1. HTTP interactions undertaken by preparers to create and delete the prepared resource are not recorded or played back, as they're not part of what the test is testing.
+2. If the test is run in playback mode, the `resource_group` parameter will be a simple `FakeResource` object with a pseudorandom `name` attribute and a blank `id` attribute. If you need a more sophisticated fake object, see the next example.
+3. Why not use a preparer in Example 1, above?
 
-1.  HTTP interactions undertaken by preparers
-    to create and delete the prepared resource
-    are not recorded or played back,
-    as they're not part of what the test is testing.
-2.  If the test is run in playback mode,
-    the `resource_group` parameter will be a simple `FakeResource` object
-    with a pseudorandom `name` attribute and a blank `id` attribute.
-    If you need a more sophisticated fake object, see the next example.
-3.  Why not use a preparer in Example 1, above?
-
-    Preparers are only for *auxiliary* resources
-    that aren't part of the main focus of the test.
-    In example 1, we want to test the actual creation and naming
-    of the resource group, so those operations are part of the test.
-    By contrast, in example 2, the subject of the test
-    is the SQL server management operations;
-    the resource group is just a prerequisite for those operations.
-    We only want this test to fail if something is wrong with the SQL server creation.
-    If there's something wrong with the resource group creation,
-    there should be a dedicated test for that.
+    Preparers are only for *auxiliary* resources that aren't part of the main focus of the test. In example 1, we want to test the actual creation and naming of the resource group, so those operations are part of the test.
+    By contrast, in example 2, the subject of the test is the SQL server management operations; the resource group is just a prerequisite for those operations.  We only want this test to fail if something is wrong with the SQL server creation.
+    If there's something wrong with the resource group creation, there should be a dedicated test for that.
 
 ### Example 3: More complicated preparer usage
 
@@ -345,35 +286,10 @@ This test creates a media service and confirms that its name is set correctly.
 
 Notes:
 
-1.  Here, we want to test creation of a media service,
-    which requires a storage account.
-    We want to use a preparer for this,
-    but creation of a storage account itself needs a resource group.
-    So we need both a `ResourceGroupPreparer` and a `StorageAccountPreparer`,
-    in that order.
-2.  Both preparers are customized.
-    We pass a `parameter_name` keyword argument of `group` to `ResourceGroupPreparer`,
-    and as a result the resource group is passed into the test method
-    through the `group` parameter (rather than the default `resource_group`).
-    Then, because `StorageAccountPreparer` needs a resource group,
-    we need to let it know about the modified parameter name.
-    We do so with the `resource_group_parameter_name` argument.
-    Finally, we pass a `name_prefix` to `StorageAccountPreparer`.
-    The names it generates by default include the fully qualified test name,
-    and so tend to be longer than is allowed for storage accounts.
-    You'll probably always need to use `name_prefix` with `StorageAccountPreparer`.
-3.  We want to ensure that the group retrieved by `get_properties`
-    has a `kind` of `BlobStorage`.
-    We create a `FakeStorageAccount` object with that attribute
-    and pass it to `StorageAccountPreparer`,
-    and also pass the `kind` keyword argument to `StorageAccountPreparer`
-    so that it will be passed through when a storage account is prepared for real.
-4.  Similarly to how a resource group parameter is added by `ResourceGroupPreparer`,
-    `StorageAccountPreparer` passes the model object for the created storage account
-    as the `storage_account` parameter, and that parameter's name can be customized.
-    `StorageAccountPreparer` also creates an account access key
-    and passes it into the test method through a parameter whose name is formed
-    by appending `_key` to the name of the parameter for the account itself.
+1. Here, we want to test creation of a media service, which requires a storage account. We want to use a preparer for this, but creation of a storage account itself needs a resource group. So we need both a `ResourceGroupPreparer` and a `StorageAccountPreparer`, in that order.
+2. Both preparers are customized. We pass a `parameter_name` keyword argument of `group` to `ResourceGroupPreparer`, and as a result the resource group is passed into the test method through the `group` parameter (rather than the default `resource_group`). Then, because `StorageAccountPreparer` needs a resource group, we need to let it know about the modified parameter name. We do so with the `resource_group_parameter_name` argument. Finally, we pass a `name_prefix` to `StorageAccountPreparer`. The names it generates by default include the fully qualified test name, and so tend to be longer than is allowed for storage accounts. You'll probably always need to use `name_prefix` with `StorageAccountPreparer`.
+3. We want to ensure that the group retrieved by `get_properties` has a `kind` of `BlobStorage`. We create a `FakeStorageAccount` object with that attribute and pass it to `StorageAccountPreparer`, and also pass the `kind` keyword argument to `StorageAccountPreparer` so that it will be passed through when a storage account is prepared for real.
+4. Similarly to how a resource group parameter is added by `ResourceGroupPreparer`, `StorageAccountPreparer` passes the model object for the created storage account as the `storage_account` parameter, and that parameter's name can be customized. `StorageAccountPreparer` also creates an account access key and passes it into the test method through a parameter whose name is formed by appending `_key` to the name of the parameter for the account itself.
 
 ### Example 4: Different endpoint than public Azure (China, Dogfood, etc.)
 
@@ -408,3 +324,35 @@ class ExampleSqlServerTestCase(AzureMgmtTestCase):
         self.assertEqual(server.name, test_server_name)
 ```
 
+## Writing data plane test with the the Azure Python SDK test framework
+
+This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
+
+### Example 1: Basic Recording and Interactions
+
+```python
+import pytest
+
+from azure.data.tables import TableServiceClient
+from devtools_testutils import AzureTestCase
+
+class ExampleStorageTestCase(AzureTestCase):
+    def setUp(self):
+        super(ExampleStorageTestCase, self).setUp()
+
+    def test_create_table(self):
+        credential = self.get_credential(TableServiceClient)
+        client = self.create_client_from_credential(TableServiceClient, credential)
+
+        table_name = "badrandomname"
+
+        created = client.create_table(table_name)
+
+        assert created.table_name == table_name
+```
+
+This simple test creates a new Tables account and checks that the name is assigned correctly.
+
+Notes:
+1. Tests for data plane libraries should inherit from the `AzureTestCase` superclass. This superclass also takes care of HTTP recording and playback like the `AzureMgmtTestCase` seen in the previous section but handles nuances around creating Clients specifically for the data plane clients.
+2. The `get_credential` will create the appropriate credential for your test based on the Client that is passed in and whether you are running live or in playback mode. 
