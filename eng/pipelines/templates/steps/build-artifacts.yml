@@ -1,5 +1,6 @@
 parameters:
   BeforePublishSteps: []
+  TestPipeline: false
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   BuildDocs: true
