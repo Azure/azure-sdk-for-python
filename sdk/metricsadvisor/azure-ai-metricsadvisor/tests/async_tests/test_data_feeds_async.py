@@ -7,6 +7,7 @@
 import datetime
 from dateutil.tz import tzutc
 import pytest
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
@@ -38,7 +39,7 @@ from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_from_sql_server(self):
 
         data_feed_name = self.create_random_name("testfeedasync")
@@ -130,7 +131,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 with self.assertRaises(ResourceNotFoundError):
                     await self.admin_client.get_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_from_sql_server_with_custom_values(self):
 
         data_feed_name = self.create_random_name("testfeedasync")
@@ -227,7 +228,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 with self.assertRaises(ResourceNotFoundError):
                     await self.admin_client.get_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_table(self):
         name = self.create_random_name("tablefeedasync")
         async with self.admin_client:
@@ -269,7 +270,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_blob(self):
         name = self.create_random_name("blobfeedasync")
         async with self.admin_client:
@@ -311,7 +312,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_cosmos_db(self):
         name = self.create_random_name("cosmosfeedasync")
         async with self.admin_client:
@@ -355,7 +356,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_http_request_get(self):
         name = self.create_random_name("httprequestfeedgetasync")
         async with self.admin_client:
@@ -396,7 +397,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_http_request_post(self):
         name = self.create_random_name("httprequestfeedpostasync")
         async with self.admin_client:
@@ -438,7 +439,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_application_insights(self):
         name = self.create_random_name("applicationinsightsasync")
         async with self.admin_client:
@@ -486,7 +487,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_data_explorer(self):
         name = self.create_random_name("azuredataexplorerasync")
         async with self.admin_client:
@@ -529,7 +530,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_influxdb(self):
         name = self.create_random_name("influxdbasync")
         async with self.admin_client:
@@ -576,7 +577,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_datalake(self):
         name = self.create_random_name("datalakeasync")
         async with self.admin_client:
@@ -623,7 +624,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_mongodb(self):
         name = self.create_random_name("mongodbasync")
         async with self.admin_client:
@@ -666,7 +667,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_mysql(self):
         name = self.create_random_name("mysqlasync")
         async with self.admin_client:
@@ -707,7 +708,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_postgresql(self):
         name = self.create_random_name("postgresqlasync")
         async with self.admin_client:
@@ -748,7 +749,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_elasticsearch(self):
         name = self.create_random_name("elasticasync")
         async with self.admin_client:
@@ -793,7 +794,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds()
@@ -802,7 +803,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_data_feed_name(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds(data_feed_name="azsqlDatafeed")
@@ -811,7 +812,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) == 1
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_status(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds(status="Paused")
@@ -820,7 +821,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) == 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_source_type(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds(data_source_type="SqlServer")
@@ -829,7 +830,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_granularity_type(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds(granularity_type="Daily")
@@ -838,7 +839,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_skip(self):
         async with self.admin_client:
             all_feeds = self.admin_client.list_data_feeds()
@@ -851,7 +852,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 skipped_feeds_list.append(feed)
             assert len(all_feeds_list) == len(skipped_feeds_list) + 1
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
@@ -903,7 +904,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_kwargs(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
@@ -958,7 +959,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model_and_kwargs(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
@@ -1032,7 +1033,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_by_reseting_properties(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")

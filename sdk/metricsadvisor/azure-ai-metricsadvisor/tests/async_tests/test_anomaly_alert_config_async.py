@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
@@ -22,7 +23,7 @@ from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_alert_direction_both(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -87,7 +88,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_alert_direction_down(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -151,7 +152,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_alert_direction_up(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -215,7 +216,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_severity_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -272,7 +273,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_snooze_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -329,7 +330,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_alert_direction_both(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("wholeseries")
@@ -385,7 +386,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_alert_direction_down(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("wholeseries")
@@ -440,7 +441,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_alert_direction_up(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("wholeseries")
@@ -495,7 +496,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_severity_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -543,7 +544,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_alert_direction_both(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroup")
@@ -601,7 +602,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_alert_direction_down(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroup")
@@ -658,7 +659,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_alert_direction_up(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroup")
@@ -715,7 +716,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_severity_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroupsev")
@@ -765,7 +766,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_multiple_configurations(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("multiple")
@@ -866,7 +867,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_anomaly_alert_configs(self):
         async with self.admin_client:
             configs = self.admin_client.list_anomaly_alert_configurations(
@@ -877,7 +878,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 config_list.append(config)
             assert len(list(config_list)) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_config_with_model(self):
         async with self.admin_client:
             try:
@@ -918,7 +919,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_config_with_kwargs(self):
         async with self.admin_client:
             try:
@@ -1002,7 +1003,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_config_with_model_and_kwargs(self):
         async with self.admin_client:
             try:
@@ -1092,7 +1093,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_by_resetting_properties(self):
         async with self.admin_client:
             try:

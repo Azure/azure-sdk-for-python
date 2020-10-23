@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"startTime": "2019-10-01T00:00:00.000Z", "endTime": "2020-10-03T00:00:00.000Z"}'
+    body: '{"startTime": "2020-10-01T00:00:00.000Z", "endTime": "2020-10-02T00:00:00.000Z"}'
     headers:
       Accept:
       - application/json
@@ -16,13 +16,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 43223ea7-3f2c-46e5-bb09-3160b0f0a5c7
+      apim-request-id: 3710fc40-1383-494e-b3c3-2b825e51ba0c
       content-length: '0'
-      date: Thu, 22 Oct 2020 15:53:03 GMT
+      date: Fri, 23 Oct 2020 15:51:34 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '478'
-      x-request-id: 43223ea7-3f2c-46e5-bb09-3160b0f0a5c7
+      x-envoy-upstream-service-time: '269'
+      x-request-id: 3710fc40-1383-494e-b3c3-2b825e51ba0c
     status:
       code: 204
       message: No Content
