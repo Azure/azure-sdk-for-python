@@ -296,9 +296,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_recognize_invoices(
-            self,
-            invoice,
-            **kwargs
+        self,
+        invoice,
+        **kwargs
     ):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given invoice.
@@ -353,9 +353,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_recognize_invoices_from_url(
-            self,
-            invoice_url,
-            **kwargs
+        self,
+        invoice_url,
+        **kwargs
     ):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given invoice.
