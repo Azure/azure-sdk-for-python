@@ -246,6 +246,45 @@ class CertificateContractPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(CertificateContractPaged, self).__init__(*args, **kwargs)
+class ContentTypeContractPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ContentTypeContract <azure.mgmt.apimanagement.models.ContentTypeContract>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ContentTypeContract]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ContentTypeContractPaged, self).__init__(*args, **kwargs)
+class ContentItemContractPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ContentItemContract <azure.mgmt.apimanagement.models.ContentItemContract>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ContentItemContract]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ContentItemContractPaged, self).__init__(*args, **kwargs)
+class DeletedServiceContractPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DeletedServiceContract <azure.mgmt.apimanagement.models.DeletedServiceContract>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DeletedServiceContract]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DeletedServiceContractPaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.apimanagement.models.Operation>` object

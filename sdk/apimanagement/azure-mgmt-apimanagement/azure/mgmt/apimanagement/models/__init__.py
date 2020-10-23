@@ -45,6 +45,7 @@ try:
     from ._models_py3 import AuthenticationSettingsContract
     from ._models_py3 import AuthorizationServerContract
     from ._models_py3 import AuthorizationServerContractBaseProperties
+    from ._models_py3 import AuthorizationServerSecretsContract
     from ._models_py3 import AuthorizationServerUpdateContract
     from ._models_py3 import BackendAuthorizationHeaderCredentials
     from ._models_py3 import BackendBaseParameters
@@ -65,6 +66,11 @@ try:
     from ._models_py3 import CertificateInformation
     from ._models_py3 import ClientSecretContract
     from ._models_py3 import ConnectivityStatusContract
+    from ._models_py3 import ContentItemContract
+    from ._models_py3 import ContentTypeContract
+    from ._models_py3 import DataMasking
+    from ._models_py3 import DataMaskingEntity
+    from ._models_py3 import DeletedServiceContract
     from ._models_py3 import DeployConfigurationParameters
     from ._models_py3 import DiagnosticContract
     from ._models_py3 import EmailTemplateContract
@@ -95,11 +101,15 @@ try:
     from ._models_py3 import IssueContract
     from ._models_py3 import IssueContractBaseProperties
     from ._models_py3 import IssueUpdateContract
+    from ._models_py3 import KeyVaultContractCreateProperties
+    from ._models_py3 import KeyVaultContractProperties
+    from ._models_py3 import KeyVaultLastAccessStatusContractProperties
     from ._models_py3 import LoggerContract
     from ._models_py3 import LoggerUpdateContract
     from ._models_py3 import NamedValueContract
     from ._models_py3 import NamedValueCreateContract
     from ._models_py3 import NamedValueEntityBaseParameters
+    from ._models_py3 import NamedValueSecretContract
     from ._models_py3 import NamedValueUpdateParameters
     from ._models_py3 import NetworkStatusContract
     from ._models_py3 import NetworkStatusContractByLocation
@@ -130,11 +140,11 @@ try:
     from ._models_py3 import ProductEntityBaseParameters
     from ._models_py3 import ProductTagResourceContractProperties
     from ._models_py3 import ProductUpdateParameters
-    from ._models_py3 import PropertyValueContract
     from ._models_py3 import QuotaCounterCollection
     from ._models_py3 import QuotaCounterContract
     from ._models_py3 import QuotaCounterValueContract
     from ._models_py3 import QuotaCounterValueContractProperties
+    from ._models_py3 import QuotaCounterValueUpdateContract
     from ._models_py3 import RecipientEmailCollection
     from ._models_py3 import RecipientEmailContract
     from ._models_py3 import RecipientsContractProperties
@@ -216,6 +226,7 @@ except (SyntaxError, ImportError):
     from ._models import AuthenticationSettingsContract
     from ._models import AuthorizationServerContract
     from ._models import AuthorizationServerContractBaseProperties
+    from ._models import AuthorizationServerSecretsContract
     from ._models import AuthorizationServerUpdateContract
     from ._models import BackendAuthorizationHeaderCredentials
     from ._models import BackendBaseParameters
@@ -236,6 +247,11 @@ except (SyntaxError, ImportError):
     from ._models import CertificateInformation
     from ._models import ClientSecretContract
     from ._models import ConnectivityStatusContract
+    from ._models import ContentItemContract
+    from ._models import ContentTypeContract
+    from ._models import DataMasking
+    from ._models import DataMaskingEntity
+    from ._models import DeletedServiceContract
     from ._models import DeployConfigurationParameters
     from ._models import DiagnosticContract
     from ._models import EmailTemplateContract
@@ -266,11 +282,15 @@ except (SyntaxError, ImportError):
     from ._models import IssueContract
     from ._models import IssueContractBaseProperties
     from ._models import IssueUpdateContract
+    from ._models import KeyVaultContractCreateProperties
+    from ._models import KeyVaultContractProperties
+    from ._models import KeyVaultLastAccessStatusContractProperties
     from ._models import LoggerContract
     from ._models import LoggerUpdateContract
     from ._models import NamedValueContract
     from ._models import NamedValueCreateContract
     from ._models import NamedValueEntityBaseParameters
+    from ._models import NamedValueSecretContract
     from ._models import NamedValueUpdateParameters
     from ._models import NetworkStatusContract
     from ._models import NetworkStatusContractByLocation
@@ -301,11 +321,11 @@ except (SyntaxError, ImportError):
     from ._models import ProductEntityBaseParameters
     from ._models import ProductTagResourceContractProperties
     from ._models import ProductUpdateParameters
-    from ._models import PropertyValueContract
     from ._models import QuotaCounterCollection
     from ._models import QuotaCounterContract
     from ._models import QuotaCounterValueContract
     from ._models import QuotaCounterValueContractProperties
+    from ._models import QuotaCounterValueUpdateContract
     from ._models import RecipientEmailCollection
     from ._models import RecipientEmailContract
     from ._models import RecipientsContractProperties
@@ -360,6 +380,9 @@ from ._paged_models import AuthorizationServerContractPaged
 from ._paged_models import BackendContractPaged
 from ._paged_models import CacheContractPaged
 from ._paged_models import CertificateContractPaged
+from ._paged_models import ContentItemContractPaged
+from ._paged_models import ContentTypeContractPaged
+from ._paged_models import DeletedServiceContractPaged
 from ._paged_models import DiagnosticContractPaged
 from ._paged_models import EmailTemplateContractPaged
 from ._paged_models import GatewayContractPaged
@@ -396,10 +419,12 @@ from ._api_management_client_enums import (
     SoapApiType,
     ApiType,
     State,
+    DataMaskingMode,
     SamplingType,
     AlwaysLog,
     HttpCorrelationProtocol,
     Verbosity,
+    OperationNameFormat,
     PolicyContentFormat,
     VersioningScheme,
     GrantType,
@@ -467,6 +492,7 @@ __all__ = [
     'AuthenticationSettingsContract',
     'AuthorizationServerContract',
     'AuthorizationServerContractBaseProperties',
+    'AuthorizationServerSecretsContract',
     'AuthorizationServerUpdateContract',
     'BackendAuthorizationHeaderCredentials',
     'BackendBaseParameters',
@@ -487,6 +513,11 @@ __all__ = [
     'CertificateInformation',
     'ClientSecretContract',
     'ConnectivityStatusContract',
+    'ContentItemContract',
+    'ContentTypeContract',
+    'DataMasking',
+    'DataMaskingEntity',
+    'DeletedServiceContract',
     'DeployConfigurationParameters',
     'DiagnosticContract',
     'EmailTemplateContract',
@@ -517,11 +548,15 @@ __all__ = [
     'IssueContract',
     'IssueContractBaseProperties',
     'IssueUpdateContract',
+    'KeyVaultContractCreateProperties',
+    'KeyVaultContractProperties',
+    'KeyVaultLastAccessStatusContractProperties',
     'LoggerContract',
     'LoggerUpdateContract',
     'NamedValueContract',
     'NamedValueCreateContract',
     'NamedValueEntityBaseParameters',
+    'NamedValueSecretContract',
     'NamedValueUpdateParameters',
     'NetworkStatusContract',
     'NetworkStatusContractByLocation',
@@ -552,11 +587,11 @@ __all__ = [
     'ProductEntityBaseParameters',
     'ProductTagResourceContractProperties',
     'ProductUpdateParameters',
-    'PropertyValueContract',
     'QuotaCounterCollection',
     'QuotaCounterContract',
     'QuotaCounterValueContract',
     'QuotaCounterValueContractProperties',
+    'QuotaCounterValueUpdateContract',
     'RecipientEmailCollection',
     'RecipientEmailContract',
     'RecipientsContractProperties',
@@ -620,6 +655,9 @@ __all__ = [
     'BackendContractPaged',
     'CacheContractPaged',
     'CertificateContractPaged',
+    'ContentTypeContractPaged',
+    'ContentItemContractPaged',
+    'DeletedServiceContractPaged',
     'OperationPaged',
     'ResourceSkuResultPaged',
     'ApiManagementServiceResourcePaged',
@@ -646,10 +684,12 @@ __all__ = [
     'SoapApiType',
     'ApiType',
     'State',
+    'DataMaskingMode',
     'SamplingType',
     'AlwaysLog',
     'HttpCorrelationProtocol',
     'Verbosity',
+    'OperationNameFormat',
     'PolicyContentFormat',
     'VersioningScheme',
     'GrantType',

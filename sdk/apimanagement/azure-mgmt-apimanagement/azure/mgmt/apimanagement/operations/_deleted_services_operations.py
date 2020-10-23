@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class IssueOperations(object):
-    """IssueOperations operations.
+class DeletedServicesOperations(object):
+    """DeletedServicesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,60 +38,33 @@ class IssueOperations(object):
 
         self.config = config
 
-    def list_by_service(
-            self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists a collection of issues in the specified service instance.
+    def list_by_subscription(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all soft-deleted services available for undelete for the given
+        subscription.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param service_name: The name of the API Management service.
-        :type service_name: str
-        :param filter: |     Field     |     Usage     |     Supported
-         operators     |     Supported functions
-         |</br>|-------------|-------------|-------------|-------------|</br>|
-         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |</br>| apiId | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith |</br>| title | filter |
-         ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith
-         |</br>| description | filter | ge, le, eq, ne, gt, lt | substringof,
-         contains, startswith, endswith |</br>| authorName | filter | ge, le,
-         eq, ne, gt, lt | substringof, contains, startswith, endswith |</br>|
-         state | filter | eq |     |</br>
-        :type filter: str
-        :param top: Number of records to return.
-        :type top: int
-        :param skip: Number of records to skip.
-        :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of IssueContract
+        :return: An iterator like instance of DeletedServiceContract
         :rtype:
-         ~azure.mgmt.apimanagement.models.IssueContractPaged[~azure.mgmt.apimanagement.models.IssueContract]
+         ~azure.mgmt.apimanagement.models.DeletedServiceContractPaged[~azure.mgmt.apimanagement.models.DeletedServiceContract]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_service.metadata['url']
+                url = self.list_by_subscription.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -126,40 +99,36 @@ class IssueOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.IssueContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.DeletedServiceContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/issues'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ApiManagement/deletedservices'}
 
-    def get(
-            self, resource_group_name, service_name, issue_id, custom_headers=None, raw=False, **operation_config):
-        """Gets API Management issue details.
+    def get_by_name(
+            self, service_name, location, custom_headers=None, raw=False, **operation_config):
+        """Get soft-deleted Api Management Service by name.
 
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param issue_id: Issue identifier. Must be unique in the current API
-         Management service instance.
-        :type issue_id: str
+        :param location: The location of the deleted API Management service.
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: IssueContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.IssueContract or
+        :return: DeletedServiceContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.DeletedServiceContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get_by_name.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -184,18 +153,73 @@ class IssueOperations(object):
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('IssueContract', response)
-            header_dict = {
-                'ETag': 'str',
-            }
+            deserialized = self._deserialize('DeletedServiceContract', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/issues/{issueId}'}
+    get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ApiManagement/locations/{location}/deletedservices/{serviceName}'}
+
+    def purge(
+            self, service_name, location, custom_headers=None, raw=False, **operation_config):
+        """Purges Api Management Service (deletes it with no option to undelete).
+
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param location: The location of the deleted API Management service.
+        :type location: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DeletedServiceContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.DeletedServiceContract or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.purge.metadata['url']
+        path_format_arguments = {
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 202:
+            deserialized = self._deserialize('DeletedServiceContract', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    purge.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.ApiManagement/locations/{location}/deletedservices/{serviceName}'}
