@@ -82,7 +82,7 @@ A `DataFeed` is what Metrics Advisor ingests from your data source, such as Cosm
 
 ### Metric
 
-A `Metric` is a quantifiable measure that is used to monitor and assess the status of a specific business process. It can be a combination of multiple time series values divided into dimensions. For example a web health metric might contain dimensions for user count and the en-us market.
+A `DataFeedMetric` is a quantifiable measure that is used to monitor and assess the status of a specific business process. It can be a combination of multiple time series values divided into dimensions. For example a web health metric might contain dimensions for user count and the en-us market.
 
 ### AnomalyDetectionConfiguration
 
@@ -90,15 +90,15 @@ A `Metric` is a quantifiable measure that is used to monitor and assess the stat
 
 ### Anomaly & Incident
 
-After a detection configuration is applied to metrics, `Incident`s are generated whenever any series within it has an `Anomaly`.
+After a detection configuration is applied to metrics, `AnomalyIncident`s are generated whenever any series within it has an `DataPointAnomaly`.
 
 ### Alert
 
-You can configure which anomalies should trigger an `Alert`. You can set multiple alerts with different settings. For example, you could create an alert for anomalies with lower business impact, and another for more important alerts.
+You can configure which anomalies should trigger an `AnomalyAlert`. You can set multiple alerts with different settings. For example, you could create an alert for anomalies with lower business impact, and another for more important alerts.
 
-### Hook
+### Notification Hook
 
-Metrics Advisor lets you create and subscribe to real-time alerts. These alerts are sent over the internet, using a `Hook`.
+Metrics Advisor lets you create and subscribe to real-time alerts. These alerts are sent over the internet, using a notification hook like `EmailNotificationHook` or `WebNotificationHook`.
 
 ## Examples
 
@@ -118,8 +118,8 @@ from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorA
 from azure.ai.metricsadvisor.models import (
         SQLServerDataFeed,
         DataFeedSchema,
-        Metric,
-        Dimension,
+        DataFeedMetric,
+        DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
         DataFeedMissingDataPointFillSettings,
@@ -147,12 +147,12 @@ data_feed = DataFeed(
     granularity=DataFeedGranularity("Daily"),
     schema=DataFeedSchema(
         metrics=[
-            Metric(name="cost", display_name="Cost"),
-            Metric(name="revenue", display_name="Revenue")
+            DataFeedMetric(name="cost", display_name="Cost"),
+            DataFeedMetric(name="revenue", display_name="Revenue")
         ],
         dimensions=[
-            Dimension(name="category", display_name="Category"),
-            Dimension(name="city", display_name="City")
+            DataFeedDimension(name="category", display_name="Category"),
+            DataFeedDimension(name="city", display_name="City")
         ],
         timestamp_column="Timestamp"
     ),
@@ -394,7 +394,7 @@ We can add some hooks so when an alert is triggered, we can get call back.
 
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
-from azure.ai.metricsadvisor.models import EmailHook
+from azure.ai.metricsadvisor.models import EmailNotificationHook
 
 service_endpoint = os.getenv("ENDPOINT")
 subscription_key = os.getenv("SUBSCRIPTION_KEY")
@@ -404,7 +404,7 @@ client = MetricsAdvisorAdministrationClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key))
 
 hook = client.create_hook(
-    hook=EmailHook(
+    hook=EmailNotificationHook(
         name="email hook",
         description="my email hook",
         emails_to_alert=["alertme@alertme.com"],

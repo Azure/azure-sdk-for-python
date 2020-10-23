@@ -8,8 +8,8 @@ import pytest
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
-    EmailHook,
-    WebHook,
+    EmailNotificationHook,
+    WebNotificationHook,
 )
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
@@ -22,7 +22,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 email_hook = await self.admin_client.create_hook(
-                    hook=EmailHook(
+                    hook=EmailNotificationHook(
                         name=email_hook_name,
                         emails_to_alert=["yournamehere@microsoft.com"],
                         description="my email hook",
@@ -31,7 +31,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 self.assertIsNotNone(email_hook.id)
                 self.assertIsNotNone(email_hook.name)
-                self.assertIsNotNone(email_hook.admins)
+                self.assertIsNotNone(email_hook.admin_emails)
                 self.assertEqual(email_hook.emails_to_alert, ["yournamehere@microsoft.com"])
                 self.assertEqual(email_hook.description, "my email hook")
                 self.assertEqual(email_hook.external_link, "external link")
@@ -48,7 +48,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 web_hook = await self.admin_client.create_hook(
-                    hook=WebHook(
+                    hook=WebNotificationHook(
                         name=web_hook_name,
                         endpoint="https://httpbin.org/post",
                         description="my web hook",
@@ -57,7 +57,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 )
                 self.assertIsNotNone(web_hook.id)
                 self.assertIsNotNone(web_hook.name)
-                self.assertIsNotNone(web_hook.admins)
+                self.assertIsNotNone(web_hook.admin_emails)
                 self.assertEqual(web_hook.endpoint, "https://httpbin.org/post")
                 self.assertEqual(web_hook.description, "my web hook")
                 self.assertEqual(web_hook.external_link, "external link")

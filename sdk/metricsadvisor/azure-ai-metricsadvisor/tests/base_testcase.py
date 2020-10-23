@@ -19,8 +19,8 @@ from azure.ai.metricsadvisor import (
 from azure.ai.metricsadvisor.models import (
     SQLServerDataFeed,
     DataFeedSchema,
-    Metric,
-    Dimension,
+    DataFeedMetric,
+    DataFeedDimension,
     DataFeedGranularity,
     DataFeedIngestionSettings,
     DataFeedMissingDataPointFillSettings,
@@ -39,8 +39,8 @@ from azure.ai.metricsadvisor.models import (
     SuppressCondition,
     ChangeThresholdCondition,
     HardThresholdCondition,
-    EmailHook,
-    WebHook,
+    EmailNotificationHook,
+    WebNotificationHook,
     DataFeed,
     AnomalyDetectionConfiguration,
     AnomalyAlertConfiguration
@@ -187,12 +187,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 ),
                 schema=DataFeedSchema(
                     metrics=[
-                        Metric(name="cost"),
-                        Metric(name="revenue")
+                        DataFeedMetric(name="cost"),
+                        DataFeedMetric(name="revenue")
                     ],
                     dimensions=[
-                        Dimension(name="category"),
-                        Dimension(name="city")
+                        DataFeedDimension(name="category"),
+                        DataFeedDimension(name="city")
                     ],
                     timestamp_column="Timestamp"
                 ),
@@ -238,12 +238,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 ),
                 schema=DataFeedSchema(
                     metrics=[
-                        Metric(name="cost", display_name="display cost", description="the cost"),
-                        Metric(name="revenue", display_name="display revenue", description="the revenue")
+                        DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
+                        DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
                     ],
                     dimensions=[
-                        Dimension(name="category", display_name="display category"),
-                        Dimension(name="city", display_name="display city")
+                        DataFeedDimension(name="category", display_name="display category"),
+                        DataFeedDimension(name="city", display_name="display city")
                     ],
                     timestamp_column="Timestamp"
                 ),
@@ -255,7 +255,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                     stop_retry_after=-1,
                 ),
                 options=DataFeedOptions(
-                    admins=["yournamehere@microsoft.com"],
+                    admin_emails=["yournamehere@microsoft.com"],
                     data_feed_description="my first data feed",
                     missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                         fill_type="SmartFilling"
@@ -264,7 +264,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                         rollup_type="NoRollup",
                         rollup_method="None",
                     ),
-                    viewers=["viewers"],
+                    viewer_emails=["viewers"],
                     access_mode="Private",
                     action_link_template="action link template"
                 )
@@ -395,7 +395,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_email_hook_for_update(self, name):
         return self.admin_client.create_hook(
-            hook=EmailHook(
+            hook=EmailNotificationHook(
                 name=name,
                 emails_to_alert=["yournamehere@microsoft.com"],
                 description="my email hook",
@@ -405,7 +405,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_web_hook_for_update(self, name):
         return self.admin_client.create_hook(
-            hook=WebHook(
+            hook=WebNotificationHook(
                 name=name,
                 endpoint="https://httpbin.org/post",
                 description="my web hook",
