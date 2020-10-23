@@ -27,7 +27,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         results = list(self.client.list_anomalies_for_detection_configuration(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
         ))
         assert len(results) > 0
 
@@ -36,7 +36,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             detection_configuration_id=self.anomaly_detection_configuration_id,
             dimension_name=self.dimension_name,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
         ))
         assert len(results) > 0
 
@@ -44,7 +44,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         results = list(self.client.list_incidents_for_detection_configuration(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
         ))
         assert len(results) > 0
 
@@ -60,14 +60,14 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
             detection_configuration_id=self.anomaly_detection_configuration_id,
             incident_id=self.incident_id,
         ))
-        assert len(results) == 0
+        assert len(results) > 0
 
     def test_list_metric_enriched_series_data(self):
-        series_identity = {"Dim1":"Common Lime"}
+        series_identity = {"city": "Los Angeles"}
         results = list(self.client.list_metric_enriched_series_data(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
             series=[series_identity]
         ))
         assert len(results) > 0
@@ -76,7 +76,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         results = list(self.client.list_metric_enrichment_status(
             metric_id=self.metric_id,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
         ))
         assert len(results) > 0
 
@@ -84,7 +84,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         results = list(self.client.list_alerts_for_alert_configuration(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
             time_mode="AnomalyTime",
         ))
         assert len(list(results)) > 0
@@ -93,9 +93,9 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         results = list(self.client.list_metrics_series_data(
             metric_id=self.metric_id,
             start_time=datetime.datetime(2020, 1, 1),
-            end_time=datetime.datetime(2020, 9, 9),
+            end_time=datetime.datetime(2020, 10, 21),
             series_to_filter=[
-                {"Dim1": "Common Lime", "Dim2": "African buffalo"}
+                {"city": "Los Angeles", "category": "Homemade"}
             ]
         ))
         assert len(results) > 0
@@ -109,33 +109,33 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
 
     def test_add_anomaly_feedback(self):
         anomaly_feedback = AnomalyFeedback(metric_id=self.metric_id,
-                                           dimension_key={"Dim1": "Common Lime"},
+                                           dimension_key={"city": "Los Angeles"},
                                            start_time=datetime.datetime(2020, 8, 5),
-                                           end_time=datetime.datetime(2020, 8, 7),
+                                           end_time=datetime.datetime(2020, 10, 21),
                                            value="NotAnomaly")
         self.client.add_feedback(anomaly_feedback)
 
     def test_add_change_point_feedback(self):
         change_point_feedback = ChangePointFeedback(metric_id=self.metric_id,
-                                                    dimension_key={"Dim1": "Common Lime"},
+                                                    dimension_key={"city": "Los Angeles"},
                                                     start_time=datetime.datetime(2020, 8, 5),
-                                                    end_time=datetime.datetime(2020, 8, 7),
+                                                    end_time=datetime.datetime(2020, 10, 21),
                                                     value="NotChangePoint")
         self.client.add_feedback(change_point_feedback)
 
     def test_add_comment_feedback(self):
         comment_feedback = CommentFeedback(metric_id=self.metric_id,
-                                           dimension_key={"Dim1": "Common Lime"},
+                                           dimension_key={"city": "Los Angeles"},
                                            start_time=datetime.datetime(2020, 8, 5),
-                                           end_time=datetime.datetime(2020, 8, 7),
+                                           end_time=datetime.datetime(2020, 10, 21),
                                            value="comment")
         self.client.add_feedback(comment_feedback)
 
     def test_add_period_feedback(self):
         period_feedback = PeriodFeedback(metric_id=self.metric_id,
-                                         dimension_key={"Dim1": "Common Lime"},
+                                         dimension_key={"city": "Los Angeles"},
                                          start_time=datetime.datetime(2020, 8, 5),
-                                         end_time=datetime.datetime(2020, 8, 7),
+                                         end_time=datetime.datetime(2020, 10, 21),
                                          period_type="AssignValue",
                                          value=2)
         self.client.add_feedback(period_feedback)

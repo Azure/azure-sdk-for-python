@@ -140,19 +140,23 @@ class CorsRule(GeneratedCorsRule):
 class ShareSmbSettings(GeneratedShareSmbSettings):
     """ Settings for the SMB protocol.
 
-    :param SmbMultichannel multichannel: Required. Sets the multichannel settings.
+    :keyword SmbMultichannel multichannel: Sets the multichannel settings.
     """
-    def __init__(self, multichannel):
-        self.multichannel = multichannel
+    def __init__(self, **kwargs):
+        self.multichannel = kwargs.get('multichannel')
+        if self.multichannel is None:
+            raise ValueError("The value 'multichannel' must be specified.")
 
 
 class SmbMultichannel(GeneratedSmbMultichannel):
     """ Settings for Multichannel.
 
-    :param bool enabled: Required. If SMB Multichannel is enabled.
+    :keyword bool enabled: If SMB Multichannel is enabled.
     """
-    def __init__(self, enabled):
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        self.enabled = kwargs.get('enabled')
+        if self.enabled is None:
+            raise ValueError("The value 'enabled' must be specified.")
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
@@ -160,10 +164,12 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
 
     Contains protocol properties of the share service such as the SMB setting of the share service.
 
-    :param SmbSettings smb: Required. Sets SMB settings.
+    :keyword SmbSettings smb: Sets SMB settings.
     """
-    def __init__(self, smb):
-        self.smb = smb
+    def __init__(self, **kwargs):
+        self.smb = kwargs.get('smb')
+        if self.smb is None:
+            raise ValueError("The value 'smb' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
@@ -222,7 +228,7 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class LeaseProperties(DictMixin):
-    """File Lease Properties.
+    """File or Share Lease Properties.
 
     :ivar str status:
         The lease status of the file or share. Possible values: locked|unlocked

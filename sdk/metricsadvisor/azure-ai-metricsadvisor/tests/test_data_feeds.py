@@ -780,7 +780,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         assert len(list(feeds)) > 0
 
     def test_list_data_feeds_with_data_feed_name(self):
-        feeds = self.admin_client.list_data_feeds(data_feed_name="testDataFeed1")
+        feeds = self.admin_client.list_data_feeds(data_feed_name="azsqlDatafeed")
         feed_list = list(feeds)
         assert len(feed_list) == 1
 
@@ -796,7 +796,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         assert len(list(feeds)) == 0
 
     def test_list_data_feeds_with_source_type(self):
-        feeds = self.admin_client.list_data_feeds(data_source_type="AzureBlob")
+        feeds = self.admin_client.list_data_feeds(data_source_type="SqlServer")
         assert len(list(feeds)) > 0
 
     def test_list_data_feeds_with_granularity_type(self):

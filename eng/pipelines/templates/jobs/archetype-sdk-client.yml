@@ -75,12 +75,14 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-      - template: /eng/common/pipelines/templates/steps/verify-links.yml
-        parameters:
+    - template: /eng/common/pipelines/templates/steps/verify-links.yml
+      parameters:
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           Directory: ''
           Urls: (git diff origin/${env:SYSTEM_PULLREQUEST_TARGETBRANCH} HEAD --name-only -- '*.md')
-          CheckLinkGuidance: $true
+        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: sdk/${{ parameters.ServiceDirectory }}
+        CheckLinkGuidance: $true
 
     - template: ../steps/analyze.yml
       parameters: 

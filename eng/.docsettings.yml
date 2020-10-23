@@ -99,9 +99,10 @@ known_content_issues:
   - ['sdk/textanalytics/azure-ai-textanalytics/samples/README.md', '#4554']
   - ['sdk/monitor/opentelemetry-exporter-azuremonitor/swagger/README.md', '#4554']
   - ['sdk/monitor/opentelemetry-exporter-azuremonitor/README.md', '#4554']
+  - ['sdk/digitaltwins/azure-digitaltwins-core/swagger/README.md', '#4554']
 
   # nspckg and common.
-  - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
+  - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'nspkg and common']
   - ['sdk/appconfiguration/azure-appconfiguration/samples/README.md', 'nspkg and common']
   - ['sdk/cognitiveservices/azure-cognitiveservices-knowledge-nspkg/README.rst', 'nspkg and common']
   - ['sdk/cognitiveservices/azure-cognitiveservices-language-nspkg/README.rst', 'nspkg and common']
@@ -128,8 +129,9 @@ known_content_issues:
   - ['sdk/tables/azure-data-nspkg/README.md', 'nspkg and common']
   - ['sdk/cosmos/README.md', 'nspkg and common']
   - ['sdk/communication/azure-communication-nspkg/README.md', 'nspkg and common']
-# HISTORY.rst
-  - ['sdk/core/azure/HISTORY.rst','#4554']
+  # HISTORY.rst
+  - ['sdk/core/azure/HISTORY.rst','nspkg and common']
+  - ['sdk/digitaltwins/azure-digitaltwins-nspkg/README.md', 'nspkg and common']
 
   # root readme
   - ['README.md', 'root readme']

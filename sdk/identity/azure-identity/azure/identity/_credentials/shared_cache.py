@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._constants import AZURE_CLI_CLIENT_ID
+from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AadClient
 from .._internal.decorators import log_get_token, wrap_exceptions
 from .._internal.msal_client import MsalClient
@@ -103,7 +103,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
-        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)
 
     def _initialize(self):
         if self._initialized:
