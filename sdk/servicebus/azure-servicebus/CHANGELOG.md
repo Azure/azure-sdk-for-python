@@ -6,7 +6,7 @@
   - Renamed `AutoLockRenew` to `AutoLockRenewer`
   - Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
     - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
-    - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now takes keyword parameter `session_id` for getting a receiver to the sessionful entity.
+    - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` for getting a receiver to the sessionful entity.
 
 **New Features**
 

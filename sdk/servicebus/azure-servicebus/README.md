@@ -200,7 +200,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
         sender.send_messages(Message("Session Enabled Message", session_id=session_id))
 
     # If session_id is null here, will receive from the first available session.
-    with client.get_queue_receiver(queue_name, session_id) as receiver:
+    with client.get_queue_receiver(queue_name, session_id=session_id) as receiver:
         for msg in receiver:
             print(str(msg))
 ```
