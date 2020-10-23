@@ -472,29 +472,37 @@ class FormWord(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormWord, this is "word".
+    :ivar appearance: Text appearance properties.
+    :vartype appearance: ~azure.ai.formrecognizer.Appearance
+    .. versionadded:: v2.1-preview
+        *appearance* property
     """
 
     def __init__(self, **kwargs):
         super(FormWord, self).__init__(kind="word", **kwargs)
         self.confidence = kwargs.get("confidence", None)
+        self.appearance = kwargs.get("appearance", None)
 
     @classmethod
     def _from_generated(cls, word, page):
+        word_appearance = word.appearance if hasattr(word, "appearance") else None
         return cls(
             text=word.text,
             bounding_box=get_bounding_box(word),
             confidence=adjust_confidence(word.confidence),
-            page_number=page
+            page_number=page,
+            appearance=word_appearance
         )
 
     def __repr__(self):
-        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={})" \
+        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={}, appearance={})" \
             .format(
                 self.text,
                 self.bounding_box,
                 self.confidence,
                 self.page_number,
-                self.kind
+                self.kind,
+                self.appearance
             )[:1024]
 
 
