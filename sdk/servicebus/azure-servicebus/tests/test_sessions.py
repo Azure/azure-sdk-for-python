@@ -836,7 +836,8 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for m in session:
                     assert m.session_id == session_id
                     count += 1
-                session.session.get_state()
+                state = session.session.get_state()
+                assert type(state) is bytes
             assert count == 3
 
 

@@ -741,7 +741,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 async for m in session:
                     assert m.session_id == session_id
                     count += 1
-                await session.session.get_state()
+                state = await session.session.get_state()
+                assert type(state) is bytes
             assert count == 3
 
 
