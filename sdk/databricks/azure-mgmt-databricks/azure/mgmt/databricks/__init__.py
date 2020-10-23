@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .databricks_client import DatabricksClient
-from .version import VERSION
+from ._configuration import DatabricksClientConfiguration
+from ._databricks_client import DatabricksClient
+__all__ = ['DatabricksClient', 'DatabricksClientConfiguration']
 
-__all__ = ['DatabricksClient']
+from .version import VERSION
 
 __version__ = VERSION
 
