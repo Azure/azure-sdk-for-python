@@ -15,8 +15,8 @@ from azure.ai.metricsadvisor.models import (
     AzureBlobDataFeed,
     AzureCosmosDBDataFeed,
     HttpRequestDataFeed,
-    Metric,
-    Dimension,
+    DataFeedMetric,
+    DataFeedDimension,
     DataFeedSchema,
     DataFeedIngestionSettings,
     DataFeedGranularity,
@@ -84,12 +84,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost", display_name="display cost", description="the cost"),
-                            Metric(name="revenue", display_name="display revenue", description="the revenue")
+                            DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
+                            DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category", display_name="display category"),
-                            Dimension(name="city", display_name="display city")
+                            DataFeedDimension(name="category", display_name="display category"),
+                            DataFeedDimension(name="city", display_name="display city")
                         ],
                         timestamp_column="Timestamp"
                     ),
@@ -101,7 +101,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         stop_retry_after=-1,
                     ),
                     options=DataFeedOptions(
-                        admins=["yournamehere@microsoft.com"],
+                        admin_emails=["yournamehere@microsoft.com"],
                         data_feed_description="my first data feed",
                         missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                             fill_type="SmartFilling"
@@ -110,7 +110,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             rollup_type="NoRollup",
                             rollup_method="None",
                         ),
-                        viewers=["viewers"],
+                        viewer_emails=["viewers"],
                         access_mode="Private",
                         action_link_template="action link template"
                     )
@@ -140,12 +140,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
                 self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
                 self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.options.admins)
+                self.assertIn("yournamehere@microsoft.com", data_feed.options.admin_emails)
                 self.assertEqual(data_feed.options.data_feed_description, "my first data feed")
                 self.assertEqual(data_feed.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_type, "NoRollup")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_method, "None")
-                self.assertEqual(data_feed.options.viewers, ["viewers"])
+                self.assertEqual(data_feed.options.viewer_emails, ["viewers"])
                 self.assertEqual(data_feed.options.access_mode, "Private")
                 self.assertEqual(data_feed.options.action_link_template, "action link template")
                 self.assertEqual(data_feed.status, "Active")
@@ -176,12 +176,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost", display_name="display cost", description="the cost"),
-                            Metric(name="revenue", display_name="display revenue", description="the revenue")
+                            DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
+                            DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category", display_name="display category"),
-                            Dimension(name="city", display_name="display city")
+                            DataFeedDimension(name="category", display_name="display category"),
+                            DataFeedDimension(name="city", display_name="display city")
                         ],
                         timestamp_column="Timestamp"
                     ),
@@ -193,7 +193,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                         stop_retry_after=-1,
                     ),
                     options=DataFeedOptions(
-                        admins=["yournamehere@microsoft.com"],
+                        admin_emails=["yournamehere@microsoft.com"],
                         data_feed_description="my first data feed",
                         missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                             fill_type="CustomValue",
@@ -204,7 +204,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                             rollup_method="Sum",
                             rollup_identification_value="sumrollup"
                         ),
-                        viewers=["viewers"],
+                        viewer_emails=["viewers"],
                         access_mode="Private",
                         action_link_template="action link template"
                     )
@@ -234,14 +234,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
                 self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
                 self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.options.admins)
+                self.assertIn("yournamehere@microsoft.com", data_feed.options.admin_emails)
                 self.assertEqual(data_feed.options.data_feed_description, "my first data feed")
                 self.assertEqual(data_feed.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(data_feed.options.missing_data_point_fill_settings.custom_fill_value, 10)
                 self.assertEqual(data_feed.options.rollup_settings.rollup_type, "AlreadyRollup")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_method, "Sum")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(data_feed.options.viewers, ["viewers"])
+                self.assertEqual(data_feed.options.viewer_emails, ["viewers"])
                 self.assertEqual(data_feed.options.access_mode, "Private")
                 self.assertEqual(data_feed.options.action_link_template, "action link template")
                 self.assertEqual(data_feed.status, "Active")
@@ -271,12 +271,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -312,12 +312,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -354,12 +354,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -395,12 +395,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -436,12 +436,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -482,12 +482,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -525,12 +525,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -568,12 +568,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -614,12 +614,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost", display_name="Cost"),
-                            Metric(name="revenue", display_name="Revenue")
+                            DataFeedMetric(name="cost", display_name="Cost"),
+                            DataFeedMetric(name="revenue", display_name="Revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category", display_name="Category"),
-                            Dimension(name="city", display_name="City")
+                            DataFeedDimension(name="category", display_name="Category"),
+                            DataFeedDimension(name="city", display_name="City")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -658,12 +658,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -699,12 +699,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -739,12 +739,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
+                            DataFeedMetric(name="cost"),
+                            DataFeedMetric(name="revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
+                            DataFeedDimension(name="category"),
+                            DataFeedDimension(name="city")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -781,12 +781,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     ),
                     schema=DataFeedSchema(
                         metrics=[
-                            Metric(name="cost", display_name="Cost"),
-                            Metric(name="revenue", display_name="Revenue")
+                            DataFeedMetric(name="cost", display_name="Cost"),
+                            DataFeedMetric(name="revenue", display_name="Revenue")
                         ],
                         dimensions=[
-                            Dimension(name="category", display_name="Category"),
-                            Dimension(name="city", display_name="City")
+                            DataFeedDimension(name="category", display_name="Category"),
+                            DataFeedDimension(name="city", display_name="City")
                         ],
                     ),
                     ingestion_settings=DataFeedIngestionSettings(
@@ -885,7 +885,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.options.missing_data_point_fill_settings.fill_type = "CustomValue"
                 data_feed.options.missing_data_point_fill_settings.custom_fill_value = 2
                 data_feed.options.access_mode = "Public"
-                data_feed.options.viewers = ["updated"]
+                data_feed.options.viewer_emails = ["updated"]
                 data_feed.status = "Paused"
                 data_feed.options.action_link_template = "updated"
                 data_feed.source.connection_string = "updated"
@@ -908,7 +908,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
-                self.assertEqual(updated.options.viewers, ["updated"])
+                self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
                 self.assertEqual(updated.source.connection_string, "updated")
@@ -939,7 +939,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     fill_type="CustomValue",
                     custom_fill_value=2,
                     access_mode="Public",
-                    viewers=["updated"],
+                    viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
                     source=SQLServerDataFeed(
@@ -963,7 +963,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
-                self.assertEqual(updated.options.viewers, ["updated"])
+                self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
                 self.assertEqual(updated.source.connection_string, "updated")
@@ -992,7 +992,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.options.missing_data_point_fill_settings.fill_type = "don't update me"
                 data_feed.options.missing_data_point_fill_settings.custom_fill_value = 4
                 data_feed.options.access_mode = "don't update me"
-                data_feed.options.viewers = ["don't update me"]
+                data_feed.options.viewer_emails = ["don't update me"]
                 data_feed.status = "don't update me"
                 data_feed.options.action_link_template = "don't update me"
                 data_feed.source.connection_string = "don't update me"
@@ -1013,7 +1013,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     fill_type="CustomValue",
                     custom_fill_value=2,
                     access_mode="Public",
-                    viewers=["updated"],
+                    viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
                     source=SQLServerDataFeed(
@@ -1037,7 +1037,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
-                self.assertEqual(updated.options.viewers, ["updated"])
+                self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
                 self.assertEqual(updated.source.connection_string, "updated")
@@ -1067,7 +1067,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     fill_type=None,
                     custom_fill_value=None,
                     access_mode=None,
-                    viewers=None,
+                    viewer_emails=None,
                     status=None,
                     action_link_template=None,
                 )
@@ -1087,7 +1087,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 0)
                 self.assertEqual(updated.options.access_mode, "Private")
-                # self.assertEqual(updated.options.viewers, ["viewers"]) # doesn't currently clear
+                # self.assertEqual(updated.options.viewer_emails, ["viewers"]) # doesn't currently clear
                 self.assertEqual(updated.status, "Active")
                 # self.assertEqual(updated.options.action_link_template, "updated")  # doesn't currently clear
 

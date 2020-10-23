@@ -13,8 +13,11 @@ from azure.core.pipeline.transport import HttpTransport
 POLLING_INTERVAL = 5
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
-def _get_deserialize():
-    from ._generated.v2_1_preview_1 import FormRecognizerClient
+def _get_deserialize(api_version):
+    if api_version == "2.0":
+        from ._generated.v2_0 import FormRecognizerClient
+    else:
+        from ._generated.v2_1_preview_1 import FormRecognizerClient
     return FormRecognizerClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
 
 
