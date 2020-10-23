@@ -1,5 +1,51 @@
 # Release History
 
+
+## 0.5.0 (2020-10-23)
+
+**Features**
+
+  - Model SecureScoreControlDetails has a new parameter weight
+  - Model SecureScoreControlDetails has a new parameter percentage
+  - Model SecureScoreItem has a new parameter weight
+  - Model SecureScoreItem has a new parameter percentage
+  - Model SecureScoreControlScore has a new parameter percentage
+  - Added operation AlertsOperations.get_resource_group_level
+  - Added operation AlertsOperations.get_subscription_level
+  - Added operation AlertsOperations.update_resource_group_level_state_to_resolve
+  - Added operation AlertsOperations.list_subscription_level_by_region
+  - Added operation AlertsOperations.list_resource_group_level_by_region
+  - Added operation AlertsOperations.update_subscription_level_state_to_resolve
+  - Added operation AlertsOperations.update_subscription_level_state_to_dismiss
+  - Added operation AlertsOperations.update_resource_group_level_state_to_dismiss
+  - Added operation AlertsOperations.update_subscription_level_state_to_activate
+  - Added operation AlertsOperations.update_resource_group_level_state_to_activate
+  - Added operation group IotRecommendationTypesOperations
+  - Added operation group ConnectorsOperations
+  - Added operation group DeviceOperations
+  - Added operation group DevicesForSubscriptionOperations
+  - Added operation group IotDefenderSettingsOperations
+  - Added operation group IotAlertsOperations
+  - Added operation group DevicesForHubOperations
+  - Added operation group IotSensorsOperations
+  - Added operation group IotRecommendationsOperations
+  - Added operation group SecuritySolutionsOperations
+  - Added operation group SecuritySolutionsReferenceDataOperations
+  - Added operation group OnPremiseIotSensorsOperations
+  - Added operation group IotAlertTypesOperations
+
+**Breaking changes**
+
+  - Model Alert has a new signature
+  - Removed operation AlertsOperations.list_subscription_level_alerts_by_region
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_dismiss
+  - Removed operation AlertsOperations.get_resource_group_level_alerts
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.get_subscription_level_alert
+  - Removed operation AlertsOperations.list_resource_group_level_alerts_by_region
+  - Removed operation AlertsOperations.update_resource_group_level_alert_state_to_reactivate
+  - Removed operation AlertsOperations.update_subscription_level_alert_state_to_dismiss
+  
 ## 0.4.1 (2020-06-12)
 
 **Bugfixes**
