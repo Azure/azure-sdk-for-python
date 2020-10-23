@@ -200,7 +200,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
         sender.send_messages(Message("Session Enabled Message", session_id=session_id))
 
     # If session_id is null here, will receive from the first available session.
-    with client.get_queue_session_receiver(queue_name, session_id) as receiver:
+    with client.get_queue_receiver(queue_name, session_id) as receiver:
         for msg in receiver:
             print(str(msg))
 ```
@@ -335,7 +335,7 @@ session_id = os.environ['SERVICE_BUS_SESSION_ID']
 # Can also be called via "with AutoLockRenewer() as renewer" to automate closing.
 renewer = AutoLockRenewer()
 with ServiceBusClient.from_connection_string(connstr) as client:
-    with client.get_queue_session_receiver(queue_name, session_id=session_id) as receiver:
+    with client.get_queue_receiver(queue_name, session_id=session_id) as receiver:
         renewer.register(receiver.session, timeout=300) # Timeout for how long to maintain the lock for, in seconds.
         for msg in receiver.receive_messages():
             renewer.register(msg, timeout=60)
