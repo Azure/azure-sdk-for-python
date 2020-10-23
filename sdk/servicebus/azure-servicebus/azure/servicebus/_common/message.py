@@ -562,8 +562,8 @@ class ServiceBusMessageBatch(object):
         message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
 
-        # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
-        # message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
+        # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
+        # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
             self._size
             + message_size

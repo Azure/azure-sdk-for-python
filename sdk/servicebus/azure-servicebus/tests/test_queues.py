@@ -1559,7 +1559,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         except AttributeError:
             timestamp = calendar.timegm(new_scheduled_time.timetuple()) * 1000
 
-        uamqp_received_message = uamqp.message.ServiceBusMessage(
+        uamqp_received_message = uamqp.message.Message(
             body=b'data',
             annotations={
                 _X_OPT_PARTITION_KEY: b'r_key',
