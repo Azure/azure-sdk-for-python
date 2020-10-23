@@ -56,6 +56,7 @@ def prepare_tables(page, read_result):
             column_count=table.columns,
             page_number=page.page,
             cells=[FormTableCell._from_generated(cell, page.page, read_result) for cell in table.cells],
+            bounding_box=table.bounding_box if hasattr(table, "bounding_box") else None
         ) for table in page.tables
     ]
 

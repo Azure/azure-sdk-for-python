@@ -563,6 +563,13 @@ class FormTable(object):
         Number of rows in table.
     :ivar int column_count:
         Number of columns in table.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the table. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
+        Units are in pixels for images and inches for PDF.
+    .. versionadded:: v2.1-preview
+        The *bounding_box* property.
     """
 
     def __init__(self, **kwargs):
@@ -570,14 +577,16 @@ class FormTable(object):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
+        self.bounding_box = kwargs.get("bounding_box", None)
 
     def __repr__(self):
-        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})" \
+        return "FormTable(page_number={}, cells={}, row_count={}, column_count={}, bounding_box={})" \
             .format(
                 self.page_number,
                 repr(self.cells),
                 self.row_count,
-                self.column_count
+                self.column_count,
+                self.bounding_box
             )[:1024]
 
 
