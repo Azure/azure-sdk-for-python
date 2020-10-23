@@ -14,6 +14,9 @@ import uuid
 import os
 import sys
 from datetime import datetime, timedelta
+import mock
+import random
+import string
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -43,19 +46,64 @@ from azure.storage.blob import (
     AccountSasPermissions,
     StandardBlobTier,
 )
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.credentials import AccessToken
 from azure.storage.blob._generated.models import RehydratePriority
+from azure.identity._internal.get_token_mixin import GetTokenMixin
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
-#------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
+
+class MockCredential(GetTokenMixin):
+
+    def _new_token(self):
+        return AccessToken(''.join(random.choice(string.ascii_lowercase) for i in range(10)), time.time() + 2)
+
+    def __init__(self):
+        super(MockCredential, self).__init__()
+        self.token = self._new_token()
+        self.acquire_token_silently = mock.Mock(return_value=self.token)
+        self.expires_on = self.token.expires_on
+
+    def _acquire_token_silently(self, *scopes):
+        return self.acquire_token_silently(*scopes)
+
+    def _request_token(self, *scopes, **kwargs):
+        return MockCredential()
+
+    def get_token(self, *_, **__):
+        return super(MockCredential, self).get_token(*_, **__)
+
+
+class CredentialRotationPolicy(SansIOHTTPPolicy):
+    @property
+    def _need_new_token(self):
+        return not self._token or self._token.expires_on - time.time() < 300
+
+    def __init__(self, token):
+        self._token = token
+        self.refresh_counter = 0
+
+    def on_request(self, request):
+        if self._need_new_token:
+            self._token = self._token.get_token("Scope")
+            self.refresh_counter += 1
+
 
 class StorageCommonBlobTest(StorageTestCase):
-
-    def _setup(self, storage_account, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
+    def _setup(self, storage_account, key, additional_policies=None, **kwargs):
+        total_retries = kwargs.pop('total_retries', 10)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account, "blob"),
+            credential=key,
+            retry_total=total_retries,
+            _additional_pipeline_policies=additional_policies)
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -76,7 +124,7 @@ class StorageCommonBlobTest(StorageTestCase):
             except:
                 pass
 
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
     def _get_container_reference(self):
         return self.get_resource_name(TEST_CONTAINER_PREFIX)
 
@@ -86,7 +134,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def _create_block_blob(self, standard_blob_tier=None, overwrite=False, tags=None):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(self.byte_data, length=len(self.byte_data), standard_blob_tier=standard_blob_tier, 
+        blob.upload_blob(self.byte_data, length=len(self.byte_data), standard_blob_tier=standard_blob_tier,
                          overwrite=overwrite, tags=tags)
         return blob_name
 
@@ -145,7 +193,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNone(blob.deleted_time)
         self.assertIsNone(blob.remaining_retention_days)
 
-    #-- Common test cases for blobs ----------------------------------------------
+    # -- Common test cases for blobs ----------------------------------------------
     @GlobalStorageAccountPreparer()
     def test_blob_exists(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
@@ -1802,7 +1850,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @GlobalStorageAccountPreparer()
-    def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):   
+    def test_token_credential_with_batch_operation(self, resource_group, location, storage_account, storage_account_key):
         # Setup
         container_name = self._get_container_reference()
         blob_name = self._get_blob_reference()
@@ -1817,7 +1865,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
             delete_batch = []
             blob_list = container.list_blobs(name_starts_with=blob_name)
-            for blob in blob_list:        
+            for blob in blob_list:
                 delete_batch.append(blob.name)
 
             container.delete_blobs(*delete_batch)
@@ -2349,4 +2397,18 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.blob_tier, 'Hot')
         self.assertEqual(origin_props.blob_tier, 'Cool')
 
-#------------------------------------------------------------------------------
+    @GlobalStorageAccountPreparer()
+    def test_access_token_refresh_after_retry(self, resource_group, location, storage_account, storage_account_key):
+        def fail_response(response):
+            response.http_response.status_code = 408
+
+        cred_token = MockCredential()
+        cred_policy = CredentialRotationPolicy(cred_token)
+        self._setup(storage_account, storage_account_key, [cred_policy], total_retries=2)
+        blob_name = self.get_resource_name("testpolicies")
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with self.assertRaises(Exception):
+            blob.upload_blob("abc", overwrite=True, raw_response_hook=fail_response)
+        self.assertEqual(cred_policy.refresh_counter, 4)
+
+# ------------------------------------------------------------------------------
