@@ -3,7 +3,7 @@
 ## 1.0.0b1 (2020-10-31)
 
 This is beta preview version.
-For detailed changelog please refer to equivalent stable version 3.0.0 (https://pypi.org/project/azure-mgmt-machinelearningservices/0.1.0/)
+For detailed changelog please refer to equivalent stable version 0.1.0 (https://pypi.org/project/azure-mgmt-machinelearningservices/0.1.0/)
 
 This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
 
@@ -31,6 +31,6 @@ This version uses a next-generation code generator that introduces important bre
 - This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 
-## 0.4.1 (2018-05-29)
+## 0.1.0 (2019-06-27)
 
   - Initial Release
