@@ -64,19 +64,21 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _check_live(self):
         """check whether the receiver is alive"""
+        # pylint: disable=protected-access
         if self._session and self._session._lock_expired:  # pylint: disable=protected-access
             raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
 
     def _get_source(self):
+        # pylint: disable=protected-access
         if self._session:
             source = Source(self._entity_uri)
             session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
             source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
             return source
-        else:
-            return self._entity_uri
+        return self._entity_uri
 
     def _on_attach(self, source, target, properties, error):
+        # pylint: disable=protected-access, unused-argument
         if self._session and str(source) == self._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
             self._session._session_start = utc_now()
