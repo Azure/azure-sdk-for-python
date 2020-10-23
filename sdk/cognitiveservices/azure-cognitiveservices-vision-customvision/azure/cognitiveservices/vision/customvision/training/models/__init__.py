@@ -11,6 +11,8 @@
 
 try:
     from ._models_py3 import BoundingBox
+    from ._models_py3 import CreateProjectOptions
+    from ._models_py3 import CustomBaseModelInfo
     from ._models_py3 import CustomVisionError, CustomVisionErrorException
     from ._models_py3 import Domain
     from ._models_py3 import Export
@@ -21,6 +23,8 @@ try:
     from ._models_py3 import ImageFileCreateEntry
     from ._models_py3 import ImageIdCreateBatch
     from ._models_py3 import ImageIdCreateEntry
+    from ._models_py3 import ImageMetadataUpdateEntry
+    from ._models_py3 import ImageMetadataUpdateSummary
     from ._models_py3 import ImagePerformance
     from ._models_py3 import ImagePrediction
     from ._models_py3 import ImageProcessingSettings
@@ -39,6 +43,7 @@ try:
     from ._models_py3 import ImageUrlCreateEntry
     from ._models_py3 import Iteration
     from ._models_py3 import IterationPerformance
+    from ._models_py3 import ModelInformation
     from ._models_py3 import Prediction
     from ._models_py3 import PredictionQueryResult
     from ._models_py3 import PredictionQueryTag
@@ -59,6 +64,8 @@ try:
     from ._models_py3 import TrainingParameters
 except (SyntaxError, ImportError):
     from ._models import BoundingBox
+    from ._models import CreateProjectOptions
+    from ._models import CustomBaseModelInfo
     from ._models import CustomVisionError, CustomVisionErrorException
     from ._models import Domain
     from ._models import Export
@@ -69,6 +76,8 @@ except (SyntaxError, ImportError):
     from ._models import ImageFileCreateEntry
     from ._models import ImageIdCreateBatch
     from ._models import ImageIdCreateEntry
+    from ._models import ImageMetadataUpdateEntry
+    from ._models import ImageMetadataUpdateSummary
     from ._models import ImagePerformance
     from ._models import ImagePrediction
     from ._models import ImageProcessingSettings
@@ -87,6 +96,7 @@ except (SyntaxError, ImportError):
     from ._models import ImageUrlCreateEntry
     from ._models import Iteration
     from ._models import IterationPerformance
+    from ._models import ModelInformation
     from ._models import Prediction
     from ._models import PredictionQueryResult
     from ._models import PredictionQueryTag
@@ -113,6 +123,7 @@ from ._custom_vision_training_client_enums import (
     ExportPlatform,
     ExportStatus,
     ImageCreateStatus,
+    ImageMetadataUpdateStatus,
     OrderBy,
     ProjectStatus,
     SortBy,
@@ -122,6 +133,8 @@ from ._custom_vision_training_client_enums import (
 
 __all__ = [
     'BoundingBox',
+    'CreateProjectOptions',
+    'CustomBaseModelInfo',
     'CustomVisionError', 'CustomVisionErrorException',
     'Domain',
     'Export',
@@ -132,6 +145,8 @@ __all__ = [
     'ImageFileCreateEntry',
     'ImageIdCreateBatch',
     'ImageIdCreateEntry',
+    'ImageMetadataUpdateEntry',
+    'ImageMetadataUpdateSummary',
     'ImagePerformance',
     'ImagePrediction',
     'ImageProcessingSettings',
@@ -150,6 +165,7 @@ __all__ = [
     'ImageUrlCreateEntry',
     'Iteration',
     'IterationPerformance',
+    'ModelInformation',
     'Prediction',
     'PredictionQueryResult',
     'PredictionQueryTag',
@@ -174,10 +190,11 @@ __all__ = [
     'ExportStatus',
     'ExportFlavor',
     'ImageCreateStatus',
+    'ImageMetadataUpdateStatus',
+    'TagType',
     'Classifier',
     'TrainingType',
     'OrderBy',
     'ProjectStatus',
     'SortBy',
-    'TagType',
 ]
