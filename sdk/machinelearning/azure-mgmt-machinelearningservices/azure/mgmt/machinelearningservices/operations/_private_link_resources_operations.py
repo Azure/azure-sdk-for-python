@@ -22,8 +22,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class VirtualMachineSizesOperations(object):
-    """VirtualMachineSizesOperations operations.
+class PrivateLinkResourcesOperations(object):
+    """PrivateLinkResourcesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -44,28 +44,25 @@ class VirtualMachineSizesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_by_workspace(
         self,
-        location,  # type: str
-        compute_type=None,  # type: Optional[str]
-        recommended=None,  # type: Optional[bool]
+        resource_group_name,  # type: str
+        workspace_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VirtualMachineSizeListResult"
-        """Returns supported VM Sizes in a location.
+        # type: (...) -> "models.PrivateLinkResourceListResult"
+        """Gets the private link resources that need to be created for a workspace.
 
-        :param location: The location upon which virtual-machine-sizes is queried.
-        :type location: str
-        :param compute_type: Type of compute to filter by.
-        :type compute_type: str
-        :param recommended: Specifies whether to return recommended vm sizes or all vm sizes.
-        :type recommended: bool
+        :param resource_group_name: Name of the resource group in which workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualMachineSizeListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.VirtualMachineSizeListResult
+        :return: PrivateLinkResourceListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.PrivateLinkResourceListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualMachineSizeListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourceListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -74,20 +71,17 @@ class VirtualMachineSizesOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.list.metadata['url']  # type: ignore
+        url = self.list_by_workspace.metadata['url']  # type: ignore
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if compute_type is not None:
-            query_parameters['compute-type'] = self._serialize.query("compute_type", compute_type, 'str')
-        if recommended is not None:
-            query_parameters['recommended'] = self._serialize.query("recommended", recommended, 'bool')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -101,10 +95,10 @@ class VirtualMachineSizesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VirtualMachineSizeListResult', pipeline_response)
+        deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/vmSizes'}  # type: ignore
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateLinkResources'}  # type: ignore
