@@ -20,6 +20,7 @@ from .operations import ConfigurationStoresOperations
 from .operations import Operations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
+from .operations import KeyValuesOperations
 from .. import models
 
 
@@ -34,6 +35,8 @@ class AppConfigurationManagementClient(object):
     :vartype private_endpoint_connections: app_configuration_management_client.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: app_configuration_management_client.aio.operations.PrivateLinkResourcesOperations
+    :ivar key_values: KeyValuesOperations operations
+    :vartype key_values: app_configuration_management_client.aio.operations.KeyValuesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Microsoft Azure subscription ID.
@@ -56,7 +59,6 @@ class AppConfigurationManagementClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.configuration_stores = ConfigurationStoresOperations(
@@ -66,6 +68,8 @@ class AppConfigurationManagementClient(object):
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.key_values = KeyValuesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:
