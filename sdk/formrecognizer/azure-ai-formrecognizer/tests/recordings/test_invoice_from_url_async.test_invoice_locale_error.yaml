@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '163'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false&locale=not%20a%20locale
+  response:
+    body:
+      string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
+        "58e0b866-4580-4e80-bf21-a3e758e4fd3f"}, "message": "Locale unsupported. Supported
+        locale includes en-US."}}'
+    headers:
+      apim-request-id: 58e0b866-4580-4e80-bf21-a3e758e4fd3f
+      content-length: '169'
+      content-type: application/json; charset=utf-8
+      date: Fri, 23 Oct 2020 22:20:22 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '579'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false&locale=not%20a%20locale
+version: 1

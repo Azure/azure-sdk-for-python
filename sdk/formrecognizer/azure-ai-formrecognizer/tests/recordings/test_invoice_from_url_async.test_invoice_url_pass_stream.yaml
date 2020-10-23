@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: 'b''{"source": "<_io.BufferedReader name=\''/Users/isabellacai/Desktop/github_repos/azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff\''>"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '185'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "f7eb2190-2c35-4413-921c-8d7b88b7ba94"},
+        "message": "Image URL is badly formatted."}}'
+    headers:
+      apim-request-id: f7eb2190-2c35-4413-921c-8d7b88b7ba94
+      content-length: '144'
+      content-type: application/json; charset=utf-8
+      date: Fri, 23 Oct 2020 22:20:21 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '8'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+version: 1

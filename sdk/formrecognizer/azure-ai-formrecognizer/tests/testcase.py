@@ -86,6 +86,7 @@ class FormRecognizerTest(AzureTestCase):
         self.business_card_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"
         self.business_card_multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-multipage.pdf"
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
+        self.invoice_url_tiff = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
         self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
         self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
@@ -343,6 +344,17 @@ class FormRecognizerTest(AzureTestCase):
         self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), actual.get("Faxes"), read_results)
         self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
         self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
+
+    def assertInvoiceTransformCorrect(self, invoice, actual, read_results=None):
+        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorName"), actual.get("VendorName"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorAddress"), actual.get("VendorAddress"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddressRecipient"), actual.get("CustomerAddressRecipient"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddress"), actual.get("CustomerAddress"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerName"), actual.get("CustomerName"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceId"), actual.get("InvoiceId"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceDate"), actual.get("InvoiceDate"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceTotal"), actual.get("InvoiceTotal"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("DueDate"), actual.get("DueDate"), read_results)
 
     def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None, **kwargs):
         for table, actual_table in zip(layout, actual_layout):
