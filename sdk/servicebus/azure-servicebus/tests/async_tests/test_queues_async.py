@@ -15,6 +15,7 @@ import uuid
 from datetime import datetime, timedelta
 
 import uamqp
+import uamqp.errors
 from uamqp import compat
 from azure.servicebus.aio import (
     ServiceBusClient,
@@ -1512,3 +1513,48 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         finally:
             # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
             uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = original_execute_method
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', lock_duration='PT5S')
+    async def test_async_queue_operation_negative(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        def _hack_amqp_message_complete(cls):
+            raise RuntimeError()
+
+        async def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
+            raise uamqp.errors.AMQPConnectionError()
+
+        async def _hack_sb_message_settle_message(self, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
+            raise uamqp.errors.AMQPError()
+
+        async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with sender, receiver:
+                # negative settlement via receiver link
+                await sender.send_messages(Message("body"), timeout=5)
+                message = (await receiver.receive_messages(max_wait_time=5))[0]
+                message.message.accept = types.MethodType(_hack_amqp_message_complete, message.message)
+                await message.complete()  # settle via mgmt link
+
+                try:
+                    origin_amqp_mgmt_request_method = receiver._handler.mgmt_request_async
+                    with pytest.raises(ServiceBusConnectionError):
+                        receiver._handler.mgmt_request_async = types.MethodType(_hack_amqp_mgmt_request, receiver._handler)
+                        await receiver.peek_messages()
+                finally:
+                    receiver._handler.mgmt_request = types.MethodType(origin_amqp_mgmt_request_method, receiver._handler)
+
+                await sender.send_messages(Message("body"), timeout=5)
+
+                message = (await receiver.receive_messages(max_wait_time=5))[0]
+                message._settle_message = types.MethodType(_hack_sb_message_settle_message, message)
+                with pytest.raises(MessageSettleFailed):
+                    await message.complete()
+
+                message = (await receiver.receive_messages(max_wait_time=6))[0]
+                await message.complete()

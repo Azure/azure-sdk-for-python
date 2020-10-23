@@ -20,8 +20,7 @@ from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusAuthenticationError,
-    ServiceBusAuthorizationError,
-    ServiceBusResourceNotFound
+    ServiceBusAuthorizationError
 )
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
