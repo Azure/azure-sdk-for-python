@@ -53,67 +53,6 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
-class _PagingOption(str, Enum):
-    """Known paging options from Swagger."""
-
-    TOKEN_INPUT_PARAMETER = "continuation-token-input-parameter"  # for token paging, which parameter will hold continuation token
-
-class BadStatus(Exception):
-    pass
-
-
-class BadResponse(Exception):
-    pass
-
-
-class OperationFailed(Exception):
-    pass
-
-def _raise_if_bad_http_status_and_method(response):
-    # type: (ResponseType) -> None
-    """Check response status code is valid.
-
-    Must be 200, 201, 202, or 204.
-
-    :raises: BadStatus if invalid status.
-    """
-    code = response.status_code
-    if code in {200, 201, 202, 204}:
-        return
-    raise BadStatus(
-        "Invalid return status {!r} for {!r} operation".format(
-            code, response.request.method
-        )
-    )
-
-class PageIteratorABC(ABC):
-
-    def initialize(
-        self,
-        client,
-        initial_call,
-        extract_data,
-        prepare_request_to_separate_next_operation=None
-    ):
-        raise NotImplementedError("This method needs to be implemented")
-
-    def get_initial_page(self):
-        raise NotImplementedError("This method needs to be implemented")
-
-    def get_next_page(self):
-        raise NotImplementedError("This method needs to be implemented")
-
-    def finished(self):
-        raise NotImplementedError("This method needs to be implemented")
-
-    def __iter__(self):
-        raise NotImplementedError("This method needs to be implemented")
-
-    def __next__(self):
-        raise NotImplementedError("This method needs to be implemented")
-
-
-
 class PageIterator(PageIteratorABC):
     def __init__(
         self,
@@ -237,7 +176,7 @@ class PageIteratorWithInitialResponse(PageIterator):
 
 class PageIteratorWithContinuationToken(PageIterator):
 
-    def _set_continuation_token(self):
+    def _add_continuation_token(self):
         set_continuation_token = False
         continuation_token_input_parameter = self._paging_options[_PagingOption.TOKEN_INPUT_PARAMETER]
         request_params = self._algorithm.get_request_parameters()
