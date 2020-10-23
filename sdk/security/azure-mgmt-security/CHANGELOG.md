@@ -1,6 +1,5 @@
 # Release History
 
-
 ## 0.5.0 (2020-10-23)
 
 **Features**
