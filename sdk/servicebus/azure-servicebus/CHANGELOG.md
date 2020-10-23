@@ -3,7 +3,13 @@
 ## 7.0.0b8 (Unreleased)
 
 **Breaking Changes**
-  - Renamed `AutoLockRenew` to `AutoLockRenewer`
+  - Renamed `AutoLockRenew` to `AutoLockRenewer`.
+  - Renamed `Message` to `ServiceBusMessage`.
+  - Renamed `PeekedMessage` to `ServiceBusPeekedMessage`.
+  - Renamed `ReceivedMessage` to `ServiceBusReceivedMessage`.
+  - Renamed `BatchMessage` to `ServiceBusMessageBatch`.
+    - - Renamed method `add` to `add_message` on the class.
+  - Renamed `ServiceBusSender.create_batch` to `ServiceBusSender.create_message_batch`.
 
 **New Features**
 

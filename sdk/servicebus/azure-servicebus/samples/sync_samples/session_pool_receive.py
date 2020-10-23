@@ -8,7 +8,7 @@ import os
 import uuid
 import concurrent
 
-from azure.servicebus import ServiceBusClient, Message, AutoLockRenewer
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, AutoLockRenewer
 from azure.servicebus.exceptions import NoActiveSession
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -51,7 +51,7 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
         with client.get_queue_sender(queue_name) as sender:
             for session_id in sessions:
                 for i in range(20):
-                    message = Message("Sample message no. {}".format(i), session_id=session_id)
+                    message = ServiceBusMessage("Sample message no. {}".format(i), session_id=session_id)
                     sender.send_messages(message)
 
         all_messages = []

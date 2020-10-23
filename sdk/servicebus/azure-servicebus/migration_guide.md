@@ -50,7 +50,7 @@ semantics with the sender or receiver lifetime.
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `QueueClient.from_connection_string().send()  and ServiceBusClient.from_connection_string().get_queue().get_sender().send()`| `ServiceBusClient.from_connection_string().get_queue_sender().send_messages()`| [Get a sender and send a message](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) |
-| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_batch()  batch.add(Message("data 1"))  queue_sender.send_messages(batch)`| [Create and send a batch of messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) |
+| `queue_client.send(BatchMessage(["data 1", "data 2", ...]))`| `batch = queue_sender.create_message_batch()  batch.add_message(Message("data 1"))  queue_sender.send_messages(batch)`| [Create and send a batch of messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py) |
 
 ### Scheduling messages and cancelling scheduled messages 
 
@@ -175,8 +175,8 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR) as client:
             sender.send_messages(message)
 
         # Send as a batch
-        batch = new BatchMessage()
+        batch = new ServiceBusMessageBatch()
         for i in range(10):
-            batch.add(Message("Batch message no. {}".format(i)))
+            batch.add_message(Message("Batch message no. {}".format(i)))
         sender.send_messages(batch)
 ```

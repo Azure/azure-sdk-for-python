@@ -65,7 +65,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
@@ -148,7 +148,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         if not self.message.annotations:
             self.message.annotations = {}
 
-        if isinstance(self, ReceivedMessage):
+        if isinstance(self, ServiceBusReceivedMessage):
             try:
                 del self.message.annotations[key]
             except KeyError:
@@ -163,7 +163,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
 
     def _to_outgoing_message(self):
-        # type: () -> Message
+        # type: () -> ServiceBusMessage
         self.message.state = MessageState.WaitingToBeSent
         self.message._response = None # pylint: disable=protected-access
         return self
@@ -489,49 +489,53 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._amqp_properties.to = val
 
 
-class BatchMessage(object):
+class ServiceBusMessageBatch(object):
     """A batch of messages.
 
     Sending messages in a batch is more performant than sending individual message.
-    BatchMessage helps you create the maximum allowed size batch of `Message` to improve sending performance.
+    ServiceBusMessageBatch helps you create the maximum allowed size batch of `Message` to improve sending performance.
 
     Use the `add` method to add messages until the maximum batch size limit in bytes has been reached -
     at which point a `ValueError` will be raised.
 
-    **Please use the create_batch method of ServiceBusSender
-    to create a BatchMessage object instead of instantiating a BatchMessage object directly.**
+    **Please use the create_message_batch method of ServiceBusSender
+    to create a ServiceBusMessageBatch object instead of instantiating a ServiceBusMessageBatch object directly.**
 
-    :ivar max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
-    :vartype max_size_in_bytes: int
-    :ivar message: Internal AMQP BatchMessage object.
-    :vartype message: ~uamqp.BatchMessage
-
-    :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
+    :param int max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
     """
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
-        self.max_size_in_bytes = max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
+        self._max_size_in_bytes = max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
-        self._messages = []  # type: List[Message]
+        self._messages = []  # type: List[ServiceBusMessage]
 
     def __repr__(self):
         # type: () -> str
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
             self.max_size_in_bytes, self._count
         )
-        return "BatchMessage({})".format(batch_repr)
+        return "ServiceBusMessageBatch({})".format(batch_repr)
 
     def __len__(self):
         return self._count
 
     def _from_list(self, messages):
         for each in messages:
-            if not isinstance(each, Message):
+            if not isinstance(each, ServiceBusMessage):
                 raise TypeError("Only Message or an iterable object containing Message objects are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
-            self.add(each)
+            self.add_message(each)
+
+    @property
+    def max_size_in_bytes(self):
+        # type: () -> int
+        """The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
+
+        :rtype: int
+        """
+        return self._max_size_in_bytes
 
     @property
     def size_in_bytes(self):
@@ -542,8 +546,8 @@ class BatchMessage(object):
         """
         return self._size
 
-    def add(self, message):
-        # type: (Message) -> None
+    def add_message(self, message):
+        # type: (ServiceBusMessage) -> None
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -551,15 +555,15 @@ class BatchMessage(object):
         be raised.
 
         :param message: The Message to be added to the batch.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.ServiceBusMessage
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
         message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
 
-        # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
-        # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
+        # message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
             self._size
             + message_size
@@ -568,7 +572,7 @@ class BatchMessage(object):
 
         if size_after_add > self.max_size_in_bytes:
             raise MessageContentTooLarge(
-                "BatchMessage has reached its size limit: {}".format(
+                "ServiceBusMessageBatch has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
@@ -579,7 +583,7 @@ class BatchMessage(object):
         self._messages.append(message)
 
 
-class PeekedMessage(Message):
+class ServiceBusPeekedMessage(ServiceBusMessage):
     """A preview message.
 
     This message is still on the queue, and unlocked.
@@ -589,10 +593,10 @@ class PeekedMessage(Message):
 
     def __init__(self, message):
         # type: (uamqp.message.Message) -> None
-        super(PeekedMessage, self).__init__(None, message=message) # type: ignore
+        super(ServiceBusPeekedMessage, self).__init__(None, message=message) # type: ignore
 
     def _to_outgoing_message(self):
-        # type: () -> Message
+        # type: () -> ServiceBusMessage
         amqp_message = self.message
         amqp_body = amqp_message._body  # pylint: disable=protected-access
 
@@ -602,7 +606,7 @@ class PeekedMessage(Message):
             # amqp_body is type of uamqp.message.ValueBody
             body = amqp_body.data
 
-        return Message(
+        return ServiceBusMessage(
             body=body,
             content_type=self.content_type,
             correlation_id=self.correlation_id,
@@ -618,53 +622,6 @@ class PeekedMessage(Message):
             to=self.to,
             via_partition_key=self.via_partition_key
         )
-
-    @property
-    def dead_letter_error_description(self):
-        # type: () -> Optional[str]
-        """
-        Dead letter error description, when the message is received from a deadletter subqueue of an entity.
-
-        :rtype: str
-        """
-        if self.message.application_properties:
-            try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
-            except AttributeError:
-                pass
-        return None
-
-    @property
-    def dead_letter_reason(self):
-        # type: () -> Optional[str]
-        """
-        Dead letter reason, when the message is received from a deadletter subqueue of an entity.
-
-        :rtype: str
-        """
-        if self.message.application_properties:
-            try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
-            except AttributeError:
-                pass
-        return None
-
-    @property
-    def dead_letter_source(self):
-        # type: () -> Optional[str]
-        """
-        The name of the queue or subscription that this message was enqueued on, before it was deadlettered.
-        This property is only set in messages that have been dead-lettered and subsequently auto-forwarded
-        from the dead-letter queue to another entity. Indicates the entity in which the message was dead-lettered.
-
-        :rtype: str
-        """
-        if self.message.annotations:
-            try:
-                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
-            except AttributeError:
-                pass
-        return None
 
     @property
     def delivery_count(self):
@@ -737,7 +694,7 @@ class PeekedMessage(Message):
         return None
 
 
-class ReceivedMessageBase(PeekedMessage):
+class ServiceBusReceivedMessageBase(ServiceBusPeekedMessage):
     """
     A Service Bus Message received from service side.
 
@@ -756,7 +713,7 @@ class ReceivedMessageBase(PeekedMessage):
 
     def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
         # type: (uamqp.message.Message, ReceiveMode, Any) -> None
-        super(ReceivedMessageBase, self).__init__(message=message)
+        super(ServiceBusReceivedMessageBase, self).__init__(message=message)
         self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
@@ -858,6 +815,53 @@ class ReceivedMessageBase(PeekedMessage):
         return False
 
     @property
+    def dead_letter_error_description(self):
+        # type: () -> Optional[str]
+        """
+        Dead letter error description, when the message is received from a deadletter subqueue of an entity.
+
+        :rtype: str
+        """
+        if self.message.application_properties:
+            try:
+                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
+            except AttributeError:
+                pass
+        return None
+
+    @property
+    def dead_letter_reason(self):
+        # type: () -> Optional[str]
+        """
+        Dead letter reason, when the message is received from a deadletter subqueue of an entity.
+
+        :rtype: str
+        """
+        if self.message.application_properties:
+            try:
+                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
+            except AttributeError:
+                pass
+        return None
+
+    @property
+    def dead_letter_source(self):
+        # type: () -> Optional[str]
+        """
+        The name of the queue or subscription that this message was enqueued on, before it was deadlettered.
+        This property is only set in messages that have been dead-lettered and subsequently auto-forwarded
+        from the dead-letter queue to another entity. Indicates the entity in which the message was dead-lettered.
+
+        :rtype: str
+        """
+        if self.message.annotations:
+            try:
+                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
+            except AttributeError:
+                pass
+        return None
+
+    @property
     def lock_token(self):
         # type: () -> Optional[Union[uuid.UUID, str]]
         """
@@ -901,7 +905,7 @@ class ReceivedMessageBase(PeekedMessage):
         return self._expiry
 
 
-class ReceivedMessage(ReceivedMessageBase):
+class ServiceBusReceivedMessage(ServiceBusReceivedMessageBase):
     def _settle_message(
         self,
         settle_operation,
