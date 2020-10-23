@@ -160,7 +160,11 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.begin_analyze_layout_async(page_range, file_stream, **kwargs)
+        # FIXME: this is handwritten
+        if api_version == '2.0':
+            return mixin_instance.begin_analyze_layout_async(file_stream, **kwargs)
+        elif api_version == '2.1-preview.2':
+            return mixin_instance.begin_analyze_layout_async(page_range, file_stream, **kwargs)
 
     def begin_analyze_receipt_async(
         self,
