@@ -624,6 +624,53 @@ class ServiceBusPeekedMessage(ServiceBusMessage):
         )
 
     @property
+    def dead_letter_error_description(self):
+        # type: () -> Optional[str]
+        """
+        Dead letter error description, when the message is received from a deadletter subqueue of an entity.
+
+        :rtype: str
+        """
+        if self.message.application_properties:
+            try:
+                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
+            except AttributeError:
+                pass
+        return None
+
+    @property
+    def dead_letter_reason(self):
+        # type: () -> Optional[str]
+        """
+        Dead letter reason, when the message is received from a deadletter subqueue of an entity.
+
+        :rtype: str
+        """
+        if self.message.application_properties:
+            try:
+                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
+            except AttributeError:
+                pass
+        return None
+
+    @property
+    def dead_letter_source(self):
+        # type: () -> Optional[str]
+        """
+        The name of the queue or subscription that this message was enqueued on, before it was deadlettered.
+        This property is only set in messages that have been dead-lettered and subsequently auto-forwarded
+        from the dead-letter queue to another entity. Indicates the entity in which the message was dead-lettered.
+
+        :rtype: str
+        """
+        if self.message.annotations:
+            try:
+                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
+            except AttributeError:
+                pass
+        return None
+
+    @property
     def delivery_count(self):
         # type: () -> Optional[int]
         """
@@ -813,53 +860,6 @@ class ServiceBusReceivedMessageBase(ServiceBusPeekedMessage):
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True
         return False
-
-    @property
-    def dead_letter_error_description(self):
-        # type: () -> Optional[str]
-        """
-        Dead letter error description, when the message is received from a deadletter subqueue of an entity.
-
-        :rtype: str
-        """
-        if self.message.application_properties:
-            try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION).decode('UTF-8')
-            except AttributeError:
-                pass
-        return None
-
-    @property
-    def dead_letter_reason(self):
-        # type: () -> Optional[str]
-        """
-        Dead letter reason, when the message is received from a deadletter subqueue of an entity.
-
-        :rtype: str
-        """
-        if self.message.application_properties:
-            try:
-                return self.message.application_properties.get(PROPERTIES_DEAD_LETTER_REASON).decode('UTF-8')
-            except AttributeError:
-                pass
-        return None
-
-    @property
-    def dead_letter_source(self):
-        # type: () -> Optional[str]
-        """
-        The name of the queue or subscription that this message was enqueued on, before it was deadlettered.
-        This property is only set in messages that have been dead-lettered and subsequently auto-forwarded
-        from the dead-letter queue to another entity. Indicates the entity in which the message was dead-lettered.
-
-        :rtype: str
-        """
-        if self.message.annotations:
-            try:
-                return self.message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode('UTF-8')
-            except AttributeError:
-                pass
-        return None
 
     @property
     def lock_token(self):
