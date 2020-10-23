@@ -81,12 +81,12 @@ try:
         dtdl_model_room = json.load(f)
 
     new_model_list = []
-    new_model_list.append(
-        dtdl_model_building,
-        dtdl_model_floor,
-        dtdl_model_hvac,
-        dtdl_model_room
-    )
+
+    new_model_list.append(dtdl_model_building)
+    new_model_list.append(dtdl_model_floor)
+    new_model_list.append(dtdl_model_hvac)
+    new_model_list.append(dtdl_model_room)
+    
     models = service_client.create_models(new_model_list)
     print('Created Models:')
     print(models)
