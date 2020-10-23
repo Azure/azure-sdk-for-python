@@ -14,26 +14,26 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
     body:
-      string: '{"value":[{"rootCause":{"dimension":{"dimension_name":"Delhi","category":"Shoes
-        Handbags & Sunglasses"}},"path":[],"score":1.0,"description":"No root cause
-        insight."}]}'
+      string: '{"value":[{"rootCause":{"dimension":{"category":"Shoes Handbags & Sunglasses","dimension_name":"Mumbai"}},"path":["dimension_name","category"],"score":0.1494267098214867,"description":"Decrease
+        on category = Shoes Handbags & Sunglasses | dimension_name = Mumbai contributes
+        the most to current incident."}]}'
     headers:
       apim-request-id:
-      - 8fa88e36-f866-48c1-825d-1861135b9584
+      - 828a8895-7d09-4a7f-9deb-3971845e666e
       content-length:
-      - '158'
+      - '277'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Oct 2020 21:42:39 GMT
+      - Fri, 23 Oct 2020 16:05:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '211'
+      - '352'
       x-request-id:
-      - 8fa88e36-f866-48c1-825d-1861135b9584
+      - 828a8895-7d09-4a7f-9deb-3971845e666e
     status:
       code: 200
       message: OK
