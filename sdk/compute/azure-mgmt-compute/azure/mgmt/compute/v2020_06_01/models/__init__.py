@@ -22,8 +22,6 @@ try:
     from ._models_py3 import BillingProfile
     from ._models_py3 import BootDiagnostics
     from ._models_py3 import BootDiagnosticsInstanceView
-    from ._models_py3 import Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties
-    from ._models_py3 import ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import ComputeOperationListResult
     from ._models_py3 import ComputeOperationValue
     from ._models_py3 import DataDisk
@@ -118,6 +116,7 @@ try:
     from ._models_py3 import UpgradePolicy
     from ._models_py3 import Usage
     from ._models_py3 import UsageName
+    from ._models_py3 import UserAssignedIdentitiesValue
     from ._models_py3 import VMScaleSetConvertToSinglePlacementGroupInput
     from ._models_py3 import VaultCertificate
     from ._models_py3 import VaultSecretGroup
@@ -141,6 +140,11 @@ try:
     from ._models_py3 import VirtualMachineListResult
     from ._models_py3 import VirtualMachinePatchStatus
     from ._models_py3 import VirtualMachineReimageParameters
+    from ._models_py3 import VirtualMachineRunCommand
+    from ._models_py3 import VirtualMachineRunCommandInstanceView
+    from ._models_py3 import VirtualMachineRunCommandScriptSource
+    from ._models_py3 import VirtualMachineRunCommandUpdate
+    from ._models_py3 import VirtualMachineRunCommandsListResult
     from ._models_py3 import VirtualMachineScaleSet
     from ._models_py3 import VirtualMachineScaleSetDataDisk
     from ._models_py3 import VirtualMachineScaleSetExtension
@@ -149,6 +153,7 @@ try:
     from ._models_py3 import VirtualMachineScaleSetExtensionUpdate
     from ._models_py3 import VirtualMachineScaleSetIPConfiguration
     from ._models_py3 import VirtualMachineScaleSetIdentity
+    from ._models_py3 import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue
     from ._models_py3 import VirtualMachineScaleSetInstanceView
     from ._models_py3 import VirtualMachineScaleSetInstanceViewStatusesSummary
     from ._models_py3 import VirtualMachineScaleSetIpTag
@@ -211,8 +216,6 @@ except (SyntaxError, ImportError):
     from ._models import BillingProfile  # type: ignore
     from ._models import BootDiagnostics  # type: ignore
     from ._models import BootDiagnosticsInstanceView  # type: ignore
-    from ._models import Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
-    from ._models import ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import ComputeOperationListResult  # type: ignore
     from ._models import ComputeOperationValue  # type: ignore
     from ._models import DataDisk  # type: ignore
@@ -307,6 +310,7 @@ except (SyntaxError, ImportError):
     from ._models import UpgradePolicy  # type: ignore
     from ._models import Usage  # type: ignore
     from ._models import UsageName  # type: ignore
+    from ._models import UserAssignedIdentitiesValue  # type: ignore
     from ._models import VMScaleSetConvertToSinglePlacementGroupInput  # type: ignore
     from ._models import VaultCertificate  # type: ignore
     from ._models import VaultSecretGroup  # type: ignore
@@ -330,6 +334,11 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineListResult  # type: ignore
     from ._models import VirtualMachinePatchStatus  # type: ignore
     from ._models import VirtualMachineReimageParameters  # type: ignore
+    from ._models import VirtualMachineRunCommand  # type: ignore
+    from ._models import VirtualMachineRunCommandInstanceView  # type: ignore
+    from ._models import VirtualMachineRunCommandScriptSource  # type: ignore
+    from ._models import VirtualMachineRunCommandUpdate  # type: ignore
+    from ._models import VirtualMachineRunCommandsListResult  # type: ignore
     from ._models import VirtualMachineScaleSet  # type: ignore
     from ._models import VirtualMachineScaleSetDataDisk  # type: ignore
     from ._models import VirtualMachineScaleSetExtension  # type: ignore
@@ -338,6 +347,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineScaleSetExtensionUpdate  # type: ignore
     from ._models import VirtualMachineScaleSetIPConfiguration  # type: ignore
     from ._models import VirtualMachineScaleSetIdentity  # type: ignore
+    from ._models import VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue  # type: ignore
     from ._models import VirtualMachineScaleSetInstanceView  # type: ignore
     from ._models import VirtualMachineScaleSetInstanceViewStatusesSummary  # type: ignore
     from ._models import VirtualMachineScaleSetIpTag  # type: ignore
@@ -392,6 +402,7 @@ from ._compute_management_client_enums import (
     DiffDiskOptions,
     DiffDiskPlacement,
     DiskCreateOptionTypes,
+    ExecutionState,
     HyperVGenerationType,
     HyperVGenerationTypes,
     IPVersion,
@@ -442,8 +453,6 @@ __all__ = [
     'BillingProfile',
     'BootDiagnostics',
     'BootDiagnosticsInstanceView',
-    'Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties',
-    'ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties',
     'ComputeOperationListResult',
     'ComputeOperationValue',
     'DataDisk',
@@ -538,6 +547,7 @@ __all__ = [
     'UpgradePolicy',
     'Usage',
     'UsageName',
+    'UserAssignedIdentitiesValue',
     'VMScaleSetConvertToSinglePlacementGroupInput',
     'VaultCertificate',
     'VaultSecretGroup',
@@ -561,6 +571,11 @@ __all__ = [
     'VirtualMachineListResult',
     'VirtualMachinePatchStatus',
     'VirtualMachineReimageParameters',
+    'VirtualMachineRunCommand',
+    'VirtualMachineRunCommandInstanceView',
+    'VirtualMachineRunCommandScriptSource',
+    'VirtualMachineRunCommandUpdate',
+    'VirtualMachineRunCommandsListResult',
     'VirtualMachineScaleSet',
     'VirtualMachineScaleSetDataDisk',
     'VirtualMachineScaleSetExtension',
@@ -569,6 +584,7 @@ __all__ = [
     'VirtualMachineScaleSetExtensionUpdate',
     'VirtualMachineScaleSetIPConfiguration',
     'VirtualMachineScaleSetIdentity',
+    'VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue',
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetInstanceViewStatusesSummary',
     'VirtualMachineScaleSetIpTag',
@@ -621,6 +637,7 @@ __all__ = [
     'DiffDiskOptions',
     'DiffDiskPlacement',
     'DiskCreateOptionTypes',
+    'ExecutionState',
     'HyperVGenerationType',
     'HyperVGenerationTypes',
     'IPVersion',
