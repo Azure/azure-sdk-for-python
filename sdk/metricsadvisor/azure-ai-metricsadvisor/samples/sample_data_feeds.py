@@ -35,8 +35,8 @@ def sample_create_data_feed():
     from azure.ai.metricsadvisor.models import (
         SQLServerDataFeed,
         DataFeedSchema,
-        Metric,
-        Dimension,
+        DataFeedMetric,
+        DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
         DataFeedMissingDataPointFillSettings
@@ -60,12 +60,12 @@ def sample_create_data_feed():
         granularity="Daily",
         schema=DataFeedSchema(
             metrics=[
-                Metric(name="cost", display_name="Cost"),
-                Metric(name="revenue", display_name="Revenue")
+                DataFeedMetric(name="cost", display_name="Cost"),
+                DataFeedMetric(name="revenue", display_name="Revenue")
             ],
             dimensions=[
-                Dimension(name="category", display_name="Category"),
-                Dimension(name="city", display_name="City")
+                DataFeedDimension(name="category", display_name="Category"),
+                DataFeedDimension(name="city", display_name="City")
             ],
             timestamp_column="Timestamp"
         ),
