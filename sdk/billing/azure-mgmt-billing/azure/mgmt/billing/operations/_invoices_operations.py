@@ -431,10 +431,10 @@ class InvoicesOperations(object):
     download_invoice.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoices/{invoiceName}/download'}
 
 
-    def _download_multiple_modern_invoice_initial(
+    def _download_multiple_billing_profile_invoices_initial(
             self, billing_account_name, download_urls, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.download_multiple_modern_invoice.metadata['url']
+        url = self.download_multiple_billing_profile_invoices.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
@@ -482,9 +482,9 @@ class InvoicesOperations(object):
 
         return deserialized
 
-    def download_multiple_modern_invoice(
+    def download_multiple_billing_profile_invoices(
             self, billing_account_name, download_urls, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Gets a URL to download an multiple invoices documents (invoice pdf, tax
+        """Gets a URL to download multiple invoice documents (invoice pdf, tax
         receipts, credit notes) as a zip file. The operation is supported for
         billing accounts with agreement type Microsoft Partner Agreement or
         Microsoft Customer Agreement.
@@ -509,7 +509,7 @@ class InvoicesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        raw_result = self._download_multiple_modern_invoice_initial(
+        raw_result = self._download_multiple_billing_profile_invoices_initial(
             billing_account_name=billing_account_name,
             download_urls=download_urls,
             custom_headers=custom_headers,
@@ -538,7 +538,7 @@ class InvoicesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    download_multiple_modern_invoice.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/downloadDocuments'}
+    download_multiple_billing_profile_invoices.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/downloadDocuments'}
 
     def list_by_billing_subscription(
             self, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):
@@ -773,10 +773,10 @@ class InvoicesOperations(object):
     download_billing_subscription_invoice.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/default/billingSubscriptions/{subscriptionId}/invoices/{invoiceName}/download'}
 
 
-    def _download_multiple_billing_subscription_invoice_initial(
+    def _download_multiple_billing_subscription_invoices_initial(
             self, download_urls, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.download_multiple_billing_subscription_invoice.metadata['url']
+        url = self.download_multiple_billing_subscription_invoices.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -824,9 +824,9 @@ class InvoicesOperations(object):
 
         return deserialized
 
-    def download_multiple_billing_subscription_invoice(
+    def download_multiple_billing_subscription_invoices(
             self, download_urls, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Gets a URL to download multiple invoices documents (invoice pdf, tax
+        """Gets a URL to download multiple invoice documents (invoice pdf, tax
         receipts, credit notes) as a zip file.
 
         :param download_urls: An array of download urls for individual
@@ -846,7 +846,7 @@ class InvoicesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        raw_result = self._download_multiple_billing_subscription_invoice_initial(
+        raw_result = self._download_multiple_billing_subscription_invoices_initial(
             download_urls=download_urls,
             custom_headers=custom_headers,
             raw=True,
@@ -874,4 +874,4 @@ class InvoicesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    download_multiple_billing_subscription_invoice.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/default/billingSubscriptions/{subscriptionId}/downloadDocuments'}
+    download_multiple_billing_subscription_invoices.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/default/billingSubscriptions/{subscriptionId}/downloadDocuments'}
