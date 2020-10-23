@@ -1115,6 +1115,32 @@ class ApplicationHealthPolicyMapItem(Model):
         self.value = value
 
 
+class ApplicationHealthPolicyMapObject(Model):
+    """Represents the map of application health policies for a ServiceFabric
+    cluster upgrade.
+
+    :param application_health_policy_map: Defines a map that contains specific
+     application health policies for different applications.
+     Each entry specifies as key the application name and as value an
+     ApplicationHealthPolicy used to evaluate the application health.
+     If an application is not specified in the map, the application health
+     evaluation uses the ApplicationHealthPolicy found in its application
+     manifest or the default application health policy (if no health policy is
+     defined in the manifest).
+     The map is empty by default.
+    :type application_health_policy_map:
+     list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
+    """
+
+    _attribute_map = {
+        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
+    }
+
+    def __init__(self, *, application_health_policy_map=None, **kwargs) -> None:
+        super(ApplicationHealthPolicyMapObject, self).__init__(**kwargs)
+        self.application_health_policy_map = application_health_policy_map
+
+
 class ApplicationHealthReportExpiredEvent(ApplicationEvent):
     """Application Health Report Expired event.
 
@@ -3378,7 +3404,7 @@ class BackupStorageDescription(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureBlobBackupStorageDescription,
-    FileShareBackupStorageDescription
+    FileShareBackupStorageDescription, DsmsAzureBlobBackupStorageDescription
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3398,7 +3424,7 @@ class BackupStorageDescription(Model):
     }
 
     _subtype_map = {
-        'storage_kind': {'AzureBlobStore': 'AzureBlobBackupStorageDescription', 'FileShare': 'FileShareBackupStorageDescription'}
+        'storage_kind': {'AzureBlobStore': 'AzureBlobBackupStorageDescription', 'FileShare': 'FileShareBackupStorageDescription', 'DsmsAzureBlobStore': 'DsmsAzureBlobBackupStorageDescription'}
     }
 
     def __init__(self, *, friendly_name: str=None, **kwargs) -> None:
@@ -5981,17 +6007,10 @@ class ClusterUpgradeDescriptionObject(Model):
      evaluate the health of the cluster during a cluster upgrade.
     :type cluster_upgrade_health_policy:
      ~azure.servicefabric.models.ClusterUpgradeHealthPolicyObject
-    :param application_health_policy_map: Defines a map that contains specific
-     application health policies for different applications.
-     Each entry specifies as key the application name and as value an
-     ApplicationHealthPolicy used to evaluate the application health.
-     If an application is not specified in the map, the application health
-     evaluation uses the ApplicationHealthPolicy found in its application
-     manifest or the default application health policy (if no health policy is
-     defined in the manifest).
-     The map is empty by default.
+    :param application_health_policy_map: Represents the map of application
+     health policies for a ServiceFabric cluster upgrade
     :type application_health_policy_map:
-     list[~azure.servicefabric.models.ApplicationHealthPolicyMapItem]
+     ~azure.servicefabric.models.ApplicationHealthPolicyMapObject
     """
 
     _attribute_map = {
@@ -6006,7 +6025,7 @@ class ClusterUpgradeDescriptionObject(Model):
         'monitoring_policy': {'key': 'MonitoringPolicy', 'type': 'MonitoringPolicyDescription'},
         'cluster_health_policy': {'key': 'ClusterHealthPolicy', 'type': 'ClusterHealthPolicy'},
         'cluster_upgrade_health_policy': {'key': 'ClusterUpgradeHealthPolicy', 'type': 'ClusterUpgradeHealthPolicyObject'},
-        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': '[ApplicationHealthPolicyMapItem]'},
+        'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': 'ApplicationHealthPolicyMapObject'},
     }
 
     def __init__(self, *, config_version: str=None, code_version: str=None, upgrade_kind="Rolling", rolling_upgrade_mode="UnmonitoredAuto", upgrade_replica_set_check_timeout_in_seconds: int=None, force_restart: bool=None, sort_order="Default", enable_delta_health_evaluation: bool=None, monitoring_policy=None, cluster_health_policy=None, cluster_upgrade_health_policy=None, application_health_policy_map=None, **kwargs) -> None:
@@ -9307,6 +9326,44 @@ class DoublePropertyValue(PropertyValue):
         self.kind = 'Double'
 
 
+class DsmsAzureBlobBackupStorageDescription(BackupStorageDescription):
+    """Describes the parameters for Dsms Azure blob store used for storing and
+    enumerating backups.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param friendly_name: Friendly name for this backup storage.
+    :type friendly_name: str
+    :param storage_kind: Required. Constant filled by server.
+    :type storage_kind: str
+    :param storage_credentials_source_location: Required. The source location
+     of the storage credentials to connect to the Dsms Azure blob store.
+    :type storage_credentials_source_location: str
+    :param container_name: Required. The name of the container in the blob
+     store to store and enumerate backups from.
+    :type container_name: str
+    """
+
+    _validation = {
+        'storage_kind': {'required': True},
+        'storage_credentials_source_location': {'required': True},
+        'container_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'friendly_name': {'key': 'FriendlyName', 'type': 'str'},
+        'storage_kind': {'key': 'StorageKind', 'type': 'str'},
+        'storage_credentials_source_location': {'key': 'StorageCredentialsSourceLocation', 'type': 'str'},
+        'container_name': {'key': 'ContainerName', 'type': 'str'},
+    }
+
+    def __init__(self, *, storage_credentials_source_location: str, container_name: str, friendly_name: str=None, **kwargs) -> None:
+        super(DsmsAzureBlobBackupStorageDescription, self).__init__(friendly_name=friendly_name, **kwargs)
+        self.storage_credentials_source_location = storage_credentials_source_location
+        self.container_name = container_name
+        self.storage_kind = 'DsmsAzureBlobStore'
+
+
 class EnableBackupDescription(Model):
     """Specifies the parameters needed to enable periodic backup.
 
@@ -11969,6 +12026,30 @@ class ManagedApplicationIdentityDescription(Model):
         self.managed_identities = managed_identities
 
 
+class MetricLoadDescription(Model):
+    """Specifies metric load information.
+
+    :param metric_name: The name of the reported metric.
+    :type metric_name: str
+    :param current_load: The current value of the metric load.
+    :type current_load: long
+    :param predicted_load: The predicted value of the metric load.
+    :type predicted_load: long
+    """
+
+    _attribute_map = {
+        'metric_name': {'key': 'MetricName', 'type': 'str'},
+        'current_load': {'key': 'CurrentLoad', 'type': 'long'},
+        'predicted_load': {'key': 'PredictedLoad', 'type': 'long'},
+    }
+
+    def __init__(self, *, metric_name: str=None, current_load: int=None, predicted_load: int=None, **kwargs) -> None:
+        super(MetricLoadDescription, self).__init__(**kwargs)
+        self.metric_name = metric_name
+        self.current_load = current_load
+        self.predicted_load = predicted_load
+
+
 class MonitoringPolicyDescription(Model):
     """Describes the parameters for monitoring an upgrade in Monitored mode.
 
@@ -14516,6 +14597,34 @@ class PagedSubNameInfoList(Model):
         self.sub_names = sub_names
 
 
+class PagedUpdatePartitionLoadResultList(Model):
+    """The list of results of the call UpdatePartitionLoad. The list is paged when
+    all of the results cannot fit in a single message. The next set of results
+    can be obtained by executing the same query with the continuation token
+    provided in this list.
+
+    :param continuation_token: The continuation token parameter is used to
+     obtain next set of results. The continuation token is included in the
+     response of the API when the results from the system do not fit in a
+     single response. When this value is passed to the next API call, the API
+     returns next set of results. If there are no further results, then the
+     continuation token is not included in the response.
+    :type continuation_token: str
+    :param items: List of partition load update information.
+    :type items: list[~azure.servicefabric.models.UpdatePartitionLoadResult]
+    """
+
+    _attribute_map = {
+        'continuation_token': {'key': 'ContinuationToken', 'type': 'str'},
+        'items': {'key': 'Items', 'type': '[UpdatePartitionLoadResult]'},
+    }
+
+    def __init__(self, *, continuation_token: str=None, items=None, **kwargs) -> None:
+        super(PagedUpdatePartitionLoadResultList, self).__init__(**kwargs)
+        self.continuation_token = continuation_token
+        self.items = items
+
+
 class PagedVolumeResourceDescriptionList(Model):
     """The list of volume resources. The list is paged when all of the results
     cannot fit in a single message. The next set of results can be obtained by
@@ -15100,6 +15209,43 @@ class PartitionLoadInformation(Model):
         self.partition_id = partition_id
         self.primary_load_metric_reports = primary_load_metric_reports
         self.secondary_load_metric_reports = secondary_load_metric_reports
+
+
+class PartitionMetricLoadDescription(Model):
+    """Represents load information for a partition, which contains the metrics
+    load information about primary, all secondary replicas/instances or a
+    specific secondary replica/instance located on a specific node.
+
+    :param partition_id: Id of the partition.
+    :type partition_id: str
+    :param primary_replica_load_entries: Partition's load information for
+     primary replica, in case partition is from a stateful service.
+    :type primary_replica_load_entries:
+     list[~azure.servicefabric.models.MetricLoadDescription]
+    :param secondary_replicas_or_instances_load_entries: Partition's load
+     information for all secondary replicas or instances.
+    :type secondary_replicas_or_instances_load_entries:
+     list[~azure.servicefabric.models.MetricLoadDescription]
+    :param secondary_replica_or_instance_load_entries_per_node: Partition's
+     load information for a specific secondary replica or instance located on a
+     specific node.
+    :type secondary_replica_or_instance_load_entries_per_node:
+     list[~azure.servicefabric.models.ReplicaMetricLoadDescription]
+    """
+
+    _attribute_map = {
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        'primary_replica_load_entries': {'key': 'PrimaryReplicaLoadEntries', 'type': '[MetricLoadDescription]'},
+        'secondary_replicas_or_instances_load_entries': {'key': 'SecondaryReplicasOrInstancesLoadEntries', 'type': '[MetricLoadDescription]'},
+        'secondary_replica_or_instance_load_entries_per_node': {'key': 'SecondaryReplicaOrInstanceLoadEntriesPerNode', 'type': '[ReplicaMetricLoadDescription]'},
+    }
+
+    def __init__(self, *, partition_id: str=None, primary_replica_load_entries=None, secondary_replicas_or_instances_load_entries=None, secondary_replica_or_instance_load_entries_per_node=None, **kwargs) -> None:
+        super(PartitionMetricLoadDescription, self).__init__(**kwargs)
+        self.partition_id = partition_id
+        self.primary_replica_load_entries = primary_replica_load_entries
+        self.secondary_replicas_or_instances_load_entries = secondary_replicas_or_instances_load_entries
+        self.secondary_replica_or_instance_load_entries_per_node = secondary_replica_or_instance_load_entries_per_node
 
 
 class PartitionNewHealthReportEvent(PartitionEvent):
@@ -16854,6 +17000,29 @@ class ReplicaInfo(Model):
         self.address = address
         self.last_in_build_duration_in_seconds = last_in_build_duration_in_seconds
         self.service_kind = None
+
+
+class ReplicaMetricLoadDescription(Model):
+    """Specifies metric loads of a partition's specific secondary replica or
+    instance.
+
+    :param node_name: Node name of a specific secondary replica or instance.
+    :type node_name: str
+    :param replica_or_instance_load_entries: Loads of a different metrics for
+     a partition's secondary replica or instance.
+    :type replica_or_instance_load_entries:
+     list[~azure.servicefabric.models.MetricLoadDescription]
+    """
+
+    _attribute_map = {
+        'node_name': {'key': 'NodeName', 'type': 'str'},
+        'replica_or_instance_load_entries': {'key': 'ReplicaOrInstanceLoadEntries', 'type': '[MetricLoadDescription]'},
+    }
+
+    def __init__(self, *, node_name: str=None, replica_or_instance_load_entries=None, **kwargs) -> None:
+        super(ReplicaMetricLoadDescription, self).__init__(**kwargs)
+        self.node_name = node_name
+        self.replica_or_instance_load_entries = replica_or_instance_load_entries
 
 
 class ReplicasHealthEvaluation(HealthEvaluation):
@@ -19766,6 +19935,8 @@ class ServiceUpdateDescription(Model):
      set. The value is 8192.
      - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
      property is set. The value is 16384.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 32768.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -20353,6 +20524,8 @@ class StatefulServiceDescription(ServiceDescription):
      property is set. The value is 4.
      - ServicePlacementTimeLimit - Indicates the ServicePlacementTimeLimit
      property is set. The value is 8.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 16.
     :type flags: int
     :param replica_restart_wait_duration_seconds: The duration, in seconds,
      between when a replica goes down and when a new replica is created.
@@ -20366,6 +20539,11 @@ class StatefulServiceDescription(ServiceDescription):
     :param service_placement_time_limit_seconds: The duration for which
      replicas can stay InBuild before reporting that build is stuck.
     :type service_placement_time_limit_seconds: long
+    :param drop_source_replica_on_move: Indicates whether to drop source
+     Secondary replica even if the target replica has not finished build. If
+     desired behavior is to drop it as soon as possible the value of this
+     property is true, if not it is false.
+    :type drop_source_replica_on_move: bool
     """
 
     _validation = {
@@ -20406,9 +20584,10 @@ class StatefulServiceDescription(ServiceDescription):
         'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'long'},
         'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'long'},
         'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'long'},
+        'drop_source_replica_on_move': {'key': 'DropSourceReplicaOnMove', 'type': 'bool'},
     }
 
-    def __init__(self, *, service_name: str, service_type_name: str, partition_description, target_replica_set_size: int, min_replica_set_size: int, has_persisted_state: bool, application_name: str=None, initialization_data=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified: bool=None, service_package_activation_mode=None, service_dns_name: str=None, scaling_policies=None, flags: int=None, replica_restart_wait_duration_seconds: int=None, quorum_loss_wait_duration_seconds: int=None, stand_by_replica_keep_duration_seconds: int=None, service_placement_time_limit_seconds: int=None, **kwargs) -> None:
+    def __init__(self, *, service_name: str, service_type_name: str, partition_description, target_replica_set_size: int, min_replica_set_size: int, has_persisted_state: bool, application_name: str=None, initialization_data=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, is_default_move_cost_specified: bool=None, service_package_activation_mode=None, service_dns_name: str=None, scaling_policies=None, flags: int=None, replica_restart_wait_duration_seconds: int=None, quorum_loss_wait_duration_seconds: int=None, stand_by_replica_keep_duration_seconds: int=None, service_placement_time_limit_seconds: int=None, drop_source_replica_on_move: bool=None, **kwargs) -> None:
         super(StatefulServiceDescription, self).__init__(application_name=application_name, service_name=service_name, service_type_name=service_type_name, initialization_data=initialization_data, partition_description=partition_description, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, is_default_move_cost_specified=is_default_move_cost_specified, service_package_activation_mode=service_package_activation_mode, service_dns_name=service_dns_name, scaling_policies=scaling_policies, **kwargs)
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
@@ -20418,6 +20597,7 @@ class StatefulServiceDescription(ServiceDescription):
         self.quorum_loss_wait_duration_seconds = quorum_loss_wait_duration_seconds
         self.stand_by_replica_keep_duration_seconds = stand_by_replica_keep_duration_seconds
         self.service_placement_time_limit_seconds = service_placement_time_limit_seconds
+        self.drop_source_replica_on_move = drop_source_replica_on_move
         self.service_kind = 'Stateful'
 
 
@@ -20803,6 +20983,8 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
      set. The value is 8192.
      - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
      property is set. The value is 16384.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 32768.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -20843,6 +21025,11 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
     :param service_placement_time_limit_seconds: The duration for which
      replicas can stay InBuild before reporting that build is stuck.
     :type service_placement_time_limit_seconds: str
+    :param drop_source_replica_on_move: Indicates whether to drop source
+     Secondary replica even if the target replica has not finished build. If
+     desired behavior is to drop it as soon as possible the value of this
+     property is true, if not it is false.
+    :type drop_source_replica_on_move: bool
     """
 
     _validation = {
@@ -20866,9 +21053,10 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         'quorum_loss_wait_duration_seconds': {'key': 'QuorumLossWaitDurationSeconds', 'type': 'str'},
         'stand_by_replica_keep_duration_seconds': {'key': 'StandByReplicaKeepDurationSeconds', 'type': 'str'},
         'service_placement_time_limit_seconds': {'key': 'ServicePlacementTimeLimitSeconds', 'type': 'str'},
+        'drop_source_replica_on_move': {'key': 'DropSourceReplicaOnMove', 'type': 'bool'},
     }
 
-    def __init__(self, *, flags: str=None, placement_constraints: str=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, scaling_policies=None, target_replica_set_size: int=None, min_replica_set_size: int=None, replica_restart_wait_duration_seconds: str=None, quorum_loss_wait_duration_seconds: str=None, stand_by_replica_keep_duration_seconds: str=None, service_placement_time_limit_seconds: str=None, **kwargs) -> None:
+    def __init__(self, *, flags: str=None, placement_constraints: str=None, correlation_scheme=None, load_metrics=None, service_placement_policies=None, default_move_cost=None, scaling_policies=None, target_replica_set_size: int=None, min_replica_set_size: int=None, replica_restart_wait_duration_seconds: str=None, quorum_loss_wait_duration_seconds: str=None, stand_by_replica_keep_duration_seconds: str=None, service_placement_time_limit_seconds: str=None, drop_source_replica_on_move: bool=None, **kwargs) -> None:
         super(StatefulServiceUpdateDescription, self).__init__(flags=flags, placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, load_metrics=load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, scaling_policies=scaling_policies, **kwargs)
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
@@ -20876,6 +21064,7 @@ class StatefulServiceUpdateDescription(ServiceUpdateDescription):
         self.quorum_loss_wait_duration_seconds = quorum_loss_wait_duration_seconds
         self.stand_by_replica_keep_duration_seconds = stand_by_replica_keep_duration_seconds
         self.service_placement_time_limit_seconds = service_placement_time_limit_seconds
+        self.drop_source_replica_on_move = drop_source_replica_on_move
         self.service_kind = 'Stateful'
 
 
@@ -21594,6 +21783,8 @@ class StatelessServiceUpdateDescription(ServiceUpdateDescription):
      set. The value is 8192.
      - InstanceCloseDelayDuration - Indicates the InstanceCloseDelayDuration
      property is set. The value is 16384.
+     - DropSourceReplicaOnMove - Indicates the DropSourceReplicaOnMove property
+     is set. The value is 32768.
     :type flags: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
@@ -22151,6 +22342,29 @@ class UpdateClusterUpgradeDescription(Model):
         self.enable_delta_health_evaluation = enable_delta_health_evaluation
         self.cluster_upgrade_health_policy = cluster_upgrade_health_policy
         self.application_health_policy_map = application_health_policy_map
+
+
+class UpdatePartitionLoadResult(Model):
+    """Specifies result of updating load for specified partitions. The output will
+    be ordered based on the partition ID.
+
+    :param partition_id: Id of the partition.
+    :type partition_id: str
+    :param partition_error_code: If OperationState is Completed - this is 0.
+     If OperationState is Faulted - this is an error code indicating the
+     reason.
+    :type partition_error_code: int
+    """
+
+    _attribute_map = {
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+        'partition_error_code': {'key': 'PartitionErrorCode', 'type': 'int'},
+    }
+
+    def __init__(self, *, partition_id: str=None, partition_error_code: int=None, **kwargs) -> None:
+        super(UpdatePartitionLoadResult, self).__init__(**kwargs)
+        self.partition_id = partition_id
+        self.partition_error_code = partition_error_code
 
 
 class UpgradeDomainDeltaNodesCheckHealthEvaluation(HealthEvaluation):
