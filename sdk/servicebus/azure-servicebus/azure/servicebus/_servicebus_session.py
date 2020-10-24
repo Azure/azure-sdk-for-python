@@ -32,7 +32,7 @@ class BaseSession(object):
         # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync]) -> None
         self._session_id = session_id
         self._receiver = receiver
-        self._encoding = "UTF-8"
+        self._encoding = kwargs.pop('encoding', "UTF-8")
         self._session_start = None
         self._locked_until_utc = None  # type: Optional[datetime.datetime]
         self.auto_renew_error = None
