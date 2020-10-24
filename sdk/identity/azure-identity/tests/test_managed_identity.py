@@ -339,9 +339,7 @@ def test_client_id_none():
     assert token.token == expected_access_token
 
     with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"},
-        clear=True,
+        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True,
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = credential.get_token(scope)

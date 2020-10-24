@@ -57,8 +57,6 @@ def _get_client_args(**kwargs):
         version = "2019-07-01-preview"
         base_headers = {"Secret": secret}
         connection_verify = False
-        if kwargs.get("client_id"):
-            identity_config["clientid"] = kwargs.pop("client_id")
     else:
         # Service Fabric managed identity isn't available in this environment
         return None
