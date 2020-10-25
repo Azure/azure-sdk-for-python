@@ -9,14 +9,10 @@ from enum import Enum
 import pytest
 import requests
 import time
-import unittest
 import uuid
 import os
 import sys
 from datetime import datetime, timedelta
-import mock
-import random
-import string
 
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -35,7 +31,6 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     BlobType,
-    StorageErrorCode,
     BlobSasPermissions,
     ContainerSasPermissions,
     ContentSettings,
@@ -46,10 +41,7 @@ from azure.storage.blob import (
     AccountSasPermissions,
     StandardBlobTier,
 )
-from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.credentials import AccessToken
 from azure.storage.blob._generated.models import RehydratePriority
-from azure.identity._internal.get_token_mixin import GetTokenMixin
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
 
