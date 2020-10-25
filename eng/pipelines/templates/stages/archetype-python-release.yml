@@ -1,5 +1,6 @@
 parameters:
   Artifacts: []
+  TestPipeline: false
   ArtifactName: 'not-specified'
   DependsOn: Build
   DocArtifact: 'documentation'
@@ -28,13 +29,14 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
-                    - task: PowerShell@2
-                      displayName: Prep template pipeline for release
-                      condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
-                      inputs:
-                        pwsh: true
-                        workingDirectory: $(Build.SourcesDirectory)
-                        filePath: eng/scripts/SetTestPipelineVersion.ps1
+                    - ${{if eq(parameters.TestPipeline, 'true')}}:
+                      - task: PowerShell@2
+                        displayName: Prep template pipeline for release
+                        condition: succeeded()
+                        inputs:
+                          pwsh: true
+                          workingDirectory: $(Build.SourcesDirectory)
+                          filePath: eng/scripts/SetTestPipelineVersion.ps1
                     - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                       parameters:
                         SourceFolder: ${{parameters.ArtifactName}} 
@@ -193,6 +195,7 @@ stages:
                           DocRepoDestinationPath: 'docs-ref-services/' 
                           GHReviewersVariable: 'OwningGHUser'
                           CIConfigs: $(CIConfigs)
+                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion

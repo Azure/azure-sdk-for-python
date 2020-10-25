@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from typing import TYPE_CHECKING, Any
 import hashlib
 import hmac
 import base64
-from typing import TYPE_CHECKING, Any
+import six
 try:
     from urllib.parse import quote
 except ImportError:
@@ -92,3 +93,13 @@ def _is_cloud_event(event):
         return all([_ in event for _ in required]) and event['specversion'] == "1.0"
     except TypeError:
         return False
+
+def _eventgrid_data_typecheck(event):
+    try:
+        data = event.get('data')
+    except AttributeError:
+        data = event.data
+
+    if isinstance(data, six.binary_type):
+        raise TypeError("Data in EventGridEvent cannot be bytes. Please refer to"\
+            "https://docs.microsoft.com/en-us/azure/event-grid/event-schema")

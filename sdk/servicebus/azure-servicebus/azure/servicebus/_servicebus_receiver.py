@@ -256,6 +256,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         # type: (bytes, List[str], Optional[Dict[str, Any]]) -> Any
+        # Message settlement through the mgmt link.
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -265,7 +266,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        return self._mgmt_request_response_with_retry(
+        # We don't do retry here, retry is done in the ReceivedMessage._settle_message
+        return self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default

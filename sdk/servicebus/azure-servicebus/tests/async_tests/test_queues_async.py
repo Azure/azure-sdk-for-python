@@ -15,11 +15,12 @@ import uuid
 from datetime import datetime, timedelta
 
 import uamqp
+import uamqp.errors
 from uamqp import compat
 from azure.servicebus.aio import (
     ServiceBusClient,
     ReceivedMessage,
-    AutoLockRenew)
+    AutoLockRenewer)
 from azure.servicebus import TransportType
 from azure.servicebus._common.message import Message, BatchMessage, PeekedMessage
 from azure.servicebus._common.constants import ReceiveMode, SubQueue
@@ -706,7 +707,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message = Message("{}".format(i))
                     await sender.send_messages(message)
 
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
                 async for message in receiver:
@@ -1138,7 +1139,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             if error:
                 errors.append(error)
 
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1 # So we can run the test fast.
         async with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1149,7 +1150,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that in normal operation it does not get called
             auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
@@ -1159,7 +1160,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1171,7 +1172,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that it is called when there is an overt renew failure
             message = MockReceivedMessage(exception_on_renew_lock=True)
@@ -1182,7 +1183,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that it is not called when the renewer is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1194,7 +1195,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
         del results[:]
         del errors[:]
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that it is not called when the receiver is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
@@ -1207,7 +1208,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.asyncio
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
         async with auto_lock_renew:
@@ -1221,7 +1222,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         with pytest.raises(ServiceBusError):
             auto_lock_renew.register(renewable=MockReceivedMessage())
 
-        auto_lock_renew = AutoLockRenew()
+        auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
         auto_lock_renew.register(renewable=MockReceivedMessage())
@@ -1512,3 +1513,48 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         finally:
             # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
             uamqp.async_ops.mgmt_operation_async.MgmtOperationAsync.execute_async = original_execute_method
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', lock_duration='PT5S')
+    async def test_async_queue_operation_negative(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        def _hack_amqp_message_complete(cls):
+            raise RuntimeError()
+
+        async def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
+            raise uamqp.errors.AMQPConnectionError()
+
+        async def _hack_sb_message_settle_message(self, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
+            raise uamqp.errors.AMQPError()
+
+        async with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with sender, receiver:
+                # negative settlement via receiver link
+                await sender.send_messages(Message("body"), timeout=5)
+                message = (await receiver.receive_messages(max_wait_time=5))[0]
+                message.message.accept = types.MethodType(_hack_amqp_message_complete, message.message)
+                await message.complete()  # settle via mgmt link
+
+                try:
+                    origin_amqp_mgmt_request_method = receiver._handler.mgmt_request_async
+                    with pytest.raises(ServiceBusConnectionError):
+                        receiver._handler.mgmt_request_async = types.MethodType(_hack_amqp_mgmt_request, receiver._handler)
+                        await receiver.peek_messages()
+                finally:
+                    receiver._handler.mgmt_request = types.MethodType(origin_amqp_mgmt_request_method, receiver._handler)
+
+                await sender.send_messages(Message("body"), timeout=5)
+
+                message = (await receiver.receive_messages(max_wait_time=5))[0]
+                message._settle_message = types.MethodType(_hack_sb_message_settle_message, message)
+                with pytest.raises(MessageSettleFailed):
+                    await message.complete()
+
+                message = (await receiver.receive_messages(max_wait_time=6))[0]
+                await message.complete()
