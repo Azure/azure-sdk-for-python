@@ -42,6 +42,9 @@ from azure.core.pipeline.transport import (
     AioHttpTransport
 )
 
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling.base_polling import LocationPolling
+
 from azure.core.configuration import Configuration
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import AzureError
@@ -139,6 +142,18 @@ async def test_async_transport_sleep():
 
     async with AioHttpTransport() as transport:
         await transport.sleep(1)
+
+def test_polling_with_path_format_arguments():
+    method = AsyncLROBasePolling(
+        timeout=0,
+        path_format_arguments={"host": "host:3000", "accountName": "local"}
+    )
+    client = AsyncPipelineClient(base_url="http://{accountName}{host}")
+
+    method._operation = LocationPolling()
+    method._operation._location_url = "/results/1"
+    method._client = client
+    assert "http://localhost:3000/results/1" == method._client.format_url(method._operation.get_polling_url(), **method._path_format_arguments)
 
 def test_async_trio_transport_sleep():
 

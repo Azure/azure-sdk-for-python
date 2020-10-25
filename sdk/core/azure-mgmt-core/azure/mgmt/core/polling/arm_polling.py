@@ -105,7 +105,7 @@ class BodyContentPolling(LongRunningOperation):
         """Answer if this polling method could be used.
         """
         response = pipeline_response.http_response
-        return response.request.method == "PUT"
+        return response.request.method in ["PUT", "PATCH"]
 
     def get_polling_url(self):
         # type: () -> str
@@ -176,7 +176,12 @@ class BodyContentPolling(LongRunningOperation):
 
 class ARMPolling(LROBasePolling):
     def __init__(
-        self, timeout=30, lro_algorithms=None, lro_options=None, **operation_config
+        self,
+        timeout=30,
+        lro_algorithms=None,
+        lro_options=None,
+        path_format_arguments=None,
+        **operation_config
     ):
         lro_algorithms = lro_algorithms or [
             AzureAsyncOperationPolling(lro_options=lro_options),
@@ -188,6 +193,7 @@ class ARMPolling(LROBasePolling):
             timeout=timeout,
             lro_algorithms=lro_algorithms,
             lro_options=lro_options,
+            path_format_arguments=path_format_arguments,
             **operation_config
         )
 

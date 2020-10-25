@@ -465,7 +465,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")

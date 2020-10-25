@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._constants import AZURE_CLI_CLIENT_ID
+from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AadClient
 from .._internal.decorators import log_get_token, wrap_exceptions
 from .._internal.msal_client import MsalClient
@@ -67,7 +67,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
         If no access token is cached, attempt to acquire one using a cached refresh token.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -103,7 +103,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
-        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)
 
     def _initialize(self):
         if self._initialized:

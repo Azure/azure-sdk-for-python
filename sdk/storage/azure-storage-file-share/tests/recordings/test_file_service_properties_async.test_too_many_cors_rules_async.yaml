@@ -15,34 +15,27 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-file-share/12.0.1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 15 Jan 2020 23:51:23 GMT
+      - Fri, 18 Sep 2020 01:53:43 GMT
       x-ms-version:
-      - '2019-02-02'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:92094185-001a-0057-77fe-cb0b18000000\nTime:2020-01-15T23:51:23.3058154Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        specified is not syntactically valid.\nRequestId:800a2c58-901a-0025-3d5e-8d9f30000000\nTime:2020-09-18T01:53:42.5260418Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
         /></Error>"
     headers:
       content-length: '294'
       content-type: application/xml
-      date: Wed, 15 Jan 2020 23:51:22 GMT
+      date: Fri, 18 Sep 2020 01:53:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidXmlDocument
-      x-ms-version: '2019-02-02'
+      x-ms-version: '2020-02-10'
     status:
       code: 400
       message: XML specified is not syntactically valid.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage43x4qoc3y4bx.file.core.windows.net
-        - /
-        - restype=service&comp=properties
-        - ''
+    url: https://seancanarypremiumfile.file.core.windows.net/?restype=service&comp=properties
 version: 1

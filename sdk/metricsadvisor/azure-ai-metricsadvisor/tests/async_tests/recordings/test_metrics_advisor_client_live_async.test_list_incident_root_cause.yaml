@@ -5,23 +5,25 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
     body:
-      string: '{"value":[]}'
+      string: '{"value":[{"rootCause":{"dimension":{"category":"Shoes Handbags & Sunglasses","dimension_name":"Mumbai"}},"path":["dimension_name","category"],"score":0.1494267098214867,"description":"Decrease
+        on category = Shoes Handbags & Sunglasses | dimension_name = Mumbai contributes
+        the most to current incident."}]}'
     headers:
-      apim-request-id: 6ba159d5-8f7b-4376-9c7b-90c30c50a9d5
-      content-length: '12'
+      apim-request-id: 10991b64-5d97-4897-b69c-7a83a1cd219b
+      content-length: '277'
       content-type: application/json; charset=utf-8
-      date: Mon, 21 Sep 2020 16:55:05 GMT
+      date: Fri, 23 Oct 2020 16:06:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '493'
-      x-request-id: 6ba159d5-8f7b-4376-9c7b-90c30c50a9d5
+      x-envoy-upstream-service-time: '5422'
+      x-request-id: 10991b64-5d97-4897-b69c-7a83a1cd219b
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/c0f2539f-b804-4ab9-a70f-0da0c89c76d8/incidents/cc2ff8a836361371b8c6eaad71b194f4-1746b031c00/rootCause
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/incidents/5a0692283edccf37ce825b3a8d475f4e-174e1756000/rootCause
 version: 1

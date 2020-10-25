@@ -461,8 +461,8 @@ class ManagedHsmProperties(msrest.serialization.Model):
     :param initial_admin_object_ids: Array of initial administrators object ids for this managed
      hsm pool.
     :type initial_admin_object_ids: list[str]
-    :param hsm_pool_uri: The URI of the managed hsm pool for performing operations on keys.
-    :type hsm_pool_uri: str
+    :param hsm_uri: The URI of the managed hsm pool for performing operations on keys.
+    :type hsm_uri: str
     :param enable_soft_delete: Property to specify whether the 'soft delete' functionality is
      enabled for this managed HSM pool. If it's not set to any value(true or false) when creating
      new managed HSM pool, it will be set to true by default. Once set to true, it cannot be
@@ -496,7 +496,7 @@ class ManagedHsmProperties(msrest.serialization.Model):
     _attribute_map = {
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'initial_admin_object_ids': {'key': 'initialAdminObjectIds', 'type': '[str]'},
-        'hsm_pool_uri': {'key': 'hsmPoolUri', 'type': 'str'},
+        'hsm_uri': {'key': 'hsmUri', 'type': 'str'},
         'enable_soft_delete': {'key': 'enableSoftDelete', 'type': 'bool'},
         'soft_delete_retention_in_days': {'key': 'softDeleteRetentionInDays', 'type': 'int'},
         'enable_purge_protection': {'key': 'enablePurgeProtection', 'type': 'bool'},
@@ -512,7 +512,7 @@ class ManagedHsmProperties(msrest.serialization.Model):
         super(ManagedHsmProperties, self).__init__(**kwargs)
         self.tenant_id = kwargs.get('tenant_id', None)
         self.initial_admin_object_ids = kwargs.get('initial_admin_object_ids', None)
-        self.hsm_pool_uri = kwargs.get('hsm_pool_uri', None)
+        self.hsm_uri = kwargs.get('hsm_uri', None)
         self.enable_soft_delete = kwargs.get('enable_soft_delete', True)
         self.soft_delete_retention_in_days = kwargs.get('soft_delete_retention_in_days', 90)
         self.enable_purge_protection = kwargs.get('enable_purge_protection', None)

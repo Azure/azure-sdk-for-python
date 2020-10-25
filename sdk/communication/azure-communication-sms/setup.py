@@ -43,7 +43,7 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        'Development Status :: 4 - Beta',
+        "Development Status :: 4 - Beta",
 
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
@@ -68,7 +68,7 @@ setup(
         'six>=1.6'
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['azure-communication-nspkg'],
         ":python_version<'3.5'": ["typing"]
     }
 )

@@ -13,33 +13,46 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/query
   response:
     body:
-      string: '{"value":[{"feedbackId":"feedback_id","createdTime":"2020-09-22T00:24:18.629Z","userPrincipal":"xiangyan@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Common
-        Lime","Dim2":"Amphibian"}},"feedbackType":"Anomaly","startTime":"2020-08-30T00:00:00Z","endTime":"2020-08-30T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"2fe9e687-4c9e-4e1b-8ec8-6541553db969","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"2fe9e687-4c9e-4e1b-8ec8-6541553db969","name":"new
-        Name","description":"new description","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"OR","hardThresholdCondition":{"upperBound":500.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minAlertNumber":5,"minAlertRatio":5.0}},"changeThresholdCondition":{"changePercentage":44.0,"shiftPoint":2,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minAlertNumber":4,"minAlertRatio":4.0}}},"dimensionGroupOverrideConfigurations":[{"group":{"seriesGroupConfigurationId":"51242ee0b8c72df4e537ffdfe0e8af69","tagSet":{"dimension_name":"Common
-        Lime"}},"conditionOperator":"AND","hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minAlertNumber":2,"minAlertRatio":2.0}}}],"seriesOverrideConfigurations":[{"series":{"seriesConfigurationId":"54bdef99c03c71c764fd3ea671cd1260","tagSet":{"dimension_name":"Common
-        Beech","Dim2":"Ant"}},"conditionOperator":"OR","changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minAlertNumber":2,"minAlertRatio":2.0}}}],"favoriteSeries":[],"disabledSeries":[]}}],"@nextLink":null}'
+      string: '{"value":[{"feedbackId":"43b71917-d9ea-48b2-bbd5-31450b42e9c8","createdTime":"2020-10-21T21:42:37.609Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"d5e5e5f7-5a5e-4488-9a03-a722c11e8743","createdTime":"2020-10-21T21:42:37.136Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"66d68377-b9ea-41e8-9d1c-19f369fa2342","createdTime":"2020-10-21T21:42:36.713Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"5294fd3e-5826-45be-b9c9-0bb556d3e99b","createdTime":"2020-10-21T21:42:36.218Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"336ab90c-8a4c-4b03-b4b9-e0a3accf7885","createdTime":"2020-10-21T21:37:13.624Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"50a63795-d631-43ae-9a05-d744df4b986d","createdTime":"2020-10-21T21:37:13.204Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"a21e2ccf-b5ad-4bd6-805c-1659dcdf0e1b","createdTime":"2020-10-21T21:37:12.826Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"2d8e40ab-24ce-45c3-bcd0-64850a1dd895","createdTime":"2020-10-21T21:37:12.22Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"d28de1e8-24e8-463a-824f-cf7b1c61f1ce","createdTime":"2020-10-21T21:00:47.704Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"23efe57b-4c7d-4261-9a46-b79cf2f627a1","createdTime":"2020-10-21T21:00:47.287Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"d5d34037-a423-48df-b651-6d87dd54e7c3","createdTime":"2020-10-21T21:00:46.839Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"55480715-243c-4ef6-8571-4666bcfa7aff","createdTime":"2020-10-21T21:00:46.199Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-10-21T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"1607ffa8-044d-40e1-aa81-2337b1d35ad1","createdTime":"2020-10-21T20:59:25.918Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Period","value":{"periodType":"AssignValue","periodValue":2}},{"feedbackId":"40c7d42b-6d49-43fe-a4da-04a30be4050f","createdTime":"2020-10-21T20:59:25.414Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Comment","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"commentValue":"comment"}},{"feedbackId":"f95f172a-7923-46c9-b387-1934715b365e","createdTime":"2020-10-21T20:59:24.984Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"ChangePoint","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"changePointValue":"NotChangePoint"}},{"feedbackId":"54b14cb6-8c15-413c-b33e-45091b658ff6","createdTime":"2020-10-21T20:59:18.46Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Los
+        Angeles"}},"feedbackType":"Anomaly","startTime":"2020-08-05T00:00:00Z","endTime":"2020-08-07T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":null,"anomalyDetectionConfigurationSnapshot":null},{"feedbackId":"feedback_id","createdTime":"2020-10-21T20:53:05.91Z","userPrincipal":"krpratic@microsoft.com","metricId":"metric_id","dimensionFilter":{"dimension":{"dimension_name":"Mumbai","category":"Shoes
+        Handbags & Sunglasses"}},"feedbackType":"Anomaly","startTime":"2020-10-01T00:00:00Z","endTime":"2020-10-01T00:00:00Z","value":{"anomalyValue":"NotAnomaly"},"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","anomalyDetectionConfigurationSnapshot":{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}}],"@nextLink":null}'
     headers:
       apim-request-id:
-      - fe27fe9b-33ba-40c1-992f-055d1d41008c
+      - b0a63ba2-0834-4492-ba4d-6e6acfdd5d43
       content-length:
-      - '1794'
+      - '7062'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Sep 2020 00:35:51 GMT
+      - Wed, 21 Oct 2020 21:42:38 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '224'
+      - '76'
       x-request-id:
-      - fe27fe9b-33ba-40c1-992f-055d1d41008c
+      - b0a63ba2-0834-4492-ba4d-6e6acfdd5d43
     status:
       code: 200
       message: OK

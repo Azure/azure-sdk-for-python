@@ -19,8 +19,8 @@ from azure.ai.metricsadvisor import (
 from azure.ai.metricsadvisor.models import (
     SQLServerDataFeed,
     DataFeedSchema,
-    Metric,
-    Dimension,
+    DataFeedMetric,
+    DataFeedDimension,
     DataFeedGranularity,
     DataFeedIngestionSettings,
     DataFeedMissingDataPointFillSettings,
@@ -39,8 +39,8 @@ from azure.ai.metricsadvisor.models import (
     SuppressCondition,
     ChangeThresholdCondition,
     HardThresholdCondition,
-    EmailHook,
-    WebHook
+    EmailNotificationHook,
+    WebNotificationHook
 )
 
 
@@ -62,14 +62,14 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             self.http_request_post_url = self.get_settings_value("METRICS_ADVISOR_HTTP_POST_URL")
             self.application_insights_api_key = self.get_settings_value("METRICS_ADVISOR_APPLICATION_INSIGHTS_API_KEY")
             self.azure_data_explorer_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_DATA_EXPLORER_CONNECTION_STRING")
-            self.influxdb_connection_string = self.get_settings_value("METRICS_ADVISOR_INFLUXDB_CONNECTION_STRING")
-            self.influxdb_password = self.get_settings_value("METRICS_ADVISOR_INFLUXDB_PASSWORD")
+            self.influxdb_connection_string = self.get_settings_value("METRICS_ADVISOR_INFLUX_DB_CONNECTION_STRING")
+            self.influxdb_password = self.get_settings_value("METRICS_ADVISOR_INFLUX_DB_PASSWORD")
             self.azure_datalake_account_key = self.get_settings_value("METRICS_ADVISOR_AZURE_DATALAKE_ACCOUNT_KEY")
-            self.mongodb_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_MONGODB_CONNECTION_STRING")
+            self.mongodb_connection_string = self.get_settings_value("METRICS_ADVISOR_AZURE_MONGO_DB_CONNECTION_STRING")
             self.mysql_connection_string = self.get_settings_value("METRICS_ADVISOR_MYSQL_CONNECTION_STRING")
             self.postgresql_connection_string = self.get_settings_value("METRICS_ADVISOR_POSTGRESQL_CONNECTION_STRING")
-            self.elasticsearch_auth_header = self.get_settings_value("METRICS_ADVISOR_ELASTICSEARCH_AUTH")
-            self.anomaly_detection_configuration_id = self.get_settings_value("ANOMALY_DETECTION_CONFIGURATION_ID")
+            self.elasticsearch_auth_header = self.get_settings_value("METRICS_ADVISOR_ELASTICSEARCH_AUTH_HEADER")
+            self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
             self.data_feed_id = self.get_settings_value("METRICS_ADVISOR_DATA_FEED_ID")
             self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
             self.scrubber.register_name_pair(
@@ -181,12 +181,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             granularity="Daily",
             schema=DataFeedSchema(
                 metrics=[
-                    Metric(name="cost"),
-                    Metric(name="revenue")
+                    DataFeedMetric(name="cost"),
+                    DataFeedMetric(name="revenue")
                 ],
                 dimensions=[
-                    Dimension(name="category"),
-                    Dimension(name="city")
+                    DataFeedDimension(name="category"),
+                    DataFeedDimension(name="city")
                 ],
             ),
             ingestion_settings="2019-10-01T00:00:00Z",
@@ -225,12 +225,12 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
             ),
             schema=DataFeedSchema(
                 metrics=[
-                    Metric(name="cost", display_name="display cost", description="the cost"),
-                    Metric(name="revenue", display_name="display revenue", description="the revenue")
+                    DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
+                    DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
                 ],
                 dimensions=[
-                    Dimension(name="category", display_name="display category"),
-                    Dimension(name="city", display_name="display city")
+                    DataFeedDimension(name="category", display_name="display category"),
+                    DataFeedDimension(name="city", display_name="display city")
                 ],
                 timestamp_column="Timestamp"
             ),
@@ -242,7 +242,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                 stop_retry_after=-1,
             ),
             options=DataFeedOptions(
-                admins=["yournamehere@microsoft.com"],
+                admin_emails=["yournamehere@microsoft.com"],
                 data_feed_description="my first data feed",
                 missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                     fill_type="SmartFilling"
@@ -251,7 +251,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                     rollup_type="NoRollup",
                     rollup_method="None",
                 ),
-                viewers=["viewers"],
+                viewer_emails=["viewers"],
                 access_mode="Private",
                 action_link_template="action link template"
             )
@@ -379,7 +379,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
     def _create_email_hook_for_update(self, name):
         return self.admin_client.create_hook(
             name=name,
-            hook=EmailHook(
+            hook=EmailNotificationHook(
                 emails_to_alert=["yournamehere@microsoft.com"],
                 description="my email hook",
                 external_link="external link"
@@ -389,7 +389,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
     def _create_web_hook_for_update(self, name):
         return self.admin_client.create_hook(
             name=name,
-            hook=WebHook(
+            hook=WebNotificationHook(
                 endpoint="https://httpbin.org/post",
                 description="my web hook",
                 external_link="external link",
@@ -409,13 +409,13 @@ class TestMetricsAdvisorClientBase(AzureTestCase):
             service_endpoint = self.get_settings_value("METRICS_ADVISOR_ENDPOINT")
             subscription_key = self.get_settings_value("METRICS_ADVISOR_SUBSCRIPTION_KEY")
             api_key = self.get_settings_value("METRICS_ADVISOR_API_KEY")
-            self.anomaly_detection_configuration_id = self.get_settings_value("ANOMALY_DETECTION_CONFIGURATION_ID")
-            self.anomaly_alert_configuration_id = self.get_settings_value("ANOMALY_ALERT_CONFIGURATION_ID")
-            self.metric_id = self.get_settings_value("METRIC_ID")
-            self.incident_id = self.get_settings_value("INCIDENT_ID")
-            self.dimension_name = self.get_settings_value("DIMENSION_NAME")
-            self.feedback_id = self.get_settings_value("FEEDBACK_ID")
-            self.alert_id = self.get_settings_value("ALERT_ID")
+            self.anomaly_detection_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_DETECTION_CONFIGURATION_ID")
+            self.anomaly_alert_configuration_id = self.get_settings_value("METRICS_ADVISOR_ANOMALY_ALERT_CONFIGURATION_ID")
+            self.metric_id = self.get_settings_value("METRICS_ADVISOR_METRIC_ID")
+            self.incident_id = self.get_settings_value("METRICS_ADVISOR_INCIDENT_ID")
+            self.dimension_name = self.get_settings_value("METRICS_ADVISOR_DIMENSION_NAME")
+            self.feedback_id = self.get_settings_value("METRICS_ADVISOR_FEEDBACK_ID")
+            self.alert_id = self.get_settings_value("METRICS_ADVISOR_ALERT_ID")
             self.scrubber.register_name_pair(
                 self.anomaly_detection_configuration_id,
                 "anomaly_detection_configuration_id"

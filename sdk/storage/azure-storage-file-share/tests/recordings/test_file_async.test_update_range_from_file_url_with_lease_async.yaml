@@ -3,11 +3,11 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:42 GMT
+      - Fri, 25 Sep 2020 13:05:57 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare539b1a3e?restype=share
   response:
@@ -15,31 +15,24 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 12 Feb 2020 19:23:42 GMT
-      etag: '"0x8D7AFF1127D0C5B"'
-      last-modified: Wed, 12 Feb 2020 19:23:42 GMT
+      date: Fri, 25 Sep 2020 13:05:56 GMT
+      etag: '"0x8D86153BE078BEA"'
+      last-modified: Fri, 25 Sep 2020 13:05:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e
-        - restype=share
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e?restype=share
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:42 GMT
+      - Fri, 25 Sep 2020 13:05:57 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -51,7 +44,7 @@ interactions:
       x-ms-type:
       - file
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare539b1a3e/testfile
   response:
@@ -59,30 +52,23 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 12 Feb 2020 19:23:42 GMT
-      etag: '"0x8D7AFF1129122FD"'
-      last-modified: Wed, 12 Feb 2020 19:23:42 GMT
+      date: Fri, 25 Sep 2020 13:05:57 GMT
+      etag: '"0x8D86153BE2B995B"'
+      last-modified: Fri, 25 Sep 2020 13:05:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-02-12T19:23:42.9695229Z'
-      x-ms-file-creation-time: '2020-02-12T19:23:42.9695229Z'
+      x-ms-file-change-time: '2020-09-25T13:05:57.3633371Z'
+      x-ms-file-creation-time: '2020-09-25T13:05:57.3633371Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2020-02-12T19:23:42.9695229Z'
+      x-ms-file-last-write-time: '2020-09-25T13:05:57.3633371Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 4485082972441276519*10853357836431137001
+      x-ms-file-permission-key: 4010187179898695473*11459378189709739967
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/testfile
-        - ''
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/testfile
 - request:
     body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
     headers:
@@ -91,13 +77,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:57 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
       x-ms-write:
       - update
     method: PUT
@@ -108,23 +94,16 @@ interactions:
     headers:
       content-length: '0'
       content-md5: yaNM/IXZgmmMasifdgcavQ==
-      date: Wed, 12 Feb 2020 19:23:42 GMT
-      etag: '"0x8D7AFF11296F06E"'
-      last-modified: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:57 GMT
+      etag: '"0x8D86153BE390952"'
+      last-modified: Fri, 25 Sep 2020 13:05:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/testfile
-        - comp=range
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/testfile?comp=range
 - request:
     body: abcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnop
     headers:
@@ -133,13 +112,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:57 GMT
       x-ms-range:
       - bytes=0-511
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
       x-ms-write:
       - update
     method: PUT
@@ -150,65 +129,51 @@ interactions:
     headers:
       content-length: '0'
       content-md5: pTsTLZHyQ+et6NksJ1OHxg==
-      date: Wed, 12 Feb 2020 19:23:42 GMT
-      etag: '"0x8D7AFF1129C6FB1"'
-      last-modified: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:57 GMT
+      etag: '"0x8D86153BE4232C1"'
+      last-modified: Fri, 25 Sep 2020 13:05:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/testfile
-        - comp=range
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/testfile?comp=range
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:57 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare539b1a3e?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:21a2a4fc-901a-0071-6dd9-e1f40e000000\nTime:2020-02-12T19:23:43.1713723Z</Message></Error>"
+        specified share already exists.\nRequestId:673d6dbf-201a-009a-333c-93441b000000\nTime:2020-09-25T13:05:57.7398365Z</Message></Error>"
     headers:
       content-length: '222'
       content-type: application/xml
-      date: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareAlreadyExists
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 409
       message: The specified share already exists.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e
-        - restype=share
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e?restype=share
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-content-length:
       - '2048'
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:58 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -220,7 +185,7 @@ interactions:
       x-ms-type:
       - file
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate
   response:
@@ -228,86 +193,72 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 12 Feb 2020 19:23:43 GMT
-      etag: '"0x8D7AFF112B5EFCF"'
-      last-modified: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:57 GMT
+      etag: '"0x8D86153BE6F3E76"'
+      last-modified: Fri, 25 Sep 2020 13:05:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-02-12T19:23:43.2106959Z'
-      x-ms-file-creation-time: '2020-02-12T19:23:43.2106959Z'
+      x-ms-file-change-time: '2020-09-25T13:05:57.8066550Z'
+      x-ms-file-creation-time: '2020-09-25T13:05:57.8066550Z'
       x-ms-file-id: '11529285414812647424'
-      x-ms-file-last-write-time: '2020-02-12T19:23:43.2106959Z'
+      x-ms-file-last-write-time: '2020-09-25T13:05:57.8066550Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 4485082972441276519*10853357836431137001
+      x-ms-file-permission-key: 4010187179898695473*11459378189709739967
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/filetoupdate
-        - ''
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/filetoupdate
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:58 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 14131130-ff42-488a-9d7e-c4047509024f
+      - 0dc27554-e858-4000-bceb-3c750b5fced6
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=lease
   response:
     body:
       string: ''
     headers:
-      date: Wed, 12 Feb 2020 19:23:43 GMT
-      etag: '"0x8D7AFF112B5EFCF"'
-      last-modified: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:57 GMT
+      etag: '"0x8D86153BE6F3E76"'
+      last-modified: Fri, 25 Sep 2020 13:05:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-lease-id: 14131130-ff42-488a-9d7e-c4047509024f
-      x-ms-version: '2019-07-07'
+      x-ms-lease-id: 0dc27554-e858-4000-bceb-3c750b5fced6
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/filetoupdate
-        - comp=lease
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=lease
 - request:
     body: null
     headers:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-copy-source:
-      - https://pyacrstorageepk37kc36v76.file.core.windows.net/utshare539b1a3e/testfile?se=2020-02-12T20%3A23%3A43Z&sp=r&sv=2019-07-07&sr=f&sig=3rNFmwM8iHbUV4r87xOBLWNxilZMYeoPnt6aJoq3HhE%3D
+      - https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/testfile?se=2020-09-25T14%3A05%3A58Z&sp=r&sv=2020-02-10&sr=f&sig=%2BjjpGaL21kSoikIBFKvvistV3gb9jGcgFNpsqtTeIIQ%3D
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:58 GMT
       x-ms-range:
       - bytes=0-511
       x-ms-source-range:
       - bytes=0-511
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
       x-ms-write:
       - update
     method: PUT
@@ -315,45 +266,38 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
-        is currently a lease on the file and no lease ID was specified in the request.\nRequestId:897a8a28-a01a-001f-22d9-e15d27000000\nTime:2020-02-12T19:23:43.4096641Z</Message></Error>"
+        is currently a lease on the file and no lease ID was specified in the request.\nRequestId:29e9800a-101a-0038-023c-937e02000000\nTime:2020-09-25T13:05:58.4289809Z</Message></Error>"
     headers:
       content-length: '267'
       content-type: application/xml
-      date: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:58 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: LeaseIdMissing
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 412
       message: There is currently a lease on the file and no lease ID was specified
         in the request.
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/filetoupdate
-        - comp=range
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=range
 - request:
     body: null
     headers:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-copy-source:
-      - https://pyacrstorageepk37kc36v76.file.core.windows.net/utshare539b1a3e/testfile?se=2020-02-12T20%3A23%3A43Z&sp=r&sv=2019-07-07&sr=f&sig=3rNFmwM8iHbUV4r87xOBLWNxilZMYeoPnt6aJoq3HhE%3D
+      - https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/testfile?se=2020-09-25T14%3A05%3A58Z&sp=r&sv=2020-02-10&sr=f&sig=%2BjjpGaL21kSoikIBFKvvistV3gb9jGcgFNpsqtTeIIQ%3D
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:58 GMT
       x-ms-lease-id:
-      - 14131130-ff42-488a-9d7e-c4047509024f
+      - 0dc27554-e858-4000-bceb-3c750b5fced6
       x-ms-range:
       - bytes=0-511
       x-ms-source-range:
       - bytes=0-511
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
       x-ms-write:
       - update
     method: PUT
@@ -363,35 +307,28 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 12 Feb 2020 19:23:43 GMT
-      etag: '"0x8D7AFF112DA475E"'
-      last-modified: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:58 GMT
+      etag: '"0x8D86153BEDE1A2D"'
+      last-modified: Fri, 25 Sep 2020 13:05:58 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: EZA9hgZaRrQ=
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 201
       message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/filetoupdate
-        - comp=range
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=range
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:58 GMT
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=rangelist
   response:
@@ -399,37 +336,31 @@ interactions:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges><Range><Start>0</Start><End>511</End></Range></Ranges>"
     headers:
       content-type: application/xml
-      date: Wed, 12 Feb 2020 19:23:43 GMT
-      etag: '"0x8D7AFF112DA475E"'
-      last-modified: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:58 GMT
+      etag: '"0x8D86153BEDE1A2D"'
+      last-modified: Fri, 25 Sep 2020 13:05:58 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
+      vary: Origin
       x-ms-content-length: '2048'
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 200
       message: OK
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/filetoupdate
-        - comp=rangelist
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/filetoupdate?comp=rangelist
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.1.0 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-file-share/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 12 Feb 2020 19:23:43 GMT
+      - Fri, 25 Sep 2020 13:05:59 GMT
       x-ms-range:
       - bytes=0-511
       x-ms-version:
-      - '2019-07-07'
+      - '2020-02-10'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare539b1a3e/filetoupdate
   response:
@@ -440,32 +371,26 @@ interactions:
       content-length: '512'
       content-range: bytes 0-511/2048
       content-type: application/octet-stream
-      date: Wed, 12 Feb 2020 19:23:43 GMT
-      etag: '"0x8D7AFF112DA475E"'
-      last-modified: Wed, 12 Feb 2020 19:23:43 GMT
+      date: Fri, 25 Sep 2020 13:05:58 GMT
+      etag: '"0x8D86153BEDE1A2D"'
+      last-modified: Fri, 25 Sep 2020 13:05:58 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      vary: Origin
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2020-02-12T19:23:43.2106959Z'
-      x-ms-file-creation-time: '2020-02-12T19:23:43.2106959Z'
+      x-ms-file-change-time: '2020-09-25T13:05:57.8066550Z'
+      x-ms-file-creation-time: '2020-09-25T13:05:57.8066550Z'
       x-ms-file-id: '11529285414812647424'
-      x-ms-file-last-write-time: '2020-02-12T19:23:43.2106959Z'
+      x-ms-file-last-write-time: '2020-09-25T13:05:57.8066550Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 4485082972441276519*10853357836431137001
+      x-ms-file-permission-key: 4010187179898695473*11459378189709739967
       x-ms-lease-duration: infinite
       x-ms-lease-state: leased
       x-ms-lease-status: locked
       x-ms-server-encrypted: 'true'
       x-ms-type: File
-      x-ms-version: '2019-07-07'
+      x-ms-version: '2020-02-10'
     status:
       code: 206
       message: Partial Content
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorageepk37kc36v76.file.core.windows.net
-        - /utshare539b1a3e/filetoupdate
-        - ''
-        - ''
+    url: https://seanmcccanary3.file.core.windows.net/utshare539b1a3e/filetoupdate
 version: 1

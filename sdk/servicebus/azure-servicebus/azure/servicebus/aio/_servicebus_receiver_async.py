@@ -14,6 +14,7 @@ from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
 from ._base_handler_async import BaseHandler
+from .._common.message import PeekedMessage
 from ._async_message import ReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
@@ -208,13 +209,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self.close()
             raise
 
-
-    async def close(self):
-        # type: () -> None
-        await super(ServiceBusReceiver, self).close()
-        self._message_iter = None
-
-
     async def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
         # pylint: disable=protected-access
@@ -274,19 +268,25 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             mgmt_handlers.default
         )
 
-    async def _renew_locks(self, *lock_tokens):
+    async def _renew_locks(self, *lock_tokens, timeout=None):
+        # type: (str, Optional[float]) -> Any
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
-            mgmt_handlers.lock_renew_op
+            mgmt_handlers.lock_renew_op,
+            timeout=timeout
         )
 
-    def get_streaming_message_iter(self, max_wait_time: float = None) -> AsyncIterator[ReceivedMessage]:
+    async def close(self) -> None:
+        await super(ServiceBusReceiver, self).close()
+        self._message_iter = None
+
+    def get_streaming_message_iter(self, max_wait_time: Optional[float] = None) -> AsyncIterator[ReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
-        :param float max_wait_time: Maximum time to wait in seconds for the next message to arrive.
+        :param Optional[float] max_wait_time: Maximum time to wait in seconds for the next message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
@@ -368,8 +368,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
-    async def receive_messages(self, max_message_count=None, max_wait_time=None):
-        # type: (int, float) -> List[ReceivedMessage]
+    async def receive_messages(
+        self,
+        max_message_count: Optional[int] = None,
+        max_wait_time: Optional[float] = None
+    ) -> List[ReceivedMessage]:
         """Receive a batch of messages at once.
 
         This approach is optimal if you wish to process multiple messages simultaneously, or
@@ -383,9 +386,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         return as soon as at least one message is received and there is a gap in incoming messages regardless
         of the specified batch size.
 
-        :param int max_message_count: Maximum number of messages in the batch. Actual number
+        :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count size and incoming stream rate.
-        :param float max_wait_time: Maximum time to wait in seconds for the first message to arrive.
+        :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
          timeout period, an empty list will be returned.
@@ -406,11 +409,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
-            require_timeout=True
+            operation_requires_timeout=True
         )
 
-    async def receive_deferred_messages(self, sequence_numbers):
-        # type: (Union[int, List[int]]) -> List[ReceivedMessage]
+    async def receive_deferred_messages(
+        self,
+        sequence_numbers: Union[int, List[int]],
+        **kwargs: Any
+    ) -> List[ReceivedMessage]:
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -418,6 +424,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param Union[int, list[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: list[~azure.servicebus.aio.ReceivedMessage]
 
         .. admonition:: Example:
@@ -431,6 +439,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
         if not sequence_numbers:
@@ -454,11 +465,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
-            handler
+            handler,
+            timeout=timeout
         )
         return messages
 
-    async def peek_messages(self, max_message_count=1, sequence_number=0):
+    async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[PeekedMessage]:
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -466,7 +478,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
-        :param int sequence_number: A message sequence number from which to start browsing messages.
+        :keyword int sequence_number: A message sequence number from which to start browsing messages.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: list[~azure.servicebus.PeekedMessage]
 
         .. admonition:: Example:
@@ -479,6 +493,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Peek messages in the queue.
         """
         self._check_live()
+        sequence_number = kwargs.pop("sequence_number", 0)
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(max_message_count) < 1:
@@ -498,5 +516,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,
-            mgmt_handlers.peek_op
+            mgmt_handlers.peek_op,
+            timeout=timeout
         )

@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import concurrent
 
 import conftest
-from azure.servicebus import AutoLockRenew, ServiceBusClient, Message
+from azure.servicebus import AutoLockRenewer, ServiceBusClient, Message
 
 def send_message(client, queue_name):
     queue_client = client.get_queue(queue_name)
@@ -26,7 +26,7 @@ def process_message(message):
 
 def receive_process_and_complete_message(client, queue_name):
     queue_client = client.get_queue(queue_name)
-    lock_renewal = AutoLockRenew(max_workers=4)
+    lock_renewal = AutoLockRenewer(max_workers=4)
     lock_renewal.renew_period = 120
     with queue_client.get_receiver() as queue_receiver:
         for message in queue_receiver:

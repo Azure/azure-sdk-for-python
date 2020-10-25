@@ -14,6 +14,9 @@ from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
+from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
+from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import DirectoryItem
 
@@ -134,6 +137,46 @@ class CorsRule(GeneratedCorsRule):
         )
 
 
+class ShareSmbSettings(GeneratedShareSmbSettings):
+    """ Settings for the SMB protocol.
+
+    :keyword SmbMultichannel multichannel: Sets the multichannel settings.
+    """
+    def __init__(self, **kwargs):
+        self.multichannel = kwargs.get('multichannel')
+        if self.multichannel is None:
+            raise ValueError("The value 'multichannel' must be specified.")
+
+
+class SmbMultichannel(GeneratedSmbMultichannel):
+    """ Settings for Multichannel.
+
+    :keyword bool enabled: If SMB Multichannel is enabled.
+    """
+    def __init__(self, **kwargs):
+        self.enabled = kwargs.get('enabled')
+        if self.enabled is None:
+            raise ValueError("The value 'enabled' must be specified.")
+
+
+class ShareProtocolSettings(GeneratedShareProtocolSettings):
+    """Protocol Settings class used by the set and get service properties methods in the share service.
+
+    Contains protocol properties of the share service such as the SMB setting of the share service.
+
+    :keyword SmbSettings smb: Sets SMB settings.
+    """
+    def __init__(self, **kwargs):
+        self.smb = kwargs.get('smb')
+        if self.smb is None:
+            raise ValueError("The value 'smb' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        return cls(
+            smb=generated.smb)
+
+
 class AccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get acl methods in each service.
 
@@ -185,14 +228,14 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class LeaseProperties(DictMixin):
-    """File Lease Properties.
+    """File or Share Lease Properties.
 
     :ivar str status:
-        The lease status of the file. Possible values: locked|unlocked
+        The lease status of the file or share. Possible values: locked|unlocked
     :ivar str state:
-        Lease state of the file. Possible values: available|leased|expired|breaking|broken
+        Lease state of the file or share. Possible values: available|leased|expired|breaking|broken
     :ivar str duration:
-        When a file is leased, specifies whether the lease is of infinite or fixed duration.
+        When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
     def __init__(self, **kwargs):
@@ -271,6 +314,8 @@ class ShareProperties(DictMixin):
         conditionally.
     :ivar int quota:
         The allocated quota.
+    :ivar str access_tier:
+        The share's access tier.
     :ivar dict metadata: A dict with name_value pairs to associate with the
         share as metadata.
     :ivar str snapshot:
@@ -294,6 +339,7 @@ class ShareProperties(DictMixin):
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.quota = kwargs.get('x-ms-share-quota')
+        self.access_tier = kwargs.get('x-ms-access-tier')
         self.next_allowed_quota_downgrade_time = kwargs.get('x-ms-share-next-allowed-quota-downgrade-time')
         self.metadata = kwargs.get('metadata')
         self.snapshot = None
@@ -304,6 +350,7 @@ class ShareProperties(DictMixin):
         self.provisioned_egress_mbps = kwargs.get('x-ms-share-provisioned-egress-mbps')
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
+        self.lease = LeaseProperties(**kwargs)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -312,6 +359,7 @@ class ShareProperties(DictMixin):
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
         props.quota = generated.properties.quota
+        props.access_tier = generated.properties.access_tier
         props.next_allowed_quota_downgrade_time = generated.properties.next_allowed_quota_downgrade_time
         props.metadata = generated.metadata
         props.snapshot = generated.snapshot
@@ -322,6 +370,7 @@ class ShareProperties(DictMixin):
         props.provisioned_egress_mbps = generated.properties.provisioned_egress_mbps
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
+        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
 
 
@@ -922,4 +971,5 @@ def service_properties_deserialize(generated):
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        'protocol': ShareProtocolSettings._from_generated(generated.protocol), # pylint: disable=protected-access
     }

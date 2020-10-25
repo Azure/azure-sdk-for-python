@@ -264,7 +264,7 @@ class StorageTableEntityTest(TableTestCase):
         self.assertEqual(len(keys), 3)
 
     # --Test cases for entities ------------------------------------------
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_entity_dictionary(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -817,7 +817,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_or_merge_entity_with_existing_entity(self, resource_group, location, cosmos_account,
@@ -841,7 +841,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_or_merge_entity_with_non_existing_entity(self, resource_group, location, cosmos_account,
@@ -865,7 +865,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_or_replace_entity_with_existing_entity(self, resource_group, location, cosmos_account,
@@ -889,7 +889,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_or_replace_entity_with_non_existing_entity(self, resource_group, location, cosmos_account,
@@ -913,7 +913,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_merge_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -936,7 +936,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_merge_entity_not_existing(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -956,7 +956,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_merge_entity_with_if_matches(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -981,7 +981,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_merge_entity_with_if_doesnt_match(self, resource_group, location, cosmos_account,
@@ -1276,7 +1276,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK")
+    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_timezone(self, resource_group, location, cosmos_account, cosmos_account_key):

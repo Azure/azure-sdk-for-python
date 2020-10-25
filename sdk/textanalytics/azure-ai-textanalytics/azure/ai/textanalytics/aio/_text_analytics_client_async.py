@@ -271,7 +271,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -300,9 +300,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
-        except NotImplementedError as error:
-            if "APIVersion v3.0 is not available" in str(error):
-                raise NotImplementedError(
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
+                raise ValueError(
                     "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
@@ -519,7 +519,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             )
         except TypeError as error:
             if "opinion_mining" in str(error):
-                raise NotImplementedError(
+                raise ValueError(
                     "'show_opinion_mining' is only available for API version v3.1-preview and up"
                 )
             raise error

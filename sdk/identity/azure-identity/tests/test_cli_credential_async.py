@@ -75,11 +75,10 @@ async def test_get_token():
     """The credential should parse the CLI's output to an AccessToken"""
 
     access_token = "access token"
-    valid_seconds = 42
+    expected_expires_on = 1602015811
     successful_output = json.dumps(
         {
-            # expiresOn is a naive datetime representing valid_seconds from the epoch
-            "expiresOn": datetime.fromtimestamp(valid_seconds).strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "expiresOn": datetime.fromtimestamp(expected_expires_on).strftime("%Y-%m-%d %H:%M:%S.%f"),
             "accessToken": access_token,
             "subscription": "some-guid",
             "tenant": "some-guid",
@@ -93,7 +92,7 @@ async def test_get_token():
 
     assert token.token == access_token
     assert type(token.expires_on) == int
-    assert token.expires_on == valid_seconds
+    assert token.expires_on == expected_expires_on
 
 
 async def test_cli_not_installed_linux():

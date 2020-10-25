@@ -6,28 +6,54 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Union, List, Dict, cast
 from azure.core.credentials import AzureKeyCredential
-
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline.policies import (
+    RequestIdPolicy,
+    HeadersPolicy,
+    AsyncRedirectPolicy,
+    AsyncRetryPolicy,
+    ContentDecodePolicy,
+    CustomHookPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+    DistributedTracingPolicy,
+    HttpLoggingPolicy,
+    UserAgentPolicy
+)
+from .._policies import CloudEventDistributedTracingPolicy
 from .._models import CloudEvent, EventGridEvent, CustomEvent
-from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
+from .._helpers import (
+    _get_topic_hostname_only_fqdn,
+    _get_authentication_policy,
+    _is_cloud_event,
+    _eventgrid_data_typecheck
+)
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
+from .._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent as InternalEventGridEvent
+from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
+from .._version import VERSION
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Union, Dict, List
-    SendType = Union[
-        CloudEvent,
-        EventGridEvent,
-        CustomEvent,
-        Dict,
-        List[CloudEvent],
-        List[EventGridEvent],
-        List[CustomEvent],
-        List[Dict]
-    ]
+SendType = Union[
+    CloudEvent,
+    EventGridEvent,
+    CustomEvent,
+    Dict,
+    List[CloudEvent],
+    List[EventGridEvent],
+    List[CustomEvent],
+    List[Dict]
+]
 
-class EventGridPublisherClient(object):
+ListEventType = Union[
+    List[CloudEvent],
+    List[EventGridEvent],
+    List[CustomEvent],
+    List[Dict]
+]
+
+class EventGridPublisherClient():
     """Asynchronous EventGrid Python Publisher Client.
 
     :param str topic_hostname: The topic endpoint to send the events to.
@@ -36,16 +62,47 @@ class EventGridPublisherClient(object):
     :type credential: ~azure.core.credentials.AzureKeyCredential or EventGridSharedAccessSignatureCredential
     """
 
-    def __init__(self, topic_hostname, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential], Any) -> None
-        auth_policy = _get_authentication_policy(credential)
-        self._client = EventGridPublisherClientAsync(authentication_policy=auth_policy, **kwargs)
+    def __init__(
+        self,
+        topic_hostname: str,
+        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        **kwargs: Any) -> None:
+        self._client = EventGridPublisherClientAsync(
+            policies=EventGridPublisherClient._policies(credential, **kwargs),
+            **kwargs
+            )
         topic_hostname = _get_topic_hostname_only_fqdn(topic_hostname)
         self._topic_hostname = topic_hostname
 
+    @staticmethod
+    def _policies(
+        credential: Union[AzureKeyCredential, EventGridSharedAccessSignatureCredential],
+        **kwargs: Any
+        ) -> List[Any]:
+        auth_policy = _get_authentication_policy(credential)
+        sdk_moniker = 'eventgridpublisherclient/{}'.format(VERSION)
+        policies = [
+            RequestIdPolicy(**kwargs),
+            HeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=sdk_moniker, **kwargs),
+            ProxyPolicy(**kwargs),
+            ContentDecodePolicy(**kwargs),
+            AsyncRedirectPolicy(**kwargs),
+            AsyncRetryPolicy(**kwargs),
+            auth_policy,
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            CloudEventDistributedTracingPolicy(),
+            HttpLoggingPolicy(**kwargs)
+        ]
+        return policies
 
-    async def send(self, events, **kwargs):
-        # type: (SendType) -> None
+    @distributed_trace_async
+    async def send(
+        self,
+        events: SendType,
+        **kwargs: Any) -> None:
         """Sends event data to topic hostname specified during client initialization.
 
         :param  events: A list or an instance of CloudEvent/EventGridEvent/CustomEvent to be sent.
@@ -57,20 +114,36 @@ class EventGridPublisherClient(object):
         :raises: :class:`ValueError`, when events do not follow specified SendType.
          """
         if not isinstance(events, list):
-            events = [events]
+            events = cast(ListEventType, [events])
 
         if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
             try:
-                events = [e._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
+                events = [
+                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access
+                    ]
             except AttributeError:
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
-            await self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
+            await self._client.publish_cloud_event_events(
+                self._topic_hostname,
+                cast(List[InternalCloudEvent], events),
+                **kwargs
+                )
         elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
             kwargs.setdefault("content_type", "application/json; charset=utf-8")
-            await self._client.publish_events(self._topic_hostname, events, **kwargs)
+            for event in events:
+                _eventgrid_data_typecheck(event)
+            await self._client.publish_events(
+                self._topic_hostname,
+                cast(List[InternalEventGridEvent], events),
+                **kwargs
+                )
         elif all(isinstance(e, CustomEvent) for e in events):
-            serialized_events = [dict(e) for e in events]
-            await self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
+            serialized_events = [dict(e) for e in events] # type: ignore
+            await self._client.publish_custom_event_events(
+                self._topic_hostname,
+                cast(List, serialized_events),
+                **kwargs
+                )
         else:
             raise ValueError("Event schema is not correct.")

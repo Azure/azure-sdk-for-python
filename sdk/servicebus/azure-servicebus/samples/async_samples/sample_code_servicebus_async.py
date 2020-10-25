@@ -225,9 +225,9 @@ async def example_send_and_receive_async():
     # [END receive_forever_async]
 
     # [START auto_lock_renew_message_async]
-    from azure.servicebus.aio import AutoLockRenew
+    from azure.servicebus.aio import AutoLockRenewer
 
-    lock_renewal = AutoLockRenew()
+    lock_renewal = AutoLockRenewer()
     async with servicebus_receiver:
         async for message in servicebus_receiver:
             lock_renewal.register(message, timeout=60)
@@ -289,9 +289,9 @@ async def example_session_ops_async():
         # [END session_renew_lock_async]
 
         # [START auto_lock_renew_session_async]
-        from azure.servicebus.aio import AutoLockRenew
+        from azure.servicebus.aio import AutoLockRenewer
 
-        lock_renewal = AutoLockRenew()
+        lock_renewal = AutoLockRenewer()
         async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
