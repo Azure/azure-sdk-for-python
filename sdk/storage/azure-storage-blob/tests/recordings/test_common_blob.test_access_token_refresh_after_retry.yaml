@@ -13,32 +13,33 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Fri, 23 Oct 2020 00:09:32 GMT
+      - Sat, 24 Oct 2020 23:59:10 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer5fee163a?timeout=5&restype=container
+    uri: https://storagename.blob.core.windows.net/retrytest5fee163a?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidAuthenticationInfo</Code><Message>Authentication
+        information is not given in the correct format. Check the value of Authorization
+        header.\nRequestId:0d3cbc79-c01e-0076-0d61-aa508a000000\nTime:2020-10-24T23:59:10.3922243Z</Message></Error>"
     headers:
       content-length:
-      - '0'
+      - '297'
+      content-type:
+      - application/xml
       date:
-      - Fri, 23 Oct 2020 00:09:32 GMT
-      etag:
-      - '"0x8D876E7EB8A31CC"'
-      last-modified:
-      - Fri, 23 Oct 2020 00:09:33 GMT
+      - Sat, 24 Oct 2020 23:59:09 GMT
       server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version:
-      - '2020-02-10'
+      - Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidAuthenticationInfo
     status:
-      code: 201
-      message: Created
+      code: 400
+      message: Authentication information is not given in the correct format. Check
+        the value of Authorization header.
 - request:
-    body: abc
+    body: null
     headers:
       Accept:
       - '*/*'
@@ -47,48 +48,37 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3'
-      Content-Type:
-      - application/octet-stream
+      - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-blob-type:
-      - BlockBlob
       x-ms-date:
-      - Fri, 23 Oct 2020 00:09:33 GMT
+      - Sat, 24 Oct 2020 23:59:31 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer5fee163a/testpolicies5fee163a
+    uri: https://storagename.blob.core.windows.net/retrytest5fee163a?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidAuthenticationInfo</Code><Message>Authentication
+        information is not given in the correct format. Check the value of Authorization
+        header.\nRequestId:0d3ccdf8-c01e-0076-7961-aa508a000000\nTime:2020-10-24T23:59:31.0468974Z</Message></Error>"
     headers:
       content-length:
-      - '0'
-      content-md5:
-      - kAFQmDzST7DWlj99KOF/cg==
+      - '297'
+      content-type:
+      - application/xml
       date:
-      - Fri, 23 Oct 2020 00:09:32 GMT
-      etag:
-      - '"0x8D876E7EB9EF58A"'
-      last-modified:
-      - Fri, 23 Oct 2020 00:09:33 GMT
+      - Sat, 24 Oct 2020 23:59:30 GMT
       server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-content-crc64:
-      - 6/rBP7vK5QU=
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2020-02-10'
-      x-ms-version-id:
-      - '2020-10-23T00:09:33.5511434Z'
+      - Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidAuthenticationInfo
     status:
-      code: 201
-      message: Created
+      code: 400
+      message: Authentication information is not given in the correct format. Check
+        the value of Authorization header.
 - request:
-    body: abc
+    body: null
     headers:
       Accept:
       - '*/*'
@@ -97,48 +87,37 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3'
-      Content-Type:
-      - application/octet-stream
+      - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-blob-type:
-      - BlockBlob
       x-ms-date:
-      - Fri, 23 Oct 2020 00:09:52 GMT
+      - Sat, 24 Oct 2020 23:59:55 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer5fee163a/testpolicies5fee163a
+    uri: https://storagename.blob.core.windows.net/retrytest5fee163a?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidAuthenticationInfo</Code><Message>Authentication
+        information is not given in the correct format. Check the value of Authorization
+        header.\nRequestId:0d3ce363-c01e-0076-1161-aa508a000000\nTime:2020-10-24T23:59:54.4795466Z</Message></Error>"
     headers:
       content-length:
-      - '0'
-      content-md5:
-      - kAFQmDzST7DWlj99KOF/cg==
+      - '297'
+      content-type:
+      - application/xml
       date:
-      - Fri, 23 Oct 2020 00:09:52 GMT
-      etag:
-      - '"0x8D876E7F7048B72"'
-      last-modified:
-      - Fri, 23 Oct 2020 00:09:52 GMT
+      - Sat, 24 Oct 2020 23:59:53 GMT
       server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-content-crc64:
-      - 6/rBP7vK5QU=
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2020-02-10'
-      x-ms-version-id:
-      - '2020-10-23T00:09:52.6728322Z'
+      - Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidAuthenticationInfo
     status:
-      code: 201
-      message: Created
+      code: 400
+      message: Authentication information is not given in the correct format. Check
+        the value of Authorization header.
 - request:
-    body: abc
+    body: null
     headers:
       Accept:
       - '*/*'
@@ -147,44 +126,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3'
-      Content-Type:
-      - application/octet-stream
+      - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-blob-type:
-      - BlockBlob
       x-ms-date:
-      - Fri, 23 Oct 2020 00:10:19 GMT
+      - Sun, 25 Oct 2020 00:00:38 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer5fee163a/testpolicies5fee163a
+    uri: https://storagename.blob.core.windows.net/retrytest5fee163a?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidAuthenticationInfo</Code><Message>Authentication
+        information is not given in the correct format. Check the value of Authorization
+        header.\nRequestId:0d3d0d5f-c01e-0076-0661-aa508a000000\nTime:2020-10-25T00:00:38.1025382Z</Message></Error>"
     headers:
       content-length:
-      - '0'
-      content-md5:
-      - kAFQmDzST7DWlj99KOF/cg==
+      - '297'
+      content-type:
+      - application/xml
       date:
-      - Fri, 23 Oct 2020 00:10:19 GMT
-      etag:
-      - '"0x8D876E80723CC0F"'
-      last-modified:
-      - Fri, 23 Oct 2020 00:10:19 GMT
+      - Sun, 25 Oct 2020 00:00:38 GMT
       server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-content-crc64:
-      - 6/rBP7vK5QU=
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2020-02-10'
-      x-ms-version-id:
-      - '2020-10-23T00:10:19.7211935Z'
+      - Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - InvalidAuthenticationInfo
     status:
-      code: 201
-      message: Created
+      code: 400
+      message: Authentication information is not given in the correct format. Check
+        the value of Authorization header.
 version: 1
