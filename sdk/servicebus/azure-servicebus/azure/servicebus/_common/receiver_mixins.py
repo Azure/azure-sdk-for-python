@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import uuid
 from contextlib import contextmanager
+from typing import Optional, Iterator, Iterable, TYPE_CHECKING, Type, Union
 
 from uamqp import Source
 from azure.core.settings import settings
@@ -25,6 +26,10 @@ from ..exceptions import (
     SessionLockExpired
 )
 from .utils import utc_from_timestamp, utc_now, trace_link_message
+
+if TYPE_CHECKING:
+    from azure.core.tracing import AbstractSpan
+    from .message import Message
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -80,7 +85,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     @contextmanager
     def _receive_trace_context_manager(self, message=None, span_name=SPAN_NAME_RECEIVE):
-        # type: (Optional[Union[Message, Iterable[Message]]]) -> Iterator[None]
+        # type: (Optional[Union[Message, Iterable[Message]]], str) -> Iterator[None]
         """Tracing"""
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is None:

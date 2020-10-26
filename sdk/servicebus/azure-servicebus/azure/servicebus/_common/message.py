@@ -64,6 +64,7 @@ from .utils import (
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_session_receiver import ServiceBusSessionReceiver
+    from azure.core.tracing import AbstractSpan
 
 _LOGGER = logging.getLogger(__name__)
 

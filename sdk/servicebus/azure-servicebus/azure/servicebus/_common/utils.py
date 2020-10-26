@@ -9,7 +9,7 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict, Tuple, Iterable
+from typing import Optional, Dict, Tuple, Iterable, Type, TYPE_CHECKING, Union
 from contextlib import contextmanager
 from msrest.serialization import UTC
 
@@ -40,6 +40,10 @@ from .constants import (
     TRACE_ENQUEUED_TIME_PROPERTY,
     SPAN_ENQUEUED_TIME_PROPERTY
 )
+
+if TYPE_CHECKING:
+    from .message import Message
+    from azure.core.tracing import AbstractSpan
 
 _log = logging.getLogger(__name__)
 
