@@ -7,7 +7,9 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-class ServiceBusConnectionStringProperties(object):
+from azure.servicebus.management._models import DictMixin
+
+class ServiceBusConnectionStringProperties(DictMixin):
     """
     Properties of a connection string.
     """
