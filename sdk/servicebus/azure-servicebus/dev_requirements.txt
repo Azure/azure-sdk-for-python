@@ -2,5 +2,3 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 -e ../azure-mgmt-servicebus
-aiohttp>=3.0; python_version >= '3.5'
-
