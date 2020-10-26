@@ -28,9 +28,12 @@ from .._common.constants import (
     MGMT_REQUEST_SEQUENCE_NUMBERS,
     MGMT_REQUEST_RECEIVER_SETTLE_MODE,
     MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
-    MGMT_REQUEST_MAX_MESSAGE_COUNT
+    MGMT_REQUEST_MAX_MESSAGE_COUNT,
+    SPAN_NAME_RECEIVE_DEFERRED,
+    SPAN_NAME_PEEK
 )
 from .._common import mgmt_handlers
+from .._common.utils import trace_link_message
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -148,7 +151,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 original_timeout = self.receiver._handler._timeout
                 self.receiver._handler._timeout = self.max_wait_time * 1000
             try:
-                return await self.receiver.__anext__()
+                with self.receiver._receive_trace_context_manager() as receive_span:
+                    message = await self.receiver._inner_anext()
+                    trace_link_message(message, receive_span)
+                    return message
             finally:
                 if original_timeout:
                     self.receiver._handler._timeout = original_timeout
@@ -156,7 +162,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._IterContextualWrapper(self)
 
-    async def __anext__(self):
+    async def _inner_anext(self):
+        # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
             try:
@@ -164,6 +171,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             except StopAsyncIteration:
                 self._message_iter = None
                 raise
+
+    async def __anext__(self):
+        with self._receive_trace_context_manager() as receive_span:
+            message = await self._inner_anext()
+            trace_link_message(message, receive_span)
+            return message
 
     async def _iter_next(self):
         await self._open()
@@ -405,12 +418,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
-        return await self._do_retryable_operation(
-            self._receive,
-            max_message_count=max_message_count,
-            timeout=max_wait_time,
-            operation_requires_timeout=True
-        )
+        with self._receive_trace_context_manager() as receive_span:
+            messages = await self._do_retryable_operation(
+                self._receive,
+                max_message_count=max_message_count,
+                timeout=max_wait_time,
+                operation_requires_timeout=True
+            )
+            trace_link_message(messages, receive_span)
+            return messages
 
     async def receive_deferred_messages(
         self,
@@ -462,13 +478,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                                     receive_mode=self._receive_mode,
                                     message_type=ReceivedMessage,
                                     receiver=self)
-        messages = await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
-            message,
-            handler,
-            timeout=timeout
-        )
-        return messages
+        with self._receive_trace_context_manager(span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
+            messages = await self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+                message,
+                handler,
+                timeout=timeout
+            )
+            trace_link_message(messages, receive_span)
+            return messages
 
     async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[PeekedMessage]:
         """Browse messages currently pending in the queue.
@@ -513,9 +531,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_message_properties(message)
 
-        return await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_PEEK_OPERATION,
-            message,
-            mgmt_handlers.peek_op,
-            timeout=timeout
-        )
+        with self._receive_trace_context_manager(span_name=SPAN_NAME_PEEK) as receive_span:
+            messages = await self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_PEEK_OPERATION,
+                message,
+                mgmt_handlers.peek_op,
+                timeout=timeout
+            )
+            trace_link_message(messages, receive_span)
+            return messages

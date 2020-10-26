@@ -18,7 +18,13 @@ from .exceptions import (
     OperationTimeoutError,
     _ServiceBusErrorPolicy,
     )
-from ._common.utils import create_authentication, transform_messages_to_sendable_if_needed
+from ._common.utils import (
+    create_authentication,
+    transform_messages_to_sendable_if_needed,
+    send_trace_context_manager,
+    trace_message,
+    add_link_to_send
+    )
 from ._common.constants import (
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -28,7 +34,8 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGES,
     MGMT_REQUEST_MESSAGE_ID,
     MGMT_REQUEST_PARTITION_KEY,
-    MGMT_REQUEST_VIA_PARTITION_KEY
+    MGMT_REQUEST_VIA_PARTITION_KEY,
+    SPAN_NAME_SCHEDULE
 )
 
 if TYPE_CHECKING:
@@ -62,13 +69,15 @@ class SenderMixin(object):
         self._handler._msg_timeout = timeout * 1000  # type: ignore
 
     @classmethod
-    def _build_schedule_request(cls, schedule_time_utc, *messages):
+    def _build_schedule_request(cls, schedule_time_utc, send_span, *messages):
         request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
             if not isinstance(message, Message):
                 raise ValueError("Scheduling batch messages only supports iterables containing Message Objects."
                                  " Received instead: {}".format(message.__class__.__name__))
             message = transform_messages_to_sendable_if_needed(message)
+            trace_message(message, send_span)
+            add_link_to_send(message, send_span)
             message.scheduled_enqueue_time_utc = schedule_time_utc
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -221,16 +230,17 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(messages, Message):
-            request_body = self._build_schedule_request(schedule_time_utc, messages)
-        else:
-            request_body = self._build_schedule_request(schedule_time_utc, *messages)
-        return self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
-            request_body,
-            mgmt_handlers.schedule_op,
-            timeout=timeout
-        )
+        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
+            if isinstance(messages, Message):
+                request_body = self._build_schedule_request(schedule_time_utc, send_span, messages)
+            else:
+                request_body = self._build_schedule_request(schedule_time_utc, send_span, *messages)
+            return self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
+                request_body,
+                mgmt_handlers.schedule_op,
+                timeout=timeout
+            )
 
     def cancel_scheduled_messages(self, sequence_numbers, **kwargs):
         # type: (Union[int, List[int]], Any) -> None
@@ -349,25 +359,39 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        message = transform_messages_to_sendable_if_needed(message)
-        try:
-            batch = self.create_batch()
-            batch._from_list(message)  # pylint: disable=protected-access
-            message = batch
-        except TypeError:  # Message was not a list or generator.
-            pass
-        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
-            raise ValueError("A BatchMessage or list of Message must have at least one Message")
-        if not isinstance(message, BatchMessage) and not isinstance(message, Message):
-            raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
 
-        self._do_retryable_operation(
-            self._send,
-            message=message,
-            timeout=timeout,
-            operation_requires_timeout=True,
-            require_last_exception=True
-        )
+        with send_trace_context_manager() as send_span:
+            # Ensure message is sendable (not a ReceivedMessage), and if needed (a list) is batched. Adds tracing.
+            message = transform_messages_to_sendable_if_needed(message)
+            try:
+                for each_message in iter(message):
+                    add_link_to_send(each_message, send_span)
+                batch = self.create_batch()
+                batch._from_list(message, send_span)  # pylint: disable=protected-access
+                message = batch
+            except TypeError:  # Message was not a list or generator. Do needed tracing.
+                if isinstance(message, BatchMessage):
+                    for batch_message in message.message._body_gen:  # pylint: disable=protected-access
+                        add_link_to_send(batch_message, send_span)
+                elif isinstance(message, Message):
+                    trace_message(message, send_span)
+                    add_link_to_send(message, send_span)
+
+            if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
+                raise ValueError("A BatchMessage or list of Message must have at least one Message")
+            if not isinstance(message, BatchMessage) and not isinstance(message, Message):
+                raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
+
+            if send_span:
+                self._add_span_request_attributes(send_span)
+
+            self._do_retryable_operation(
+                self._send,
+                message=message,
+                timeout=timeout,
+                operation_requires_timeout=True,
+                require_last_exception=True
+            )
 
     def create_batch(self, max_size_in_bytes=None):
         # type: (int) -> BatchMessage

@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
+from contextlib import contextmanager
 from uamqp import Source
 from .message import ReceivedMessage
 from .constants import (
@@ -12,14 +13,17 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    ReceiveMode
+    ReceiveMode,
+    SPAN_NAME_RECEIVE
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
     SessionLockExpired
 )
-from .utils import utc_from_timestamp, utc_now
+from .utils import utc_from_timestamp, utc_now, trace_link_message
 
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):
@@ -56,6 +60,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _build_message(self, received, message_type=ReceivedMessage):
         message = message_type(message=received, receive_mode=self._receive_mode, receiver=self)
+        trace_link_message(message)
         self._last_received_sequenced_number = message.sequence_number
         return message
 
@@ -70,6 +75,25 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _populate_message_properties(self, message):
         pass
+
+    @contextmanager
+    def _receive_trace_context_manager(self, message=None, span_name=SPAN_NAME_RECEIVE):
+        # type: (Optional[Union[Message, Iterable[Message]]]) -> Iterator[None]
+        """Tracing"""
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is None:
+            yield
+        else:
+            receive_span = span_impl_type(name=span_name)
+            self._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
+            receive_span.kind = SpanKind.CONSUMER
+
+            # If it is desired to create link before span open
+            if message:
+                trace_link_message(message, receive_span)
+
+            with receive_span:
+                yield
 
 
 class SessionReceiverMixin(ReceiverMixin):

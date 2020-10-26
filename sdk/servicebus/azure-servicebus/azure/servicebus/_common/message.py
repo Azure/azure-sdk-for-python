@@ -56,7 +56,11 @@ from ..exceptions import (
     MessageSettleFailed,
     MessageContentTooLarge,
     ServiceBusError)
-from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
+from .utils import (
+    utc_from_timestamp,
+    utc_now,
+    transform_messages_to_sendable_if_needed,
+    trace_message)
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_session_receiver import ServiceBusSessionReceiver
@@ -523,14 +527,16 @@ class BatchMessage(object):
         return "BatchMessage({})".format(batch_repr)
 
     def __len__(self):
+        # type: () -> int
         return self._count
 
-    def _from_list(self, messages):
+    def _from_list(self, messages, parent_span=None):
+        # type: (Iterable[Message], AbstractSpan) -> None
         for each in messages:
             if not isinstance(each, Message):
                 raise TypeError("Only Message or an iterable object containing Message objects are accepted."
                                  "Received instead: {}".format(each.__class__.__name__))
-            self.add(each)
+            self._add(each, parent_span)
 
     @property
     def size_in_bytes(self):
@@ -554,7 +560,13 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
+        return self._add(message)
+
+    def _add(self, message, parent_span=None):
+        # type: (Message, AbstractSpan) -> None
+        """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_to_sendable_if_needed(message)
+        trace_message(message, parent_span) # parent_span is e.g. if built as part of a send operation.
         message_size = message.message.get_message_encoded_size()
 
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
