@@ -26,7 +26,22 @@ parse_result = ServiceBusConnectionStringParser(conn_str).parse()
 fully_qualified_namespace = parse_result.fully_qualified_namespace
 credential = ServiceBusSharedKeyCredential(parse_result.shared_access_key_name, parse_result.shared_access_key)
 
+# initialize with credential and namespace from the parse_result.
 servicebus_client = ServiceBusClient(fully_qualified_namespace, credential)
+with servicebus_client:
+    sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
+    with sender:
+        sender.send_messages(Message('Single Message'))
+
+print("Send message is done.")
+
+
+# initialize with DefaultAzureCredential
+servicebus_client = ServiceBusClient(
+    fully_qualified_namespace,
+    DefaultAzureCredential(),
+    parse_result.entity_path
+    )
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:

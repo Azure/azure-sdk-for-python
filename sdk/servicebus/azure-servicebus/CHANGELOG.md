@@ -46,6 +46,8 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * `AutoLockRenewer.register` now takes `ServiceBusReceiver` as a positional parameter.
 * Removed `encoding` support from `ServiceBusMessage`.
 
+* Added a `ServiceBusConnectionStringParser` which parses a connection string into individual entities.
+
 **BugFixes**
 
 * Updated uAMQP dependency to 1.2.12.

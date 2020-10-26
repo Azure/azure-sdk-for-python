@@ -9,7 +9,7 @@ except ImportError:
 
 class ServiceBusConnectionStringProperties(object):
     """
-    Properties of a connection string
+    Properties of a connection string.
     """
     def __init__(self, **kwargs):
         self.fully_qualified_namespace = kwargs.pop('fully_qualified_namespace', None)
@@ -21,10 +21,12 @@ class ServiceBusConnectionStringProperties(object):
 
 
 class ServiceBusConnectionStringParser(object):
-    """
-    Parse the connection string.
+    """Parse the connection string.
+
+    :param conn_str: The connection string that has to be parsed.
     """
     def __init__(self, conn_str, **kwargs):
+        # type: (str, Any) -> None
         """
         :param conn_str: The connection string to parse.
         :type conn_str: str
@@ -32,6 +34,7 @@ class ServiceBusConnectionStringParser(object):
         self._conn_str = conn_str
 
     def parse(self, **kwargs):
+        # type(Any) -> ServiceBusConnectionStringProperties
         """
         Parse the connection string.
         """
@@ -48,8 +51,8 @@ class ServiceBusConnectionStringParser(object):
         if not endpoint:
             raise ValueError("Connection string is either blank or malformed.")
         parsed = urlparse(endpoint.rstrip('/'))
-        if parsed.netloc is None:
-            raise ValueError("Invalid EndPoint on the Connection String.")
+        if not parsed.netloc:
+            raise ValueError("Invalid Endpoint on the Connection String.")
         namespace = parsed.netloc.strip()
         props = {
             'fully_qualified_namespace': namespace,
