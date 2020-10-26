@@ -98,7 +98,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         )
 
         # create and validate an ADLS account
-        response_create = self.adls_account_client.accounts.create(
+        response_create = self.adls_account_client.accounts.begin_create(
             resource_group.name,
             account_name,
             params_create,
@@ -161,8 +161,8 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=LOCATION)
     def test_adls_accounts(self, resource_group, location):
         # define account params
-        account_name = self.get_resource_name('pyarmadls')
-        account_name_no_encryption = self.get_resource_name('pyarmadls2')
+        account_name = self.get_resource_name('testadls')
+        account_name_no_encryption = self.get_resource_name('testadls2')
 
         params_create = azure.mgmt.datalake.store.models.CreateDataLakeStoreAccountParameters(
             location=location,
@@ -191,7 +191,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertTrue(name_availability.name_available)
 
         # create and validate an ADLS account
-        adls_account = self.adls_account_client.accounts.create(
+        adls_account = self.adls_account_client.accounts.begin_create(
             resource_group.name,
             account_name,
             params_create,
@@ -242,7 +242,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
 
         # create no encryption account
         # create and validate an ADLS account
-        adls_account_no_encryption = self.adls_account_client.accounts.create(
+        adls_account_no_encryption = self.adls_account_client.accounts.begin_create(
             resource_group.name,
             account_name_no_encryption,
             params_create_no_encryption,
@@ -275,7 +275,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         self.assertGreater(len(result_list), 1)
 
         # update the tags
-        adls_account = self.adls_account_client.accounts.update(
+        adls_account = self.adls_account_client.accounts.begin_update(
             resource_group.name,
             account_name,
             azure.mgmt.datalake.store.models.UpdateDataLakeStoreAccountParameters(
@@ -295,7 +295,7 @@ class MgmtDataLakeStoreTest(AzureMgmtTestCase):
         operations_list = self.adls_account_client.operations.list()
         self.assertIsNotNone(operations_list)
 
-        self.adls_account_client.accounts.delete(
+        self.adls_account_client.accounts.begin_delete(
             resource_group.name,
             account_name
         ).wait()
