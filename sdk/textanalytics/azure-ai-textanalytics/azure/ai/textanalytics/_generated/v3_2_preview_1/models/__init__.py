@@ -15,19 +15,7 @@ try:
     from ._models_py3 import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1
     from ._models_py3 import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1
     from ._models_py3 import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1
-    from ._models_py3 import Components1Yw06Y0SchemasTasksstatePropertiesTasksPropertiesCustomentityrecognitiontasksItemsAllof1
-    from ._models_py3 import Components4X9ZamSchemasTasksstatePropertiesTasksPropertiesCustomclassificationtasksItemsAllof1
     from ._models_py3 import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1
-    from ._models_py3 import CustomClassification
-    from ._models_py3 import CustomClassificationDocument
-    from ._models_py3 import CustomClassificationResult
-    from ._models_py3 import CustomClassificationTask
-    from ._models_py3 import CustomClassificationTaskParameters
-    from ._models_py3 import CustomEntitiesDocument
-    from ._models_py3 import CustomEntitiesResult
-    from ._models_py3 import CustomEntitiesTask
-    from ._models_py3 import CustomEntitiesTaskParameters
-    from ._models_py3 import CustomEntity
     from ._models_py3 import DetectedLanguage
     from ._models_py3 import DocumentEntities
     from ._models_py3 import DocumentError
@@ -81,15 +69,12 @@ try:
     from ._models_py3 import TaskState
     from ._models_py3 import TasksState
     from ._models_py3 import TasksStateTasks
-    from ._models_py3 import TasksStateTasksCustomClassificationTasksItem
-    from ._models_py3 import TasksStateTasksCustomEntityRecognitionTasksItem
     from ._models_py3 import TasksStateTasksEntityLinkingTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
     from ._models_py3 import TasksStateTasksKeyPhraseExtractionTasksItem
     from ._models_py3 import TasksStateTasksSentimentAnalysisTasksItem
     from ._models_py3 import TextAnalyticsError
-    from ._models_py3 import TextAnalyticsTask
     from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
     from ._models import AnalyzeBatchInput  # type: ignore
@@ -100,19 +85,7 @@ except (SyntaxError, ImportError):
     from ._models import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1  # type: ignore
     from ._models import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1  # type: ignore
     from ._models import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1  # type: ignore
-    from ._models import Components1Yw06Y0SchemasTasksstatePropertiesTasksPropertiesCustomentityrecognitiontasksItemsAllof1  # type: ignore
-    from ._models import Components4X9ZamSchemasTasksstatePropertiesTasksPropertiesCustomclassificationtasksItemsAllof1  # type: ignore
     from ._models import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1  # type: ignore
-    from ._models import CustomClassification  # type: ignore
-    from ._models import CustomClassificationDocument  # type: ignore
-    from ._models import CustomClassificationResult  # type: ignore
-    from ._models import CustomClassificationTask  # type: ignore
-    from ._models import CustomClassificationTaskParameters  # type: ignore
-    from ._models import CustomEntitiesDocument  # type: ignore
-    from ._models import CustomEntitiesResult  # type: ignore
-    from ._models import CustomEntitiesTask  # type: ignore
-    from ._models import CustomEntitiesTaskParameters  # type: ignore
-    from ._models import CustomEntity  # type: ignore
     from ._models import DetectedLanguage  # type: ignore
     from ._models import DocumentEntities  # type: ignore
     from ._models import DocumentError  # type: ignore
@@ -166,15 +139,12 @@ except (SyntaxError, ImportError):
     from ._models import TaskState  # type: ignore
     from ._models import TasksState  # type: ignore
     from ._models import TasksStateTasks  # type: ignore
-    from ._models import TasksStateTasksCustomClassificationTasksItem  # type: ignore
-    from ._models import TasksStateTasksCustomEntityRecognitionTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityLinkingTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
     from ._models import TasksStateTasksKeyPhraseExtractionTasksItem  # type: ignore
     from ._models import TasksStateTasksSentimentAnalysisTasksItem  # type: ignore
     from ._models import TextAnalyticsError  # type: ignore
-    from ._models import TextAnalyticsTask  # type: ignore
     from ._models import TextAnalyticsWarning  # type: ignore
 
 from ._text_analytics_client_enums import (
@@ -186,6 +156,7 @@ from ._text_analytics_client_enums import (
     SentenceSentimentValue,
     State,
     StringIndexType,
+    StringIndexTypeResponse,
     TokenSentimentValue,
     WarningCodeValue,
 )
@@ -199,19 +170,7 @@ __all__ = [
     'Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1',
     'Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1',
     'Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1',
-    'Components1Yw06Y0SchemasTasksstatePropertiesTasksPropertiesCustomentityrecognitiontasksItemsAllof1',
-    'Components4X9ZamSchemasTasksstatePropertiesTasksPropertiesCustomclassificationtasksItemsAllof1',
     'ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1',
-    'CustomClassification',
-    'CustomClassificationDocument',
-    'CustomClassificationResult',
-    'CustomClassificationTask',
-    'CustomClassificationTaskParameters',
-    'CustomEntitiesDocument',
-    'CustomEntitiesResult',
-    'CustomEntitiesTask',
-    'CustomEntitiesTaskParameters',
-    'CustomEntity',
     'DetectedLanguage',
     'DocumentEntities',
     'DocumentError',
@@ -265,15 +224,12 @@ __all__ = [
     'TaskState',
     'TasksState',
     'TasksStateTasks',
-    'TasksStateTasksCustomClassificationTasksItem',
-    'TasksStateTasksCustomEntityRecognitionTasksItem',
     'TasksStateTasksEntityLinkingTasksItem',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
     'TasksStateTasksKeyPhraseExtractionTasksItem',
     'TasksStateTasksSentimentAnalysisTasksItem',
     'TextAnalyticsError',
-    'TextAnalyticsTask',
     'TextAnalyticsWarning',
     'AspectRelationType',
     'DocumentSentimentValue',
@@ -283,6 +239,7 @@ __all__ = [
     'SentenceSentimentValue',
     'State',
     'StringIndexType',
+    'StringIndexTypeResponse',
     'TokenSentimentValue',
     'WarningCodeValue',
 ]

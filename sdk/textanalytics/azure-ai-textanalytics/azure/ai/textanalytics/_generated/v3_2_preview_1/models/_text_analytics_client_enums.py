@@ -95,6 +95,12 @@ class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNICODE_CODE_POINT = "UnicodeCodePoint"  #: Returned offset and length values will correspond to Unicode code points. Use this option if your application is written in a language that support Unicode, for example Python.
     UTF16_CODE_UNIT = "Utf16CodeUnit"  #: Returned offset and length values will correspond to UTF-16 code units. Use this option if your application is written in a language that support Unicode, for example Java, JavaScript.
 
+class StringIndexTypeResponse(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    TEXT_ELEMENTS_V8 = "TextElements_v8"  #: Returned offset and length values will correspond to TextElements (Graphemes and Grapheme clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is written in .Net Framework or .Net Core and you will be using StringInfo.
+    UNICODE_CODE_POINT = "UnicodeCodePoint"  #: Returned offset and length values will correspond to Unicode code points. Use this option if your application is written in a language that support Unicode, for example Python.
+    UTF16_CODE_UNIT = "Utf16CodeUnit"  #: Returned offset and length values will correspond to UTF-16 code units. Use this option if your application is written in a language that support Unicode, for example Java, JavaScript.
+
 class TokenSentimentValue(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Aspect level sentiment for the aspect in the sentence.
     """

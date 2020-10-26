@@ -138,7 +138,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Submit healthcare analysis job.
