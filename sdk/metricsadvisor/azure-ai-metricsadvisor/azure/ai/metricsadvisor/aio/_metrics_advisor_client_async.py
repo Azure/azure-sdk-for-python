@@ -318,7 +318,7 @@ class MetricsAdvisorClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
                 :start-after: [START list_alerts_for_alert_config_async]
                 :end-before: [END list_alerts_for_alert_config_async]
                 :language: python
@@ -360,7 +360,7 @@ class MetricsAdvisorClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
                 :start-after: [START list_anomalies_for_alert_async]
                 :end-before: [END list_anomalies_for_alert_async]
                 :language: python

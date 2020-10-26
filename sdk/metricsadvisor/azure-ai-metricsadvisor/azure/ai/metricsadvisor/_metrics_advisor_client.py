@@ -315,7 +315,7 @@ class MetricsAdvisorClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
+            .. literalinclude:: ../samples/sample_alert_configuration.py
                 :start-after: [START list_alerts_for_alert_config]
                 :end-before: [END list_alerts_for_alert_config]
                 :language: python
@@ -357,7 +357,7 @@ class MetricsAdvisorClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
+            .. literalinclude:: ../samples/sample_alert_configuration.py
                 :start-after: [START list_anomalies_for_alert]
                 :end-before: [END list_anomalies_for_alert]
                 :language: python
