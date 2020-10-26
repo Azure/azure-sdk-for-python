@@ -41,7 +41,9 @@ class GetDetailedDiagnosticsInformationSampleAsync(object):
         text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
 
         documents = [
-            "I had the best day of my life.",
+            """I had the best day of my life. I decided to go sky-diving and it made me appreciate my whole life so much more.
+            I developed a deep-connection with my instructor as well.
+            """,
             "This was a waste of my time. The speaker put me to sleep.",
             "No tengo dinero ni nada que dar...",
             "L'hôtel n'était pas très confortable. L'éclairage était trop sombre."

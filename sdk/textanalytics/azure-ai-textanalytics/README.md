@@ -144,7 +144,7 @@ The input for each operation is passed as a **list** of documents.
 
 Each document can be passed as a string in the list, e.g.
 ```python
-documents = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites.", "What a great movie!"]
+documents = ["I hated the movie. It was so slow!", "The movie made it into my top ten favorites. What a great movie!"]
 ```
 
 or, if you wish to pass in a per-item document `id` or `language`/`country_hint`, they can be passed as a list of
@@ -155,8 +155,7 @@ or a dict-like representation of the object:
 ```python
 documents = [
     {"id": "1", "language": "en", "text": "I hated the movie. It was so slow!"},
-    {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites."},
-    {"id": "3", "language": "en", "text": "What a great movie!"}
+    {"id": "2", "language": "en", "text": "The movie made it into my top ten favorites. What a great movie!"},
 ]
 ```
 
@@ -207,7 +206,7 @@ endpoint="https://<region>.api.cognitive.microsoft.com/"
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
-    "I did not like the restaurant. The food was too spicy.",
+    "I did not like the restaurant. The food was somehow both too spicy and underseasoned. Additionally, I thought the location was too far away from the playhouse.",
     "The restaurant was decorated beautifully. The atmosphere was unlike any other restaurant I've been to.",
     "The food was yummy. :)"
 ]
@@ -241,8 +240,10 @@ endpoint="https://<region>.api.cognitive.microsoft.com/"
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
-    "Microsoft was founded by Bill Gates and Paul Allen.",
-    "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
+    """
+    Microsoft was founded by Bill Gates and Paul Allen. Its headquarters are located in Redmond. Redmond is a
+    city in King County, Washington, United States, located 15 miles east of Seattle.
+    """,
     "Jeff bought three dozen eggs because there was a 50% discount."
 ]
 
@@ -277,7 +278,7 @@ endpoint="https://<region>.api.cognitive.microsoft.com/"
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
-    "Microsoft was founded by Bill Gates and Paul Allen.",
+    "Microsoft was founded by Bill Gates and Paul Allen. Its headquarters are located in Redmond.",
     "Easter Island, a Chilean territory, is a remote volcanic island in Polynesia."
 ]
 
@@ -315,8 +316,10 @@ endpoint="https://<region>.api.cognitive.microsoft.com/"
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
-    "The employee's SSN is 859-98-0987.",
-    "The employee's phone number is 555-555-5555."
+    """
+    We have an employee called Parker who cleans up after customers. The employee's
+    SSN is 859-98-0987, and their phone number is 555-555-5555.
+    """
 ]
 response = text_analytics_client.recognize_pii_entities(documents, language="en")
 result = [doc for doc in response if not doc.is_error]
@@ -348,8 +351,10 @@ text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
     "Redmond is a city in King County, Washington, United States, located 15 miles east of Seattle.",
-    "I need to take my cat to the veterinarian.",
-    "I will travel to South America in the summer."
+    """
+    I need to take my cat to the veterinarian. He has been sick recently, and I need to take him
+    before I travel to South America for the summer.
+    """,
 ]
 
 response = text_analytics_client.extract_key_phrases(documents, language="en")
@@ -376,7 +381,10 @@ endpoint="https://<region>.api.cognitive.microsoft.com/"
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
 documents = [
-    "This is written in English.",
+    """
+    This whole document is written in English. In order for the whole document to be written
+    in English, every sentence also has to be written in English, which it is.
+    """,
     "Il documento scritto in italiano.",
     "Dies ist in deutsche Sprache verfasst."
 ]
