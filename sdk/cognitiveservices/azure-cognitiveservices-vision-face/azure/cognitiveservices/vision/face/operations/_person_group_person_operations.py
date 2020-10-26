@@ -49,12 +49,12 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: Person or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.Person or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
@@ -115,12 +115,12 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype: list[~azure.cognitiveservices.vision.face.models.Person] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -175,11 +175,11 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -223,12 +223,12 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: Person or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.Person or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -282,11 +282,11 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
@@ -327,7 +327,7 @@ class PersonGroupPersonOperations(object):
             self, person_group_id, person_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
         """Delete a face from a person in a person group by specified
         personGroupId, personId and persistedFaceId.
-        <br /> Adding/deleting faces to/from a same person will be processed
+         Adding/deleting faces to/from a same person will be processed
         sequentially. Adding/deleting faces to/from different persons are
         processed in parallel.
 
@@ -342,11 +342,11 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.delete_face.metadata['url']
@@ -394,12 +394,12 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: PersistedFace or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get_face.metadata['url']
@@ -445,16 +445,16 @@ class PersonGroupPersonOperations(object):
         can be specified as an image with a targetFace rectangle. It returns a
         persistedFaceId representing the added face. No image will be stored.
         Only the extracted face feature will be stored on server until
-        [PersonGroup PersonFace -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/deleteface),
-        [PersonGroup Person -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/delete)
-        or [PersonGroup -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/delete)
+        `PersonGroup PersonFace -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/deleteface>`_,
+        `PersonGroup Person -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/delete>`_
+        or `PersonGroup -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/delete>`_
         is called.
-        <br /> Note persistedFaceId is different from faceId generated by [Face
+         Note persistedFaceId is different from faceId generated by `Face
         -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         * Higher face image quality means better recognition precision. Please
         consider high-quality faces: frontal, clear, and face size is 200x200
         pixels (100 pixels between eyes) or bigger.
@@ -463,8 +463,8 @@ class PersonGroupPersonOperations(object):
         allowed image file size is from 1KB to 6MB.
         * "targetFace" rectangle should contain one face. Zero or multiple
         faces will be regarded as an error. If the provided "targetFace"
-        rectangle is not returned from [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        rectangle is not returned from `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_,
         there’s no guarantee to detect and add the face successfully.
         * Out of detectable face size (36x36 - 4096x4096 pixels), large
         head-pose, or large occlusions will cause failures.
@@ -486,11 +486,11 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.UpdateFaceRequest(user_data=user_data)
 
@@ -535,16 +535,16 @@ class PersonGroupPersonOperations(object):
         can be specified as an image with a targetFace rectangle. It returns a
         persistedFaceId representing the added face. No image will be stored.
         Only the extracted face feature will be stored on server until
-        [PersonGroup PersonFace -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/deleteface),
-        [PersonGroup Person -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/delete)
-        or [PersonGroup -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/delete)
+        `PersonGroup PersonFace -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/deleteface>`_,
+        `PersonGroup Person -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/delete>`_
+        or `PersonGroup -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/delete>`_
         is called.
-        <br /> Note persistedFaceId is different from faceId generated by [Face
+         Note persistedFaceId is different from faceId generated by `Face
         -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         *   Higher face image quality means better recognition precision.
         Please consider high-quality faces: frontal, clear, and face size is
         200x200 pixels (100 pixels between eyes) or bigger.
@@ -553,8 +553,8 @@ class PersonGroupPersonOperations(object):
         allowed image file size is from 1KB to 6MB.
         *   "targetFace" rectangle should contain one face. Zero or multiple
         faces will be regarded as an error. If the provided "targetFace"
-        rectangle is not returned from [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        rectangle is not returned from `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_,
         there’s no guarantee to detect and add the face successfully.
         *   Out of detectable face size (36x36 - 4096x4096 pixels), large
         head-pose, or large occlusions will cause failures.
@@ -565,13 +565,13 @@ class PersonGroupPersonOperations(object):
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
-        different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        different detection models, please refer to `How to specify a detection
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'detection_01': | The default detection model for [PersonGroup Person
+        | 'detection_01': | The default detection model for `PersonGroup Person
         - Add
-        Face](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/addfacefromurl).
+        Face <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/addfacefromurl>`_.
         Recommend for near frontal face detection. For scenarios with
         exceptionally large angle (head-pose) faces, occluded faces or wrong
         image orientation, the faces in such cases may not be detected. |
@@ -605,12 +605,12 @@ class PersonGroupPersonOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: PersistedFace or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         image_url = models.ImageUrl(url=url)
 
@@ -667,16 +667,16 @@ class PersonGroupPersonOperations(object):
         can be specified as an image with a targetFace rectangle. It returns a
         persistedFaceId representing the added face. No image will be stored.
         Only the extracted face feature will be stored on server until
-        [PersonGroup PersonFace -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/deleteface),
-        [PersonGroup Person -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/delete)
-        or [PersonGroup -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/delete)
+        `PersonGroup PersonFace -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/deleteface>`_,
+        `PersonGroup Person -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/delete>`_
+        or `PersonGroup -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/delete>`_
         is called.
-        <br /> Note persistedFaceId is different from faceId generated by [Face
+         Note persistedFaceId is different from faceId generated by `Face
         -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         *   Higher face image quality means better recognition precision.
         Please consider high-quality faces: frontal, clear, and face size is
         200x200 pixels (100 pixels between eyes) or bigger.
@@ -685,8 +685,8 @@ class PersonGroupPersonOperations(object):
         allowed image file size is from 1KB to 6MB.
         *   "targetFace" rectangle should contain one face. Zero or multiple
         faces will be regarded as an error. If the provided "targetFace"
-        rectangle is not returned from [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        rectangle is not returned from `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_,
         there’s no guarantee to detect and add the face successfully.
         *   Out of detectable face size (36x36 - 4096x4096 pixels), large
         head-pose, or large occlusions will cause failures.
@@ -697,13 +697,13 @@ class PersonGroupPersonOperations(object):
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
-        different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        different detection models, please refer to `How to specify a detection
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'detection_01': | The default detection model for [PersonGroup Person
+        | 'detection_01': | The default detection model for `PersonGroup Person
         - Add
-        Face](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/addfacefromurl).
+        Face <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroupperson/addfacefromurl>`_.
         Recommend for near frontal face detection. For scenarios with
         exceptionally large angle (head-pose) faces, occluded faces or wrong
         image orientation, the faces in such cases may not be detected. |
@@ -742,12 +742,12 @@ class PersonGroupPersonOperations(object):
          data is uploading, response will be None.
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: PersistedFace or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.add_face_from_stream.metadata['url']

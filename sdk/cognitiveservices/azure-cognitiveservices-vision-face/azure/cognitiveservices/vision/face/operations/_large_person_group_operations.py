@@ -39,21 +39,21 @@ class LargePersonGroupOperations(object):
             self, large_person_group_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
         """Create a new large person group with user-specified largePersonGroupId,
         name, an optional userData and recognitionModel.
-        <br /> A large person group is the container of the uploaded person
+         A large person group is the container of the uploaded person
         data, including face recognition feature, and up to 1,000,000
         people.
-        <br /> After creation, use [LargePersonGroup Person -
-        Create](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroupperson/create)
-        to add person into the group, and call [LargePersonGroup -
-        Train](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/train)
-        to get this group ready for [Face -
-        Identify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify).
-        <br /> No image will be stored. Only the person's extracted face
-        features and userData will be stored on server until [LargePersonGroup
+         After creation, use `LargePersonGroup Person -
+        Create <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroupperson/create>`_
+        to add person into the group, and call `LargePersonGroup -
+        Train <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/train>`_
+        to get this group ready for `Face -
+        Identify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify>`_.
+         No image will be stored. Only the person's extracted face
+        features and userData will be stored on server until `LargePersonGroup
         Person -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroupperson/delete)
-        or [LargePersonGroup -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/delete)
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroupperson/delete>`_
+        or `LargePersonGroup -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/delete>`_
         is called.
         <br/>'recognitionModel' should be specified to associate with this
         large person group. The default value for 'recognitionModel' is
@@ -63,9 +63,9 @@ class LargePersonGroupOperations(object):
         already associated with the collection. Existing face features in a
         large person group can't be updated to features extracted by another
         version of recognition model.
-        * 'recognition_01': The default recognition model for [LargePersonGroup
+        * 'recognition_01': The default recognition model for `LargePersonGroup
         -
-        Create](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/create).
+        Create <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/create>`_.
         All those large person groups created before 2019 March are bonded with
         this recognition model.
         * 'recognition_02': Recognition model released in 2019 March.
@@ -91,11 +91,11 @@ class LargePersonGroupOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.MetaDataContract(name=name, user_data=user_data, recognition_model=recognition_model)
 
@@ -143,11 +143,11 @@ class LargePersonGroupOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -181,8 +181,8 @@ class LargePersonGroupOperations(object):
             self, large_person_group_id, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """Retrieve the information of a large person group, including its name,
         userData and recognitionModel. This API returns large person group
-        information only, use [LargePersonGroup Person -
-        List](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroupperson/list)
+        information only, use `LargePersonGroup Person -
+        List <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroupperson/list>`_
         instead to retrieve person information under the large person group.
         .
 
@@ -196,12 +196,12 @@ class LargePersonGroupOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: LargePersonGroup or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.LargePersonGroup
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -256,11 +256,11 @@ class LargePersonGroupOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
@@ -308,12 +308,12 @@ class LargePersonGroupOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: TrainingStatus or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.TrainingStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get_training_status.metadata['url']
@@ -353,7 +353,7 @@ class LargePersonGroupOperations(object):
     def list(
             self, start=None, top=1000, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """List all existing large person groups’ largePersonGroupId, name,
-        userData and recognitionModel.<br />
+        userData and recognitionModel.
         * Large person groups are stored in alphabetical order of
         largePersonGroupId.
         * "start" parameter (string, optional) is a user-provided
@@ -364,11 +364,11 @@ class LargePersonGroupOperations(object):
         return. A maximal of 1000 entries can be returned in one call. To fetch
         more, you can specify "start" with the last returned entry’s Id of the
         current call.
-        <br />
+
         For example, total 5 large person groups: "group1", ..., "group5".
-        <br /> "start=&top=" will return all 5 groups.
-        <br /> "start=&top=2" will return "group1", "group2".
-        <br /> "start=group2&top=3" will return "group3", "group4", "group5".
+         "start=&top=" will return all 5 groups.
+         "start=&top=2" will return "group1", "group2".
+         "start=group2&top=3" will return "group3", "group4", "group5".
         .
 
         :param start: List large person groups from the least
@@ -383,13 +383,13 @@ class LargePersonGroupOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype:
          list[~azure.cognitiveservices.vision.face.models.LargePersonGroup] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -443,11 +443,11 @@ class LargePersonGroupOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.train.metadata['url']

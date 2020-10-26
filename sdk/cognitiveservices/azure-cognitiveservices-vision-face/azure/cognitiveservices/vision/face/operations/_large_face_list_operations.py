@@ -39,27 +39,27 @@ class LargeFaceListOperations(object):
             self, large_face_list_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
         """Create an empty large face list with user-specified largeFaceListId,
         name, an optional userData and recognitionModel.
-        <br /> Large face list is a list of faces, up to 1,000,000 faces, and
-        used by [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar).
-        <br /> After creation, user should use [LargeFaceList Face -
-        Add](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl)
-        to import the faces and [LargeFaceList -
-        Train](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/train)
-        to make it ready for [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar).
+         Large face list is a list of faces, up to 1,000,000 faces, and
+        used by `Face - Find
+        Similar <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar>`_.
+         After creation, user should use `LargeFaceList Face -
+        Add <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl>`_
+        to import the faces and `LargeFaceList -
+        Train <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/train>`_
+        to make it ready for `Face - Find
+        Similar <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar>`_.
         No image will be stored. Only the extracted face features are stored on
-        server until [LargeFaceList -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete)
+        server until `LargeFaceList -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete>`_
         is called.
-        <br /> Find Similar is used for scenario like finding celebrity-like
+         Find Similar is used for scenario like finding celebrity-like
         faces, similar face filtering, or as a light way face identification.
         But if the actual use is to identify person, please use
-        [PersonGroup](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup)
+        `PersonGroup <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup>`_
         /
-        [LargePersonGroup](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup)
-        and [Face -
-        Identify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify).
+        `LargePersonGroup <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup>`_
+        and `Face -
+        Identify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify>`_.
         <br/>'recognitionModel' should be specified to associate with this
         large face list. The default value for 'recognitionModel' is
         'recognition_01', if the latest model needed, please explicitly specify
@@ -68,8 +68,8 @@ class LargeFaceListOperations(object):
         associated with the collection. Existing face features in a large face
         list can't be updated to features extracted by another version of
         recognition model.
-        * 'recognition_01': The default recognition model for [LargeFaceList-
-        Create](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/create).
+        * 'recognition_01': The default recognition model for `LargeFaceList-
+        Create <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/create>`_.
         All those large face lists created before 2019 March are bonded with
         this recognition model.
         * 'recognition_02': Recognition model released in 2019 March.
@@ -95,11 +95,11 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.MetaDataContract(name=name, user_data=user_data, recognition_model=recognition_model)
 
@@ -150,12 +150,12 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: LargeFaceList or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.LargeFaceList or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -209,11 +209,11 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.NameAndUserDataContract(name=name, user_data=user_data)
 
@@ -260,11 +260,11 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -306,12 +306,12 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: TrainingStatus or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.TrainingStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get_training_status.metadata['url']
@@ -351,9 +351,9 @@ class LargeFaceListOperations(object):
     def list(
             self, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
         """List large face lists’ information of largeFaceListId, name, userData
-        and recognitionModel. <br />
-        To get face information inside largeFaceList use [LargeFaceList Face -
-        Get](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/getface)<br
+        and recognitionModel.
+        To get face information inside largeFaceList use `LargeFaceList Face -
+        Get <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/getface>`_ <br
         />
         * Large face lists are stored in alphabetical order of largeFaceListId.
         * "start" parameter (string, optional) is a user-provided
@@ -364,11 +364,11 @@ class LargeFaceListOperations(object):
         return. A maximal of 1000 entries can be returned in one call. To fetch
         more, you can specify "start" with the last returned entry’s Id of the
         current call.
-        <br />
+
         For example, total 5 large person lists: "list1", ..., "list5".
-        <br /> "start=&top=" will return all 5 lists.
-        <br /> "start=&top=2" will return "list1", "list2".
-        <br /> "start=list2&top=3" will return "list3", "list4", "list5".
+         "start=&top=" will return all 5 lists.
+         "start=&top=2" will return "list1", "list2".
+         "start=list2&top=3" will return "list3", "list4", "list5".
         .
 
         :param return_recognition_model: A value indicating whether the
@@ -378,13 +378,13 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype:
          list[~azure.cognitiveservices.vision.face.models.LargeFaceList] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -434,11 +434,11 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.train.metadata['url']
@@ -472,7 +472,7 @@ class LargeFaceListOperations(object):
             self, large_face_list_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
         """Delete a face from a large face list by specified largeFaceListId and
         persistedFaceId.
-        <br /> Adding/deleting faces to/from a same large face list are
+         Adding/deleting faces to/from a same large face list are
         processed sequentially and to/from different large face lists are in
         parallel.
 
@@ -486,11 +486,11 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.delete_face.metadata['url']
@@ -536,12 +536,12 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: PersistedFace or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get_face.metadata['url']
@@ -596,11 +596,11 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.UpdateFaceRequest(user_data=user_data)
 
@@ -640,18 +640,18 @@ class LargeFaceListOperations(object):
     def add_face_from_url(
             self, large_face_list_id, url, user_data=None, target_face=None, detection_model="detection_01", custom_headers=None, raw=False, **operation_config):
         """Add a face to a specified large face list, up to 1,000,000 faces.
-        <br /> To deal with an image contains multiple faces, input face can be
+         To deal with an image contains multiple faces, input face can be
         specified as an image with a targetFace rectangle. It returns a
         persistedFaceId representing the added face. No image will be stored.
         Only the extracted face feature will be stored on server until
-        [LargeFaceList Face -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/deleteface)
-        or [LargeFaceList -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete)
+        `LargeFaceList Face -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/deleteface>`_
+        or `LargeFaceList -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete>`_
         is called.
-        <br /> Note persistedFaceId is different from faceId generated by [Face
+         Note persistedFaceId is different from faceId generated by `Face
         -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         * Higher face image quality means better recognition precision. Please
         consider high-quality faces: frontal, clear, and face size is 200x200
         pixels (100 pixels between eyes) or bigger.
@@ -659,8 +659,8 @@ class LargeFaceListOperations(object):
         allowed image file size is from 1KB to 6MB.
         * "targetFace" rectangle should contain one face. Zero or multiple
         faces will be regarded as an error. If the provided "targetFace"
-        rectangle is not returned from [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        rectangle is not returned from `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_,
         there’s no guarantee to detect and add the face successfully.
         * Out of detectable face size (36x36 - 4096x4096 pixels), large
         head-pose, or large occlusions will cause failures.
@@ -670,13 +670,13 @@ class LargeFaceListOperations(object):
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
-        different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        different detection models, please refer to `How to specify a detection
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'detection_01': | The default detection model for [LargeFaceList -
+        | 'detection_01': | The default detection model for `LargeFaceList -
         Add
-        Face](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl).
+        Face <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl>`_.
         Recommend for near frontal face detection. For scenarios with
         exceptionally large angle (head-pose) faces, occluded faces or wrong
         image orientation, the faces in such cases may not be detected. |
@@ -712,12 +712,12 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: PersistedFace or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         image_url = models.ImageUrl(url=url)
 
@@ -785,13 +785,13 @@ class LargeFaceListOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype:
          list[~azure.cognitiveservices.vision.face.models.PersistedFace] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.list_faces.metadata['url']
@@ -835,18 +835,18 @@ class LargeFaceListOperations(object):
     def add_face_from_stream(
             self, large_face_list_id, image, user_data=None, target_face=None, detection_model="detection_01", custom_headers=None, raw=False, callback=None, **operation_config):
         """Add a face to a specified large face list, up to 1,000,000 faces.
-        <br /> To deal with an image contains multiple faces, input face can be
+         To deal with an image contains multiple faces, input face can be
         specified as an image with a targetFace rectangle. It returns a
         persistedFaceId representing the added face. No image will be stored.
         Only the extracted face feature will be stored on server until
-        [LargeFaceList Face -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/deleteface)
-        or [LargeFaceList -
-        Delete](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete)
+        `LargeFaceList Face -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/deleteface>`_
+        or `LargeFaceList -
+        Delete <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/delete>`_
         is called.
-        <br /> Note persistedFaceId is different from faceId generated by [Face
+         Note persistedFaceId is different from faceId generated by `Face
         -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         * Higher face image quality means better recognition precision. Please
         consider high-quality faces: frontal, clear, and face size is 200x200
         pixels (100 pixels between eyes) or bigger.
@@ -854,8 +854,8 @@ class LargeFaceListOperations(object):
         allowed image file size is from 1KB to 6MB.
         * "targetFace" rectangle should contain one face. Zero or multiple
         faces will be regarded as an error. If the provided "targetFace"
-        rectangle is not returned from [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        rectangle is not returned from `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_,
         there’s no guarantee to detect and add the face successfully.
         * Out of detectable face size (36x36 - 4096x4096 pixels), large
         head-pose, or large occlusions will cause failures.
@@ -865,13 +865,13 @@ class LargeFaceListOperations(object):
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
-        different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        different detection models, please refer to `How to specify a detection
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'detection_01': | The default detection model for [LargeFaceList -
+        | 'detection_01': | The default detection model for `LargeFaceList -
         Add
-        Face](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl).
+        Face <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/addfacefromurl>`_.
         Recommend for near frontal face detection. For scenarios with
         exceptionally large angle (head-pose) faces, occluded faces or wrong
         image orientation, the faces in such cases may not be detected. |
@@ -912,12 +912,12 @@ class LargeFaceListOperations(object):
          data is uploading, response will be None.
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: PersistedFace or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.PersistedFace or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.add_face_from_stream.metadata['url']

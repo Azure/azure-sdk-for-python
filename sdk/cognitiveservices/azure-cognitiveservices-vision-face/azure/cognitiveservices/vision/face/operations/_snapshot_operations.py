@@ -39,7 +39,7 @@ class SnapshotOperations(object):
             self, type, object_id, apply_scope, user_data=None, custom_headers=None, raw=False, **operation_config):
         """Submit an operation to take a snapshot of face list, large face list,
         person group or large person group, with user-specified snapshot type,
-        source object id, apply scope and an optional user data.<br />
+        source object id, apply scope and an optional user data.
         The snapshot interfaces are for users to backup and restore their face
         data from one face subscription to another, inside same region or
         across regions. The workflow contains two phases, user first calls
@@ -47,19 +47,19 @@ class SnapshotOperations(object):
         snapshot, then calls Snapshot - Apply to paste the snapshot to target
         subscription. The snapshots are stored in a centralized location (per
         Azure instance), so that they can be applied cross accounts and
-        regions.<br />
+        regions.
         Taking snapshot is an asynchronous operation. An operation id can be
         obtained from the "Operation-Location" field in response header, to be
         used in OperationStatus - Get for tracking the progress of creating the
         snapshot. The snapshot id will be included in the "resourceLocation"
         field in OperationStatus - Get response when the operation status is
-        "succeeded".<br />
+        "succeeded".
         Snapshot taking time depends on the number of person and face entries
         in the source object. It could be in seconds, or up to several hours
-        for 1,000,000 persons with multiple faces.<br />
+        for 1,000,000 persons with multiple faces.
         Snapshots will be automatically expired and cleaned in 48 hours after
         it is created by Snapshot - Take. User can delete the snapshot using
-        Snapshot - Delete by themselves any time before expiration.<br />
+        Snapshot - Delete by themselves any time before expiration.
         Taking snapshot for a certain object will not block any other
         operations against the object. All read-only operations (Get/List and
         Identify/FindSimilar/Verify) can be conducted as usual. For all
@@ -70,7 +70,7 @@ class SnapshotOperations(object):
         writable operations can work as normal. Snapshot will also include the
         training results of the source object, which means target subscription
         the snapshot applied to does not need re-train the target object before
-        calling Identify/FindSimilar.<br />
+        calling Identify/FindSimilar.
         * Free-tier subscription quota: 100 take operations per month.
         * S0-tier subscription quota: 100 take operations per day.
 
@@ -94,11 +94,11 @@ class SnapshotOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.TakeSnapshotRequest(type=type, object_id=object_id, apply_scope=apply_scope, user_data=user_data)
 
@@ -157,12 +157,12 @@ class SnapshotOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype: list[~azure.cognitiveservices.vision.face.models.Snapshot] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -214,12 +214,12 @@ class SnapshotOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: Snapshot or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.Snapshot or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -275,11 +275,11 @@ class SnapshotOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.UpdateSnapshotRequest(apply_scope=apply_scope, user_data=user_data)
 
@@ -329,11 +329,11 @@ class SnapshotOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -367,7 +367,7 @@ class SnapshotOperations(object):
             self, snapshot_id, object_id, mode="CreateNew", custom_headers=None, raw=False, **operation_config):
         """Submit an operation to apply a snapshot to current subscription. For
         each snapshot, only subscriptions included in the applyScope of
-        Snapshot - Take can apply it.<br />
+        Snapshot - Take can apply it.
         The snapshot interfaces are for users to backup and restore their face
         data from one face subscription to another, inside same region or
         across regions. The workflow contains two phases, user first calls
@@ -375,19 +375,19 @@ class SnapshotOperations(object):
         snapshot, then calls Snapshot - Apply to paste the snapshot to target
         subscription. The snapshots are stored in a centralized location (per
         Azure instance), so that they can be applied cross accounts and
-        regions.<br />
+        regions.
         Applying snapshot is an asynchronous operation. An operation id can be
         obtained from the "Operation-Location" field in response header, to be
         used in OperationStatus - Get for tracking the progress of applying the
         snapshot. The target object id will be included in the
         "resourceLocation" field in OperationStatus - Get response when the
-        operation status is "succeeded".<br />
+        operation status is "succeeded".
         Snapshot applying time depends on the number of person and face entries
         in the snapshot object. It could be in seconds, or up to 1 hour for
-        1,000,000 persons with multiple faces.<br />
+        1,000,000 persons with multiple faces.
         Snapshots will be automatically expired and cleaned in 48 hours after
         it is created by Snapshot - Take. So the target subscription is
-        required to apply the snapshot in 48 hours since its creation.<br />
+        required to apply the snapshot in 48 hours since its creation.
         Applying a snapshot will not block any other operations against the
         target object, however it is not recommended because the correctness
         cannot be guaranteed during snapshot applying. After snapshot applying
@@ -395,12 +395,12 @@ class SnapshotOperations(object):
         normal. Snapshot also includes the training results of the source
         object, which means target subscription the snapshot applied to does
         not need re-train the target object before calling
-        Identify/FindSimilar.<br />
+        Identify/FindSimilar.
         One snapshot can be applied multiple times in parallel, while currently
         only CreateNew apply mode is supported, which means the apply operation
         will fail if target subscription already contains an object of same
         type and using the same objectId. Users can specify the "objectId" in
-        request body to avoid such conflicts.<br />
+        request body to avoid such conflicts.
         * Free-tier subscription quota: 100 apply operations per month.
         * S0-tier subscription quota: 100 apply operations per day.
 
@@ -420,11 +420,11 @@ class SnapshotOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.ApplySnapshotRequest(object_id=object_id, mode=mode)
 
@@ -474,12 +474,12 @@ class SnapshotOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: OperationStatus or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.OperationStatus or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.get_operation_status.metadata['url']

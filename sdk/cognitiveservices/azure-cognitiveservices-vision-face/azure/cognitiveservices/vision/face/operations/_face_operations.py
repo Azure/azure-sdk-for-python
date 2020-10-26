@@ -39,14 +39,14 @@ class FaceOperations(object):
             self, face_id, face_list_id=None, large_face_list_id=None, face_ids=None, max_num_of_candidates_returned=20, mode="matchPerson", custom_headers=None, raw=False, **operation_config):
         """Given query face's faceId, to search the similar-looking faces from a
         faceId array, a face list or a large face list. faceId array contains
-        the faces created by [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl),
+        the faces created by `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_,
         which will expire 24 hours after creation. A "faceListId" is created by
-        [FaceList -
-        Create](https://docs.microsoft.com/rest/api/cognitiveservices/face/facelist/create)
+        `FaceList -
+        Create <https://docs.microsoft.com/rest/api/cognitiveservices/face/facelist/create>`_
         containing persistedFaceIds that will not expire. And a
-        "largeFaceListId" is created by [LargeFaceList -
-        Create](https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/create)
+        "largeFaceListId" is created by `LargeFaceList -
+        Create <https://docs.microsoft.com/rest/api/cognitiveservices/face/largefacelist/create>`_
         containing persistedFaceIds that will also not expire. Depending on the
         input the returned similar faces list contains faceIds or
         persistedFaceIds ranked by similarity.
@@ -96,12 +96,12 @@ class FaceOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype: list[~azure.cognitiveservices.vision.face.models.SimilarFace]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.FindSimilarRequest(face_id=face_id, face_list_id=face_list_id, large_face_list_id=large_face_list_id, face_ids=face_ids, max_num_of_candidates_returned=max_num_of_candidates_returned, mode=mode)
 
@@ -145,7 +145,7 @@ class FaceOperations(object):
 
     def group(
             self, face_ids, custom_headers=None, raw=False, **operation_config):
-        """Divide candidate faces into groups based on face similarity.<br />
+        """Divide candidate faces into groups based on face similarity.
         * The output is one or more disjointed face groups and a messyGroup. A
         face group contains faces that have similar looking, often of the same
         person. Face groups are ranked by group size, i.e. number of faces.
@@ -155,8 +155,8 @@ class FaceOperations(object):
         any similar counterpart face from original faces. The messyGroup will
         not appear in the result if all faces found their counterparts.
         * Group API needs at least 2 candidate faces and 1000 at most. We
-        suggest to try [Face -
-        Verify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface)
+        suggest to try `Face -
+        Verify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface>`_
         when you only have 2 candidate faces.
         * The 'recognitionModel' associated with the query faces' faceIds
         should be the same.
@@ -169,12 +169,12 @@ class FaceOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: GroupResult or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.GroupResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.GroupRequest(face_ids=face_ids)
 
@@ -226,12 +226,12 @@ class FaceOperations(object):
         largePersonGroupId), and return candidate person(s) for that face
         ranked by similarity confidence. The person group/large person group
         should be trained to make it ready for identification. See more in
-        [PersonGroup -
-        Train](https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/train)
-        and [LargePersonGroup -
-        Train](https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/train).
+        `PersonGroup -
+        Train <https://docs.microsoft.com/rest/api/cognitiveservices/face/persongroup/train>`_
+        and `LargePersonGroup -
+        Train <https://docs.microsoft.com/rest/api/cognitiveservices/face/largepersongroup/train>`_.
         <br/>
-        Remarks:<br />
+        Remarks:
         * The algorithm allows more than one face to be identified
         independently at the same request, but no more than 10 faces.
         * Each person in the person group/large person group could have more
@@ -242,8 +242,8 @@ class FaceOperations(object):
         * Number of candidates returned is restricted by
         maxNumOfCandidatesReturned and confidenceThreshold. If no person is
         identified, the returned candidates will be an empty array.
-        * Try [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar)
+        * Try `Face - Find
+        Similar <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar>`_
         when you need to find similar faces from a face list/large face list
         instead of a person group/large person group.
         * The 'recognitionModel' associated with the query faces' faceIds
@@ -275,13 +275,13 @@ class FaceOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype:
          list[~azure.cognitiveservices.vision.face.models.IdentifyResult] or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.IdentifyRequest(face_ids=face_ids, person_group_id=person_group_id, large_person_group_id=large_person_group_id, max_num_of_candidates_returned=max_num_of_candidates_returned, confidence_threshold=confidence_threshold)
 
@@ -328,7 +328,7 @@ class FaceOperations(object):
         """Verify whether two faces belong to a same person or whether one face
         belongs to a person.
         <br/>
-        Remarks:<br />
+        Remarks:
         * Higher face image quality means better identification precision.
         Please consider high-quality faces: frontal, clear, and face size is
         200x200 pixels (100 pixels between eyes) or bigger.
@@ -347,12 +347,12 @@ class FaceOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: VerifyResult or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.VerifyResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.VerifyFaceToFaceRequest(face_id1=face_id1, face_id2=face_id2)
 
@@ -397,15 +397,15 @@ class FaceOperations(object):
     def detect_with_url(
             self, url, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, detection_model="detection_01", custom_headers=None, raw=False, **operation_config):
         """Detect human faces in an image, return face rectangles, and optionally
-        with faceIds, landmarks, and attributes.<br />
+        with faceIds, landmarks, and attributes.
         * No image will be stored. Only the extracted face feature will be
         stored on server. The faceId is an identifier of the face feature and
-        will be used in [Face -
-        Identify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify),
-        [Face -
-        Verify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface),
-        and [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar).
+        will be used in `Face -
+        Identify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify>`_,
+        `Face -
+        Verify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface>`_,
+        and `Face - Find
+        Similar <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar>`_.
         The stored face feature(s) will expire and be deleted 24 hours after
         the original detection call.
         * Optional parameters include faceId, landmarks, and attributes.
@@ -417,24 +417,24 @@ class FaceOperations(object):
         allowed image file size is from 1KB to 6MB.
         * Up to 100 faces can be returned for an image. Faces are ranked by
         face rectangle size from large to small.
-        * For optimal results when querying [Face -
-        Identify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify),
-        [Face -
-        Verify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface),
-        and [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar)
+        * For optimal results when querying `Face -
+        Identify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify>`_,
+        `Face -
+        Verify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface>`_,
+        and `Face - Find
+        Similar <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar>`_
         ('returnFaceId' is true), please use faces that are: frontal, clear,
         and with a minimum size of 200x200 pixels (100 pixels between eyes).
         * The minimum detectable face size is 36x36 pixels in an image no
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
-        different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        different detection models, please refer to `How to specify a detection
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'detection_01': | The default detection model for [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        | 'detection_01': | The default detection model for `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         Recommend for near frontal face detection. For scenarios with
         exceptionally large angle (head-pose) faces, occluded faces or wrong
         image orientation, the faces in such cases may not be detected. |
@@ -446,13 +446,13 @@ class FaceOperations(object):
         default value for 'recognitionModel' is 'recognition_01', if latest
         model needed, please explicitly specify the model you need in this
         parameter. Once specified, the detected faceIds will be associated with
-        the specified recognition model. More details, please refer to [How to
+        the specified recognition model. More details, please refer to `How to
         specify a recognition
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model)
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'recognition_01': | The default recognition model for [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        | 'recognition_01': | The default recognition model for `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         All those faceIds created before 2019 March are bonded with this
         recognition model. |
         | 'recognition_02': | Recognition model released in 2019 March. |
@@ -501,12 +501,12 @@ class FaceOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype: list[~azure.cognitiveservices.vision.face.models.DetectedFace]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         image_url = models.ImageUrl(url=url)
 
@@ -585,12 +585,12 @@ class FaceOperations(object):
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: VerifyResult or ClientRawResponse if raw=true
         :rtype: ~azure.cognitiveservices.vision.face.models.VerifyResult or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         body = models.VerifyFaceToPersonRequest(face_id=face_id, person_group_id=person_group_id, large_person_group_id=large_person_group_id, person_id=person_id)
 
@@ -635,15 +635,15 @@ class FaceOperations(object):
     def detect_with_stream(
             self, image, return_face_id=True, return_face_landmarks=False, return_face_attributes=None, recognition_model="recognition_01", return_recognition_model=False, detection_model="detection_01", custom_headers=None, raw=False, callback=None, **operation_config):
         """Detect human faces in an image, return face rectangles, and optionally
-        with faceIds, landmarks, and attributes.<br />
+        with faceIds, landmarks, and attributes.
         * No image will be stored. Only the extracted face feature will be
         stored on server. The faceId is an identifier of the face feature and
-        will be used in [Face -
-        Identify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify),
-        [Face -
-        Verify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface),
-        and [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar).
+        will be used in `Face -
+        Identify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify>`_,
+        `Face -
+        Verify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface>`_,
+        and `Face - Find
+        Similar <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar>`_.
         The stored face feature(s) will expire and be deleted 24 hours after
         the original detection call.
         * Optional parameters include faceId, landmarks, and attributes.
@@ -655,24 +655,24 @@ class FaceOperations(object):
         allowed image file size is from 1KB to 6MB.
         * Up to 100 faces can be returned for an image. Faces are ranked by
         face rectangle size from large to small.
-        * For optimal results when querying [Face -
-        Identify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify),
-        [Face -
-        Verify](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface),
-        and [Face - Find
-        Similar](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar)
+        * For optimal results when querying `Face -
+        Identify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/identify>`_,
+        `Face -
+        Verify <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/verifyfacetoface>`_,
+        and `Face - Find
+        Similar <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/findsimilar>`_
         ('returnFaceId' is true), please use faces that are: frontal, clear,
         and with a minimum size of 200x200 pixels (100 pixels between eyes).
         * The minimum detectable face size is 36x36 pixels in an image no
         larger than 1920x1080 pixels. Images with dimensions higher than
         1920x1080 pixels will need a proportionally larger minimum face size.
         * Different 'detectionModel' values can be provided. To use and compare
-        different detection models, please refer to [How to specify a detection
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        different detection models, please refer to `How to specify a detection
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'detection_01': | The default detection model for [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        | 'detection_01': | The default detection model for `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         Recommend for near frontal face detection. For scenarios with
         exceptionally large angle (head-pose) faces, occluded faces or wrong
         image orientation, the faces in such cases may not be detected. |
@@ -684,13 +684,13 @@ class FaceOperations(object):
         default value for 'recognitionModel' is 'recognition_01', if latest
         model needed, please explicitly specify the model you need in this
         parameter. Once specified, the detected faceIds will be associated with
-        the specified recognition model. More details, please refer to [How to
+        the specified recognition model. More details, please refer to `How to
         specify a recognition
-        model](https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model)
+        model <https://docs.microsoft.com/azure/cognitive-services/face/face-api-how-to-topics/specify-recognition-model>`_
         | Model | Recommended use-case(s) |
         | ---------- | -------- |
-        | 'recognition_01': | The default recognition model for [Face -
-        Detect](https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl).
+        | 'recognition_01': | The default recognition model for `Face -
+        Detect <https://docs.microsoft.com/rest/api/cognitiveservices/face/face/detectwithurl>`_.
         All those faceIds created before 2019 March are bonded with this
         recognition model. |
         | 'recognition_02': | Recognition model released in 2019 March. |
@@ -744,12 +744,12 @@ class FaceOperations(object):
          data is uploading, response will be None.
         :type callback: Callable[Bytes, response=None]
         :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
+         overrides <msrest:optionsforoperations>`_.
         :return: list or ClientRawResponse if raw=true
         :rtype: list[~azure.cognitiveservices.vision.face.models.DetectedFace]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
+         :class:`APIErrorException <azure.cognitiveservices.vision.face.models.APIErrorException>`_
         """
         # Construct URL
         url = self.detect_with_stream.metadata['url']
