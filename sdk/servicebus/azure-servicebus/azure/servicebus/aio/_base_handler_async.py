@@ -74,6 +74,7 @@ class ServiceBusSharedKeyCredential(object):
 
 
 class BaseHandler:
+    # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -85,8 +86,8 @@ class BaseHandler:
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")
-        self._mgmt_target = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
-        self._mgmt_target = "{}{}".format(self._mgmt_target, MANAGEMENT_PATH_SUFFIX)
+        self._entity_path = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
+        self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
         self._credential = credential
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
@@ -249,6 +250,9 @@ class BaseHandler:
             operation_requires_timeout=True,
             **kwargs
         )
+
+    async def _add_span_request_attributes(self, span):
+        return BaseHandlerSync._add_span_request_attributes(self, span) # pylint: disable=protected-access
 
     async def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")

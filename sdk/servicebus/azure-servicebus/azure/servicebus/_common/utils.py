@@ -36,6 +36,8 @@ from .constants import (
     TRACE_PARENT_PROPERTY,
     TRACE_NAMESPACE,
     TRACE_NAMESPACE_PROPERTY,
+    TRACE_PROPERTY_ENCODING,
+    TRACE_ENQUEUED_TIME_PROPERTY,
     SPAN_ENQUEUED_TIME_PROPERTY
 )
 
@@ -196,7 +198,7 @@ def add_link_to_send(message, send_span):
             if traceparent:
                 send_span.link(traceparent)
     except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("add_link_to_send had an exception %r", exp)
+        _log.warning("add_link_to_send had an exception %r", exp)
 
 
 def trace_message(message, parent_span=None):
@@ -221,7 +223,7 @@ def trace_message(message, parent_span=None):
                     TRACE_PARENT_PROPERTY, message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING)
                 )
     except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_message had an exception %r", exp)
+        _log.warning("trace_message had an exception %r", exp)
 
 
 def trace_link_message(messages, parent_span=None):
@@ -245,7 +247,8 @@ def trace_link_message(messages, parent_span=None):
                         if traceparent:
                             current_span.link(
                                 traceparent,
-                                attributes={SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(PROP_TIMESTAMP)}
+                                attributes={SPAN_ENQUEUED_TIME_PROPERTY: \
+                                    message.message.annotations.get(TRACE_ENQUEUED_TIME_PROPERTY)}
                             )
     except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_link_message had an exception %r", exp)
+        _log.warning("trace_link_message had an exception %r", exp)

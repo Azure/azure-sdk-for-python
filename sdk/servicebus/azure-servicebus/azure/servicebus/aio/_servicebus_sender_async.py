@@ -318,7 +318,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
 
             if send_span:
-                self._add_span_request_attributes(send_span)
+                await self._add_span_request_attributes(send_span)
 
             await self._do_retryable_operation(
                 self._send,

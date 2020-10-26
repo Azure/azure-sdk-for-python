@@ -5,7 +5,11 @@
 # -------------------------------------------------------------------------
 import uuid
 from contextlib import contextmanager
+
 from uamqp import Source
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
+
 from .message import ReceivedMessage
 from .constants import (
     NEXT_AVAILABLE,
@@ -22,8 +26,6 @@ from ..exceptions import (
 )
 from .utils import utc_from_timestamp, utc_now, trace_link_message
 
-from azure.core.settings import settings
-from azure.core.tracing import SpanKind
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):

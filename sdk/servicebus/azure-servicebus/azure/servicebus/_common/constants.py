@@ -124,6 +124,7 @@ TRACE_PEER_ADDRESS_PROPERTY = "peer.address"
 
 SPAN_ENQUEUED_TIME_PROPERTY = 'enqueuedTime'
 
+TRACE_ENQUEUED_TIME_PROPERTY = b'x-opt-enqueued-time'
 TRACE_PARENT_PROPERTY = b'Diagnostic-Id'
 TRACE_PROPERTY_ENCODING = 'ascii'
 

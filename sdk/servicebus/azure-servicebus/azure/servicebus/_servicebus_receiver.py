@@ -174,7 +174,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             message = self._inner_next()
             trace_link_message(message, receive_span)
             return message
-    
+
     next = __next__ # for python2.7
 
     def _iter_next(self):
