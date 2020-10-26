@@ -133,7 +133,7 @@ Tox name of this test is `latestdependency` and steps to manually run this test 
         `Tox –e latestdependency –c ../../../tox/tox.ini`
  
  
-#### Oldest Dependency Test 
+#### Minimum Dependency Test 
  
 This test makes sure that a package being developed works absolutely fine using oldest released version of required Azure SDK package as long as there is a released version which satisfies the requirement specification. Workflow of this test is as follows: 
  
