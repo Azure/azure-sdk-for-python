@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._data_lake_store_account_management_client import DataLakeStoreAccountManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['DataLakeStoreAccountManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
