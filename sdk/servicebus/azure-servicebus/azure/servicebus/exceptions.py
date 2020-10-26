@@ -40,6 +40,27 @@ _NO_RETRY_ERRORS = (
     b"com.microsoft:argument-error")
 
 
+_AMQP_SESSION_ERROR_CONDITIONS = (
+    SESSION_LOCK_LOST,
+    SESSION_LOCK_TIMEOUT
+)
+
+
+_AMQP_CONNECTION_ERRORS = (
+    errors.LinkDetach,
+    errors.ConnectionClose,
+    errors.MessageHandlerError,
+    errors.AMQPConnectionError
+)
+
+
+_AMQP_MESSAGE_ERRORS = (
+    errors.MessageAlreadySettled,
+    errors.MessageContentTooLarge,
+    errors.MessageException
+)
+
+
 def _error_handler(error):
     """Handle connection and service errors.
 
@@ -65,63 +86,97 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-def _create_servicebus_exception(logger, exception, handler):  # pylint: disable=too-many-statements
+def _handle_amqp_connection_error(logger, exception, handler):
+    # Handle all exception inherited from uamqp.errors.AMQPConnectionError
     error_need_close_handler = True
     error_need_raise = False
+    error = None
+    if isinstance(exception, errors.LinkDetach) and exception.condition in _AMQP_SESSION_ERROR_CONDITIONS:
+        # In session lock lost or no active session case, we don't retry, close the handler and raise the error
+        error_need_raise = True
+        if exception.condition == SESSION_LOCK_LOST:
+            try:
+                session_id = handler._session_id  # pylint: disable=protected-access
+            except AttributeError:
+                session_id = None
+            error = SessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
+        elif exception.condition == SESSION_LOCK_TIMEOUT:
+            error = NoActiveSession("Queue has no active session to receive from.")
+    elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
+        # In other link detach and connection case, should retry
+        logger.info("Handler detached due to exception: (%r).", exception)
+        if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
+            error = ServiceBusAuthorizationError(str(exception), exception)
+        elif exception.condition == constants.ErrorCodes.NotAllowed and 'requires sessions' in str(exception):
+            message = str(exception) + '\n\nDid you want ServiceBusClient.get_<queue/subscription>_session_receiver()?'
+            error = ServiceBusConnectionError(message, exception)
+        else:
+            error = ServiceBusConnectionError(str(exception), exception)
+    elif isinstance(exception, errors.MessageHandlerError):
+        logger.info("Handler error: (%r).", exception)
+        error = ServiceBusConnectionError(str(exception), exception)
+    else:
+        # handling general uamqp.errors.AMQPConnectionError
+        logger.info("Failed to open handler: (%r).", exception)
+        message = "Failed to open handler: {}.".format(exception)
+        error = ServiceBusConnectionError(message, exception)
+        error_need_raise, error_need_close_handler = True, False
+
+    return error, error_need_close_handler, error_need_raise
+
+
+def _handle_amqp_message_error(logger, exception, **kwargs):
+    # Handle amqp message related errors
+    error_need_close_handler = True
+    error_need_raise = False
+    error = None
     if isinstance(exception, errors.MessageAlreadySettled):
+        # This one doesn't need retry, should raise the error
         logger.info("Message already settled (%r)", exception)
-        error = MessageAlreadySettled(exception)
+        error = MessageAlreadySettled(kwargs.get("settle_operation", "Unknown operation"))
         error_need_close_handler = False
         error_need_raise = True
     elif isinstance(exception, errors.MessageContentTooLarge) or \
             (isinstance(exception, errors.MessageException) and
              exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
-        logger.info("Message content is too large (%r)", exception)
-        error = MessageContentTooLarge(message="Message content is too large", error=exception)
+        # This one doesn't need retry, should raise the error
+        logger.info("Message content is too large (%r).", exception)
+        error = MessageContentTooLarge("Message content is too large.", exception)
         error_need_close_handler = False
         error_need_raise = True
-    elif isinstance(exception, errors.MessageException):
+    else:
+        # handling general uamqp.errors.MessageException
         logger.info("Message send failed (%r)", exception)
         if exception.condition == constants.ErrorCodes.ClientError and 'timed out' in str(exception):
             error = OperationTimeoutError("Send operation timed out", error=exception)
         else:
             error = MessageSendFailed(error=exception)
         error_need_raise = False
-    elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_LOST:
-        try:
-            session_id = handler._session_id  # pylint: disable=protected-access
-        except AttributeError:
-            session_id = None
-        error = SessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
-        error_need_raise = True
-    elif isinstance(exception, errors.LinkDetach) and exception.condition == SESSION_LOCK_TIMEOUT:
-        error = NoActiveSession("Queue has no active session to receive from.")
-        error_need_raise = True
+
+    return error, error_need_close_handler, error_need_raise
+
+
+def _create_servicebus_exception(logger, exception, handler, **kwargs):  # pylint: disable=too-many-statements
+    # transform amqp exceptions into servicebus exceptions
+    error_need_close_handler = True
+    error_need_raise = False
+    if isinstance(exception, _AMQP_CONNECTION_ERRORS):
+        error, error_need_close_handler, error_need_raise = \
+            _handle_amqp_connection_error(logger, exception, handler)
+    elif isinstance(exception, _AMQP_MESSAGE_ERRORS):
+        error, error_need_close_handler, error_need_raise = \
+            _handle_amqp_message_error(logger, exception, **kwargs)
     elif isinstance(exception, errors.AuthenticationException):
         logger.info("Authentication failed due to exception: (%r).", exception)
-        error = AuthenticationError(str(exception), error=exception)
-    elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-        logger.info("Handler detached due to exception: (%r).", exception)
-        if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-            error = AuthorizationError(str(exception), error=exception)
-        elif exception.condition == constants.ErrorCodes.NotAllowed and 'requires sessions' in str(exception):
-            message = str(exception) + '\n\nDid you want ServiceBusClient.get_<queue/subscription>_session_receiver()?'
-            error = ConnectionError(message, error=exception)
-        else:
-            error = ConnectionError(str(exception), error=exception)
-    elif isinstance(exception, errors.MessageHandlerError):
-        logger.info("Handler error: (%r).", exception)
-        error = ConnectionError(str(exception), error=exception)
-    elif isinstance(exception, errors.AMQPConnectionError):
-        logger.info("Failed to open handler: (%r).", exception)
-        message = "Failed to open handler: {}.".format(exception)
-        error = ConnectionError(message, error=exception)
-        error_need_raise, error_need_close_handler = True, False
+        error = ServiceBusAuthenticationError(str(exception), exception)
     else:
         logger.info("Unexpected error occurred (%r). Shutting down.", exception)
-        error = exception
-        if not isinstance(exception, ServiceBusError):
-            error = ServiceBusError("Handler failed: {}.".format(exception), error=exception)
+        if kwargs.get("settle_operation"):
+            error = MessageSettleFailed(kwargs.get("settle_operation"), exception)
+        elif not isinstance(exception, ServiceBusError):
+            error = ServiceBusError("Handler failed: {}.".format(exception), exception)
+        else:
+            error = exception
 
     try:
         err_condition = exception.condition
@@ -161,8 +216,6 @@ class ServiceBusError(AzureError):
     :param str message: The message object stringified as 'message' attribute
     :keyword error: The original exception if any
     :paramtype error: Exception
-    :ivar inner_exception: The exception passed with the 'error' kwarg
-    :type inner_exception: Exception
     :ivar exc_type: The exc_type from sys.exc_info()
     :ivar exc_value: The exc_value from sys.exc_info()
     :ivar exc_traceback: The exc_traceback from sys.exc_info()
@@ -175,16 +228,16 @@ class ServiceBusError(AzureError):
         super(ServiceBusError, self).__init__(message, error=kwargs.get("error"))
 
 
-class ConnectionError(ServiceBusError):
-    """An error occured in the connection."""
+class ServiceBusConnectionError(ServiceBusError):
+    """An error occurred in the connection."""
 
 
-class AuthorizationError(ServiceBusError):
-    """An error occured when authorizing the connection."""
+class ServiceBusAuthorizationError(ServiceBusError):
+    """An error occurred when authorizing the connection."""
 
 
-class AuthenticationError(ServiceBusError):
-    """An error occured when authenticate the connection."""
+class ServiceBusAuthenticationError(ServiceBusError):
+    """An error occurred when authenticate the connection."""
 
 
 class NoActiveSession(ServiceBusError):
@@ -196,7 +249,7 @@ class OperationTimeoutError(ServiceBusError):
 
 
 class ServiceBusMessageError(ServiceBusError):
-    """A message failed to send because the message is in a wrong state"""
+    """An error occurred when an operation on a message failed because the message is in an incorrect state."""
 
 
 class MessageContentTooLarge(ServiceBusMessageError, ValueError):
@@ -222,7 +275,7 @@ class MessageAlreadySettled(ServiceBusMessageError):
         super(MessageAlreadySettled, self).__init__(message)
 
 
-class MessageSettleFailed(ServiceBusError):
+class MessageSettleFailed(ServiceBusMessageError):
     """Attempt to settle a message failed.
 
     :param str action: The settlement operation, there are four types of settlement,
@@ -238,7 +291,7 @@ class MessageSettleFailed(ServiceBusError):
         super(MessageSettleFailed, self).__init__(message, error=error)
 
 
-class MessageSendFailed(ServiceBusError):
+class MessageSendFailed(ServiceBusMessageError):
     """A message failed to send to the Service Bus entity."""
 
     def __init__(self, error):
@@ -253,7 +306,7 @@ class MessageSendFailed(ServiceBusError):
         super(MessageSendFailed, self).__init__(message, error=error)
 
 
-class MessageLockExpired(ServiceBusError):
+class MessageLockExpired(ServiceBusMessageError):
     """The lock on the message has expired and it has been released back to the queue.
 
     It will need to be received again in order to settle it.

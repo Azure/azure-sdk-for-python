@@ -11,12 +11,20 @@ methods to recognize data from business cards.
 - Recognize receipt methods now take keyword argument `locale` to optionally indicate the locale of the receipt for
 improved results
 - Added ability to create a composed model from the `FormTrainingClient` by calling method `begin_create_composed_model()`
+- Added support to train and recognize custom forms with selection marks such as check boxes and radio buttons.
+This functionality is only available for models trained with labels
+- Added property `selection_marks` to `FormPage` which contains a list of `FormSelectionMark`
+- When passing `include_field_elements=True`, the property `field_elements` on `FieldData` and `FormTableCell` will
+also be populated with any selection marks found on the page
 - Added the properties `model_name` and `properties` to types `CustomFormModel` and `CustomFormModelInfo`
 - Added keyword argument `model_name` to `begin_training()` and `begin_create_composed_model()`
 - Added model type `CustomFormModelProperties` that includes information like if a model is a composed model
 - Added property `model_id` to `CustomFormSubmodel` and `TrainingDocumentInfo`
 - Added properties `model_id` and `form_type_confidence` to `RecognizedForm`
 
+**Dependency updates**
+
+- Package now requires [azure-common](https://pypi.org/project/azure-common/) version 1.1
 
 ## 3.0.0 (2020-08-20)
 

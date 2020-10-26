@@ -1,7 +1,11 @@
 # Release History
 
 ## 1.5.0b3 (Unreleased)
-
+### Changed
+- `DeviceCodeCredential` parameter `client_id` is now optional. When not
+   provided, the credential will authenticate users to an Azure development
+   application.
+   ([#14354](https://github.com/Azure/azure-sdk-for-python/issues/14354))
 
 ## 1.5.0b2 (2020-10-07)
 ### Fixed

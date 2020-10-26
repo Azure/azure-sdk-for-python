@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z"}'
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z"}'
     headers:
       Accept:
       - application/json
@@ -9,23 +9,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/status/enrichment/anomalyDetection/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/status/enrichment/anomalyDetection/query
   response:
     body:
-      string: '{"nextLink":null,"value":[{"timestamp":"2020-09-06T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-09-12T01:29:10.153Z\"}"},{"timestamp":"2020-09-07T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-09-12T01:33:40.164Z\"}"},{"timestamp":"2020-09-08T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-09-14T20:53:05.120Z\"}"}]}'
+      string: '{"value":[{"timestamp":"2020-10-12T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-15T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-17T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-16T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-09-24T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:53:55.656Z\",\"UpdateTime\":\"2020-10-21T15:53:55.656Z\"}"},{"timestamp":"2020-10-05T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.659Z\",\"UpdateTime\":\"2020-10-21T15:54:35.659Z\"}"},{"timestamp":"2020-10-19T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-09T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.659Z\",\"UpdateTime\":\"2020-10-21T15:54:35.659Z\"}"},{"timestamp":"2020-10-04T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.659Z\",\"UpdateTime\":\"2020-10-21T15:54:35.659Z\"}"},{"timestamp":"2020-10-06T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.659Z\",\"UpdateTime\":\"2020-10-21T15:54:35.659Z\"}"},{"timestamp":"2020-10-08T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.659Z\",\"UpdateTime\":\"2020-10-21T15:54:35.659Z\"}"},{"timestamp":"2020-10-10T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-14T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-18T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-20T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-09-23T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:53:55.648Z\",\"UpdateTime\":\"2020-10-21T15:53:55.648Z\"}"},{"timestamp":"2020-09-26T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:53:55.656Z\",\"UpdateTime\":\"2020-10-21T15:53:55.656Z\"}"},{"timestamp":"2020-09-28T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:15.657Z\",\"UpdateTime\":\"2020-10-21T15:54:15.657Z\"}"},{"timestamp":"2020-09-30T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:15.658Z\",\"UpdateTime\":\"2020-10-21T15:54:15.658Z\"}"},{"timestamp":"2020-10-07T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.659Z\",\"UpdateTime\":\"2020-10-21T15:54:35.659Z\"}"},{"timestamp":"2020-10-11T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-10-13T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:54:35.660Z\",\"UpdateTime\":\"2020-10-21T15:54:35.660Z\"}"},{"timestamp":"2020-09-22T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:56:45.469Z\",\"UpdateTime\":\"2020-10-21T15:56:45.469Z\"}"},{"timestamp":"2020-09-25T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:56:45.470Z\",\"UpdateTime\":\"2020-10-21T15:56:45.470Z\"}"},{"timestamp":"2020-09-27T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:56:45.470Z\",\"UpdateTime\":\"2020-10-21T15:56:45.470Z\"}"},{"timestamp":"2020-09-29T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:56:45.470Z\",\"UpdateTime\":\"2020-10-21T15:56:45.470Z\"}"},{"timestamp":"2020-10-01T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:57:05.471Z\",\"UpdateTime\":\"2020-10-21T15:57:05.471Z\"}"},{"timestamp":"2020-10-02T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:57:05.471Z\",\"UpdateTime\":\"2020-10-21T15:57:05.471Z\"}"},{"timestamp":"2020-10-03T00:00:00Z","status":"Succeeded","message":"{\"CreateTime\":\"2020-10-21T15:57:25.473Z\",\"UpdateTime\":\"2020-10-21T15:57:25.473Z\"}"}],"@nextLink":null}'
     headers:
-      apim-request-id: 6455d05e-cc67-4437-bd25-56a629a456d8
-      content-length: '375'
+      apim-request-id: 4f14457b-438d-4c89-887d-38e92fcbf5bf
+      content-length: '4668'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Sep 2020 21:59:24 GMT
+      date: Wed, 21 Oct 2020 21:37:18 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '217'
-      x-request-id: 6455d05e-cc67-4437-bd25-56a629a456d8
+      x-envoy-upstream-service-time: '145'
+      x-request-id: 4f14457b-438d-4c89-887d-38e92fcbf5bf
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/3d48ed3e-6e6e-4391-b78f-b00dfee1e6f5/status/enrichment/anomalyDetection/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/metrics/27e3015f-04fd-44ba-a20b-bc529a0aebae/status/enrichment/anomalyDetection/query
 version: 1

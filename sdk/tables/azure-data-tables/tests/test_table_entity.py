@@ -30,11 +30,7 @@ from azure.core.exceptions import (
 from azure.data.tables._entity import TableEntity, EntityProperty, EdmType
 from azure.data.tables._models import TableSasPermissions, AccessPolicy, UpdateMode
 
-from _shared.testcase import (
-    GlobalStorageAccountPreparer,
-    TableTestCase,
-    LogCaptured
-)
+from _shared.testcase import TableTestCase, LogCaptured
 
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 
@@ -1430,7 +1426,7 @@ class StorageTableEntityTest(TableTestCase):
                 entity.test4 = EntityProperty(1234567890)
                 entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
                 batch.create_entity(entity)
-            self.ts.commit_batch(table_name, batch)
+            self.ts.send_batch(table_name, batch)
 
         # Act
         start_time = datetime.now()

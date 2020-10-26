@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from uamqp.errors import VendorLinkDetach
-from azure.servicebus.aio import ServiceBusClient, ReceivedMessage, AutoLockRenew
+from azure.servicebus.aio import ServiceBusClient, ReceivedMessage, AutoLockRenewer
 from azure.servicebus._common.message import Message, PeekedMessage
 from azure.servicebus._common.constants import ReceiveMode, NEXT_AVAILABLE, SubQueue
 from azure.servicebus._common.utils import utc_now
@@ -498,7 +498,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             async def lock_lost_callback(renewable, error):
                 results.append(renewable)
 
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             messages = []
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=20) as session:
                 renewer.register(session.session, timeout=60)
@@ -628,7 +628,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 await sender.send_messages(message)
 
             messages = []
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver.session, timeout=140)
                 messages.extend(await receiver.receive_messages(max_wait_time=120))
@@ -668,7 +668,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 tokens = await sender.schedule_messages([message_a, message_b], enqueue_time)
                 assert len(tokens) == 2
 
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, prefetch_count=20) as receiver:
                 renewer.register(receiver.session, timeout=140)
                 messages.extend(await receiver.receive_messages(max_wait_time=120))
@@ -703,7 +703,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert len(tokens) == 2
                 await sender.cancel_scheduled_messages(tokens)
 
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             messages = []
             async with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver.session, timeout=140)

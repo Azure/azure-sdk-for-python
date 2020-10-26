@@ -6,13 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 import logging
 from ._models import CloudEvent, EventGridEvent
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Union
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ class EventGridConsumer(object):
             eventgrid_event = EventGridEvent._from_json(eventgrid_event, encode) # pylint: disable=protected-access
             deserialized_event = EventGridEvent.deserialize(eventgrid_event)
             EventGridEvent._deserialize_data(deserialized_event, deserialized_event.event_type) # pylint: disable=protected-access
-            return deserialized_event
+            return cast(EventGridEvent, deserialized_event)
         except Exception as err:
             _LOGGER.error('Error: cannot deserialize event. Event does not have a valid format. \
                 Event must be a string, dict, or bytes following the CloudEvent schema.')

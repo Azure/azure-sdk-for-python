@@ -217,8 +217,8 @@ def example_send_and_receive_sync():
     # [END peek_messages_sync]
 
     # [START auto_lock_renew_message_sync]
-    from azure.servicebus import AutoLockRenew
-    lock_renewal = AutoLockRenew(max_workers=4)
+    from azure.servicebus import AutoLockRenewer
+    lock_renewal = AutoLockRenewer(max_workers=4)
     with servicebus_receiver:
         for message in servicebus_receiver:
             # Auto renew message for 1 minute.
@@ -339,9 +339,9 @@ def example_session_ops_sync():
         # [END session_renew_lock_sync]
 
         # [START auto_lock_renew_session_sync]
-        from azure.servicebus import AutoLockRenew
+        from azure.servicebus import AutoLockRenewer
 
-        lock_renewal = AutoLockRenew(max_workers=4)
+        lock_renewal = AutoLockRenewer(max_workers=4)
         with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes

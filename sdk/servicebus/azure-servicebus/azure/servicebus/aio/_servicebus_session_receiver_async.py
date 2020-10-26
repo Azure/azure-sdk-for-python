@@ -149,8 +149,7 @@ class ServiceBusSessionReceiver(ServiceBusReceiver, SessionReceiverMixin):
         return super(ServiceBusSessionReceiver, cls).from_connection_string(conn_str, **kwargs)  # type: ignore
 
     @property
-    def session(self):
-        # type: ()->ServiceBusSession
+    def session(self) -> ServiceBusSession:
         """
         Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
         entities.

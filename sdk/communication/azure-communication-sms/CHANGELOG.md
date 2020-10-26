@@ -1,5 +1,8 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+
 ## 1.0.0b3 (2020-10-07)
 - Add dependency to `azure-communication-nspkg` package, to support py2
 
