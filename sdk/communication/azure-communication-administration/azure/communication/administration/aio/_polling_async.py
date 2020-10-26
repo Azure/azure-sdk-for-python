@@ -12,7 +12,7 @@ from functools import partial
 from azure.core.polling import AsyncPollingMethod
 
 from .._phonenumber._generated.models import (
-    PhoneNumberSearch,
+    PhoneNumberReservation,
     PhoneNumberRelease
 )
 
@@ -51,7 +51,7 @@ class PhoneNumberBasePollingAsync(AsyncPollingMethod):
         return self._is_terminated(self._response.status)
 
     def resource(self):
-        # type: () -> Union[PhoneNumberSearch, PhoneNumberRelease]
+        # type: () -> Union[PhoneNumberReservation, PhoneNumberRelease]
         if not self.finished():
             return None
         return self._response
@@ -76,13 +76,13 @@ class ReservePhoneNumberPollingAsync(PhoneNumberBasePollingAsync):
     def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
         super().initialize(client, initial_response, deserialization_callback)
-        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.reservation_id)
 
 class PurchaseReservationPollingAsync(PhoneNumberBasePollingAsync):
     def initialize(self, client, initial_response, deserialization_callback):
         # type: (Any, Any, Callable) -> None
         super().initialize(client, initial_response, deserialization_callback)
-        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.search_id)
+        self._query_status = partial(self._client.get_search_by_id, search_id=initial_response.reservation_id)
 
 class ReleasePhoneNumberPollingAsync(PhoneNumberBasePollingAsync):
     def initialize(self, client, initial_response, deserialization_callback):

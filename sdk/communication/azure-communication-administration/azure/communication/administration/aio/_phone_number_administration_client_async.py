@@ -29,7 +29,7 @@ from .._phonenumber._generated.models import (
     PhoneNumberCountries,
     PhoneNumberEntities,
     PhoneNumberRelease,
-    PhoneNumberSearch,
+    PhoneNumberReservation,
     PhonePlanGroups,
     PhonePlansResponse,
     PstnConfiguration,
@@ -434,12 +434,12 @@ class PhoneNumberAdministrationClient(object):
             reservation_id,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> PhoneNumberSearch
+        # type: (...) -> PhoneNumberReservation
         """Get reservation by reservation id.
 
         :param reservation_id: The reservation id to get reservation.
         :type reservation_id: str
-        :rtype: ~azure.communication.administration.PhoneNumberSearch
+        :rtype: ~azure.communication.administration.PhoneNumberReservation
         """
         return await self._phone_number_administration_client.phone_number_administration.get_search_by_id(
             search_id=reservation_id,
@@ -459,7 +459,7 @@ class PhoneNumberAdministrationClient(object):
         restart a poller from a saved state, and keyword body will be ignored.
         :keyword azure.communication.administration.CreateSearchOptions body: search options.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberSearch]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
@@ -544,7 +544,7 @@ class PhoneNumberAdministrationClient(object):
         restart a poller from a saved state, and keyword reservation_id will be ignored.
         :keyword str reservation_id: The reservation id to be purchased.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberSearch]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
