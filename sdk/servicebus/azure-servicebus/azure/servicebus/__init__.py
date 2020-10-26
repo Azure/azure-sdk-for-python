@@ -15,6 +15,10 @@ from ._servicebus_session import ServiceBusSession
 from ._common.message import ServiceBusMessage, ServiceBusMessageBatch, ServiceBusReceivedMessage
 from ._common.constants import ReceiveMode, SubQueue, NEXT_AVAILABLE_SESSION
 from ._common.auto_lock_renewer import AutoLockRenewer
+from ._common._connection_string_parser import (
+    ServiceBusConnectionStringParser,
+    ServiceBusConnectionStringProperties
+)
 
 TransportType = constants.TransportType
 
@@ -30,5 +34,7 @@ __all__ = [
     'ServiceBusSession',
     'ServiceBusSender',
     'TransportType',
-    'AutoLockRenewer'
+    'AutoLockRenewer',
+    'ServiceBusConnectionStringParser',
+    'ServiceBusConnectionStringProperties'
 ]
