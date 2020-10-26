@@ -23,10 +23,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"vnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet\"\
-        ,\r\n  \"etag\": \"W/\\\"08fb0046-6700-430f-bcff-544e82497380\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"4c26ce4f-245d-4451-84a6-5eafceac13b6\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"cb7d273d-fd31-4b3c-a058-e0347e8f747b\",\r\n    \"\
+        \   \"resourceGuid\": \"9e070944-dfc0-42c6-94cf-7209caac0773\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/8\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -35,7 +35,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec8f1fa-71a0-468e-8c4f-ed855f3a178a?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/28a82867-6a4a-49c0-8cd2-93a143275c6a?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
@@ -43,7 +43,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 06:52:47 GMT
+      - Mon, 28 Sep 2020 02:24:02 GMT
       expires:
       - '-1'
       pragma:
@@ -56,9 +56,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 3e1c7127-7ce3-4e3c-b1ac-35e745ffb086
+      - cb9dd35f-b4ed-424f-a4c8-f3641afaae36
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -75,7 +75,7 @@ interactions:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/4ec8f1fa-71a0-468e-8c4f-ed855f3a178a?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/28a82867-6a4a-49c0-8cd2-93a143275c6a?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -87,7 +87,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 06:52:53 GMT
+      - Mon, 28 Sep 2020 02:24:07 GMT
       expires:
       - '-1'
       pragma:
@@ -104,7 +104,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 6a0d9dec-5937-4a56-8d28-51e2cdea5b60
+      - 62e7501d-a6ea-47dd-ae71-40ae1093a3aa
     status:
       code: 200
       message: OK
@@ -125,10 +125,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"vnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet\"\
-        ,\r\n  \"etag\": \"W/\\\"3cb82604-d0c6-4e9c-8407-0f0c1a71e00b\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"9ec337ec-4375-4b3b-93b5-8e0a0041c0d9\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"cb7d273d-fd31-4b3c-a058-e0347e8f747b\",\r\n    \"\
+        \    \"resourceGuid\": \"9e070944-dfc0-42c6-94cf-7209caac0773\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/8\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -141,9 +141,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 06:52:53 GMT
+      - Mon, 28 Sep 2020 02:24:07 GMT
       etag:
-      - W/"3cb82604-d0c6-4e9c-8407-0f0c1a71e00b"
+      - W/"9ec337ec-4375-4b3b-93b5-8e0a0041c0d9"
       expires:
       - '-1'
       pragma:
@@ -160,7 +160,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - c1a83b98-f815-4e2f-b279-de89f6cffc27
+      - 3256c4b1-7855-4b0c-805d-330f09e795d3
     status:
       code: 200
       message: OK
@@ -187,22 +187,23 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"v-subnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\r\n  \"etag\": \"W/\\\"8a13e125-c9fe-46d3-87f3-4a653cb43512\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"cdce8342-5272-4681-a574-0e95b5f471d5\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/8\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
-        : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
-        \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+        : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\",\r\
+        \n    \"subnetID\": 0\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
+        \r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e8cd31ba-47cf-4513-bc15-4a73392e4154?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/8b276d5a-2250-4975-b6f1-b4243004ee14?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
-      - '559'
+      - '579'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 06:52:53 GMT
+      - Mon, 28 Sep 2020 02:24:07 GMT
       expires:
       - '-1'
       pragma:
@@ -215,9 +216,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d3ccc644-7af1-4387-8cd7-7b21b1a0cdb7
+      - 799f248a-5bad-4d4c-bac0-37b4f3dbfef6
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 201
       message: Created
@@ -234,7 +235,7 @@ interactions:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/e8cd31ba-47cf-4513-bc15-4a73392e4154?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/8b276d5a-2250-4975-b6f1-b4243004ee14?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -246,7 +247,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 06:52:58 GMT
+      - Mon, 28 Sep 2020 02:24:12 GMT
       expires:
       - '-1'
       pragma:
@@ -263,7 +264,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 342cbfcd-d7ac-4efd-a685-618a55c60f01
+      - 93c91ce3-24a4-442c-b5ac-c0a23c649bf8
     status:
       code: 200
       message: OK
@@ -284,22 +285,23 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"v-subnet\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.Network/virtualNetworks/vnet/subnets/v-subnet\"\
-        ,\r\n  \"etag\": \"W/\\\"0014a236-b412-4f6e-b559-c2d5035cbbfe\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"622a5cdd-b6d5-4c76-ac98-fba0335e19c3\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/8\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
-        : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
-        \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
+        : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\",\r\
+        \n    \"subnetID\": 0\r\n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\
+        \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '560'
+      - '580'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 11 Sep 2020 06:52:59 GMT
+      - Mon, 28 Sep 2020 02:24:13 GMT
       etag:
-      - W/"0014a236-b412-4f6e-b559-c2d5035cbbfe"
+      - W/"622a5cdd-b6d5-4c76-ac98-fba0335e19c3"
       expires:
       - '-1'
       pragma:
@@ -316,7 +318,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 638dec49-042b-4865-b26d-fcf75e1d9954
+      - f23ce1d8-a44d-4a4a-b7d3-83bfd78fce31
     status:
       code: 200
       message: OK
@@ -342,7 +344,7 @@ interactions:
       - application/json; charset=utf-8
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
@@ -367,7 +369,7 @@ interactions:
         \ azureuser@linuxvm\"\n      }\n     ]\n    }\n   }\n  }\n }"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/c886a471-2353-49c4-b1c1-fa54de691405?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
       cache-control:
       - no-cache
       content-length:
@@ -375,7 +377,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:53:10 GMT
+      - Mon, 28 Sep 2020 02:24:27 GMT
       expires:
       - '-1'
       pragma:
@@ -387,7 +389,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -402,13 +404,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/c886a471-2353-49c4-b1c1-fa54de691405?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"71a486c8-5323-c449-b1c1-fa54de691405\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:53:09.6469992Z\"\n }"
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -417,7 +419,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:53:42 GMT
+      - Mon, 28 Sep 2020 02:25:00 GMT
       expires:
       - '-1'
       pragma:
@@ -446,13 +448,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/c886a471-2353-49c4-b1c1-fa54de691405?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"71a486c8-5323-c449-b1c1-fa54de691405\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:53:09.6469992Z\"\n }"
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -461,7 +463,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:54:12 GMT
+      - Mon, 28 Sep 2020 02:25:30 GMT
       expires:
       - '-1'
       pragma:
@@ -490,13 +492,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/c886a471-2353-49c4-b1c1-fa54de691405?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"71a486c8-5323-c449-b1c1-fa54de691405\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:53:09.6469992Z\"\n }"
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -505,7 +507,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:54:43 GMT
+      - Mon, 28 Sep 2020 02:26:00 GMT
       expires:
       - '-1'
       pragma:
@@ -534,13 +536,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/c886a471-2353-49c4-b1c1-fa54de691405?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"71a486c8-5323-c449-b1c1-fa54de691405\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:53:09.6469992Z\"\n }"
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -549,7 +551,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:55:13 GMT
+      - Mon, 28 Sep 2020 02:26:30 GMT
       expires:
       - '-1'
       pragma:
@@ -578,14 +580,410 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/c886a471-2353-49c4-b1c1-fa54de691405?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"71a486c8-5323-c449-b1c1-fa54de691405\",\n  \"status\"\
-        : \"Succeeded\",\n  \"startTime\": \"2020-09-11T06:53:09.6469992Z\",\n  \"\
-        endTime\": \"2020-09-11T06:55:14.2030196Z\"\n }"
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:27:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:27:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:28:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:28:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:29:02 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:29:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:30:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:30:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:31:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/a57fbb30-7583-4597-b012-2d29f551dc6e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"30bb7fa5-8375-9745-b012-2d29f551dc6e\",\n  \"status\"\
+        : \"Succeeded\",\n  \"startTime\": \"2020-09-28T02:24:26.8085063Z\",\n  \"\
+        endTime\": \"2020-09-28T02:31:33.4172844Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -594,7 +992,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:55:43 GMT
+      - Mon, 28 Sep 2020 02:31:36 GMT
       expires:
       - '-1'
       pragma:
@@ -623,7 +1021,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerservice_test_container665810f8/providers/Microsoft.ContainerService/containerServices/pycontainer665810f8?api-version=2017-07-01
   response:
@@ -653,7 +1051,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:55:44 GMT
+      - Mon, 28 Sep 2020 02:31:36 GMT
       expires:
       - '-1'
       pragma:
@@ -682,7 +1080,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -714,7 +1112,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:55:46 GMT
+      - Mon, 28 Sep 2020 02:31:38 GMT
       expires:
       - '-1'
       pragma:
@@ -743,7 +1141,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -776,7 +1174,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:55:46 GMT
+      - Mon, 28 Sep 2020 02:31:38 GMT
       expires:
       - '-1'
       pragma:
@@ -805,7 +1203,7 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
@@ -838,7 +1236,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:55:47 GMT
+      - Mon, 28 Sep 2020 02:31:38 GMT
       expires:
       - '-1'
       pragma:
@@ -869,7 +1267,7 @@ interactions:
       - '0'
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
@@ -895,7 +1293,7 @@ interactions:
         \ azureuser@linuxvm\"\n      }\n     ]\n    }\n   }\n  }\n }"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
       cache-control:
       - no-cache
       content-length:
@@ -903,11 +1301,11 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:55:48 GMT
+      - Mon, 28 Sep 2020 02:31:39 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operationresults/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operationresults/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
       pragma:
       - no-cache
       server:
@@ -932,13 +1330,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -947,7 +1345,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:56:18 GMT
+      - Mon, 28 Sep 2020 02:32:10 GMT
       expires:
       - '-1'
       pragma:
@@ -976,13 +1374,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -991,7 +1389,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:56:49 GMT
+      - Mon, 28 Sep 2020 02:32:40 GMT
       expires:
       - '-1'
       pragma:
@@ -1020,13 +1418,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -1035,7 +1433,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:57:19 GMT
+      - Mon, 28 Sep 2020 02:33:11 GMT
       expires:
       - '-1'
       pragma:
@@ -1064,13 +1462,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -1079,7 +1477,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:57:50 GMT
+      - Mon, 28 Sep 2020 02:33:42 GMT
       expires:
       - '-1'
       pragma:
@@ -1108,13 +1506,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -1123,7 +1521,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:58:20 GMT
+      - Mon, 28 Sep 2020 02:34:12 GMT
       expires:
       - '-1'
       pragma:
@@ -1152,13 +1550,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -1167,7 +1565,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:58:50 GMT
+      - Mon, 28 Sep 2020 02:34:42 GMT
       expires:
       - '-1'
       pragma:
@@ -1196,13 +1594,13 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"InProgress\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -1211,7 +1609,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:59:20 GMT
+      - Mon, 28 Sep 2020 02:35:13 GMT
       expires:
       - '-1'
       pragma:
@@ -1240,14 +1638,410 @@ interactions:
       - keep-alive
       User-Agent:
       - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-containerservice/9.4.0 Azure-SDK-For-Python
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/d5e1637b-16cf-4b9c-86cc-3ca91a767b8a?api-version=2016-03-30
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
   response:
     body:
-      string: "{\n  \"name\": \"7b63e1d5-cf16-9c4b-86cc-3ca91a767b8a\",\n  \"status\"\
-        : \"Succeeded\",\n  \"startTime\": \"2020-09-11T06:55:47.9961378Z\",\n  \"\
-        endTime\": \"2020-09-11T06:59:37.2974788Z\"\n }"
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:35:44 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:36:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:36:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:37:15 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:37:45 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:38:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:38:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:39:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"InProgress\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\"\n }"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '126'
+      content-type:
+      - application/json
+      date:
+      - Mon, 28 Sep 2020 02:39:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-containerservice/10.0.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerService/locations/eastus/operations/75d0fc62-f9c6-4b48-b571-06da8086761e?api-version=2016-03-30
+  response:
+    body:
+      string: "{\n  \"name\": \"62fcd075-c6f9-484b-b571-06da8086761e\",\n  \"status\"\
+        : \"Succeeded\",\n  \"startTime\": \"2020-09-28T02:31:40.0577078Z\",\n  \"\
+        endTime\": \"2020-09-28T02:40:13.9436661Z\"\n }"
     headers:
       cache-control:
       - no-cache
@@ -1256,7 +2050,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 11 Sep 2020 06:59:51 GMT
+      - Mon, 28 Sep 2020 02:40:18 GMT
       expires:
       - '-1'
       pragma:
