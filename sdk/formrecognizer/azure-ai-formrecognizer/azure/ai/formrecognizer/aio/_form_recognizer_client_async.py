@@ -74,12 +74,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
         See fields found on a receipt here:
         https://aka.ms/formrecognizer/receiptfields
 
-        :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :param receipt: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type receipt: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -147,7 +147,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         https://aka.ms/formrecognizer/receiptfields
 
         :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -199,12 +199,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given business card.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
         See fields found on a business card here:
         https://aka.ms/formrecognizer/businesscardfields
 
-        :param business_card: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :param business_card: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type business_card: bytes or IO[bytes]
         :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
@@ -262,7 +262,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         https://aka.ms/formrecognizer/businesscardfields
 
         :param str business_card_url: The URL of the business card to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
         :keyword bool include_field_elements:
@@ -303,12 +303,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     ) -> AsyncLROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given invoice.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
         See fields found on a invoice here:
         https://aka.ms/formrecognizer/invoicefields
 
-        :param invoice: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :param invoice: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type invoice: bytes or IO[bytes]
         :keyword str locale: Locale of the invoice. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
@@ -364,7 +364,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         https://aka.ms/formrecognizer/invoicefields
 
         :param str invoice_url: The URL of the invoice to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str locale: Locale of the invoice. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
         :keyword bool include_field_elements:
@@ -408,9 +408,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
     ) -> AsyncLROPoller[List[FormPage]]:
         """Extract text and content/layout information from a given document.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
-        :param form: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword list[str] page_range: Specify page number or range of page numbers to
             process, e.g: 1, 5, 7, 9-10.
@@ -467,7 +467,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         The input document must be the location (URL) of the document to be analyzed.
 
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword list[str] page_range: Specify page number or range of page numbers to
             process, e.g: 1, 5, 7, 9-10.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -507,10 +507,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png' or 'image/tiff'.
+        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
 
         :param str model_id: Custom model identifier.
-        :param form: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -582,7 +582,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         :param str model_id: Custom model identifier.
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations

@@ -123,12 +123,16 @@ class CustomFormModelStatus(str, Enum):
 
 class FormContentType(str, Enum):
     """Content type for upload.
+
+    .. versionadded:: v2.1-preview
+        Support for image/bmp
     """
 
     APPLICATION_PDF = "application/pdf"
     IMAGE_JPEG = "image/jpeg"
     IMAGE_PNG = "image/png"
     IMAGE_TIFF = "image/tiff"
+    IMAGE_BMP = "image/bmp"
 
 
 class Point(namedtuple("Point", "x y")):
