@@ -1184,7 +1184,6 @@ class EntitiesRecognitionTask(DictMixin):
 
     def to_generated(self):
         return _v3_2_preview_1_models.EntitiesTask(
-            enable=True,
             parameters=_v3_2_preview_1_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type
@@ -1231,7 +1230,6 @@ class PiiEntitiesRecognitionTask(DictMixin):
 
     def to_generated(self):
         return _v3_2_preview_1_models.PiiTask(
-            enable=True,
             parameters=_v3_2_preview_1_models.PiiTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
@@ -1277,7 +1275,6 @@ class EntityLinkingTask(DictMixin):
 
     def to_generated(self):
         return _v3_2_preview_1_models.EntityLinkingTask(
-            enable=True,
             parameters=_v3_2_preview_1_models.EntityLinkingTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type
@@ -1318,7 +1315,6 @@ class KeyPhraseExtractionTask(DictMixin):
 
     def to_generated(self):
         return _v3_2_preview_1_models.KeyPhrasesTask(
-            enable=True,
             parameters=_v3_2_preview_1_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version
             )
@@ -1365,7 +1361,6 @@ class SentimentAnalysisTask(DictMixin):
 
     def to_generated(self):
         return _v3_2_preview_1_models.SentimentTask(
-            enable=True,
             parameters=_v3_2_preview_1_models.SentimentTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,

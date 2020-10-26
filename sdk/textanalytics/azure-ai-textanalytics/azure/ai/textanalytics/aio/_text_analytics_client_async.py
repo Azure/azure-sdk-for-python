@@ -25,11 +25,9 @@ from .._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
-    pii_entities_result
-)
-from .._response_handlers_async import (
-    healthcare_paged_result_async,
-    analyze_paged_result_async,
+    pii_entities_result,
+    healthcare_paged_result,
+    analyze_paged_result
 )
 from .._models import (
     DetectLanguageInput,
@@ -532,9 +530,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    async def _healthcare_result_callback_async(self, raw_response, _, headers, show_stats=False):
+    def _healthcare_result_callback_async(self, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(self._client.models().HealthcareJobState, raw_response)
-        return await healthcare_paged_result_async(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
+        return healthcare_paged_result(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace_async
     async def begin_health(  # type: ignore
@@ -621,9 +619,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    async def _analyze_result_callback_async(self, raw_response, _, headers):
+    def _analyze_result_callback_async(self, raw_response, _, headers):
         analyze_result = self._deserialize(self._client.models().AnalyzeJobState, raw_response)
-        return await analyze_paged_result_async(self._client.analyze_status, raw_response, analyze_result, headers)
+        return analyze_paged_result(self._client.analyze_status, raw_response, analyze_result, headers)
 
     @distributed_trace_async
     async def begin_analyze(  # type: ignore
