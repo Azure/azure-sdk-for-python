@@ -454,10 +454,10 @@ class PhoneNumberAdministrationClient(object):
     ):
         # type: (...) -> AsyncLROPoller
         """Begins creating a phone number search to reserve phone numbers.
-        Caller must provide either body, or continuation_token keywords to use the method.
-        If both body and continuation_token are specified, only continuation_token will be used to
-        restart a poller from a saved state, and keyword body will be ignored.
-        :keyword azure.communication.administration.CreateSearchOptions body: search options.
+        Caller must provide either options, or continuation_token keywords to use the method.
+        If both options and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword options will be ignored.
+        :keyword azure.communication.administration.CreateSearchOptions options: reservation options.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
@@ -480,11 +480,14 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
-        if "body" not in kwargs:
-            raise ValueError("Either kwarg 'body' or 'continuation_token' needs to be specified")
+        if "options" not in kwargs:
+            raise ValueError("Either kwarg 'options' or 'continuation_token' needs to be specified")
+
+        reservation_options = kwargs.pop('options')  # type: str
 
         create_search_response = await self._phone_number_administration_client.\
             phone_number_administration.create_search(
+                body=reservation_options,
                 **kwargs
             )
         initial_state = await self._phone_number_administration_client.phone_number_administration.get_search_by_id(
@@ -540,7 +543,7 @@ class PhoneNumberAdministrationClient(object):
         # type: (...) -> AsyncLROPoller
         """Begins purchase the reserved phone numbers of a phone number search.
         Caller must provide either reservation_id, or continuation_token keywords to use the method.
-        If both body and continuation_token are specified, only continuation_token will be used to
+        If both reservation_id and continuation_token are specified, only continuation_token will be used to
         restart a poller from a saved state, and keyword reservation_id will be ignored.
         :keyword str reservation_id: The reservation id to be purchased.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
