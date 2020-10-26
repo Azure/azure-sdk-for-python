@@ -56,10 +56,16 @@ class ManagedIdentityCredential(object):
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT) and os.environ.get(
                 EnvironmentVariables.IDENTITY_HEADER
         ):
-            _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
-            from .app_service import AppServiceCredential
+            if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
+                _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+                from .service_fabric import ServiceFabricCredential
 
-            self._credential = AppServiceCredential(**kwargs)
+                self._credential = ServiceFabricCredential(**kwargs)
+            else:
+                _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+                from .app_service import AppServiceCredential
+
+                self._credential = AppServiceCredential(**kwargs)
         elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
