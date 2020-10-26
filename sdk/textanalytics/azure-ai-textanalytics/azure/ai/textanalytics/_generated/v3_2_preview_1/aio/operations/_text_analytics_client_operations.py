@@ -399,7 +399,7 @@ class TextAnalyticsClientOperationsMixin:
         self,
         documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -458,7 +458,7 @@ class TextAnalyticsClientOperationsMixin:
         self,
         documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Submit healthcare analysis job.
@@ -531,7 +531,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> "models.EntitiesResult":
         """Named Entity Recognition.
@@ -618,7 +618,7 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         domain: Optional[str] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> "models.PiiResult":
         """Entities containing personal information.
@@ -710,7 +710,7 @@ class TextAnalyticsClientOperationsMixin:
         documents: List["models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> "models.EntityLinkingResult":
         """Linked entities from a well-known knowledge base.
@@ -953,7 +953,7 @@ class TextAnalyticsClientOperationsMixin:
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         opinion_mining: Optional[bool] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = None,
+        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> "models.SentimentResponse":
         """Sentiment.

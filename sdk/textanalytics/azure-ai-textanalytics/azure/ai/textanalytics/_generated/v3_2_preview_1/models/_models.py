@@ -401,44 +401,6 @@ class Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextrac
         self.results = kwargs.get('results', None)
 
 
-class Components1Yw06Y0SchemasTasksstatePropertiesTasksPropertiesCustomentityrecognitiontasksItemsAllof1(msrest.serialization.Model):
-    """Components1Yw06Y0SchemasTasksstatePropertiesTasksPropertiesCustomentityrecognitiontasksItemsAllof1.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.CustomEntitiesResult
-    """
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'CustomEntitiesResult'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Components1Yw06Y0SchemasTasksstatePropertiesTasksPropertiesCustomentityrecognitiontasksItemsAllof1, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
-
-
-class Components4X9ZamSchemasTasksstatePropertiesTasksPropertiesCustomclassificationtasksItemsAllof1(msrest.serialization.Model):
-    """Components4X9ZamSchemasTasksstatePropertiesTasksPropertiesCustomclassificationtasksItemsAllof1.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.CustomClassificationResult
-    """
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'CustomClassificationResult'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Components4X9ZamSchemasTasksstatePropertiesTasksPropertiesCustomclassificationtasksItemsAllof1, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
-
-
 class ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1(msrest.serialization.Model):
     """ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1.
 
@@ -456,416 +418,6 @@ class ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtas
     ):
         super(ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1, self).__init__(**kwargs)
         self.results = kwargs.get('results', None)
-
-
-class CustomClassification(msrest.serialization.Model):
-    """CustomClassification.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param confidence_score: Required.
-    :type confidence_score: float
-    :param name: Required.
-    :type name: str
-    """
-
-    _validation = {
-        'confidence_score': {'required': True},
-        'name': {'required': True},
-    }
-
-    _attribute_map = {
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomClassification, self).__init__(**kwargs)
-        self.confidence_score = kwargs['confidence_score']
-        self.name = kwargs['name']
-
-
-class CustomClassificationDocument(msrest.serialization.Model):
-    """CustomClassificationDocument.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required.
-    :type id: str
-    :param classifications: Required.
-    :type classifications: list[~azure.ai.textanalytics.v3_2_preview_1.models.CustomClassification]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'classifications': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'classifications': {'key': 'classifications', 'type': '[CustomClassification]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomClassificationDocument, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.classifications = kwargs['classifications']
-
-
-class CustomClassificationResult(msrest.serialization.Model):
-    """CustomClassificationResult.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param documents: Required. Response by document.
-    :type documents:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.CustomClassificationDocument]
-    :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_2_preview_1.models.DocumentError]
-    :param statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_2_preview_1.models.RequestStatistics
-    """
-
-    _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-    }
-
-    _attribute_map = {
-        'documents': {'key': 'documents', 'type': '[CustomClassificationDocument]'},
-        'errors': {'key': 'errors', 'type': '[DocumentError]'},
-        'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomClassificationResult, self).__init__(**kwargs)
-        self.documents = kwargs['documents']
-        self.errors = kwargs['errors']
-        self.statistics = kwargs.get('statistics', None)
-
-
-class TextAnalyticsTask(msrest.serialization.Model):
-    """TextAnalyticsTask.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
-    """
-
-    _validation = {
-        'enable': {'required': True},
-    }
-
-    _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TextAnalyticsTask, self).__init__(**kwargs)
-        self.enable = kwargs['enable']
-
-
-class CustomClassificationTask(TextAnalyticsTask):
-    """CustomClassificationTask.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
-    :param parameters: Required.
-    :type parameters:
-     ~azure.ai.textanalytics.v3_2_preview_1.models.CustomClassificationTaskParameters
-    """
-
-    _validation = {
-        'enable': {'required': True},
-        'parameters': {'required': True},
-    }
-
-    _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
-        'parameters': {'key': 'parameters', 'type': 'CustomClassificationTaskParameters'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomClassificationTask, self).__init__(**kwargs)
-        self.parameters = kwargs['parameters']
-
-
-class CustomClassificationTaskParameters(msrest.serialization.Model):
-    """CustomClassificationTaskParameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param app_id: Required.
-    :type app_id: str
-    :param slot_name: Required.
-    :type slot_name: str
-    """
-
-    _validation = {
-        'app_id': {'required': True},
-        'slot_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'slot_name': {'key': 'slotName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomClassificationTaskParameters, self).__init__(**kwargs)
-        self.app_id = kwargs['app_id']
-        self.slot_name = kwargs['slot_name']
-
-
-class CustomEntitiesDocument(msrest.serialization.Model):
-    """CustomEntitiesDocument.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required.
-    :type id: str
-    :param entities: Required.
-    :type entities: list[~azure.ai.textanalytics.v3_2_preview_1.models.CustomEntity]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'entities': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'entities': {'key': 'entities', 'type': '[CustomEntity]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomEntitiesDocument, self).__init__(**kwargs)
-        self.id = kwargs['id']
-        self.entities = kwargs['entities']
-
-
-class CustomEntitiesResult(msrest.serialization.Model):
-    """CustomEntitiesResult.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param documents: Required. Response by document.
-    :type documents: list[~azure.ai.textanalytics.v3_2_preview_1.models.CustomEntitiesDocument]
-    :param errors: Required. Errors by document id.
-    :type errors: list[~azure.ai.textanalytics.v3_2_preview_1.models.DocumentError]
-    :param statistics: if showStats=true was specified in the request this field will contain
-     information about the request payload.
-    :type statistics: ~azure.ai.textanalytics.v3_2_preview_1.models.RequestStatistics
-    """
-
-    _validation = {
-        'documents': {'required': True},
-        'errors': {'required': True},
-    }
-
-    _attribute_map = {
-        'documents': {'key': 'documents', 'type': '[CustomEntitiesDocument]'},
-        'errors': {'key': 'errors', 'type': '[DocumentError]'},
-        'statistics': {'key': 'statistics', 'type': 'RequestStatistics'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomEntitiesResult, self).__init__(**kwargs)
-        self.documents = kwargs['documents']
-        self.errors = kwargs['errors']
-        self.statistics = kwargs.get('statistics', None)
-
-
-class CustomEntitiesTask(TextAnalyticsTask):
-    """CustomEntitiesTask.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
-    :param parameters: Required.
-    :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.CustomEntitiesTaskParameters
-    """
-
-    _validation = {
-        'enable': {'required': True},
-        'parameters': {'required': True},
-    }
-
-    _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
-        'parameters': {'key': 'parameters', 'type': 'CustomEntitiesTaskParameters'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomEntitiesTask, self).__init__(**kwargs)
-        self.parameters = kwargs['parameters']
-
-
-class CustomEntitiesTaskParameters(msrest.serialization.Model):
-    """CustomEntitiesTaskParameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param app_id: Required.
-    :type app_id: str
-    :param slot_name: Required.
-    :type slot_name: str
-    :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
-    """
-
-    _validation = {
-        'app_id': {'required': True},
-        'slot_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'slot_name': {'key': 'slotName', 'type': 'str'},
-        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomEntitiesTaskParameters, self).__init__(**kwargs)
-        self.app_id = kwargs['app_id']
-        self.slot_name = kwargs['slot_name']
-        self.string_index_type = kwargs.get('string_index_type', None)
-
-
-class Entity(msrest.serialization.Model):
-    """Entity.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param text: Required. Entity text as appears in the request.
-    :type text: str
-    :param category: Required. Entity type.
-    :type category: str
-    :param subcategory: (Optional) Entity sub type.
-    :type subcategory: str
-    :param offset: Required. Start position for the entity text. Use of different 'stringIndexType'
-     values can affect the offset returned.
-    :type offset: int
-    :param length: Required. Length for the entity text. Use of different 'stringIndexType' values
-     can affect the length returned.
-    :type length: int
-    :param confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
-    :type confidence_score: float
-    """
-
-    _validation = {
-        'text': {'required': True},
-        'category': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'confidence_score': {'required': True},
-    }
-
-    _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'subcategory': {'key': 'subcategory', 'type': 'str'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Entity, self).__init__(**kwargs)
-        self.text = kwargs['text']
-        self.category = kwargs['category']
-        self.subcategory = kwargs.get('subcategory', None)
-        self.offset = kwargs['offset']
-        self.length = kwargs['length']
-        self.confidence_score = kwargs['confidence_score']
-
-
-class CustomEntity(Entity):
-    """CustomEntity.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param text: Required. Entity text as appears in the request.
-    :type text: str
-    :param category: Required. Entity type.
-    :type category: str
-    :param subcategory: (Optional) Entity sub type.
-    :type subcategory: str
-    :param offset: Required. Start position for the entity text. Use of different 'stringIndexType'
-     values can affect the offset returned.
-    :type offset: int
-    :param length: Required. Length for the entity text. Use of different 'stringIndexType' values
-     can affect the length returned.
-    :type length: int
-    :param confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
-    :type confidence_score: float
-    :param children:
-    :type children: list[~azure.ai.textanalytics.v3_2_preview_1.models.CustomEntity]
-    """
-
-    _validation = {
-        'text': {'required': True},
-        'category': {'required': True},
-        'offset': {'required': True},
-        'length': {'required': True},
-        'confidence_score': {'required': True},
-    }
-
-    _attribute_map = {
-        'text': {'key': 'text', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'subcategory': {'key': 'subcategory', 'type': 'str'},
-        'offset': {'key': 'offset', 'type': 'int'},
-        'length': {'key': 'length', 'type': 'int'},
-        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
-        'children': {'key': 'children', 'type': '[CustomEntity]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CustomEntity, self).__init__(**kwargs)
-        self.children = kwargs.get('children', None)
 
 
 class DetectedLanguage(msrest.serialization.Model):
@@ -1264,23 +816,14 @@ class EntitiesResult(msrest.serialization.Model):
         self.model_version = kwargs['model_version']
 
 
-class EntitiesTask(TextAnalyticsTask):
+class EntitiesTask(msrest.serialization.Model):
     """EntitiesTask.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
     :param parameters:
     :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.EntitiesTaskParameters
     """
 
-    _validation = {
-        'enable': {'required': True},
-    }
-
     _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
         'parameters': {'key': 'parameters', 'type': 'EntitiesTaskParameters'},
     }
 
@@ -1298,8 +841,9 @@ class EntitiesTaskParameters(msrest.serialization.Model):
     :param model_version:
     :type model_version: str
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
+     "Utf16CodeUnit". Default value: "TextElements_v8".
+    :type string_index_type: str or
+     ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexTypeResponse
     """
 
     _attribute_map = {
@@ -1313,7 +857,58 @@ class EntitiesTaskParameters(msrest.serialization.Model):
     ):
         super(EntitiesTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.string_index_type = kwargs.get('string_index_type', None)
+        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
+
+
+class Entity(msrest.serialization.Model):
+    """Entity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param text: Required. Entity text as appears in the request.
+    :type text: str
+    :param category: Required. Entity type.
+    :type category: str
+    :param subcategory: (Optional) Entity sub type.
+    :type subcategory: str
+    :param offset: Required. Start position for the entity text. Use of different 'stringIndexType'
+     values can affect the offset returned.
+    :type offset: int
+    :param length: Required. Length for the entity text. Use of different 'stringIndexType' values
+     can affect the length returned.
+    :type length: int
+    :param confidence_score: Required. Confidence score between 0 and 1 of the extracted entity.
+    :type confidence_score: float
+    """
+
+    _validation = {
+        'text': {'required': True},
+        'category': {'required': True},
+        'offset': {'required': True},
+        'length': {'required': True},
+        'confidence_score': {'required': True},
+    }
+
+    _attribute_map = {
+        'text': {'key': 'text', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'subcategory': {'key': 'subcategory', 'type': 'str'},
+        'offset': {'key': 'offset', 'type': 'int'},
+        'length': {'key': 'length', 'type': 'int'},
+        'confidence_score': {'key': 'confidenceScore', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Entity, self).__init__(**kwargs)
+        self.text = kwargs['text']
+        self.category = kwargs['category']
+        self.subcategory = kwargs.get('subcategory', None)
+        self.offset = kwargs['offset']
+        self.length = kwargs['length']
+        self.confidence_score = kwargs['confidence_score']
 
 
 class EntityLinkingResult(msrest.serialization.Model):
@@ -1356,23 +951,14 @@ class EntityLinkingResult(msrest.serialization.Model):
         self.model_version = kwargs['model_version']
 
 
-class EntityLinkingTask(TextAnalyticsTask):
+class EntityLinkingTask(msrest.serialization.Model):
     """EntityLinkingTask.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
     :param parameters:
     :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingTaskParameters
     """
 
-    _validation = {
-        'enable': {'required': True},
-    }
-
     _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
         'parameters': {'key': 'parameters', 'type': 'EntityLinkingTaskParameters'},
     }
 
@@ -1390,8 +976,9 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
     :param model_version:
     :type model_version: str
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
+     "Utf16CodeUnit". Default value: "TextElements_v8".
+    :type string_index_type: str or
+     ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexTypeResponse
     """
 
     _attribute_map = {
@@ -1405,7 +992,7 @@ class EntityLinkingTaskParameters(msrest.serialization.Model):
     ):
         super(EntityLinkingTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
-        self.string_index_type = kwargs.get('string_index_type', None)
+        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -1719,12 +1306,6 @@ class JobManifestTasks(msrest.serialization.Model):
     :param sentiment_analysis_tasks:
     :type sentiment_analysis_tasks:
      list[~azure.ai.textanalytics.v3_2_preview_1.models.SentimentTask]
-    :param custom_classification_tasks:
-    :type custom_classification_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.CustomClassificationTask]
-    :param custom_entity_recognition_tasks:
-    :type custom_entity_recognition_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.CustomEntitiesTask]
     """
 
     _attribute_map = {
@@ -1733,8 +1314,6 @@ class JobManifestTasks(msrest.serialization.Model):
         'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[EntityLinkingTask]'},
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[KeyPhrasesTask]'},
         'sentiment_analysis_tasks': {'key': 'sentimentAnalysisTasks', 'type': '[SentimentTask]'},
-        'custom_classification_tasks': {'key': 'customClassificationTasks', 'type': '[CustomClassificationTask]'},
-        'custom_entity_recognition_tasks': {'key': 'customEntityRecognitionTasks', 'type': '[CustomEntitiesTask]'},
     }
 
     def __init__(
@@ -1747,8 +1326,6 @@ class JobManifestTasks(msrest.serialization.Model):
         self.entity_linking_tasks = kwargs.get('entity_linking_tasks', None)
         self.key_phrase_extraction_tasks = kwargs.get('key_phrase_extraction_tasks', None)
         self.sentiment_analysis_tasks = kwargs.get('sentiment_analysis_tasks', None)
-        self.custom_classification_tasks = kwargs.get('custom_classification_tasks', None)
-        self.custom_entity_recognition_tasks = kwargs.get('custom_entity_recognition_tasks', None)
 
 
 class KeyPhraseResult(msrest.serialization.Model):
@@ -1791,23 +1368,14 @@ class KeyPhraseResult(msrest.serialization.Model):
         self.model_version = kwargs['model_version']
 
 
-class KeyPhrasesTask(TextAnalyticsTask):
+class KeyPhrasesTask(msrest.serialization.Model):
     """KeyPhrasesTask.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
     :param parameters:
     :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.KeyPhrasesTaskParameters
     """
 
-    _validation = {
-        'enable': {'required': True},
-    }
-
     _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
         'parameters': {'key': 'parameters', 'type': 'KeyPhrasesTaskParameters'},
     }
 
@@ -2178,23 +1746,14 @@ class PiiResult(msrest.serialization.Model):
         self.model_version = kwargs['model_version']
 
 
-class PiiTask(TextAnalyticsTask):
+class PiiTask(msrest.serialization.Model):
     """PiiTask.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
     :param parameters:
     :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.PiiTaskParameters
     """
 
-    _validation = {
-        'enable': {'required': True},
-    }
-
     _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
         'parameters': {'key': 'parameters', 'type': 'PiiTaskParameters'},
     }
 
@@ -2214,8 +1773,9 @@ class PiiTaskParameters(msrest.serialization.Model):
     :param model_version:
     :type model_version: str
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
+     "Utf16CodeUnit". Default value: "TextElements_v8".
+    :type string_index_type: str or
+     ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexTypeResponse
     """
 
     _attribute_map = {
@@ -2231,7 +1791,7 @@ class PiiTaskParameters(msrest.serialization.Model):
         super(PiiTaskParameters, self).__init__(**kwargs)
         self.domain = kwargs.get('domain', "none")
         self.model_version = kwargs.get('model_version', "latest")
-        self.string_index_type = kwargs.get('string_index_type', None)
+        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
 
 
 class RequestStatistics(msrest.serialization.Model):
@@ -2514,23 +2074,14 @@ class SentimentResponse(msrest.serialization.Model):
         self.model_version = kwargs['model_version']
 
 
-class SentimentTask(TextAnalyticsTask):
+class SentimentTask(msrest.serialization.Model):
     """SentimentTask.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param enable: Required.
-    :type enable: bool
     :param parameters:
     :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.SentimentTaskParameters
     """
 
-    _validation = {
-        'enable': {'required': True},
-    }
-
     _attribute_map = {
-        'enable': {'key': 'enable', 'type': 'bool'},
         'parameters': {'key': 'parameters', 'type': 'SentimentTaskParameters'},
     }
 
@@ -2550,8 +2101,9 @@ class SentimentTaskParameters(msrest.serialization.Model):
     :param opinion_mining:
     :type opinion_mining: bool
     :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit".
-    :type string_index_type: str or ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexType
+     "Utf16CodeUnit". Default value: "TextElements_v8".
+    :type string_index_type: str or
+     ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexTypeResponse
     """
 
     _attribute_map = {
@@ -2567,7 +2119,7 @@ class SentimentTaskParameters(msrest.serialization.Model):
         super(SentimentTaskParameters, self).__init__(**kwargs)
         self.model_version = kwargs.get('model_version', "latest")
         self.opinion_mining = kwargs.get('opinion_mining', False)
-        self.string_index_type = kwargs.get('string_index_type', None)
+        self.string_index_type = kwargs.get('string_index_type', "TextElements_v8")
 
 
 class TasksStateTasks(msrest.serialization.Model):
@@ -2600,12 +2152,6 @@ class TasksStateTasks(msrest.serialization.Model):
     :param sentiment_analysis_tasks:
     :type sentiment_analysis_tasks:
      list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksSentimentAnalysisTasksItem]
-    :param custom_classification_tasks:
-    :type custom_classification_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksCustomClassificationTasksItem]
-    :param custom_entity_recognition_tasks:
-    :type custom_entity_recognition_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksCustomEntityRecognitionTasksItem]
     """
 
     _validation = {
@@ -2626,8 +2172,6 @@ class TasksStateTasks(msrest.serialization.Model):
         'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[TasksStateTasksEntityLinkingTasksItem]'},
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[TasksStateTasksKeyPhraseExtractionTasksItem]'},
         'sentiment_analysis_tasks': {'key': 'sentimentAnalysisTasks', 'type': '[TasksStateTasksSentimentAnalysisTasksItem]'},
-        'custom_classification_tasks': {'key': 'customClassificationTasks', 'type': '[TasksStateTasksCustomClassificationTasksItem]'},
-        'custom_entity_recognition_tasks': {'key': 'customEntityRecognitionTasks', 'type': '[TasksStateTasksCustomEntityRecognitionTasksItem]'},
     }
 
     def __init__(
@@ -2645,8 +2189,6 @@ class TasksStateTasks(msrest.serialization.Model):
         self.entity_linking_tasks = kwargs.get('entity_linking_tasks', None)
         self.key_phrase_extraction_tasks = kwargs.get('key_phrase_extraction_tasks', None)
         self.sentiment_analysis_tasks = kwargs.get('sentiment_analysis_tasks', None)
-        self.custom_classification_tasks = kwargs.get('custom_classification_tasks', None)
-        self.custom_entity_recognition_tasks = kwargs.get('custom_entity_recognition_tasks', None)
 
 
 class TaskState(msrest.serialization.Model):
@@ -2680,86 +2222,6 @@ class TaskState(msrest.serialization.Model):
         **kwargs
     ):
         super(TaskState, self).__init__(**kwargs)
-        self.last_update_date_time = kwargs['last_update_date_time']
-        self.name = kwargs['name']
-        self.status = kwargs['status']
-
-
-class TasksStateTasksCustomClassificationTasksItem(TaskState, Components4X9ZamSchemasTasksstatePropertiesTasksPropertiesCustomclassificationtasksItemsAllof1):
-    """TasksStateTasksCustomClassificationTasksItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.CustomClassificationResult
-    :param last_update_date_time: Required.
-    :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
-    :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_2_preview_1.models.State
-    """
-
-    _validation = {
-        'last_update_date_time': {'required': True},
-        'name': {'required': True},
-        'status': {'required': True},
-    }
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'CustomClassificationResult'},
-        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TasksStateTasksCustomClassificationTasksItem, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
-        self.last_update_date_time = kwargs['last_update_date_time']
-        self.name = kwargs['name']
-        self.status = kwargs['status']
-
-
-class TasksStateTasksCustomEntityRecognitionTasksItem(TaskState, Components1Yw06Y0SchemasTasksstatePropertiesTasksPropertiesCustomentityrecognitiontasksItemsAllof1):
-    """TasksStateTasksCustomEntityRecognitionTasksItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.CustomEntitiesResult
-    :param last_update_date_time: Required.
-    :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
-    :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_2_preview_1.models.State
-    """
-
-    _validation = {
-        'last_update_date_time': {'required': True},
-        'name': {'required': True},
-        'status': {'required': True},
-    }
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'CustomEntitiesResult'},
-        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TasksStateTasksCustomEntityRecognitionTasksItem, self).__init__(**kwargs)
-        self.results = kwargs.get('results', None)
         self.last_update_date_time = kwargs['last_update_date_time']
         self.name = kwargs['name']
         self.status = kwargs['status']

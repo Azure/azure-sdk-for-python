@@ -409,7 +409,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -433,7 +433,7 @@ class TextAnalyticsClientOperationsMixin(object):
             'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
         url = self._client.format_url(url, **path_format_arguments)
-        print(url)
+
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if model_version is not None:
@@ -469,7 +469,7 @@ class TextAnalyticsClientOperationsMixin(object):
         self,
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -543,7 +543,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EntitiesResult"
@@ -631,7 +631,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.PiiResult"
@@ -724,7 +724,7 @@ class TextAnalyticsClientOperationsMixin(object):
         documents,  # type: List["models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.EntityLinkingResult"
@@ -970,7 +970,7 @@ class TextAnalyticsClientOperationsMixin(object):
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         opinion_mining=None,  # type: Optional[bool]
-        string_index_type=None,  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.SentimentResponse"
