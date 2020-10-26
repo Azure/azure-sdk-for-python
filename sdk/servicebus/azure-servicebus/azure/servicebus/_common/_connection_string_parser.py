@@ -25,16 +25,16 @@ class ServiceBusConnectionStringParser(object):
 
     :param conn_str: The connection string that has to be parsed.
     """
-    def __init__(self, conn_str, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, conn_str):
+        # type: (str) -> None
         """
         :param conn_str: The connection string to parse.
         :type conn_str: str
         """
         self._conn_str = conn_str
 
-    def parse(self, **kwargs):
-        # type(Any) -> ServiceBusConnectionStringProperties
+    def parse(self):
+        # type() -> ServiceBusConnectionStringProperties
         """
         Parse the connection string.
         """
