@@ -51,13 +51,8 @@ TEST_BLOB_PREFIX = 'blob'
 
 # ------------------------------------------------------------------------------
 class StorageCommonBlobTest(StorageTestCase):
-    def _setup(self, storage_account, key, additional_policies=None, **kwargs):
-        total_retries = kwargs.pop('total_retries', 10)
-        self.bsc = BlobServiceClient(
-            self.account_url(storage_account, "blob"),
-            credential=key,
-            retry_total=total_retries,
-            _additional_pipeline_policies=additional_policies)
+    def _setup(self, storage_account, key, **kwargs):
+        self.bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=key)
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
