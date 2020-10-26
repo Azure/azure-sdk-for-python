@@ -19,12 +19,13 @@ from .._phonenumber._generated.models import (
 class PhoneNumberBasePollingAsync(AsyncPollingMethod):
     """ABC class for reserve/purchase/release phone number related polling.
     """
-    def __init__(self, is_terminated, interval=5):
+    def __init__(self, is_terminated, polling_interval=5):
+        # type: (bool, int) -> None
         self._response = None
         self._client = None
         self._query_status = None
         self._is_terminated = is_terminated
-        self._polling_interval = interval
+        self._polling_interval = polling_interval
 
     async def _update_status(self):
         # type: () -> None
