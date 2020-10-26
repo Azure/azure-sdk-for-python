@@ -227,7 +227,7 @@ def build_swaggertosdk_conf_from_json_readme(readme_file, sdk_git_id, config, ba
     generated_config = {
         "markdown": readme_full_path,
     }
-    sdk_git_short_id = sdk_git_id.split("/")[-1].lower() + "-track2"
+    sdk_git_short_id = sdk_git_id.split("/")[-1].lower()
     _LOGGER.info("Looking for tag {} in readme {}".format(sdk_git_short_id, readme_file))
     for swagger_to_sdk_conf in readme_as_conf:
         repo = swagger_to_sdk_conf.get("repo", "")
