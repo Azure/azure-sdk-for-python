@@ -57,7 +57,7 @@ LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 RERUNS_DELAY = 60
 
-SLEEP_DELAY = 15
+SLEEP_DELAY = 20
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -84,34 +84,6 @@ class XMSRequestIDBody(RecordingProcessor):
             response['body']['string'] = re.sub(b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response['body']['string'])
 
         return response
-
-
-class GlobalStorageAccountPreparer(AzureMgmtPreparer):
-    def __init__(self):
-        super(GlobalStorageAccountPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-
-    def create_resource(self, name, **kwargs):
-        storage_account = TableTestCase._STORAGE_ACCOUNT
-        if self.is_live:
-            self.test_class_instance.scrubber.register_name_pair(
-                storage_account.name,
-                "storagename"
-            )
-        else:
-            name = "storagename"
-            storage_account.name = name
-            storage_account.primary_endpoints.table = 'https://{}.{}.core.windows.net'.format(name, 'table')
-
-        return {
-            'location': 'westus',
-            'resource_group': TableTestCase._RESOURCE_GROUP,
-            'storage_account': storage_account,
-            'storage_account_key': TableTestCase._STORAGE_KEY,
-            'storage_account_cs': TableTestCase._STORAGE_CONNECTION_STRING,
-        }
 
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):

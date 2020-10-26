@@ -16,6 +16,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 import logging
+from uuid import uuid4
 
 
 
@@ -29,7 +30,11 @@ import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport
+from azure.core.pipeline.transport import (
+    RequestsTransport,
+    HttpTransport,
+    HttpRequest,
+)
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -42,7 +47,7 @@ from azure.core.pipeline.policies import (
 
 from ._shared_access_signature import QueryStringConstants
 from ._constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
-from ._models import LocationMode
+from ._models import LocationMode, BatchTransactionResult
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
     StorageHeadersPolicy,
@@ -54,7 +59,7 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._error import _process_table_error
-from ._models import PartialBatchErrorException
+from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
 
@@ -251,54 +256,55 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return config, Pipeline(config.transport, policies=policies)
 
     def _batch_send(
-        self, *reqs,  # type: HttpRequest
+        self, entities, # type: List[TableEntity]
+        *reqs,  # type: List[HttpRequest]
         **kwargs
     ):
+        # (...) -> List[HttpResponse]
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        request = self._client._client.post(  # pylint: disable=protected-access
-            url='{}://{}/?comp=batch{}{}'.format(
-                self.scheme,
-                self._primary_hostname,
-                kwargs.pop('sas', None),
-                kwargs.pop('timeout', None)
-            ),
-            headers={
-                'x-ms-version': self.api_version
-            }
-        )
-
         policies = [StorageHeadersPolicy()]
-        if self._credential_policy:
-            policies.append(self._credential_policy)
 
-        request.set_multipart_mixed(
+        changeset = HttpRequest('POST', None)
+        changeset.set_multipart_mixed(
             *reqs,
             policies=policies,
-            enforce_https=False
+            boundary="changeset_{}".format(uuid4())
+        )
+        request = self._client._client.post(  # pylint: disable=protected-access
+            url='https://{}/$batch'.format(self._primary_hostname),
+            headers={
+                'x-ms-version': self.api_version,
+                'DataServiceVersion': '3.0',
+                'MaxDataServiceVersion': '3.0;NetFx',
+            }
+        )
+        request.set_multipart_mixed(
+            changeset,
+            policies=policies,
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4())
         )
 
         pipeline_response = self._pipeline.run(
             request, **kwargs
         )
         response = pipeline_response.http_response
-
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts()
+            transaction_result = BatchTransactionResult(reqs, parts, entities)
             if raise_on_any_failure:
-                parts = list(response.parts())
                 if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = PartialBatchErrorException(
-                        message="There is a partial failure in the batch operation.",
+                    error = BatchErrorException(
+                        message="There is a failure in the batch operation.",
                         response=response, parts=parts
                     )
                     raise error
-                return iter(parts)
-            return parts
+            return transaction_result
         except HttpResponseError as error:
             _process_table_error(error)
 
