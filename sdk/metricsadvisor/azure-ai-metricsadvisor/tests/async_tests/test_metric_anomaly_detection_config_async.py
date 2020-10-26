@@ -228,7 +228,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
     @AzureTestCase.await_prepared_test
     async def test_create_ad_config_multiple_series_and_group_conds(self):
-        data_feed = await self._create_data_feed("datafeedforconfigasync")
+        data_feed = await self._create_data_feed("datafeedconfigasync")
         async with self.admin_client:
             try:
                 detection_config_name = self.create_random_name("multipledetectionconfigsasync")
