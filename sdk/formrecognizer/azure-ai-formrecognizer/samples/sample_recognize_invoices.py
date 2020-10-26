@@ -28,6 +28,8 @@ class RecognizeInvoiceSample(object):
     def recognize_invoice(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "./sample_forms/forms/Invoice_1.pdf"))
+
+        # [START recognize_invoices]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import FormRecognizerClient
 
@@ -70,6 +72,7 @@ class RecognizeInvoiceSample(object):
             due_date = invoice.fields.get("DueDate")
             if due_date:
                 print("Due Date: {} has confidence: {}".format(due_date.value, due_date.confidence))
+        # [END recognize_invoices]
 
 if __name__ == '__main__':
     sample = RecognizeInvoiceSample()

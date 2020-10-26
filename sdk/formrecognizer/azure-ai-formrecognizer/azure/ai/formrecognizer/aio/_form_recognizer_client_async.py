@@ -221,6 +221,15 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_business_cards_async.py
+                :start-after: [START recognize_business_cards_async]
+                :end-before: [END recognize_business_cards_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize business cards from a file.
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
@@ -325,6 +334,16 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_recognize_invoices_async.py
+                :start-after: [START recognize_invoices_async]
+                :end-before: [END recognize_invoices_async]
+                :language: python
+                :dedent: 8
+                :caption: Recognize invoices from a file.
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":

@@ -29,6 +29,7 @@ class RecognizeBusinessCardSampleAsync(object):
     async def recognize_business_card_async(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
                                                             "..", "..", "./sample_forms/business_cards/business-card-english.jpg"))
+        # [START recognize_business_cards_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
 
@@ -94,6 +95,7 @@ class RecognizeBusinessCardSampleAsync(object):
             if other_phones:
                 for other_phone in other_phones.value:
                     print("Other phone number: {} has confidence: {}".format(other_phone.value, other_phone.confidence))
+        # [END recognize_business_cards_async]
 
 
 async def main():
