@@ -191,9 +191,10 @@ class RecognizeHealthcareEntitiesResult(DictMixin):
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
     :ivar entities: Recognized Healthcare entities in the document.
-    :vartype entities:
+    :vartype entities: 
         list[~azure.ai.textanalytics.HealthcareEntity]
     :ivar relations: A list of detected relations between recognized entities.
+    :vartype relations: 
         list[~azure.ai.textanalytics.HealthcareRelation]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
