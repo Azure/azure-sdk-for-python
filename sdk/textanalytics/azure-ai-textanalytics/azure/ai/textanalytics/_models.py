@@ -115,7 +115,7 @@ class RecognizeEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=true` was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -151,7 +151,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=true` was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -194,7 +194,7 @@ class DetectLanguageResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=true` was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -393,7 +393,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=true` was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -427,7 +427,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=true` was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -463,7 +463,7 @@ class AnalyzeSentimentResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=true` was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
