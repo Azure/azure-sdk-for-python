@@ -180,7 +180,8 @@ class MgmtBatchTest(AzureMgmtTestCase):
             location=location,
             auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
         )
-        account_name = self._get_account_name()
+        # account_name = self._get_account_name()
+        account_name = "batch"
         account_setup = self.mgmt_batch_client.batch_account.begin_create(
             resource_group.name,
             account_name,
