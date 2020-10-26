@@ -12,6 +12,9 @@ FILE: sample_recognize_invoices.py
 DESCRIPTION:
     This sample demonstrates how to recognize fields from invoices.
 
+    See fields found on a invoice here:
+    https://aka.ms/formrecognizer/invoicefields
+
 USAGE:
     python sample_recognize_invoices.py
 

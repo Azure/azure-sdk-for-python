@@ -12,6 +12,10 @@ FILE: sample_recognize_business_cards_async.py
 DESCRIPTION:
     This sample demonstrates how to recognize fields on business cards.
 
+    See fields found on a business card here:
+    https://aka.ms/formrecognizer/businesscardfields
+
+
 USAGE:
     python sample_recognize_business_cards_async.py
 
