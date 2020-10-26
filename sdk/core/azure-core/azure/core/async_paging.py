@@ -98,7 +98,8 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         try:
             self._response = await self._get_next(self.continuation_token)
         except AzureError as error:
-            error.continuation_token = self.continuation_token
+            if not error.continuation_token:
+                error.continuation_token = self.continuation_token
             raise
 
         self._did_a_call_already = True
