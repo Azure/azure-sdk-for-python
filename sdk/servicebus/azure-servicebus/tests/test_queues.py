@@ -1631,9 +1631,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             message_2nd_received_cnt += 1
                             message.complete()
 
-                print("COUNTS&&&&&&&&&&&&&&&&&&&&")
-                print(message_1st_received_cnt)
-                print(message_2nd_received_cnt)
                 assert message_1st_received_cnt == 20 and message_2nd_received_cnt == 20
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect

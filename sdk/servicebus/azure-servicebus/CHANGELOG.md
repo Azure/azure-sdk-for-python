@@ -22,6 +22,7 @@
 * `via_partition_key` is no longer exposed, this is pending a full implementation of transactions as it has no external use.  If needed, the underlying value can still be accessed in `Message.amqp_annotated_message.annotations`.
 * `Message.properties` has been renamed to `Message.application_properties` for consistency with service verbiage.
 * Sub-client (`ServiceBusSender` and `ServiceBusReceiver`) `from_connection_string` initializers have been made internal until needed.  Clients should be initialized from root `ServiceBusClient`.
+* `Message.label` has been renamed to `Message.subject`.
 
 ## 7.0.0b7 (2020-10-05)
 
