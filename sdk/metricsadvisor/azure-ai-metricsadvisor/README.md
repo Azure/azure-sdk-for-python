@@ -6,7 +6,7 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 - Configure and fine-tune the anomaly detection model used on your data
 - Diagnose anomalies and help with root cause analysis
 
-[Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs]
+[Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs] | [Samples][samples_readme]
 
 ## Getting started
 
@@ -68,8 +68,8 @@ admin_client = MetricsAdvisorAdministrationClient(service_endpoint,
 `MetricsAdvisorAdministrationClient` allows you to
 
 - manage data feeds
-- configure anomaly detection configurations
-- configure anomaly alerting configurations
+- manage anomaly detection configurations
+- manage anomaly alerting configurations
 - manage hooks
 
 ### DataFeed
@@ -107,6 +107,8 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 * [Configure anomaly detection configuration](#configure-anomaly-detection-configuration "Configure anomaly detection configuration")
 * [Configure alert configuration](#configure-alert-configuration "Configure alert configuration")
 * [Query anomaly detection results](#query-anomaly-detection-results "Query anomaly detection results")
+* [Query incidents](#query-incidents "Query incidents")
+* [Query root causes](#query-root-causes "Query root causes")
 * [Add hooks for receiving anomaly alerts](#add-hooks-for-receiving-anomaly-alerts "Add hooks for receiving anomaly alerts")
 
 ### Add a data feed from a sample or data source
@@ -387,6 +389,64 @@ for result in results:
     print("Severity: {}".format(result.severity))
     print("Status: {}".format(result.status))
 ```
+
+### Query incidents
+
+We can query the incidents for a detection configuration.
+
+```py
+import datetime
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+anomaly_detection_configuration_id = os.getenv("DETECTION_CONFIGURATION_ID")
+
+client = MetricsAdvisorClient(service_endpoint,
+    MetricsAdvisorKeyCredential(subscription_key, api_key)
+)
+
+results = client.list_incidents_for_detection_configuration(
+            detection_configuration_id=anomaly_detection_configuration_id,
+            start_time=datetime.datetime(2020, 1, 1),
+            end_time=datetime.datetime(2020, 9, 9),
+        )
+for result in results:
+    print("Metric id: {}".format(result.metric_id))
+    print("Incident ID: {}".format(result.id))
+    print("Severity: {}".format(result.severity))
+    print("Status: {}".format(result.status))
+```
+
+### Query root causes
+
+We can also query the root causes of an incident
+
+```py
+import datetime
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+anomaly_detection_configuration_id = os.getenv("DETECTION_CONFIGURATION_ID")
+incident_id = os.getenv("INCIDENT_ID")
+
+client = MetricsAdvisorClient(service_endpoint,
+    MetricsAdvisorKeyCredential(subscription_key, api_key)
+)
+
+results = client.list_incident_root_causes(
+            detection_configuration_id=anomaly_detection_configuration_id,
+            incident_id=incident_id,
+        )
+for result in results:
+    print("Score: {}".format(result.score))
+    print("Description: {}".format(result.description))
+
+```
+
 
 ### Add hooks for receiving anomaly alerts
 
