@@ -218,6 +218,15 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_business_cards.py
+                :start-after: [START recognize_business_cards]
+                :end-before: [END recognize_business_cards]
+                :language: python
+                :dedent: 8
+                :caption: Recognize business cards from a file.
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
@@ -296,9 +305,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_recognize_invoices(
-            self,
-            invoice,
-            **kwargs
+        self,
+        invoice,
+        **kwargs
     ):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given invoice.
@@ -325,6 +334,15 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_recognize_invoices.py
+                :start-after: [START recognize_invoices]
+                :end-before: [END recognize_invoices]
+                :language: python
+                :dedent: 8
+                :caption: Recognize invoices from a file.
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
@@ -353,9 +371,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
     @distributed_trace
     def begin_recognize_invoices_from_url(
-            self,
-            invoice_url,
-            **kwargs
+        self,
+        invoice_url,
+        **kwargs
     ):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
         """Extract field text and semantic values from a given invoice.
