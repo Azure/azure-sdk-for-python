@@ -235,3 +235,11 @@ class TestContentFromUrl(FormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_content_page_range(self, client):
+        pytest.skip("service returning 3 pages")
+        poller = client.begin_recognize_content_from_url(self.multipage_url_pdf, page_range=["1"])
+        result = poller.result()
+        self.assertEqual(len(result), 1)

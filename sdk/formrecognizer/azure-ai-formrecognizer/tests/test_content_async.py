@@ -369,3 +369,16 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_page_range(self, client):
+        pytest.skip("service returning 3 pages")
+        with open(self.multipage_invoice_pdf, "rb") as fd:
+            myform = fd.read()
+
+        async with client:
+            poller = await client.begin_recognize_content(myform, page_range=["1"])
+            result = await poller.result()
+
+        self.assertEqual(len(result), 1)

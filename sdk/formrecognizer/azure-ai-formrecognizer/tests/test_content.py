@@ -333,3 +333,15 @@ class TestContentFromStream(FormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_content_page_range(self, client):
+        pytest.skip("service returning 3 pages")
+        with open(self.multipage_invoice_pdf, "rb") as fd:
+            myform = fd.read()
+
+        poller = client.begin_recognize_content(myform, page_range=["1"])
+        result = poller.result()
+
+        self.assertEqual(len(result), 1)
