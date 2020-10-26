@@ -77,7 +77,7 @@ class ServiceBusSession(BaseSession):
     **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
 
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the session lock.
+    :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the session lock.
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 
     .. admonition:: Example:
@@ -167,7 +167,7 @@ class ServiceBusSession(BaseSession):
         Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
 
         This operation can also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.AutoLockRenew` instance.
+        with an `azure.servicebus.AutoLockRenewer` instance.
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.

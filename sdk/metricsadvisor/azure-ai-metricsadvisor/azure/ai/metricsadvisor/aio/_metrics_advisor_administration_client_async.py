@@ -9,7 +9,6 @@
 
 from typing import (
     Any,
-    List,
     Union,
     cast
 )
@@ -20,8 +19,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._generated.aio import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _ClientAsync
 from .._generated.models import (
-    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
-    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     IngestionStatus as DataFeedIngestionStatus,
     IngestionProgressResetOptions as _IngestionProgressResetOptions,
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
@@ -39,23 +36,16 @@ from .._helpers import (
 )
 from ..models import (
     DataFeed,
-    EmailHook,
-    WebHook,
+    EmailNotificationHook,
+    WebNotificationHook,
     AnomalyAlertConfiguration,
     AnomalyDetectionConfiguration,
     DataFeedIngestionProgress,
-    DataFeedGranularityType,
-    MetricAlertConfiguration,
-    DataFeedGranularity,
-    DataFeedSchema,
-    DataFeedIngestionSettings,
-    Hook,
-    MetricDetectionCondition
+    NotificationHook
 )
 from .._metrics_advisor_administration_client import (
     DATA_FEED,
-    DATA_FEED_PATCH,
-    DataFeedSourceUnion
+    DATA_FEED_PATCH
 )
 
 
@@ -116,22 +106,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_anomaly_alert_configuration(
-            self, name: str,
-            metric_alert_configurations: List[MetricAlertConfiguration],
-            hook_ids: List[str],
+            self, alert_configuration: AnomalyAlertConfiguration,
             **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         """Create an anomaly alert configuration.
 
-        :param str name: Name for the anomaly alert configuration.
-        :param metric_alert_configurations: Anomaly alert configurations.
-        :type metric_alert_configurations: list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
-        :param list[str] hook_ids: Unique hook IDs.
-        :keyword cross_metrics_operator: Cross metrics operator should be specified when setting up multiple metric
-            alert configurations. Possible values include: "AND", "OR", "XOR".
-        :paramtype cross_metrics_operator: str or
-            ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
-        :keyword str description: Anomaly alert configuration description.
+        :param alert_configuration: The alert configuration to create.
+        :type alert_configuration: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :return: AnomalyAlertConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -146,17 +127,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create an anomaly alert configuration
         """
 
-        cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
         response_headers = await self._client.create_anomaly_alerting_configuration(
-            _AnomalyAlertingConfiguration(
-                name=name,
-                metric_alerting_configurations=[
-                    config._to_generated() for config in metric_alert_configurations
-                ],
-                hook_ids=hook_ids,
-                cross_metrics_operator=cross_metrics_operator,
-                description=kwargs.pop("description", None)
-            ),
+            alert_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -166,32 +138,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_data_feed(
-            self, name: str,
-            source: DataFeedSourceUnion,
-            granularity: Union[str, DataFeedGranularityType, DataFeedGranularity],
-            schema: Union[List[str], DataFeedSchema],
-            ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
+            self, data_feed: DataFeed,
             **kwargs: Any
     ) -> DataFeed:
         """Create a new data feed.
 
-        :param str name: Name for the data feed.
-        :param source: The source of the data feed
-        :type source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
-        :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
-        :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
-            ~azure.ai.metricsadvisor.models.DataFeedGranularity]
-        :param schema: Data feed schema. Can be passed as a list of metric names as strings or as a DataFeedSchema
-            object if additional configuration is needed.
-        :type schema: Union[list[str], ~azure.ai.metricsadvisor.models.DataFeedSchema]
-        :param ingestion_settings: The data feed ingestions settings. Can be passed as a datetime to use for the
-            ingestion begin time or as a DataFeedIngestionSettings object if additional configuration is needed.
-        :type ingestion_settings: Union[~datetime.datetime, ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings]
-        :keyword options: Data feed options.
-        :paramtype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
+        :param data_feed: The data feed to create
+        :type data_feed: ~azure.ai.metricsadvisor.models.DataFeed
         :return: DataFeed
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -206,16 +159,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create a data feed
         """
 
-        options = kwargs.pop("options", None)
-        data_feed_type = DATA_FEED[source.data_source_type]
+        data_feed_type = DATA_FEED[data_feed.source.data_source_type]
         data_feed_detail = convert_to_generated_data_feed_type(
             generated_feed_type=data_feed_type,
-            name=name,
-            source=source,
-            granularity=granularity,
-            schema=schema,
-            ingestion_settings=ingestion_settings,
-            options=options
+            name=data_feed.name,
+            source=data_feed.source,
+            granularity=data_feed.granularity,
+            schema=data_feed.schema,
+            ingestion_settings=data_feed.ingestion_settings,
+            options=data_feed.options
         )
 
         response_headers = await self._client.create_data_feed(
@@ -229,18 +181,18 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_hook(
-            self, name: str,
-            hook: Union[EmailHook, WebHook],
+            self, hook: Union[EmailNotificationHook, WebNotificationHook],
             **kwargs: Any
-    ) -> Union[Hook, EmailHook, WebHook]:
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Create a new email or web hook.
 
-        :param str name: The name for the hook.
-        :param hook: An email or web hook
-        :type hook: Union[~azure.ai.metricsadvisor.models.EmailHook, ~azure.ai.metricsadvisor.models.WebHook]
-        :return: EmailHook or WebHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.Hook, ~azure.ai.metricsadvisor.models.EmailHook,
-            ~azure.ai.metricsadvisor.models.WebHook]
+        :param hook: An email or web hook to create
+        :type hook: Union[~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
+        :return: EmailNotificationHook or WebNotificationHook
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -250,15 +202,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END create_hook_async]
                 :language: python
                 :dedent: 4
-                :caption: Create a hook
+                :caption: Create a notification hook
         """
 
         hook_request = None
         if hook.hook_type == "Email":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         response_headers = await self._client.create_hook(
             hook_request,  # type: ignore
@@ -271,25 +223,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_metric_anomaly_detection_configuration(
-            self, name: str,
-            metric_id: str,
-            whole_series_detection_condition: MetricDetectionCondition,
+            self, detection_configuration: AnomalyDetectionConfiguration,
             **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         """Create anomaly detection configuration.
 
-        :param str name: The name for the anomaly detection configuration
-        :param str metric_id: Required. metric unique id.
-        :param whole_series_detection_condition: Required.
-            Conditions to detect anomalies in all time series of a metric.
-        :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
-        :keyword str description: anomaly detection configuration description.
-        :keyword series_group_detection_conditions: detection configuration for series group.
-        :paramtype series_group_detection_conditions:
-         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
-        :keyword series_detection_conditions: detection configuration for specific series.
-        :paramtype series_detection_conditions:
-            list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
+        :param detection_configuration: The detection configuration to create.
+        :type detection_configuration: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :return: AnomalyDetectionConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -303,24 +243,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Create an anomaly detection configuration
         """
-        description = kwargs.pop("description", None)
-        series_group_detection_conditions = kwargs.pop("series_group_detection_conditions", None)
-        series_detection_conditions = kwargs.pop("series_detection_conditions", None)
-        config = _AnomalyDetectionConfiguration(
-            name=name,
-            metric_id=metric_id,
-            description=description,
-            whole_metric_configuration=whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in series_group_detection_conditions
-            ] if series_group_detection_conditions else None,
-            series_override_configurations=[
-                series._to_generated() for series in series_detection_conditions]
-            if series_detection_conditions else None,
-        )
 
         response_headers = await self._client.create_anomaly_detection_configuration(
-            config,
+            detection_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -411,14 +336,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         self,
         hook_id: str,
         **kwargs: Any
-    ) -> Union[Hook, EmailHook, WebHook]:
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Get a web or email hook by its id.
 
         :param hook_id: Hook unique ID.
         :type hook_id: str
-        :return: EmailHook or Webhook
-        :rtype: Union[~azure.ai.metricsadvisor.models.Hook, ~azure.ai.metricsadvisor.models.EmailHook,
-            ~azure.ai.metricsadvisor.models.WebHook]
+        :return: EmailNotificationHook or WebNotificationHook
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -428,13 +354,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END get_hook_async]
                 :language: python
                 :dedent: 4
-                :caption: Get a hook by its ID
+                :caption: Get a notification hook by its ID
         """
 
         hook = await self._client.get_hook(hook_id, **kwargs)
         if hook.hook_type == "Email":
-            return EmailHook._from_generated(hook)
-        return WebHook._from_generated(hook)
+            return EmailNotificationHook._from_generated(hook)
+        return WebNotificationHook._from_generated(hook)
 
     @distributed_trace_async
     async def get_data_feed_ingestion_progress(
@@ -630,9 +556,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         :paramtype fill_type: str or ~azure.ai.metricsadvisor.models.DataSourceMissingDataPointFillType
         :keyword float custom_fill_value: The value of fill missing point for anomaly detection
             if "CustomValue" fill type is specified.
-        :keyword list[str] admins: Data feed administrators.
+        :keyword list[str] admin_emails: Data feed administrator emails.
         :keyword str data_feed_description: Data feed description.
-        :keyword list[str] viewers: Data feed viewer.
+        :keyword list[str] viewer_emails: Data feed viewer emails.
         :keyword access_mode: Data feed access mode. Possible values include:
             "Private", "Public". Default value: "Private".
         :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
@@ -675,8 +601,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
         update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
         update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
-        update_kwargs["admins"] = kwargs.pop("admins", unset)
-        update_kwargs["viewers"] = kwargs.pop("viewers", unset)
+        update_kwargs["admins"] = kwargs.pop("admin_emails", unset)
+        update_kwargs["viewers"] = kwargs.pop("viewer_emails", unset)
         update_kwargs["status"] = kwargs.pop("status", unset)
         update_kwargs["actionLinkTemplate"] = kwargs.pop("action_link_template", unset)
         update_kwargs["dataSourceParameter"] = kwargs.pop("source", unset)
@@ -834,30 +760,33 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     @distributed_trace_async
     async def update_hook(
         self,
-        hook: Union[str, EmailHook, WebHook],
+        hook: Union[str, EmailNotificationHook, WebNotificationHook],
         **kwargs: Any
-    ) -> Union[Hook, EmailHook, WebHook]:
-        """Update a hook. Either pass the entire EmailHook or WebHook object with the chosen updates, or the
-        ID to your hook configuration with the updates passed via keyword arguments.
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
+        """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the
+        chosen updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
 
         :param hook: An email or web hook or the ID to the hook. If an ID is passed, you must pass `hook_type`.
-        :type hook: Union[str, ~azure.ai.metricsadvisor.models.EmailHook, ~azure.ai.metricsadvisor.models.WebHook]
+        :type hook: Union[str, ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :keyword str hook_type: The hook type. Possible values are "Email" or "Web". Must be passed if only the
             hook ID is provided.
         :keyword str name: Hook unique name.
         :keyword str description: Hook description.
         :keyword str external_link: Hook external link.
-        :keyword list[str] emails_to_alert: Email TO: list. Only should be passed to update EmailHook.
+        :keyword list[str] emails_to_alert: Email TO: list. Only should be passed to update EmailNotificationHook.
         :keyword str endpoint: API address, will be called when alert is triggered, only support
-            POST method via SSL. Only should be passed to update WebHook.
-        :keyword str username: basic authentication. Only should be passed to update WebHook.
-        :keyword str password: basic authentication. Only should be passed to update WebHook.
-        :keyword str certificate_key: client certificate. Only should be passed to update WebHook.
-        :keyword str certificate_password: client certificate password. Only should be passed to update WebHook.
-        :return: EmailHook or WebHook
-        :rtype: Union[~azure.ai.metricsadvisor.models.Hook, ~azure.ai.metricsadvisor.models.EmailHook,
-            ~azure.ai.metricsadvisor.models.WebHook]
+            POST method via SSL. Only should be passed to update WebNotificationHook.
+        :keyword str username: basic authentication. Only should be passed to update WebNotificationHook.
+        :keyword str password: basic authentication. Only should be passed to update WebNotificationHook.
+        :keyword str certificate_key: client certificate. Only should be passed to update WebNotificationHook.
+        :keyword str certificate_password: client certificate password. Only should be passed to update
+            WebNotificationHook.
+        :return: EmailNotificationHook or WebNotificationHook
+        :rtype: Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook,
+            ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -867,7 +796,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END update_hook_async]
                 :language: python
                 :dedent: 4
-                :caption: Update an existing hook
+                :caption: Update an existing notification hook
         """
 
         unset = object()
@@ -895,7 +824,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         else:
             hook_id = hook.id
             if hook.hook_type == "Email":
-                hook = cast(EmailHook, hook)
+                hook = cast(EmailNotificationHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -904,7 +833,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 )
 
             elif hook.hook_type == "Webhook":
-                hook = cast(WebHook, hook)
+                hook = cast(WebNotificationHook, hook)
                 hook_patch = hook._to_generated_patch(
                     name=update.pop("hookName", None),
                     description=update.pop("description", None),
@@ -927,14 +856,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
     def list_hooks(
         self,
         **kwargs: Any
-    ) -> AsyncItemPaged[Union[Hook, EmailHook, WebHook]]:
+    ) -> AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]:
         """List all hooks.
 
         :keyword str hook_name: filter hook by its name.
         :keyword int skip:
-        :return: Pageable containing EmailHook and WebHook
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[Union[~azure.ai.metricsadvisor.models.Hook,
-            ~azure.ai.metricsadvisor.models.EmailHook, ~azure.ai.metricsadvisor.models.WebHook]]
+        :return: Pageable containing EmailNotificationHook and WebNotificationHook
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[Union[~azure.ai.metricsadvisor.models.NotificationHook,
+            ~azure.ai.metricsadvisor.models.EmailNotificationHook, ~azure.ai.metricsadvisor.models.WebNotificationHook]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -944,15 +873,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :end-before: [END list_hooks_async]
                 :language: python
                 :dedent: 4
-                :caption: List all the hooks under an account
+                :caption: List all the notification hooks under an account
         """
         hook_name = kwargs.pop('hook_name', None)
         skip = kwargs.pop('skip', None)
 
         def _convert_to_hook_type(hook):
             if hook.hook_type == "Email":
-                return EmailHook._from_generated(hook)
-            return WebHook._from_generated(hook)
+                return EmailNotificationHook._from_generated(hook)
+            return WebNotificationHook._from_generated(hook)
 
         return self._client.list_hooks(  # type: ignore
             hook_name=hook_name,

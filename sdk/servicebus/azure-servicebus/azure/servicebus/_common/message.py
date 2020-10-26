@@ -12,6 +12,7 @@ import logging
 import copy
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Any
 
+import uamqp.errors
 import uamqp.message
 from uamqp.constants import MessageState
 
@@ -740,7 +741,7 @@ class ReceivedMessageBase(PeekedMessage):
     """
     A Service Bus Message received from service side.
 
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the message lock.
+    :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the message lock.
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 
     .. admonition:: Example:
@@ -759,7 +760,7 @@ class ReceivedMessageBase(PeekedMessage):
         self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
-        self.auto_renew_error = None # type: Optional[Exception]
+        self.auto_renew_error = None  # type: Optional[Exception]
         try:
             self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
         except KeyError:
@@ -770,7 +771,7 @@ class ReceivedMessageBase(PeekedMessage):
     def _check_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
-            raise MessageSettleFailed(action, "Orphan message had no open connection.")
+            raise MessageSettleFailed(action, ServiceBusError("Orphan message had no open connection."))
         if self._settled:
             raise MessageAlreadySettled(action)
         try:
@@ -902,10 +903,10 @@ class ReceivedMessageBase(PeekedMessage):
 
 class ReceivedMessage(ReceivedMessageBase):
     def _settle_message(
-            self,
-            settle_operation,
-            dead_letter_reason=None,
-            dead_letter_error_description=None,
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None
     ):
         # type: (str, Optional[str], Optional[str]) -> None
         try:
@@ -925,8 +926,29 @@ class ReceivedMessage(ReceivedMessageBase):
             self._settle_via_mgmt_link(settle_operation,
                                        dead_letter_reason=dead_letter_reason,
                                        dead_letter_error_description=dead_letter_error_description)()
-        except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
+        except Exception as exception:  # pylint: disable=broad-except
+            _LOGGER.info(
+                "Message settling: %r has encountered an exception (%r) through management link",
+                settle_operation,
+                exception
+            )
+            raise
+
+    def _settle_message_with_retry(
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+        **kwargs
+    ):
+        # pylint: disable=unused-argument, protected-access
+        self._receiver._do_retryable_operation(
+            self._settle_message,
+            timeout=None,
+            settle_operation=settle_operation,
+            dead_letter_reason=dead_letter_reason,
+            dead_letter_error_description=dead_letter_error_description
+        )
 
     def complete(self):
         # type: () -> None
@@ -952,7 +974,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
-        self._settle_message(MESSAGE_COMPLETE)
+        self._settle_message_with_retry(MESSAGE_COMPLETE)
         self._settled = True
 
     def dead_letter(self, reason=None, error_description=None):
@@ -983,7 +1005,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        self._settle_message(MESSAGE_DEAD_LETTER,
+        self._settle_message_with_retry(MESSAGE_DEAD_LETTER,
                              dead_letter_reason=reason,
                              dead_letter_error_description=error_description)
         self._settled = True
@@ -1012,7 +1034,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
-        self._settle_message(MESSAGE_ABANDON)
+        self._settle_message_with_retry(MESSAGE_ABANDON)
         self._settled = True
 
     def defer(self):
@@ -1039,7 +1061,7 @@ class ReceivedMessage(ReceivedMessageBase):
                     by calling receive_deffered_messages with its sequence number
         """
         self._check_live(MESSAGE_DEFER)
-        self._settle_message(MESSAGE_DEFER)
+        self._settle_message_with_retry(MESSAGE_DEFER)
         self._settled = True
 
     def renew_lock(self, **kwargs):
@@ -1057,7 +1079,7 @@ class ReceivedMessage(ReceivedMessageBase):
         This operation is only available for non-sessionful messages as well.
 
         Lock renewal can be performed as a background task by registering the message with an
-        `azure.servicebus.AutoLockRenew` instance.
+        `azure.servicebus.AutoLockRenewer` instance.
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.

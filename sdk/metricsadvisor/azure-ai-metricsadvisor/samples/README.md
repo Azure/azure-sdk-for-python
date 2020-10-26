@@ -20,7 +20,7 @@ The async versions of the samples require Python 3.5 or later.
 |[sample_ingestion.py][sample_ingestion] and [sample_ingestion_async.py][sample_ingestion_async]|Check on the data feed ingestion progress, list ingestion statuses, and refresh data feed ingestion|
 |[sample_anomaly_detection_configuration.py][sample_anomaly_detection_configuration] and [sample_anomaly_detection_configuration_async.py][sample_anomaly_detection_configuration_async]|Create, list, get, update, and delete anomaly detection configurations|
 |[sample_anomaly_alert_configuration.py][sample_anomaly_alert_configuration] and [sample_anomaly_alert_configuration_async.py][sample_anomaly_alert_configuration_async]|Create, list, get, update, and delete anomaly alert configurations. Also list alerts and anomalies for a specific alert configuration.|
-|[sample_hooks.py][sample_hooks] and [sample_hooks_async.py][sample_hooks_async]|Create, list, get, update, and delete hooks|
+|[sample_hooks.py][sample_hooks] and [sample_hooks_async.py][sample_hooks_async]|Create, list, get, update, and delete notification hooks|
 |[sample_feedback.py][sample_feedback] and [sample_feedback_async.py][sample_feedback_async]|Add, get, and list feedback for the anomaly detection result|
 
 

@@ -15,11 +15,6 @@ import six
 from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
 from .models import (
-    DataFeedGranularityType,
-    DataFeedGranularity,
-    DataFeedSchema,
-    Metric,
-    DataFeedIngestionSettings,
     AnomalyFeedback,
     ChangePointFeedback,
     CommentFeedback,
@@ -130,21 +125,6 @@ def convert_to_generated_data_feed_type(
     :return: The generated model for the data source type
     """
 
-    if isinstance(granularity, (DataFeedGranularityType, six.string_types)):
-        granularity = DataFeedGranularity(
-            granularity_type=granularity,
-        )
-
-    if isinstance(schema, list):
-        schema = DataFeedSchema(
-            metrics=[Metric(name=metric_name) for metric_name in schema]
-        )
-
-    if isinstance(ingestion_settings, (datetime.datetime, six.string_types)):
-        ingestion_settings = DataFeedIngestionSettings(
-            ingestion_begin_time=ingestion_settings
-        )
-
     return generated_feed_type(
         data_source_parameter=source.__dict__,
         data_feed_name=name,
@@ -170,9 +150,9 @@ def convert_to_generated_data_feed_type(
         if options and options.missing_data_point_fill_settings else None,
         fill_missing_point_value=options.missing_data_point_fill_settings.custom_fill_value
         if options and options.missing_data_point_fill_settings else None,
-        viewers=options.viewers if options else None,
+        viewers=options.viewer_emails if options else None,
         view_mode=options.access_mode if options else None,
-        admins=options.admins if options else None,
+        admins=options.admin_emails if options else None,
         action_link_template=options.action_link_template if options else None
     )
 

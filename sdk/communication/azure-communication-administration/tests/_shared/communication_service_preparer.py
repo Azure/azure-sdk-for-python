@@ -31,6 +31,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             client_kwargs=client_kwargs,
         )
         self.resource_group_parameter_name = resource_group_parameter_name
+        self.random_name_enabled = True
         self.service_name = "TEST-SERVICE-NAME"
         self.mgmt_client = None
 
@@ -54,7 +55,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
 
         group_name = self._get_resource_group(**kwargs).name
 
-        self.mgmt_client = self.create_mgmt_client(CommunicationServiceManagementClient)
+        self.mgmt_client = self.create_mgmt_client(CommunicationServiceManagementClient, polling_interval=30)
 
         resource = self.mgmt_client.communication_service.begin_create_or_update(
             group_name,
