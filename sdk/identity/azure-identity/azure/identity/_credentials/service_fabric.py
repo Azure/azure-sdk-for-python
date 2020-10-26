@@ -53,25 +53,21 @@ def _get_client_args(**kwargs):
     url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
     secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
     thumbprint = os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
-    if url and secret and thumbprint:
-        version = "2019-07-01-preview"
-        base_headers = {"Secret": secret}
-        connection_verify = False
-    else:
+    if not (url and secret and thumbprint):
         # Service Fabric managed identity isn't available in this environment
         return None
 
     return dict(
         kwargs,
         _identity_config=identity_config,
-        base_headers=base_headers,
-        connection_verify=connection_verify,
-        request_factory=functools.partial(_get_request, url, version),
+        base_headers={"Secret": secret},
+        connection_verify=False,
+        request_factory=functools.partial(_get_request, url),
     )
 
 
-def _get_request(url, version, scope, identity_config):
-    # type: (str, str, str, dict) -> HttpRequest
+def _get_request(url, scope, identity_config):
+    # type: (str, str, dict) -> HttpRequest
     request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": version, "resource": scope}, **identity_config))
+    request.format_parameters(dict({"api-version": "2019-07-01-preview", "resource": scope}, **identity_config))
     return request
