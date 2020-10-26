@@ -10,7 +10,7 @@ import pytest
 import sys
 import time
 
-from azure.servicebus import ServiceBusClient, AutoLockRenew
+from azure.servicebus import ServiceBusClient, AutoLockRenewer
 from azure.servicebus._common.constants import ReceiveMode
 
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
@@ -160,7 +160,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
         def OnSend(self, state, sent_message, sender):
             '''Called on every successful send'''
             if state.total_sent % 10 == 0:
-                # To make it time out and reconnect
+                # To make receive time out, in push mode this delay would trigger receiver reconnection
                 time.sleep(self.max_wait_time + 5)
 
     @pytest.mark.liveTest
