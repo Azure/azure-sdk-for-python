@@ -9,7 +9,6 @@
 
 from typing import (
     Any,
-    List,
     Union,
     cast,
     TYPE_CHECKING
@@ -20,7 +19,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 \
     import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2 as _Client
 from ._generated.models import (
-    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
     AzureApplicationInsightsDataFeed as _AzureApplicationInsightsDataFeed,
     AzureBlobDataFeed as _AzureBlobDataFeed,
     AzureCosmosDBDataFeed as _AzureCosmosDBDataFeed,
@@ -47,7 +45,6 @@ from ._generated.models import (
     PostgreSqlDataFeedPatch as _PostgreSqlDataFeedPatch,
     MongoDBDataFeedPatch as _MongoDBDataFeedPatch,
     SQLServerDataFeedPatch as _SQLServerDataFeedPatch,
-    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     IngestionProgressResetOptions as _IngestionProgressResetOptions,
     IngestionStatusQueryOptions as _IngestionStatusQueryOptions,
 )
@@ -67,51 +64,14 @@ from .models._models import (
     WebNotificationHook,
     AnomalyAlertConfiguration,
     AnomalyDetectionConfiguration,
-    DataFeedIngestionProgress,
-    AzureApplicationInsightsDataFeed,
-    AzureBlobDataFeed,
-    AzureCosmosDBDataFeed,
-    AzureDataExplorerDataFeed,
-    AzureTableDataFeed,
-    HttpRequestDataFeed,
-    InfluxDBDataFeed,
-    MySqlDataFeed,
-    PostgreSqlDataFeed,
-    SQLServerDataFeed,
-    MongoDBDataFeed,
-    AzureDataLakeStorageGen2DataFeed,
-    ElasticsearchDataFeed
+    DataFeedIngestionProgress
 )
 
 if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
     from ._generated.models import IngestionStatus as DataFeedIngestionStatus
-    from .models._models import (
-        MetricAlertConfiguration,
-        DataFeedGranularity,
-        DataFeedGranularityType,
-        DataFeedSchema,
-        DataFeedIngestionSettings,
-        NotificationHook,
-        MetricDetectionCondition
-    )
-
-DataFeedSourceUnion = Union[
-    AzureApplicationInsightsDataFeed,
-    AzureBlobDataFeed,
-    AzureCosmosDBDataFeed,
-    AzureDataExplorerDataFeed,
-    AzureTableDataFeed,
-    HttpRequestDataFeed,
-    InfluxDBDataFeed,
-    MySqlDataFeed,
-    PostgreSqlDataFeed,
-    SQLServerDataFeed,
-    MongoDBDataFeed,
-    AzureDataLakeStorageGen2DataFeed,
-    ElasticsearchDataFeed
-]
+    from .models._models import NotificationHook
 
 
 DATA_FEED = {
@@ -210,22 +170,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def create_anomaly_alert_configuration(
-            self, name,  # type: str
-            metric_alert_configurations,  # type: List[MetricAlertConfiguration]
-            hook_ids,  # type: List[str]
+            self, alert_configuration,  # type: AnomalyAlertConfiguration
             **kwargs  # type: Any
     ):  # type: (...) -> AnomalyAlertConfiguration
         """Create an anomaly alert configuration.
 
-        :param str name: Name for the anomaly alert configuration.
-        :param metric_alert_configurations: Anomaly alert configurations.
-        :type metric_alert_configurations: list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
-        :param list[str] hook_ids: Unique hook IDs.
-        :keyword cross_metrics_operator: Cross metrics operator should be specified when setting up multiple metric
-            alert configurations. Possible values include: "AND", "OR", "XOR".
-        :paramtype cross_metrics_operator: str or
-            ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
-        :keyword str description: Anomaly alert configuration description.
+        :param alert_configuration: The alert configuration to create.
+        :type alert_configuration: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :return: AnomalyAlertConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -240,17 +191,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create an anomaly alert configuration
         """
 
-        cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
         response_headers = self._client.create_anomaly_alerting_configuration(  # type: ignore
-            _AnomalyAlertingConfiguration(
-                name=name,
-                metric_alerting_configurations=[
-                    config._to_generated() for config in metric_alert_configurations
-                ],
-                hook_ids=hook_ids,
-                cross_metrics_operator=cross_metrics_operator,
-                description=kwargs.pop("description", None)
-            ),
+            alert_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -260,32 +202,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def create_data_feed(
-            self, name,  # type: str
-            source,  # type: DataFeedSourceUnion
-            granularity,  # type: Union[str, DataFeedGranularityType, DataFeedGranularity]
-            schema,  # type: Union[List[str], DataFeedSchema]
-            ingestion_settings,  # type: Union[datetime.datetime, DataFeedIngestionSettings]
+            self, data_feed,  # type: DataFeed
             **kwargs  # type: Any
     ):  # type: (...) -> DataFeed
         """Create a new data feed.
 
-        :param str name: Name for the data feed.
-        :param source: The source of the data feed
-        :type source: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-            AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, HttpRequestDataFeed,
-            InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-            ElasticsearchDataFeed]
-        :param granularity: Granularity type. If using custom granularity, you must instantiate a DataFeedGranularity.
-        :type granularity: Union[str, ~azure.ai.metricsadvisor.models.DataFeedGranularityType,
-            ~azure.ai.metricsadvisor.models.DataFeedGranularity]
-        :param schema: Data feed schema. Can be passed as a list of metric names as strings or as a DataFeedSchema
-            object if additional configuration is needed.
-        :type schema: Union[list[str], ~azure.ai.metricsadvisor.models.DataFeedSchema]
-        :param ingestion_settings: The data feed ingestions settings. Can be passed as a datetime to use for the
-            ingestion begin time or as a DataFeedIngestionSettings object if additional configuration is needed.
-        :type ingestion_settings: Union[~datetime.datetime, ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings]
-        :keyword options: Data feed options.
-        :paramtype options: ~azure.ai.metricsadvisor.models.DataFeedOptions
+        :param data_feed: The data feed to create
+        :type data_feed: ~azure.ai.metricsadvisor.models.DataFeed
         :return: DataFeed
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -300,16 +223,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :caption: Create a data feed
         """
 
-        options = kwargs.pop("options", None)
-        data_feed_type = DATA_FEED[source.data_source_type]
+        data_feed_type = DATA_FEED[data_feed.source.data_source_type]
         data_feed_detail = convert_to_generated_data_feed_type(
             generated_feed_type=data_feed_type,
-            name=name,
-            source=source,
-            granularity=granularity,
-            schema=schema,
-            ingestion_settings=ingestion_settings,
-            options=options
+            name=data_feed.name,
+            source=data_feed.source,
+            granularity=data_feed.granularity,
+            schema=data_feed.schema,
+            ingestion_settings=data_feed.ingestion_settings,
+            options=data_feed.options
         )
 
         response_headers = self._client.create_data_feed(  # type: ignore
@@ -322,14 +244,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def create_hook(
-            self, name,  # type: str
-            hook,  # type: Union[EmailNotificationHook, WebNotificationHook]
+            self, hook,  # type: Union[EmailNotificationHook, WebNotificationHook]
             **kwargs  # type: Any
     ):  # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
         """Create a new email or web hook.
 
-        :param str name: The name for the hook.
-        :param hook: An email or web hook
+        :param hook: An email or web hook to create
         :type hook: Union[~azure.ai.metricsadvisor.models.EmailNotificationHook,
             ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :return: EmailNotificationHook or WebNotificationHook
@@ -350,10 +270,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         hook_request = None
         if hook.hook_type == "Email":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         response_headers = self._client.create_hook(  # type: ignore
             hook_request,  # type: ignore
@@ -365,25 +285,13 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def create_metric_anomaly_detection_configuration(
-            self, name,  # type: str
-            metric_id,  # type: str
-            whole_series_detection_condition,  # type: MetricDetectionCondition
+            self, detection_configuration,  # type: AnomalyDetectionConfiguration
             **kwargs  # type: Any
     ):  # type: (...) -> AnomalyDetectionConfiguration
         """Create anomaly detection configuration.
 
-        :param str name: The name for the anomaly detection configuration
-        :param str metric_id: Required. metric unique id.
-        :param whole_series_detection_condition: Required.
-            Conditions to detect anomalies in all time series of a metric.
-        :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
-        :keyword str description: anomaly detection configuration description.
-        :keyword series_group_detection_conditions: detection configuration for series group.
-        :paramtype series_group_detection_conditions:
-         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
-        :keyword series_detection_conditions: detection configuration for specific series.
-        :paramtype series_detection_conditions:
-            list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
+        :param detection_configuration: The detection configuration to create.
+        :type detection_configuration: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :return: AnomalyDetectionConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -397,24 +305,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: Create an anomaly detection configuration
         """
-        description = kwargs.pop("description", None)
-        series_group_detection_conditions = kwargs.pop("series_group_detection_conditions", None)
-        series_detection_conditions = kwargs.pop("series_detection_conditions", None)
-        config = _AnomalyDetectionConfiguration(
-            name=name,
-            metric_id=metric_id,
-            description=description,
-            whole_metric_configuration=whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in series_group_detection_conditions
-            ] if series_group_detection_conditions else None,
-            series_override_configurations=[
-                series._to_generated() for series in series_detection_conditions]
-            if series_detection_conditions else None,
-        )
 
         response_headers = self._client.create_anomaly_detection_configuration(  # type: ignore
-            config,
+            detection_configuration._to_generated(),
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
