@@ -13,6 +13,7 @@ setup(
     version='0.0.0b1',
     description='Microsoft Azure Communication Namespace Package [Internal]',
     long_description=open('README.md', 'r').read(),
+    long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azurepysdk@microsoft.com',

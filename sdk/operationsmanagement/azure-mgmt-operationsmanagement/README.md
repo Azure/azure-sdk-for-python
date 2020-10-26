@@ -1,6 +1,6 @@
 ## Microsoft Azure SDK for Python
 
-This is the Microsoft Azure MyService Management Client Library.
+This is the Microsoft Azure Operations Management Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs
 that replace the old Azure Service Management (ASM).
@@ -16,7 +16,7 @@ For a more complete set of Azure libraries, see the
 
 ## Usage
 
-For code examples, see [MyService
+For code examples, see [Operations
 Management](https://docs.microsoft.com/python/api/overview/azure/) on
 docs.microsoft.com.
 
