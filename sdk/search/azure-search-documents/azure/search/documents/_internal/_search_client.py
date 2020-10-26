@@ -86,7 +86,6 @@ class SearchClient(HeadersMixin):
         self._client = SearchIndexClient(
             endpoint=endpoint, index_name=index_name, sdk_moniker=SDK_MONIKER, **kwargs
         )  # type: SearchIndexClient
-        self._paging_method = SearchPageIterator()
 
     def __repr__(self):
         # type: () -> str
@@ -259,9 +258,6 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return SearchItemPaged(
-            client=self._client,
-            paging_method=self._paging_method,
-            initial_call=
             self._client, query, kwargs, page_iterator_class=SearchPageIterator
         )
 
