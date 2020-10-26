@@ -324,7 +324,7 @@ class StorageTableClientTest(TableTestCase):
             try:
                 self.table.commit_batch(batch)
             except PartialBatchErrorException as error:
-                pass  # TODO
+                pass
                 #self.assertEqual(error.code, 'UpdateConditionNotSatisfied')
                 #self.assertTrue('The update condition specified in the request was not satisfied.' in str(error))
             else:

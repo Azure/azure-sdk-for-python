@@ -117,11 +117,7 @@ def _to_entity_guid(value):
 
 
 def _to_entity_int32(value):
-    # TODO: What the heck? below
-    if sys.version_info < (3,):
-        value = int(value)
-    else:
-        value = int(value)
+    value = int(value)
     if value >= 2 ** 31 or value < -(2 ** 31):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
     return None, value
