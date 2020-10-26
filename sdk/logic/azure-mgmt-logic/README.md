@@ -1,5 +1,5 @@
 ## Microsoft Azure SDK for Python
-
+                                    
 This is the Microsoft Azure Logic Apps Management Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs
