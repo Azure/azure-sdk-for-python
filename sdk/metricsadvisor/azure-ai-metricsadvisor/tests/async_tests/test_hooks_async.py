@@ -22,8 +22,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 email_hook = await self.admin_client.create_hook(
-                    name=email_hook_name,
                     hook=EmailNotificationHook(
+                        name=email_hook_name,
                         emails_to_alert=["yournamehere@microsoft.com"],
                         description="my email hook",
                         external_link="external link"
@@ -48,8 +48,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 web_hook = await self.admin_client.create_hook(
-                    name=web_hook_name,
                     hook=WebNotificationHook(
+                        name=web_hook_name,
                         endpoint="https://httpbin.org/post",
                         description="my web hook",
                         external_link="external link"

@@ -16,6 +16,7 @@ from azure.ai.metricsadvisor.models import (
     SuppressCondition,
     ChangeThresholdCondition,
     HardThresholdCondition,
+    AnomalyDetectionConfiguration
 )
 
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
@@ -31,36 +32,38 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 detection_config_name = self.create_random_name("testdetectionconfigasync")
                 config = await self.admin_client.create_metric_anomaly_detection_configuration(
-                    name=detection_config_name,
-                    metric_id=data_feed.metric_ids[0],
-                    description="My test metric anomaly detection configuration",
-                    whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="OR",
-                        smart_detection_condition=SmartDetectionCondition(
-                            sensitivity=50,
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=50,
-                                min_ratio=50
-                            )
-                        ),
-                        hard_threshold_condition=HardThresholdCondition(
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=5,
-                                min_ratio=5
+                    AnomalyDetectionConfiguration(
+                        name=detection_config_name,
+                        metric_id=data_feed.metric_ids[0],
+                        description="My test metric anomaly detection configuration",
+                        whole_series_detection_condition=MetricDetectionCondition(
+                            cross_conditions_operator="OR",
+                            smart_detection_condition=SmartDetectionCondition(
+                                sensitivity=50,
+                                anomaly_detector_direction="Both",
+                                suppress_condition=SuppressCondition(
+                                    min_number=50,
+                                    min_ratio=50
+                                )
                             ),
-                            lower_bound=0,
-                            upper_bound=100
-                        ),
-                        change_threshold_condition=ChangeThresholdCondition(
-                            change_percentage=50,
-                            shift_point=30,
-                            within_range=True,
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=2,
-                                min_ratio=2
+                            hard_threshold_condition=HardThresholdCondition(
+                                anomaly_detector_direction="Both",
+                                suppress_condition=SuppressCondition(
+                                    min_number=5,
+                                    min_ratio=5
+                                ),
+                                lower_bound=0,
+                                upper_bound=100
+                            ),
+                            change_threshold_condition=ChangeThresholdCondition(
+                                change_percentage=50,
+                                shift_point=30,
+                                within_range=True,
+                                anomaly_detector_direction="Both",
+                                suppress_condition=SuppressCondition(
+                                    min_number=2,
+                                    min_ratio=2
+                                )
                             )
                         )
                     )
@@ -111,61 +114,63 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 detection_config_name = self.create_random_name("testdetectionconfigetasync")
                 detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
-                    name=detection_config_name,
-                    metric_id=data_feed.metric_ids[0],
-                    description="My test metric anomaly detection configuration",
-                    whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="AND",
-                        smart_detection_condition=SmartDetectionCondition(
-                            sensitivity=50,
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=50,
-                                min_ratio=50
-                            )
-                        ),
-                        hard_threshold_condition=HardThresholdCondition(
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=5,
-                                min_ratio=5
+                    AnomalyDetectionConfiguration(
+                        name=detection_config_name,
+                        metric_id=data_feed.metric_ids[0],
+                        description="My test metric anomaly detection configuration",
+                        whole_series_detection_condition=MetricDetectionCondition(
+                            cross_conditions_operator="AND",
+                            smart_detection_condition=SmartDetectionCondition(
+                                sensitivity=50,
+                                anomaly_detector_direction="Both",
+                                suppress_condition=SuppressCondition(
+                                    min_number=50,
+                                    min_ratio=50
+                                )
                             ),
-                            lower_bound=0,
-                            upper_bound=100
+                            hard_threshold_condition=HardThresholdCondition(
+                                anomaly_detector_direction="Both",
+                                suppress_condition=SuppressCondition(
+                                    min_number=5,
+                                    min_ratio=5
+                                ),
+                                lower_bound=0,
+                                upper_bound=100
+                            ),
+                            change_threshold_condition=ChangeThresholdCondition(
+                                change_percentage=50,
+                                shift_point=30,
+                                within_range=True,
+                                anomaly_detector_direction="Both",
+                                suppress_condition=SuppressCondition(
+                                    min_number=2,
+                                    min_ratio=2
+                                )
+                            )
                         ),
-                        change_threshold_condition=ChangeThresholdCondition(
-                            change_percentage=50,
-                            shift_point=30,
-                            within_range=True,
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=2,
-                                min_ratio=2
+                        series_detection_conditions=[MetricSingleSeriesDetectionCondition(
+                            series_key={"city": "Shenzhen", "category": "Jewelry"},
+                            smart_detection_condition=SmartDetectionCondition(
+                                anomaly_detector_direction="Both",
+                                sensitivity=63,
+                                suppress_condition=SuppressCondition(
+                                    min_number=1,
+                                    min_ratio=100
+                                )
                             )
-                        )
-                    ),
-                    series_detection_conditions=[MetricSingleSeriesDetectionCondition(
-                        series_key={"city": "Shenzhen", "category": "Jewelry"},
-                        smart_detection_condition=SmartDetectionCondition(
-                            anomaly_detector_direction="Both",
-                            sensitivity=63,
-                            suppress_condition=SuppressCondition(
-                                min_number=1,
-                                min_ratio=100
+                        )],
+                        series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
+                            series_group_key={"city": "Sao Paulo"},
+                            smart_detection_condition=SmartDetectionCondition(
+                                anomaly_detector_direction="Both",
+                                sensitivity=63,
+                                suppress_condition=SuppressCondition(
+                                    min_number=1,
+                                    min_ratio=100
+                                )
                             )
-                        )
-                    )],
-                    series_group_detection_conditions=[MetricSeriesGroupDetectionCondition(
-                        series_group_key={"city": "Sao Paulo"},
-                        smart_detection_condition=SmartDetectionCondition(
-                            anomaly_detector_direction="Both",
-                            sensitivity=63,
-                            suppress_condition=SuppressCondition(
-                                min_number=1,
-                                min_ratio=100
-                            )
-                        )
-                    )]
+                        )]
+                    )
                 )
 
                 self.assertIsNotNone(detection_config.id)
@@ -228,49 +233,18 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             try:
                 detection_config_name = self.create_random_name("multipledetectionconfigsasync")
                 detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
-                    name=detection_config_name,
-                    metric_id=data_feed.metric_ids[0],
-                    description="My test metric anomaly detection configuration",
-                    whole_series_detection_condition=MetricDetectionCondition(
-                        cross_conditions_operator="AND",
-                        smart_detection_condition=SmartDetectionCondition(
-                            sensitivity=50,
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=50,
-                                min_ratio=50
-                            )
-                        ),
-                        hard_threshold_condition=HardThresholdCondition(
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=5,
-                                min_ratio=5
-                            ),
-                            lower_bound=0,
-                            upper_bound=100
-                        ),
-                        change_threshold_condition=ChangeThresholdCondition(
-                            change_percentage=50,
-                            shift_point=30,
-                            within_range=True,
-                            anomaly_detector_direction="Both",
-                            suppress_condition=SuppressCondition(
-                                min_number=2,
-                                min_ratio=2
-                            )
-                        )
-                    ),
-                    series_detection_conditions=[
-                        MetricSingleSeriesDetectionCondition(
-                            series_key={"city": "Shenzhen", "category": "Jewelry"},
+                    AnomalyDetectionConfiguration(
+                        name=detection_config_name,
+                        metric_id=data_feed.metric_ids[0],
+                        description="My test metric anomaly detection configuration",
+                        whole_series_detection_condition=MetricDetectionCondition(
                             cross_conditions_operator="AND",
                             smart_detection_condition=SmartDetectionCondition(
+                                sensitivity=50,
                                 anomaly_detector_direction="Both",
-                                sensitivity=63,
                                 suppress_condition=SuppressCondition(
-                                    min_number=1,
-                                    min_ratio=100
+                                    min_number=50,
+                                    min_ratio=50
                                 )
                             ),
                             hard_threshold_condition=HardThresholdCondition(
@@ -293,64 +267,97 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                                 )
                             )
                         ),
-                        MetricSingleSeriesDetectionCondition(
-                            series_key={"city": "Osaka", "category": "Cell Phones"},
-                            cross_conditions_operator="AND",
-                            smart_detection_condition=SmartDetectionCondition(
-                                anomaly_detector_direction="Both",
-                                sensitivity=63,
-                                suppress_condition=SuppressCondition(
-                                    min_number=1,
-                                    min_ratio=100
-                                )
-                            )
-                        )
-                    ],
-                    series_group_detection_conditions=[
-                        MetricSeriesGroupDetectionCondition(
-                            series_group_key={"city": "Sao Paulo"},
-                            cross_conditions_operator="AND",
-                            smart_detection_condition=SmartDetectionCondition(
-                                anomaly_detector_direction="Both",
-                                sensitivity=63,
-                                suppress_condition=SuppressCondition(
-                                    min_number=1,
-                                    min_ratio=100
-                                )
-                            ),
-                            hard_threshold_condition=HardThresholdCondition(
-                                anomaly_detector_direction="Both",
-                                suppress_condition=SuppressCondition(
-                                    min_number=5,
-                                    min_ratio=5
+                        series_detection_conditions=[
+                            MetricSingleSeriesDetectionCondition(
+                                series_key={"city": "Shenzhen", "category": "Jewelry"},
+                                cross_conditions_operator="AND",
+                                smart_detection_condition=SmartDetectionCondition(
+                                    anomaly_detector_direction="Both",
+                                    sensitivity=63,
+                                    suppress_condition=SuppressCondition(
+                                        min_number=1,
+                                        min_ratio=100
+                                    )
                                 ),
-                                lower_bound=0,
-                                upper_bound=100
+                                hard_threshold_condition=HardThresholdCondition(
+                                    anomaly_detector_direction="Both",
+                                    suppress_condition=SuppressCondition(
+                                        min_number=5,
+                                        min_ratio=5
+                                    ),
+                                    lower_bound=0,
+                                    upper_bound=100
+                                ),
+                                change_threshold_condition=ChangeThresholdCondition(
+                                    change_percentage=50,
+                                    shift_point=30,
+                                    within_range=True,
+                                    anomaly_detector_direction="Both",
+                                    suppress_condition=SuppressCondition(
+                                        min_number=2,
+                                        min_ratio=2
+                                    )
+                                )
                             ),
-                            change_threshold_condition=ChangeThresholdCondition(
-                                change_percentage=50,
-                                shift_point=30,
-                                within_range=True,
-                                anomaly_detector_direction="Both",
-                                suppress_condition=SuppressCondition(
-                                    min_number=2,
-                                    min_ratio=2
+                            MetricSingleSeriesDetectionCondition(
+                                series_key={"city": "Osaka", "category": "Cell Phones"},
+                                cross_conditions_operator="AND",
+                                smart_detection_condition=SmartDetectionCondition(
+                                    anomaly_detector_direction="Both",
+                                    sensitivity=63,
+                                    suppress_condition=SuppressCondition(
+                                        min_number=1,
+                                        min_ratio=100
+                                    )
                                 )
                             )
-                        ),
-                        MetricSeriesGroupDetectionCondition(
-                            series_group_key={"city": "Seoul"},
-                            cross_conditions_operator="AND",
-                            smart_detection_condition=SmartDetectionCondition(
-                                anomaly_detector_direction="Both",
-                                sensitivity=63,
-                                suppress_condition=SuppressCondition(
-                                    min_number=1,
-                                    min_ratio=100
+                        ],
+                        series_group_detection_conditions=[
+                            MetricSeriesGroupDetectionCondition(
+                                series_group_key={"city": "Sao Paulo"},
+                                cross_conditions_operator="AND",
+                                smart_detection_condition=SmartDetectionCondition(
+                                    anomaly_detector_direction="Both",
+                                    sensitivity=63,
+                                    suppress_condition=SuppressCondition(
+                                        min_number=1,
+                                        min_ratio=100
+                                    )
+                                ),
+                                hard_threshold_condition=HardThresholdCondition(
+                                    anomaly_detector_direction="Both",
+                                    suppress_condition=SuppressCondition(
+                                        min_number=5,
+                                        min_ratio=5
+                                    ),
+                                    lower_bound=0,
+                                    upper_bound=100
+                                ),
+                                change_threshold_condition=ChangeThresholdCondition(
+                                    change_percentage=50,
+                                    shift_point=30,
+                                    within_range=True,
+                                    anomaly_detector_direction="Both",
+                                    suppress_condition=SuppressCondition(
+                                        min_number=2,
+                                        min_ratio=2
+                                    )
+                                )
+                            ),
+                            MetricSeriesGroupDetectionCondition(
+                                series_group_key={"city": "Seoul"},
+                                cross_conditions_operator="AND",
+                                smart_detection_condition=SmartDetectionCondition(
+                                    anomaly_detector_direction="Both",
+                                    sensitivity=63,
+                                    suppress_condition=SuppressCondition(
+                                        min_number=1,
+                                        min_ratio=100
+                                    )
                                 )
                             )
-                        )
-                    ]
+                        ]
+                    )
                 )
 
                 self.assertIsNotNone(detection_config.id)
