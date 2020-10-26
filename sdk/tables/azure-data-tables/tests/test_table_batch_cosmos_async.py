@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import sys
 import unittest
 import pytest
 from time import sleep
@@ -504,7 +504,7 @@ class StorageTableBatchTest(TableTestCase):
             transaction_count = 0
 
             batch = self.table.create_batch()
-            for i in range(100):
+            for i in range(20):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
                 transaction_count += 1
@@ -522,7 +522,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(entities)
-            self.assertEqual(100, length)
+            self.assertEqual(transaction_count, length)
         finally:
             await self._tear_down()
 

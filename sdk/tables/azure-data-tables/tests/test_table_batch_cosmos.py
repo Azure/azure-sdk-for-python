@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import sys
 import unittest
 import pytest
 from time import sleep
@@ -119,38 +119,32 @@ class StorageTableClientTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
-        self.assertEqual(entity['sex'], 'male')
+        self.assertEqual(entity['age'].value, 39)
+        self.assertEqual(entity['sex'].value, u'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
         self.assertFalse("optional" in entity)
-        self.assertFalse("aquarius" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
+        self.assertEqual(entity['large'].value, 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['binary'], b'binary')
+        self.assertEqual(entity['binary'].value, b'binary')
         self.assertIsInstance(entity['other'], EntityProperty)
         self.assertEqual(entity['other'].type, EdmType.INT32)
         self.assertEqual(entity['other'].value, 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        self.assertTrue('metadata' in entity.odata)
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
-        if headers:
-            self.assertTrue("etag" in headers)
-            self.assertIsNotNone(headers['etag'])
+        self.assertTrue('_metadata' in entity)
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEqual(entity.age, 'abc')
-        self.assertEqual(entity.sex, 'female')
+        self.assertEqual(entity.age.value, 'abc')
+        self.assertEqual(entity.sex.value, 'female')
         self.assertFalse(hasattr(entity, "married"))
         self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEqual(entity.sign, 'aquarius')
+        self.assertEqual(entity.sign.value, 'aquarius')
         self.assertFalse(hasattr(entity, "optional"))
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "evenratio"))
@@ -159,9 +153,7 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
         self.assertFalse(hasattr(entity, "other"))
         self.assertFalse(hasattr(entity, "clsid"))
-        self.assertIsNotNone(entity.odata['etag'])
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+        self.assertIsNotNone(entity['_metadata']['etag'])
 
     #--Test cases for batch ---------------------------------------------
 
@@ -197,6 +189,7 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(length, len(transaction.requests))
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_update(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -233,6 +226,7 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_merge(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -270,7 +264,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_match(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -301,7 +295,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_update_if_doesnt_match(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -331,6 +325,7 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_replace(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -362,6 +357,7 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_insert_merge(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -392,7 +388,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_delete(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -426,6 +422,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_inserts(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -442,7 +439,7 @@ class StorageTableClientTest(TableTestCase):
 
             batch = self.table.create_batch()
             transaction_count = 0
-            for i in range(100):
+            for i in range(20):
                 entity.RowKey = str(i)
                 batch.create_entity(entity)
                 transaction_count += 1
@@ -456,12 +453,13 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(entities)
-            self.assertEqual(100, len(entities))
+            self.assertEqual(transaction_count, len(entities))
             e = self.table.get_entity('batch_inserts', '1')
         finally:
             self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -511,6 +509,7 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("merge operations fail in cosmos: https://github.com/Azure/azure-sdk-for-python/issues/13844")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_all_operations_together_context_manager(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -558,6 +557,7 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_reuse(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -617,6 +617,7 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("This does not throw an error, but it should")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_same_row_operations_fail(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -641,7 +642,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_different_partition_operations_fail(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -668,6 +669,7 @@ class StorageTableClientTest(TableTestCase):
             self._tear_down()
 
     @pytest.mark.skip("This does not throw an error, but it should")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_batch_too_many_ops(self, resource_group, location, cosmos_account, cosmos_account_key):
