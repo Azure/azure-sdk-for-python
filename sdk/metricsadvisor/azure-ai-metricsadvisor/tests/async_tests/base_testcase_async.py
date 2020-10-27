@@ -210,7 +210,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
     async def _create_data_feed_and_detection_config(self, name):
         data_feed = await self._create_data_feed(name)
         detection_config_name = self.create_random_name(name)
-        detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
+        detection_config = await self.admin_client.create_detection_configuration(
             AnomalyDetectionConfiguration(
                 name=detection_config_name,
                 metric_id=data_feed.metric_ids[0],
