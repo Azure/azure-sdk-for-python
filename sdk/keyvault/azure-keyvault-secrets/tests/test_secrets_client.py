@@ -206,7 +206,7 @@ class SecretClientTests(KeyVaultTestCase):
             self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
@@ -221,6 +221,9 @@ class SecretClientTests(KeyVaultTestCase):
 
         # delete secret
         client.begin_delete_secret(created_bundle.name).wait()
+
+        # purge secret
+        client.purge_deleted_secret(created_bundle.name)
 
         # restore secret
         restored = client.restore_secret_backup(secret_backup)

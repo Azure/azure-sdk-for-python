@@ -297,7 +297,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     async def test_backup_restore(self, client, **kwargs):
         self.assertIsNotNone(client)
@@ -314,6 +314,9 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         # delete key
         await client.delete_key(created_bundle.name)
         # can add test case to see if we do get_deleted should return error
+
+        # purge key
+        await client.purge_deleted_key(created_bundle.name)
 
         # restore key
         restored = await client.restore_key_backup(key_backup)

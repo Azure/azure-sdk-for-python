@@ -198,7 +198,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_certificates]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_certificate_backup_restore(self, client, **kwargs):
         certificate_client = client
@@ -230,6 +230,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END backup_certificate]
 
         certificate_client.begin_delete_certificate(certificate_name=cert_name).wait()
+        certificate_client.purge_deleted_certificate(certificate_name=cert_name)
 
         # [START restore_certificate]
 

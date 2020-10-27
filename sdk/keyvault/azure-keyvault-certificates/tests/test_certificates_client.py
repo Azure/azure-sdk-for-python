@@ -480,7 +480,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(client.get_certificate_operation(certificate_name=cert_name).csr, pending_version_csr)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_backup_restore(self, client, **kwargs):
         policy = CertificatePolicy.get_default()
@@ -495,6 +495,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # delete the certificate
         client.begin_delete_certificate(certificate_name=cert_name).wait()
+
+        # purge the certificate
+        client.purge_deleted_certificate(certificate_name=cert_name)
 
         # restore certificate
         restored_certificate = client.restore_certificate_backup(backup=certificate_backup)

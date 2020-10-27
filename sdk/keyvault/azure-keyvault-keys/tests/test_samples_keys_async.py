@@ -180,7 +180,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_keys]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     async def test_example_keys_backup_restore(self, client, **kwargs):
         key_client = client
@@ -197,6 +197,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END backup_key]
 
         await key_client.delete_key(key_name)
+        await key_client.purge_deleted_key(key_name)
 
         # [START restore_key_backup]
 

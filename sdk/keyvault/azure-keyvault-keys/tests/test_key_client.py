@@ -194,7 +194,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(created_rsa_key.id, deleted_key.id)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_backup_restore(self, client, **kwargs):
 
@@ -212,6 +212,9 @@ class KeyClientTests(KeyVaultTestCase):
 
         # delete key
         client.begin_delete_key(created_bundle.name).wait()
+
+        # purge key
+        client.purge_deleted_key(created_bundle.name)
 
         # restore key
         restored = client.restore_key_backup(key_backup)

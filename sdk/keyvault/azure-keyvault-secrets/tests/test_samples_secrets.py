@@ -154,7 +154,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_deleted_secrets]
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
@@ -169,6 +169,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END backup_secret]
         secret_client.begin_delete_secret("secret-name").wait()
+        secret_client.purge_deleted_secret("secret-name")
         # [START restore_secret_backup]
 
         # restores a backed up secret

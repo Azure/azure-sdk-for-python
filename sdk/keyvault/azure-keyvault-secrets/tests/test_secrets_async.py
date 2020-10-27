@@ -204,7 +204,7 @@ class KeyVaultSecretTest(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     async def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
@@ -219,6 +219,9 @@ class KeyVaultSecretTest(KeyVaultTestCase):
 
         # delete secret
         await client.delete_secret(created_bundle.name)
+
+        # purge secret
+        await client.purge_deleted_secret(created_bundle.name)
 
         # restore secret
         restored = await client.restore_secret_backup(secret_backup)
