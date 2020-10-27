@@ -18,7 +18,7 @@ For a more complete set of Azure libraries, see the
 
 For code examples, see [Redis Cache
 Management](https://docs.microsoft.com/python/api/overview/azure/redis)
-on docs.microsoft.com.
+on docs.microsoft.com.  
 
 ## Provide Feedback
 
@@ -26,4 +26,4 @@ If you encounter any bugs or have suggestions, please file an issue in
 the [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 section of the project.
 
-![image](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-redis%2FREADME.png) 
+![image](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-redis%2FREADME.png)
