@@ -177,6 +177,8 @@ def _convert_to_entity(entry_element):
         # no type info, property should parse automatically
         if not mtype:
             entity[name] = value
+        elif mtype in [EdmType.STRING, EdmType.INT32]:
+            entity[name] = value
         else:  # need an object to hold the property
             conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
             if conv is not None:
