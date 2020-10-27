@@ -143,7 +143,7 @@ class StressTestRunner:
                     print("SENDING")
                     message = self._ConstructMessage()
                     if self.send_session_id != None:
-                        sender.send_messages(message, session_id=self.send_session_id)
+                        message.session_id = self.send_session_id
                     else:
                         sender.send_messages(message)
                     self.OnSend(self._state, message, sender)
