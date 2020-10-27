@@ -6,28 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from .. import models
+from ... import models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class PolicyStatesOperations(object):
-    """PolicyStatesOperations operations.
+class PolicyStatesOperations:
+    """PolicyStatesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -42,7 +38,7 @@ class PolicyStatesOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -50,12 +46,11 @@ class PolicyStatesOperations(object):
 
     def list_query_results_for_management_group(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        management_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        management_group_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the resources under the management group.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -68,7 +63,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -139,17 +134,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -159,18 +154,17 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_management_group.metadata = {'url': '/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_management_group(
+    async def summarize_for_management_group(
         self,
-        management_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        management_group_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the resources under the management group.
 
         :param management_group_name: Management group name.
@@ -228,7 +222,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -246,12 +240,11 @@ class PolicyStatesOperations(object):
 
     def list_query_results_for_subscription(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        subscription_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        subscription_id: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the resources under the subscription.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -264,7 +257,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -333,17 +326,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -353,18 +346,17 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_subscription(
+    async def summarize_for_subscription(
         self,
-        subscription_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        subscription_id: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the resources under the subscription.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -420,7 +412,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -438,13 +430,12 @@ class PolicyStatesOperations(object):
 
     def list_query_results_for_resource_group(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        subscription_id: str,
+        resource_group_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the resources under the resource group.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -459,7 +450,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -529,17 +520,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -549,19 +540,18 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_resource_group(
+    async def summarize_for_resource_group(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        subscription_id: str,
+        resource_group_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the resources under the resource group.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -620,7 +610,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -638,12 +628,11 @@ class PolicyStatesOperations(object):
 
     def list_query_results_for_resource(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        resource_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        resource_id: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the resource.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -656,7 +645,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -729,17 +718,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -749,18 +738,17 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_resource.metadata = {'url': '/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_resource(
+    async def summarize_for_resource(
         self,
-        resource_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        resource_id: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the resource.
 
         :param resource_id: Resource ID.
@@ -816,7 +804,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -832,12 +820,11 @@ class PolicyStatesOperations(object):
         return deserialized
     summarize_for_resource.metadata = {'url': '/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize'}  # type: ignore
 
-    def _trigger_subscription_evaluation_initial(
+    async def _trigger_subscription_evaluation_initial(
         self,
-        subscription_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        subscription_id: str,
+        **kwargs
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -862,7 +849,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -875,12 +862,11 @@ class PolicyStatesOperations(object):
 
     _trigger_subscription_evaluation_initial.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation'}  # type: ignore
 
-    def begin_trigger_subscription_evaluation(
+    async def begin_trigger_subscription_evaluation(
         self,
-        subscription_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        subscription_id: str,
+        **kwargs
+    ) -> AsyncLROPoller[None]:
         """Triggers a policy evaluation scan for all the resources under the subscription.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -889,13 +875,13 @@ class PolicyStatesOperations(object):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -903,7 +889,7 @@ class PolicyStatesOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._trigger_subscription_evaluation_initial(
+            raw_result = await self._trigger_subscription_evaluation_initial(
                 subscription_id=subscription_id,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -916,27 +902,26 @@ class PolicyStatesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_trigger_subscription_evaluation.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation'}  # type: ignore
 
-    def _trigger_resource_group_evaluation_initial(
+    async def _trigger_resource_group_evaluation_initial(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        subscription_id: str,
+        resource_group_name: str,
+        **kwargs
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -962,7 +947,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -975,13 +960,12 @@ class PolicyStatesOperations(object):
 
     _trigger_resource_group_evaluation_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation'}  # type: ignore
 
-    def begin_trigger_resource_group_evaluation(
+    async def begin_trigger_resource_group_evaluation(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        subscription_id: str,
+        resource_group_name: str,
+        **kwargs
+    ) -> AsyncLROPoller[None]:
         """Triggers a policy evaluation scan for all the resources under the resource group.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -992,13 +976,13 @@ class PolicyStatesOperations(object):
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
             'polling_interval',
@@ -1006,7 +990,7 @@ class PolicyStatesOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._trigger_resource_group_evaluation_initial(
+            raw_result = await self._trigger_resource_group_evaluation_initial(
                 subscription_id=subscription_id,
                 resource_group_name=resource_group_name,
                 cls=lambda x,y,z: x,
@@ -1020,29 +1004,28 @@ class PolicyStatesOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
-        elif polling is False: polling_method = NoPolling()
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'},  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output
             )
         else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
     begin_trigger_resource_group_evaluation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation'}  # type: ignore
 
     def list_query_results_for_policy_set_definition(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        subscription_id,  # type: str
-        policy_set_definition_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        subscription_id: str,
+        policy_set_definition_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the subscription level policy set definition.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -1057,7 +1040,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -1129,17 +1112,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1149,19 +1132,18 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_policy_set_definition.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_policy_set_definition(
+    async def summarize_for_policy_set_definition(
         self,
-        subscription_id,  # type: str
-        policy_set_definition_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        subscription_id: str,
+        policy_set_definition_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the subscription level policy set definition.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -1222,7 +1204,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1240,13 +1222,12 @@ class PolicyStatesOperations(object):
 
     def list_query_results_for_policy_definition(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        subscription_id,  # type: str
-        policy_definition_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        subscription_id: str,
+        policy_definition_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the subscription level policy definition.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -1261,7 +1242,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -1333,17 +1314,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1353,19 +1334,18 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_policy_definition.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_policy_definition(
+    async def summarize_for_policy_definition(
         self,
-        subscription_id,  # type: str
-        policy_definition_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        subscription_id: str,
+        policy_definition_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the subscription level policy definition.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -1426,7 +1406,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1444,13 +1424,12 @@ class PolicyStatesOperations(object):
 
     def list_query_results_for_subscription_level_policy_assignment(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        subscription_id,  # type: str
-        policy_assignment_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        subscription_id: str,
+        policy_assignment_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the subscription level policy assignment.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -1465,7 +1444,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -1537,17 +1516,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1557,19 +1536,18 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_subscription_level_policy_assignment.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_subscription_level_policy_assignment(
+    async def summarize_for_subscription_level_policy_assignment(
         self,
-        subscription_id,  # type: str
-        policy_assignment_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        subscription_id: str,
+        policy_assignment_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the subscription level policy assignment.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -1630,7 +1608,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1648,14 +1626,13 @@ class PolicyStatesOperations(object):
 
     def list_query_results_for_resource_group_level_policy_assignment(
         self,
-        policy_states_resource,  # type: Union[str, "models.PolicyStatesResource"]
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        policy_assignment_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyStatesQueryResults"]
+        policy_states_resource: Union[str, "models.PolicyStatesResource"],
+        subscription_id: str,
+        resource_group_name: str,
+        policy_assignment_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyStatesQueryResults"]:
         """Queries policy states for the resource group level policy assignment.
 
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
@@ -1672,7 +1649,7 @@ class PolicyStatesOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyStatesQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyStatesQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyStatesQueryResults"]
@@ -1745,17 +1722,17 @@ class PolicyStatesOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyStatesQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -1765,20 +1742,19 @@ class PolicyStatesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_resource_group_level_policy_assignment.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults'}  # type: ignore
 
-    def summarize_for_resource_group_level_policy_assignment(
+    async def summarize_for_resource_group_level_policy_assignment(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        policy_assignment_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SummarizeResults"
+        subscription_id: str,
+        resource_group_name: str,
+        policy_assignment_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> "models.SummarizeResults":
         """Summarizes policy states for the resource group level policy assignment.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -1842,7 +1818,7 @@ class PolicyStatesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
