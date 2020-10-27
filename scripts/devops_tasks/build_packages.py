@@ -12,7 +12,7 @@ import argparse
 import sys
 import os
 
-from common_tasks import process_glob_string, run_check_call
+from common_tasks import process_glob_string, run_check_call, str_to_bool
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 build_packing_script_location = os.path.join(root_dir, "build_package.py")
@@ -21,17 +21,6 @@ build_packing_script_location = os.path.join(root_dir, "build_package.py")
 tox_path = os.path.abspath(os.path.join(root_dir, "eng", "tox"))
 sys.path.append(tox_path)
 from sanitize_setup import process_requires
-
-
-def str_to_bool(input_string):
-    if isinstance(input_string, bool):
-        return input_string
-    elif input_string.lower() in ("true", "t", "1"):
-        return True
-    elif input_string.lower() in ("false", "f", "0"):
-        return False
-    else:
-        return False
 
 def build_packages(targeted_packages, distribution_directory, is_dev_build=False):
     # run the build and distribution

@@ -210,11 +210,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self.close()
             raise
 
-    def close(self):
-        # type: () -> None
-        super(ServiceBusReceiver, self).close()
-        self._message_iter = None # pylint: disable=attribute-defined-outside-init
-
     def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
         # pylint: disable=protected-access
@@ -261,6 +256,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         # type: (bytes, List[str], Optional[Dict[str, Any]]) -> Any
+        # Message settlement through the mgmt link.
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -270,20 +266,28 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        return self._mgmt_request_response_with_retry(
+        # We don't do retry here, retry is done in the ReceivedMessage._settle_message
+        return self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default
         )
 
-    def _renew_locks(self, *lock_tokens):
-        # type: (str) -> Any
+    def _renew_locks(self, *lock_tokens, **kwargs):
+        # type: (str, Any) -> Any
+        timeout = kwargs.pop("timeout", None)
         message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
-            mgmt_handlers.lock_renew_op
+            mgmt_handlers.lock_renew_op,
+            timeout=timeout
         )
+
+    def close(self):
+        # type: () -> None
+        super(ServiceBusReceiver, self).close()
+        self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
     def get_streaming_message_iter(self, max_wait_time=None):
         # type: (float) -> Iterator[ReceivedMessage]
@@ -413,11 +417,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
-            require_timeout=True
+            operation_requires_timeout=True
         )
 
-    def receive_deferred_messages(self, sequence_numbers):
-        # type: (Union[int,List[int]]) -> List[ReceivedMessage]
+    def receive_deferred_messages(self, sequence_numbers, **kwargs):
+        # type: (Union[int,List[int]], Any) -> List[ReceivedMessage]
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -425,6 +429,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param Union[int,List[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: List[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
@@ -438,6 +444,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
         if not sequence_numbers:
@@ -458,12 +467,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
             message,
-            handler
+            handler,
+            timeout=timeout
         )
         return messages
 
-    def peek_messages(self, max_message_count=1, sequence_number=None):
-        # type: (int, Optional[int]) -> List[PeekedMessage]
+    def peek_messages(self, max_message_count=1, **kwargs):
+        # type: (int, Any) -> List[PeekedMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -471,7 +481,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
-        :param int sequence_number: A message sequence number from which to start browsing messages.
+        :keyword int sequence_number: A message sequence number from which to start browsing messages.
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
 
         :rtype: List[~azure.servicebus.PeekedMessage]
 
@@ -486,6 +498,10 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
+        sequence_number = kwargs.pop("sequence_number", 0)
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
         if int(max_message_count) < 1:
@@ -504,5 +520,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,
-            mgmt_handlers.peek_op
+            mgmt_handlers.peek_op,
+            timeout=timeout
         )

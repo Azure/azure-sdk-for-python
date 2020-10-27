@@ -9,25 +9,25 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionStatus/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionStatus/query
   response:
     body:
       string: '{"value":[{"timestamp":"2020-09-15T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-14T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-13T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-12T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-11T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-10T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-09T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-08T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-07T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-06T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-05T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-04T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-03T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-02T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-01T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-31T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-30T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-29T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-28T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-27T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-26T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-25T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-24T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-23T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-22T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-21T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-20T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-19T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-18T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-17T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-16T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-15T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-14T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-13T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-12T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-11T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-10T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-09T00:00:00Z","status":"NotStarted","message":""}],"@nextLink":null}'
     headers:
-      apim-request-id: 22429294-b9c1-4362-b400-46f87c2f27ce
+      apim-request-id: 2fcaa3d4-fc32-4eb8-906d-4169db06a906
       content-length: '2764'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Sep 2020 01:48:54 GMT
+      date: Thu, 22 Oct 2020 15:53:02 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '626'
-      x-request-id: 22429294-b9c1-4362-b400-46f87c2f27ce
+      x-envoy-upstream-service-time: '342'
+      x-request-id: 2fcaa3d4-fc32-4eb8-906d-4169db06a906
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds/4957a2f7-a0f4-4fc0-b8d7-d866c1df0f4c/ingestionStatus/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds/9860df01-e740-40ec-94a2-6351813552ba/ingestionStatus/query
 - request:
     body: '{"startTime": "2020-08-09T00:00:00.000Z", "endTime": "2020-09-16T00:00:00.000Z"}'
     headers:
@@ -38,23 +38,23 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionStatus/query?$skip=5
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionStatus/query?$skip=5
   response:
     body:
       string: '{"value":[{"timestamp":"2020-09-10T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-09T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-08T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-07T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-06T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-05T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-04T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-03T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-02T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-09-01T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-31T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-30T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-29T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-28T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-27T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-26T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-25T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-24T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-23T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-22T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-21T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-20T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-19T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-18T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-17T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-16T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-15T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-14T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-13T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-12T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-11T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-10T00:00:00Z","status":"NotStarted","message":""},{"timestamp":"2020-08-09T00:00:00Z","status":"NotStarted","message":""}],"@nextLink":null}'
     headers:
-      apim-request-id: a1c7311c-bfb3-42b5-af05-4ed82db4578d
+      apim-request-id: 892db1f3-f8b8-404f-a72d-f1c4ef89744c
       content-length: '2404'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Sep 2020 01:48:55 GMT
+      date: Thu, 22 Oct 2020 15:53:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '609'
-      x-request-id: a1c7311c-bfb3-42b5-af05-4ed82db4578d
+      x-envoy-upstream-service-time: '403'
+      x-request-id: 892db1f3-f8b8-404f-a72d-f1c4ef89744c
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds/4957a2f7-a0f4-4fc0-b8d7-d866c1df0f4c/ingestionStatus/query?$skip=5
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/dataFeeds/9860df01-e740-40ec-94a2-6351813552ba/ingestionStatus/query?$skip=5
 version: 1

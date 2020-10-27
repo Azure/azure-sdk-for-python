@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
@@ -14,14 +15,15 @@ from azure.ai.metricsadvisor.models import (
     MetricBoundaryCondition,
     TopNGroupScope,
     SeverityCondition,
-    MetricAnomalyAlertSnoozeCondition
+    MetricAnomalyAlertSnoozeCondition,
+    AnomalyAlertConfiguration
 )
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_alert_direction_both(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -29,29 +31,31 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="TopN",
-                                top_n_group_in_scope=TopNGroupScope(
-                                    top=5,
-                                    period=10,
-                                    min_top_count=9
-                                )
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    lower=1.0,
-                                    upper=5.0
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="TopN",
+                                    top_n_group_in_scope=TopNGroupScope(
+                                        top=5,
+                                        period=10,
+                                        min_top_count=9
+                                    )
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Both",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        lower=1.0,
+                                        upper=5.0
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -84,7 +88,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_alert_direction_down(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -92,28 +96,30 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="TopN",
-                                top_n_group_in_scope=TopNGroupScope(
-                                    top=5,
-                                    period=10,
-                                    min_top_count=9
-                                )
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    lower=1.0,
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="TopN",
+                                    top_n_group_in_scope=TopNGroupScope(
+                                        top=5,
+                                        period=10,
+                                        min_top_count=9
+                                    )
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Down",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        lower=1.0,
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -146,7 +152,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_alert_direction_up(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -154,28 +160,30 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="TopN",
-                                top_n_group_in_scope=TopNGroupScope(
-                                    top=5,
-                                    period=10,
-                                    min_top_count=9
-                                )
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    upper=5.0,
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="TopN",
+                                    top_n_group_in_scope=TopNGroupScope(
+                                        top=5,
+                                        period=10,
+                                        min_top_count=9
+                                    )
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Up",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        upper=5.0,
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -208,7 +216,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_top_n_severity_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -216,27 +224,29 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="TopN",
-                                top_n_group_in_scope=TopNGroupScope(
-                                    top=5,
-                                    period=10,
-                                    min_top_count=9
-                                )
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                severity_condition=SeverityCondition(
-                                    min_alert_severity="Low",
-                                    max_alert_severity="High"
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="TopN",
+                                    top_n_group_in_scope=TopNGroupScope(
+                                        top=5,
+                                        period=10,
+                                        min_top_count=9
+                                    )
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    severity_condition=SeverityCondition(
+                                        min_alert_severity="Low",
+                                        max_alert_severity="High"
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -263,7 +273,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_snooze_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -271,26 +281,28 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="TopN",
-                                top_n_group_in_scope=TopNGroupScope(
-                                    top=5,
-                                    period=10,
-                                    min_top_count=9
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="TopN",
+                                    top_n_group_in_scope=TopNGroupScope(
+                                        top=5,
+                                        period=10,
+                                        min_top_count=9
+                                    )
+                                ),
+                                alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
+                                    auto_snooze=5,
+                                    snooze_scope="Metric",
+                                    only_for_successive=True
                                 )
-                            ),
-                            alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
-                                auto_snooze=5,
-                                snooze_scope="Metric",
-                                only_for_successive=True
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -318,7 +330,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_alert_direction_both(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("wholeseries")
@@ -326,24 +338,26 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="WholeSeries",
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    lower=1.0,
-                                    upper=5.0
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="WholeSeries",
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Both",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        lower=1.0,
+                                        upper=5.0
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -372,7 +386,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_alert_direction_down(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("wholeseries")
@@ -380,23 +394,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="WholeSeries"
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    lower=1.0,
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="WholeSeries"
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Down",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        lower=1.0,
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -425,7 +441,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_alert_direction_up(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("wholeseries")
@@ -433,23 +449,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="WholeSeries"
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    upper=5.0,
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="WholeSeries"
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Up",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        upper=5.0,
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -478,7 +496,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_whole_series_severity_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("topnup")
@@ -486,22 +504,24 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="WholeSeries"
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                severity_condition=SeverityCondition(
-                                    min_alert_severity="Low",
-                                    max_alert_severity="High"
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="WholeSeries"
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    severity_condition=SeverityCondition(
+                                        min_alert_severity="Low",
+                                        max_alert_severity="High"
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -524,7 +544,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_alert_direction_both(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroup")
@@ -532,25 +552,27 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="SeriesGroup",
-                                series_group_in_scope={'city': 'Shenzhen'}
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    lower=1.0,
-                                    upper=5.0
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="SeriesGroup",
+                                    series_group_in_scope={'city': 'Shenzhen'}
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Both",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        lower=1.0,
+                                        upper=5.0
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -580,7 +602,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_alert_direction_down(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroup")
@@ -588,24 +610,26 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="SeriesGroup",
-                                series_group_in_scope={'city': 'Shenzhen'}
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Down",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    lower=1.0,
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="SeriesGroup",
+                                    series_group_in_scope={'city': 'Shenzhen'}
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Down",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        lower=1.0,
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -635,7 +659,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_alert_direction_up(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroup")
@@ -643,24 +667,26 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="SeriesGroup",
-                                series_group_in_scope={'city': 'Shenzhen'}
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Up",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    upper=5.0,
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="SeriesGroup",
+                                    series_group_in_scope={'city': 'Shenzhen'}
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Up",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        upper=5.0,
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -690,7 +716,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_series_group_severity_condition(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("seriesgroupsev")
@@ -698,23 +724,25 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="SeriesGroup",
-                                series_group_in_scope={'city': 'Shenzhen'}
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                severity_condition=SeverityCondition(
-                                    min_alert_severity="Low",
-                                    max_alert_severity="High"
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="SeriesGroup",
+                                    series_group_in_scope={'city': 'Shenzhen'}
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    severity_condition=SeverityCondition(
+                                        min_alert_severity="Low",
+                                        max_alert_severity="High"
+                                    )
                                 )
                             )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertIsNone(alert_config.cross_metrics_operator)
                 self.assertIsNotNone(alert_config.id)
@@ -738,7 +766,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_anomaly_alert_config_multiple_configurations(self):
 
         detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config("multiple")
@@ -746,55 +774,57 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
         async with self.admin_client:
             try:
                 alert_config = await self.admin_client.create_anomaly_alert_configuration(
-                    name=alert_config_name,
-                    cross_metrics_operator="AND",
-                    metric_alert_configurations=[
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="TopN",
-                                top_n_group_in_scope=TopNGroupScope(
-                                    top=5,
-                                    period=10,
-                                    min_top_count=9
+                    AnomalyAlertConfiguration(
+                        name=alert_config_name,
+                        cross_metrics_operator="AND",
+                        metric_alert_configurations=[
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="TopN",
+                                    top_n_group_in_scope=TopNGroupScope(
+                                        top=5,
+                                        period=10,
+                                        min_top_count=9
+                                    )
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    metric_boundary_condition=MetricBoundaryCondition(
+                                        direction="Both",
+                                        companion_metric_id=data_feed.metric_ids[0],
+                                        lower=1.0,
+                                        upper=5.0
+                                    )
                                 )
                             ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                metric_boundary_condition=MetricBoundaryCondition(
-                                    direction="Both",
-                                    companion_metric_id=data_feed.metric_ids[0],
-                                    lower=1.0,
-                                    upper=5.0
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="SeriesGroup",
+                                    series_group_in_scope={'city': 'Shenzhen'}
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    severity_condition=SeverityCondition(
+                                        min_alert_severity="Low",
+                                        max_alert_severity="High"
+                                    )
                                 )
-                            )
-                        ),
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="SeriesGroup",
-                                series_group_in_scope={'city': 'Shenzhen'}
                             ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                severity_condition=SeverityCondition(
-                                    min_alert_severity="Low",
-                                    max_alert_severity="High"
+                            MetricAlertConfiguration(
+                                detection_configuration_id=detection_config.id,
+                                alert_scope=MetricAnomalyAlertScope(
+                                    scope_type="WholeSeries"
+                                ),
+                                alert_conditions=MetricAnomalyAlertConditions(
+                                    severity_condition=SeverityCondition(
+                                        min_alert_severity="Low",
+                                        max_alert_severity="High"
+                                    )
                                 )
                             )
-                        ),
-                        MetricAlertConfiguration(
-                            detection_configuration_id=detection_config.id,
-                            alert_scope=MetricAnomalyAlertScope(
-                                scope_type="WholeSeries"
-                            ),
-                            alert_conditions=MetricAnomalyAlertConditions(
-                                severity_condition=SeverityCondition(
-                                    min_alert_severity="Low",
-                                    max_alert_severity="High"
-                                )
-                            )
-                        )
-                    ],
-                    hook_ids=[]
+                        ],
+                        hook_ids=[]
+                    )
                 )
                 self.assertEqual(alert_config.cross_metrics_operator, "AND")
                 self.assertIsNotNone(alert_config.id)
@@ -837,7 +867,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 await self.admin_client.delete_metric_anomaly_detection_configuration(detection_config.id)
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_anomaly_alert_configs(self):
         async with self.admin_client:
             configs = self.admin_client.list_anomaly_alert_configurations(
@@ -848,7 +878,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 config_list.append(config)
             assert len(list(config_list)) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_config_with_model(self):
         async with self.admin_client:
             try:
@@ -889,7 +919,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_config_with_kwargs(self):
         async with self.admin_client:
             try:
@@ -973,7 +1003,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_config_with_model_and_kwargs(self):
         async with self.admin_client:
             try:
@@ -1063,7 +1093,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_anomaly_alert_by_resetting_properties(self):
         async with self.admin_client:
             try:

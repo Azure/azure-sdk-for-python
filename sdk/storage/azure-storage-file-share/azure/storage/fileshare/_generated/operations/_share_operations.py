@@ -37,7 +37,7 @@ class ShareOperations(object):
         self._config = config
         self.restype = "share"
 
-    def create(self, timeout=None, metadata=None, quota=None, cls=None, **kwargs):
+    def create(self, timeout=None, metadata=None, quota=None, access_tier=None, cls=None, **kwargs):
         """Creates a new share under the specified account. If the share with the
         same name already exists, the operation fails.
 
@@ -51,6 +51,10 @@ class ShareOperations(object):
         :type metadata: str
         :param quota: Specifies the maximum size of the share, in gigabytes.
         :type quota: int
+        :param access_tier: Specifies the access tier of the share. Possible
+         values include: 'TransactionOptimized', 'Hot', 'Cool'
+        :type access_tier: str or
+         ~azure.storage.fileshare.models.ShareAccessTier
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -78,6 +82,8 @@ class ShareOperations(object):
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if quota is not None:
             header_parameters['x-ms-share-quota'] = self._serialize.header("quota", quota, 'int', minimum=1)
+        if access_tier is not None:
+            header_parameters['x-ms-access-tier'] = self._serialize.header("access_tier", access_tier, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
         # Construct and send request
@@ -176,6 +182,9 @@ class ShareOperations(object):
                 'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
                 'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
                 'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
+                'x-ms-access-tier': self._deserialize('str', response.headers.get('x-ms-access-tier')),
+                'x-ms-access-tier-change-time': self._deserialize('rfc-1123', response.headers.get('x-ms-access-tier-change-time')),
+                'x-ms-access-tier-transition-state': self._deserialize('str', response.headers.get('x-ms-access-tier-transition-state')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -196,7 +205,7 @@ class ShareOperations(object):
         :type timeout: int
         :param delete_snapshots: Specifies the option include to delete the
          base share and all of its snapshots. Possible values include:
-         'include'
+         'include', 'include-leased'
         :type delete_snapshots: str or
          ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
         :param lease_access_conditions: Additional parameters for the
@@ -868,8 +877,8 @@ class ShareOperations(object):
         return deserialized
     get_permission.metadata = {'url': '/{shareName}'}
 
-    def set_quota(self, timeout=None, quota=None, lease_access_conditions=None, cls=None, **kwargs):
-        """Sets quota for the specified share.
+    def set_properties(self, timeout=None, quota=None, access_tier=None, lease_access_conditions=None, cls=None, **kwargs):
+        """Sets properties for the specified share.
 
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
@@ -878,6 +887,10 @@ class ShareOperations(object):
         :type timeout: int
         :param quota: Specifies the maximum size of the share, in gigabytes.
         :type quota: int
+        :param access_tier: Specifies the access tier of the share. Possible
+         values include: 'TransactionOptimized', 'Hot', 'Cool'
+        :type access_tier: str or
+         ~azure.storage.fileshare.models.ShareAccessTier
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
@@ -897,7 +910,7 @@ class ShareOperations(object):
         comp = "properties"
 
         # Construct URL
-        url = self.set_quota.metadata['url']
+        url = self.set_properties.metadata['url']
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
         }
@@ -915,6 +928,8 @@ class ShareOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if quota is not None:
             header_parameters['x-ms-share-quota'] = self._serialize.header("quota", quota, 'int', minimum=1)
+        if access_tier is not None:
+            header_parameters['x-ms-access-tier'] = self._serialize.header("access_tier", access_tier, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
@@ -937,7 +952,7 @@ class ShareOperations(object):
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
-    set_quota.metadata = {'url': '/{shareName}'}
+    set_properties.metadata = {'url': '/{shareName}'}
 
     def set_metadata(self, timeout=None, metadata=None, lease_access_conditions=None, cls=None, **kwargs):
         """Sets one or more user-defined name-value pairs for the specified share.

@@ -4,7 +4,7 @@
 # ------------------------------------
 
 # pylint: disable=too-many-lines,too-many-public-methods
-from ._shared import parse_vault_id
+from ._shared import parse_key_vault_id
 from ._generated.v7_1 import models
 from ._enums import(
     CertificatePolicyAction,
@@ -147,7 +147,7 @@ class CertificateProperties(object):
         # type: (**Any) -> None
         self._attributes = kwargs.pop("attributes", None)
         self._id = kwargs.pop("cert_id", None)
-        self._vault_id = parse_vault_id(self._id)
+        self._vault_id = parse_key_vault_id(self._id)
         self._x509_thumbprint = kwargs.pop("x509_thumbprint", None)
         self._tags = kwargs.pop("tags", None)
 
@@ -430,7 +430,7 @@ class CertificateOperation(object):
     ):
         # type: (...) -> None
         self._id = cert_operation_id
-        self._vault_id = parse_vault_id(cert_operation_id)
+        self._vault_id = parse_key_vault_id(cert_operation_id)
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
@@ -1058,7 +1058,7 @@ class IssuerProperties(object):
     def __init__(self, provider=None, **kwargs):
         # type: (Optional[str], **Any) -> None
         self._id = kwargs.pop("issuer_id", None)
-        self._vault_id = parse_vault_id(self._id)
+        self._vault_id = parse_key_vault_id(self._id)
         self._provider = provider
 
     def __repr__(self):
@@ -1120,7 +1120,7 @@ class CertificateIssuer(object):
         self._organization_id = organization_id
         self._admin_contacts = admin_contacts
         self._id = kwargs.pop("issuer_id", None)
-        self._vault_id = parse_vault_id(self._id)
+        self._vault_id = parse_key_vault_id(self._id)
 
     def __repr__(self):
         # type () -> str
@@ -1157,9 +1157,9 @@ class CertificateIssuer(object):
     @property
     def name(self):
         # type: () -> str
-        # Issuer name is listed under version under vault_id
-        # This is because the id we pass to parse_vault_id has an extra segment, so where most cases the version of
-        # The general pattern is certificates/name/version, but here we have certificates/issuers/name/version
+        # Issuer name is listed under version under vault_id.
+        # This is because the id we pass to parse_key_vault_id has an extra segment, so where most cases the version of
+        # the general pattern is certificates/name/version, but here we have certificates/issuers/name/version.
         # Issuers are not versioned.
         """:rtype: str"""
         return self._vault_id.version

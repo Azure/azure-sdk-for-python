@@ -175,6 +175,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             senders = [sb_client.get_queue_sender(servicebus_queue.name)],
             receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
             max_wait_time = 5,
+            receive_type=ReceiveType.pull,
             duration=timedelta(seconds=600))
 
         result = stress_test.Run()

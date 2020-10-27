@@ -7,9 +7,17 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-For code examples, see [{{package_pprint_name}}](https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}})
-on docs.microsoft.com.
+{% if is_arm %}
+To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
+{% endif %}
 
+{% if is_arm %} 
+For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}})
+Code samples for this package can be found at [{{package_pprint_name}}](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/{{package_doc_id}}) on docs.microsoft.com.
+Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+{% else %}
+For code examples, see [{{package_pprint_name}}](https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}) on docs.microsoft.com.
+{% endif %}
 
 # Provide Feedback
 

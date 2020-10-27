@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import asyncio
+import datetime
 from typing import Any, TYPE_CHECKING, Union, List
 
 import uamqp
@@ -22,7 +23,6 @@ from .._common.utils import transform_messages_to_sendable_if_needed
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
-    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,17 +131,27 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
-        self._set_msg_timeout(timeout, last_exception)
-        await self._handler.send_message_async(message.message)
+        default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
+        try:
+            self._set_msg_timeout(timeout, last_exception)
+            await self._handler.send_message_async(message.message)
+        finally:  # reset the timeout of the handler back to the default value
+            self._set_msg_timeout(default_timeout, None)
 
-    async def schedule_messages(self, messages, schedule_time_utc):
-        # type: (Union[Message, List[Message]], datetime.datetime) -> List[int]
+    async def schedule_messages(
+        self,
+        messages: Union[Message, List[Message]],
+        schedule_time_utc: datetime.datetime,
+        **kwargs: Any
+    ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
         :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: list[int]
 
         .. admonition:: Example:
@@ -155,6 +165,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         # pylint: disable=protected-access
         await self._open()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if isinstance(messages, Message):
             request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
@@ -162,16 +175,18 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
             request_body,
-            mgmt_handlers.schedule_op
+            mgmt_handlers.schedule_op,
+            timeout=timeout
         )
 
-    async def cancel_scheduled_messages(self, sequence_numbers):
-        # type: (Union[int, List[int]]) -> None
+    async def cancel_scheduled_messages(self, sequence_numbers: Union[int, List[int]], **kwargs: Any) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
 
         :param sequence_numbers: The sequence numbers of the scheduled messages.
         :type sequence_numbers: int or list[int]
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.ServiceBusError if messages cancellation failed due to message already
          cancelled or enqueued.
@@ -186,6 +201,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Cancelling messages scheduled to be sent in future
         """
         await self._open()
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, int):
             numbers = [types.AMQPLong(sequence_numbers)]
         else:
@@ -194,7 +212,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
             request_body,
-            mgmt_handlers.default
+            mgmt_handlers.default,
+            timeout=timeout
         )
 
     @classmethod
@@ -237,8 +256,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send_messages(self, message):
-        # type: (Union[Message, BatchMessage, List[Message]]) -> None
+    async def send_messages(self, message: Union[Message, BatchMessage, List[Message]], **kwargs: Any) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
@@ -246,6 +264,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param message: The ServiceBus message to be sent.
         :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
+        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
+         greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
@@ -266,6 +286,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        timeout = kwargs.pop("timeout", None)
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         message = transform_messages_to_sendable_if_needed(message)
         try:
             batch = await self.create_batch()
@@ -281,12 +304,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         await self._do_retryable_operation(
             self._send,
             message=message,
-            require_timeout=True,
+            timeout=timeout,
+            operation_requires_timeout=True,
             require_last_exception=True
         )
 
-    async def create_batch(self, max_size_in_bytes=None):
-        # type: (int) -> BatchMessage
+    async def create_batch(self, max_size_in_bytes: int = None) -> BatchMessage:
         """Create a BatchMessage object with the max size of all content being constrained by max_size_in_bytes.
         The max_size should be no greater than the max allowed message size defined by the service.
 

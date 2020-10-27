@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 28 Sep 2020 21:07:45 GMT
+      - Sat, 10 Oct 2020 02:20:51 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Sep 2020 21:07:46 GMT
+      - Sat, 10 Oct 2020 02:20:51 GMT
       ms-cv:
-      - QzclZYQsuk2dhRGLgFRISw.0
+      - DW7FajXWBkOVglGZi8w07Q.0
       x-processing-time:
-      - 1272ms
+      - 556ms
     status:
       code: 202
       message: Accepted

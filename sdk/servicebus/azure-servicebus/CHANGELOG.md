@@ -2,10 +2,36 @@
 
 ## 7.0.0b8 (Unreleased)
 
+**Breaking Changes**
+  - Renamed `AutoLockRenew` to `AutoLockRenewer`
+
+**New Features**
+
+* Added support for `timeout` parameter on the following operations:
+  - `ServiceBusSender`: `send_messages`, `schedule_messages` and `cancel_scheduled_messages`
+  - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
+  - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
+  - `ReceivedMessage`: `renew_lock`
+
+**Breaking Changes**
+
+* Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)
+and methods that use amqp management link for request like `schedule_messages`, `received_deferred_messages`, etc.
+now raise more concrete exception other than `MessageSettleFailed` and `ServiceBusError`.
+* Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
+ now inherit from `azure.servicebus.exceptions.MessageError`.
+* Removed Exception `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus resource does not exist.
+
+**BugFixes**
+
+* Updated uAMQP dependency to 1.2.12.
+  - Added support for Python 3.9.
+  - Fixed bug where amqp message `footer` and `delivery_annotation` were not encoded into the outgoing payload.
 
 ## 7.0.0b7 (2020-10-05)
 
 **Breaking Changes**
+
 * Passing any type other than `ReceiveMode` as parameter `receive_mode` now throws a `TypeError` instead of `AttributeError`.
 * Administration Client calls now take only entity names, not `<Entity>Descriptions` as well to reduce ambiguity in which entity was being acted on. TypeError will now be thrown on improper parameter types (non-string).
 * `AMQPMessage` (`Message.amqp_message`) properties are now read-only, changes of these properties would not be reflected in the underlying message.  This may be subject to change before GA.
