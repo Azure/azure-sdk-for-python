@@ -14,13 +14,53 @@ class ServiceBusConnectionStringProperties(DictMixin):
     Properties of a connection string.
     """
     def __init__(self, **kwargs):
-        self.fully_qualified_namespace = kwargs.pop('fully_qualified_namespace', None)
-        self.endpoint = kwargs.pop('endpoint', None)
-        self.entity_path = kwargs.pop('entity_path', None)
-        self.shared_access_signature = kwargs.pop('shared_access_signature', None)
-        self.shared_access_key_name = kwargs.pop('shared_access_key_name', None)
-        self.shared_access_key = kwargs.pop('shared_access_key', None)
+        self._fully_qualified_namespace = kwargs.pop('fully_qualified_namespace', None)
+        self._endpoint = kwargs.pop('endpoint', None)
+        self._entity_path = kwargs.pop('entity_path', None)
+        self._shared_access_signature = kwargs.pop('shared_access_signature', None)
+        self._shared_access_key_name = kwargs.pop('shared_access_key_name', None)
+        self._shared_access_key = kwargs.pop('shared_access_key', None)
+    
+    @property
+    def fully_qualified_namespace(self):
+        """The fully qualified host name for the Service Bus namespace.
+        The namespace format is: `<yournamespace>.servicebus.windows.net`.
+        """
+        return self._fully_qualified_namespace
 
+    @property
+    def endpoint(self):
+        """The endpoint for the Service Bus resource. In the format sb://<FQDN>/
+        """
+        return self._endpoint
+
+    @property
+    def entity_path(self):
+        """Optional. Represents the name of the queue/topic.
+        """
+        return self._entity_path
+
+    @property
+    def shared_access_signature(self):
+        """
+        This can be provided instead of the shared_access_key_name and the shared_access_key.
+        """
+        return self._shared_access_signature
+
+    @property
+    def shared_access_key_name(self):
+        """
+        The name of the shared access key.
+        """
+        return self._shared_access_key_name
+
+    @property
+    def shared_access_key(self):
+        """
+        Required for authentication along with the key name. A shared_access_signature can be used
+        alternatively.
+        """
+        return self._shared_access_key
 
 class ServiceBusConnectionStringParser(object):
     """Parse the connection string.
@@ -45,7 +85,10 @@ class ServiceBusConnectionStringParser(object):
         if any(len(tup) != 2 for tup in conn_settings):
             raise ValueError("Connection string is either blank or malformed.")
         conn_settings = dict(conn_settings)
-        shared_access_signature = conn_settings.get('SharedAccessSignature')
+        shared_access_signature = None
+        for key, value in conn_settings.items():
+            if key.lower() == 'sharedaccesssignature':
+                shared_access_signature = value
         shared_access_key = conn_settings.get('SharedAccessKey')
         if shared_access_signature is not None and shared_access_key is not None:
             raise ValueError("Only one of the SharedAccessKey or SharedAccessSignature must be present.")

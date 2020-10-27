@@ -42,3 +42,11 @@ class ServiceBusConnectionStringParserTests(AzureMgmtTestCase):
         with pytest.raises(ValueError) as e:
             parse_result = ServiceBusConnectionStringParser(conn_str).parse()
         assert str(e.value) == 'Invalid Endpoint on the Connection String.'
+
+    def test_sb_parse_conn_str_sas(self, **kwargs):
+        conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
+        parse_result = ServiceBusConnectionStringParser(conn_str).parse()
+        assert parse_result.endpoint == 'sb://resourcename.servicebus.windows.net/'
+        assert parse_result.fully_qualified_namespace == 'resourcename.servicebus.windows.net'
+        assert parse_result.shared_access_signature == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
+        assert parse_result.shared_access_key_name == None
