@@ -217,9 +217,9 @@ class AzureTestCase(ReplayableTest):
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
                 return ServicePrincipalCredentials(
-                    tenant=tenant_id,
-                    client_id=client_id,
-                    secret=secret
+                    tenant=self.tenant_id,
+                    client_id=self.client_id,
+                    secret=self.secret
                 )
         else:
             if _is_autorest_v3(client_class):
