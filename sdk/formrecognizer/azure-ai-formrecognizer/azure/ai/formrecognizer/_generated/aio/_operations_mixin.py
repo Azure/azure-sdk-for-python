@@ -116,7 +116,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     async def begin_analyze_layout_async(
         self,
-        page_range: Optional[List[str]] = None,
+        pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
@@ -127,8 +127,10 @@ class FormRecognizerClientOperationsMixin(object):
         'image/bmp'. Alternatively, use 'application/json' type to specify the location (Uri or local
         path) of the document to be analyzed.
 
-        :param page_range: Specify page number or range of page numbers to process, e.g: 1, 5, 7, 9-10.
-        :type page_range: list[str]
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma or space.
+        :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
@@ -160,7 +162,7 @@ class FormRecognizerClientOperationsMixin(object):
         if api_version == '2.0':
             return await mixin_instance.begin_analyze_layout_async(file_stream, **kwargs)
         elif api_version == '2.1-preview.2':
-            return await mixin_instance.begin_analyze_layout_async(page_range, file_stream, **kwargs)
+            return await mixin_instance.begin_analyze_layout_async(pages, file_stream, **kwargs)
 
     async def begin_analyze_receipt_async(
         self,

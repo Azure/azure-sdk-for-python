@@ -104,11 +104,11 @@ class SelectionMarkState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNSELECTED = "unselected"
 
 class TextStyle(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Style of the extracted text: handwriting or printed.
+    """The text line style name, including handwriting and other.
     """
 
+    OTHER = "other"
     HANDWRITING = "handwriting"
-    PRINTED = "printed"
 
 class TrainStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the training operation.

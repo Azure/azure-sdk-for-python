@@ -94,25 +94,20 @@ class AnalyzeResult(msrest.serialization.Model):
 
 
 class Appearance(msrest.serialization.Model):
-    """The appearance of extracted text.
+    """An object representing the appearance of the text line.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param style: Required. Style of the extracted text: handwriting or printed. Possible values
-     include: "handwriting", "printed".
-    :type style: str or ~azure.ai.formrecognizer.models.TextStyle
-    :param style_confidence: Required. Confidence value of predicted style.
-    :type style_confidence: float
+    :param style: Required. An object representing the style of the text line.
+    :type style: ~azure.ai.formrecognizer.models.Style
     """
 
     _validation = {
         'style': {'required': True},
-        'style_confidence': {'required': True, 'maximum': 1, 'minimum': 0},
     }
 
     _attribute_map = {
-        'style': {'key': 'style', 'type': 'str'},
-        'style_confidence': {'key': 'styleConfidence', 'type': 'float'},
+        'style': {'key': 'style', 'type': 'Style'},
     }
 
     def __init__(
@@ -121,7 +116,6 @@ class Appearance(msrest.serialization.Model):
     ):
         super(Appearance, self).__init__(**kwargs)
         self.style = kwargs['style']
-        self.style_confidence = kwargs['style_confidence']
 
 
 class Attributes(msrest.serialization.Model):
@@ -325,7 +319,7 @@ class DataTable(msrest.serialization.Model):
     :type columns: int
     :param cells: Required. List of cells contained in the table.
     :type cells: list[~azure.ai.formrecognizer.models.DataTableCell]
-    :param bounding_box: Required. Bounding box of the table.
+    :param bounding_box: Bounding box of the table.
     :type bounding_box: list[float]
     """
 
@@ -333,7 +327,7 @@ class DataTable(msrest.serialization.Model):
         'rows': {'required': True, 'minimum': 1},
         'columns': {'required': True, 'minimum': 1},
         'cells': {'required': True},
-        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
+        'bounding_box': {'max_items': 8, 'min_items': 8},
     }
 
     _attribute_map = {
@@ -351,7 +345,7 @@ class DataTable(msrest.serialization.Model):
         self.rows = kwargs['rows']
         self.columns = kwargs['columns']
         self.cells = kwargs['cells']
-        self.bounding_box = kwargs['bounding_box']
+        self.bounding_box = kwargs.get('bounding_box', None)
 
 
 class DataTableCell(msrest.serialization.Model):
@@ -1050,6 +1044,37 @@ class SourcePath(msrest.serialization.Model):
     ):
         super(SourcePath, self).__init__(**kwargs)
         self.source = kwargs.get('source', None)
+
+
+class Style(msrest.serialization.Model):
+    """An object representing the style of the text line.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The text line style name, including handwriting and other. Possible
+     values include: "other", "handwriting".
+    :type name: str or ~azure.ai.formrecognizer.models.TextStyle
+    :param confidence: Required. The confidence of text line style.
+    :type confidence: float
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'confidence': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(Style, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.confidence = kwargs['confidence']
 
 
 class TextLine(msrest.serialization.Model):

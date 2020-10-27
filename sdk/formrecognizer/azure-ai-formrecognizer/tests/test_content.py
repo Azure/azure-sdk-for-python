@@ -341,7 +341,7 @@ class TestContentFromStream(FormRecognizerTest):
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myform = fd.read()
 
-        poller = client.begin_recognize_content(myform, page_range=["1"])
+        poller = client.begin_recognize_content(myform, pages=["1"])
         result = poller.result()
 
         self.assertEqual(len(result), 1)

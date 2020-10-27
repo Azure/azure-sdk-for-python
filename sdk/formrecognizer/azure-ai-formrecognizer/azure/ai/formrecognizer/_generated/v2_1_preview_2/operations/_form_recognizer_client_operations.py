@@ -1396,7 +1396,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def _analyze_layout_async_initial(
         self,
-        page_range=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -1418,8 +1418,8 @@ class FormRecognizerClientOperationsMixin(object):
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        if page_range is not None:
-            query_parameters['pageRange'] = self._serialize.query("page_range", page_range, '[str]', div=',')
+        if pages is not None:
+            query_parameters['Pages'] = self._serialize.query("pages", pages, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
@@ -1459,7 +1459,7 @@ class FormRecognizerClientOperationsMixin(object):
 
     def begin_analyze_layout_async(
         self,
-        page_range=None,  # type: Optional[List[str]]
+        pages=None,  # type: Optional[List[str]]
         file_stream=None,  # type: Optional[Union[IO, "models.SourcePath"]]
         **kwargs  # type: Any
     ):
@@ -1471,8 +1471,10 @@ class FormRecognizerClientOperationsMixin(object):
         'image/bmp'. Alternatively, use 'application/json' type to specify the location (Uri or local
         path) of the document to be analyzed.
 
-        :param page_range: Specify page number or range of page numbers to process, e.g: 1, 5, 7, 9-10.
-        :type page_range: list[str]
+        :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+         pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+         range with a comma or space.
+        :type pages: list[str]
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
@@ -1496,7 +1498,7 @@ class FormRecognizerClientOperationsMixin(object):
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._analyze_layout_async_initial(
-                page_range=page_range,
+                pages=pages,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
                 **kwargs

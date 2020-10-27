@@ -378,7 +378,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             myform = fd.read()
 
         async with client:
-            poller = await client.begin_recognize_content(myform, page_range=["1"])
+            poller = await client.begin_recognize_content(myform, pages=["1"])
             result = await poller.result()
 
         self.assertEqual(len(result), 1)

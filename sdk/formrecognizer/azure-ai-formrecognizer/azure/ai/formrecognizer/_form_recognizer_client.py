@@ -428,8 +428,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type form: bytes or IO[bytes]
-        :keyword list[str] page_range: Specify page number or range of page numbers to
-            process, e.g: 1, 5, 7, 9-10.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+            pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+            range with a comma or space.
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -442,7 +443,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         .. versionadded:: v2.1-preview
-            The *page_range* keyword argument
+            The *pages* keyword argument
 
         .. admonition:: Example:
 
@@ -453,7 +454,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 :dedent: 8
                 :caption: Recognize text and content/layout information from a form.
         """
-        page_range = kwargs.pop("page_range", None)
+        pages = kwargs.pop("pages", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
@@ -463,11 +464,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
-        if page_range:
+        if pages:
             if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
-                kwargs.update({"page_range": page_range})
+                kwargs.update({"pages": pages})
             else:
-                raise ValueError("'page_range' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=form,
@@ -485,8 +486,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
-        :keyword list[str] page_range: Specify page number or range of page numbers to
-            process, e.g: 1, 5, 7, 9-10.
+        :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
+            pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
+            range with a comma or space.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -495,17 +497,17 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         .. versionadded:: v2.1-preview
-            The *page_range* keyword argument
+            The *pages* keyword argument
         """
-        page_range = kwargs.pop("page_range", None)
+        pages = kwargs.pop("pages", None)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
-        if page_range:
+        if pages:
             if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
-                kwargs.update({"page_range": page_range})
+                kwargs.update({"pages": pages})
             else:
-                raise ValueError("'page_range' is only available for API version V2_1_PREVIEW and up")
+                raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},

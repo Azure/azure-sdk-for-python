@@ -264,7 +264,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     async def test_content_page_range(self, client):
         pytest.skip("service returning 3 pages")
         async with client:
-            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf)
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1"])
             result = await poller.result()
 
         self.assertEqual(len(result), 1)

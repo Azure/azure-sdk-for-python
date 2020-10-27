@@ -10,7 +10,8 @@ from ._form_training_client import FormTrainingClient
 
 from ._generated.v2_1_preview_2.models import (
     Appearance,
-    TextStyle
+    TextStyle,
+    Style
 )
 
 
@@ -76,7 +77,8 @@ __all__ = [
     'FormSelectionMark',
     'SelectionMarkState',
     'Appearance',
-    'TextStyle'
+    'TextStyle',
+    'Style'
 ]
 
 __VERSION__ = VERSION
