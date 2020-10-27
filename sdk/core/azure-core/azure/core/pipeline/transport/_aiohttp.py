@@ -29,7 +29,6 @@ from collections.abc import AsyncIterator
 import logging
 import asyncio
 import aiohttp
-from multidict import CIMultiDictProxy, CIMultiDict
 
 from requests.exceptions import (
     ChunkedEncodingError,
@@ -264,13 +263,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
-        headers = aiohttp_response.headers
-        if isinstance(headers, CIMultiDictProxy):
-            headers_dict = CIMultiDict(headers)
-            self.headers = headers_dict
-        else:
-            self.headers = headers
         self.status_code = aiohttp_response.status
+        self.headers = aiohttp_response.headers
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
@@ -313,5 +307,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
+        from multidict import CIMultiDict  # I know it's importable since aiohttp is loaded
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
