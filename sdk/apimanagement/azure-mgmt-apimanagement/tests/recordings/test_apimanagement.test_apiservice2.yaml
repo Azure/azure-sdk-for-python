@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: '{"tags": {"tag1": "value1", "tag2": "value2", "tag3": "value3"}, "sku":
+      {"name": "Premium", "capacity": 1}, "location": "eastus", "properties": {"hostnameConfigurations":
+      [{"type": "Proxy", "hostName": "gateway1.msitesting.net", "encodedCertificate":
+      "****** Base 64 Encoded Certificate ************", "certificatePassword": "Password",
+      "defaultSslBinding": true}, {"type": "Management", "hostName": "mgmt.msitesting.net",
+      "encodedCertificate": "****** Base 64 Encoded Certificate ************", "certificatePassword":
+      "Password"}, {"type": "Portal", "hostName": "portal1.msitesting.net", "encodedCertificate":
+      "****** Base 64 Encoded Certificate ************", "certificatePassword": "Password"}],
+      "additionalLocations": [{"location": "East US", "sku": {"name": "Premium", "capacity":
+      1}, "disableGateway": true}], "virtualNetworkType": "None", "apiVersionConstraint":
+      {"minApiVersion": "2019-01-01"}, "publisherEmail": "apim@autorestsdk.com", "publisherName":
+      "autorestsdk"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '977'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-apimanagement/1.0.0b1 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_apimanagement_test_apiservice22500e21/providers/Microsoft.ApiManagement/service/apiservice2500e21?api-version=2020-06-01-preview
+  response:
+    body:
+      string: '{"error":{"code":"InvalidParameters","message":"Invalid parameter:
+        Cannot have two services in the same location ''East US''.","details":null,"innerError":null}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '159'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 27 Oct 2020 07:37:23 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 400
+      message: Bad Request
+version: 1

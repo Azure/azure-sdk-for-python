@@ -6,7 +6,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 
 # Usage
-
+  
 For code examples, see [API Management](https://docs.microsoft.com/python/api/overview/azure/)
 on docs.microsoft.com.
 
