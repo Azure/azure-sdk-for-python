@@ -26,6 +26,7 @@
 import abc
 import base64
 import json
+import logging
 from typing import TYPE_CHECKING, Optional, Any, Union
 
 from ..exceptions import HttpResponseError, DecodeError, AzureError
@@ -49,6 +50,7 @@ try:
 except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
+_LOGGER = logging.getLogger(__name__)
 
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
@@ -458,6 +460,17 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         # type() -> str
         import pickle
         return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
+    
+    def _get_continuation_token_safe(self):
+        # type() -> Optional[str]
+        """This method should only be called when populating the continuation token in an
+        underlying error, where we do not want to mask that error with a failed token retrieval.
+        """
+        try:
+            return self.get_continuation_token()
+        except Exception as err: # pylint: disable=broad-except
+            _LOGGER.warning("Unable to retrieve continuation token: %s", err)
+            return None
 
     @classmethod
     def from_continuation_token(cls, continuation_token, **kwargs):
@@ -483,7 +496,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             self._poll()
         except AzureError as err:
             if not err.continuation_token:
-                err.continuation_token = self.get_continuation_token()
+                err.continuation_token = self._get_continuation_token_safe()
             raise
 
         except BadStatus as err:
@@ -491,7 +504,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 error=err,
-                continuation_token=self.get_continuation_token()
+                continuation_token=self._get_continuation_token_safe()
             )
 
         except BadResponse as err:
@@ -500,14 +513,14 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
                 response=self._pipeline_response.http_response,
                 message=str(err),
                 error=err,
-                continuation_token=self.get_continuation_token()
+                continuation_token=self._get_continuation_token_safe()
             )
 
         except OperationFailed as err:
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 error=err,
-                continuation_token=self.get_continuation_token()
+                continuation_token=self._get_continuation_token_safe()
             )
 
     def _poll(self):

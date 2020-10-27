@@ -198,7 +198,8 @@ class AzureError(Exception):
     :ivar exc_traceback: The exc_traceback from sys.exc_info()
     :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
     :ivar str message: A stringified version of the message parameter
-    :ivar str continuation_token: A token reference to continue an incomplete operation
+    :ivar str continuation_token: A token reference to continue an incomplete operation. This value is optional
+     and will be `None` where continuation is either unavailable or not applicable.
     """
 
     def __init__(self, message, *args, **kwargs):

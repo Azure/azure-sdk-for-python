@@ -45,7 +45,7 @@ class AsyncLROBasePolling(LROBasePolling):
             await self._poll()
         except AzureError as err:
             if not err.continuation_token:
-                err.continuation_token = self.get_continuation_token()
+                err.continuation_token = self._get_continuation_token_safe()
             raise
 
         except BadStatus as err:
@@ -53,7 +53,7 @@ class AsyncLROBasePolling(LROBasePolling):
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 error=err,
-                continuation_token=self.get_continuation_token()
+                continuation_token=self._get_continuation_token_safe()
             )
 
         except BadResponse as err:
@@ -62,14 +62,14 @@ class AsyncLROBasePolling(LROBasePolling):
                 response=self._pipeline_response.http_response,
                 message=str(err),
                 error=err,
-                continuation_token=self.get_continuation_token()
+                continuation_token=self._get_continuation_token_safe()
             )
 
         except OperationFailed as err:
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 error=err,
-                continuation_token=self.get_continuation_token()
+                continuation_token=self._get_continuation_token_safe()
             )
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
