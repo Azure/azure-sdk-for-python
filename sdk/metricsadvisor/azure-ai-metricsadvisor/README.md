@@ -272,7 +272,7 @@ anomaly_detection_config = AnomalyDetectionConfiguration(
     )
 )
 
-detection_config = client.create_metric_anomaly_detection_configuration(anomaly_detection_config)
+detection_config = client.create_detection_configuration(anomaly_detection_config)
 
 return detection_config
 ```
