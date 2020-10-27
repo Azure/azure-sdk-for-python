@@ -84,77 +84,77 @@ class StressTestRunner:
 
 
     # Plugin functions the caller can override to further tailor the test.
-    def OnSend(self, state, sent_message, sender):
+    def on_send(self, state, sent_message, sender):
         '''Called on every successful send, per message'''
         pass
 
-    def OnReceive(self, state, received_message, receiver):
+    def on_receive(self, state, received_message, receiver):
         '''Called on every successful receive, per message'''
         pass
 
-    def OnReceiveBatch(self, state, batch, receiver):
+    def on_receive_batch(self, state, batch, receiver):
         '''Called on every successful receive, at the batch or iterator level rather than per-message'''
         pass
 
-    def PostReceive(self, state, receiver):
+    def post_receive(self, state, receiver):
         '''Called after completion of every successful receive'''
         pass
 
-    def OnComplete(self, send_results=[], receive_results=[]):
+    def on_complete(self, send_results=[], receive_results=[]):
         '''Called on stress test run completion'''
         pass
 
 
-    def PreProcessMessage(self, message):
+    def pre_process_message(self, message):
         '''Allows user to transform the message before batching or sending it.'''
         pass
 
 
-    def PreProcessMessageBatch(self, message):
+    def pre_process_message_batch(self, message):
         '''Allows user to transform the batch before sending it.'''
         pass
 
 
-    def PreProcessMessageBody(self, payload):
+    def pre_process_message_body(self, payload):
         '''Allows user to transform message payload before sending it.'''
         return payload
 
 
-    def _ConstructMessage(self):
+    def _construct_message(self):
         if self.send_batch_size != None:
             batch = BatchMessage()
             for _ in range(self.send_batch_size):
-                message = Message(self.PreProcessMessageBody("a" * self.message_size))
-                self.PreProcessMessage(message)
+                message = Message(self.pre_process_message_body("a" * self.message_size))
+                self.pre_process_message(message)
                 batch.add(message)
-            self.PreProcessMessageBatch(batch)
+            self.pre_process_message_batch(batch)
             return batch
         else:
-            message = Message(self.PreProcessMessageBody("a" * self.message_size))
-            self.PreProcessMessage(message)
+            message = Message(self.pre_process_message_body("a" * self.message_size))
+            self.pre_process_message(message)
             return message
 
 
-    def _Send(self, sender, end_time):
+    def _send(self, sender, end_time):
         try:
             print("STARTING SENDER")
             with sender:
                 while end_time > datetime.utcnow():
                     print("SENDING")
-                    message = self._ConstructMessage()
+                    message = self._construct_message()
                     if self.send_session_id != None:
                         message.session_id = self.send_session_id
-                    else:
-                        sender.send_messages(message)
-                    self.OnSend(self._state, message, sender)
+                    sender.send_messages(message)
+                    self.on_send(self._state, message, sender)
                     self._state.total_sent += 1
                     time.sleep(self.send_delay)
             return self._state
         except Exception as e:
             print("Exception in sender", e)
+            return self._state
 
 
-    def _Receive(self, receiver, end_time):
+    def _receive(self, receiver, end_time):
         try:
             with receiver:
                 while end_time > datetime.utcnow():
@@ -166,9 +166,9 @@ class StressTestRunner:
                     elif self.receive_type == ReceiveType.none:
                         batch = []
 
-                    self.OnReceiveBatch(self._state, batch, receiver)
+                    self.on_receive_batch(self._state, batch, receiver)
                     for message in batch:
-                        self.OnReceive(self._state, message, receiver)
+                        self.on_receive(self._state, message, receiver)
                         try:
                             if self.should_complete_messages:
                                 message.complete()
@@ -179,21 +179,22 @@ class StressTestRunner:
                         if end_time <= datetime.utcnow():
                             break
                         time.sleep(self.receive_delay)
-                    self.PostReceive(self._state, receiver)
+                    self.post_receive(self._state, receiver)
             return self._state
         except Exception as e:
             print("Exception in receiver", e)
+            return self._state
 
 
-    def Run(self):
+    def run(self):
         start_time = datetime.utcnow()
         end_time = start_time + (self._duration_override or self.duration)
         sent_messages = 0
         received_messages = 0
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as proc_pool:
             print("STARTING PROC POOL")
-            senders = [proc_pool.submit(self._Send, sender, end_time) for sender in self.senders]
-            receivers = [proc_pool.submit(self._Receive, receiver, end_time) for receiver in self.receivers]
+            senders = [proc_pool.submit(self._send, sender, end_time) for sender in self.senders]
+            receivers = [proc_pool.submit(self._receive, receiver, end_time) for receiver in self.receivers]
 
             result = StressTestResults()
             for each in concurrent.futures.as_completed(senders + receivers):

@@ -36,7 +36,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
                                        duration=timedelta(seconds=60))
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
@@ -55,7 +55,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        receive_type=ReceiveType.pull,
                                        duration=timedelta(seconds=60))
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
@@ -74,7 +74,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration=timedelta(seconds=60),
                                        send_batch_size=5)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
@@ -93,7 +93,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration=timedelta(seconds=3501*3),
                                        send_delay=3500)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
@@ -111,7 +111,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ReceiveMode.ReceiveAndDelete)],
                                        duration=timedelta(seconds=60))
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
@@ -130,7 +130,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration = timedelta(seconds=350),
                                        should_complete_messages = False)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         # This test is prompted by reports of an issue where enough unsettled messages saturate a service-side cache
         # and prevent further receipt.
         assert(result.total_sent > 2500)
@@ -151,13 +151,13 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration = timedelta(seconds=60),
                                        max_message_count = 50)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
     # Cannot be defined at local scope due to pickling into multiproc runner.
     class ReceiverTimeoutStressTestRunner(StressTestRunner):
-        def OnSend(self, state, sent_message, sender):
+        def on_send(self, state, sent_message, sender):
             '''Called on every successful send'''
             if state.total_sent % 10 == 0:
                 # To make receive time out, in push mode this delay would trigger receiver reconnection
@@ -179,13 +179,13 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             receive_type=ReceiveType.pull,
             duration=timedelta(seconds=600))
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
 
     class LongRenewStressTestRunner(StressTestRunner):
-        def OnReceive(self, state, received_message, receiver):
+        def on_receive(self, state, received_message, receiver):
             '''Called on every successful receive'''
             renewer = AutoLockRenew()
             renewer.register(received_message, timeout=300)
@@ -206,23 +206,24 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        duration=timedelta(seconds=3000),
                                        send_delay=300)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
 
     class LongSessionRenewStressTestRunner(StressTestRunner):
-        def OnReceive(self, state, received_message, receiver):
+        def on_receive(self, state, received_message, receiver):
             '''Called on every successful receive'''
-            renewer = AutoLockRenew()
-            renewer.register(receiver.Session, timeout=300)
-            time.sleep(300)
+            renewer = AutoLockRenewer()
+            def on_fail(renewable, error):
+                print("FAILED AUTOLOCKRENEW: " + str(error))
+            renewer.register(receiver.session, timeout=600, on_lock_renew_failure=on_fail)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @ServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_stress_queue_long_renew_session_send_and_receive(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False)
@@ -231,18 +232,18 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
         stress_test = ServiceBusQueueStressTests.LongSessionRenewStressTestRunner(
                                        senders = [sb_client.get_queue_sender(servicebus_queue.name)],
-                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id)],
+                                       receivers = [sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id)],
                                        duration=timedelta(seconds=3000),
                                        send_delay=300,
                                        send_session_id=session_id)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
 
-    class PeekOnReceiveStressTestRunner(StressTestRunner):
-        def OnReceiveBatch(self, state, received_message, receiver):
+    class Peekon_receiveStressTestRunner(StressTestRunner):
+        def on_receive_batch(self, state, received_message, receiver):
             '''Called on every successful receive'''
             assert receiver.peek_messages()[0]
 
@@ -255,26 +256,26 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
         sb_client = ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, debug=False)
 
-        stress_test = ServiceBusQueueStressTests.PeekOnReceiveStressTestRunner(
+        stress_test = ServiceBusQueueStressTests.Peekon_receiveStressTestRunner(
                                        senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
                                        duration = timedelta(seconds=300),
                                        receive_delay = 30,
                                        receive_type = ReceiveType.none)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         # TODO: This merits better validation, to be implemented alongside full metric spread.
 
 
     class RestartHandlerStressTestRunner(StressTestRunner):
-        def PostReceive(self, state, receiver):
+        def post_receive(self, state, receiver):
             '''Called after completion of every successful receive'''
             if state.total_received % 3 == 0:
                 receiver.__exit__()
                 receiver.__enter__()
 
-        def OnSend(self, state, sent_message, sender):
+        def on_send(self, state, sent_message, sender):
             '''Called after completion of every successful receive'''
             if state.total_sent % 3 == 0:
                 sender.__exit__()
@@ -296,6 +297,6 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
                                        receive_delay = 30,
                                        send_delay = 10)
 
-        result = stress_test.Run()
+        result = stress_test.run()
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
