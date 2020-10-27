@@ -1992,7 +1992,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             raise RuntimeError()
 
         def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
-            raise uamqp.errors.AMQPServiceBusConnectionError()
+            raise uamqp.errors.AMQPConnectionError()
 
         def _hack_sb_message_settle_message(self, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
             raise uamqp.errors.AMQPError()

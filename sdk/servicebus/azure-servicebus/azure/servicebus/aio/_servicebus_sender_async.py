@@ -237,8 +237,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
-        :raises ~azure.servicebus.AuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.AuthorizationError: Indicates an access/rights related failure.
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 

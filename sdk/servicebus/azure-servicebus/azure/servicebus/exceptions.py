@@ -253,7 +253,7 @@ class ServiceBusMessageError(ServiceBusError):
 
 
 class MessageContentTooLarge(ServiceBusMessageError, ValueError):
-    """Message content is larger than the service bus frame size"""
+    """Message content is larger than the service bus frame size."""
 
 
 class MessageAlreadySettled(ServiceBusMessageError):
@@ -300,7 +300,7 @@ class MessageSendFailed(ServiceBusMessageError):
         self.condition = None
         self.description = None
         if hasattr(error, 'condition'):
-            self.condition = error.condition      # type: ignore
+            self.condition = error.condition  # type: ignore
             self.description = error.description  # type: ignore
         self.inner_exception = error
         super(MessageSendFailed, self).__init__(message, error=error)
