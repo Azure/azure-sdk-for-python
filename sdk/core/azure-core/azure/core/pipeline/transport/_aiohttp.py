@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
+from multidict import CIMultiDictProxy, CIMultiDict
 
 import logging
 import asyncio
@@ -265,8 +266,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         headers = aiohttp_response.headers
         try:
-            if isinstance(headers, aiohttp.multidict.CIMultiDictProxy[str]):
-                headers = aiohttp.multidict.CIMultiDict(headers)
+            if isinstance(headers, CIMultiDictProxy):
+                headers = CIMultiDict(headers)
         except AttributeError:
             pass
         self.status_code = aiohttp_response.status
