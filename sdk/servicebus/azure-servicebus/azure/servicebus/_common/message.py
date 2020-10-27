@@ -526,6 +526,9 @@ class BatchMessage(object):
         return self._count
 
     def _from_list(self, messages):
+        if isinstance(messages,dict):
+            temp_messages = Message(temp_messages.pop('body'),**messages)
+            messages = temp_messages
         for each in messages:
             if not isinstance(each, Message):
                 raise TypeError("Only Message or an iterable object containing Message objects are accepted."
@@ -554,6 +557,9 @@ class BatchMessage(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
+        if isinstance(message,dict):
+            temp_message = Message(message.pop('body'),**message)
+            message = temp_message
         message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
 
@@ -588,6 +594,9 @@ class PeekedMessage(Message):
 
     def __init__(self, message):
         # type: (uamqp.message.Message) -> None
+        if isinstance(message,dict):
+            temp_message = Message(message.pop('body'),**message)
+            message = temp_message
         super(PeekedMessage, self).__init__(None, message=message) # type: ignore
 
     def _to_outgoing_message(self):

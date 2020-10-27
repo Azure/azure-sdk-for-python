@@ -132,6 +132,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     async def _send(self, message, timeout=None, last_exception=None):
         await self._open()
         default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
+        if isinstance(message,dict):
+            temp_message = Message(message.pop("body"),**message)
+            message = temp_message
         try:
             self._set_msg_timeout(timeout, last_exception)
             await self._handler.send_message_async(message.message)
@@ -165,6 +168,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         # pylint: disable=protected-access
         await self._open()
+        if isinstance(messages,list):
+            for index,each in messages:
+                if isinstance(each,dict):
+                    messages[index] = Message(each.pop("body"),**each)
+                else:
+                    pass
+        if isinstance(messages,dict):
+            temp_message = Message(messages.pop("body"),**messages)
+            messages = temp_message
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -286,6 +298,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        if isinstance(message,list):
+            for index,each in message:
+                if isinstance(each,dict):
+                    message[index] = Message(each.pop("body"),**each)
+                else:
+                    pass
+        if isinstance(message,dict):
+            temp_message = Message(message.pop("body"),**message)
+            message = temp_message
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
