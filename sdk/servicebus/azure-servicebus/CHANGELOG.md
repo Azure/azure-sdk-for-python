@@ -9,6 +9,7 @@
   - `ServiceBusReceiver`: `receive_deferred_messages`, `peek_messages` and `renew_message_lock`
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
 * `azure.servicebus.exceptions.ServiceBusError` now inherits from `azure.core.exceptions.AzureError`.
+* Added a `ServiceBusConnectionStringParser` which parses a connection string into a properties bag containing its component parts
 
 **Breaking Changes**
 
