@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 20 Oct 2020 17:54:33 GMT
+      - Tue, 27 Oct 2020 17:27:37 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -26,13 +26,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 17:54:33 GMT
+      - Tue, 27 Oct 2020 17:27:38 GMT
       ms-cv:
-      - aIOOYQqFyUWPiobZAhsBzQ.0
+      - Y0vSpvBqn0S1tuL3JCZkrg.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 1071ms
+      - 821ms
     status:
       code: 200
       message: OK
@@ -46,27 +46,27 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 20 Oct 2020 17:54:34 GMT
+      - Tue, 27 Oct 2020 17:27:38 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/403f6148-42bd-48ef-a942-68e7b140a7c7?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/62ef8671-9d37-4750-82eb-0954be6ed8c0?api-version=2020-07-20-preview1
   response:
-    body: '{"releaseId": "sanitized", "createdAt": "2020-10-20T17:54:34.15594+00:00",
+    body: '{"releaseId": "sanitized", "createdAt": "2020-10-27T17:27:38.0331088+00:00",
       "status": "Pending", "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 17:54:34 GMT
+      - Tue, 27 Oct 2020 17:27:38 GMT
       ms-cv:
-      - fC/iGOGT+0GueFuV5DV5kA.0
+      - jLzFMwZU7UKy6NZuo2jjNA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 228ms
+      - 208ms
     status:
       code: 200
       message: OK
@@ -80,27 +80,27 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 20 Oct 2020 17:54:34 GMT
+      - Tue, 27 Oct 2020 17:27:38 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/403f6148-42bd-48ef-a942-68e7b140a7c7?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/62ef8671-9d37-4750-82eb-0954be6ed8c0?api-version=2020-07-20-preview1
   response:
-    body: '{"releaseId": "sanitized", "createdAt": "2020-10-20T17:54:34.15594+00:00",
+    body: '{"releaseId": "sanitized", "createdAt": "2020-10-27T17:27:38.0331088+00:00",
       "status": "Pending", "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 17:54:34 GMT
+      - Tue, 27 Oct 2020 17:27:38 GMT
       ms-cv:
-      - hySyAjw9wUC0b6gurl7L1g.0
+      - JLJOVBYwZE6aZ293uejKOA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 218ms
+      - 195ms
     status:
       code: 200
       message: OK
@@ -114,27 +114,27 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 20 Oct 2020 17:54:40 GMT
+      - Tue, 27 Oct 2020 17:27:44 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/403f6148-42bd-48ef-a942-68e7b140a7c7?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/62ef8671-9d37-4750-82eb-0954be6ed8c0?api-version=2020-07-20-preview1
   response:
-    body: '{"releaseId": "sanitized", "createdAt": "2020-10-20T17:54:34.15594+00:00",
-      "status": "InProgress", "phoneNumberReleaseStatusDetails": "sanitized"}'
+    body: '{"releaseId": "sanitized", "createdAt": "2020-10-27T17:27:38.0331088+00:00",
+      "status": "Pending", "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 17:54:39 GMT
+      - Tue, 27 Oct 2020 17:27:43 GMT
       ms-cv:
-      - MIOTl3yEZUKRejWD9ltLQQ.0
+      - aHgxcvrzSUio9uJsjAl2gQ.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 209ms
+      - 186ms
     status:
       code: 200
       message: OK
@@ -148,28 +148,28 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Tue, 20 Oct 2020 17:54:45 GMT
+      - Tue, 27 Oct 2020 17:27:49 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/403f6148-42bd-48ef-a942-68e7b140a7c7?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/62ef8671-9d37-4750-82eb-0954be6ed8c0?api-version=2020-07-20-preview1
   response:
-    body: '{"releaseId": "sanitized", "createdAt": "2020-10-20T17:54:34.15594+00:00",
+    body: '{"releaseId": "sanitized", "createdAt": "2020-10-27T17:27:38.0331088+00:00",
       "status": "Failed", "errorMessage": "Unknown exception in BeginReleaseQueueProcessor
       : No acquired numbers to process", "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 20 Oct 2020 17:54:44 GMT
+      - Tue, 27 Oct 2020 17:27:49 GMT
       ms-cv:
-      - TwgApNgF6EmlIE7RLwxLFQ.0
+      - KU2QoBXFdUug6U3T7AVqQA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 207ms
+      - 194ms
     status:
       code: 200
       message: OK

@@ -281,7 +281,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             phone_number_reservation_response = await self._phone_number_administration_client.get_reservation_by_id(
                 reservation_id=self.reservation_id
             )
-        assert phone_number_reservation_response.search_id
+        assert phone_number_reservation_response.reservation_id
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
@@ -295,7 +295,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
         )
         async with self._phone_number_administration_client:
             poller = await self._phone_number_administration_client.begin_reserve_phone_numbers(
-                body=searchOptions
+                options=searchOptions
             )
             result = await poller.result()
         assert result

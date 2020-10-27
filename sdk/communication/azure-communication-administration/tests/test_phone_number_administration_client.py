@@ -228,7 +228,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         phone_number_reservation_response = self._phone_number_administration_client.get_reservation_by_id(
             reservation_id=self.reservation_id
         )
-        assert phone_number_reservation_response.search_id
+        assert phone_number_reservation_response.reservation_id
 
     @pytest.mark.live_test_only
     def test_create_search(self):
@@ -240,7 +240,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
             quantity=1
         )
         poller = self._phone_number_administration_client.begin_reserve_phone_numbers(
-            body=searchOptions
+            options=searchOptions
         )
         assert poller.result()
 

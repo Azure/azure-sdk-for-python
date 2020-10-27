@@ -3,7 +3,7 @@ interactions:
     body: ''
     headers:
       Date:
-      - Tue, 20 Oct 2020 17:55:03 GMT
+      - Tue, 27 Oct 2020 17:30:46 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 20 Oct 2020 17:55:02 GMT
-      ms-cv: zQpVkxohNUSQuCuC3m7Eyg.0
-      x-processing-time: 294ms
+      date: Tue, 27 Oct 2020 17:30:48 GMT
+      ms-cv: 4TCZyuk80UicMiinK1hOYA.0
+      x-processing-time: 1389ms
     status:
       code: 202
       message: Accepted
