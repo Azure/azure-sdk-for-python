@@ -715,7 +715,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
     
             with pytest.raises(ServiceBusConnectionError):
-                sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
+                sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(Message("test session sender", session_id="test"))
