@@ -8,7 +8,8 @@
 import datetime
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import (
-    ReplayableTest
+    ReplayableTest,
+    create_random_name
 )
 
 from azure.ai.metricsadvisor import (
@@ -174,7 +175,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
                                                                MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     def _create_data_feed(self, name):
-        name = self.create_random_name(name)
+        name = create_random_name(name)
         return self.admin_client.create_data_feed(
             DataFeed(
                 name=name,
@@ -225,7 +226,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
         return detection_config, data_feed
 
     def _create_data_feed_for_update(self, name):
-        data_feed_name = self.create_random_name(name)
+        data_feed_name = create_random_name(name)
         return self.admin_client.create_data_feed(
             DataFeed(
                 name=data_feed_name,
