@@ -73,6 +73,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         super(NetAppAccountTestCase, self).setUp()
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
+    @unittest.skip("Backup deletion not ready and therefor skipping this test for now")
     def test_create_delete_backup(self):
         raise unittest.SkipTest("Skipping Backup tests because deletion is not ready yet")
 
@@ -90,6 +91,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    @unittest.skip("Backup deletion not ready and therefor skipping this test for now")
     def test_list_backup(self):
         raise unittest.SkipTest("Skipping Backup tests because deletion is not ready yet")
 
@@ -113,6 +115,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
         delete_account(self.client, TEST_RG, TEST_ACC_1)
 
+    @unittest.skip("Backup deletion not ready and therefor skipping this test for now")
     def test_get_backup_by_name(self):
         raise unittest.SkipTest("Skipping Backup tests because deletion is not ready yet")
 
@@ -124,6 +127,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         delete_backup(self.client, TEST_BACKUP_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1)
 
+    @unittest.skip("Backup deletion not ready and therefor skipping this test for now")
     def test_update_backup(self):
         raise unittest.SkipTest("Skipping Backup tests because deletion is not ready yet")
 
