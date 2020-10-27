@@ -109,8 +109,8 @@ def test_authority(authority):
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-@pytest.mark.parametrize("send_certificate", (True, False))
-def test_request_body(cert_path, cert_password, send_certificate):
+@pytest.mark.parametrize("send_certificate_chain", (True, False))
+def test_request_body(cert_path, cert_password, send_certificate_chain):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -125,7 +125,7 @@ def test_request_body(cert_path, cert_password, send_certificate):
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate)
+            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate_chain)
 
         return mock_response(json_payload=build_aad_response(access_token=access_token))
 
@@ -136,7 +136,7 @@ def test_request_body(cert_path, cert_password, send_certificate):
         password=cert_password,
         transport=Mock(send=mock_send),
         authority=authority,
-        send_certificate=send_certificate,
+        send_certificate_chain=send_certificate_chain,
     )
     token = cred.get_token(expected_scope)
     assert token.token == access_token

@@ -61,7 +61,6 @@ from ..exceptions import (
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
-    from .._servicebus_session_receiver import ServiceBusSessionReceiver
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -140,8 +139,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
-        elif body is None:
-            raise ValueError("Message body cannot be None.")
         else:
             self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
@@ -763,7 +760,7 @@ class ReceivedMessageBase(PeekedMessage):
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self.auto_renew_error = None  # type: Optional[Exception]
         try:
-            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
+            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver]
         except KeyError:
             raise TypeError("ReceivedMessage requires a receiver to be initialized.  This class should never be" + \
             "initialized by a user; the Message class should be utilized instead.")

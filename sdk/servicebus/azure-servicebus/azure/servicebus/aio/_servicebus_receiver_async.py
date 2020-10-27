@@ -13,6 +13,7 @@ import six
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
+from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import PeekedMessage
 from ._async_message import ReceivedMessage
@@ -132,6 +133,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
 
         self._populate_attributes(**kwargs)
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
     # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.
@@ -278,6 +280,25 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             mgmt_handlers.lock_renew_op,
             timeout=timeout
         )
+
+    @property
+    def session(self) -> ServiceBusSession:
+        """
+        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
+        entities.
+
+        :rtype: ~azure.servicebus.aio.ServiceBusSession
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START get_session_async]
+                :end-before: [END get_session_async]
+                :language: python
+                :dedent: 4
+                :caption: Get session from a receiver
+        """
+        return self._session  # type: ignore
 
     async def close(self) -> None:
         await super(ServiceBusReceiver, self).close()

@@ -21,15 +21,15 @@ from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
-    from ._servicebus_session_receiver import ServiceBusSessionReceiver
-    from .aio._servicebus_session_receiver_async import ServiceBusSessionReceiver as ServiceBusSessionReceiverAsync
+    from ._servicebus_receiver import ServiceBusReceiver
+    from .aio._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
     def __init__(self, session_id, receiver, encoding="UTF-8"):
-        # type: (str, Union[ServiceBusSessionReceiver, ServiceBusSessionReceiverAsync], str) -> None
+        # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync], str) -> None
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = encoding

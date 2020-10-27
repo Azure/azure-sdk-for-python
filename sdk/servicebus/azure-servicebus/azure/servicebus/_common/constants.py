@@ -131,4 +131,4 @@ ANNOTATION_SYMBOL_KEY_MAP = {
 }
 
 
-NEXT_AVAILABLE = SessionFilter.NextAvailable
+NEXT_AVAILABLE_SESSION = SessionFilter.NextAvailable

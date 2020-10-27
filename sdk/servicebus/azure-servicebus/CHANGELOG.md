@@ -14,6 +14,9 @@
 **Breaking Changes**
 
 * Renamed `AutoLockRenew` to `AutoLockRenewer`.
+* Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+  - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+  - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
 * The parameter `inner_exception` that `ServiceBusError.__init__` takes is now renamed to `error`.
 * Renamed `azure.servicebus.exceptions.MessageError` to `azure.servicebus.exceptions.ServiceBusMessageError`
 * Removed error `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus
