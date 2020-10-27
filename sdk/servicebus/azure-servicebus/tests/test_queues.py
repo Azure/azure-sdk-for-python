@@ -29,7 +29,7 @@ from azure.servicebus._common.constants import (
 )
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
-    ConnectionError,
+    ServiceBusConnectionError,
     ServiceBusError,
     MessageLockExpired,
     MessageAlreadySettled,
@@ -714,7 +714,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
     
-            with pytest.raises(ConnectionError):
+            with pytest.raises(ServiceBusConnectionError):
                 sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -1992,7 +1992,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             raise RuntimeError()
 
         def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
-            raise uamqp.errors.AMQPConnectionError()
+            raise uamqp.errors.AMQPServiceBusConnectionError()
 
         def _hack_sb_message_settle_message(self, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
             raise uamqp.errors.AMQPError()

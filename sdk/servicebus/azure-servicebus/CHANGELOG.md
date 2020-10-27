@@ -2,9 +2,6 @@
 
 ## 7.0.0b8 (Unreleased)
 
-**Breaking Changes**
-  - Renamed `AutoLockRenew` to `AutoLockRenewer`
-
 **New Features**
 
 * Added support for `timeout` parameter on the following operations:
@@ -16,12 +13,9 @@
 
 **Breaking Changes**
 
+* Renamed `AutoLockRenew` to `AutoLockRenewer`.
 * The parameter `inner_exception` that `ServiceBusError.__init__` takes is now renamed to `error`.
-* The following Service Bus errors are renamed:
-  - `ServiceBusConnectionError` to `ConnectionError`
-  - `ServiceBusAuthorizationError` to `AuthorizationError`
-  - `ServiceBusAuthenticationError` to `AuthenticationError`
-  - `MessageError` to `ServiceBusMessageError`
+* Renamed `azure.servicebus.exceptions.MessageError` to `azure.servicebus.exceptions.ServiceBusMessageError`
 * Removed error `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus
 resource does not exist when using the `ServiceBusAdministrationClient`.
 * Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)

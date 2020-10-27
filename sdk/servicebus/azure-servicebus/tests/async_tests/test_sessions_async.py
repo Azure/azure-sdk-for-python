@@ -19,8 +19,8 @@ from azure.servicebus._common.message import Message, PeekedMessage
 from azure.servicebus._common.constants import ReceiveMode, NEXT_AVAILABLE, SubQueue
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
-    ConnectionError,
-    AuthenticationError,
+    ServiceBusConnectionError,
+    ServiceBusAuthenticationError,
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,
@@ -59,7 +59,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     message = Message("Handler message no. {}".format(i), session_id=session_id)
                     await sender.send_messages(message)
 
-            with pytest.raises(ConnectionError):
+            with pytest.raises(ServiceBusConnectionError):
                 await sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)._open_with_retry()
 
             session = sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5)
@@ -881,13 +881,13 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     
             # First let's just try the naive failure cases.
             receiver = sb_client.get_queue_receiver("THIS_IS_WRONG_ON_PURPOSE")
-            with pytest.raises(AuthenticationError):
+            with pytest.raises(ServiceBusAuthenticationError):
                 await receiver._open_with_retry()
             assert not receiver._running
             assert not receiver._handler
     
             sender = sb_client.get_queue_sender("THIS_IS_WRONG_ON_PURPOSE")
-            with pytest.raises(AuthenticationError):
+            with pytest.raises(ServiceBusAuthenticationError):
                 await sender._open_with_retry()
             assert not receiver._running
             assert not receiver._handler

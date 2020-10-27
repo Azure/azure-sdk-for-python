@@ -18,8 +18,8 @@ from azure.servicebus._common.message import Message, PeekedMessage, ReceivedMes
 from azure.servicebus._common.constants import ReceiveMode, NEXT_AVAILABLE, SubQueue
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
-    ConnectionError,
-    AuthenticationError,
+    ServiceBusConnectionError,
+    ServiceBusAuthenticationError,
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,
@@ -70,7 +70,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.reply_to_session_id = 'reply_to_session_id'
                     sender.send_messages(message)
 
-                with pytest.raises(ConnectionError):
+                with pytest.raises(ServiceBusConnectionError):
                     session = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)._open_with_retry()
 
                 count = 0
@@ -206,13 +206,13 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     
             # First let's just try the naive failure cases.
             receiver = sb_client.get_queue_receiver("THIS_IS_WRONG_ON_PURPOSE")
-            with pytest.raises(AuthenticationError):
+            with pytest.raises(ServiceBusAuthenticationError):
                 receiver._open_with_retry()
             assert not receiver._running
             assert not receiver._handler
     
             sender = sb_client.get_queue_sender("THIS_IS_WRONG_ON_PURPOSE")
-            with pytest.raises(AuthenticationError):
+            with pytest.raises(ServiceBusAuthenticationError):
                 sender._open_with_retry()
             assert not receiver._running
             assert not receiver._handler
@@ -479,7 +479,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message = Message("Test message no. {}".format(i), session_id=session_id_2)
                     sender.send_messages(message)
 
-            with pytest.raises(ConnectionError):
+            with pytest.raises(ServiceBusConnectionError):
                 with sb_client.get_queue_receiver(servicebus_queue.name):
                     messages = sb_client.peek_messages(5)
 
