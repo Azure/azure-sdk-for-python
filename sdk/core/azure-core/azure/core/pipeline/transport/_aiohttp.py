@@ -264,8 +264,11 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         headers = aiohttp_response.headers
-        if isinstance(headers, aiohttp.multidict.CIMultiDictProxy[str]):
-            headers = aiohttp.multidict.CIMultiDict(headers)
+        try:
+            if isinstance(headers, aiohttp.multidict.CIMultiDictProxy[str]):
+                headers = aiohttp.multidict.CIMultiDict(headers)
+        except AttributeError:
+            pass
         self.status_code = aiohttp_response.status
         self.headers = headers
         self.reason = aiohttp_response.reason
