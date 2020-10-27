@@ -413,6 +413,65 @@ class MetricSpecification(msrest.serialization.Model):
         self.dimensions = kwargs.get('dimensions', None)
 
 
+class NameAvailability(msrest.serialization.Model):
+    """Result of the request to check name availability. It contains a flag and possible reason of failure.
+
+    :param name_available: Indicates whether the name is available or not.
+    :type name_available: bool
+    :param reason: The reason of the availability. Required if name is not available.
+    :type reason: str
+    :param message: The message of the operation.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
+        'reason': {'key': 'reason', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NameAvailability, self).__init__(**kwargs)
+        self.name_available = kwargs.get('name_available', None)
+        self.reason = kwargs.get('reason', None)
+        self.message = kwargs.get('message', None)
+
+
+class NameAvailabilityParameters(msrest.serialization.Model):
+    """Data POST-ed to the nameAvailability action.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The resource type. Should be always
+     "Microsoft.Communication/CommunicationServices".
+    :type type: str
+    :param name: Required. The CommunicationService name to validate. e.g."my-CommunicationService-
+     name-here".
+    :type name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(NameAvailabilityParameters, self).__init__(**kwargs)
+        self.type = kwargs['type']
+        self.name = kwargs['name']
+
+
 class Operation(msrest.serialization.Model):
     """REST API operation supported by CommunicationService resource provider.
 
@@ -526,7 +585,7 @@ class OperationStatus(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The operation Id.
+    :ivar id: Fully qualified ID for the operation status.
     :vartype id: str
     :ivar status: Provisioning state of the resource. Possible values include: "Succeeded",
      "Failed", "Canceled", "Creating", "Deleting", "Moving".
