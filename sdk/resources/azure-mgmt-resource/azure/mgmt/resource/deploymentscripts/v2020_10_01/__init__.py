@@ -9,17 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from ._configuration import DeploymentScriptsClientConfiguration
+from ._deployment_scripts_client import DeploymentScriptsClient
+__all__ = ['DeploymentScriptsClient', 'DeploymentScriptsClientConfiguration']
 
+from .version import VERSION
 
-class CreatedByType(str, Enum):
+__version__ = VERSION
 
-    user = "User"
-    application = "Application"
-    managed_identity = "ManagedIdentity"
-    key = "Key"
-
-
-class TemplateSpecExpandKind(str, Enum):
-
-    versions = "versions"  #: Includes version information with the Template Spec.

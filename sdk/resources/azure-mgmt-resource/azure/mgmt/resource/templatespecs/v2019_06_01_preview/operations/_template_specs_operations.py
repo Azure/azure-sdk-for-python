@@ -185,7 +185,7 @@ class TemplateSpecsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}'}
 
     def get(
-            self, resource_group_name, template_spec_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, template_spec_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Gets a Template Spec with a given name.
 
         :param resource_group_name: The name of the resource group. The name
@@ -193,6 +193,10 @@ class TemplateSpecsOperations(object):
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec.
         :type template_spec_name: str
+        :param expand: Allows for expansion of additional Template Spec
+         details in the response. Optional. Possible values include: 'versions'
+        :type expand: str or
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -216,6 +220,8 @@ class TemplateSpecsOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -301,9 +307,13 @@ class TemplateSpecsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Resources/templateSpecs/{templateSpecName}'}
 
     def list_by_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all the Template Specs within the specified subscriptions.
 
+        :param expand: Allows for expansion of additional Template Spec
+         details in the response. Optional. Possible values include: 'versions'
+        :type expand: str or
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -326,6 +336,8 @@ class TemplateSpecsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -366,12 +378,16 @@ class TemplateSpecsOperations(object):
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/templateSpecs/'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all the Template Specs within the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
+        :param expand: Allows for expansion of additional Template Spec
+         details in the response. Optional. Possible values include: 'versions'
+        :type expand: str or
+         ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -395,6 +411,8 @@ class TemplateSpecsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

@@ -11,8 +11,10 @@
 
 from ._applications_operations import ApplicationsOperations
 from ._application_definitions_operations import ApplicationDefinitionsOperations
+from ._application_client_operations import ApplicationClientOperationsMixin
 
 __all__ = [
     'ApplicationsOperations',
     'ApplicationDefinitionsOperations',
+    'ApplicationClientOperationsMixin',
 ]

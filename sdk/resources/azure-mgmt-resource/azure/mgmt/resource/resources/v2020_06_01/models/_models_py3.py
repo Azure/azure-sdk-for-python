@@ -554,6 +554,12 @@ class DeploymentProperties(Model):
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment:
      ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeployment
+    :param expression_evaluation_options: Specifies whether template
+     expressions are evaluated within the scope of the parent template or
+     nested template. Only applicable to nested templates. If not specified,
+     default value is outer.
+    :type expression_evaluation_options:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptions
     """
 
     _validation = {
@@ -568,9 +574,10 @@ class DeploymentProperties(Model):
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
     }
 
-    def __init__(self, *, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None, on_error_deployment=None, **kwargs) -> None:
+    def __init__(self, *, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None, on_error_deployment=None, expression_evaluation_options=None, **kwargs) -> None:
         super(DeploymentProperties, self).__init__(**kwargs)
         self.template = template
         self.template_link = template_link
@@ -579,6 +586,7 @@ class DeploymentProperties(Model):
         self.mode = mode
         self.debug_setting = debug_setting
         self.on_error_deployment = on_error_deployment
+        self.expression_evaluation_options = expression_evaluation_options
 
 
 class DeploymentPropertiesExtended(Model):
@@ -797,6 +805,12 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment:
      ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeployment
+    :param expression_evaluation_options: Specifies whether template
+     expressions are evaluated within the scope of the parent template or
+     nested template. Only applicable to nested templates. If not specified,
+     default value is outer.
+    :type expression_evaluation_options:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptions
     :param what_if_settings: Optional What-If operation settings.
     :type what_if_settings:
      ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfSettings
@@ -814,11 +828,12 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
         'what_if_settings': {'key': 'whatIfSettings', 'type': 'DeploymentWhatIfSettings'},
     }
 
-    def __init__(self, *, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None, on_error_deployment=None, what_if_settings=None, **kwargs) -> None:
-        super(DeploymentWhatIfProperties, self).__init__(template=template, template_link=template_link, parameters=parameters, parameters_link=parameters_link, mode=mode, debug_setting=debug_setting, on_error_deployment=on_error_deployment, **kwargs)
+    def __init__(self, *, mode, template=None, template_link=None, parameters=None, parameters_link=None, debug_setting=None, on_error_deployment=None, expression_evaluation_options=None, what_if_settings=None, **kwargs) -> None:
+        super(DeploymentWhatIfProperties, self).__init__(template=template, template_link=template_link, parameters=parameters, parameters_link=parameters_link, mode=mode, debug_setting=debug_setting, on_error_deployment=on_error_deployment, expression_evaluation_options=expression_evaluation_options, **kwargs)
         self.what_if_settings = what_if_settings
 
 
@@ -935,6 +950,26 @@ class ExportTemplateRequest(Model):
         super(ExportTemplateRequest, self).__init__(**kwargs)
         self.resources = resources
         self.options = options
+
+
+class ExpressionEvaluationOptions(Model):
+    """Specifies whether template expressions are evaluated within the scope of
+    the parent template or nested template.
+
+    :param scope: The scope to be used for evaluation of parameters, variables
+     and functions in a nested template. Possible values include:
+     'NotSpecified', 'Outer', 'Inner'
+    :type scope: str or
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptionsScopeType
+    """
+
+    _attribute_map = {
+        'scope': {'key': 'scope', 'type': 'str'},
+    }
+
+    def __init__(self, *, scope=None, **kwargs) -> None:
+        super(ExpressionEvaluationOptions, self).__init__(**kwargs)
+        self.scope = scope
 
 
 class Resource(Model):
