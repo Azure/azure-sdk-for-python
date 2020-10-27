@@ -207,6 +207,7 @@ def generate_queue_sas(
     :param ~azure.storage.queue.QueueSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
+        Permissions must be ordered read, add, update, process.
         Required unless a policy_id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
