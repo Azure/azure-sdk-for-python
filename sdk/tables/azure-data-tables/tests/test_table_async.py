@@ -441,7 +441,7 @@ class TableTestAsync(AsyncTableTestCase):
 
             account_url = self.account_url(storage_account, "table")
 
-            service = self.create_client_from_credential(TableServiceClient, token, account_url)
+            service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
 
             # Act
             # service = TableServiceClient(
