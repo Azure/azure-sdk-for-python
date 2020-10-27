@@ -49,12 +49,6 @@ class PrivateCloudProvisioningState(str, Enum):
     updating = "Updating"
 
 
-class InternetEnum(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class ClusterProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
@@ -62,6 +56,12 @@ class ClusterProvisioningState(str, Enum):
     cancelled = "Cancelled"
     deleting = "Deleting"
     updating = "Updating"
+
+
+class InternetEnum(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class HcxEnterpriseSiteStatus(str, Enum):
