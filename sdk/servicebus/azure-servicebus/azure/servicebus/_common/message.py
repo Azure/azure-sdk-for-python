@@ -139,8 +139,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
-        elif body is None:
-            raise ValueError("Message body cannot be None.")
         else:
             self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
