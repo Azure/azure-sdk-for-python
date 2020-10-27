@@ -25,11 +25,11 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
-from multidict import CIMultiDictProxy, CIMultiDict
 
 import logging
 import asyncio
 import aiohttp
+from multidict import CIMultiDictProxy, CIMultiDict
 
 from requests.exceptions import (
     ChunkedEncodingError,
@@ -265,13 +265,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         headers = aiohttp_response.headers
-        try:
-            if isinstance(headers, CIMultiDictProxy):
-                headers = CIMultiDict(headers)
-        except AttributeError:
-            pass
+        if isinstance(headers, CIMultiDictProxy):
+            headers_dict = CIMultiDict(headers)
+            self.headers = headers_dict
+        else:
+            self.headers = headers
         self.status_code = aiohttp_response.status
-        self.headers = headers
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
