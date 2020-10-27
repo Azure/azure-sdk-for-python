@@ -878,12 +878,6 @@ class ContainerSasPermissions(object):
     :param bool read:
         Read the content, properties, metadata or block list of any blob in the
         container. Use any blob in the container as the source of a copy operation.
-    :param bool add:
-        Add a block to any append blob in the container.
-    :param bool create:
-        Write a new blob to the container, snapshot any blob in the container, or copy a blob to
-        a new blob in the container. Note: You cannot grant permissions to create a container
-        with a container SAS. Use an account SAS to create a container instead.
     :param bool write:
         For any blob in the container, create or write content, properties,
         metadata, or block list. Snapshot or lease the blob. Resize the blob
@@ -900,6 +894,12 @@ class ContainerSasPermissions(object):
         List blobs in the container.
     :param bool tag:
         Set or get tags on the blobs in the container.
+    :param bool add:
+        Add a block to any append blob in the container.
+    :param bool create:
+        Write a new blob to the container, snapshot any blob in the container, or copy a blob to
+        a new blob in the container. Note: You cannot grant permissions to create a container
+        with a container SAS. Use an account SAS to create a container instead.
     """
     def __init__(self,
                  read=False,
@@ -951,8 +951,8 @@ class ContainerSasPermissions(object):
         p_tag = 't' in permission
         p_add = 'a' in permission
         p_create = 'c' in permission
-        parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete, list=p_list,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+        parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add, create=p_create)
 
         return parsed
 
