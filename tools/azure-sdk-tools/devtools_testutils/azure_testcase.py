@@ -271,7 +271,7 @@ class AzureTestCase(ReplayableTest):
         upstream to AbstractPreparer, which only awaits async tests that use preparers.
         (Add @AzureTestCase.await_prepared_test decorator to async tests without preparers)
         """
-# Note: This will only be needed so long as we maintain unittest.TestCase in our test-class inheritance chain.
+# Note: This function is only needed so long as we maintain unittest.TestCase in our test-class inheritance chain.
         if sys.version_info < (3, 5):
             raise ImportError("Async wrapper is not needed for Python 2.7 code.")
 
