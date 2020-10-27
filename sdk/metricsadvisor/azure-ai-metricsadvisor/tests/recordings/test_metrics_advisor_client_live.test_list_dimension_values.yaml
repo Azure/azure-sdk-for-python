@@ -19,29 +19,29 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
   response:
     body:
-      string: '{"value":["Karachi","__SUM__","Los Angeles","Manila","Delhi","Seoul","Mumbai","Beijing","New
-        York","Miami","Tianjin","Mexico City","Philadelphia","Osaka","Istanbul","Taipei","Kolkata","Madrid","Moscow","Rio
-        de Janeiro","Belo Horizonte","Lahore","Dallas","Shenzhen","Jakarta","Hyderabad","Wuhan","Lima","Cairo","Bangkok","Shanghai","Bogota","Houston","Buenos
+      string: '{"value":["Karachi","__SUM__","Los Angeles","Delhi","Manila","Seoul","Mumbai","Beijing","New
+        York","Miami","Mexico City","Philadelphia","Osaka","Tianjin","Istanbul","Taipei","Kolkata","Madrid","Moscow","Shenzhen","Rio
+        de Janeiro","Belo Horizonte","Lahore","Dallas","Jakarta","Hyderabad","Wuhan","Lima","Shanghai","Bangkok","Bogota","Houston","Buenos
         Aires","Kinshasa","Santiago","London","Bengaluru","Chennai","Tokyo","Sao Paulo","Lagos","Hong
-        Kong","Chongqing","Guangzhou","Tehran","Dhaka","Paris","Chicago","Ho Chi Minh
-        City","Barcelona","Washington","Pune","Shenyang","Boston","Baghdad","Guadalajara","Haora","Singapore","Toronto"],"@nextLink":null}'
+        Kong","Cairo","Chongqing","Guangzhou","Chicago","Tehran","Dhaka","Paris","Ho
+        Chi Minh City","Barcelona","Pune","Washington","Shenyang","Boston","Luanda","Baghdad","Guadalajara","Haora","Singapore","Toronto"],"@nextLink":null}'
     headers:
       apim-request-id:
-      - 77bfce75-c05f-499b-aac5-839302bd4c8c
+      - 368cc1e5-187a-4e1a-bdd6-ca68a94bced5
       content-length:
-      - '660'
+      - '669'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 26 Oct 2020 17:37:24 GMT
+      - Tue, 27 Oct 2020 19:46:00 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '443'
+      - '290'
       x-request-id:
-      - 77bfce75-c05f-499b-aac5-839302bd4c8c
+      - 368cc1e5-187a-4e1a-bdd6-ca68a94bced5
     status:
       code: 200
       message: OK

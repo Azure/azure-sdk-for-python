@@ -370,7 +370,7 @@ client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-results = client.list_alerts_for_alert_configuration(
+results = client.list_alerts(
     alert_configuration_id=alert_config_id,
     start_time=datetime.datetime(2020, 1, 1),
     end_time=datetime.datetime(2020, 9, 9),
@@ -380,7 +380,7 @@ for result in results:
     print("Alert id: {}".format(result.id))
     print("Create on: {}".format(result.created_on))
 
-results = client.list_anomalies_for_alert(
+results = client.list_anomalies(
     alert_configuration_id=alert_config_id,
     alert_id=alert_id,
 )
@@ -407,7 +407,7 @@ client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-results = client.list_incidents_for_detection_configuration(
+results = client.list_incidents(
             detection_configuration_id=anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 9, 9),

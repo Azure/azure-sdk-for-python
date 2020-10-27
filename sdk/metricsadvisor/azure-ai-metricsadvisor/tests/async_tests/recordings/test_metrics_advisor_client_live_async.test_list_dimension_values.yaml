@@ -15,21 +15,21 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
   response:
     body:
-      string: '{"value":["Karachi","__SUM__","Los Angeles","Manila","Delhi","Seoul","Mumbai","Beijing","New
-        York","Miami","Tianjin","Mexico City","Philadelphia","Osaka","Istanbul","Taipei","Kolkata","Madrid","Moscow","Rio
-        de Janeiro","Belo Horizonte","Lahore","Dallas","Shenzhen","Jakarta","Hyderabad","Wuhan","Lima","Cairo","Bangkok","Shanghai","Bogota","Houston","Buenos
+      string: '{"value":["Karachi","__SUM__","Los Angeles","Delhi","Manila","Seoul","Mumbai","Beijing","New
+        York","Miami","Mexico City","Philadelphia","Osaka","Tianjin","Istanbul","Taipei","Kolkata","Madrid","Moscow","Shenzhen","Rio
+        de Janeiro","Belo Horizonte","Lahore","Dallas","Jakarta","Hyderabad","Wuhan","Lima","Shanghai","Bangkok","Bogota","Houston","Buenos
         Aires","Kinshasa","Santiago","London","Bengaluru","Chennai","Tokyo","Sao Paulo","Lagos","Hong
-        Kong","Chongqing","Guangzhou","Tehran","Dhaka","Paris","Chicago","Ho Chi Minh
-        City","Barcelona","Washington","Pune","Shenyang","Boston","Baghdad","Guadalajara","Haora","Singapore","Toronto"],"@nextLink":null}'
+        Kong","Cairo","Chongqing","Guangzhou","Chicago","Tehran","Dhaka","Paris","Ho
+        Chi Minh City","Barcelona","Pune","Washington","Shenyang","Boston","Luanda","Baghdad","Guadalajara","Haora","Singapore","Toronto"],"@nextLink":null}'
     headers:
-      apim-request-id: a238a617-4daf-4adc-8121-7cd257431e19
-      content-length: '660'
+      apim-request-id: 075b8dc4-05fa-4ead-aeaf-f470f1570814
+      content-length: '669'
       content-type: application/json; charset=utf-8
-      date: Mon, 26 Oct 2020 17:54:14 GMT
+      date: Tue, 27 Oct 2020 19:46:16 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '187'
-      x-request-id: a238a617-4daf-4adc-8121-7cd257431e19
+      x-envoy-upstream-service-time: '197'
+      x-request-id: 075b8dc4-05fa-4ead-aeaf-f470f1570814
     status:
       code: 200
       message: OK

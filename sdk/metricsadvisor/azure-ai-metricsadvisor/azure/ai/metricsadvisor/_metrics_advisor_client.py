@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
+from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
@@ -163,7 +163,7 @@ class MetricsAdvisorClient(object):
             **kwargs))
 
     @distributed_trace
-    def list_feedbacks(self, metric_id, **kwargs):
+    def list_feedback(self, metric_id, **kwargs):
         # type: (str, Any) -> ItemPaged[Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
 
         """List feedback on the given metric.
@@ -290,7 +290,7 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_alerts_for_alert_configuration(
+    def list_alerts(
         self, alert_configuration_id,  # type: str
         start_time,  # type: datetime.datetime
         end_time,  # type: datetime.datetime
@@ -316,8 +316,8 @@ class MetricsAdvisorClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_alerts_for_alert_config]
-                :end-before: [END list_alerts_for_alert_config]
+                :start-after: [START list_alerts]
+                :end-before: [END list_alerts]
                 :language: python
                 :dedent: 4
                 :caption: Query anomaly detection results.
@@ -340,8 +340,12 @@ class MetricsAdvisorClient(object):
             cls=kwargs.pop("cls", lambda alerts: [AnomalyAlert._from_generated(alert) for alert in alerts]),
             **kwargs)
 
-    @distributed_trace
-    def list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
+    @overload
+    def list_anomalies(self, alert_configuration_id, alert_id, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
+        pass
+
+    def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
 
         """Query anomalies under a specific alert.
@@ -374,9 +378,18 @@ class MetricsAdvisorClient(object):
             cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs)
 
-    @distributed_trace
-    def list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime.datetime, datetime.datetime, Any) -> ItemPaged[DataPointAnomaly]
+    @overload
+    def list_anomalies(
+            self, detection_configuration_id,  # type: str
+            start_time,  # type: Union[str, datetime.datetime]
+            end_time,  # type: Union[str, datetime.datetime]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
+        pass
+
+    def _list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
 
         """Query anomalies under anomaly detection configuration.
 
@@ -410,7 +423,26 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_dimension_values_for_detection_configuration(
+    def list_anomalies(self, **kwargs):
+        alert_configuration_id = kwargs.get('alert_configuration_id', None)
+        alert_id = kwargs.get('alert_id', None)
+        detection_configuration_id = kwargs.get('detection_configuration_id', None)
+        start_time = kwargs.get('start_time', None)
+        end_time = kwargs.get('end_time', None)
+        if detection_configuration_id:
+            if alert_configuration_id or alert_id:
+                raise TypeError(
+                    'Specify either "detection_configuration_id" or "alert_configuration_id" and "alert_id"'
+                )
+            if not start_time or not end_time:
+                raise TypeError('"start_time" and "end_time" are required')
+            return self._list_anomalies_for_detection_configuration(**kwargs)
+        if not alert_configuration_id or not alert_id:
+            raise TypeError('"alert_configuration_id" and "alert_id" are required')
+        return self._list_anomalies_for_alert(**kwargs)
+
+    @distributed_trace
+    def list_dimension_values(
             self, detection_configuration_id,
             dimension_name,
             start_time,
@@ -451,8 +483,13 @@ class MetricsAdvisorClient(object):
             body=anomaly_dimension_query,
             **kwargs)
 
-    @distributed_trace
-    def list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
+    @overload
+    def list_incidents(self, alert_configuration_id, alert_id, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
+        pass
+
+
+    def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
 
         """Query incidents under a specific alert.
@@ -476,8 +513,12 @@ class MetricsAdvisorClient(object):
             cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs)
 
-    @distributed_trace
-    def list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
+    @overload
+    def list_incidents(self, detection_configuration_id, start_time, end_time, **kwargs):
+        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
+        pass
+
+    def _list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
         # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
 
         """Query incidents under a specific alert.
@@ -508,6 +549,25 @@ class MetricsAdvisorClient(object):
             body=detection_incident_result_query,
             cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs)
+
+    @distributed_trace
+    def list_incidents(self, **kwargs):
+        alert_configuration_id = kwargs.get('alert_configuration_id', None)
+        alert_id = kwargs.get('alert_id', None)
+        detection_configuration_id = kwargs.get('detection_configuration_id', None)
+        start_time = kwargs.get('start_time', None)
+        end_time = kwargs.get('end_time', None)
+        if detection_configuration_id:
+            if alert_configuration_id or alert_id:
+                raise TypeError(
+                    'Specify either "detection_configuration_id" or "alert_configuration_id" and "alert_id"'
+                )
+            if not start_time or not end_time:
+                raise TypeError('"start_time" and "end_time" are required')
+            return self._list_incidents_for_detection_configuration(**kwargs)
+        if not alert_configuration_id or not alert_id:
+            raise TypeError('"alert_configuration_id" and "alert_id" are required')
+        return self._list_incidents_for_alert(**kwargs)
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
