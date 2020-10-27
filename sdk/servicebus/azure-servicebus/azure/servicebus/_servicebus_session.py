@@ -91,7 +91,7 @@ class ServiceBusSession(BaseSession):
     """
 
     def get_state(self, **kwargs):
-        # type: (Any) -> str
+        # type: (Any) -> bytes
         # pylint: disable=protected-access
         """Get the session state.
 

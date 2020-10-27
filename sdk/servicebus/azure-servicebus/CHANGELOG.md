@@ -4,6 +4,7 @@
 
 **Breaking Changes**
   - Renamed `AutoLockRenew` to `AutoLockRenewer`
+  - `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`
 
 **New Features**
 
