@@ -339,16 +339,34 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
     def test_patch_volume(self):
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
-        self.assertEqual("Premium", volume.service_level);
-        self.assertEqual(100 * GIGABYTE, volume.usage_threshold);
+        self.assertEqual("Premium", volume.service_level)
+        self.assertEqual(100 * GIGABYTE, volume.usage_threshold)
 
-        volume_patch = VolumePatch(usage_threshold = 200 * GIGABYTE)
+        volume_patch = VolumePatch(usage_threshold=200 * GIGABYTE)
         volume = self.client.volumes.update(volume_patch, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1).result()
-        self.assertEqual("Premium", volume.service_level);  # unchanged
-        self.assertEqual(200 * GIGABYTE, volume.usage_threshold);
+        self.assertEqual("Premium", volume.service_level)
+        self.assertEqual(200 * GIGABYTE, volume.usage_threshold)
 
         self.client.volumes.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1).wait()
         wait_for_no_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
+    def test_pool_change(self):
+        create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
+        pool2 = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_2, LOCATION, True)
+        if self.is_live:
+            time.sleep(10)
+
+        self.client.volumes.pool_change(TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, pool2.id).wait()
+        volume = self.client.volumes.get(TEST_RG, TEST_ACC_1, TEST_POOL_2, TEST_VOL_1)
+        self.assertEqual(volume.name, TEST_ACC_1 + "/" + TEST_POOL_2 + "/" + TEST_VOL_1)
+
+        volume_list = self.client.volumes.list(TEST_RG, TEST_ACC_1, TEST_POOL_1)
+        self.assertEqual(len(list(volume_list)), 0)
+
+        self.client.volumes.delete(TEST_RG, TEST_ACC_1, TEST_POOL_2, TEST_VOL_1).wait()
+        wait_for_no_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
+        delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_2, live=self.is_live)
+        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
