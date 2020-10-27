@@ -15,7 +15,7 @@ For a more complete set of Azure libraries, see the
 [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## Usage
-
+  
 For code examples, see [DevTestLabs
 Management](https://docs.microsoft.com/python/api/overview/azure/devtest-labs)
 on docs.microsoft.com.
