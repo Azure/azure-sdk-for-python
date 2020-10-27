@@ -327,6 +327,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return cls(**constructor_args)
 
     def send_messages(self, message, **kwargs):
+
         # type: (Union[Message, BatchMessage, List[Message]], Any) -> None
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -357,7 +358,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
-         if isinstance(message,list):
+        if isinstance(message,list):
             for index,each in enumerate(message):
                 if isinstance(each,dict):
                     message[index] = Message(each.pop("body"),**each)
