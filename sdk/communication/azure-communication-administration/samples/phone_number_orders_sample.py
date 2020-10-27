@@ -81,7 +81,7 @@ def begin_reserve_phone_numbers():
         quantity=1
     )
     reserve_phone_numbers_response = phone_number_administration_client.begin_reserve_phone_numbers(
-        body=reservationOptions
+        options=reservationOptions
     )
     # [END begin_reserve_phone_numbers]
     print('reserve phone numbers status:')

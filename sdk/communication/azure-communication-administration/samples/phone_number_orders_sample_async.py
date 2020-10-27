@@ -88,7 +88,7 @@ async def begin_reserve_phone_numbers():
     )
     async with phone_number_administration_client:
         reserve_phone_numbers_response = await phone_number_administration_client.begin_reserve_phone_numbers(
-            body=reservationOptions
+            options=reservationOptions
         )
         print('reserve phone numbers status:')
         print(reserve_phone_numbers_response.status())
