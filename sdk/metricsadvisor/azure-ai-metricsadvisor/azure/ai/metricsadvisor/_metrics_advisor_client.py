@@ -352,7 +352,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_anomalies(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
-        pass
+        ...
 
     def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
@@ -395,7 +395,7 @@ class MetricsAdvisorClient(object):
             **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[DataPointAnomaly]
-        pass
+        ...
 
     def _list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
         # type: (...) -> ItemPaged[DataPointAnomaly]
@@ -495,7 +495,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_incidents(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
-        pass
+        ...
 
 
     def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
@@ -534,7 +534,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_incidents(self, detection_configuration_id, start_time, end_time, **kwargs):
         # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
-        pass
+        ...
 
     def _list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
         # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
