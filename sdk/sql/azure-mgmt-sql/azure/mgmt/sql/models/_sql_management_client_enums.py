@@ -430,19 +430,6 @@ class ManagementOperationState(str, Enum):
     cancelled = "Cancelled"
 
 
-class ElasticPoolState(str, Enum):
-
-    creating = "Creating"
-    ready = "Ready"
-    disabled = "Disabled"
-
-
-class ElasticPoolLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
 class VulnerabilityAssessmentScanTriggerType(str, Enum):
 
     on_demand = "OnDemand"
@@ -489,77 +476,6 @@ class PrivateEndpointProvisioningState(str, Enum):
     dropping = "Dropping"
     failed = "Failed"
     rejecting = "Rejecting"
-
-
-class CreateMode(str, Enum):
-
-    default = "Default"
-    copy = "Copy"
-    secondary = "Secondary"
-    point_in_time_restore = "PointInTimeRestore"
-    restore = "Restore"
-    recovery = "Recovery"
-    restore_external_backup = "RestoreExternalBackup"
-    restore_external_backup_secondary = "RestoreExternalBackupSecondary"
-    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
-    online_secondary = "OnlineSecondary"
-
-
-class SampleName(str, Enum):
-
-    adventure_works_lt = "AdventureWorksLT"
-    wide_world_importers_std = "WideWorldImportersStd"
-    wide_world_importers_full = "WideWorldImportersFull"
-
-
-class DatabaseStatus(str, Enum):
-
-    online = "Online"
-    restoring = "Restoring"
-    recovery_pending = "RecoveryPending"
-    recovering = "Recovering"
-    suspect = "Suspect"
-    offline = "Offline"
-    standby = "Standby"
-    shutdown = "Shutdown"
-    emergency_mode = "EmergencyMode"
-    auto_closed = "AutoClosed"
-    copying = "Copying"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-    offline_secondary = "OfflineSecondary"
-    pausing = "Pausing"
-    paused = "Paused"
-    resuming = "Resuming"
-    scaling = "Scaling"
-    offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
-    online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
-    disabled = "Disabled"
-
-
-class CatalogCollationType(str, Enum):
-
-    database_default = "DATABASE_DEFAULT"
-    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
-
-
-class DatabaseLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class DatabaseReadScale(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class StorageAccountType(str, Enum):
-
-    grs = "GRS"
-    lrs = "LRS"
-    zrs = "ZRS"
 
 
 class IdentityType(str, Enum):
@@ -678,6 +594,12 @@ class ManagedDatabaseStatus(str, Enum):
     updating = "Updating"
 
 
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
 class ManagedDatabaseCreateMode(str, Enum):
 
     default = "Default"
@@ -706,10 +628,94 @@ class ManagedInstanceProxyOverride(str, Enum):
     default = "Default"
 
 
+class StorageAccountType(str, Enum):
+
+    grs = "GRS"
+    lrs = "LRS"
+    zrs = "ZRS"
+
+
 class StorageKeyType(str, Enum):
 
     shared_access_key = "SharedAccessKey"
     storage_access_key = "StorageAccessKey"
+
+
+class CreateMode(str, Enum):
+
+    default = "Default"
+    copy = "Copy"
+    secondary = "Secondary"
+    point_in_time_restore = "PointInTimeRestore"
+    restore = "Restore"
+    recovery = "Recovery"
+    restore_external_backup = "RestoreExternalBackup"
+    restore_external_backup_secondary = "RestoreExternalBackupSecondary"
+    restore_long_term_retention_backup = "RestoreLongTermRetentionBackup"
+    online_secondary = "OnlineSecondary"
+
+
+class SampleName(str, Enum):
+
+    adventure_works_lt = "AdventureWorksLT"
+    wide_world_importers_std = "WideWorldImportersStd"
+    wide_world_importers_full = "WideWorldImportersFull"
+
+
+class DatabaseStatus(str, Enum):
+
+    online = "Online"
+    restoring = "Restoring"
+    recovery_pending = "RecoveryPending"
+    recovering = "Recovering"
+    suspect = "Suspect"
+    offline = "Offline"
+    standby = "Standby"
+    shutdown = "Shutdown"
+    emergency_mode = "EmergencyMode"
+    auto_closed = "AutoClosed"
+    copying = "Copying"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    offline_secondary = "OfflineSecondary"
+    pausing = "Pausing"
+    paused = "Paused"
+    resuming = "Resuming"
+    scaling = "Scaling"
+    offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
+    online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
+    disabled = "Disabled"
+
+
+class DatabaseLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class DatabaseReadScale(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class SecondaryType(str, Enum):
+
+    geo = "Geo"
+    named = "Named"
+
+
+class ElasticPoolState(str, Enum):
+
+    creating = "Creating"
+    ready = "Ready"
+    disabled = "Disabled"
+
+
+class ElasticPoolLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
@@ -729,12 +735,6 @@ class SensitivityLabelSource(str, Enum):
 
     current = "current"
     recommended = "recommended"
-
-
-class ReplicaType(str, Enum):
-
-    primary = "Primary"
-    readable_secondary = "ReadableSecondary"
 
 
 class CapabilityGroup(str, Enum):
@@ -786,3 +786,9 @@ class DatabaseState6(str, Enum):
     all = "All"
     live = "Live"
     deleted = "Deleted"
+
+
+class ReplicaType(str, Enum):
+
+    primary = "Primary"
+    readable_secondary = "ReadableSecondary"
