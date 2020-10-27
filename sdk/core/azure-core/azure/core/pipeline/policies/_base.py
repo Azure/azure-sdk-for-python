@@ -81,7 +81,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
 
     SansIOHTTPPolicy is a base class for policies that only modify or
-    mutate a request based on the HTTP specification, and do no depend
+    mutate a request based on the HTTP specification, and do not depend
     on the specifics of any particular transport. SansIOHTTPPolicy
     subclasses will function in either a Pipeline or an AsyncPipeline,
     and can act either before the request is done, or after.
