@@ -6,7 +6,7 @@
 
 # pylint:disable=protected-access
 
-from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
+from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
 import datetime
 
 from azure.core.tracing.decorator import distributed_trace
@@ -352,11 +352,6 @@ class MetricsAdvisorClient(object):
             cls=kwargs.pop("cls", lambda alerts: [AnomalyAlert._from_generated(alert) for alert in alerts]),
             **kwargs)
 
-    @overload
-    def list_anomalies(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, Any) -> AsyncItemPaged[DataPointAnomaly]
-        ...
-
     def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> AsyncItemPaged[DataPointAnomaly]
 
@@ -389,16 +384,6 @@ class MetricsAdvisorClient(object):
             skip=skip,
             cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs)
-
-    @overload
-    def list_anomalies(
-            self, detection_configuration_id,  # type: str
-            start_time,  # type: Union[str, datetime.datetime]
-            end_time,  # type: Union[str, datetime.datetime]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[DataPointAnomaly]
-        ...
 
     def _list_anomalies_for_detection_configuration(
             self, detection_configuration_id,  # type: str
@@ -500,11 +485,6 @@ class MetricsAdvisorClient(object):
             body=anomaly_dimension_query,
             **kwargs)
 
-    @overload
-    def list_incidents(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, Any) -> AsyncItemPaged[AnomalyIncident]
-        ...
-
     def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> AsyncItemPaged[AnomalyIncident]
 
@@ -537,15 +517,6 @@ class MetricsAdvisorClient(object):
             skip=skip,
             cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs)
-
-    @overload
-    def list_incidents(
-        self, detection_configuration_id: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> AsyncItemPaged[AnomalyIncident]:
-        ...
 
     def _list_incidents_for_detection_configuration(
         self, detection_configuration_id: str,
