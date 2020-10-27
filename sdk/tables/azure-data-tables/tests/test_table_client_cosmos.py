@@ -19,7 +19,7 @@ from _shared.testcase import (
 from azure.core.exceptions import HttpResponseError
 from _shared.cosmos_testcase import CachedCosmosAccountPreparer
 
-from devtools_testutils import CachedResourceGroupPreparer
+from devtools_testutils import CachedResourceGroupPreparer, AzureTestCase
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -557,7 +557,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("kierans theory")
+    @AzureTestCase.await_prepared_test
     def test_create_table_client_with_invalid_name(self):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
@@ -572,6 +572,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @AzureTestCase.await_prepared_test
     def test_error_with_malformed_conn_str(self):
         # Arrange
 
