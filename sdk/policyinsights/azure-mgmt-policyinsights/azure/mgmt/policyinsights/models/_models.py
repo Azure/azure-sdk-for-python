@@ -1341,7 +1341,7 @@ class QueryOptions(msrest.serialization.Model):
         'filter': {'key': 'Filter', 'type': 'str'},
         'order_by': {'key': 'OrderBy', 'type': 'str'},
         'select': {'key': 'Select', 'type': 'str'},
-        'from_property': {'key': 'From', 'type': 'iso-8601'},
+        'from_property': {'key': 'FromProperty', 'type': 'iso-8601'},
         'to': {'key': 'To', 'type': 'iso-8601'},
         'apply': {'key': 'Apply', 'type': 'str'},
         'skip_token': {'key': 'SkipToken', 'type': 'str'},
