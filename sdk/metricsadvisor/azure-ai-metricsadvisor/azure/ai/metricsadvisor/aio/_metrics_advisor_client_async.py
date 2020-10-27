@@ -393,7 +393,7 @@ class MetricsAdvisorClient(object):
     ):
         # type: (...) -> AsyncItemPaged[DataPointAnomaly]
 
-        """Query anomalies under anomaly detection configuration.
+        """Query anomalies under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
@@ -426,6 +426,19 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_anomalies(self, **kwargs):
+        # type: (Any) -> AsyncItemPaged[DataPointAnomaly]
+        """Query anomalies under a specific alert or detection configuration.
+
+        :keyword str alert_configuration_id: anomaly alert configuration unique id.
+        :keyword str alert_id: alert id.
+        :keyword str detection_configuration_id: anomaly detection configuration unique id.
+        :keyword Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :return: Anomalies under a specific alert.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         alert_configuration_id = kwargs.get('alert_configuration_id', None)
         alert_id = kwargs.get('alert_id', None)
         detection_configuration_id = kwargs.get('detection_configuration_id', None)
@@ -525,7 +538,7 @@ class MetricsAdvisorClient(object):
         **kwargs: Any
     ) -> AsyncItemPaged[AnomalyIncident]:
 
-        """Query incidents under a specific alert.
+        """Query incidents under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
@@ -565,6 +578,20 @@ class MetricsAdvisorClient(object):
 
     @distributed_trace
     def list_incidents(self, **kwargs):
+        # type: (Any) -> AsyncItemPaged[AnomalyIncident]
+
+        """Query incidents under a specific alert or detection configuration.
+
+        :keyword str alert_configuration_id: anomaly alerting configuration unique id.
+        :keyword str alert_id: alert id.
+        :keyword str detection_configuration_id: anomaly detection configuration unique id.
+        :keyword Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :return: AnomalyIncidents under a specific alert.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         alert_configuration_id = kwargs.get('alert_configuration_id', None)
         alert_id = kwargs.get('alert_id', None)
         detection_configuration_id = kwargs.get('detection_configuration_id', None)
