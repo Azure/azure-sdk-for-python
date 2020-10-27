@@ -302,7 +302,6 @@ class MessageSendFailed(ServiceBusMessageError):
         if hasattr(error, 'condition'):
             self.condition = error.condition  # type: ignore
             self.description = error.description  # type: ignore
-        self.inner_exception = error
         super(MessageSendFailed, self).__init__(message, error=error)
 
 
