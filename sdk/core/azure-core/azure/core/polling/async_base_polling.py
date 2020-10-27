@@ -44,7 +44,7 @@ class AsyncLROBasePolling(LROBasePolling):
         try:
             await self._poll()
         except AzureError as err:
-            if not error.continuation_token:
+            if not err.continuation_token:
                 err.continuation_token = self.get_continuation_token()
             raise
 
