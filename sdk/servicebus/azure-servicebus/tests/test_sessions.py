@@ -13,7 +13,7 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, AutoLockRenew
+from azure.servicebus import ServiceBusClient, AutoLockRenewer
 from azure.servicebus._common.message import Message, PeekedMessage, ReceivedMessage
 from azure.servicebus._common.constants import ReceiveMode, NEXT_AVAILABLE, SubQueue
 from azure.servicebus._common.utils import utc_now
@@ -32,6 +32,7 @@ from azure.servicebus.exceptions import (
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
+    CachedServiceBusQueuePreparer,
     ServiceBusTopicPreparer,
     ServiceBusQueuePreparer,
     ServiceBusSubscriptionPreparer
@@ -590,7 +591,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             def lock_lost_callback(renewable, error):
                 results.append(renewable)
 
-            renewer = AutoLockRenew()
+            renewer = AutoLockRenewer()
             messages = []
             with sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
                 renewer.register(receiver.session, timeout=60, on_lock_renew_failure = lock_lost_callback)
@@ -1001,7 +1002,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     def test_session_non_session_send_to_session_queue_should_fail(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:

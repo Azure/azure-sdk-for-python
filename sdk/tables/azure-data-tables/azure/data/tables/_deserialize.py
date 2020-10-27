@@ -156,7 +156,6 @@ def _convert_to_entity(entry_element):
     # Timestamp is a known property
     timestamp = properties.pop('Timestamp', None)
     if timestamp:
-        # TODO: verify change here
         # entity['Timestamp'] = _from_entity_datetime(timestamp)
         entity['Timestamp'] = timestamp
 

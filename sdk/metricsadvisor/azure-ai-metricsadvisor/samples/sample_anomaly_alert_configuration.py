@@ -37,7 +37,8 @@ def sample_create_alert_config():
         MetricAnomalyAlertConditions,
         SeverityCondition,
         MetricBoundaryCondition,
-        MetricAnomalyAlertSnoozeCondition
+        MetricAnomalyAlertSnoozeCondition,
+        AnomalyAlertConfiguration
     )
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
@@ -48,7 +49,7 @@ def sample_create_alert_config():
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    alert_config = client.create_anomaly_alert_configuration(
+    anomaly_alert_configuration = AnomalyAlertConfiguration(
         name="my alert config",
         description="alert config description",
         cross_metrics_operator="AND",
@@ -90,6 +91,8 @@ def sample_create_alert_config():
         ],
         hook_ids=[hook_id]
     )
+
+    alert_config = client.create_anomaly_alert_configuration(anomaly_alert_configuration)
 
     return alert_config
     # [END create_anomaly_alert_config]

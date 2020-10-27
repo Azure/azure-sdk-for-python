@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-class AutoLockRenew(object):
+class AutoLockRenewer(object):
     """Auto renew locks for messages and sessions using a background thread pool.
 
     :param executor: A user-specified thread pool. This cannot be combined with
@@ -71,7 +71,7 @@ class AutoLockRenew(object):
 
     def __enter__(self):
         if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+            raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         return self
 
@@ -134,7 +134,7 @@ class AutoLockRenew(object):
         :rtype: None
         """
         if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+            raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         self._executor.submit(self._auto_lock_renew, renewable, starttime, timeout, on_lock_renew_failure)

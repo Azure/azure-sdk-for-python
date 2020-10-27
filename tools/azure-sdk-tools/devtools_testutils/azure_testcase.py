@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+import functools
 import inspect
 import os.path
 import sys
@@ -20,6 +21,7 @@ from azure_devtools.scenario_tests import (
     AuthenticationMetadataFilter, OAuthRequestResponsesFilter
 )
 from azure_devtools.scenario_tests.config import TestConfig
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
@@ -262,3 +264,21 @@ class AzureTestCase(ReplayableTest):
         If prefix is a blank string, use the fully qualified test name instead.
         This is what legacy tests do for resource groups."""
         return self.get_resource_name(prefix or self.qualified_test_name.replace('.', '_'))
+
+    @staticmethod
+    def await_prepared_test(test_fn):
+        """Synchronous wrapper for async test methods. Used to avoid making changes
+        upstream to AbstractPreparer (which doesn't await the functions it wraps)
+        """
+
+        if sys.version_info < (3, 5):
+            raise ImportError("Async wrapper is not needed for Python 2.7 code.")
+
+        import asyncio
+        @functools.wraps(test_fn)
+        def run(test_class_instance, *args, **kwargs):
+            trim_kwargs_from_test_function(test_fn, kwargs)
+            loop = asyncio.get_event_loop()
+            return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
+
+        return run

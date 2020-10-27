@@ -2,6 +2,9 @@
 
 ## 7.0.0b8 (Unreleased)
 
+**Breaking Changes**
+  - Renamed `AutoLockRenew` to `AutoLockRenewer`
+
 **New Features**
 
 * Added support for `timeout` parameter on the following operations:
@@ -10,9 +13,19 @@
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
 
+**Breaking Changes**
+
+* Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)
+and methods that use amqp management link for request like `schedule_messages`, `received_deferred_messages`, etc.
+now raise more concrete exception other than `MessageSettleFailed` and `ServiceBusError`.
+* Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
+ now inherit from `azure.servicebus.exceptions.MessageError`.
+* Removed Exception `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus resource does not exist.
+
 **BugFixes**
 
-* Updated uAMQP dependency to 1.2.11.
+* Updated uAMQP dependency to 1.2.12.
+  - Added support for Python 3.9.
   - Fixed bug where amqp message `footer` and `delivery_annotation` were not encoded into the outgoing payload.
 
 ## 7.0.0b7 (2020-10-05)
