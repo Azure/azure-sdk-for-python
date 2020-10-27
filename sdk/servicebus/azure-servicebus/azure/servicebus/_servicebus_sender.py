@@ -217,10 +217,18 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Schedule a message to be sent in future
         """
         # pylint: disable=protected-access
-        self.
+        self._open()
+        if isinstance(messages,list):
+            for index,each in enumerate(messages):
+                if isinstance(each,dict):
+                    messages[index] = Message(each.pop("body"),**each)
+                else:
+                    pass
+
         if isinstance(messages,dict):
-            temporary_message = Message(messages.pop('body'),**messages)
-            messages = temporary_message
+            temp_messages = Message(messages.pop("body"),**messages)
+            messages = temp_messages
+
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -349,6 +357,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+         if isinstance(message,list):
+            for index,each in enumerate(message):
+                if isinstance(each,dict):
+                    message[index] = Message(each.pop("body"),**each)
+                else:
+                    pass
         if isinstance(message,dict):
             temporary_message = Message(message.pop('body'),**message)
             message = temporary_message
