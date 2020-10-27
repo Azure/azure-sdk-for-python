@@ -20,7 +20,7 @@ class ServiceBusConnectionStringProperties(DictMixin):
         self._shared_access_signature = kwargs.pop('shared_access_signature', None)
         self._shared_access_key_name = kwargs.pop('shared_access_key_name', None)
         self._shared_access_key = kwargs.pop('shared_access_key', None)
-    
+
     @property
     def fully_qualified_namespace(self):
         """The fully qualified host name for the Service Bus namespace.
