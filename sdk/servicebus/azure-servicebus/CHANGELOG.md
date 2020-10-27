@@ -3,7 +3,10 @@
 ## 7.0.0b8 (Unreleased)
 
 **Breaking Changes**
-  - Renamed `AutoLockRenew` to `AutoLockRenewer`
+  - Renamed `AutoLockRenew` to `AutoLockRenewer`.
+  - Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+    - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+    - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
 
 **New Features**
 
