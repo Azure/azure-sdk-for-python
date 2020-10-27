@@ -6,7 +6,6 @@
 from ._async_message import ServiceBusReceivedMessage
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
-from ._servicebus_session_receiver_async import ServiceBusSessionReceiver
 from ._servicebus_session_async import ServiceBusSession
 from ._servicebus_client_async import ServiceBusClient
 from ._async_auto_lock_renewer import AutoLockRenewer
@@ -16,7 +15,6 @@ __all__ = [
     'ServiceBusClient',
     'ServiceBusSender',
     'ServiceBusReceiver',
-    'ServiceBusSessionReceiver',
     'ServiceBusSession',
     'AutoLockRenewer'
 ]

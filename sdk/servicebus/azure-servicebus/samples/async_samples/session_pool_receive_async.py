@@ -9,7 +9,7 @@ import asyncio
 import uuid
 
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
-from azure.servicebus import ServiceBusMessage
+from azure.servicebus import ServiceBusMessage, NEXT_AVAILABLE_SESSION
 from azure.servicebus.exceptions import NoActiveSession
 
 
@@ -21,7 +21,7 @@ SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
 async def message_processing(servicebus_client, queue_name):
     while True:
         try:
-            async with servicebus_client.get_queue_session_receiver(queue_name, max_wait_time=1) as receiver:
+            async with servicebus_client.get_queue_receiver(queue_name, max_wait_time=1, session_id=NEXT_AVAILABLE_SESSION) as receiver:
                 renewer = AutoLockRenewer()
                 renewer.register(receiver.session)
                 await receiver.session.set_state("OPEN")

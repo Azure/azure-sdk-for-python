@@ -715,7 +715,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
     
             with pytest.raises(ServiceBusConnectionError):
-                sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
+                sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
@@ -1981,7 +1981,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
             uamqp.mgmt_operation.MgmtOperation.execute = original_execute_method
 
-
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2025,3 +2024,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
                 message = receiver.receive_messages(max_wait_time=6)[0]
                 message.complete()
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_send_message_no_body(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string)
+
+        with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            sender.send_messages(Message(body=None))
+
+        with sb_client.get_queue_receiver(servicebus_queue.name,  
+                                          max_wait_time=10) as receiver:
+            message = receiver.next()
+            assert message.body is None
+            message.complete()

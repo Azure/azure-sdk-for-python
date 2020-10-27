@@ -7,6 +7,7 @@ import functools
 from typing import (
     Union,
     Any,
+    Dict,
 )
 
 try:
@@ -24,7 +25,8 @@ from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
 from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy
+from .._models import AccessPolicy, PartialBatchErrorException  # pylint:disable=unused-import
+from .._policies import StorageHeadersPolicy  # pylint:disable=unused-import
 from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error
@@ -35,6 +37,7 @@ from .._table_client_base import TableClientBase
 from ._base_client_async import AsyncStorageAccountHostsMixin
 from ._models import TableEntityPropertiesPaged
 from ._policies_async import ExponentialRetry
+from ._table_batch_async import TableBatchOperations
 
 
 class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
@@ -569,3 +572,55 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+
+    @distributed_trace
+    def create_batch(
+        self, **kwargs: Dict[str, Any]
+    ) -> TableBatchOperations:
+        """Create a Batching object from a Table Client
+
+        return: Table batch operation for inserting new operations
+        :rtype: ~azure.data.tables.TableBatchOperations
+        :raises: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_batching_async.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Creating and adding an entity to a Table
+        """
+        return TableBatchOperations(
+            self._client,
+            self._client._serialize,  # pylint:disable=protected-access
+            self._client._deserialize,  # pylint:disable=protected-access
+            self._client._config,  # pylint:disable=protected-access
+            self.table_name,
+            self,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def send_batch(
+        self,
+        batch: TableBatchOperations,
+        **kwargs: Dict[Any, str]
+    ) -> None:
+        """Commit a TableBatchOperations to send requests to the server
+
+        return: Table batch operation for inserting new operations
+        :rtype: ~azure.data.tables.BatchTransactionResult
+        :raises: ~azure.data.tables.BatchErrorException
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_batching_async.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Using batches to send multiple requests at once
+        """
+        return await self._batch_send(batch._entities, *batch._requests, **kwargs) # pylint:disable=protected-access

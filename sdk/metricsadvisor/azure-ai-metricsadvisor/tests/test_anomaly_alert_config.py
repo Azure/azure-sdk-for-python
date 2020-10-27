@@ -15,7 +15,8 @@ from azure.ai.metricsadvisor.models import (
     MetricBoundaryCondition,
     TopNGroupScope,
     SeverityCondition,
-    MetricAnomalyAlertSnoozeCondition
+    MetricAnomalyAlertSnoozeCondition,
+    AnomalyAlertConfiguration
 )
 from base_testcase import TestMetricsAdvisorAdministrationClientBase
 
@@ -28,29 +29,31 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="TopN",
-                            top_n_group_in_scope=TopNGroupScope(
-                                top=5,
-                                period=10,
-                                min_top_count=9
-                            )
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                lower=1.0,
-                                upper=5.0
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="TopN",
+                                top_n_group_in_scope=TopNGroupScope(
+                                    top=5,
+                                    period=10,
+                                    min_top_count=9
+                                )
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Both",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    lower=1.0,
+                                    upper=5.0
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -89,28 +92,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="TopN",
-                            top_n_group_in_scope=TopNGroupScope(
-                                top=5,
-                                period=10,
-                                min_top_count=9
-                            )
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Down",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                lower=1.0,
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="TopN",
+                                top_n_group_in_scope=TopNGroupScope(
+                                    top=5,
+                                    period=10,
+                                    min_top_count=9
+                                )
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Down",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    lower=1.0,
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -149,28 +154,30 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="TopN",
-                            top_n_group_in_scope=TopNGroupScope(
-                                top=5,
-                                period=10,
-                                min_top_count=9
-                            )
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Up",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                upper=5.0,
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="TopN",
+                                top_n_group_in_scope=TopNGroupScope(
+                                    top=5,
+                                    period=10,
+                                    min_top_count=9
+                                )
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Up",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    upper=5.0,
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -209,27 +216,29 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="TopN",
-                            top_n_group_in_scope=TopNGroupScope(
-                                top=5,
-                                period=10,
-                                min_top_count=9
-                            )
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            severity_condition=SeverityCondition(
-                                min_alert_severity="Low",
-                                max_alert_severity="High"
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="TopN",
+                                top_n_group_in_scope=TopNGroupScope(
+                                    top=5,
+                                    period=10,
+                                    min_top_count=9
+                                )
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                severity_condition=SeverityCondition(
+                                    min_alert_severity="Low",
+                                    max_alert_severity="High"
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -262,26 +271,28 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="TopN",
-                            top_n_group_in_scope=TopNGroupScope(
-                                top=5,
-                                period=10,
-                                min_top_count=9
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="TopN",
+                                top_n_group_in_scope=TopNGroupScope(
+                                    top=5,
+                                    period=10,
+                                    min_top_count=9
+                                )
+                            ),
+                            alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
+                                auto_snooze=5,
+                                snooze_scope="Metric",
+                                only_for_successive=True
                             )
-                        ),
-                        alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
-                            auto_snooze=5,
-                            snooze_scope="Metric",
-                            only_for_successive=True
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -315,24 +326,26 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="WholeSeries",
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                lower=1.0,
-                                upper=5.0
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="WholeSeries",
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Both",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    lower=1.0,
+                                    upper=5.0
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -367,23 +380,25 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="WholeSeries"
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Down",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                lower=1.0,
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="WholeSeries"
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Down",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    lower=1.0,
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -418,23 +433,25 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="WholeSeries"
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Up",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                upper=5.0,
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="WholeSeries"
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Up",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    upper=5.0,
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -469,22 +486,24 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="WholeSeries"
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            severity_condition=SeverityCondition(
-                                min_alert_severity="Low",
-                                max_alert_severity="High"
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="WholeSeries"
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                severity_condition=SeverityCondition(
+                                    min_alert_severity="Low",
+                                    max_alert_severity="High"
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -513,25 +532,27 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                lower=1.0,
-                                upper=5.0
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="SeriesGroup",
+                                series_group_in_scope={'city': 'Shenzhen'}
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Both",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    lower=1.0,
+                                    upper=5.0
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -567,24 +588,26 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Down",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                lower=1.0,
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="SeriesGroup",
+                                series_group_in_scope={'city': 'Shenzhen'}
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Down",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    lower=1.0,
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -620,24 +643,26 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Up",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                upper=5.0,
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="SeriesGroup",
+                                series_group_in_scope={'city': 'Shenzhen'}
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Up",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    upper=5.0,
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -673,23 +698,25 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            severity_condition=SeverityCondition(
-                                min_alert_severity="Low",
-                                max_alert_severity="High"
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="SeriesGroup",
+                                series_group_in_scope={'city': 'Shenzhen'}
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                severity_condition=SeverityCondition(
+                                    min_alert_severity="Low",
+                                    max_alert_severity="High"
+                                )
                             )
                         )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertIsNone(alert_config.cross_metrics_operator)
             self.assertIsNotNone(alert_config.id)
@@ -719,55 +746,57 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         alert_config_name = self.create_random_name("testalert")
         try:
             alert_config = self.admin_client.create_anomaly_alert_configuration(
-                name=alert_config_name,
-                cross_metrics_operator="AND",
-                metric_alert_configurations=[
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="TopN",
-                            top_n_group_in_scope=TopNGroupScope(
-                                top=5,
-                                period=10,
-                                min_top_count=9
+                AnomalyAlertConfiguration(
+                    name=alert_config_name,
+                    cross_metrics_operator="AND",
+                    metric_alert_configurations=[
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="TopN",
+                                top_n_group_in_scope=TopNGroupScope(
+                                    top=5,
+                                    period=10,
+                                    min_top_count=9
+                                )
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                metric_boundary_condition=MetricBoundaryCondition(
+                                    direction="Both",
+                                    companion_metric_id=data_feed.metric_ids[0],
+                                    lower=1.0,
+                                    upper=5.0
+                                )
                             )
                         ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            metric_boundary_condition=MetricBoundaryCondition(
-                                direction="Both",
-                                companion_metric_id=data_feed.metric_ids[0],
-                                lower=1.0,
-                                upper=5.0
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="SeriesGroup",
+                                series_group_in_scope={'city': 'Shenzhen'}
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                severity_condition=SeverityCondition(
+                                    min_alert_severity="Low",
+                                    max_alert_severity="High"
+                                )
                             )
-                        )
-                    ),
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="SeriesGroup",
-                            series_group_in_scope={'city': 'Shenzhen'}
                         ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            severity_condition=SeverityCondition(
-                                min_alert_severity="Low",
-                                max_alert_severity="High"
+                        MetricAlertConfiguration(
+                            detection_configuration_id=detection_config.id,
+                            alert_scope=MetricAnomalyAlertScope(
+                                scope_type="WholeSeries"
+                            ),
+                            alert_conditions=MetricAnomalyAlertConditions(
+                                severity_condition=SeverityCondition(
+                                    min_alert_severity="Low",
+                                    max_alert_severity="High"
+                                )
                             )
                         )
-                    ),
-                    MetricAlertConfiguration(
-                        detection_configuration_id=detection_config.id,
-                        alert_scope=MetricAnomalyAlertScope(
-                            scope_type="WholeSeries"
-                        ),
-                        alert_conditions=MetricAnomalyAlertConditions(
-                            severity_condition=SeverityCondition(
-                                min_alert_severity="Low",
-                                max_alert_severity="High"
-                            )
-                        )
-                    )
-                ],
-                hook_ids=[]
+                    ],
+                    hook_ids=[]
+                )
             )
             self.assertEqual(alert_config.cross_metrics_operator, "AND")
             self.assertIsNotNone(alert_config.id)

@@ -61,7 +61,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await sender.send_messages(message, timeout=5)
 
             with pytest.raises(ServiceBusConnectionError):
-                await (sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
+                await (sb_client.get_queue_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                 count = 0
@@ -591,7 +591,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             with pytest.raises(ServiceBusConnectionError):
-                await sb_client.get_queue_session_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
+                await sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("test session sender", session_id="test"))
@@ -1557,4 +1557,22 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await message.complete()
 
                 message = (await receiver.receive_messages(max_wait_time=6))[0]
+                await message.complete()
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_async_send_message_no_body(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string) as sb_client:
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send_messages(Message(body=None))
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name,  
+                                            max_wait_time=10) as receiver:
+                message = await receiver.__anext__()
+                assert message.body is None
                 await message.complete()

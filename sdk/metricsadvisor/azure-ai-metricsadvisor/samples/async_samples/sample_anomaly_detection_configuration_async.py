@@ -37,6 +37,7 @@ async def sample_create_detection_config_async():
         SmartDetectionCondition,
         SuppressCondition,
         MetricDetectionCondition,
+        AnomalyDetectionConfiguration
     )
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
@@ -73,18 +74,21 @@ async def sample_create_detection_config_async():
             min_ratio=2
         )
     )
-    async with client:
-        detection_config = await client.create_metric_anomaly_detection_configuration(
-            name="my_detection_config",
-            metric_id=metric_id,
-            description="anomaly detection config for metric",
-            whole_series_detection_condition=MetricDetectionCondition(
-                cross_conditions_operator="OR",
-                change_threshold_condition=change_threshold_condition,
-                hard_threshold_condition=hard_threshold_condition,
-                smart_detection_condition=smart_detection_condition
-            )
+
+    anomaly_detection_configuration = AnomalyDetectionConfiguration(
+        name="my_detection_config",
+        metric_id=metric_id,
+        description="anomaly detection config for metric",
+        whole_series_detection_condition=MetricDetectionCondition(
+            cross_conditions_operator="OR",
+            change_threshold_condition=change_threshold_condition,
+            hard_threshold_condition=hard_threshold_condition,
+            smart_detection_condition=smart_detection_condition
         )
+    )
+
+    async with client:
+        detection_config = await client.create_metric_anomaly_detection_configuration(anomaly_detection_configuration)
 
         return detection_config
     # [END create_anomaly_detection_config_async]
