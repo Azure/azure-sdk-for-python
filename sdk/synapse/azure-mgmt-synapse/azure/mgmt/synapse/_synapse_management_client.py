@@ -36,6 +36,10 @@ from .operations import SqlPoolVulnerabilityAssessmentsOperations
 from .operations import SqlPoolVulnerabilityAssessmentScansOperations
 from .operations import SqlPoolSecurityAlertPoliciesOperations
 from .operations import SqlPoolVulnerabilityAssessmentRuleBaselinesOperations
+from .operations import ExtendedSqlPoolBlobAuditingPoliciesOperations
+from .operations import DataMaskingPoliciesOperations
+from .operations import DataMaskingRulesOperations
+from .operations import SqlPoolColumnsOperations
 from .operations import WorkspacesOperations
 from .operations import WorkspaceAadAdminsOperations
 from .operations import WorkspaceManagedIdentitySqlControlSettingsOperations
@@ -106,6 +110,14 @@ class SynapseManagementClient(SDKClient):
     :vartype sql_pool_security_alert_policies: azure.mgmt.synapse.operations.SqlPoolSecurityAlertPoliciesOperations
     :ivar sql_pool_vulnerability_assessment_rule_baselines: SqlPoolVulnerabilityAssessmentRuleBaselines operations
     :vartype sql_pool_vulnerability_assessment_rule_baselines: azure.mgmt.synapse.operations.SqlPoolVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar extended_sql_pool_blob_auditing_policies: ExtendedSqlPoolBlobAuditingPolicies operations
+    :vartype extended_sql_pool_blob_auditing_policies: azure.mgmt.synapse.operations.ExtendedSqlPoolBlobAuditingPoliciesOperations
+    :ivar data_masking_policies: DataMaskingPolicies operations
+    :vartype data_masking_policies: azure.mgmt.synapse.operations.DataMaskingPoliciesOperations
+    :ivar data_masking_rules: DataMaskingRules operations
+    :vartype data_masking_rules: azure.mgmt.synapse.operations.DataMaskingRulesOperations
+    :ivar sql_pool_columns: SqlPoolColumns operations
+    :vartype sql_pool_columns: azure.mgmt.synapse.operations.SqlPoolColumnsOperations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.synapse.operations.WorkspacesOperations
     :ivar workspace_aad_admins: WorkspaceAadAdmins operations
@@ -201,6 +213,14 @@ class SynapseManagementClient(SDKClient):
         self.sql_pool_security_alert_policies = SqlPoolSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sql_pool_vulnerability_assessment_rule_baselines = SqlPoolVulnerabilityAssessmentRuleBaselinesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.extended_sql_pool_blob_auditing_policies = ExtendedSqlPoolBlobAuditingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_masking_policies = DataMaskingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_masking_rules = DataMaskingRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_pool_columns = SqlPoolColumnsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -32,6 +32,10 @@ from ._sql_pool_vulnerability_assessments_operations import SqlPoolVulnerability
 from ._sql_pool_vulnerability_assessment_scans_operations import SqlPoolVulnerabilityAssessmentScansOperations
 from ._sql_pool_security_alert_policies_operations import SqlPoolSecurityAlertPoliciesOperations
 from ._sql_pool_vulnerability_assessment_rule_baselines_operations import SqlPoolVulnerabilityAssessmentRuleBaselinesOperations
+from ._extended_sql_pool_blob_auditing_policies_operations import ExtendedSqlPoolBlobAuditingPoliciesOperations
+from ._data_masking_policies_operations import DataMaskingPoliciesOperations
+from ._data_masking_rules_operations import DataMaskingRulesOperations
+from ._sql_pool_columns_operations import SqlPoolColumnsOperations
 from ._workspaces_operations import WorkspacesOperations
 from ._workspace_aad_admins_operations import WorkspaceAadAdminsOperations
 from ._workspace_managed_identity_sql_control_settings_operations import WorkspaceManagedIdentitySqlControlSettingsOperations
@@ -72,6 +76,10 @@ __all__ = [
     'SqlPoolVulnerabilityAssessmentScansOperations',
     'SqlPoolSecurityAlertPoliciesOperations',
     'SqlPoolVulnerabilityAssessmentRuleBaselinesOperations',
+    'ExtendedSqlPoolBlobAuditingPoliciesOperations',
+    'DataMaskingPoliciesOperations',
+    'DataMaskingRulesOperations',
+    'SqlPoolColumnsOperations',
     'WorkspacesOperations',
     'WorkspaceAadAdminsOperations',
     'WorkspaceManagedIdentitySqlControlSettingsOperations',
