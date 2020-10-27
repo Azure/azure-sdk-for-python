@@ -286,8 +286,8 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :type queue: ~azure.servicebus.management.QueueProperties
         :rtype: None
         """
-        if isinstance(queue,dict):
-            dict_to_queue_props = QueueProperties(queue.pop("name"),**queue)
+        if isinstance(queue, dict):
+            dict_to_queue_props = QueueProperties(queue.pop("name"), **queue)
             to_update = dict_to_queue_props._to_internal_entity()
         else:
             to_update = queue._to_internal_entity()
@@ -483,8 +483,8 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :type topic: ~azure.servicebus.management.TopicProperties
         :rtype: None
         """
-        if isinstance(topic,dict):
-            dict_to_topic_props = TopicProperties(topic.pop("name"),**topic)
+        if isinstance(topic, dict):
+            dict_to_topic_props = TopicProperties(topic.pop("name"), **topic)
             to_update = dict_to_topic_props._to_internal_entity()
         else:
             to_update = topic._to_internal_entity()
@@ -692,8 +692,8 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_entity_name_type(topic_name, display_name='topic_name')
-        if isinstance(subscription,dict):
-            dict_to_subscription_props = SubscriptionProperties(subscription.pop("name"),**subscription)
+        if isinstance(subscription, dict):
+            dict_to_subscription_props = SubscriptionProperties(subscription.pop("name"), **subscription)
             to_update = dict_to_subscription_props._to_internal_entity()
         else:
             to_update = subscription._to_internal_entity()
@@ -863,9 +863,8 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
-        
-        if isinstance(rule,dict):
-            dict_to_rule_props = RuleProperties(rule.pop('name'),**rule)
+        if isinstance(rule, dict):
+            dict_to_rule_props = RuleProperties(rule.pop('name'), **rule)
             to_update = dict_to_rule_props._to_internal_entity()
         else:
             to_update = rule._to_internal_entity()

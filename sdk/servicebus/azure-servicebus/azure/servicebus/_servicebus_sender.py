@@ -218,15 +218,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         # pylint: disable=protected-access
         self._open()
-        if isinstance(messages,list):
-            for index,each in enumerate(messages):
-                if isinstance(each,dict):
-                    messages[index] = Message(each.pop("body"),**each)
+        if isinstance(messages, list):
+            for index, each in enumerate(messages):
+                if isinstance(each, dict):
+                    messages[index] = Message(each.pop("body"), **each)
                 else:
                     pass
 
-        if isinstance(messages,dict):
-            temp_messages = Message(messages.pop("body"),**messages)
+        if isinstance(messages, dict):
+            temp_messages = Message(messages.pop("body"), **messages)
             messages = temp_messages
 
         timeout = kwargs.pop("timeout", None)
@@ -358,14 +358,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
-        if isinstance(message,list):
-            for index,each in enumerate(message):
-                if isinstance(each,dict):
-                    message[index] = Message(each.pop("body"),**each)
+        if isinstance(message, list):
+            for index, each in enumerate(message):
+                if isinstance(each, dict):
+                    message[index] = Message(each.pop("body"), **each)
                 else:
                     pass
-        if isinstance(message,dict):
-            temporary_message = Message(message.pop('body'),**message)
+        if isinstance(message, dict):
+            temporary_message = Message(message.pop('body'), **message)
             message = temporary_message
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
