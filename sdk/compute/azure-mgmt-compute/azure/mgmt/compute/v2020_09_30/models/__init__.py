@@ -57,6 +57,7 @@ try:
     from ._models_py3 import SharingUpdate
     from ._models_py3 import TargetRegion
     from ._models_py3 import UpdateResourceDefinition
+    from ._models_py3 import UserArtifactManage
     from ._models_py3 import UserArtifactSource
 except (SyntaxError, ImportError):
     from ._models import ApiError
@@ -106,6 +107,7 @@ except (SyntaxError, ImportError):
     from ._models import SharingUpdate
     from ._models import TargetRegion
     from ._models import UpdateResourceDefinition
+    from ._models import UserArtifactManage
     from ._models import UserArtifactSource
 from ._paged_models import GalleryApplicationPaged
 from ._paged_models import GalleryApplicationVersionPaged
@@ -126,7 +128,7 @@ from ._compute_management_client_enums import (
     StorageAccountType,
     HostCaching,
     SharingUpdateOperationTypes,
-    Permissions,
+    SelectPermissions,
     ReplicationStatusTypes,
     SharedToValues,
 )
@@ -179,6 +181,7 @@ __all__ = [
     'SharingUpdate',
     'TargetRegion',
     'UpdateResourceDefinition',
+    'UserArtifactManage',
     'UserArtifactSource',
     'GalleryPaged',
     'GalleryImagePaged',
@@ -198,7 +201,7 @@ __all__ = [
     'StorageAccountType',
     'HostCaching',
     'SharingUpdateOperationTypes',
-    'Permissions',
+    'SelectPermissions',
     'ReplicationStatusTypes',
     'SharedToValues',
 ]

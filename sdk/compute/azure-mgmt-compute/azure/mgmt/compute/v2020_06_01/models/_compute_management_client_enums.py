@@ -444,6 +444,17 @@ class OrchestrationServiceStateAction(str, Enum):
     suspend = "Suspend"
 
 
+class ExecutionState(str, Enum):
+
+    unknown = "Unknown"
+    pending = "Pending"
+    running = "Running"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    timed_out = "TimedOut"
+    canceled = "Canceled"
+
+
 class InstanceViewTypes(str, Enum):
 
     instance_view = "instanceView"

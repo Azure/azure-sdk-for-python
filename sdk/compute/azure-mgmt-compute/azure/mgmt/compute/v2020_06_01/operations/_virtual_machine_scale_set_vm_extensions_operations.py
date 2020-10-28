@@ -71,7 +71,7 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(extension_parameters, 'VirtualMachineExtension')
+        body_content = self._serialize.body(extension_parameters, 'VirtualMachineScaleSetVMExtension')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -85,9 +85,9 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualMachineExtension', response)
+            deserialized = self._deserialize('VirtualMachineScaleSetVMExtension', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('VirtualMachineExtension', response)
+            deserialized = self._deserialize('VirtualMachineScaleSetVMExtension', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -110,18 +110,19 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
         :param extension_parameters: Parameters supplied to the Create Virtual
          Machine Extension operation.
         :type extension_parameters:
-         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns VirtualMachineExtension
-         or ClientRawResponse<VirtualMachineExtension> if raw==True
+        :return: An instance of LROPoller that returns
+         VirtualMachineScaleSetVMExtension or
+         ClientRawResponse<VirtualMachineScaleSetVMExtension> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
@@ -136,7 +137,7 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('VirtualMachineExtension', response)
+            deserialized = self._deserialize('VirtualMachineScaleSetVMExtension', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -183,7 +184,7 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(extension_parameters, 'VirtualMachineExtensionUpdate')
+        body_content = self._serialize.body(extension_parameters, 'VirtualMachineScaleSetVMExtensionUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -197,7 +198,7 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualMachineExtension', response)
+            deserialized = self._deserialize('VirtualMachineScaleSetVMExtension', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -220,18 +221,19 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
         :param extension_parameters: Parameters supplied to the Update Virtual
          Machine Extension operation.
         :type extension_parameters:
-         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionUpdate
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtensionUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns VirtualMachineExtension
-         or ClientRawResponse<VirtualMachineExtension> if raw==True
+        :return: An instance of LROPoller that returns
+         VirtualMachineScaleSetVMExtension or
+         ClientRawResponse<VirtualMachineScaleSetVMExtension> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
@@ -246,7 +248,7 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('VirtualMachineExtension', response)
+            deserialized = self._deserialize('VirtualMachineScaleSetVMExtension', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -369,8 +371,10 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VirtualMachineExtension or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtension
+        :return: VirtualMachineScaleSetVMExtension or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -412,7 +416,7 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualMachineExtension', response)
+            deserialized = self._deserialize('VirtualMachineScaleSetVMExtension', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -439,10 +443,10 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VirtualMachineExtensionsListResult or ClientRawResponse if
-         raw=true
+        :return: VirtualMachineScaleSetVMExtensionsListResult or
+         ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionsListResult
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtensionsListResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -483,7 +487,7 @@ class VirtualMachineScaleSetVMExtensionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualMachineExtensionsListResult', response)
+            deserialized = self._deserialize('VirtualMachineScaleSetVMExtensionsListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
