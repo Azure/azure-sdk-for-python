@@ -62,49 +62,39 @@ class ServiceBusConnectionStringProperties(DictMixin):
         """
         return self._shared_access_key
 
-class ServiceBusConnectionStringParser(object):
+
+
+def parse_connection_string(conn_str):
+    # type(str) -> ServiceBusConnectionStringProperties
     """Parse the connection string.
 
     :param conn_str: The connection string that has to be parsed.
+    :type conn_str: str
     """
-    def __init__(self, conn_str):
-        # type: (str) -> None
-        """
-        :param conn_str: The connection string to parse.
-        :type conn_str: str
-        """
-        self._conn_str = conn_str
-
-    def parse(self):
-        # type() -> ServiceBusConnectionStringProperties
-        """
-        Parse the connection string.
-        """
-        conn_str = self._conn_str.rstrip(";")
-        conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
-        if any(len(tup) != 2 for tup in conn_settings):
-            raise ValueError("Connection string is either blank or malformed.")
-        conn_settings = dict(conn_settings)
-        shared_access_signature = None
-        for key, value in conn_settings.items():
-            if key.lower() == 'sharedaccesssignature':
-                shared_access_signature = value
-        shared_access_key = conn_settings.get('SharedAccessKey')
-        if shared_access_signature is not None and shared_access_key is not None:
-            raise ValueError("Only one of the SharedAccessKey or SharedAccessSignature must be present.")
-        endpoint = conn_settings.get('Endpoint')
-        if not endpoint:
-            raise ValueError("Connection string is either blank or malformed.")
-        parsed = urlparse(endpoint.rstrip('/'))
-        if not parsed.netloc:
-            raise ValueError("Invalid Endpoint on the Connection String.")
-        namespace = parsed.netloc.strip()
-        props = {
-            'fully_qualified_namespace': namespace,
-            'endpoint': endpoint,
-            'entity_path': conn_settings.get('EntityPath'),
-            'shared_access_signature': shared_access_signature,
-            'shared_access_key_name': conn_settings.get('SharedAccessKeyName'),
-            'shared_access_key': shared_access_key
-        }
-        return ServiceBusConnectionStringProperties(**props)
+    conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
+    if any(len(tup) != 2 for tup in conn_settings):
+        raise ValueError("Connection string is either blank or malformed.")
+    conn_settings = dict(conn_settings)
+    shared_access_signature = None
+    for key, value in conn_settings.items():
+        if key.lower() == 'sharedaccesssignature':
+            shared_access_signature = value
+    shared_access_key = conn_settings.get('SharedAccessKey')
+    if shared_access_signature is not None and shared_access_key is not None:
+        raise ValueError("Only one of the SharedAccessKey or SharedAccessSignature must be present.")
+    endpoint = conn_settings.get('Endpoint')
+    if not endpoint:
+        raise ValueError("Connection string is either blank or malformed.")
+    parsed = urlparse(endpoint.rstrip('/'))
+    if not parsed.netloc:
+        raise ValueError("Invalid Endpoint on the Connection String.")
+    namespace = parsed.netloc.strip()
+    props = {
+        'fully_qualified_namespace': namespace,
+        'endpoint': endpoint,
+        'entity_path': conn_settings.get('EntityPath'),
+        'shared_access_signature': shared_access_signature,
+        'shared_access_key_name': conn_settings.get('SharedAccessKeyName'),
+        'shared_access_key': shared_access_key
+    }
+    return ServiceBusConnectionStringProperties(**props)

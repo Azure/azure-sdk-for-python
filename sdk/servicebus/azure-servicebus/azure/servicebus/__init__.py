@@ -16,7 +16,7 @@ from ._common.message import ServiceBusMessage, ServiceBusMessageBatch, ServiceB
 from ._common.constants import ReceiveMode, SubQueue, NEXT_AVAILABLE_SESSION
 from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common._connection_string_parser import (
-    ServiceBusConnectionStringParser,
+    parse_connection_string,
     ServiceBusConnectionStringProperties
 )
 
@@ -35,6 +35,6 @@ __all__ = [
     'ServiceBusSender',
     'TransportType',
     'AutoLockRenewer',
-    'ServiceBusConnectionStringParser',
+    'parse_connection_string',
     'ServiceBusConnectionStringProperties'
 ]

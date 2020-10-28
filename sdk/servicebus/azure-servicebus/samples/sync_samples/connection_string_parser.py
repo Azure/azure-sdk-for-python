@@ -13,7 +13,7 @@ from azure.servicebus import (
     ServiceBusClient,
     Message,
     ServiceBusConnectionStringProperties,
-    ServiceBusConnectionStringParser,
+    parse_connection_string,
 )
 
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
@@ -21,7 +21,7 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 conn_str = os.environ['SERVICE_BUS_CONN_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
-parse_result = ServiceBusConnectionStringParser(conn_str).parse()
+parse_result = parse_connection_string(conn_str)
 
 fully_qualified_namespace = parse_result.fully_qualified_namespace
 credential = ServiceBusSharedKeyCredential(parse_result.shared_access_key_name, parse_result.shared_access_key)
