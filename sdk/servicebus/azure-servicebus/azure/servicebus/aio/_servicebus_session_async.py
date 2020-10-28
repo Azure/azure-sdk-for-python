@@ -40,7 +40,7 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    async def get_state(self, **kwargs: Any) -> str:
+    async def get_state(self, **kwargs: Any) -> bytes:
         """Get the session state.
 
         Returns None if no state has been set.
@@ -69,8 +69,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)
-        if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode('UTF-8')
         return session_state
 
     async def set_state(self, state: Union[str, bytes, bytearray], **kwargs: Any) -> None:

@@ -14,7 +14,7 @@ Examples to show basic use case of python azure-servicebus SDK, including:
 
 import os
 import datetime
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 
 def process_message(message):
@@ -185,21 +185,21 @@ def example_send_and_receive_sync():
     servicebus_sender = example_create_servicebus_sender_sync()
     servicebus_receiver = example_create_servicebus_receiver_sync()
 
-    from azure.servicebus import Message
+    from azure.servicebus import ServiceBusMessage
     # [START send_sync]
     with servicebus_sender:
-        message = Message("Hello World")
+        message = ServiceBusMessage("Hello World")
         servicebus_sender.send_messages(message)
     # [END send_sync]
 
     # [START create_batch_sync]
     with servicebus_sender:
-        batch_message = servicebus_sender.create_batch()
-        batch_message.add(Message("Single message inside batch"))
+        batch_message = servicebus_sender.create_message_batch()
+        batch_message.add_message(ServiceBusMessage("Single message inside batch"))
     # [END create_batch_sync]
 
     # [START send_complex_message]
-    message = Message(
+    message = ServiceBusMessage(
         "Hello World!!",
         session_id="MySessionID",
         partition_key="UsingSpecificPartition",
@@ -270,7 +270,7 @@ def example_receive_deferred_sync():
     servicebus_sender = example_create_servicebus_sender_sync()
     servicebus_receiver = example_create_servicebus_receiver_sync()
     with servicebus_sender:
-        servicebus_sender.send_messages(Message("Hello World"))
+        servicebus_sender.send_messages(ServiceBusMessage("Hello World"))
     # [START receive_defer_sync]
     with servicebus_receiver:
         deferred_sequenced_numbers = []
@@ -295,7 +295,7 @@ def example_receive_deadletter_sync():
 
     with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
         with servicebus_client.get_queue_sender(queue_name) as servicebus_sender:
-            servicebus_sender.send_messages(Message("Hello World"))
+            servicebus_sender.send_messages(ServiceBusMessage("Hello World"))
         # [START receive_deadletter_sync]
         with servicebus_client.get_queue_receiver(queue_name) as servicebus_receiver:
             messages = servicebus_receiver.receive_messages(max_wait_time=5)
@@ -316,24 +316,24 @@ def example_session_ops_sync():
 
     with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
         # [START get_session_sync]
-        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
         # [END get_session_sync]
 
         # [START get_session_state_sync]
-        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = session.get_state()
         # [END get_session_state_sync]
 
         # [START set_session_state_sync]
-        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = session.set_state("START")
         # [END set_session_state_sync]
 
         # [START session_renew_lock_sync]
-        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = session.renew_lock()
         # [END session_renew_lock_sync]
@@ -342,7 +342,7 @@ def example_session_ops_sync():
         from azure.servicebus import AutoLockRenewer
 
         lock_renewal = AutoLockRenewer(max_workers=4)
-        with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
             lock_renewal.register(session, timeout=120)
@@ -358,7 +358,7 @@ def example_schedule_ops_sync():
     # [START scheduling_messages]
     with servicebus_sender:
         scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
-        scheduled_messages = [Message("Scheduled message") for _ in range(10)]
+        scheduled_messages = [ServiceBusMessage("Scheduled message") for _ in range(10)]
         sequence_nums = servicebus_sender.schedule_messages(scheduled_messages, scheduled_time_utc)
     # [END scheduling_messages]
 

@@ -142,7 +142,7 @@ Four different clients are provided to interact with the various components of t
     create, delete, or enumerate the contents of an immediate or nested subdirectory, and includes operations to create
     and delete files within it. For operations relating to a specific subdirectory or file, a client for that entity can
     also be retrieved using the `get_subdirectory_client` and `get_file_client` functions.
-4. [ShareFileClient](http://aka.ms/azsdk-python-storage-fileshare-sharefileclient) -
+4. [ShareFileClient](https://aka.ms/azsdk-python-storage-fileshare-sharefileclient) -
     this client represents interaction with a specific file (which need not exist yet). It provides operations to
     upload, download, create, delete, and copy a file.
 

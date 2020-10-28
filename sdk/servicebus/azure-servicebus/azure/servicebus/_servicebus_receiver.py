@@ -15,7 +15,7 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
-from ._common.message import PeekedMessage, ReceivedMessage
+from ._common.message import ServiceBusPeekedMessage, ServiceBusReceivedMessage
 from ._common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -29,9 +29,9 @@ from ._common.constants import (
     MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
     MGMT_REQUEST_MAX_MESSAGE_COUNT
 )
-
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
+from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -105,7 +105,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         **kwargs
     ):
         # type: (str, TokenCredential, Any) -> None
-        self._message_iter = None # type: Optional[Iterator[ReceivedMessage]]
+        self._message_iter = None # type: Optional[Iterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -132,6 +132,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             )
 
         self._populate_attributes(**kwargs)
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -211,7 +212,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise
 
     def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
+        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         self._open()
 
@@ -256,6 +257,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         # type: (bytes, List[str], Optional[Dict[str, Any]]) -> Any
+        # Message settlement through the mgmt link.
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -265,7 +267,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        return self._mgmt_request_response_with_retry(
+        # We don't do retry here, retry is done in the ReceivedMessage._settle_message
+        return self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default
@@ -282,13 +285,33 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             timeout=timeout
         )
 
+    @property
+    def session(self):
+        # type: () -> ServiceBusSession
+        """
+        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
+        entities, it would return None if called on a non-sessionful receiver.
+
+        :rtype: ~azure.servicebus.ServiceBusSession
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START get_session_sync]
+                :end-before: [END get_session_sync]
+                :language: python
+                :dedent: 4
+                :caption: Get session from a receiver
+        """
+        return self._session  # type: ignore
+
     def close(self):
         # type: () -> None
         super(ServiceBusReceiver, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
     def get_streaming_message_iter(self, max_wait_time=None):
-        # type: (float) -> Iterator[ReceivedMessage]
+        # type: (float) -> Iterator[ServiceBusReceivedMessage]
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
@@ -377,7 +400,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return cls(**constructor_args)
 
     def receive_messages(self, max_message_count=None, max_wait_time=None):
-        # type: (int, float) -> List[ReceivedMessage]
+        # type: (int, float) -> List[ServiceBusReceivedMessage]
         """Receive a batch of messages at once.
 
         This approach is optimal if you wish to process multiple messages simultaneously, or
@@ -398,7 +421,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
 
-        :rtype: List[~azure.servicebus.ReceivedMessage]
+        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -419,7 +442,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def receive_deferred_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int,List[int]], Any) -> List[ReceivedMessage]
+        # type: (Union[int,List[int]], Any) -> List[ServiceBusReceivedMessage]
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -429,7 +452,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          deferred.
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[~azure.servicebus.ReceivedMessage]
+        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -471,7 +494,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return messages
 
     def peek_messages(self, max_message_count=1, **kwargs):
-        # type: (int, Any) -> List[PeekedMessage]
+        # type: (int, Any) -> List[ServiceBusPeekedMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -483,7 +506,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
 
-        :rtype: List[~azure.servicebus.PeekedMessage]
+        :rtype: List[~azure.servicebus.ServiceBusPeekedMessage]
 
         .. admonition:: Example:
 

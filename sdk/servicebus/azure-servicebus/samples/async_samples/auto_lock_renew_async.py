@@ -16,7 +16,7 @@ Example to show usage of AutoLockRenewer asynchronously:
 import os
 import asyncio
 
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
 from azure.servicebus.exceptions import MessageLockExpired
 
@@ -30,7 +30,7 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
 
     async with servicebus_client:
         async with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
-            msgs_to_send = [Message("session message: {}".format(i)) for i in range(10)]
+            msgs_to_send = [ServiceBusMessage("session message: {}".format(i)) for i in range(10)]
             await sender.send_messages(msgs_to_send)
             print('Send messages to non-sessionful queue.')
 
@@ -60,13 +60,13 @@ async def renew_lock_on_session_of_the_sessionful_entity():
     async with servicebus_client:
 
         async with servicebus_client.get_queue_sender(queue_name=SESSION_QUEUE_NAME) as sender:
-            msgs_to_send = [Message("session message: {}".format(i), session_id='SESSION') for i in range(10)]
+            msgs_to_send = [ServiceBusMessage("session message: {}".format(i), session_id='SESSION') for i in range(10)]
             await sender.send_messages(msgs_to_send)
             print('Send messages to sessionful queue.')
 
         renewer = AutoLockRenewer()
 
-        async with servicebus_client.get_queue_session_receiver(
+        async with servicebus_client.get_queue_receiver(
             queue_name=SESSION_QUEUE_NAME,
             session_id='SESSION',
             prefetch_count=10
@@ -88,7 +88,7 @@ async def renew_lock_with_lock_renewal_failure_callback():
 
     async with servicebus_client:
         async with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
-            await sender.send_messages(Message("message"))
+            await sender.send_messages(ServiceBusMessage("message"))
         
         async with AutoLockRenewer() as renewer:
             # For this sample we're going to set the renewal recurrence of the autolockrenewer to greater than the

@@ -6,7 +6,7 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 - Configure and fine-tune the anomaly detection model used on your data
 - Diagnose anomalies and help with root cause analysis
 
-[Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs]
+[Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs] | [Samples][samples_readme]
 
 ## Getting started
 
@@ -68,8 +68,8 @@ admin_client = MetricsAdvisorAdministrationClient(service_endpoint,
 `MetricsAdvisorAdministrationClient` allows you to
 
 - manage data feeds
-- configure anomaly detection configurations
-- configure anomaly alerting configurations
+- manage anomaly detection configurations
+- manage anomaly alerting configurations
 - manage hooks
 
 ### DataFeed
@@ -82,7 +82,7 @@ A `DataFeed` is what Metrics Advisor ingests from your data source, such as Cosm
 
 ### Metric
 
-A `Metric` is a quantifiable measure that is used to monitor and assess the status of a specific business process. It can be a combination of multiple time series values divided into dimensions. For example a web health metric might contain dimensions for user count and the en-us market.
+A `DataFeedMetric` is a quantifiable measure that is used to monitor and assess the status of a specific business process. It can be a combination of multiple time series values divided into dimensions. For example a web health metric might contain dimensions for user count and the en-us market.
 
 ### AnomalyDetectionConfiguration
 
@@ -90,15 +90,15 @@ A `Metric` is a quantifiable measure that is used to monitor and assess the stat
 
 ### Anomaly & Incident
 
-After a detection configuration is applied to metrics, `Incident`s are generated whenever any series within it has an `Anomaly`.
+After a detection configuration is applied to metrics, `AnomalyIncident`s are generated whenever any series within it has an `DataPointAnomaly`.
 
 ### Alert
 
-You can configure which anomalies should trigger an `Alert`. You can set multiple alerts with different settings. For example, you could create an alert for anomalies with lower business impact, and another for more important alerts.
+You can configure which anomalies should trigger an `AnomalyAlert`. You can set multiple alerts with different settings. For example, you could create an alert for anomalies with lower business impact, and another for more important alerts.
 
-### Hook
+### Notification Hook
 
-Metrics Advisor lets you create and subscribe to real-time alerts. These alerts are sent over the internet, using a `Hook`.
+Metrics Advisor lets you create and subscribe to real-time alerts. These alerts are sent over the internet, using a notification hook like `EmailNotificationHook` or `WebNotificationHook`.
 
 ## Examples
 
@@ -107,6 +107,8 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 * [Configure anomaly detection configuration](#configure-anomaly-detection-configuration "Configure anomaly detection configuration")
 * [Configure alert configuration](#configure-alert-configuration "Configure alert configuration")
 * [Query anomaly detection results](#query-anomaly-detection-results "Query anomaly detection results")
+* [Query incidents](#query-incidents "Query incidents")
+* [Query root causes](#query-root-causes "Query root causes")
 * [Add hooks for receiving anomaly alerts](#add-hooks-for-receiving-anomaly-alerts "Add hooks for receiving anomaly alerts")
 
 ### Add a data feed from a sample or data source
@@ -118,11 +120,13 @@ from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorA
 from azure.ai.metricsadvisor.models import (
         SQLServerDataFeed,
         DataFeedSchema,
-        Metric,
-        Dimension,
+        DataFeedMetric,
+        DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
-        DataFeedMissingDataPointFillSettings
+        DataFeedMissingDataPointFillSettings,
+        DataFeedGranularity,
+        DataFeed
     )
 
 service_endpoint = os.getenv("ENDPOINT")
@@ -136,25 +140,27 @@ client = MetricsAdvisorAdministrationClient(
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-data_feed = client.create_data_feed(
+data_feed = DataFeed(
     name="My data feed",
     source=SQLServerDataFeed(
         connection_string=sql_server_connection_string,
         query=query,
     ),
-    granularity="Daily",
+    granularity=DataFeedGranularity("Daily"),
     schema=DataFeedSchema(
         metrics=[
-            Metric(name="cost", display_name="Cost"),
-            Metric(name="revenue", display_name="Revenue")
+            DataFeedMetric(name="cost", display_name="Cost"),
+            DataFeedMetric(name="revenue", display_name="Revenue")
         ],
         dimensions=[
-            Dimension(name="category", display_name="Category"),
-            Dimension(name="city", display_name="City")
+            DataFeedDimension(name="category", display_name="Category"),
+            DataFeedDimension(name="city", display_name="City")
         ],
         timestamp_column="Timestamp"
     ),
-    ingestion_settings=datetime.datetime(2019, 10, 1),
+    ingestion_settings=DataFeedIngestionSettings(
+        ingestion_begin_time=datetime.datetime(2019, 10, 1)
+    ),
     options=DataFeedOptions(
         data_feed_description="cost/revenue data feed",
         rollup_settings=DataFeedRollupSettings(
@@ -169,7 +175,9 @@ data_feed = client.create_data_feed(
     )
 )
 
-return data_feed
+my_sql_data_feed = client.create_data_feed(data_feed)
+
+return my_sql_data_feed
 ```
 
 ### Check ingestion status
@@ -212,6 +220,7 @@ from azure.ai.metricsadvisor.models import (
     SmartDetectionCondition,
     SuppressCondition,
     MetricDetectionCondition,
+    AnomalyDetectionConfiguration
 )
 
 service_endpoint = os.getenv("ENDPOINT")
@@ -251,7 +260,7 @@ smart_detection_condition = SmartDetectionCondition(
     )
 )
 
-detection_config = client.create_metric_anomaly_detection_configuration(
+anomaly_detection_config = AnomalyDetectionConfiguration(
     name="my_detection_config",
     metric_id=metric_id,
     description="anomaly detection config for metric",
@@ -262,6 +271,8 @@ detection_config = client.create_metric_anomaly_detection_configuration(
         smart_detection_condition=smart_detection_condition
     )
 )
+
+detection_config = client.create_metric_anomaly_detection_configuration(anomaly_detection_config)
 
 return detection_config
 ```
@@ -279,7 +290,8 @@ from azure.ai.metricsadvisor.models import (
     MetricAnomalyAlertConditions,
     SeverityCondition,
     MetricBoundaryCondition,
-    MetricAnomalyAlertSnoozeCondition
+    MetricAnomalyAlertSnoozeCondition,
+    AnomalyAlertConfiguration
 )
 service_endpoint = os.getenv("ENDPOINT")
 subscription_key = os.getenv("SUBSCRIPTION_KEY")
@@ -292,7 +304,7 @@ client = MetricsAdvisorAdministrationClient(
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-alert_config = client.create_anomaly_alert_configuration(
+anomaly_alert_configuration = AnomalyAlertConfiguration(
     name="my alert config",
     description="alert config description",
     cross_metrics_operator="AND",
@@ -335,6 +347,8 @@ alert_config = client.create_anomaly_alert_configuration(
     hook_ids=[hook_id]
 )
 
+alert_config = client.create_anomaly_alert_configuration(anomaly_alert_configuration)
+
 return alert_config
 ```
 
@@ -376,13 +390,71 @@ for result in results:
     print("Status: {}".format(result.status))
 ```
 
+### Query incidents
+
+We can query the incidents for a detection configuration.
+
+```py
+import datetime
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+anomaly_detection_configuration_id = os.getenv("DETECTION_CONFIGURATION_ID")
+
+client = MetricsAdvisorClient(service_endpoint,
+    MetricsAdvisorKeyCredential(subscription_key, api_key)
+)
+
+results = client.list_incidents_for_detection_configuration(
+            detection_configuration_id=anomaly_detection_configuration_id,
+            start_time=datetime.datetime(2020, 1, 1),
+            end_time=datetime.datetime(2020, 9, 9),
+        )
+for result in results:
+    print("Metric id: {}".format(result.metric_id))
+    print("Incident ID: {}".format(result.id))
+    print("Severity: {}".format(result.severity))
+    print("Status: {}".format(result.status))
+```
+
+### Query root causes
+
+We can also query the root causes of an incident
+
+```py
+import datetime
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
+anomaly_detection_configuration_id = os.getenv("DETECTION_CONFIGURATION_ID")
+incident_id = os.getenv("INCIDENT_ID")
+
+client = MetricsAdvisorClient(service_endpoint,
+    MetricsAdvisorKeyCredential(subscription_key, api_key)
+)
+
+results = client.list_incident_root_causes(
+            detection_configuration_id=anomaly_detection_configuration_id,
+            incident_id=incident_id,
+        )
+for result in results:
+    print("Score: {}".format(result.score))
+    print("Description: {}".format(result.description))
+
+```
+
+
 ### Add hooks for receiving anomaly alerts
 
 We can add some hooks so when an alert is triggered, we can get call back.
 
 ```py
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
-from azure.ai.metricsadvisor.models import EmailHook
+from azure.ai.metricsadvisor.models import EmailNotificationHook
 
 service_endpoint = os.getenv("ENDPOINT")
 subscription_key = os.getenv("SUBSCRIPTION_KEY")
@@ -392,8 +464,8 @@ client = MetricsAdvisorAdministrationClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key))
 
 hook = client.create_hook(
-    name="email hook",
-    hook=EmailHook(
+    hook=EmailNotificationHook(
+        name="email hook",
         description="my email hook",
         emails_to_alert=["alertme@alertme.com"],
         external_link="https://adwiki.azurewebsites.net/articles/howto/alerts/create-hooks.html"

@@ -15,13 +15,12 @@ from azure.common import AzureHttpError, AzureConflictHttpError
 from azure.mgmt.servicebus.models import AccessRights
 from azure.servicebus import ServiceBusClient, ServiceBusSender
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
-from azure.servicebus._common.message import Message, PeekedMessage
+from azure.servicebus._common.message import ServiceBusMessage, ServiceBusPeekedMessage
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusAuthenticationError,
-    ServiceBusAuthorizationError,
-    ServiceBusResourceNotFound
+    ServiceBusAuthorizationError
 )
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -48,7 +47,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusAuthenticationError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send_messages(ServiceBusMessage("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -61,7 +60,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender('invalidqueue') as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send_messages(ServiceBusMessage("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -74,7 +73,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             with pytest.raises(ServiceBusAuthenticationError):
                 with client.get_queue_sender("invalid") as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send_messages(ServiceBusMessage("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -89,9 +88,9 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
-            with pytest.raises(ServiceBusAuthorizationError): 
+            with pytest.raises(ServiceBusAuthorizationError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send_messages(ServiceBusMessage("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -108,7 +107,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                     messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
             with client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.send_messages(Message("test"))
+                sender.send_messages(ServiceBusMessage("test"))
 
                 with pytest.raises(TypeError):
                     sender.send_messages("cat")
@@ -128,11 +127,11 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             # Validate that the wrong queue with the right credentials fails.
             with pytest.raises(ServiceBusAuthenticationError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send_messages(ServiceBusMessage("test"))
 
             # But that the correct one works.
             with client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.send_messages(Message("test")) 
+                sender.send_messages(ServiceBusMessage("test")) 
 
             # Now do the same but with direct connstr initialization.
             with pytest.raises(ServiceBusAuthenticationError):
@@ -140,13 +139,13 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,
                 ) as sender:
-                    sender.send_messages(Message("test"))
+                    sender.send_messages(ServiceBusMessage("test"))
 
             with ServiceBusSender.from_connection_string(
                 servicebus_queue_authorization_rule_connection_string,
                 queue_name=servicebus_queue.name,
             ) as sender:
-                sender.send_messages(Message("test"))
+                sender.send_messages(ServiceBusMessage("test"))
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -215,7 +214,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with client:
             assert len(client._handlers) == 0
             with client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.send_messages(Message("foo"))
+                sender.send_messages(ServiceBusMessage("foo"))
 
         # This is disabled pending UAMQP fix https://github.com/Azure/azure-uamqp-python/issues/170
         #
@@ -225,4 +224,4 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         #with client:
         #    assert len(client._handlers) == 0
         #    with client.get_queue_sender(servicebus_queue.name) as sender:
-        #        sender.send_messages(Message("foo"))
+        #        sender.send_messages(ServiceBusMessage("foo"))

@@ -220,15 +220,52 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    def _handle_exception(self, exception):
-        # type: (BaseException) -> ServiceBusError
-        error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
+    def _handle_exception(self, exception, **kwargs):
+        # type: (BaseException, Any) -> ServiceBusError
+        error, error_need_close_handler, error_need_raise = \
+            _create_servicebus_exception(_LOGGER, exception, self, **kwargs)
         if error_need_close_handler:
             self._close_handler()
         if error_need_raise:
             raise error
 
         return error
+
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
+        # pylint: disable=protected-access
+        require_last_exception = kwargs.pop("require_last_exception", False)
+        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
+        retried_times = 0
+        max_retries = self._config.retry_total
+
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+
+        while retried_times <= max_retries:
+            try:
+                if operation_requires_timeout and abs_timeout_time:
+                    remaining_timeout = abs_timeout_time - time.time()
+                    kwargs["timeout"] = remaining_timeout
+                return operation(**kwargs)
+            except StopIteration:
+                raise
+            except Exception as exception:  # pylint: disable=broad-except
+                last_exception = self._handle_exception(exception, **kwargs)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
+                retried_times += 1
+                if retried_times > max_retries:
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
+                self._backoff(
+                    retried_times=retried_times,
+                    last_exception=last_exception,
+                    abs_timeout_time=abs_timeout_time
+                )
 
     def _backoff(
         self,
@@ -257,41 +294,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
             raise last_exception
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
-        require_last_exception = kwargs.pop("require_last_exception", False)
-        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
-        retried_times = 0
-        max_retries = self._config.retry_total
-
-        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
-
-        while retried_times <= max_retries:
-            try:
-                if operation_requires_timeout and abs_timeout_time:
-                    remaining_timeout = abs_timeout_time - time.time()
-                    kwargs["timeout"] = remaining_timeout
-                return operation(**kwargs)
-            except StopIteration:
-                raise
-            except Exception as exception:  # pylint: disable=broad-except
-                last_exception = self._handle_exception(exception)
-                if require_last_exception:
-                    kwargs["last_exception"] = last_exception
-                retried_times += 1
-                if retried_times > max_retries:
-                    _LOGGER.info(
-                        "%r operation has exhausted retry. Last exception: %r.",
-                        self._container_id,
-                        last_exception,
-                    )
-                    raise last_exception
-                self._backoff(
-                    retried_times=retried_times,
-                    last_exception=last_exception,
-                    abs_timeout_time=abs_timeout_time
-                )
-
     def _mgmt_request_response(
         self,
         mgmt_operation,
@@ -301,7 +303,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         timeout=None,
         **kwargs
     ):
-        # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
+        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> uamqp.Message
         """
         Execute an amqp management operation.
 
@@ -309,7 +311,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
          be service-specific, but common values include READ, CREATE and UPDATE.
          This value will be added as an application property on the message.
         :param message: The message to send in the management request.
-        :paramtype message: ~uamqp.message.Message
+        :paramtype message: Any
         :param callback: The callback which is used to parse the returning message.
         :paramtype callback: Callable[int, ~uamqp.message.Message, str]
         :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
@@ -347,8 +349,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
-            raise ServiceBusError("Management request failed: {}".format(exp), exp)
+                raise OperationTimeoutError("Management operation timed out.", error=exp)
+            raise
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any

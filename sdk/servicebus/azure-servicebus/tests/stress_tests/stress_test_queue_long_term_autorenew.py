@@ -9,13 +9,13 @@ from datetime import datetime, timedelta
 import concurrent
 
 import conftest
-from azure.servicebus import AutoLockRenewer, ServiceBusClient, Message
+from azure.servicebus import AutoLockRenewer, ServiceBusClient, ServiceBusMessage
 
 def send_message(client, queue_name):
     queue_client = client.get_queue(queue_name)
-    msg = Message(b'Test')
+    msg = ServiceBusMessage(b'Test')
     queue_client.send(msg)
-    print('Message sent')
+    print('ServiceBusMessage sent')
 
 
 def process_message(message):

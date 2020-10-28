@@ -23,10 +23,13 @@ from ._models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
+    BatchTransactionResult,
+    BatchErrorException
 )
 from ._policies import ExponentialRetry, LinearRetry
 from ._version import VERSION
 from ._deserialize import TableErrorCode
+from ._table_batch import TableBatchOperations
 
 __version__ = VERSION
 
@@ -53,5 +56,8 @@ __all__ = [
     'EdmType',
     'RetentionPolicy',
     'generate_table_sas',
-    'SASProtocol'
+    'SASProtocol',
+    'BatchTransactionResult',
+    'TableBatchOperations',
+    'BatchErrorException'
 ]

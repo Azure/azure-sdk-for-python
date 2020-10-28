@@ -12,6 +12,7 @@ import logging
 import copy
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Callable, Any
 
+import uamqp.errors
 import uamqp.message
 from uamqp.constants import MessageState
 
@@ -50,21 +51,21 @@ from .constants import (
     ANNOTATION_SYMBOL_KEY_MAP
 )
 from ..exceptions import (
+    ServiceBusMessageError,
     MessageAlreadySettled,
     MessageLockExpired,
     SessionLockExpired,
     MessageSettleFailed,
-    MessageContentTooLarge,
-    ServiceBusError)
+    MessageContentTooLarge
+)
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
-    from .._servicebus_session_receiver import ServiceBusSessionReceiver
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Message(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
@@ -138,8 +139,6 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
-        elif body is None:
-            raise ValueError("Message body cannot be None.")
         else:
             self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
@@ -147,7 +146,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         if not self.message.annotations:
             self.message.annotations = {}
 
-        if isinstance(self, ReceivedMessage):
+        if isinstance(self, ServiceBusReceivedMessage):
             try:
                 del self.message.annotations[key]
             except KeyError:
@@ -162,7 +161,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             self.message.annotations[ANNOTATION_SYMBOL_KEY_MAP[key]] = value
 
     def _to_outgoing_message(self):
-        # type: () -> Message
+        # type: () -> ServiceBusMessage
         self.message.state = MessageState.WaitingToBeSent
         self.message._response = None # pylint: disable=protected-access
         return self
@@ -488,61 +487,65 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
         self._amqp_properties.to = val
 
 
-class BatchMessage(object):
+class ServiceBusMessageBatch(object):
     """A batch of messages.
 
     Sending messages in a batch is more performant than sending individual message.
-    BatchMessage helps you create the maximum allowed size batch of `Message` to improve sending performance.
+    ServiceBusMessageBatch helps you create the maximum allowed size batch of `Message` to improve sending performance.
 
     Use the `add` method to add messages until the maximum batch size limit in bytes has been reached -
     at which point a `ValueError` will be raised.
 
-    **Please use the create_batch method of ServiceBusSender
-    to create a BatchMessage object instead of instantiating a BatchMessage object directly.**
+    **Please use the create_message_batch method of ServiceBusSender
+    to create a ServiceBusMessageBatch object instead of instantiating a ServiceBusMessageBatch object directly.**
 
-    :ivar max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
-    :vartype max_size_in_bytes: int
-    :ivar message: Internal AMQP BatchMessage object.
-    :vartype message: ~uamqp.BatchMessage
-
-    :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold.
+    :param int max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
     """
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
-        self.max_size_in_bytes = max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
+        self._max_size_in_bytes = max_size_in_bytes or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         self._size = self.message.gather()[0].get_message_encoded_size()
         self._count = 0
-        self._messages = []  # type: List[Message]
+        self._messages = []  # type: List[ServiceBusMessage]
 
     def __repr__(self):
         # type: () -> str
         batch_repr = "max_size_in_bytes={}, message_count={}".format(
             self.max_size_in_bytes, self._count
         )
-        return "BatchMessage({})".format(batch_repr)
+        return "ServiceBusMessageBatch({})".format(batch_repr)
 
     def __len__(self):
         return self._count
 
     def _from_list(self, messages):
         for each in messages:
-            if not isinstance(each, Message):
+            if not isinstance(each, ServiceBusMessage):
                 raise TypeError("Only Message or an iterable object containing Message objects are accepted."
-                                 "Received instead: {}".format(each.__class__.__name__))
-            self.add(each)
+                                "Received instead: {}".format(each.__class__.__name__))
+            self.add_message(each)
+
+    @property
+    def max_size_in_bytes(self):
+        # type: () -> int
+        """The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
+
+        :rtype: int
+        """
+        return self._max_size_in_bytes
 
     @property
     def size_in_bytes(self):
         # type: () -> int
-        """The combined size of the events in the batch, in bytes.
+        """The combined size of the messages in the batch, in bytes.
 
         :rtype: int
         """
         return self._size
 
-    def add(self, message):
-        # type: (Message) -> None
+    def add_message(self, message):
+        # type: (ServiceBusMessage) -> None
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
@@ -550,15 +553,15 @@ class BatchMessage(object):
         be raised.
 
         :param message: The Message to be added to the batch.
-        :type message: ~azure.servicebus.Message
+        :type message: ~azure.servicebus.ServiceBusMessage
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
         """
         message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
 
-        # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
-        # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
+        # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
             self._size
             + message_size
@@ -567,7 +570,7 @@ class BatchMessage(object):
 
         if size_after_add > self.max_size_in_bytes:
             raise MessageContentTooLarge(
-                "BatchMessage has reached its size limit: {}".format(
+                "ServiceBusMessageBatch has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
@@ -578,7 +581,7 @@ class BatchMessage(object):
         self._messages.append(message)
 
 
-class PeekedMessage(Message):
+class ServiceBusPeekedMessage(ServiceBusMessage):
     """A preview message.
 
     This message is still on the queue, and unlocked.
@@ -588,10 +591,10 @@ class PeekedMessage(Message):
 
     def __init__(self, message):
         # type: (uamqp.message.Message) -> None
-        super(PeekedMessage, self).__init__(None, message=message) # type: ignore
+        super(ServiceBusPeekedMessage, self).__init__(None, message=message) # type: ignore
 
     def _to_outgoing_message(self):
-        # type: () -> Message
+        # type: () -> ServiceBusMessage
         amqp_message = self.message
         amqp_body = amqp_message._body  # pylint: disable=protected-access
 
@@ -601,7 +604,7 @@ class PeekedMessage(Message):
             # amqp_body is type of uamqp.message.ValueBody
             body = amqp_body.data
 
-        return Message(
+        return ServiceBusMessage(
             body=body,
             content_type=self.content_type,
             correlation_id=self.correlation_id,
@@ -736,7 +739,7 @@ class PeekedMessage(Message):
         return None
 
 
-class ReceivedMessageBase(PeekedMessage):
+class ServiceBusReceivedMessageBase(ServiceBusPeekedMessage):
     """
     A Service Bus Message received from service side.
 
@@ -755,13 +758,13 @@ class ReceivedMessageBase(PeekedMessage):
 
     def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
         # type: (uamqp.message.Message, ReceiveMode, Any) -> None
-        super(ReceivedMessageBase, self).__init__(message=message)
+        super(ServiceBusReceivedMessageBase, self).__init__(message=message)
         self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
-        self.auto_renew_error = None # type: Optional[Exception]
+        self.auto_renew_error = None  # type: Optional[Exception]
         try:
-            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver, ServiceBusSessionReceiver]
+            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver]
         except KeyError:
             raise TypeError("ReceivedMessage requires a receiver to be initialized.  This class should never be" + \
             "initialized by a user; the Message class should be utilized instead.")
@@ -770,17 +773,17 @@ class ReceivedMessageBase(PeekedMessage):
     def _check_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
-            raise MessageSettleFailed(action, "Orphan message had no open connection.")
+            raise MessageSettleFailed(action, error=ServiceBusMessageError("Orphan message had no open connection."))
         if self._settled:
             raise MessageAlreadySettled(action)
         try:
             if self._lock_expired:
-                raise MessageLockExpired(inner_exception=self.auto_renew_error)
+                raise MessageLockExpired(error=self.auto_renew_error)
         except TypeError:
             pass
         try:
             if self._receiver.session._lock_expired:  # pylint: disable=protected-access
-                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
+                raise SessionLockExpired(error=self._receiver.session.auto_renew_error)
         except AttributeError:
             pass
 
@@ -900,12 +903,12 @@ class ReceivedMessageBase(PeekedMessage):
         return self._expiry
 
 
-class ReceivedMessage(ReceivedMessageBase):
+class ServiceBusReceivedMessage(ServiceBusReceivedMessageBase):
     def _settle_message(
-            self,
-            settle_operation,
-            dead_letter_reason=None,
-            dead_letter_error_description=None,
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None
     ):
         # type: (str, Optional[str], Optional[str]) -> None
         try:
@@ -925,8 +928,29 @@ class ReceivedMessage(ReceivedMessageBase):
             self._settle_via_mgmt_link(settle_operation,
                                        dead_letter_reason=dead_letter_reason,
                                        dead_letter_error_description=dead_letter_error_description)()
-        except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
+        except Exception as exception:  # pylint: disable=broad-except
+            _LOGGER.info(
+                "Message settling: %r has encountered an exception (%r) through management link",
+                settle_operation,
+                exception
+            )
+            raise
+
+    def _settle_message_with_retry(
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+        **kwargs
+    ):
+        # pylint: disable=unused-argument, protected-access
+        self._receiver._do_retryable_operation(
+            self._settle_message,
+            timeout=None,
+            settle_operation=settle_operation,
+            dead_letter_reason=dead_letter_reason,
+            dead_letter_error_description=dead_letter_error_description
+        )
 
     def complete(self):
         # type: () -> None
@@ -952,7 +976,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
-        self._settle_message(MESSAGE_COMPLETE)
+        self._settle_message_with_retry(MESSAGE_COMPLETE)
         self._settled = True
 
     def dead_letter(self, reason=None, error_description=None):
@@ -983,7 +1007,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        self._settle_message(MESSAGE_DEAD_LETTER,
+        self._settle_message_with_retry(MESSAGE_DEAD_LETTER,
                              dead_letter_reason=reason,
                              dead_letter_error_description=error_description)
         self._settled = True
@@ -1012,7 +1036,7 @@ class ReceivedMessage(ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
-        self._settle_message(MESSAGE_ABANDON)
+        self._settle_message_with_retry(MESSAGE_ABANDON)
         self._settled = True
 
     def defer(self):
@@ -1039,7 +1063,7 @@ class ReceivedMessage(ReceivedMessageBase):
                     by calling receive_deffered_messages with its sequence number
         """
         self._check_live(MESSAGE_DEFER)
-        self._settle_message(MESSAGE_DEFER)
+        self._settle_message_with_retry(MESSAGE_DEFER)
         self._settled = True
 
     def renew_lock(self, **kwargs):
