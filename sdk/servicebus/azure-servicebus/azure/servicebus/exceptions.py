@@ -107,7 +107,7 @@ def _handle_amqp_connection_error(logger, exception, handler):
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
             error = ServiceBusAuthorizationError(str(exception), exception)
         elif exception.condition == constants.ErrorCodes.NotAllowed and 'requires sessions' in str(exception):
-            message = str(exception) + '\n\nDid you want ServiceBusClient.get_<queue/subscription>_session_receiver()?'
+            message = str(exception) + '\n\nsession_id must be set when getting a receiver for sessionful entity.'
             error = ServiceBusConnectionError(message, exception)
         else:
             error = ServiceBusConnectionError(str(exception), exception)

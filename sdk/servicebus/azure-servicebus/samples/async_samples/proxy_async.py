@@ -13,7 +13,7 @@ Example to show sending message through http proxy to a Service Bus Queue asynch
 
 import os
 import asyncio
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -29,7 +29,7 @@ HTTP_PROXY = {
 
 
 async def send_single_message(sender):
-    message = Message("Single Message")
+    message = ServiceBusMessage("Single Message")
     await sender.send_messages(message)
 
 

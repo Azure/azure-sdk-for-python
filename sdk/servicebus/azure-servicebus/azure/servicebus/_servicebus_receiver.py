@@ -17,7 +17,7 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
-from ._common.message import ReceivedMessage
+from ._common.message import ServiceBusReceivedMessage
 from ._common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -122,7 +122,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         **kwargs
     ):
         # type: (str, TokenCredential, Any) -> None
-        self._message_iter = None # type: Optional[Iterator[ReceivedMessage]]
+        self._message_iter = None # type: Optional[Iterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -229,7 +229,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise
 
     def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
+        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         self._open()
 
@@ -273,7 +273,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return [self._build_message(message) for message in batch]
 
     def _settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
-        # type: (ReceivedMessage, str, Optional[str], Optional[str]) -> None
+        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         # pylint: disable=protected-access
         try:
             if not message._is_deferred_message:
@@ -359,7 +359,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
     def get_streaming_message_iter(self, max_wait_time=None):
-        # type: (float) -> Iterator[ReceivedMessage]
+        # type: (float) -> Iterator[ServiceBusReceivedMessage]
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
@@ -448,7 +448,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return cls(**constructor_args)
 
     def receive_messages(self, max_message_count=None, max_wait_time=None):
-        # type: (int, float) -> List[ReceivedMessage]
+        # type: (int, float) -> List[ServiceBusReceivedMessage]
         """Receive a batch of messages at once.
 
         This approach is optimal if you wish to process multiple messages simultaneously, or
@@ -469,7 +469,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
 
-        :rtype: List[~azure.servicebus.ReceivedMessage]
+        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -490,7 +490,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
 
     def receive_deferred_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int,List[int]], Any) -> List[ReceivedMessage]
+        # type: (Union[int,List[int]], Any) -> List[ServiceBusReceivedMessage]
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -500,7 +500,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          deferred.
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[~azure.servicebus.ReceivedMessage]
+        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -542,7 +542,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return messages
 
     def peek_messages(self, max_message_count=1, **kwargs):
-        # type: (int, Any) -> List[ReceivedMessage]
+        # type: (int, Any) -> List[ServiceBusReceivedMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -554,7 +554,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
 
-        :rtype: List[~azure.servicebus.ReceivedMessage]
+        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -606,7 +606,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_COMPLETE)
         self._settle_message(message, MESSAGE_COMPLETE)
@@ -624,7 +624,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_ABANDON)
         self._settle_message(message, MESSAGE_ABANDON)
@@ -643,7 +643,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEFER)
         self._settle_message(message, MESSAGE_DEFER)
@@ -665,7 +665,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEAD_LETTER)
         self._settle_message(
@@ -677,7 +677,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         message._settled = True  # pylint: disable=protected-access
 
     def renew_message_lock(self, message, **kwargs):
-        # type: (ReceivedMessage, Any) -> datetime.datetime
+        # type: (ServiceBusReceivedMessage, Any) -> datetime.datetime
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
 

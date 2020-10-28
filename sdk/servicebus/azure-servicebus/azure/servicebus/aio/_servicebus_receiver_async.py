@@ -116,7 +116,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        self._message_iter = None  # type: Optional[AsyncIterator[ReceivedMessage]]
+        self._message_iter = None  # type: Optional[AsyncIterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -154,6 +154,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self.max_wait_time = max_wait_time
 
         async def __anext__(self):
+            # pylint: disable=protected-access
             original_timeout = None
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
@@ -223,7 +224,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise
 
     async def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
+        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         await self._open()
 
@@ -263,7 +264,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
-
         return [self._build_message(message) for message in batch]
 
     async def _settle_message(  # type: ignore
@@ -468,7 +468,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
          timeout period, an empty list will be returned.
-        :rtype: list[~azure.servicebus.aio.ReceivedMessage]
+        :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -502,7 +502,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          deferred.
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: list[~azure.servicebus.aio.ReceivedMessage]
+        :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -557,7 +557,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: list[~azure.servicebus.ReceivedMessage]
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 

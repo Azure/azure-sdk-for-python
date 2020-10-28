@@ -11,7 +11,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusClient, Message, ReceiveMode
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, ReceiveMode
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import SubQueue
@@ -43,7 +43,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 logging_enable=False
         ) as sb_client:
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
-                message = Message(b"Sample topic message")
+                message = ServiceBusMessage(b"Sample topic message")
                 sender.send_messages(message)
 
             with sb_client.get_subscription_receiver(
@@ -75,7 +75,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
         ) as sb_client:
 
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
-                message = Message(b"Sample topic message")
+                message = ServiceBusMessage(b"Sample topic message")
                 sender.send_messages(message)
 
             with sb_client.get_subscription_receiver(
@@ -133,7 +133,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
                 with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                     for i in range(10):
-                        message = Message("Dead lettered message no. {}".format(i))
+                        message = ServiceBusMessage("Dead lettered message no. {}".format(i))
                         sender.send_messages(message)
 
                 count = 0

@@ -8,7 +8,7 @@ import functools
 from typing import Optional, Callable
 
 from uamqp import Source
-from .message import ReceivedMessage
+from .message import ServiceBusReceivedMessage
 from .constants import (
     NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
@@ -71,8 +71,8 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._further_pull_receive_timeout_ms = 200
         self._max_wait_time = kwargs.get("max_wait_time", None)
 
-    def _build_message(self, received):
-        message = ReceivedMessage(message=received, receive_mode=self._receive_mode, receiver=self)
+    def _build_message(self, received, message_type=ServiceBusReceivedMessage):
+        message = message_type(message=received, receive_mode=self._receive_mode, receiver=self)
         self._last_received_sequenced_number = message.sequence_number
         return message
 
@@ -117,7 +117,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         dead_letter_reason=None,
         dead_letter_error_description=None
     ):
-        # type: (ReceivedMessage, str, Optional[str], Optional[str]) -> Callable
+        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> Callable
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(message.message.accept)
         if settle_operation == MESSAGE_ABANDON:

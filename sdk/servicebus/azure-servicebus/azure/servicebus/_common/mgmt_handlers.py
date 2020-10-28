@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 
 import uamqp
-
 from .message import ServiceBusReceivedMessage
 from ..exceptions import ServiceBusError, MessageLockExpired
 from .constants import ReceiveMode

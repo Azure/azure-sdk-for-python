@@ -65,7 +65,7 @@ async def create_indexer():
     indexer = SearchIndexer(
         name="async-sample-indexer",
         data_source_name="async-indexer-datasource",
-        target_index_name="indexer-hotels"
+        target_index_name="async-indexer-hotels"
     )
     result = await indexers_client.create_indexer(indexer)
     print("Create new Indexer - async-sample-indexer")

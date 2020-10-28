@@ -13,6 +13,12 @@
 **Breaking Changes**
 
 * Renamed `AutoLockRenew` to `AutoLockRenewer`.
+* Renamed `Message` to `ServiceBusMessage`.
+* Renamed `ReceivedMessage` to `ServiceBusReceivedMessage`.
+* Renamed `BatchMessage` to `ServiceBusMessageBatch`.
+* Removed class `PeekedMessage`.
+  - Renamed method `add` to `add_message` on the class.
+* Renamed `ServiceBusSender.create_batch` to `ServiceBusSender.create_message_batch`.
 * Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
   - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
   - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
@@ -22,7 +28,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
  now inherit from `azure.servicebus.exceptions.MessageError`.
 * Removed Exception `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus resource does not exist.
-* Removed class `PeekedMessage`.
+* `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`.
 
 **BugFixes**
 
