@@ -283,13 +283,13 @@ class QueueMessageSamplesAsync(object):
 
 async def main():
     sample = QueueMessageSamplesAsync()
-    # await sample.set_access_policy_async()
-    # await sample.queue_metadata_async()
-    # await sample.send_and_receive_messages_async()
+    await sample.set_access_policy_async()
+    await sample.queue_metadata_async()
+    await sample.send_and_receive_messages_async()
     await sample.receive_one_message_from_queue()
-    # await sample.delete_and_clear_messages_async()
-    # await sample.peek_messages_async()
-    # await sample.update_message_async()
+    await sample.delete_and_clear_messages_async()
+    await sample.peek_messages_async()
+    await sample.update_message_async()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
