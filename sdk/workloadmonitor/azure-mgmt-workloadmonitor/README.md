@@ -12,7 +12,7 @@ To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk
 
  
 For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/?view=azure-python-preview)
-Code samples for this package can be found at [MyService Management](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/?view=azure-python-preview) on docs.microsoft.com.
+Code samples for this package can be found at [Workloadmonitor Management](https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/?view=azure-python-preview) on docs.microsoft.com.
 Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
 
