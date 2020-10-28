@@ -660,8 +660,9 @@ async def test_long_running_negative():
     poll = async_poller(CLIENT, response,
         TestBasePolling.mock_outputs,
         AsyncLROBasePolling(0))
-    with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
+    with pytest.raises(HttpResponseError) as error: # TODO: Node.js raises on deserialization
         await poll
+    assert error.value.continuation_token is not None
 
     LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
     POLLING_STATUS = 200

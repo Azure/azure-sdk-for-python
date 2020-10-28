@@ -669,8 +669,9 @@ class TestBasePolling(object):
         poll = LROPoller(CLIENT, response,
             TestBasePolling.mock_outputs,
             LROBasePolling(0))
-        with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
+        with pytest.raises(HttpResponseError) as error: # TODO: Node.js raises on deserialization
             poll.result()
+        assert error.value.continuation_token is not None
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200
