@@ -16,7 +16,7 @@ from uamqp.constants import SenderSettleMode
 
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
-from .._common.message import ReceivedMessage
+from .._common.message import ServiceBusReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -268,7 +268,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     async def _settle_message(  # type: ignore
         self,
-        message: ReceivedMessage,
+        message: ServiceBusReceivedMessage,
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] =None
@@ -355,7 +355,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         await super(ServiceBusReceiver, self).close()
         self._message_iter = None
 
-    def get_streaming_message_iter(self, max_wait_time: Optional[float] = None) -> AsyncIterator[ReceivedMessage]:
+    def get_streaming_message_iter(
+        self,
+        max_wait_time: Optional[float] = None
+    ) -> AsyncIterator[ServiceBusReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
@@ -445,7 +448,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self,
         max_message_count: Optional[int] = None,
         max_wait_time: Optional[float] = None
-    ) -> List[ReceivedMessage]:
+    ) -> List[ServiceBusReceivedMessage]:
         """Receive a batch of messages at once.
 
         This approach is optimal if you wish to process multiple messages simultaneously, or
@@ -489,7 +492,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self,
         sequence_numbers: Union[int, List[int]],
         **kwargs: Any
-    ) -> List[ReceivedMessage]:
+    ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -533,7 +536,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         handler = functools.partial(mgmt_handlers.deferred_message_op,
                                     receive_mode=self._receive_mode,
-                                    message_type=ReceivedMessage,
+                                    message_type=ServiceBusReceivedMessage,
                                     receiver=self)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -543,7 +546,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         return messages
 
-    async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[ReceivedMessage]:
+    async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -606,7 +609,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_COMPLETE)
         await self._settle_message(message, MESSAGE_COMPLETE)
@@ -624,7 +627,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_ABANDON)
         await self._settle_message(message, MESSAGE_ABANDON)
@@ -643,7 +646,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEFER)
         await self._settle_message(message, MESSAGE_DEFER)
@@ -665,7 +668,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ReceivedMessage):
+        if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEAD_LETTER)
         await self._settle_message(
@@ -677,7 +680,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         message._settled = True  # pylint: disable=protected-access
 
     async def renew_message_lock(self, message, **kwargs):
-        # type: (ReceivedMessage, Any) -> datetime.datetime
+        # type: (ServiceBusReceivedMessage, Any) -> datetime.datetime
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
 
@@ -698,6 +701,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
+        try:
+            if self.session:  # type: ignore
+                raise TypeError("Session messages cannot be renewed. Please renew the session lock instead.")
+        except AttributeError:
+            pass
 
         self._check_message_alive(message, MESSAGE_RENEW_LOCK)
         token = message.lock_token
@@ -708,7 +716,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        expiry = self._renew_locks(token, timeout=timeout)  # type: ignore
+        expiry = await self._renew_locks(token, timeout=timeout)  # type: ignore
         message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
 
         return message._expiry

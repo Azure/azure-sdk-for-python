@@ -6,7 +6,7 @@
 
 import uamqp
 
-from .message import ReceivedMessage
+from .message import ServiceBusReceivedMessage
 from ..exceptions import ServiceBusError, MessageLockExpired
 from .constants import ReceiveMode
 
@@ -29,12 +29,12 @@ def lock_renew_op(status_code, message, description):
             status_code, description, message.get_data()))
 
 
-def peek_op(status_code, message, description):
+def peek_op(status_code, message, description, receiver):
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'messages']:
             wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b'message']))
-            parsed.append(ReceivedMessage(wrapped))
+            parsed.append(ServiceBusReceivedMessage(wrapped, is_peeked_message=True, receiver=receiver))
         return parsed
     if status_code in [202, 204]:
         return []
@@ -64,7 +64,7 @@ def deferred_message_op(
         description,
         receiver,
         receive_mode=ReceiveMode.PeekLock,
-        message_type=ReceivedMessage
+        message_type=ServiceBusReceivedMessage
 ):
     if status_code == 200:
         parsed = []

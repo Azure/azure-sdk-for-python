@@ -586,10 +586,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         self._populate_message_properties(message)
 
+        handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
             message,
-            mgmt_handlers.peek_op,
+            handler,
             timeout=timeout
         )
 
@@ -697,6 +698,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
+        try:
+            if self.session:  # type: ignore
+                raise TypeError("Session messages cannot be renewed. Please renew the session lock instead.")
+        except AttributeError:
+            pass
+
         self._check_message_alive(message, MESSAGE_RENEW_LOCK)
         token = message.lock_token
         if not token:

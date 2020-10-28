@@ -243,15 +243,15 @@ class OperationTimeoutError(ServiceBusError):
     """Operation timed out."""
 
 
-class MessageError(ServiceBusError):
+class ServiceBusMessageError(ServiceBusError):
     """An error occurred when an operation on a message failed because the message is in an incorrect state."""
 
 
-class MessageContentTooLarge(MessageError, ValueError):
+class MessageContentTooLarge(ServiceBusMessageError, ValueError):
     """Message content is larger than the service bus frame size."""
 
 
-class MessageAlreadySettled(MessageError):
+class MessageAlreadySettled(ServiceBusMessageError):
     """Failed to settle the message.
 
     An attempt was made to complete an operation on a message that has already
@@ -267,7 +267,7 @@ class MessageAlreadySettled(MessageError):
         super(MessageAlreadySettled, self).__init__(message)
 
 
-class MessageSettleFailed(MessageError):
+class MessageSettleFailed(ServiceBusMessageError):
     """An attempt to settle a message failed."""
 
     def __init__(self, action, inner_exception):
@@ -277,7 +277,7 @@ class MessageSettleFailed(MessageError):
         super(MessageSettleFailed, self).__init__(message, inner_exception)
 
 
-class MessageSendFailed(MessageError):
+class MessageSendFailed(ServiceBusMessageError):
     """A message failed to send to the Service Bus entity."""
 
     def __init__(self, inner_exception):
@@ -292,7 +292,7 @@ class MessageSendFailed(MessageError):
         super(MessageSendFailed, self).__init__(message, inner_exception)
 
 
-class MessageLockExpired(MessageError):
+class MessageLockExpired(ServiceBusMessageError):
     """The lock on the message has expired and it has been released back to the queue.
 
     It will need to be received again in order to settle it.
