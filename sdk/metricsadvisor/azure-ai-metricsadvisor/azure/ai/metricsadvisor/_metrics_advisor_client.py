@@ -408,7 +408,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomalies using alert id.
         """
-        pass
 
     @overload
     def list_anomalies(
@@ -431,7 +430,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
 
     @distributed_trace
     def list_anomalies(self, **kwargs):
@@ -565,7 +563,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query incidents for alert.
         """
-        pass
 
     @overload
     def list_incidents(
@@ -596,7 +593,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query incidents for detection configuration.
         """
-        pass
 
     @distributed_trace
     def list_incidents(self, **kwargs):

@@ -391,9 +391,9 @@ class MetricsAdvisorClient(object):
 
     @overload
     def list_anomalies(
-            self, alert_configuration_id,   # type: str
-            alert_id,       # type: str
-            **kwargs        # type: Any
+            self, alert_configuration_id: str,
+            alert_id: str,
+            **kwargs: Any
     ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a specific alert.
 
@@ -415,14 +415,13 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomalies using alert id.
         """
-        pass
 
     @overload
     def list_anomalies(
-            self, detection_configuration_id,  # type: str
-            start_time,  # type: Union[str, datetime.datetime]
-            end_time,  # type: Union[str, datetime.datetime]
-            **kwargs  # type: Any
+            self, detection_configuration_id: str,
+            start_time: Union[str, datetime.datetime],
+            end_time: Union[str, datetime.datetime],
+            **kwargs: Any
     ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a detection configuration.
 
@@ -437,7 +436,6 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
 
     @distributed_trace
     def list_anomalies(self, **kwargs):
@@ -550,9 +548,9 @@ class MetricsAdvisorClient(object):
 
     @overload
     def list_incidents(
-            self, alert_configuration_id,   # type: str
-            alert_id,       # type: str
-            **kwargs        # type: Any
+            self, alert_configuration_id: str,
+            alert_id: str,
+            **kwargs: Any
     ) -> AsyncItemPaged[AnomalyIncident]:
 
         """Query incidents under a specific alert.
@@ -575,7 +573,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query incidents for alert.
         """
-        pass
 
     @overload
     def list_incidents(
@@ -606,7 +603,6 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query incidents for detection configuration.
         """
-        pass
 
     @distributed_trace
     def list_incidents(self, **kwargs):
