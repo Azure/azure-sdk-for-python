@@ -15,7 +15,7 @@ from azure.common import AzureHttpError, AzureConflictHttpError
 from azure.mgmt.servicebus.models import AccessRights
 from azure.servicebus import ServiceBusClient, ServiceBusSender
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
-from azure.servicebus._common.message import Message, PeekedMessage
+from azure.servicebus._common.message import Message
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusConnectionError,
