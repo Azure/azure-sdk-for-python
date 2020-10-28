@@ -12,6 +12,11 @@ FILE: sample_recognize_content.py
 DESCRIPTION:
     This sample demonstrates how to extract text, selection marks, and content information from a document
     given through a file.
+
+    Note that selection marks returned from begin_recognize_content() do not return the text associated with
+    the checkbox. For the API to return this information, train a custom model to recognize the checkbox and its text.
+    See sample_train_model_with_labels.py for more information.
+
 USAGE:
     python sample_recognize_content.py
 
