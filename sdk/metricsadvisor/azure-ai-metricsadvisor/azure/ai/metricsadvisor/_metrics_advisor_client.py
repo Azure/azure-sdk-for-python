@@ -428,8 +428,8 @@ class MetricsAdvisorClient(object):
     @overload
     def list_anomalies(
             self, detection_configuration_id,   # type: str
-            start_time,     # type: Union[str, ~datetime.datetime]
-            end_time,       # type: Union[str, ~datetime.datetime]
+            start_time,     # type: Union[str, datetime.datetime]
+            end_time,       # type: Union[str, datetime.datetime]
             **kwargs        # type: Any
     ):
         # type: (...) -> ItemPaged[DataPointAnomaly]
