@@ -1091,6 +1091,8 @@ class TextLine(msrest.serialization.Model):
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param words: Required. List of words in the text line.
     :type words: list[~azure.ai.formrecognizer.models.TextWord]
+    :param appearance: Text appearance properties.
+    :type appearance: ~azure.ai.formrecognizer.models.Appearance
     """
 
     _validation = {
@@ -1104,6 +1106,7 @@ class TextLine(msrest.serialization.Model):
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'language': {'key': 'language', 'type': 'str'},
         'words': {'key': 'words', 'type': '[TextWord]'},
+        'appearance': {'key': 'appearance', 'type': 'Appearance'},
     }
 
     def __init__(
@@ -1115,6 +1118,7 @@ class TextLine(msrest.serialization.Model):
         self.bounding_box = kwargs['bounding_box']
         self.language = kwargs.get('language', None)
         self.words = kwargs['words']
+        self.appearance = kwargs.get('appearance', None)
 
 
 class TextWord(msrest.serialization.Model):
@@ -1128,8 +1132,6 @@ class TextWord(msrest.serialization.Model):
     :type bounding_box: list[float]
     :param confidence: Confidence value.
     :type confidence: float
-    :param appearance: Text appearance properties.
-    :type appearance: ~azure.ai.formrecognizer.models.Appearance
     """
 
     _validation = {
@@ -1142,7 +1144,6 @@ class TextWord(msrest.serialization.Model):
         'text': {'key': 'text', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
-        'appearance': {'key': 'appearance', 'type': 'Appearance'},
     }
 
     def __init__(
@@ -1153,7 +1154,6 @@ class TextWord(msrest.serialization.Model):
         self.text = kwargs['text']
         self.bounding_box = kwargs['bounding_box']
         self.confidence = kwargs.get('confidence', None)
-        self.appearance = kwargs.get('appearance', None)
 
 
 class TrainingDocumentInfo(msrest.serialization.Model):

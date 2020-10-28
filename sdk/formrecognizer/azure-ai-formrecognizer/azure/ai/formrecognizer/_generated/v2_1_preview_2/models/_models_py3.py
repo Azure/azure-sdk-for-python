@@ -1231,6 +1231,8 @@ class TextLine(msrest.serialization.Model):
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param words: Required. List of words in the text line.
     :type words: list[~azure.ai.formrecognizer.models.TextWord]
+    :param appearance: Text appearance properties.
+    :type appearance: ~azure.ai.formrecognizer.models.Appearance
     """
 
     _validation = {
@@ -1244,6 +1246,7 @@ class TextLine(msrest.serialization.Model):
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'language': {'key': 'language', 'type': 'str'},
         'words': {'key': 'words', 'type': '[TextWord]'},
+        'appearance': {'key': 'appearance', 'type': 'Appearance'},
     }
 
     def __init__(
@@ -1253,6 +1256,7 @@ class TextLine(msrest.serialization.Model):
         bounding_box: List[float],
         words: List["TextWord"],
         language: Optional[Union[str, "Language"]] = None,
+        appearance: Optional["Appearance"] = None,
         **kwargs
     ):
         super(TextLine, self).__init__(**kwargs)
@@ -1260,6 +1264,7 @@ class TextLine(msrest.serialization.Model):
         self.bounding_box = bounding_box
         self.language = language
         self.words = words
+        self.appearance = appearance
 
 
 class TextWord(msrest.serialization.Model):
@@ -1273,8 +1278,6 @@ class TextWord(msrest.serialization.Model):
     :type bounding_box: list[float]
     :param confidence: Confidence value.
     :type confidence: float
-    :param appearance: Text appearance properties.
-    :type appearance: ~azure.ai.formrecognizer.models.Appearance
     """
 
     _validation = {
@@ -1287,7 +1290,6 @@ class TextWord(msrest.serialization.Model):
         'text': {'key': 'text', 'type': 'str'},
         'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'confidence': {'key': 'confidence', 'type': 'float'},
-        'appearance': {'key': 'appearance', 'type': 'Appearance'},
     }
 
     def __init__(
@@ -1296,14 +1298,12 @@ class TextWord(msrest.serialization.Model):
         text: str,
         bounding_box: List[float],
         confidence: Optional[float] = None,
-        appearance: Optional["Appearance"] = None,
         **kwargs
     ):
         super(TextWord, self).__init__(**kwargs)
         self.text = text
         self.bounding_box = bounding_box
         self.confidence = confidence
-        self.appearance = appearance
 
 
 class TrainingDocumentInfo(msrest.serialization.Model):
