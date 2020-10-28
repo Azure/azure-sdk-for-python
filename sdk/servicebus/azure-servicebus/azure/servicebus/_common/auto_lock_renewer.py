@@ -16,9 +16,9 @@ from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusEr
 from .utils import renewable_start_time, utc_now
 
 if TYPE_CHECKING:
-    from typing import Callable, Union, Optional, Awaitable
-    from .message import ReceivedMessage
-    LockRenewFailureCallback = Callable[[Union[ServiceBusSession, ReceivedMessage],
+    from typing import Callable, Union, Optional
+    from .message import ServiceBusReceivedMessage
+    LockRenewFailureCallback = Callable[[Union[ServiceBusSession, ServiceBusReceivedMessage],
                                          Optional[Exception]], None]
 
 _log = logging.getLogger(__name__)
@@ -120,11 +120,11 @@ class AutoLockRenewer(object):
                 on_lock_renew_failure(renewable, error)
 
     def register(self, renewable, timeout=300, on_lock_renew_failure=None):
-        # type: (Union[ReceivedMessage, ServiceBusSession], float, Optional[LockRenewFailureCallback]) -> None
+        # type: (Union[ServiceBusReceivedMessage, ServiceBusSession], float, Optional[LockRenewFailureCallback]) -> None
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
-        :type renewable: Union[~azure.servicebus.ReceivedMessage, ~azure.servicebus.ServiceBusSession]
+        :type renewable: Union[~azure.servicebus.ServiceBusReceivedMessage, ~azure.servicebus.ServiceBusSession]
         :param timeout: A time in seconds that the lock should be maintained for. Default value is 300 (5 minutes).
         :type timeout: float
         :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable

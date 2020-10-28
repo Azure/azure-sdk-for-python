@@ -13,14 +13,14 @@ Example to show scheduling messages to and cancelling messages from a Service Bu
 
 import os
 import datetime
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 def schedule_single_message(sender):
-    message = Message("Message to be scheduled")
+    message = ServiceBusMessage("Message to be scheduled")
     scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
     sequence_number = sender.schedule_messages(message, scheduled_time_utc)
     return sequence_number
@@ -29,7 +29,7 @@ def schedule_single_message(sender):
 def schedule_multiple_messages(sender):
     messages_to_schedule = []
     for _ in range(10):
-        messages_to_schedule.append(Message("Message to be scheduled"))
+        messages_to_schedule.append(ServiceBusMessage("Message to be scheduled"))
 
     scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
     sequence_numbers = sender.schedule_messages(messages_to_schedule, scheduled_time_utc)
