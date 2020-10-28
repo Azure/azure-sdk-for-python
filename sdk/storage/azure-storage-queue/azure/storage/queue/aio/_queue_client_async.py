@@ -456,7 +456,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    async def receive_messages(self, **kwargs):
+    def receive_messages(self, **kwargs):
         # type: (Optional[Any]) -> AsyncItemPaged[QueueMessage]
         """Removes one or more messages from the front of the queue.
 
