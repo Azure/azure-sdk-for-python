@@ -435,30 +435,38 @@ class FormLine(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormLine, this is "line".
+    :ivar appearance: Text appearance properties.
+    :vartype appearance: ~azure.ai.formrecognizer.Appearance
+    .. versionadded:: v2.1-preview
+        *appearance* property
     """
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(kind="line", **kwargs)
         self.words = kwargs.get("words", None)
+        self.appearance = kwargs.get("appearance", None)
 
     @classmethod
     def _from_generated(cls, line, page):
+        line_appearance = line.appearance if hasattr(line, "appearance") else None
         return cls(
             text=line.text,
             bounding_box=get_bounding_box(line),
             page_number=page,
             words=[FormWord._from_generated(word, page) for word in line.words]
-            if line.words else None
+            if line.words else None,
+            appearance=line_appearance
         )
 
     def __repr__(self):
-        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={})" \
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={}, appearance={})" \
             .format(
                 self.text,
                 self.bounding_box,
                 repr(self.words),
                 self.page_number,
-                self.kind
+                self.kind,
+                self.appearance
             )[:1024]
 
 
@@ -476,37 +484,29 @@ class FormWord(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormWord, this is "word".
-    :ivar appearance: Text appearance properties.
-    :vartype appearance: ~azure.ai.formrecognizer.Appearance
-    .. versionadded:: v2.1-preview
-        *appearance* property
     """
 
     def __init__(self, **kwargs):
         super(FormWord, self).__init__(kind="word", **kwargs)
         self.confidence = kwargs.get("confidence", None)
-        self.appearance = kwargs.get("appearance", None)
 
     @classmethod
     def _from_generated(cls, word, page):
-        word_appearance = word.appearance if hasattr(word, "appearance") else None
         return cls(
             text=word.text,
             bounding_box=get_bounding_box(word),
             confidence=adjust_confidence(word.confidence),
-            page_number=page,
-            appearance=word_appearance
+            page_number=page
         )
 
     def __repr__(self):
-        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={}, appearance={})" \
+        return "FormWord(text={}, bounding_box={}, confidence={}, page_number={}, kind={})" \
             .format(
                 self.text,
                 self.bounding_box,
                 self.confidence,
                 self.page_number,
-                self.kind,
-                self.appearance
+                self.kind
             )[:1024]
 
 

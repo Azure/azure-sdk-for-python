@@ -23,7 +23,7 @@ also be populated with any selection marks found on the page
 - Added model type `CustomFormModelProperties` that includes information like if a model is a composed model
 - Added property `model_id` to `CustomFormSubmodel` and `TrainingDocumentInfo`
 - Added properties `model_id` and `form_type_confidence` to `RecognizedForm`
-- `appearance` property added to `FormWord` to indicate the style of extracted text - like "handwriting" or "other"
+- `appearance` property added to `FormLine` to indicate the style of extracted text - like "handwriting" or "other"
 - Added keyword argument `pages` to `begin_recognize_content` and `begin_recognize_content_from_url` to specify the page
 numbers to analyze
 - Added property `bounding_box` to `FormTable`
