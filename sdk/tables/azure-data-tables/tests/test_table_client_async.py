@@ -118,7 +118,7 @@ class StorageTableClientTest(TableTestCase):
     async def test_create_service_with_token_and_http_async(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 url = self.account_url(storage_account, "table").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
@@ -166,11 +166,11 @@ class StorageTableClientTest(TableTestCase):
 
         for service_type in TABLE_SERVICES:
             # Act
-            with self.assertRaises(ValueError) as e:
+            with pytest.raises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
             self.assertEqual(
-                str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
+                str(e.value), "You need to provide either a SAS token or an account shared key to authenticate.")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -272,7 +272,7 @@ class StorageTableClientTest(TableTestCase):
             conn_string = 'UseDevelopmentStorage=true;'.format(storage_account.name, storage_account_key)
 
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -340,7 +340,7 @@ class StorageTableClientTest(TableTestCase):
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Fails if primary excluded
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -514,15 +514,15 @@ class StorageTableClientTest(TableTestCase):
         for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
             for service_type in SERVICES.items():
                 # Act
-                with self.assertRaises(ValueError) as e:
+                with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
                     self.assertEqual(
-                        str(e.exception), "Connection string is either blank or malformed.")
+                        str(e.value), "Connection string is either blank or malformed.")
                 elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
                     self.assertEqual(
-                        str(e.exception), "Connection string missing required connection details.")
+                        str(e.value), "Connection string missing required connection details.")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")

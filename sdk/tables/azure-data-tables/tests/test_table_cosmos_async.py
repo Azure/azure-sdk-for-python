@@ -75,7 +75,7 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Act
         created = await ts.create_table(table_name=table_name)
-        with self.assertRaises(ResourceExistsError):
+        with pytest.raises(ResourceExistsError):
             await ts.create_table(table_name=table_name)
 
         # Assert
@@ -243,7 +243,7 @@ class TableTestAsync(AsyncTableTestCase):
         table_name = self._get_table_reference()
 
         # Act
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             await ts.delete_table(table_name)
 
         if self.is_live:
@@ -261,7 +261,7 @@ class TableTestAsync(AsyncTableTestCase):
         table_name = u'啊齄丂狛狜'
 
         # Act
-        # with self.assertRaises(HttpResponseError):
+        # with pytest.raises(HttpResponseError):
 
         with pytest.raises(ValueError) as excinfo:
             await ts.create_table(table_name=table_name)
@@ -395,7 +395,7 @@ class TableTestAsync(AsyncTableTestCase):
                 identifiers['id{}'.format(i)] = None
 
             # Assert
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 await table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
         finally:
             await ts.delete_table(table.table_name)

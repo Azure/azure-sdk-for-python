@@ -282,3 +282,18 @@ class AzureTestCase(ReplayableTest):
             return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
         return run
+
+    def assertIsInstance(self, obj, obj_class):
+        assert isinstance(obj, obj_class)
+
+    def assertEqual(self, obj1, obj2):
+        assert obj1 == obj2
+        assert type(obj1) is type(obj2)
+
+    def assertIsNone(self, obj):
+        assert obj is None
+
+    def assertIsNotNone(self, obj):
+        assert obj is not None
+
+    def assertTrue(self, obj):

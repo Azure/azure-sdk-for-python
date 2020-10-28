@@ -633,7 +633,7 @@ class StorageTableClientTest(TableTestCase):
                 '001', 'batch_negative_1')
 
             # Assert
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 batch.update_item(entity, mode='MERGE')
         finally:
             self._tear_down()
@@ -659,7 +659,7 @@ class StorageTableClientTest(TableTestCase):
                 '002', 'batch_negative_1')
 
             # Assert
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 batch.create_item(entity)
         finally:
             self._tear_down()
@@ -675,7 +675,7 @@ class StorageTableClientTest(TableTestCase):
             self.table.create_item(entity)
 
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = Entity()

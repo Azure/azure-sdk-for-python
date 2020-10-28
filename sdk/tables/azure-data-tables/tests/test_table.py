@@ -135,7 +135,7 @@ class StorageTableTest(TableTestCase):
 
         # Act
         created = ts.create_table(table_name)
-        with self.assertRaises(ResourceExistsError):
+        with pytest.raises(ResourceExistsError):
             ts.create_table(table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
@@ -306,7 +306,7 @@ class StorageTableTest(TableTestCase):
         table_name = self._get_table_reference()
 
         # Act
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             ts.delete_table(table_name)
 
         # Assert
@@ -323,7 +323,7 @@ class StorageTableTest(TableTestCase):
         table_name = u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             ts.create_table(table_name)
 
             assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
@@ -439,7 +439,7 @@ class StorageTableTest(TableTestCase):
                 identifiers['id{}'.format(i)] = None
 
             # Assert
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
         finally:
             ts.delete_table(table.table_name)

@@ -224,7 +224,7 @@ class TableServicePropertiesTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
-        self.assertRaises(ValueError,
+        pytest.raises(ValueError,
                           RetentionPolicy,
                           True, None)
         if self.is_live:
@@ -241,7 +241,7 @@ class TableServicePropertiesTest(TableTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(HttpResponseError,
+        pytest.raises(HttpResponseError,
                           tsc.set_service_properties, None, None, None, cors)
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -256,7 +256,7 @@ class TableServicePropertiesTest(TableTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
         # Assert
-        self.assertRaises(HttpResponseError,
+        pytest.raises(HttpResponseError,
                           tsc.set_service_properties,
                           None, None, minute_metrics)
         if self.is_live:

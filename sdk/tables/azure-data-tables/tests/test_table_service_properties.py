@@ -219,7 +219,7 @@ class TableServicePropertiesTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
-        self.assertRaises(ValueError,
+        pytest.raises(ValueError,
                           RetentionPolicy,
                           True, None)
 
@@ -233,7 +233,7 @@ class TableServicePropertiesTest(TableTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(HttpResponseError,
+        pytest.raises(HttpResponseError,
                           tsc.set_service_properties, None, None, None, cors)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -245,7 +245,7 @@ class TableServicePropertiesTest(TableTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
         # Assert
-        self.assertRaises(HttpResponseError,
+        pytest.raises(HttpResponseError,
                           tsc.set_service_properties,
                           None, None, minute_metrics)
 

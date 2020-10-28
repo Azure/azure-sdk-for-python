@@ -76,7 +76,7 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Act
         created = await ts.create_table(table_name=table_name)
-        with self.assertRaises(ResourceExistsError):
+        with pytest.raises(ResourceExistsError):
             await ts.create_table(table_name=table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
@@ -84,7 +84,6 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Assert
         self.assertIsInstance(created, TableClient)
-        # self.assertEqual(len(existing), 1)
         await ts.delete_table(table_name=table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -243,7 +242,7 @@ class TableTestAsync(AsyncTableTestCase):
         table_name = self._get_table_reference()
 
         # Act
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             await ts.delete_table(table_name)
 
         # Assert
@@ -261,7 +260,7 @@ class TableTestAsync(AsyncTableTestCase):
         table_name = u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             await ts.create_table(table_name)
 
             assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
@@ -381,7 +380,7 @@ class TableTestAsync(AsyncTableTestCase):
                 identifiers['id{}'.format(i)] = None
 
             # Assert
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 await table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
         finally:
             await ts.delete_table(table.table_name)

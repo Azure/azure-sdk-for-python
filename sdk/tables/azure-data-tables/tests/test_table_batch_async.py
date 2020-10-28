@@ -375,7 +375,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 await self.table.send_batch(batch)
 
             # Assert
@@ -476,7 +476,7 @@ class StorageTableBatchTest(TableTestCase):
             self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 entity = await self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
         finally:
             await self._tear_down()
@@ -673,7 +673,7 @@ class StorageTableBatchTest(TableTestCase):
             batch.create_entity(entity)
 
             await self.table.send_batch(batch)
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 resp = await table2.send_batch(batch)
 
             # Assert
@@ -705,7 +705,7 @@ class StorageTableBatchTest(TableTestCase):
                 '001', 'batch_negative_1')
 
             # Assert
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(HttpResponseError):
                 batch.update_entity(entity, mode=UpdateMode.MERGE)
         finally:
             await self._tear_down()
@@ -731,7 +731,7 @@ class StorageTableBatchTest(TableTestCase):
                 '002', 'batch_negative_1')
 
             # Assert
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 batch.create_entity(entity)
         finally:
             await self._tear_down()
@@ -747,7 +747,7 @@ class StorageTableBatchTest(TableTestCase):
             await self.table.create_entity(entity)
 
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = TableEntity()
