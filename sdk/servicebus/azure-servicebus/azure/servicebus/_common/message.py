@@ -51,12 +51,13 @@ from .constants import (
     ANNOTATION_SYMBOL_KEY_MAP
 )
 from ..exceptions import (
+    ServiceBusMessageError,
     MessageAlreadySettled,
     MessageLockExpired,
     SessionLockExpired,
     MessageSettleFailed,
-    MessageContentTooLarge,
-    ServiceBusError)
+    MessageContentTooLarge
+)
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
@@ -522,7 +523,7 @@ class ServiceBusMessageBatch(object):
         for each in messages:
             if not isinstance(each, ServiceBusMessage):
                 raise TypeError("Only Message or an iterable object containing Message objects are accepted."
-                                 "Received instead: {}".format(each.__class__.__name__))
+                                "Received instead: {}".format(each.__class__.__name__))
             self.add_message(each)
 
     @property
@@ -537,7 +538,7 @@ class ServiceBusMessageBatch(object):
     @property
     def size_in_bytes(self):
         # type: () -> int
-        """The combined size of the events in the batch, in bytes.
+        """The combined size of the messages in the batch, in bytes.
 
         :rtype: int
         """
@@ -772,17 +773,17 @@ class ServiceBusReceivedMessageBase(ServiceBusPeekedMessage):
     def _check_live(self, action):
         # pylint: disable=no-member
         if not self._receiver or not self._receiver._running:  # pylint: disable=protected-access
-            raise MessageSettleFailed(action, ServiceBusError("Orphan message had no open connection."))
+            raise MessageSettleFailed(action, error=ServiceBusMessageError("Orphan message had no open connection."))
         if self._settled:
             raise MessageAlreadySettled(action)
         try:
             if self._lock_expired:
-                raise MessageLockExpired(inner_exception=self.auto_renew_error)
+                raise MessageLockExpired(error=self.auto_renew_error)
         except TypeError:
             pass
         try:
             if self._receiver.session._lock_expired:  # pylint: disable=protected-access
-                raise SessionLockExpired(inner_exception=self._receiver.session.auto_renew_error)
+                raise SessionLockExpired(error=self._receiver.session.auto_renew_error)
         except AttributeError:
             pass
 

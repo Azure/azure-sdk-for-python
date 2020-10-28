@@ -30,7 +30,6 @@ from azure.servicebus.exceptions import (
     ServiceBusError,
     NoActiveSession,
     SessionLockExpired,
-    MessageLockExpired,
     MessageAlreadySettled,
     AutoLockRenewTimeout,
     MessageSettleFailed,
