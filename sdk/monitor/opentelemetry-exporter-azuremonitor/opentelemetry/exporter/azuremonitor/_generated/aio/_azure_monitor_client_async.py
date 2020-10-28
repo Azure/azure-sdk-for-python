@@ -11,12 +11,12 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration_async import ApplicationInsightsClientConfiguration
-from .operations_async import ApplicationInsightsClientOperationsMixin
+from ._configuration_async import AzureMonitorClientConfiguration
+from .operations_async import AzureMonitorClientOperationsMixin
 from .. import models
 
 
-class ApplicationInsightsClient(ApplicationInsightsClientOperationsMixin):
+class AzureMonitorClient(AzureMonitorClientOperationsMixin):
     """Opentelemetry Exporter for Azure Monitor.
 
     :param host: Breeze endpoint: https://dc.services.visualstudio.com.
@@ -29,7 +29,7 @@ class ApplicationInsightsClient(ApplicationInsightsClientOperationsMixin):
         **kwargs: Any
     ) -> None:
         base_url = '{Host}/v2'
-        self._config = ApplicationInsightsClientConfiguration(host, **kwargs)
+        self._config = AzureMonitorClientConfiguration(host, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -41,7 +41,7 @@ class ApplicationInsightsClient(ApplicationInsightsClientOperationsMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ApplicationInsightsClient":
+    async def __aenter__(self) -> "AzureMonitorClient":
         await self._client.__aenter__()
         return self
 

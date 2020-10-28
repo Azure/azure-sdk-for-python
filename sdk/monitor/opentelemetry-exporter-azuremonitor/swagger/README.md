@@ -14,7 +14,7 @@ autorest ./swagger/README.md --python --v3
 ### Configuration
 
 ```yaml
-title: ApplicationInsightsClient
+title: AzureMonitorClient
 description: Opentelemetry Exporter for Azure Monitor
 generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION

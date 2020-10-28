@@ -13,8 +13,8 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class ApplicationInsightsClientConfiguration(Configuration):
-    """Configuration for ApplicationInsightsClient.
+class AzureMonitorClientConfiguration(Configuration):
+    """Configuration for AzureMonitorClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -30,10 +30,10 @@ class ApplicationInsightsClientConfiguration(Configuration):
     ) -> None:
         if host is None:
             raise ValueError("Parameter 'host' must not be None.")
-        super(ApplicationInsightsClientConfiguration, self).__init__(**kwargs)
+        super(AzureMonitorClientConfiguration, self).__init__(**kwargs)
 
         self.host = host
-        kwargs.setdefault('sdk_moniker', 'applicationinsightsclient/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'azuremonitorclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

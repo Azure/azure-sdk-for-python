@@ -15,12 +15,12 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-from ._configuration import ApplicationInsightsClientConfiguration
-from .operations import ApplicationInsightsClientOperationsMixin
+from ._configuration import AzureMonitorClientConfiguration
+from .operations import AzureMonitorClientOperationsMixin
 from . import models
 
 
-class ApplicationInsightsClient(ApplicationInsightsClientOperationsMixin):
+class AzureMonitorClient(AzureMonitorClientOperationsMixin):
     """Opentelemetry Exporter for Azure Monitor.
 
     :param host: Breeze endpoint: https://dc.services.visualstudio.com.
@@ -34,7 +34,7 @@ class ApplicationInsightsClient(ApplicationInsightsClientOperationsMixin):
     ):
         # type: (...) -> None
         base_url = '{Host}/v2'
-        self._config = ApplicationInsightsClientConfiguration(host, **kwargs)
+        self._config = AzureMonitorClientConfiguration(host, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -48,7 +48,7 @@ class ApplicationInsightsClient(ApplicationInsightsClientOperationsMixin):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> ApplicationInsightsClient
+        # type: () -> AzureMonitorClient
         self._client.__enter__()
         return self
 

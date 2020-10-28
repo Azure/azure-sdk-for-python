@@ -121,7 +121,7 @@ class MessageData(MonitorDomain):
     :type message: str
     :param severity_level: Trace severity level. Possible values include: "Verbose", "Information",
      "Warning", "Error", "Critical".
-    :type severity_level: str or ~application_insights_client.models.SeverityLevel
+    :type severity_level: str or ~azure_monitor_client.models.SeverityLevel
     :param properties: Collection of custom properties.
     :type properties: dict[str, str]
     :param measurements: Collection of custom measurements.
@@ -164,7 +164,7 @@ class MetricDataPoint(msrest.serialization.Model):
     :type name: str
     :param data_point_type: Metric type. Single measurement or the aggregated value. Possible
      values include: "Measurement", "Aggregation".
-    :type data_point_type: str or ~application_insights_client.models.DataPointType
+    :type data_point_type: str or ~azure_monitor_client.models.DataPointType
     :param value: Required. Single value for measurement. Sum of individual measurements for the
      aggregation.
     :type value: float
@@ -224,7 +224,7 @@ class MetricsData(MonitorDomain):
     :param metrics: Required. List of metrics. Only one metric in the list is currently supported
      by Application Insights storage. If multiple data points were sent only the first one will be
      used.
-    :type metrics: list[~application_insights_client.models.MetricDataPoint]
+    :type metrics: list[~azure_monitor_client.models.MetricDataPoint]
     :param properties: Collection of custom properties.
     :type properties: dict[str, str]
     """
@@ -257,7 +257,7 @@ class MonitorBase(msrest.serialization.Model):
      this, this should be null.
     :type base_type: str
     :param base_data: The data payload for the telemetry request.
-    :type base_data: ~application_insights_client.models.MonitorDomain
+    :type base_data: ~azure_monitor_client.models.MonitorDomain
     """
 
     _attribute_map = {
@@ -705,11 +705,11 @@ class TelemetryExceptionData(MonitorDomain):
     :param version: Required. Schema version.
     :type version: int
     :param exceptions: Required. Exception chain - list of inner exceptions.
-    :type exceptions: list[~application_insights_client.models.TelemetryExceptionDetails]
+    :type exceptions: list[~azure_monitor_client.models.TelemetryExceptionDetails]
     :param severity_level: Severity level. Mostly used to indicate exception severity level when it
      is reported by logging library. Possible values include: "Verbose", "Information", "Warning",
      "Error", "Critical".
-    :type severity_level: str or ~application_insights_client.models.SeverityLevel
+    :type severity_level: str or ~azure_monitor_client.models.SeverityLevel
     :param problem_id: Identifier of where the exception was thrown in code. Used for exceptions
      grouping. Typically a combination of exception type and a function from the call stack.
     :type problem_id: str
@@ -768,7 +768,7 @@ class TelemetryExceptionDetails(msrest.serialization.Model):
     :param stack: Text describing the stack. Either stack or parsedStack should have a value.
     :type stack: str
     :param parsed_stack: List of stack frames. Either stack or parsedStack should have a value.
-    :type parsed_stack: list[~application_insights_client.models.StackFrame]
+    :type parsed_stack: list[~azure_monitor_client.models.StackFrame]
     """
 
     _validation = {
@@ -830,7 +830,7 @@ class TelemetryItem(msrest.serialization.Model):
      information on available properties.
     :type tags: dict[str, str]
     :param data: Telemetry data item.
-    :type data: ~application_insights_client.models.MonitorBase
+    :type data: ~azure_monitor_client.models.MonitorBase
     """
 
     _validation = {
@@ -873,7 +873,7 @@ class TrackResponse(msrest.serialization.Model):
     :param items_accepted: The number of items accepted.
     :type items_accepted: int
     :param errors: An array of error detail objects.
-    :type errors: list[~application_insights_client.models.TelemetryErrorDetails]
+    :type errors: list[~azure_monitor_client.models.TelemetryErrorDetails]
     """
 
     _attribute_map = {
