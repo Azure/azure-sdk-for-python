@@ -252,7 +252,7 @@ class StorageTableClientTest(TableTestCase):
             assert service.account_name ==  storage_account.name
             assert service.credential.account_name ==  storage_account.name
             assert service.credential.account_key ==  storage_account_key
-            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
+            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table"))
             assert service.scheme ==  'http'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -404,7 +404,7 @@ class StorageTableClientTest(TableTestCase):
             assert response.http_request.headers['User-Agent'] in "azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()))
+                    platform.platform())
 
         tables = service.list_tables(raw_response_hook=callback)
         assert tables is not None
@@ -429,7 +429,7 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert in "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
+            assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform()) in response.http_request.headers['User-Agent']
