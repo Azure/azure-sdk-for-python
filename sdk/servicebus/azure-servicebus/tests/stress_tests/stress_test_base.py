@@ -102,6 +102,8 @@ class StressTestRunner:
             if arg.startswith('--stress_test_duration_seconds='):
                 self._duration_override = timedelta(seconds=int(arg.split('=')[1]))
 
+        self._should_stop = False
+
 
     # Plugin functions the caller can override to further tailor the test.
     def OnSend(self, state, sent_message):
@@ -135,7 +137,7 @@ class StressTestRunner:
 
     def _ScheduleIntervalLogger(self, end_time, description="", interval_seconds=30):
         def _doIntervalLogging():
-            if end_time > datetime.utcnow():
+            if end_time > datetime.utcnow() and not self._should_stop:
                 self._state.PopulateProcessStats()
                 _logger.critical("{} RECURRENT STATUS:".format(description))
                 _logger.critical(self._state)
@@ -164,7 +166,7 @@ class StressTestRunner:
         try:
             _logger.info("STARTING SENDER")
             with sender:
-                while end_time > datetime.utcnow():
+                while end_time > datetime.utcnow() and not self._should_stop:
                     _logger.info("SENDING")
                     try:
                         message = self._ConstructMessage()
@@ -181,13 +183,14 @@ class StressTestRunner:
             return self._state
         except Exception as e:
             _logger.exception("Exception in sender: {}".format(e))
+            self._should_stop = True
             raise
 
     def _Receive(self, receiver, end_time):
         self._ScheduleIntervalLogger(end_time, "Receiver " + str(self))
         try:
             with receiver:
-                while end_time > datetime.utcnow():
+                while end_time > datetime.utcnow() and not self._should_stop:
                     _logger.info("RECEIVE LOOP")
                     try:
                         if self.receive_type == ReceiveType.pull:
@@ -216,6 +219,7 @@ class StressTestRunner:
             return self._state
         except Exception as e:
             _logger.exception("Exception in receiver {}".format(e))
+            self._should_stop = True
             raise
 
 
