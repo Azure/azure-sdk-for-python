@@ -16,6 +16,8 @@ from ._configuration import HealthcareApisManagementClientConfiguration
 from .operations import ServicesOperations
 from .operations import Operations
 from .operations import OperationResultsOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -31,6 +33,10 @@ class HealthcareApisManagementClient(SDKClient):
     :vartype operations: azure.mgmt.healthcareapis.operations.Operations
     :ivar operation_results: OperationResults operations
     :vartype operation_results: azure.mgmt.healthcareapis.operations.OperationResultsOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.healthcareapis.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.healthcareapis.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -47,7 +53,7 @@ class HealthcareApisManagementClient(SDKClient):
         super(HealthcareApisManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-08-20-preview'
+        self.api_version = '2020-03-30'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -56,4 +62,8 @@ class HealthcareApisManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operation_results = OperationResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
