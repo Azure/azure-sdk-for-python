@@ -531,7 +531,7 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            wrapped_message = QueueMessage._from_generated(message[0])
+            wrapped_message = QueueMessage._from_generated(message[0]) # pylint: disable=protected-access
             return wrapped_message
         except StorageErrorException as error:
             process_storage_error(error)
