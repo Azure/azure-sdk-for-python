@@ -56,5 +56,8 @@ class UsernamePasswordCredential(InteractiveCredential):
         # type: (*str, **Any) -> dict
         app = self._get_app()
         return app.acquire_token_by_username_password(
-            username=self._username, password=self._password, scopes=list(scopes)
+            username=self._username,
+            password=self._password,
+            scopes=list(scopes),
+            claims_challenge=kwargs.get("claims_challenge"),
         )

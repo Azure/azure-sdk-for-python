@@ -87,7 +87,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
             raise CredentialUnavailableError(message="Shared token cache unavailable")
 
         if self._auth_record:
-            return self._acquire_token_silent(*scopes)
+            return self._acquire_token_silent(*scopes, **kwargs)
 
         account = self._get_account(self._username, self._tenant_id)
 
@@ -146,7 +146,9 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
                 continue
 
             now = int(time.time())
-            result = self._app.acquire_token_silent_with_error(list(scopes), account=account, **kwargs)
+            result = self._app.acquire_token_silent_with_error(
+                list(scopes), account=account, claims_challenge=kwargs.get("claims_challenge")
+            )
             if result and "access_token" in result and "expires_in" in result:
                 return AccessToken(result["access_token"], now + int(result["expires_in"]))
 

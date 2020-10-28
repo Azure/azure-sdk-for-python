@@ -84,13 +84,16 @@ class DeviceCodeCredential(InteractiveCredential):
         else:
             print(flow["message"])
 
+        claims_challenge = kwargs.get("claims_challenge")
         if self._timeout is not None and self._timeout < flow["expires_in"]:
             # user specified an effective timeout we will observe
             deadline = int(time.time()) + self._timeout
-            result = app.acquire_token_by_device_flow(flow, exit_condition=lambda flow: time.time() > deadline)
+            result = app.acquire_token_by_device_flow(
+                flow, exit_condition=lambda flow: time.time() > deadline, claims_challenge=claims_challenge
+            )
         else:
             # MSAL will stop polling when the device code expires
-            result = app.acquire_token_by_device_flow(flow)
+            result = app.acquire_token_by_device_flow(flow, claims_challenge=claims_challenge)
 
         if "access_token" not in result:
             if result.get("error") == "authorization_pending":

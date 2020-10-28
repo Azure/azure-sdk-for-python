@@ -103,6 +103,8 @@ class InteractiveCredential(MsalCredential):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+        :keyword str claims_challenge: a claims challenge returned by a resource provider following an authorization
+          failure
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
           required data, state, or platform support
@@ -187,7 +189,9 @@ class InteractiveCredential(MsalCredential):
                     continue
 
                 now = int(time.time())
-                result = app.acquire_token_silent_with_error(list(scopes), account=account, **kwargs)
+                result = app.acquire_token_silent_with_error(
+                    list(scopes), account=account, claims_challenge=kwargs.get("claims_challenge")
+                )
                 if result and "access_token" in result and "expires_in" in result:
                     return AccessToken(result["access_token"], now + int(result["expires_in"]))
 

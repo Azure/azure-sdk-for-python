@@ -97,7 +97,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         request_state = str(uuid.uuid4())
         app = self._get_app()
         auth_url = app.get_authorization_request_url(
-            scopes, redirect_uri=redirect_uri, state=request_state, prompt="select_account", **kwargs
+            scopes, redirect_uri=redirect_uri, state=request_state, prompt="select_account"
         )
 
         # open browser to that url
@@ -113,7 +113,9 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # redeem the authorization code for a token
         code = self._parse_response(request_state, response)
-        return app.acquire_token_by_authorization_code(code, scopes=scopes, redirect_uri=redirect_uri, **kwargs)
+        return app.acquire_token_by_authorization_code(
+            code, scopes=scopes, redirect_uri=redirect_uri, claims_challenge=kwargs.get("claims_challenge")
+        )
 
     @staticmethod
     def _parse_response(request_state, response):
