@@ -336,12 +336,24 @@ class TestContentFromStream(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
-    def test_content_page_range(self, client):
-        pytest.skip("service returning 3 pages")
+    def test_content_specify_pages(self, client):
+
         with open(self.multipage_invoice_pdf, "rb") as fd:
             myform = fd.read()
 
         poller = client.begin_recognize_content(myform, pages=["1"])
         result = poller.result()
+        assert len(result) == 1
 
-        self.assertEqual(len(result), 1)
+        # off-by-one error with elements, uncomment when fixed
+        # poller = client.begin_recognize_content(myform, pages=["1", "3"])
+        # result = poller.result()
+        # assert len(result) == 2
+
+        poller = client.begin_recognize_content(myform, pages=["1-2"])
+        result = poller.result()
+        assert len(result) == 2
+
+        poller = client.begin_recognize_content(myform, pages=["1-2", "3"])
+        result = poller.result()
+        assert len(result) == 3

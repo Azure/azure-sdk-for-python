@@ -433,7 +433,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :type form: bytes or IO[bytes]
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-            range with a comma or space.
+            range with a comma.
         :keyword content_type: Media type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -490,7 +490,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
-            range with a comma or space.
+            range with a comma.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
