@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ..exceptions import HttpResponseError, AzureError
+from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
     BadStatus,
@@ -43,17 +43,12 @@ class AsyncLROBasePolling(LROBasePolling):
     async def run(self):  # pylint:disable=invalid-overridden-method
         try:
             await self._poll()
-        except AzureError as err:
-            if not err.continuation_token:
-                err.continuation_token = self._get_continuation_token_safe()
-            raise
 
         except BadStatus as err:
             self._status = "Failed"
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
-                error=err,
-                continuation_token=self._get_continuation_token_safe()
+                error=err
             )
 
         except BadResponse as err:
@@ -61,15 +56,13 @@ class AsyncLROBasePolling(LROBasePolling):
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 message=str(err),
-                error=err,
-                continuation_token=self._get_continuation_token_safe()
+                error=err
             )
 
         except OperationFailed as err:
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
-                error=err,
-                continuation_token=self._get_continuation_token_safe()
+                error=err
             )
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
