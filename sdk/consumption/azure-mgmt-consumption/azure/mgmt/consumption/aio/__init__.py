@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._consumption_management_client import ConsumptionManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['ConsumptionManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
