@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
+from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
@@ -563,6 +563,18 @@ class MetricsAdvisorClient(object):
             body=detection_incident_result_query,
             cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
             **kwargs)
+
+    @overload
+    def list_incidents(self, alert_configuration_id: str, alert_id: str, **kwargs) -> ItemPaged[AnomalyIncident]:
+        pass
+
+    @overload
+    def list_incidents(
+            self, detection_configuration_id: str,
+            start_time: Union[str, datetime.datetime],
+            end_time: Union[str, datetime.datetime],
+            **kwargs: Any) -> ItemPaged[AnomalyIncident]:
+        pass
 
     @distributed_trace
     def list_incidents(self, **kwargs):
