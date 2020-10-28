@@ -223,10 +223,6 @@ class ServiceBusError(AzureError):
     :ivar str message: A stringified version of the message parameter
     """
 
-    def __init__(self, message, *args, **kwargs):
-        # type: (str, Any, Any) -> None
-        super(ServiceBusError, self).__init__(message, *args, **kwargs)
-
 
 class ServiceBusConnectionError(ServiceBusError):
     """An error occurred in the connection."""
