@@ -17,6 +17,8 @@ try:
     from ._models_py3 import LinkedNotificationHub
     from ._models_py3 import LocationResource
     from ._models_py3 import MetricSpecification
+    from ._models_py3 import NameAvailability
+    from ._models_py3 import NameAvailabilityParameters
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationList
@@ -37,6 +39,8 @@ except (SyntaxError, ImportError):
     from ._models import LinkedNotificationHub  # type: ignore
     from ._models import LocationResource  # type: ignore
     from ._models import MetricSpecification  # type: ignore
+    from ._models import NameAvailability  # type: ignore
+    from ._models import NameAvailabilityParameters  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationList  # type: ignore
@@ -65,6 +69,8 @@ __all__ = [
     'LinkedNotificationHub',
     'LocationResource',
     'MetricSpecification',
+    'NameAvailability',
+    'NameAvailabilityParameters',
     'Operation',
     'OperationDisplay',
     'OperationList',

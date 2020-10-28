@@ -27,7 +27,7 @@ class CommunicationServiceManagementClientConfiguration(Configuration):
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Gets subscription ID which uniquely identifies the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     """
 
