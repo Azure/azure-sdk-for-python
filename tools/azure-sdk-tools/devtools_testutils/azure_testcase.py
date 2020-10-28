@@ -297,3 +297,4 @@ class AzureTestCase(ReplayableTest):
         assert obj is not None
 
     def assertTrue(self, obj):
+        assert obj

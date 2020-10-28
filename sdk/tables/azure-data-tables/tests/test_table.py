@@ -142,7 +142,7 @@ class StorageTableTest(TableTestCase):
         existing = list(ts.query_tables(filter=name_filter))
 
         # Assert
-        self.assertIsNotNone(created)
+        assert created is not None
         ts.delete_table(table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -154,9 +154,9 @@ class StorageTableTest(TableTestCase):
         t0 = ts.create_table(table_name)
         t1 = ts.create_table_if_not_exists(table_name)
 
-        self.assertIsNotNone(t0)
-        self.assertIsNotNone(t1)
-        self.assertEqual(t0.table_name, t1.table_name)
+        assert t0 is not None
+        assert t1 is not None
+        assert t0.table_name ==  t1.table_name
         ts.delete_table(table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -167,8 +167,8 @@ class StorageTableTest(TableTestCase):
 
         t = ts.create_table_if_not_exists(table_name)
 
-        self.assertIsNotNone(t)
-        self.assertEqual(t.table_name, table_name)
+        assert t is not None
+        assert t.table_name ==  table_name
         ts.delete_table(table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -209,11 +209,11 @@ class StorageTableTest(TableTestCase):
 
         # Assert
         for table_item in tables:
-            self.assertIsInstance(table_item, TableItem)
+            assert isinstance(table_item,  TableItem)
 
-        self.assertIsNotNone(tables)
-        self.assertGreaterEqual(len(tables), 1)
-        self.assertIsNotNone(tables[0])
+        assert tables is not None
+        assert len(tables) >=  1
+        assert tables[0] is not None
         ts.delete_table(t.table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -228,11 +228,11 @@ class StorageTableTest(TableTestCase):
         tables = list(ts.query_tables(filter=name_filter))
 
         for table_item in tables:
-            self.assertIsInstance(table_item, TableItem)
+            assert isinstance(table_item,  TableItem)
 
         # Assert
-        self.assertIsNotNone(tables)
-        self.assertEqual(len(tables), 1)
+        assert tables is not None
+        assert len(tables) ==  1
         ts.delete_table(t.table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -254,8 +254,8 @@ class StorageTableTest(TableTestCase):
             big_page.append(t)
 
         # Assert
-        self.assertEqual(len(small_page), 3)
-        self.assertGreaterEqual(len(big_page), 4)
+        assert len(small_page) ==  3
+        assert len(big_page) >=  4
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -278,9 +278,9 @@ class StorageTableTest(TableTestCase):
         tables2 = generator2._current_page
 
         # Assert
-        self.assertEqual(len(tables1), 2)
-        self.assertEqual(len(tables2), 2)
-        self.assertNotEqual(tables1, tables2)
+        assert len(tables1) ==  2
+        assert len(tables2) ==  2
+        assert tables1 != tables2
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -294,8 +294,8 @@ class StorageTableTest(TableTestCase):
         existing = list(ts.query_tables("TableName eq '{}'".format(table.table_name)))
 
         # Assert
-        self.assertIsNone(deleted)
-        self.assertEqual(len(existing), 0)
+        assert deleted is None
+        assert len(existing) ==  0
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -343,8 +343,8 @@ class StorageTableTest(TableTestCase):
             acl = table.get_table_access_policy()
 
             # Assert
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 0)
+            assert acl is not None
+            assert len(acl) ==  0
         finally:
             ts.delete_table(table.table_name)
 
@@ -365,8 +365,8 @@ class StorageTableTest(TableTestCase):
 
             # Assert
             acl = table.get_table_access_policy()
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 0)
+            assert acl is not None
+            assert len(acl) ==  0
         finally:
             ts.delete_table(table.table_name)
 
@@ -386,12 +386,12 @@ class StorageTableTest(TableTestCase):
             table.set_table_access_policy(signed_identifiers={'empty': None})
             # Assert
             acl = table.get_table_access_policy()
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 1)
-            self.assertIsNotNone(acl['empty'])
-            self.assertIsNone(acl['empty'].permission)
-            self.assertIsNone(acl['empty'].expiry)
-            self.assertIsNone(acl['empty'].start)
+            assert acl is not None
+            assert len(acl) ==  1
+            assert acl['empty'] is not None
+            assert acl['empty'].permission is None
+            assert acl['empty'].expiry is None
+            assert acl['empty'].start is None
         finally:
             ts.delete_table(table.table_name)
 
@@ -417,9 +417,9 @@ class StorageTableTest(TableTestCase):
             client.set_table_access_policy(signed_identifiers=identifiers)
             # Assert
             acl = client.get_table_access_policy()
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 1)
-            self.assertTrue('testid' in acl)
+            assert acl is not None
+            assert len(acl) ==  1
+            assert 'testid' in acl
         finally:
             ts.delete_table(table.table_name)
 
@@ -485,9 +485,9 @@ class StorageTableTest(TableTestCase):
             entities = list(sas_table.list_entities())
 
             # Assert
-            self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].text.value, 'hello')
-            self.assertEqual(entities[1].text.value, 'hello')
+            assert len(entities) ==  2
+            assert entities[0].text.value ==  'hello'
+            assert entities[1].text.value ==  'hello'
         finally:
             self._delete_table(table=table, ts=tsc)
 
@@ -517,7 +517,7 @@ class StorageTableTest(TableTestCase):
         e = sys.exc_info()[0]
 
         # Assert
-        self.assertIsNone(e)
+        assert e is None
 
         ts.delete_table(table)
         locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')

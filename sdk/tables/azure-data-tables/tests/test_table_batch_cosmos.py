@@ -107,49 +107,49 @@ class StorageTableClientTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'], 39)
-        self.assertEqual(entity['sex'], 'male')
-        self.assertEqual(entity['married'], True)
-        self.assertEqual(entity['deceased'], False)
-        self.assertFalse("optional" in entity)
-        self.assertFalse("aquarius" in entity)
-        self.assertEqual(entity['ratio'], 3.1)
-        self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'], 933311100)
-        self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
-        self.assertEqual(entity['binary'], b'binary')
-        self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
-        self.assertEqual(entity['other'].value, 20)
-        self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
-        self.assertTrue('metadata' in entity.odata)
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
+        assert entity['married'] ==  True
+        assert entity['deceased'] ==  False
+        assert not "optional" in entity
+        assert not "aquarius" in entity
+        assert entity['ratio'] ==  3.1
+        assert entity['evenratio'] ==  3.0
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc())
+        assert entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity['binary'] ==  b'binary'
+        assert isinstance(entity['other'],  EntityProperty)
+        assert entity['other'].type ==  EdmType.INT32
+        assert entity['other'].value ==  20
+        assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
+        assert 'metadata' in entity.odata
+        assert entity.timestamp is not None
+        assert isinstance(entity.timestamp,  datetime)
         if headers:
-            self.assertTrue("etag" in headers)
-            self.assertIsNotNone(headers['etag'])
+            assert "etag" in headers
+            assert headers['etag'] is not None
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEqual(entity.age, 'abc')
-        self.assertEqual(entity.sex, 'female')
-        self.assertFalse(hasattr(entity, "married"))
-        self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEqual(entity.sign, 'aquarius')
-        self.assertFalse(hasattr(entity, "optional"))
-        self.assertFalse(hasattr(entity, "ratio"))
-        self.assertFalse(hasattr(entity, "evenratio"))
-        self.assertFalse(hasattr(entity, "large"))
-        self.assertFalse(hasattr(entity, "Birthday"))
-        self.assertEqual(entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc()))
-        self.assertFalse(hasattr(entity, "other"))
-        self.assertFalse(hasattr(entity, "clsid"))
-        self.assertIsNotNone(entity.odata['etag'])
-        self.assertIsNotNone(entity.timestamp)
-        self.assertIsInstance(entity.timestamp, datetime)
+        assert entity.age ==  'abc'
+        assert entity.sex ==  'female'
+        assert not hasattr(entity, "married")
+        assert not hasattr(entity, "deceased")
+        assert entity.sign ==  'aquarius'
+        assert not hasattr(entity, "optional")
+        assert not hasattr(entity, "ratio")
+        assert not hasattr(entity, "evenratio")
+        assert not hasattr(entity, "large")
+        assert not hasattr(entity, "Birthday")
+        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
+        assert not hasattr(entity, "other")
+        assert not hasattr(entity, "clsid")
+        assert entity.odata['etag'] is not None
+        assert entity.timestamp is not None
+        assert isinstance(entity.timestamp,  datetime)
 
     #--Test cases for batch ---------------------------------------------
 
@@ -169,14 +169,14 @@ class StorageTableClientTest(TableTestCase):
         entity.test8 = EntityProperty(10, EdmType.INT64)
 
         # Assert
-        self.assertEqual(entity.test.type, EdmType.BOOLEAN)
-        self.assertEqual(entity.test2.type, EdmType.BINARY)
-        self.assertEqual(entity.test3.type, EdmType.GUID)
-        self.assertEqual(entity.test4.type, EdmType.DATETIME)
-        self.assertEqual(entity.test5.type, EdmType.STRING)
-        self.assertEqual(entity.test6.type, EdmType.DOUBLE)
-        self.assertEqual(entity.test7.type, EdmType.INT32)
-        self.assertEqual(entity.test8.type, EdmType.INT64)
+        assert entity.test.type ==  EdmType.BOOLEAN
+        assert entity.test2.type ==  EdmType.BINARY
+        assert entity.test3.type ==  EdmType.GUID
+        assert entity.test4.type ==  EdmType.DATETIME
+        assert entity.test5.type ==  EdmType.STRING
+        assert entity.test6.type ==  EdmType.DOUBLE
+        assert entity.test7.type ==  EdmType.INT32
+        assert entity.test8.type ==  EdmType.INT64
 
 
     @pytest.mark.skip("pending")
@@ -201,9 +201,9 @@ class StorageTableClientTest(TableTestCase):
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            assert resp is not None
             result, headers = self.table.read_item('001', 'batch_insert', response_hook=lambda e, h: (e, h))
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            assert list(resp)[0].headers['Etag'] ==  headers['etag']
         finally:
             self._tear_down()
 
@@ -226,7 +226,7 @@ class StorageTableClientTest(TableTestCase):
             self.table.create_item(entity)
 
             entity = self.table.read_item('001', 'batch_update')
-            self.assertEqual(3, entity.test3)
+            assert 3 ==  entity.test3
             entity.test2 = 'value1'
 
             batch = self.table.create_batch()
@@ -234,10 +234,10 @@ class StorageTableClientTest(TableTestCase):
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            assert resp is not None
             result, headers = self.table.read_item('001', 'batch_update', response_hook=lambda e, h: (e, h))
-            self.assertEqual('value1', result.test2)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            assert 'value1' ==  result.test2
+            assert list(resp)[0].headers['Etag'] ==  headers['etag']
         finally:
             self._tear_down()
 
@@ -260,7 +260,7 @@ class StorageTableClientTest(TableTestCase):
             self.table.create_item(entity)
 
             entity = self.table.read_item('001', 'batch_merge')
-            self.assertEqual(3, entity.test3)
+            assert 3 ==  entity.test3
             entity = Entity()
             entity.PartitionKey = '001'
             entity.RowKey = 'batch_merge'
@@ -271,11 +271,11 @@ class StorageTableClientTest(TableTestCase):
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            assert resp is not None
             entity, headers = self.table.read_item('001', 'batch_merge', response_hook=lambda e, h: (e, h))
-            self.assertEqual('value1', entity.test2)
-            self.assertEqual(1234567890, entity.test4)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            assert 'value1' ==  entity.test2
+            assert 1234567890 ==  entity.test4
+            assert list(resp)[0].headers['Etag'] ==  headers['etag']
         finally:
             self._tear_down()
 
@@ -296,10 +296,10 @@ class StorageTableClientTest(TableTestCase):
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            assert resp is not None
             entity, headers = self.table.read_item(entity['PartitionKey'], entity['RowKey'], response_hook=lambda e, h: (e, h))
             self._assert_updated_entity(entity)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            assert list(resp)[0].headers['Etag'] ==  headers['etag']
         finally:
             self._tear_down()
 
@@ -325,8 +325,8 @@ class StorageTableClientTest(TableTestCase):
                 self.table.commit_batch(batch)
             except PartialBatchErrorException as error:
                 pass
-                #self.assertEqual(error.code, 'UpdateConditionNotSatisfied')
-                #self.assertTrue('The update condition specified in the request was not satisfied.' in str(error))
+                #assert error.code ==  'UpdateConditionNotSatisfied'
+                #assert 'The update condition specified in the request was not satisfied.' in str(error)
             else:
                 self.fail('AzureBatchOperationError was expected')
 
@@ -358,12 +358,12 @@ class StorageTableClientTest(TableTestCase):
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            assert resp is not None
             entity, headers = self.table.read_item('001', 'batch_insert_replace', response_hook=lambda e, h: (e, h))
-            self.assertIsNotNone(entity)
-            self.assertEqual('value', entity.test2)
-            self.assertEqual(1234567890, entity.test4)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            assert entity is not None
+            assert 'value' ==  entity.test2
+            assert 1234567890 ==  entity.test4
+            assert list(resp)[0].headers['Etag'] ==  headers['etag']
         finally:
             self._tear_down()
 
@@ -389,12 +389,12 @@ class StorageTableClientTest(TableTestCase):
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
+            assert resp is not None
             entity, headers = self.table.read_item('001', 'batch_insert_merge', response_hook=lambda e, h: (e, h))
-            self.assertIsNotNone(entity)
-            self.assertEqual('value', entity.test2)
-            self.assertEqual(1234567890, entity.test4)
-            self.assertEqual(list(resp)[0].headers['Etag'], headers['etag'])
+            assert entity is not None
+            assert 'value' ==  entity.test2
+            assert 1234567890 ==  entity.test4
+            assert list(resp)[0].headers['Etag'] ==  headers['etag']
         finally:
             self._tear_down()
 
@@ -417,15 +417,15 @@ class StorageTableClientTest(TableTestCase):
             self.table.create_item(entity)
 
             entity = self.table.read_item('001', 'batch_delete')
-            self.assertEqual(3, entity.test3)
+            assert 3 ==  entity.test3
 
             batch = self.table.create_batch()
             batch.delete_item('001', 'batch_delete')
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertIsNotNone(resp)
-            self.assertEqual(list(resp)[0].status_code, 204)
+            assert resp is not None
+            assert list(resp)[0].status_code ==  204
         finally:
             self._tear_down()
 
@@ -453,8 +453,8 @@ class StorageTableClientTest(TableTestCase):
             entities = list(self.table.query_items("PartitionKey eq 'batch_inserts'"))
 
             # Assert
-            self.assertIsNotNone(entities)
-            self.assertEqual(100, len(entities))
+            assert entities is not None
+            assert 100 ==  len(entities)
         finally:
             self._tear_down()
 
@@ -501,9 +501,9 @@ class StorageTableClientTest(TableTestCase):
             resp = self.table.commit_batch(batch)
 
             # Assert
-            self.assertEqual(6, len(list(resp)))
+            assert 6 ==  len(list(resp))
             entities = list(self.table.query_items("PartitionKey eq '003'"))
-            self.assertEqual(5, len(entities))
+            assert 5 ==  len(entities)
         finally:
             self._tear_down()
 
@@ -550,7 +550,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             entities = list(self.table.query_items("PartitionKey eq '003'"))
-            self.assertEqual(5, len(entities))
+            assert 5 ==  len(entities)
         finally:
             self._tear_down()
 
@@ -607,9 +607,9 @@ class StorageTableClientTest(TableTestCase):
             resp = table2.commit_batch(batch)
 
             # Assert
-            self.assertEqual(6, len(list(resp)))
+            assert 6 ==  len(list(resp))
             entities = list(self.table.query_items("PartitionKey eq '003'"))
-            self.assertEqual(5, len(entities))
+            assert 5 ==  len(entities)
         finally:
             self._tear_down()
 
