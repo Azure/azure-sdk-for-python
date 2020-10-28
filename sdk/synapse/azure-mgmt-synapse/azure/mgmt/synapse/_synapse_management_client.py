@@ -36,9 +36,14 @@ from .operations import SqlPoolVulnerabilityAssessmentsOperations
 from .operations import SqlPoolVulnerabilityAssessmentScansOperations
 from .operations import SqlPoolSecurityAlertPoliciesOperations
 from .operations import SqlPoolVulnerabilityAssessmentRuleBaselinesOperations
+from .operations import ExtendedSqlPoolBlobAuditingPoliciesOperations
+from .operations import DataMaskingPoliciesOperations
+from .operations import DataMaskingRulesOperations
+from .operations import SqlPoolColumnsOperations
 from .operations import WorkspacesOperations
 from .operations import WorkspaceAadAdminsOperations
 from .operations import WorkspaceManagedIdentitySqlControlSettingsOperations
+from .operations import RestorableDroppedSqlPoolsOperations
 from .operations import IntegrationRuntimesOperations
 from .operations import IntegrationRuntimeNodeIpAddressOperations
 from .operations import IntegrationRuntimeObjectMetadataOperations
@@ -106,12 +111,22 @@ class SynapseManagementClient(SDKClient):
     :vartype sql_pool_security_alert_policies: azure.mgmt.synapse.operations.SqlPoolSecurityAlertPoliciesOperations
     :ivar sql_pool_vulnerability_assessment_rule_baselines: SqlPoolVulnerabilityAssessmentRuleBaselines operations
     :vartype sql_pool_vulnerability_assessment_rule_baselines: azure.mgmt.synapse.operations.SqlPoolVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar extended_sql_pool_blob_auditing_policies: ExtendedSqlPoolBlobAuditingPolicies operations
+    :vartype extended_sql_pool_blob_auditing_policies: azure.mgmt.synapse.operations.ExtendedSqlPoolBlobAuditingPoliciesOperations
+    :ivar data_masking_policies: DataMaskingPolicies operations
+    :vartype data_masking_policies: azure.mgmt.synapse.operations.DataMaskingPoliciesOperations
+    :ivar data_masking_rules: DataMaskingRules operations
+    :vartype data_masking_rules: azure.mgmt.synapse.operations.DataMaskingRulesOperations
+    :ivar sql_pool_columns: SqlPoolColumns operations
+    :vartype sql_pool_columns: azure.mgmt.synapse.operations.SqlPoolColumnsOperations
     :ivar workspaces: Workspaces operations
     :vartype workspaces: azure.mgmt.synapse.operations.WorkspacesOperations
     :ivar workspace_aad_admins: WorkspaceAadAdmins operations
     :vartype workspace_aad_admins: azure.mgmt.synapse.operations.WorkspaceAadAdminsOperations
     :ivar workspace_managed_identity_sql_control_settings: WorkspaceManagedIdentitySqlControlSettings operations
     :vartype workspace_managed_identity_sql_control_settings: azure.mgmt.synapse.operations.WorkspaceManagedIdentitySqlControlSettingsOperations
+    :ivar restorable_dropped_sql_pools: RestorableDroppedSqlPools operations
+    :vartype restorable_dropped_sql_pools: azure.mgmt.synapse.operations.RestorableDroppedSqlPoolsOperations
     :ivar integration_runtimes: IntegrationRuntimes operations
     :vartype integration_runtimes: azure.mgmt.synapse.operations.IntegrationRuntimesOperations
     :ivar integration_runtime_node_ip_address: IntegrationRuntimeNodeIpAddress operations
@@ -202,11 +217,21 @@ class SynapseManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.sql_pool_vulnerability_assessment_rule_baselines = SqlPoolVulnerabilityAssessmentRuleBaselinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.extended_sql_pool_blob_auditing_policies = ExtendedSqlPoolBlobAuditingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_masking_policies = DataMaskingPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.data_masking_rules = DataMaskingRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_pool_columns = SqlPoolColumnsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.workspaces = WorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspace_aad_admins = WorkspaceAadAdminsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspace_managed_identity_sql_control_settings = WorkspaceManagedIdentitySqlControlSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.restorable_dropped_sql_pools = RestorableDroppedSqlPoolsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_runtimes = IntegrationRuntimesOperations(
             self._client, self.config, self._serialize, self._deserialize)
