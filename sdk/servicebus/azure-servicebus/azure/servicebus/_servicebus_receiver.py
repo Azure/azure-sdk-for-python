@@ -29,9 +29,9 @@ from ._common.constants import (
     MGMT_REQUEST_FROM_SEQUENCE_NUMBER,
     MGMT_REQUEST_MAX_MESSAGE_COUNT
 )
-
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
+from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -132,6 +132,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             )
 
         self._populate_attributes(**kwargs)
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -256,6 +257,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         # type: (bytes, List[str], Optional[Dict[str, Any]]) -> Any
+        # Message settlement through the mgmt link.
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
             MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)
@@ -265,7 +267,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        return self._mgmt_request_response_with_retry(
+        # We don't do retry here, retry is done in the ReceivedMessage._settle_message
+        return self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
             mgmt_handlers.default
@@ -281,6 +284,26 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             mgmt_handlers.lock_renew_op,
             timeout=timeout
         )
+
+    @property
+    def session(self):
+        # type: () -> ServiceBusSession
+        """
+        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
+        entities, it would return None if called on a non-sessionful receiver.
+
+        :rtype: ~azure.servicebus.ServiceBusSession
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START get_session_sync]
+                :end-before: [END get_session_sync]
+                :language: python
+                :dedent: 4
+                :caption: Get session from a receiver
+        """
+        return self._session  # type: ignore
 
     def close(self):
         # type: () -> None

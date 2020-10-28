@@ -39,7 +39,8 @@ async def sample_create_alert_config_async():
         MetricAnomalyAlertConditions,
         SeverityCondition,
         MetricBoundaryCondition,
-        MetricAnomalyAlertSnoozeCondition
+        MetricAnomalyAlertSnoozeCondition,
+        AnomalyAlertConfiguration
     )
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
@@ -50,49 +51,51 @@ async def sample_create_alert_config_async():
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
+    anomaly_alert_configuration = AnomalyAlertConfiguration(
+        name="my alert config",
+        description="alert config description",
+        cross_metrics_operator="AND",
+        metric_alert_configurations=[
+            MetricAlertConfiguration(
+                detection_configuration_id=anomaly_detection_configuration_id,
+                alert_scope=MetricAnomalyAlertScope(
+                    scope_type="WholeSeries"
+                ),
+                alert_conditions=MetricAnomalyAlertConditions(
+                    severity_condition=SeverityCondition(
+                        min_alert_severity="Low",
+                        max_alert_severity="High"
+                    )
+                )
+            ),
+            MetricAlertConfiguration(
+                detection_configuration_id=anomaly_detection_configuration_id,
+                alert_scope=MetricAnomalyAlertScope(
+                    scope_type="TopN",
+                    top_n_group_in_scope=TopNGroupScope(
+                        top=10,
+                        period=5,
+                        min_top_count=5
+                    )
+                ),
+                alert_conditions=MetricAnomalyAlertConditions(
+                    metric_boundary_condition=MetricBoundaryCondition(
+                        direction="Up",
+                        upper=50
+                    )
+                ),
+                alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
+                    auto_snooze=2,
+                    snooze_scope="Metric",
+                    only_for_successive=True
+                )
+            ),
+        ],
+        hook_ids=[hook_id]
+    )
+
     async with client:
-        alert_config = await client.create_anomaly_alert_configuration(
-            name="my alert config",
-            description="alert config description",
-            cross_metrics_operator="AND",
-            metric_alert_configurations=[
-                MetricAlertConfiguration(
-                    detection_configuration_id=anomaly_detection_configuration_id,
-                    alert_scope=MetricAnomalyAlertScope(
-                        scope_type="WholeSeries"
-                    ),
-                    alert_conditions=MetricAnomalyAlertConditions(
-                        severity_condition=SeverityCondition(
-                            min_alert_severity="Low",
-                            max_alert_severity="High"
-                        )
-                    )
-                ),
-                MetricAlertConfiguration(
-                    detection_configuration_id=anomaly_detection_configuration_id,
-                    alert_scope=MetricAnomalyAlertScope(
-                        scope_type="TopN",
-                        top_n_group_in_scope=TopNGroupScope(
-                            top=10,
-                            period=5,
-                            min_top_count=5
-                        )
-                    ),
-                    alert_conditions=MetricAnomalyAlertConditions(
-                        metric_boundary_condition=MetricBoundaryCondition(
-                            direction="Up",
-                            upper=50
-                        )
-                    ),
-                    alert_snooze_condition=MetricAnomalyAlertSnoozeCondition(
-                        auto_snooze=2,
-                        snooze_scope="Metric",
-                        only_for_successive=True
-                    )
-                ),
-            ],
-            hook_ids=[hook_id]
-        )
+        alert_config = await client.create_anomaly_alert_configuration(anomaly_alert_configuration)
 
         return alert_config
     # [END create_anomaly_alert_config_async]

@@ -9,32 +9,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/alert_id/incidents
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/alert/anomaly/configurations/anomaly_alert_configuration_id/alerts/alert_id/incidents
   response:
     body:
-      string: '{"value":[{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","incidentId":"a6a239ae68312b70cf66f778a7477d41-alert_id","startTime":"2020-09-08T00:00:00Z","lastTime":"2020-09-08T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Cherry
-        Laurel","Dim2":"Bandicoot"}},"property":{"maxSeverity":"Low","incidentStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","incidentId":"incident_id","startTime":"2020-09-06T00:00:00Z","lastTime":"2020-09-08T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Common
-        Lime","Dim2":"Arrow crab"}},"property":{"maxSeverity":"Low","incidentStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","incidentId":"faa12efccfc87ba03d8d757bc2f0b0c4-alert_id","startTime":"2020-09-08T00:00:00Z","lastTime":"2020-09-08T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Cherry
-        Laurel","Dim2":"Beaked whale"}},"property":{"maxSeverity":"Medium","incidentStatus":"Active"}}],"@nextLink":null}'
+      string: '{"value":[{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","incidentId":"incident_id","startTime":"2020-10-18T00:00:00Z","lastTime":"2020-10-20T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Delhi","category":"Shoes
+        Handbags & Sunglasses"}},"property":{"maxSeverity":"High","incidentStatus":"Active"}},{"metricId":"metric_id","anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","incidentId":"daceb039d9ec34d28f04654dd61aee57-alert_id","startTime":"2020-10-20T00:00:00Z","lastTime":"2020-10-20T00:00:00Z","rootNode":{"dimension":{"dimension_name":"Karachi","category":"Handmade"}},"property":{"maxSeverity":"High","incidentStatus":"Active"}}],"@nextLink":null}'
     headers:
       apim-request-id:
-      - adc57129-32b5-4b80-a67a-b8374fcf1d18
+      - d4f213df-f1e2-4162-bdb1-7dc8a82cb8b8
       content-length:
-      - '1179'
+      - '805'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 22 Sep 2020 21:54:39 GMT
+      - Wed, 21 Oct 2020 21:42:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '408'
+      - '271'
       x-request-id:
-      - adc57129-32b5-4b80-a67a-b8374fcf1d18
+      - d4f213df-f1e2-4162-bdb1-7dc8a82cb8b8
     status:
       code: 200
       message: OK

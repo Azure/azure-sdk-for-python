@@ -351,3 +351,43 @@ async def test_imds_user_assigned_identity():
     with mock.patch.dict("os.environ", clear=True):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
+
+
+@pytest.mark.asyncio
+async def test_service_fabric():
+    """Service Fabric 2019-07-01-preview"""
+
+    access_token = "****"
+    expires_on = 42
+    endpoint = "http://localhost:42/token"
+    secret = "expected-secret"
+    thumbprint = "SHA1HEX"
+    scope = "scope"
+
+    async def send(request, **_):
+        assert request.url.startswith(endpoint)
+        assert request.method == "GET"
+        assert request.headers["Secret"] == secret
+        assert request.query["api-version"] == "2019-07-01-preview"
+        assert request.query["resource"] == scope
+
+        return mock_response(
+            json_payload={
+                "access_token": access_token,
+                "expires_on": str(expires_on),
+                "resource": scope,
+                "token_type": "Bearer",
+            }
+        )
+
+    with mock.patch(
+        "os.environ",
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: secret,
+            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
+        },
+    ):
+        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        assert token.token == access_token
+        assert token.expires_on == expires_on

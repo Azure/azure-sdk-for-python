@@ -11,7 +11,7 @@ FILE: sample_hooks.py
 
 DESCRIPTION:
     This sample demonstrates how to create, get, list, update, and delete hooks
-    under your Metrics Advisor account. EmailHook is used as an example in this sample.
+    under your Metrics Advisor account. EmailNotificationHook is used as an example in this sample.
 
 USAGE:
     python sample_hooks.py
@@ -28,7 +28,7 @@ import os
 def sample_create_hook():
     # [START create_hook]
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
-    from azure.ai.metricsadvisor.models import EmailHook
+    from azure.ai.metricsadvisor.models import EmailNotificationHook
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
     subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
@@ -38,8 +38,8 @@ def sample_create_hook():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     hook = client.create_hook(
-        name="email hook",
-        hook=EmailHook(
+        hook=EmailNotificationHook(
+            name="email hook",
             description="my email hook",
             emails_to_alert=["alertme@alertme.com"],
             external_link="https://adwiki.azurewebsites.net/articles/howto/alerts/create-hooks.html"
@@ -67,7 +67,7 @@ def sample_get_hook(hook_id):
     print("Description: {}".format(hook.description))
     print("Emails to alert: {}".format(hook.emails_to_alert))
     print("External link: {}".format(hook.external_link))
-    print("Admins: {}".format(hook.admins))
+    print("Admins: {}".format(hook.admin_emails))
 
     # [END get_hook]
 

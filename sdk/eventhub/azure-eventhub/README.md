@@ -82,7 +82,7 @@ one active consumer for a given partition and consumer group pairing. Each activ
 its partition; if there are multiple readers on the same partition, then they will receive duplicate events.
 
 For more concepts and deeper discussion, see: [Event Hubs Features](https://docs.microsoft.com/azure/event-hubs/event-hubs-features).
-Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Queuing Protocol (AMQP) Version 1.0](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html).
+Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Queuing Protocol (AMQP) Version 1.0](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html).
 
 ## Examples
 
@@ -434,7 +434,7 @@ PR appropriately (e.g., label, comment). Simply follow the instructions provided
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-[avro]: http://avro.apache.org/
+[avro]: https://avro.apache.org/
 [schemaregistry_service]: https://aka.ms/schemaregistry
 [schemaregistry_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry
 [schemaregistry_avroserializer_repo]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/schemaregistry/azure-schemaregistry-avroserializer

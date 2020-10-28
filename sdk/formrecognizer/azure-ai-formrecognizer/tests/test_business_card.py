@@ -140,7 +140,7 @@ class TestBusinessCard(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -161,17 +161,7 @@ class TestBusinessCard(FormRecognizerTest):
         read_results = raw_response.analyze_result.read_results
         document_results = raw_response.analyze_result.document_results
 
-        # check dict values
-        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), actual.get("ContactNames"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), actual.get("JobTitles"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), actual.get("Departments"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), actual.get("Emails"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), actual.get("Websites"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), actual.get("MobilePhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), actual.get("OtherPhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), actual.get("Faxes"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
+        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
@@ -187,7 +177,7 @@ class TestBusinessCard(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -209,17 +199,7 @@ class TestBusinessCard(FormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        # check dict values
-        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), actual.get("ContactNames"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), actual.get("JobTitles"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), actual.get("Departments"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), actual.get("Emails"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), actual.get("Websites"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), actual.get("MobilePhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), actual.get("OtherPhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), actual.get("Faxes"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
+        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
@@ -227,6 +207,46 @@ class TestBusinessCard(FormRecognizerTest):
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(business_card.pages, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_stream_multipage_transform_pdf(self, client):
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            responses.append(analyze_result)
+            responses.append(extracted_business_card)
+
+        with open(self.business_card_multipage_pdf, "rb") as fd:
+            myfile = fd.read()
+
+        poller = client.begin_recognize_business_cards(
+            business_card=myfile,
+            include_field_elements=True,
+            cls=callback
+        )
+
+        result = poller.result()
+        raw_response = responses[0]
+        returned_model = responses[1]
+        read_results = raw_response.analyze_result.read_results
+        document_results = raw_response.analyze_result.document_results
+        page_results = raw_response.analyze_result.page_results
+
+        self.assertEqual(2, len(returned_model))
+        self.assertEqual(2, len(document_results))
+
+        for i in range(len(returned_model)):
+            business_card = returned_model[i]
+            actual = document_results[i]
+            self.assertBusinessCardTransformCorrect(business_card, actual.fields, read_results)
+            self.assertEqual(i + 1, business_card.page_range.first_page_number)
+            self.assertEqual(i + 1, business_card.page_range.last_page_number)
+
+        # Check page metadata
+        self.assertFormPagesTransformCorrect(returned_model, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -287,6 +307,69 @@ class TestBusinessCard(FormRecognizerTest):
         # check dict values
         self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
+
+        self.assertEqual(len(business_card.fields.get("JobTitles").value), 1)
+        self.assertEqual(business_card.fields.get("JobTitles").value[0].value, "Senior Researcher")
+
+        self.assertEqual(len(business_card.fields.get("Departments").value), 1)
+        self.assertEqual(business_card.fields.get("Departments").value[0].value, "Cloud & Al Department")
+
+        self.assertEqual(len(business_card.fields.get("Emails").value), 1)
+        self.assertEqual(business_card.fields.get("Emails").value[0].value, "avery.smith@contoso.com")
+
+        self.assertEqual(len(business_card.fields.get("Websites").value), 1)
+        self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
+
+        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
+        # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
+
+        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
+        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+
+        # self.assertEqual(len(business_card.fields.get("Faxes").value), 1)
+        # self.assertEqual(business_card.fields.get("Faxes").value[0].value, "https://www.contoso.com/")
+
+        self.assertEqual(len(business_card.fields.get("Addresses").value), 1)
+        self.assertEqual(business_card.fields.get("Addresses").value[0].value, "2 Kingdom Street Paddington, London, W2 6BD")
+
+        self.assertEqual(len(business_card.fields.get("CompanyNames").value), 1)
+        self.assertEqual(business_card.fields.get("CompanyNames").value[0].value, "Contoso")
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_business_card_multipage_pdf(self, client):
+
+        with open(self.business_card_multipage_pdf, "rb") as fd:
+            receipt = fd.read()
+        poller = client.begin_recognize_business_cards(receipt, include_field_elements=True)
+        result = poller.result()
+
+        self.assertEqual(len(result), 2)
+        business_card = result[0]
+        self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'JOHN')
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'SINGER')
+
+        self.assertEqual(len(business_card.fields.get("JobTitles").value), 1)
+        self.assertEqual(business_card.fields.get("JobTitles").value[0].value, "Software Engineer")
+
+        self.assertEqual(len(business_card.fields.get("Emails").value), 1)
+        self.assertEqual(business_card.fields.get("Emails").value[0].value, "johnsinger@contoso.com")
+
+        self.assertEqual(len(business_card.fields.get("Websites").value), 1)
+        self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com")
+
+        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
+        # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
+
+        business_card = result[1]
+        self.assertEqual(len(business_card.fields.get("ContactNames").value), 1)
+        self.assertEqual(business_card.fields.get("ContactNames").value[0].value_data.page_number, 2)
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['FirstName'].value, 'Avery')
         self.assertEqual(business_card.fields.get("ContactNames").value[0].value['LastName'].value, 'Smith')
 
