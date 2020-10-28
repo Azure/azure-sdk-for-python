@@ -481,7 +481,6 @@ class MetricsAdvisorClient(object):
         :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :keyword str dimension_name: The dimension name to query.
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         :return: Dimension values of anomalies.
         :rtype: ~azure.core.paging.ItemPaged[str]
