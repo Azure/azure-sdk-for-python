@@ -225,7 +225,7 @@ class ServiceBusError(AzureError):
 
     def __init__(self, message, *args, **kwargs):
         # type: (str, Any, Any) -> None
-        super(ServiceBusError, self).__init__(message, error=kwargs.get("error"))
+        super(ServiceBusError, self).__init__(message, *args, **kwargs)
 
 
 class ServiceBusConnectionError(ServiceBusError):
