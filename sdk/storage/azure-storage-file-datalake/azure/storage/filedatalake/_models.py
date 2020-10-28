@@ -818,20 +818,3 @@ class AccessControlChanges(DictMixin):
         self.aggregate_counters = aggregate_counters
         self.batch_failures = batch_failures
         self.continuation = continuation
-
-
-class DataLakeAclChangeFailedError(Exception):
-    """The error happened during set/update/remove acl recursive operation.
-
-    :ivar ~azure.core.exceptions.AzureError error:
-        The exception.
-    :ivar str description:
-        A description of the error.
-    :ivar str continuation:
-        An opaque continuation token that may be used to resume the operations in case of failures.
-    """
-
-    def __init__(self, error, description, continuation):
-        self.error = error
-        self.description = description
-        self.continuation = continuation
