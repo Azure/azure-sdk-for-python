@@ -408,27 +408,6 @@ class Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecogniti
         self.results = results
 
 
-class Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1(msrest.serialization.Model):
-    """Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.SentimentResponse
-    """
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'SentimentResponse'},
-    }
-
-    def __init__(
-        self,
-        *,
-        results: Optional["SentimentResponse"] = None,
-        **kwargs
-    ):
-        super(Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1, self).__init__(**kwargs)
-        self.results = results
-
-
 class Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1(msrest.serialization.Model):
     """Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1.
 
@@ -447,27 +426,6 @@ class Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextrac
         **kwargs
     ):
         super(Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1, self).__init__(**kwargs)
-        self.results = results
-
-
-class ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1(msrest.serialization.Model):
-    """ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingResult
-    """
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'EntityLinkingResult'},
-    }
-
-    def __init__(
-        self,
-        *,
-        results: Optional["EntityLinkingResult"] = None,
-        **kwargs
-    ):
-        super(ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1, self).__init__(**kwargs)
         self.results = results
 
 
@@ -1067,55 +1025,6 @@ class EntityLinkingResult(msrest.serialization.Model):
         self.model_version = model_version
 
 
-class EntityLinkingTask(msrest.serialization.Model):
-    """EntityLinkingTask.
-
-    :param parameters:
-    :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingTaskParameters
-    """
-
-    _attribute_map = {
-        'parameters': {'key': 'parameters', 'type': 'EntityLinkingTaskParameters'},
-    }
-
-    def __init__(
-        self,
-        *,
-        parameters: Optional["EntityLinkingTaskParameters"] = None,
-        **kwargs
-    ):
-        super(EntityLinkingTask, self).__init__(**kwargs)
-        self.parameters = parameters
-
-
-class EntityLinkingTaskParameters(msrest.serialization.Model):
-    """EntityLinkingTaskParameters.
-
-    :param model_version:
-    :type model_version: str
-    :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or
-     ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexTypeResponse
-    """
-
-    _attribute_map = {
-        'model_version': {'key': 'model-version', 'type': 'str'},
-        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        model_version: Optional[str] = "latest",
-        string_index_type: Optional[Union[str, "StringIndexTypeResponse"]] = "TextElements_v8",
-        **kwargs
-    ):
-        super(EntityLinkingTaskParameters, self).__init__(**kwargs)
-        self.model_version = model_version
-        self.string_index_type = string_index_type
-
-
 class ErrorResponse(msrest.serialization.Model):
     """ErrorResponse.
 
@@ -1457,23 +1366,15 @@ class JobManifestTasks(msrest.serialization.Model):
      list[~azure.ai.textanalytics.v3_2_preview_1.models.EntitiesTask]
     :param entity_recognition_pii_tasks:
     :type entity_recognition_pii_tasks: list[~azure.ai.textanalytics.v3_2_preview_1.models.PiiTask]
-    :param entity_linking_tasks:
-    :type entity_linking_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingTask]
     :param key_phrase_extraction_tasks:
     :type key_phrase_extraction_tasks:
      list[~azure.ai.textanalytics.v3_2_preview_1.models.KeyPhrasesTask]
-    :param sentiment_analysis_tasks:
-    :type sentiment_analysis_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.SentimentTask]
     """
 
     _attribute_map = {
         'entity_recognition_tasks': {'key': 'entityRecognitionTasks', 'type': '[EntitiesTask]'},
         'entity_recognition_pii_tasks': {'key': 'entityRecognitionPiiTasks', 'type': '[PiiTask]'},
-        'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[EntityLinkingTask]'},
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[KeyPhrasesTask]'},
-        'sentiment_analysis_tasks': {'key': 'sentimentAnalysisTasks', 'type': '[SentimentTask]'},
     }
 
     def __init__(
@@ -1481,17 +1382,13 @@ class JobManifestTasks(msrest.serialization.Model):
         *,
         entity_recognition_tasks: Optional[List["EntitiesTask"]] = None,
         entity_recognition_pii_tasks: Optional[List["PiiTask"]] = None,
-        entity_linking_tasks: Optional[List["EntityLinkingTask"]] = None,
         key_phrase_extraction_tasks: Optional[List["KeyPhrasesTask"]] = None,
-        sentiment_analysis_tasks: Optional[List["SentimentTask"]] = None,
         **kwargs
     ):
         super(JobManifestTasks, self).__init__(**kwargs)
         self.entity_recognition_tasks = entity_recognition_tasks
         self.entity_recognition_pii_tasks = entity_recognition_pii_tasks
-        self.entity_linking_tasks = entity_linking_tasks
         self.key_phrase_extraction_tasks = key_phrase_extraction_tasks
-        self.sentiment_analysis_tasks = sentiment_analysis_tasks
 
 
 class KeyPhraseResult(msrest.serialization.Model):
@@ -2332,60 +2229,6 @@ class SentimentResponse(msrest.serialization.Model):
         self.model_version = model_version
 
 
-class SentimentTask(msrest.serialization.Model):
-    """SentimentTask.
-
-    :param parameters:
-    :type parameters: ~azure.ai.textanalytics.v3_2_preview_1.models.SentimentTaskParameters
-    """
-
-    _attribute_map = {
-        'parameters': {'key': 'parameters', 'type': 'SentimentTaskParameters'},
-    }
-
-    def __init__(
-        self,
-        *,
-        parameters: Optional["SentimentTaskParameters"] = None,
-        **kwargs
-    ):
-        super(SentimentTask, self).__init__(**kwargs)
-        self.parameters = parameters
-
-
-class SentimentTaskParameters(msrest.serialization.Model):
-    """SentimentTaskParameters.
-
-    :param model_version:
-    :type model_version: str
-    :param opinion_mining:
-    :type opinion_mining: bool
-    :param string_index_type:  Possible values include: "TextElements_v8", "UnicodeCodePoint",
-     "Utf16CodeUnit". Default value: "TextElements_v8".
-    :type string_index_type: str or
-     ~azure.ai.textanalytics.v3_2_preview_1.models.StringIndexTypeResponse
-    """
-
-    _attribute_map = {
-        'model_version': {'key': 'model-version', 'type': 'str'},
-        'opinion_mining': {'key': 'opinionMining', 'type': 'bool'},
-        'string_index_type': {'key': 'stringIndexType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        model_version: Optional[str] = "latest",
-        opinion_mining: Optional[bool] = False,
-        string_index_type: Optional[Union[str, "StringIndexTypeResponse"]] = "TextElements_v8",
-        **kwargs
-    ):
-        super(SentimentTaskParameters, self).__init__(**kwargs)
-        self.model_version = model_version
-        self.opinion_mining = opinion_mining
-        self.string_index_type = string_index_type
-
-
 class TasksStateTasks(msrest.serialization.Model):
     """TasksStateTasks.
 
@@ -2407,15 +2250,9 @@ class TasksStateTasks(msrest.serialization.Model):
     :param entity_recognition_pii_tasks:
     :type entity_recognition_pii_tasks:
      list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksEntityRecognitionPiiTasksItem]
-    :param entity_linking_tasks:
-    :type entity_linking_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksEntityLinkingTasksItem]
     :param key_phrase_extraction_tasks:
     :type key_phrase_extraction_tasks:
      list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksKeyPhraseExtractionTasksItem]
-    :param sentiment_analysis_tasks:
-    :type sentiment_analysis_tasks:
-     list[~azure.ai.textanalytics.v3_2_preview_1.models.TasksStateTasksSentimentAnalysisTasksItem]
     """
 
     _validation = {
@@ -2433,9 +2270,7 @@ class TasksStateTasks(msrest.serialization.Model):
         'total': {'key': 'total', 'type': 'int'},
         'entity_recognition_tasks': {'key': 'entityRecognitionTasks', 'type': '[TasksStateTasksEntityRecognitionTasksItem]'},
         'entity_recognition_pii_tasks': {'key': 'entityRecognitionPiiTasks', 'type': '[TasksStateTasksEntityRecognitionPiiTasksItem]'},
-        'entity_linking_tasks': {'key': 'entityLinkingTasks', 'type': '[TasksStateTasksEntityLinkingTasksItem]'},
         'key_phrase_extraction_tasks': {'key': 'keyPhraseExtractionTasks', 'type': '[TasksStateTasksKeyPhraseExtractionTasksItem]'},
-        'sentiment_analysis_tasks': {'key': 'sentimentAnalysisTasks', 'type': '[TasksStateTasksSentimentAnalysisTasksItem]'},
     }
 
     def __init__(
@@ -2448,9 +2283,7 @@ class TasksStateTasks(msrest.serialization.Model):
         details: Optional[List["TaskState"]] = None,
         entity_recognition_tasks: Optional[List["TasksStateTasksEntityRecognitionTasksItem"]] = None,
         entity_recognition_pii_tasks: Optional[List["TasksStateTasksEntityRecognitionPiiTasksItem"]] = None,
-        entity_linking_tasks: Optional[List["TasksStateTasksEntityLinkingTasksItem"]] = None,
         key_phrase_extraction_tasks: Optional[List["TasksStateTasksKeyPhraseExtractionTasksItem"]] = None,
-        sentiment_analysis_tasks: Optional[List["TasksStateTasksSentimentAnalysisTasksItem"]] = None,
         **kwargs
     ):
         super(TasksStateTasks, self).__init__(**kwargs)
@@ -2461,9 +2294,7 @@ class TasksStateTasks(msrest.serialization.Model):
         self.total = total
         self.entity_recognition_tasks = entity_recognition_tasks
         self.entity_recognition_pii_tasks = entity_recognition_pii_tasks
-        self.entity_linking_tasks = entity_linking_tasks
         self.key_phrase_extraction_tasks = key_phrase_extraction_tasks
-        self.sentiment_analysis_tasks = sentiment_analysis_tasks
 
 
 class TaskState(msrest.serialization.Model):
@@ -2501,51 +2332,6 @@ class TaskState(msrest.serialization.Model):
         **kwargs
     ):
         super(TaskState, self).__init__(**kwargs)
-        self.last_update_date_time = last_update_date_time
-        self.name = name
-        self.status = status
-
-
-class TasksStateTasksEntityLinkingTasksItem(TaskState, ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1):
-    """TasksStateTasksEntityLinkingTasksItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.EntityLinkingResult
-    :param last_update_date_time: Required.
-    :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
-    :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_2_preview_1.models.State
-    """
-
-    _validation = {
-        'last_update_date_time': {'required': True},
-        'name': {'required': True},
-        'status': {'required': True},
-    }
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'EntityLinkingResult'},
-        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        name: str,
-        status: Union[str, "State"],
-        results: Optional["EntityLinkingResult"] = None,
-        **kwargs
-    ):
-        super(TasksStateTasksEntityLinkingTasksItem, self).__init__(last_update_date_time=last_update_date_time, name=name, status=status, results=results, **kwargs)
-        self.results = results
         self.last_update_date_time = last_update_date_time
         self.name = name
         self.status = status
@@ -2680,51 +2466,6 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSc
         **kwargs
     ):
         super(TasksStateTasksKeyPhraseExtractionTasksItem, self).__init__(last_update_date_time=last_update_date_time, name=name, status=status, results=results, **kwargs)
-        self.results = results
-        self.last_update_date_time = last_update_date_time
-        self.name = name
-        self.status = status
-
-
-class TasksStateTasksSentimentAnalysisTasksItem(TaskState, Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1):
-    """TasksStateTasksSentimentAnalysisTasksItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param results:
-    :type results: ~azure.ai.textanalytics.v3_2_preview_1.models.SentimentResponse
-    :param last_update_date_time: Required.
-    :type last_update_date_time: ~datetime.datetime
-    :param name: Required.
-    :type name: str
-    :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
-    :type status: str or ~azure.ai.textanalytics.v3_2_preview_1.models.State
-    """
-
-    _validation = {
-        'last_update_date_time': {'required': True},
-        'name': {'required': True},
-        'status': {'required': True},
-    }
-
-    _attribute_map = {
-        'results': {'key': 'results', 'type': 'SentimentResponse'},
-        'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        name: str,
-        status: Union[str, "State"],
-        results: Optional["SentimentResponse"] = None,
-        **kwargs
-    ):
-        super(TasksStateTasksSentimentAnalysisTasksItem, self).__init__(last_update_date_time=last_update_date_time, name=name, status=status, results=results, **kwargs)
         self.results = results
         self.last_update_date_time = last_update_date_time
         self.name = name

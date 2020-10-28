@@ -13,9 +13,7 @@ try:
     from ._models_py3 import AspectRelation
     from ._models_py3 import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1
     from ._models_py3 import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1
-    from ._models_py3 import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1
     from ._models_py3 import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1
-    from ._models_py3 import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1
     from ._models_py3 import DetectedLanguage
     from ._models_py3 import DocumentEntities
     from ._models_py3 import DocumentError
@@ -30,8 +28,6 @@ try:
     from ._models_py3 import EntitiesTaskParameters
     from ._models_py3 import Entity
     from ._models_py3 import EntityLinkingResult
-    from ._models_py3 import EntityLinkingTask
-    from ._models_py3 import EntityLinkingTaskParameters
     from ._models_py3 import ErrorResponse
     from ._models_py3 import HealthcareEntity
     from ._models_py3 import HealthcareEntityLink
@@ -64,16 +60,12 @@ try:
     from ._models_py3 import SentenceSentiment
     from ._models_py3 import SentimentConfidenceScorePerLabel
     from ._models_py3 import SentimentResponse
-    from ._models_py3 import SentimentTask
-    from ._models_py3 import SentimentTaskParameters
     from ._models_py3 import TaskState
     from ._models_py3 import TasksState
     from ._models_py3 import TasksStateTasks
-    from ._models_py3 import TasksStateTasksEntityLinkingTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
     from ._models_py3 import TasksStateTasksKeyPhraseExtractionTasksItem
-    from ._models_py3 import TasksStateTasksSentimentAnalysisTasksItem
     from ._models_py3 import TextAnalyticsError
     from ._models_py3 import TextAnalyticsWarning
 except (SyntaxError, ImportError):
@@ -83,9 +75,7 @@ except (SyntaxError, ImportError):
     from ._models import AspectRelation  # type: ignore
     from ._models import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1  # type: ignore
     from ._models import Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1  # type: ignore
-    from ._models import Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1  # type: ignore
     from ._models import Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1  # type: ignore
-    from ._models import ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1  # type: ignore
     from ._models import DetectedLanguage  # type: ignore
     from ._models import DocumentEntities  # type: ignore
     from ._models import DocumentError  # type: ignore
@@ -100,8 +90,6 @@ except (SyntaxError, ImportError):
     from ._models import EntitiesTaskParameters  # type: ignore
     from ._models import Entity  # type: ignore
     from ._models import EntityLinkingResult  # type: ignore
-    from ._models import EntityLinkingTask  # type: ignore
-    from ._models import EntityLinkingTaskParameters  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import HealthcareEntity  # type: ignore
     from ._models import HealthcareEntityLink  # type: ignore
@@ -134,16 +122,12 @@ except (SyntaxError, ImportError):
     from ._models import SentenceSentiment  # type: ignore
     from ._models import SentimentConfidenceScorePerLabel  # type: ignore
     from ._models import SentimentResponse  # type: ignore
-    from ._models import SentimentTask  # type: ignore
-    from ._models import SentimentTaskParameters  # type: ignore
     from ._models import TaskState  # type: ignore
     from ._models import TasksState  # type: ignore
     from ._models import TasksStateTasks  # type: ignore
-    from ._models import TasksStateTasksEntityLinkingTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
     from ._models import TasksStateTasksKeyPhraseExtractionTasksItem  # type: ignore
-    from ._models import TasksStateTasksSentimentAnalysisTasksItem  # type: ignore
     from ._models import TextAnalyticsError  # type: ignore
     from ._models import TextAnalyticsWarning  # type: ignore
 
@@ -168,9 +152,7 @@ __all__ = [
     'AspectRelation',
     'Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1',
     'Components15X8E9LSchemasTasksstatePropertiesTasksPropertiesEntityrecognitionpiitasksItemsAllof1',
-    'Components1C6O47FSchemasTasksstatePropertiesTasksPropertiesSentimentanalysistasksItemsAllof1',
     'Components1D9IzucSchemasTasksstatePropertiesTasksPropertiesKeyphraseextractiontasksItemsAllof1',
-    'ComponentsIfu7BjSchemasTasksstatePropertiesTasksPropertiesEntitylinkingtasksItemsAllof1',
     'DetectedLanguage',
     'DocumentEntities',
     'DocumentError',
@@ -185,8 +167,6 @@ __all__ = [
     'EntitiesTaskParameters',
     'Entity',
     'EntityLinkingResult',
-    'EntityLinkingTask',
-    'EntityLinkingTaskParameters',
     'ErrorResponse',
     'HealthcareEntity',
     'HealthcareEntityLink',
@@ -219,16 +199,12 @@ __all__ = [
     'SentenceSentiment',
     'SentimentConfidenceScorePerLabel',
     'SentimentResponse',
-    'SentimentTask',
-    'SentimentTaskParameters',
     'TaskState',
     'TasksState',
     'TasksStateTasks',
-    'TasksStateTasksEntityLinkingTasksItem',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
     'TasksStateTasksKeyPhraseExtractionTasksItem',
-    'TasksStateTasksSentimentAnalysisTasksItem',
     'TextAnalyticsError',
     'TextAnalyticsWarning',
     'AspectRelationType',
