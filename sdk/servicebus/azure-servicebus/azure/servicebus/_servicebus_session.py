@@ -91,7 +91,7 @@ class ServiceBusSession(BaseSession):
     """
 
     def get_state(self, **kwargs):
-        # type: (Any) -> str
+        # type: (Any) -> bytes
         # pylint: disable=protected-access
         """Get the session state.
 
@@ -121,8 +121,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
-        if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode(self._encoding)
         return session_state
 
     def set_state(self, state, **kwargs):
