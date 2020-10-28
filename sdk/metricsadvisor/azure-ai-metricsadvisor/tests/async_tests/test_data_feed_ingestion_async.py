@@ -7,13 +7,14 @@
 import datetime
 from dateutil.tz import tzutc
 import pytest
+from devtools_testutils import AzureTestCase
 
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_get_data_feed_ingestion_progress(self):
         async with self.admin_client:
             ingestion = await self.admin_client.get_data_feed_ingestion_progress(
@@ -22,7 +23,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             self.assertIsNotNone(ingestion.latest_success_timestamp)
             self.assertIsNotNone(ingestion.latest_active_timestamp)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feed_ingestion_status(self):
         async with self.admin_client:
             ingestions = self.admin_client.list_data_feed_ingestion_status(
@@ -35,7 +36,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 ingestions_list.append(status)
             assert len(list(ingestions_list)) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feed_ingestion_status_with_skip(self):
         async with self.admin_client:
             ingestions = self.admin_client.list_data_feed_ingestion_status(
@@ -60,11 +61,11 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
             assert len(ingestions_list) == len(ingestions_with_skips_list) + 5
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_refresh_data_feed_ingestion(self):
         async with self.admin_client:
             await self.admin_client.refresh_data_feed_ingestion(
                 self.data_feed_id,
-                start_time=datetime.datetime(2019, 10, 1, tzinfo=tzutc()),
-                end_time=datetime.datetime(2020, 10, 3, tzinfo=tzutc()),
+                start_time=datetime.datetime(2020, 10, 1, tzinfo=tzutc()),
+                end_time=datetime.datetime(2020, 10, 2, tzinfo=tzutc()),
             )

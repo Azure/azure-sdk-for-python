@@ -225,9 +225,9 @@ async def example_send_and_receive_async():
     # [END receive_forever_async]
 
     # [START auto_lock_renew_message_async]
-    from azure.servicebus.aio import AutoLockRenew
+    from azure.servicebus.aio import AutoLockRenewer
 
-    lock_renewal = AutoLockRenew()
+    lock_renewal = AutoLockRenewer()
     async with servicebus_receiver:
         async for message in servicebus_receiver:
             lock_renewal.register(message, timeout=60)
@@ -266,33 +266,33 @@ async def example_session_ops_async():
 
     async with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
         # [START get_session_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
         # [END get_session_async]
 
         # [START get_session_state_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.get_state()
         # [END get_session_state_async]
 
         # [START set_session_state_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.set_state("START")
         # [END set_session_state_async]
 
         # [START session_renew_lock_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.renew_lock()
         # [END session_renew_lock_async]
 
         # [START auto_lock_renew_session_async]
-        from azure.servicebus.aio import AutoLockRenew
+        from azure.servicebus.aio import AutoLockRenewer
 
-        lock_renewal = AutoLockRenew()
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        lock_renewal = AutoLockRenewer()
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
             lock_renewal.register(session, timeout=120)

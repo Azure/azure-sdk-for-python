@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
       "dimensionName": "dimension_name"}'
     headers:
       Accept:
@@ -10,28 +10,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/anomalies/dimension/query
   response:
     body:
-      string: '{"value":["Common Lime","Cherry Laurel","Cabbage Palm","Blackthorn","Blue
-        Atlas Cedar","Cider gum","Common Walnut","Almond","Chinese red-barked birch","Bastard
-        Service Tree","Black Birch (River Birch)","Caucasian Fir","Common Beech","Cherry","Caucasian
-        Lime","Birch","Algerian Fir","Black Poplar","Cockspur Thorn","Common Alder","Common
-        Ash","Austrian Pine","Common Hazel","Box elder","Common Juniper","Aspen","Common
-        Yew"],"@nextLink":null}'
+      string: '{"value":["Karachi","Los Angeles","Manila","Delhi","Seoul","Beijing","Mumbai","New
+        York","Tianjin"],"@nextLink":null}'
     headers:
-      apim-request-id: 4e250a80-2b37-4615-b2ff-a07bc700d865
-      content-length: '441'
+      apim-request-id: 291b22b2-b0e7-4e95-aebf-ac99050eb316
+      content-length: '117'
       content-type: application/json; charset=utf-8
-      date: Mon, 21 Sep 2020 16:55:04 GMT
+      date: Wed, 21 Oct 2020 21:37:14 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '843'
-      x-request-id: 4e250a80-2b37-4615-b2ff-a07bc700d865
+      x-envoy-upstream-service-time: '195'
+      x-request-id: 291b22b2-b0e7-4e95-aebf-ac99050eb316
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/c0f2539f-b804-4ab9-a70f-0da0c89c76d8/anomalies/dimension/query
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/anomalies/dimension/query
 version: 1

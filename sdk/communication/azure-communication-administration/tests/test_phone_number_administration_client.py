@@ -16,6 +16,9 @@ from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase import PhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
 
+SKIP_PHONE_NUMBER_TESTS = True
+PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
+
 class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
 
     def setUp(self):
@@ -123,11 +126,13 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
             self.release_id = "release_id"
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_all_phone_numbers(self):
         pages = self._phone_number_administration_client.list_all_phone_numbers()
         assert pages.next()
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_get_all_area_codes(self):
         area_codes = self._phone_number_administration_client.get_all_area_codes(
             location_type="NotRequired",
@@ -137,6 +142,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert area_codes.primary_area_codes
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_get_capabilities_update(self):
         capability_response = self._phone_number_administration_client.get_capabilities_update(
             capabilities_update_id=self.capabilities_id
@@ -144,6 +150,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert capability_response.capabilities_update_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_update_capabilities(self):
         update = NumberUpdateCapabilities(add=iter(["InboundCalling"]))
 
@@ -157,11 +164,13 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert capability_response.capabilities_update_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_all_supported_countries(self):
         countries = self._phone_number_administration_client.list_all_supported_countries()
         assert countries.next().localized_name
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_get_number_configuration(self):
         phone_number_response = self._phone_number_administration_client.get_number_configuration(
             phone_number=self.phonenumber_to_get_config
@@ -169,6 +178,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert phone_number_response.pstn_configuration
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_configure_number(self):
         pstnConfig = PstnConfiguration(
             callback_url="https://callbackurl",
@@ -181,6 +191,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert not configure_number_response
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_phone_plan_groups(self):
         phone_plan_group_response = self._phone_number_administration_client.list_phone_plan_groups(
             country_code=self.country_code
@@ -188,6 +199,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert phone_plan_group_response.next().phone_plan_group_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_phone_plans(self):
         phone_plan_response = self._phone_number_administration_client.list_phone_plans(
             country_code=self.country_code,
@@ -196,6 +208,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert phone_plan_response.next().phone_plan_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_get_phone_plan_location_options(self):
         location_options_response = self._phone_number_administration_client.get_phone_plan_location_options(
             country_code=self.country_code,
@@ -205,6 +218,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert location_options_response.location_options.label_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_get_release_by_id(self):
         phone_number_release_response = self._phone_number_administration_client.get_release_by_id(
             release_id=self.release_id
@@ -212,11 +226,13 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert phone_number_release_response.release_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_list_all_releases(self):
         releases_response = self._phone_number_administration_client.list_all_releases()
         assert releases_response.next().id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_release_phone_numbers(self):
         releases_response = self._phone_number_administration_client.release_phone_numbers(
             [self.phonenumber_to_release]
@@ -224,6 +240,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert releases_response.release_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_get_search_by_id(self):
         phone_number_search_response = self._phone_number_administration_client.get_search_by_id(
             search_id=self.search_id
@@ -231,6 +248,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert phone_number_search_response.search_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_create_search(self):
         searchOptions = CreateSearchOptions(
             area_code=self.area_code_for_search,
@@ -245,6 +263,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert search_response.search_id
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_cancel_search(self):
         cancel_search_response = self._phone_number_administration_client.cancel_search(
             search_id=self.search_id_to_cancel
@@ -252,6 +271,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
         assert not cancel_search_response
 
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     def test_purchase_search(self):
         purchase_search_response = self._phone_number_administration_client.purchase_search(
             search_id=self.search_id_to_purchase

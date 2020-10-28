@@ -13,33 +13,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query
   response:
     body:
-      string: '{"value":["Algerian Fir","Almond","Aspen","Austrian Pine","Bastard
-        Service Tree","Birch","Black Birch (River Birch)","Black Mulberry","Black
-        Poplar","Blackthorn","Blue Atlas Cedar","Box elder","Cabbage Palm","Caucasian
-        Fir","Caucasian Lime","Cherry","Cherry Laurel","Chinese red-barked birch","Cider
-        gum","Cockspur Thorn"],"@nextLink":"https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20"}'
+      string: '{"value":["Abidjan","Ahmadabad","Alexandria","Ankara","Atlanta","Baghdad","Bangkok","Barcelona","Beijing","Belo
+        Horizonte","Bengaluru","Bogota","Boston","Brasilia","Buenos Aires","Cairo","Chengdu","Chennai","Chicago","Chittagong"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20"}'
     headers:
       apim-request-id:
-      - de769b65-714e-4958-9c62-1a67ff37dfdf
+      - 5919036e-621a-43fc-a7a6-1b622dc1ae82
       content-length:
-      - '497'
+      - '402'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Sep 2020 16:54:10 GMT
+      - Wed, 21 Oct 2020 21:42:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '96'
+      - '71'
       x-request-id:
-      - de769b65-714e-4958-9c62-1a67ff37dfdf
+      - 5919036e-621a-43fc-a7a6-1b622dc1ae82
     status:
       code: 200
       message: OK
@@ -57,30 +54,153 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=20
   response:
     body:
-      string: '{"value":["Common Alder","Common Ash","Common Beech","Common Hazel","Common
-        Juniper","Common Lime","Common Walnut","Common Yew","Copper Beech","Cotoneaster"],"@nextLink":null}'
+      string: '{"value":["Chongqing","Dallas","Delhi","Dhaka","Dongguan","Guadalajara","Guangzhou","Hanoi","Haora","Hechi","Ho
+        Chi Minh City","Hong Kong","Houston","Hyderabad","Istanbul","Jakarta","Karachi","Khartoum","Kinshasa","Kolkata"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=40"}'
     headers:
       apim-request-id:
-      - 8d5197eb-33ca-47cd-9229-411d07d52982
+      - 1b6fa190-85c6-4a58-a53b-d330d3d48b09
       content-length:
-      - '175'
+      - '396'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Sep 2020 16:54:10 GMT
+      - Wed, 21 Oct 2020 21:42:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '97'
+      - '80'
       x-request-id:
-      - 8d5197eb-33ca-47cd-9229-411d07d52982
+      - 1b6fa190-85c6-4a58-a53b-d330d3d48b09
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=40
+  response:
+    body:
+      string: '{"value":["Lagos","Lahore","Lima","London","Los Angeles","Luanda","Madrid","Manila","Melbourne","Mexico
+        City","Miami","Monterrey","Moscow","Mumbai","New York","Osaka","Paris","Philadelphia","Phoenix","Porto
+        Alegre"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=60"}'
+    headers:
+      apim-request-id:
+      - c14863c8-c0c6-48a3-ad91-746a20f7e2ca
+      content-length:
+      - '387'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 21:42:41 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '77'
+      x-request-id:
+      - c14863c8-c0c6-48a3-ad91-746a20f7e2ca
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=60
+  response:
+    body:
+      string: '{"value":["Pune","Rangoon","Rio de Janeiro","Riyadh","Saint Petersburg","Santiago","Sao
+        Paulo","Seoul","Shanghai","Shenyang","Shenzhen","Singapore","Surat","Sydney","Taipei","Tehran","Tianjin","Tokyo","Toronto","Washington"],"@nextLink":"https://js-metrics-advisor.cognitiveservices.azure.com:443/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=80"}'
+    headers:
+      apim-request-id:
+      - 7c891a7b-22c0-4d28-8c38-451cf30e9860
+      content-length:
+      - '396'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 21:42:41 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '71'
+      x-request-id:
+      - 7c891a7b-22c0-4d28-8c38-451cf30e9860
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"dimensionName": "dimension_name"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '25'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/dimension/query?$top=20&$skip=80
+  response:
+    body:
+      string: '{"value":["Wuhan","Xi''an"],"@nextLink":null}'
+    headers:
+      apim-request-id:
+      - c6138fd0-737e-4006-b1e4-bee842522a0b
+      content-length:
+      - '44'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 21:42:41 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '84'
+      x-request-id:
+      - c6138fd0-737e-4006-b1e4-bee842522a0b
     status:
       code: 200
       message: OK

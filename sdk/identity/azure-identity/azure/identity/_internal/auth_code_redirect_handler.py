@@ -56,7 +56,7 @@ class AuthCodeRedirectServer(HTTPServer):
         while not self.query_params:
             try:
                 self.handle_request()
-            except ValueError:
+            except (IOError, ValueError):
                 # socket has been closed, probably by handle_timeout
                 break
 

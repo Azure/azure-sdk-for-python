@@ -11,7 +11,6 @@ from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import (
-    GlobalStorageAccountPreparer,
     TableTestCase
 )
 

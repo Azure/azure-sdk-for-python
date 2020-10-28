@@ -235,7 +235,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 :caption: List model information for each model on the account.
         """
         return self._client.list_custom_models(  # type: ignore
-            cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
+            cls=kwargs.pop("cls", lambda objs:
+            [CustomFormModelInfo._from_generated(x, api_version=self.api_version) for x in objs]),
             **kwargs
         )
 
@@ -370,7 +371,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
+            return CustomFormModelInfo._from_generated(copy_result, target["modelId"], api_version=self.api_version)
 
         return await self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
