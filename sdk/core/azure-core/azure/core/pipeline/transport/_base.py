@@ -77,7 +77,7 @@ from .._tools import await_result as _await_result
 
 if TYPE_CHECKING:
     from ..policies import SansIOHTTPPolicy
-    from collections import MutableMapping
+    from collections.abc import MutableMapping
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
