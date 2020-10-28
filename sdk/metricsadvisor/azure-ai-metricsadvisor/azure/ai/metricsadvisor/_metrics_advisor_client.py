@@ -565,15 +565,22 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @overload
-    def list_incidents(self, alert_configuration_id: str, alert_id: str, **kwargs) -> ItemPaged[AnomalyIncident]:
+    def list_incidents(
+            self, alert_configuration_id,   # type: str
+            alert_id,   # type: str
+            **kwargs    # type: Any
+    ):
+        # type: (...) -> ItemPaged[AnomalyIncident]
         pass
 
     @overload
     def list_incidents(
-            self, detection_configuration_id: str,
-            start_time: Union[str, datetime.datetime],
-            end_time: Union[str, datetime.datetime],
-            **kwargs: Any) -> ItemPaged[AnomalyIncident]:
+            self, detection_configuration_id,   # type: str
+            start_time, # type: Union[str, datetime.datetime]
+            end_time,   # type: Union[str, datetime.datetime]
+            **kwargs    # type: Any
+    ):
+        # type: (...) -> ItemPaged[AnomalyIncident]
         pass
 
     @distributed_trace
