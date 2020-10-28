@@ -171,7 +171,7 @@ def _convert_to_entity(entry_element):
             mtype = EdmType.INT32
 
             if value >= 2 ** 31 or value < (-2 ** 31):
-                mtype = EdmType.Int64
+                mtype = EdmType.INT64
 
         # Add type for String
         try:
