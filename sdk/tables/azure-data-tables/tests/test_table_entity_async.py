@@ -407,6 +407,32 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_insert_entity_with_large_int_success(self, resource_group, location, storage_account,
+                                                         storage_account_key):
+        # Arrange
+        await self._set_up(storage_account, storage_account_key)
+        try:
+            # Act
+            dict64 = self._create_random_base_entity_dict()
+            dict64['large'] = EntityProperty(2 ** 50, EdmType.INT64)
+
+            # Assert
+            await self.table.create_entity(entity=dict64)
+
+            received_entity = await self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
+            assert received_entity['large'].value == dict64['large'].value
+
+            dict64['RowKey'] = 'negative'
+            dict64['large'] = EntityProperty(-(2 ** 50 + 1), EdmType.INT64)
+            await self.table.create_entity(entity=dict64)
+
+            received_entity = await self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
+            assert received_entity['large'].value == dict64['large'].value
+
+        finally:
+            await self._tear_down()
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
