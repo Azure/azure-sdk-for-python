@@ -11,7 +11,7 @@ from ._models import (
     ChatThreadMember,
     ChatMessage,
     ChatThread,
-    ReadReceipt,
+    ChatMessageReadReceipt,
 )
 from ._shared.models import CommunicationUser
 
@@ -20,7 +20,7 @@ __all__ = [
     'ChatThreadClient',
     'ChatMessage',
     'ChatMessagePriority',
-    'ReadReceipt',
+    'ChatMessageReadReceipt',
     'SendChatMessageResult',
     'ChatThread',
     'ChatThreadInfo',

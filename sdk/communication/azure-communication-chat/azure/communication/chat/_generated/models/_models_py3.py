@@ -494,7 +494,7 @@ class MultiStatusResponse(msrest.serialization.Model):
         self.multiple_status = None
 
 
-class ReadReceipt(msrest.serialization.Model):
+class ChatMessageReadReceipt(msrest.serialization.Model):
     """A read receipt indicates the time a chat message was read by a recipient.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -525,19 +525,19 @@ class ReadReceipt(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ReadReceipt, self).__init__(**kwargs)
+        super(ChatMessageReadReceipt, self).__init__(**kwargs)
         self.sender_id = None
         self.chat_message_id = None
         self.read_on = None
 
 
-class ReadReceiptsCollection(msrest.serialization.Model):
-    """ReadReceiptsCollection.
+class ChatMessageReadReceiptsCollection(msrest.serialization.Model):
+    """ChatMessageReadReceiptsCollection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Collection of read receipts.
-    :vartype value: list[~azure.communication.chat.models.ReadReceipt]
+    :vartype value: list[~azure.communication.chat.models.ChatMessageReadReceipt]
     :ivar next_link: If there are more read receipts that can be retrieved, the next link will be
      populated.
     :vartype next_link: str
@@ -549,7 +549,7 @@ class ReadReceiptsCollection(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ReadReceipt]'},
+        'value': {'key': 'value', 'type': '[ChatMessageReadReceipt]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
@@ -557,7 +557,7 @@ class ReadReceiptsCollection(msrest.serialization.Model):
         self,
         **kwargs
     ):
-        super(ReadReceiptsCollection, self).__init__(**kwargs)
+        super(ChatMessageReadReceiptsCollection, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 

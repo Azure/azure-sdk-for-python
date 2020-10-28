@@ -30,7 +30,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         chat_thread_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ReadReceiptsCollection"]
+        # type: (...) -> Iterable["models.ChatMessageReadReceiptsCollection"]
         """Gets read receipts for a thread.
 
         Gets read receipts for a thread.
@@ -38,11 +38,11 @@ class AzureCommunicationChatServiceOperationsMixin(object):
         :param chat_thread_id: Thread id to get the read receipts for.
         :type chat_thread_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ReadReceiptsCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ReadReceiptsCollection]
+        :return: An iterator like instance of either ChatMessageReadReceiptsCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.models.ChatMessageReadReceiptsCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ReadReceiptsCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ChatMessageReadReceiptsCollection"]
         error_map = {
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -85,7 +85,7 @@ class AzureCommunicationChatServiceOperationsMixin(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ReadReceiptsCollection', pipeline_response)
+            deserialized = self._deserialize('ChatMessageReadReceiptsCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)

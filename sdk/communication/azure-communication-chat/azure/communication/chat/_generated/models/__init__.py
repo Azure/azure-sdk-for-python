@@ -19,8 +19,8 @@ try:
     from ._models_py3 import Error
     from ._models_py3 import IndividualStatusResponse
     from ._models_py3 import MultiStatusResponse
-    from ._models_py3 import ReadReceipt
-    from ._models_py3 import ReadReceiptsCollection
+    from ._models_py3 import ChatMessageReadReceipt
+    from ._models_py3 import ChatMessageReadReceiptsCollection
     from ._models_py3 import SendChatMessageRequest
     from ._models_py3 import SendChatMessageResult
     from ._models_py3 import SendReadReceiptRequest
@@ -39,8 +39,8 @@ except (SyntaxError, ImportError):
     from ._models import Error  # type: ignore
     from ._models import IndividualStatusResponse  # type: ignore
     from ._models import MultiStatusResponse  # type: ignore
-    from ._models import ReadReceipt  # type: ignore
-    from ._models import ReadReceiptsCollection  # type: ignore
+    from ._models import ChatMessageReadReceipt  # type: ignore
+    from ._models import ChatMessageReadReceiptsCollection  # type: ignore
     from ._models import SendChatMessageRequest  # type: ignore
     from ._models import SendChatMessageResult  # type: ignore
     from ._models import SendReadReceiptRequest  # type: ignore
@@ -64,8 +64,8 @@ __all__ = [
     'Error',
     'IndividualStatusResponse',
     'MultiStatusResponse',
-    'ReadReceipt',
-    'ReadReceiptsCollection',
+    'ChatMessageReadReceipt',
+    'ChatMessageReadReceiptsCollection',
     'SendChatMessageRequest',
     'SendChatMessageResult',
     'SendReadReceiptRequest',
