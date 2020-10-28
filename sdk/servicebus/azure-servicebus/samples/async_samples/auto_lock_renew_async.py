@@ -66,7 +66,7 @@ async def renew_lock_on_session_of_the_sessionful_entity():
 
         renewer = AutoLockRenewer()
 
-        async with servicebus_client.get_queue_session_receiver(
+        async with servicebus_client.get_queue_receiver(
             queue_name=SESSION_QUEUE_NAME,
             session_id='SESSION',
             prefetch_count=10

@@ -1,5 +1,187 @@
 # Release History
 
+## 6.0.0b1 (2020-10-12)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 1.0.0 (2020-08-17)
+
+**Features**
+
+  - Model SqlContainerGetPropertiesResource has a new parameter analytical_storage_ttl
+  - Model DatabaseAccountUpdateParameters has a new parameter cors
+  - Model SqlContainerResource has a new parameter analytical_storage_ttl
+  - Model DatabaseAccountGetResults has a new parameter cors
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_collection_to_manual_throughput
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_database_to_manual_throughput
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_database_to_autoscale
+  - Added operation MongoDBResourcesOperations.migrate_mongo_db_collection_to_autoscale
+  - Added operation GremlinResourcesOperations.migrate_gremlin_database_to_manual_throughput
+  - Added operation GremlinResourcesOperations.migrate_gremlin_graph_to_autoscale
+  - Added operation GremlinResourcesOperations.migrate_gremlin_graph_to_manual_throughput
+  - Added operation GremlinResourcesOperations.migrate_gremlin_database_to_autoscale
+  - Added operation TableResourcesOperations.migrate_table_to_autoscale
+  - Added operation TableResourcesOperations.migrate_table_to_manual_throughput
+  - Added operation CassandraResourcesOperations.migrate_cassandra_keyspace_to_autoscale
+  - Added operation CassandraResourcesOperations.migrate_cassandra_keyspace_to_manual_throughput
+  - Added operation CassandraResourcesOperations.migrate_cassandra_table_to_manual_throughput
+  - Added operation CassandraResourcesOperations.migrate_cassandra_table_to_autoscale
+  - Added operation SqlResourcesOperations.migrate_sql_database_to_manual_throughput
+  - Added operation SqlResourcesOperations.migrate_sql_database_to_autoscale
+  - Added operation SqlResourcesOperations.migrate_sql_container_to_autoscale
+  - Added operation SqlResourcesOperations.migrate_sql_container_to_manual_throughput
+
+**Breaking changes**
+
+  - Model ThroughputSettingsUpdateParameters no longer has parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerCreateUpdateParameters no longer has parameter identity
+  - Model SqlContainerGetResults no longer has parameter identity
+  - Model MongoDBDatabaseGetResults no longer has parameter identity
+  - Model GremlinGraphGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionGetResults no longer has parameter identity
+  - Model CassandraTableGetResults no longer has parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseGetResults no longer has parameter identity
+  - Model MongoDBCollectionGetResults no longer has parameter identity
+  - Model SqlStoredProcedureGetResults no longer has parameter identity
+  - Model GremlinDatabaseGetResults no longer has parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlTriggerGetResults no longer has parameter identity
+  - Model CassandraKeyspaceGetResults no longer has parameter identity
+  - Model DatabaseAccountUpdateParameters no longer has parameter backup_policy
+  - Model SqlStoredProcedureCreateUpdateParameters no longer has parameter identity
+  - Model TableCreateUpdateParameters no longer has parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model SqlDatabaseCreateUpdateParameters no longer has parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter instance_id
+  - Model DatabaseAccountGetResults no longer has parameter system_data
+  - Model DatabaseAccountGetResults no longer has parameter backup_policy
+  - Model DatabaseAccountGetResults no longer has parameter identity
+  - Model DatabaseAccountGetResults no longer has parameter create_mode
+  - Model DatabaseAccountGetResults no longer has parameter restore_parameters
+  - Model SqlContainerCreateUpdateParameters no longer has parameter identity
+  - Model GremlinGraphCreateUpdateParameters no longer has parameter identity
+  - Model ARMResourceProperties no longer has parameter identity
+  - Model CassandraTableCreateUpdateParameters no longer has parameter identity
+  - Model ThroughputSettingsGetResults no longer has parameter identity
+  - Model TableGetResults no longer has parameter identity
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+  - Removed operation group RestorableDatabaseAccountsOperations
+
+## 0.16.0 (2020-07-31)
+
+**Features**
+
+  - Model SqlUserDefinedFunctionGetResults has a new parameter identity
+  - Model CassandraKeyspaceCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionGetResults has a new parameter identity
+  - Model TableGetResults has a new parameter identity
+  - Model SqlTriggerGetResults has a new parameter identity
+  - Model SqlStoredProcedureCreateUpdateParameters has a new parameter identity
+  - Model SqlDatabaseCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableGetResults has a new parameter identity
+  - Model MongoDBDatabaseCreateUpdateParameters has a new parameter identity
+  - Model ThroughputSettingsGetResults has a new parameter identity
+  - Model TableCreateUpdateParameters has a new parameter identity
+  - Model SqlContainerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountUpdateParameters has a new parameter backup_policy
+  - Model SqlDatabaseGetResults has a new parameter identity
+  - Model MongoDBDatabaseGetResults has a new parameter identity
+  - Model SqlUserDefinedFunctionCreateUpdateParameters has a new parameter identity
+  - Model CassandraTableCreateUpdateParameters has a new parameter identity
+  - Model MongoDBCollectionCreateUpdateParameters has a new parameter identity
+  - Model SqlStoredProcedureGetResults has a new parameter identity
+  - Model ThroughputSettingsUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseCreateUpdateParameters has a new parameter identity
+  - Model GremlinDatabaseGetResults has a new parameter identity
+  - Model ARMResourceProperties has a new parameter identity
+  - Model CassandraKeyspaceGetResults has a new parameter identity
+  - Model SqlContainerGetResults has a new parameter identity
+  - Model GremlinGraphCreateUpdateParameters has a new parameter identity
+  - Model GremlinGraphGetResults has a new parameter identity
+  - Model SqlTriggerCreateUpdateParameters has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter system_data
+  - Model DatabaseAccountGetResults has a new parameter backup_policy
+  - Model DatabaseAccountGetResults has a new parameter create_mode
+  - Model DatabaseAccountGetResults has a new parameter instance_id
+  - Model DatabaseAccountGetResults has a new parameter identity
+  - Model DatabaseAccountGetResults has a new parameter restore_parameters
+  - Added operation group RestorableDatabaseAccountsOperations
+
+**Breaking changes**
+
+  - Model DatabaseAccountCreateUpdateParameters has a new signature
+
+## 0.15.0 (2020-06-11)
+
+**Features**
+
+  - Model MongoDBCollectionResource has a new parameter analytical_storage_ttl
+  - Model MongoDBDatabaseGetPropertiesOptions has a new parameter autoscale_settings
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter autoscale_settings
+  - Model SqlContainerGetPropertiesOptions has a new parameter autoscale_settings
+  - Model CassandraTableGetPropertiesResource has a new parameter analytical_storage_ttl
+  - Model CassandraTableResource has a new parameter analytical_storage_ttl
+  - Model OptionsResource has a new parameter autoscale_settings
+  - Model TableGetPropertiesOptions has a new parameter autoscale_settings
+  - Model ThroughputSettingsResource has a new parameter autoscale_settings
+  - Model CassandraTableGetPropertiesOptions has a new parameter autoscale_settings
+  - Model GremlinDatabaseGetPropertiesOptions has a new parameter autoscale_settings
+  - Model DatabaseAccountGetResults has a new parameter api_properties
+  - Model DatabaseAccountGetResults has a new parameter ip_rules
+  - Model DatabaseAccountGetResults has a new parameter enable_free_tier
+  - Model DatabaseAccountGetResults has a new parameter enable_analytical_storage
+  - Model GremlinGraphGetPropertiesOptions has a new parameter autoscale_settings
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter api_properties
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter ip_rules
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_free_tier
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_analytical_storage
+  - Model MongoDBCollectionGetPropertiesOptions has a new parameter autoscale_settings
+  - Model CassandraKeyspaceGetPropertiesOptions has a new parameter autoscale_settings
+  - Model SqlDatabaseGetPropertiesOptions has a new parameter autoscale_settings
+  - Model DatabaseAccountUpdateParameters has a new parameter api_properties
+  - Model DatabaseAccountUpdateParameters has a new parameter ip_rules
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_free_tier
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_analytical_storage
+  - Model MongoDBCollectionGetPropertiesResource has a new parameter analytical_storage_ttl
+
+**Breaking changes**
+
+  - Model ThroughputSettingsGetPropertiesResource no longer has parameter provisioned_throughput_settings
+  - Model ThroughputSettingsResource no longer has parameter provisioned_throughput_settings
+  - Model DatabaseAccountGetResults no longer has parameter ip_range_filter
+  - Model DatabaseAccountCreateUpdateParameters no longer has parameter ip_range_filter
+  - Model DatabaseAccountUpdateParameters no longer has parameter ip_range_filter
+  - Model CreateUpdateOptions has a new signature
+
 ## 0.14.0 (2020-05-05)
 
 **Features**

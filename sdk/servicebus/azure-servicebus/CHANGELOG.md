@@ -5,6 +5,9 @@
 **Breaking Changes**
   - Renamed `AutoLockRenew` to `AutoLockRenewer`
   - `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`
+  - Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+    - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+    - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
 
 **New Features**
 
@@ -13,6 +16,15 @@
   - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
+
+**Breaking Changes**
+
+* Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)
+and methods that use amqp management link for request like `schedule_messages`, `received_deferred_messages`, etc.
+now raise more concrete exception other than `MessageSettleFailed` and `ServiceBusError`.
+* Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
+ now inherit from `azure.servicebus.exceptions.MessageError`.
+* Removed Exception `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus resource does not exist.
 
 **BugFixes**
 

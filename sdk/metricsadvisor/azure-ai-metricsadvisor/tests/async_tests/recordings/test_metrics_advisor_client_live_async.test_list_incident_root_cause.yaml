@@ -10,20 +10,20 @@ interactions:
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
     body:
-      string: '{"value":[{"rootCause":{"dimension":{"dimension_name":"Delhi","category":"Shoes
-        Handbags & Sunglasses"}},"path":[],"score":1.0,"description":"No root cause
-        insight."}]}'
+      string: '{"value":[{"rootCause":{"dimension":{"category":"Electronics (Consumer)","dimension_name":"Karachi"}},"path":["dimension_name"],"score":0.34265262137636504,"description":"Increase
+        on category = Electronics (Consumer) | dimension_name = Karachi contributes
+        the most to current incident."}]}'
     headers:
-      apim-request-id: cfcdc20a-41b8-456c-ab1c-7b2b6b09f53f
-      content-length: '158'
+      apim-request-id: fa45d3b0-f5bb-459d-8d1e-5cc4dc55292a
+      content-length: '259'
       content-type: application/json; charset=utf-8
-      date: Wed, 21 Oct 2020 21:37:15 GMT
+      date: Mon, 26 Oct 2020 19:42:46 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '223'
-      x-request-id: cfcdc20a-41b8-456c-ab1c-7b2b6b09f53f
+      x-envoy-upstream-service-time: '415'
+      x-request-id: fa45d3b0-f5bb-459d-8d1e-5cc4dc55292a
     status:
       code: 200
       message: OK
-    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/incidents/51d849d03277901eadfa9a0e7665b4ad-175434e3400/rootCause
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/fb5a6ed6-2b9e-4b72-8b0c-0046ead1c15c/incidents/2583ff47fef9174e6d6bfe73415ad914-174d2024c00/rootCause
 version: 1

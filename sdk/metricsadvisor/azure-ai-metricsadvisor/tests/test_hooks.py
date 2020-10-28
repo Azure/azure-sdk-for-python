@@ -21,8 +21,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         email_hook_name = self.create_random_name("testemailhook")
         try:
             email_hook = self.admin_client.create_hook(
-                name=email_hook_name,
                 hook=EmailNotificationHook(
+                    name=email_hook_name,
                     emails_to_alert=["yournamehere@microsoft.com"],
                     description="my email hook",
                     external_link="external link"
@@ -45,8 +45,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
         web_hook_name = self.create_random_name("testwebhook")
         try:
             web_hook = self.admin_client.create_hook(
-                name=web_hook_name,
                 hook=WebNotificationHook(
+                    name=web_hook_name,
                     endpoint="https://httpbin.org/post",
                     description="my web hook",
                     external_link="external link"
