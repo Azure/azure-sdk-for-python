@@ -6,7 +6,7 @@
 
 # pylint:disable=protected-access
 
-from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
+from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 import datetime
 
 from azure.core.tracing.decorator import distributed_trace
@@ -355,6 +355,46 @@ class MetricsAdvisorClient(object):
     def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> AsyncItemPaged[DataPointAnomaly]
 
+        skip = kwargs.pop('skip', None)
+
+        return self._client.get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
+            configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
+            **kwargs)
+
+    def _list_anomalies_for_detection_configuration(
+            self, detection_configuration_id,  # type: str
+            start_time,  # type: Union[str, datetime.datetime]
+            end_time,  # type: Union[str, datetime.datetime]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[DataPointAnomaly]
+
+        skip = kwargs.pop('skip', None)
+        filter_condition = kwargs.pop('filter', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+        detection_anomaly_result_query = DetectionAnomalyResultQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            filter=filter_condition,
+        )
+
+        return self._client.get_anomalies_by_anomaly_detection_configuration(  # type: ignore
+            configuration_id=detection_configuration_id,
+            skip=skip,
+            body=detection_anomaly_result_query,
+            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
+            **kwargs)
+
+    @overload
+    def list_anomalies(
+            self, alert_configuration_id,   # type: str
+            alert_id,       # type: str
+            **kwargs        # type: Any
+    ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a specific alert.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -375,24 +415,15 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomalies using alert id.
         """
+        pass
 
-        skip = kwargs.pop('skip', None)
-
-        return self._client.get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
-            configuration_id=alert_configuration_id,
-            alert_id=alert_id,
-            skip=skip,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
-            **kwargs)
-
-    def _list_anomalies_for_detection_configuration(
+    @overload
+    def list_anomalies(
             self, detection_configuration_id,  # type: str
             start_time,  # type: Union[str, datetime.datetime]
             end_time,  # type: Union[str, datetime.datetime]
             **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[DataPointAnomaly]
-
+    ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -406,23 +437,7 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        skip = kwargs.pop('skip', None)
-        filter_condition = kwargs.pop('filter', None)
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
-        detection_anomaly_result_query = DetectionAnomalyResultQuery(
-            start_time=converted_start_time,
-            end_time=converted_end_time,
-            filter=filter_condition,
-        )
-
-        return self._client.get_anomalies_by_anomaly_detection_configuration(  # type: ignore
-            configuration_id=detection_configuration_id,
-            skip=skip,
-            body=detection_anomaly_result_query,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
-            **kwargs)
+        pass
 
     @distributed_trace
     def list_anomalies(self, **kwargs):
@@ -501,6 +516,45 @@ class MetricsAdvisorClient(object):
     def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> AsyncItemPaged[AnomalyIncident]
 
+        skip = kwargs.pop('skip', None)
+
+        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
+            configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
+            **kwargs)
+
+    def _list_incidents_for_detection_configuration(
+        self, detection_configuration_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[AnomalyIncident]:
+
+        filter_condition = kwargs.pop('filter', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+
+        detection_incident_result_query = DetectionIncidentResultQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            filter=filter_condition,
+        )
+
+        return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
+            configuration_id=detection_configuration_id,
+            body=detection_incident_result_query,
+            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
+            **kwargs)
+
+    @overload
+    def list_incidents(
+            self, alert_configuration_id,   # type: str
+            alert_id,       # type: str
+            **kwargs        # type: Any
+    ) -> AsyncItemPaged[AnomalyIncident]:
+
         """Query incidents under a specific alert.
 
         :param alert_configuration_id: anomaly alerting configuration unique id.
@@ -521,17 +575,10 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query incidents for alert.
         """
+        pass
 
-        skip = kwargs.pop('skip', None)
-
-        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
-            configuration_id=alert_configuration_id,
-            alert_id=alert_id,
-            skip=skip,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
-            **kwargs)
-
-    def _list_incidents_for_detection_configuration(
+    @overload
+    def list_incidents(
         self, detection_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
@@ -559,22 +606,7 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query incidents for detection configuration.
         """
-
-        filter_condition = kwargs.pop('filter', None)
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
-
-        detection_incident_result_query = DetectionIncidentResultQuery(
-            start_time=converted_start_time,
-            end_time=converted_end_time,
-            filter=filter_condition,
-        )
-
-        return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
-            configuration_id=detection_configuration_id,
-            body=detection_incident_result_query,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
-            **kwargs)
+        pass
 
     @distributed_trace
     def list_incidents(self, **kwargs):
