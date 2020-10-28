@@ -25,11 +25,11 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
-from multidict import CIMultiDict
 
 import logging
 import asyncio
 import aiohttp
+from multidict import CIMultiDict
 
 from requests.exceptions import (
     ChunkedEncodingError,
