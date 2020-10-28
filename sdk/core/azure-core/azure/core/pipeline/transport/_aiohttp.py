@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
+from multidict import CIMultiDict
 
 import logging
 import asyncio
@@ -264,7 +265,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
-        self.headers = aiohttp_response.headers
+        self.headers = CIMultiDict(aiohttp_response.headers)
         self.reason = aiohttp_response.reason
         self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
