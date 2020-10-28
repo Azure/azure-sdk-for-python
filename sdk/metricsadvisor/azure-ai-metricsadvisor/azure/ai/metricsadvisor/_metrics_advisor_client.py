@@ -416,6 +416,25 @@ class MetricsAdvisorClient(object):
             cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs)
 
+    @overload
+    def list_anomalies(
+            self, alert_configuration_id,   # type: str
+            alert_id,   # type: str
+            **kwargs    # type: Any
+    ):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
+        pass
+
+    @overload
+    def list_anomalies(
+            self, detection_configuration_id,   # type: str
+            start_time,     # type: Union[str, ~datetime.datetime]
+            end_time,       # type: Union[str, ~datetime.datetime]
+            **kwargs        # type: Any
+    ):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
+        pass
+
     @distributed_trace
     def list_anomalies(self, **kwargs):
         # type: (Any) -> ItemPaged[DataPointAnomaly]
@@ -576,9 +595,9 @@ class MetricsAdvisorClient(object):
     @overload
     def list_incidents(
             self, detection_configuration_id,   # type: str
-            start_time, # type: Union[str, datetime.datetime]
-            end_time,   # type: Union[str, datetime.datetime]
-            **kwargs    # type: Any
+            start_time,     # type: Union[str, datetime.datetime]
+            end_time,       # type: Union[str, datetime.datetime]
+            **kwargs        # type: Any
     ):
         # type: (...) -> ItemPaged[AnomalyIncident]
         pass
