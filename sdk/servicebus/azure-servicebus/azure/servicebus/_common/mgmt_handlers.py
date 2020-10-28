@@ -6,7 +6,7 @@
 
 import uamqp
 
-from .message import PeekedMessage, ReceivedMessage
+from .message import ReceivedMessage
 from ..exceptions import ServiceBusError, MessageLockExpired
 from .constants import ReceiveMode
 
@@ -34,7 +34,7 @@ def peek_op(status_code, message, description):
         parsed = []
         for m in message.get_data()[b'messages']:
             wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b'message']))
-            parsed.append(PeekedMessage(wrapped))
+            parsed.append(ReceivedMessage(wrapped))
         return parsed
     if status_code in [202, 204]:
         return []

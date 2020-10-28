@@ -12,7 +12,7 @@ from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session import ServiceBusSession
-from ._common.message import Message, BatchMessage, PeekedMessage, ReceivedMessage
+from ._common.message import Message, BatchMessage, ReceivedMessage
 from ._common.constants import ReceiveMode, SubQueue, NEXT_AVAILABLE_SESSION
 from ._common.auto_lock_renewer import AutoLockRenewer
 
@@ -22,7 +22,6 @@ __all__ = [
     'Message',
     'BatchMessage',
     'NEXT_AVAILABLE_SESSION',
-    'PeekedMessage',
     'ReceivedMessage',
     'SubQueue',
     'ReceiveMode',

@@ -11,17 +11,19 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
+from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
 from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 from .utils import renewable_start_time, utc_now
 
 if TYPE_CHECKING:
-    from typing import Callable, Union, Optional, Awaitable
+    from typing import Callable, Union, Optional
     from .message import ReceivedMessage
     LockRenewFailureCallback = Callable[[Union[ServiceBusSession, ReceivedMessage],
                                          Optional[Exception]], None]
 
 _log = logging.getLogger(__name__)
+
 
 class AutoLockRenewer(object):
     """Auto renew locks for messages and sessions using a background thread pool.
@@ -90,11 +92,11 @@ class AutoLockRenewer(object):
             return False
         return True
 
-    def _auto_lock_renew(self, renewable, starttime, timeout, on_lock_renew_failure=None):
+    def _auto_lock_renew(self, receiver, renewable, starttime, timeout, on_lock_renew_failure=None):
         # pylint: disable=protected-access
         _log.debug("Running lock auto-renew thread for %r seconds", timeout)
         error = None
-        clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
+        clean_shutdown = False  # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         try:
             while self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(seconds=timeout):
@@ -102,7 +104,10 @@ class AutoLockRenewer(object):
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
                 if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self._renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", self._renew_period)
-                    renewable.renew_lock()
+                    try:
+                        renewable.renew_lock()  # Renewable is a session
+                    except AttributeError:
+                        receiver.renew_message_lock(renewable)  # Renewable is a message
                 time.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
@@ -119,10 +124,13 @@ class AutoLockRenewer(object):
             if on_lock_renew_failure and not clean_shutdown:
                 on_lock_renew_failure(renewable, error)
 
-    def register(self, renewable, timeout=300, on_lock_renew_failure=None):
-        # type: (Union[ReceivedMessage, ServiceBusSession], float, Optional[LockRenewFailureCallback]) -> None
+    def register(self, receiver, renewable, timeout=300, on_lock_renew_failure=None):
+        # type: (ServiceBusReceiver,Union[ReceivedMessage, ServiceBusSession], float, Optional[LockRenewFailureCallback]) -> None
         """Register a renewable entity for automatic lock renewal.
 
+        :param receiver: The ServiceBusReceiver instance that is associated with the message or the session to
+         be auto-lock-renewed.
+        :type receiver: ~azure.servicebus.ServiceBusReceiver
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.ReceivedMessage, ~azure.servicebus.ServiceBusSession]
         :param timeout: A time in seconds that the lock should be maintained for. Default value is 300 (5 minutes).
@@ -137,7 +145,7 @@ class AutoLockRenewer(object):
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
-        self._executor.submit(self._auto_lock_renew, renewable, starttime, timeout, on_lock_renew_failure)
+        self._executor.submit(self._auto_lock_renew, receiver, renewable, starttime, timeout, on_lock_renew_failure)
 
     def close(self, wait=True):
         """Cease autorenewal by shutting down the thread pool to clean up any remaining lock renewal threads.

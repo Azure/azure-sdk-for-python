@@ -554,17 +554,56 @@ class BatchMessage(object):
         self._messages.append(message)
 
 
-class PeekedMessage(Message):
-    """A preview message.
+class ReceivedMessage(Message):
+    """
+    A Service Bus Message received from service side.
 
-    This message is still on the queue, and unlocked.
-    A peeked message cannot be completed, abandoned, dead-lettered or deferred.
-    It has no lock token or expiry.
+    :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the message lock.
+    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+            :start-after: [START receive_complex_message]
+            :end-before: [END receive_complex_message]
+            :language: python
+            :dedent: 4
+            :caption: Checking the properties on a received message.
     """
 
-    def __init__(self, message):
-        # type: (uamqp.message.Message) -> None
-        super(PeekedMessage, self).__init__(None, message=message) # type: ignore
+    def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
+        # type: (uamqp.message.Message, ReceiveMode, Any) -> None
+        super(ReceivedMessage, self).__init__(None, message=message)
+        self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
+        self._received_timestamp_utc = utc_now()
+        self._is_deferred_message = kwargs.get("is_deferred_message", False)
+        self.auto_renew_error = None  # type: Optional[Exception]
+        try:
+            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver]
+        except KeyError:
+            raise TypeError(
+                "ReceivedMessage requires a receiver to be initialized.  This class should never be" +
+                "initialized by a user; the Message class should be utilized instead."
+            )
+        self._expiry = None # type: Optional[datetime.datetime]
+
+    @property
+    def _lock_expired(self):
+        # type: () -> bool
+        # pylint: disable=protected-access
+        """
+        Whether the lock on the message has expired.
+
+        :rtype: bool
+        """
+        try:
+            if self._receiver.session:  # type: ignore
+                raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
+        except AttributeError: # Is not a session receiver
+            pass
+        if self.locked_until_utc and self.locked_until_utc <= utc_now():
+            return True
+        return False
 
     def _to_outgoing_message(self):
         # type: () -> Message
@@ -710,56 +749,6 @@ class PeekedMessage(Message):
         if self.message.annotations:
             return self.message.annotations.get(_X_OPT_SEQUENCE_NUMBER)
         return None
-
-
-class ReceivedMessage(PeekedMessage):
-    """
-    A Service Bus Message received from service side.
-
-    :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the message lock.
-    :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START receive_complex_message]
-            :end-before: [END receive_complex_message]
-            :language: python
-            :dedent: 4
-            :caption: Checking the properties on a received message.
-    """
-
-    def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
-        # type: (uamqp.message.Message, ReceiveMode, Any) -> None
-        super(ReceivedMessage, self).__init__(message=message)
-        self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
-        self._received_timestamp_utc = utc_now()
-        self._is_deferred_message = kwargs.get("is_deferred_message", False)
-        self.auto_renew_error = None  # type: Optional[Exception]
-        try:
-            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver]
-        except KeyError:
-            raise TypeError("ReceivedMessage requires a receiver to be initialized.  This class should never be" + \
-            "initialized by a user; the Message class should be utilized instead.")
-        self._expiry = None # type: Optional[datetime.datetime]
-
-    @property
-    def _lock_expired(self):
-        # type: () -> bool
-        # pylint: disable=protected-access
-        """
-        Whether the lock on the message has expired.
-
-        :rtype: bool
-        """
-        try:
-            if self._receiver.session:  # type: ignore
-                raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
-        except AttributeError: # Is not a session receiver
-            pass
-        if self.locked_until_utc and self.locked_until_utc <= utc_now():
-            return True
-        return False
 
     @property
     def lock_token(self):

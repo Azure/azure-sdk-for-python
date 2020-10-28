@@ -22,6 +22,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
  now inherit from `azure.servicebus.exceptions.MessageError`.
 * Removed Exception `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus resource does not exist.
+* Removed class `PeekedMessage`.
 
 **BugFixes**
 

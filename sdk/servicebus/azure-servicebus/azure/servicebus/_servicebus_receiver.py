@@ -7,7 +7,7 @@ import time
 import logging
 import functools
 import uuid
-from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator, Union, Callable
+from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator, Union
 
 import six
 
@@ -17,7 +17,7 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
-from ._common.message import PeekedMessage, ReceivedMessage
+from ._common.message import ReceivedMessage
 from ._common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -542,7 +542,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return messages
 
     def peek_messages(self, max_message_count=1, **kwargs):
-        # type: (int, Any) -> List[PeekedMessage]
+        # type: (int, Any) -> List[ReceivedMessage]
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -554,7 +554,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
 
-        :rtype: List[~azure.servicebus.PeekedMessage]
+        :rtype: List[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
 

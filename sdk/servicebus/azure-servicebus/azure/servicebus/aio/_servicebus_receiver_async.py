@@ -16,7 +16,7 @@ from uamqp.constants import SenderSettleMode
 
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
-from .._common.message import PeekedMessage, ReceivedMessage
+from .._common.message import ReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -543,7 +543,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         return messages
 
-    async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[PeekedMessage]:
+    async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[ReceivedMessage]:
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -554,7 +554,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: list[~azure.servicebus.PeekedMessage]
+        :rtype: list[~azure.servicebus.ReceivedMessage]
 
         .. admonition:: Example:
 
