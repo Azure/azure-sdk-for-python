@@ -514,7 +514,7 @@ class _HttpResponseBase(object):
         self.request = request
         self.internal_response = internal_response
         self.status_code = None  # type: Optional[int]
-        self.headers = {}  # type: MutableMapping
+        self.headers = {}  # type: MutableMapping[str, str]
         self.reason = None  # type: Optional[str]
         self.content_type = None  # type: Optional[str]
         self.block_size = block_size or 4096  # Default to same as Requests
