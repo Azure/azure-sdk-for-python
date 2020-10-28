@@ -19,13 +19,13 @@ from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class ConfigurationsOperations(object):
-    """ConfigurationsOperations operations.
+class VirtualMachinesOperations(object):
+    """VirtualMachinesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -46,25 +46,25 @@ class ConfigurationsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
+    def list_hosts(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ClusterConfigurations"
-        """Gets all configuration information for an HDI cluster.
+        # type: (...) -> List["models.HostInfo"]
+        """Lists the HDInsight clusters hosts.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ClusterConfigurations, or the result of cls(response)
-        :rtype: ~azure.mgmt.hdinsight.models.ClusterConfigurations
+        :return: list of HostInfo, or the result of cls(response)
+        :rtype: list[~azure.mgmt.hdinsight.models.HostInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterConfigurations"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.HostInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -73,7 +73,7 @@ class ConfigurationsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self.list.metadata['url']  # type: ignore
+        url = self.list_hosts.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -98,20 +98,19 @@ class ConfigurationsOperations(object):
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ClusterConfigurations', pipeline_response)
+        deserialized = self._deserialize('[HostInfo]', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations'}  # type: ignore
+    list_hosts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/listHosts'}  # type: ignore
 
-    def _update_initial(
+    def _restart_hosts_initial(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        configuration_name,  # type: str
-        parameters,  # type: Dict[str, str]
+        hosts,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -125,12 +124,11 @@ class ConfigurationsOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._update_initial.metadata['url']  # type: ignore
+        url = self._restart_hosts_initial.metadata['url']  # type: ignore
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -144,13 +142,13 @@ class ConfigurationsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(parameters, '{str}')
+        body_content = self._serialize.body(hosts, '[str]')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -158,28 +156,24 @@ class ConfigurationsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}  # type: ignore
+    _restart_hosts_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/restartHosts'}  # type: ignore
 
-    def begin_update(
+    def begin_restart_hosts(
         self,
         resource_group_name,  # type: str
         cluster_name,  # type: str
-        configuration_name,  # type: str
-        parameters,  # type: Dict[str, str]
+        hosts,  # type: List[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Configures the HTTP settings on the specified cluster. This API is deprecated, please use
-        UpdateGatewaySettings in cluster endpoint instead.
+        """Restarts the specified HDInsight cluster hosts.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param cluster_name: The name of the cluster.
         :type cluster_name: str
-        :param configuration_name: The name of the cluster configuration.
-        :type configuration_name: str
-        :param parameters: The cluster configurations.
-        :type parameters: dict[str, str]
+        :param hosts: The list of hosts to restart.
+        :type hosts: list[str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -198,11 +192,10 @@ class ConfigurationsOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._update_initial(
+            raw_result = self._restart_hosts_initial(
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
-                configuration_name=configuration_name,
-                parameters=parameters,
+                hosts=hosts,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -226,69 +219,4 @@ class ConfigurationsOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}  # type: ignore
-
-    def get(
-        self,
-        resource_group_name,  # type: str
-        cluster_name,  # type: str
-        configuration_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, str]
-        """The configuration object for the specified cluster. This API is not recommended and might be
-        removed in the future. Please consider using List configurations API instead.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster.
-        :type cluster_name: str
-        :param configuration_name: The name of the cluster configuration.
-        :type configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: dict mapping str to str, or the result of cls(response)
-        :rtype: dict[str, str]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Dict[str, str]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
-            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('{str}', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations/{configurationName}'}  # type: ignore
+    begin_restart_hosts.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/restartHosts'}  # type: ignore

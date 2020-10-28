@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import HDInsightManagementClientConfiguration
 from .operations import ClustersOperations
@@ -27,32 +25,32 @@ from .operations import ScriptActionsOperations
 from .operations import ScriptExecutionHistoryOperations
 from .operations import Operations
 from .operations import VirtualMachinesOperations
-from . import models
+from .. import models
 
 
 class HDInsightManagementClient(object):
     """HDInsight Management Client.
 
     :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.hdinsight.operations.ClustersOperations
+    :vartype clusters: azure.mgmt.hdinsight.aio.operations.ClustersOperations
     :ivar applications: ApplicationsOperations operations
-    :vartype applications: azure.mgmt.hdinsight.operations.ApplicationsOperations
+    :vartype applications: azure.mgmt.hdinsight.aio.operations.ApplicationsOperations
     :ivar locations: LocationsOperations operations
-    :vartype locations: azure.mgmt.hdinsight.operations.LocationsOperations
+    :vartype locations: azure.mgmt.hdinsight.aio.operations.LocationsOperations
     :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations: azure.mgmt.hdinsight.operations.ConfigurationsOperations
+    :vartype configurations: azure.mgmt.hdinsight.aio.operations.ConfigurationsOperations
     :ivar extensions: ExtensionsOperations operations
-    :vartype extensions: azure.mgmt.hdinsight.operations.ExtensionsOperations
+    :vartype extensions: azure.mgmt.hdinsight.aio.operations.ExtensionsOperations
     :ivar script_actions: ScriptActionsOperations operations
-    :vartype script_actions: azure.mgmt.hdinsight.operations.ScriptActionsOperations
+    :vartype script_actions: azure.mgmt.hdinsight.aio.operations.ScriptActionsOperations
     :ivar script_execution_history: ScriptExecutionHistoryOperations operations
-    :vartype script_execution_history: azure.mgmt.hdinsight.operations.ScriptExecutionHistoryOperations
+    :vartype script_execution_history: azure.mgmt.hdinsight.aio.operations.ScriptExecutionHistoryOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.hdinsight.operations.Operations
+    :vartype operations: azure.mgmt.hdinsight.aio.operations.Operations
     :ivar virtual_machines: VirtualMachinesOperations operations
-    :vartype virtual_machines: azure.mgmt.hdinsight.operations.VirtualMachinesOperations
+    :vartype virtual_machines: azure.mgmt.hdinsight.aio.operations.VirtualMachinesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -61,16 +59,15 @@ class HDInsightManagementClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = HDInsightManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -96,15 +93,12 @@ class HDInsightManagementClient(object):
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> HDInsightManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "HDInsightManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
