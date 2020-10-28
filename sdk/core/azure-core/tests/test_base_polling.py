@@ -23,10 +23,12 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
+import base64
 import datetime
 import json
 import re
 import types
+import pickle
 import platform
 import unittest
 import six
@@ -49,6 +51,7 @@ from azure.core.pipeline.transport import RequestsTransportResponse, HttpTranspo
 
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
+
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
@@ -671,7 +674,7 @@ class TestBasePolling(object):
             LROBasePolling(0))
         with pytest.raises(HttpResponseError) as error: # TODO: Node.js raises on deserialization
             poll.result()
-        assert error.value.continuation_token is not None
+        assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode('ascii')
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200

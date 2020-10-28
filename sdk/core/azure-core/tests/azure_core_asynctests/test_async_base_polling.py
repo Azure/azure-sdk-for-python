@@ -23,8 +23,9 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
-
+import base64
 import json
+import pickle
 import re
 import types
 import unittest
@@ -662,7 +663,7 @@ async def test_long_running_negative():
         AsyncLROBasePolling(0))
     with pytest.raises(HttpResponseError) as error: # TODO: Node.js raises on deserialization
         await poll
-    assert error.value.continuation_token is not None
+    assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode('ascii')
 
     LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
     POLLING_STATUS = 200
