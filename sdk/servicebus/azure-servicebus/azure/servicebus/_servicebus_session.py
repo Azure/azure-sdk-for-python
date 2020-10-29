@@ -28,11 +28,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
-    def __init__(self, session_id, receiver, encoding="UTF-8"):
-        # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync], str) -> None
+    def __init__(self, session_id, receiver):
+        # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync]) -> None
         self._session_id = session_id
         self._receiver = receiver
-        self._encoding = encoding
+        self._encoding = "UTF-8"
         self._session_start = None
         self._locked_until_utc = None  # type: Optional[datetime.datetime]
         self.auto_renew_error = None

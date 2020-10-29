@@ -36,6 +36,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
  now inherit from `azure.servicebus.exceptions.MessageError`.
 * `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`.
+* `encoding` support is removed from `ServiceBusMessage`
 
 **BugFixes**
 

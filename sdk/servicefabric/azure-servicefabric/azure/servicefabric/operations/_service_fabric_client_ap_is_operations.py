@@ -4349,6 +4349,13 @@ class ServiceFabricClientAPIsOperationsMixin(object):
 
         Validates the supplied application upgrade parameters and starts
         upgrading the application if the parameters are valid.
+        Note,
+        [ApplicationParameter](https://docs.microsoft.com/dotnet/api/system.fabric.description.applicationdescription.applicationparameters)s
+        are not preserved across an application upgrade.
+        In order to preserve current application parameters, the user should
+        get the parameters using [GetApplicationInfo](./GetApplicationInfo.md)
+        operation first and pass them into the upgrade API call as shown in the
+        example.
 
         :param application_id: The identity of the application. This is
          typically the full name of the application without the 'fabric:' URI
@@ -7647,6 +7654,93 @@ class ServiceFabricClientAPIsOperationsMixin(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     move_secondary_replica.metadata = {'url': '/Partitions/{partitionId}/$/MoveSecondaryReplica'}
+
+    def update_partition_load(
+            self, partition_metric_load_description_list, continuation_token=None, max_results=0, timeout=60, custom_headers=None, raw=False, **operation_config):
+        """Update the loads of provided partitions for specific metrics.
+
+        Updates the load value and predicted load value for all the partitions
+        provided for specified metrics.
+
+        :param partition_metric_load_description_list: Description of updating
+         load for list of partitions.
+        :type partition_metric_load_description_list:
+         list[~azure.servicefabric.models.PartitionMetricLoadDescription]
+        :param continuation_token: The continuation token parameter is used to
+         obtain next set of results. A continuation token with a non-empty
+         value is included in the response of the API when the results from the
+         system do not fit in a single response. When this value is passed to
+         the next API call, the API returns next set of results. If there are
+         no further results, then the continuation token does not contain a
+         value. The value of this parameter should not be URL encoded.
+        :type continuation_token: str
+        :param max_results: The maximum number of results to be returned as
+         part of the paged queries. This parameter defines the upper bound on
+         the number of results returned. The results returned can be less than
+         the specified maximum results if they do not fit in the message as per
+         the max message size restrictions defined in the configuration. If
+         this parameter is zero or not specified, the paged query includes as
+         many results as possible that fit in the return message.
+        :type max_results: long
+        :param timeout: The server timeout for performing the operation in
+         seconds. This timeout specifies the time duration that the client is
+         willing to wait for the requested operation to complete. The default
+         value for this parameter is 60 seconds.
+        :type timeout: long
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PagedUpdatePartitionLoadResultList or ClientRawResponse if
+         raw=true
+        :rtype: ~azure.servicefabric.models.PagedUpdatePartitionLoadResultList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`FabricErrorException<azure.servicefabric.models.FabricErrorException>`
+        """
+        api_version = "7.2"
+
+        # Construct URL
+        url = self.update_partition_load.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if continuation_token is not None:
+            query_parameters['ContinuationToken'] = self._serialize.query("continuation_token", continuation_token, 'str', skip_quote=True)
+        if max_results is not None:
+            query_parameters['MaxResults'] = self._serialize.query("max_results", max_results, 'long', minimum=0)
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'long', maximum=4294967295, minimum=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(partition_metric_load_description_list, '[PartitionMetricLoadDescription]')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.FabricErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PagedUpdatePartitionLoadResultList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_partition_load.metadata = {'url': '/$/UpdatePartitionLoad'}
 
     def create_repair_task(
             self, repair_task, custom_headers=None, raw=False, **operation_config):

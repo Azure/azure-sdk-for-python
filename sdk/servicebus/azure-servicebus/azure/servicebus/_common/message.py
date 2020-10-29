@@ -81,7 +81,6 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     :keyword str to: The `to` address used for auto_forward chaining scenarios.
     :keyword str reply_to: The address of an entity to send replies to.
     :keyword str reply_to_session_id: The session identifier augmenting the `reply_to` address.
-    :keyword str encoding: The encoding for string data. Default is UTF-8.
 
     :ivar AMQPMessage amqp_annotated_message: Advanced use only.
         The internal AMQP message payload that is sent or received.
