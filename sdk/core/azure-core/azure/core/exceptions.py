@@ -252,6 +252,10 @@ class HttpResponseError(AzureError):
     :type status_code: int
     :ivar response: The response that triggered the exception.
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :ivar model: The request body/response body model
+    :type model: ~msrest.serialization.Model
+    :ivar error: The formatted error
+    :type error: ODataV4Format
     """
 
     def __init__(self, message=None, response=None, **kwargs):
