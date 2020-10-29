@@ -189,8 +189,6 @@ class FormRecognizerTest(AzureTestCase):
                 continue
             for line, expected_line in zip(page.lines, expected_page.lines):
                 self.assertFormLineTransformCorrect(line, expected_line)
-                for word, expected_word, in zip(line.words, expected_line.words):
-                    self.assertFormWordTransformCorrect(word, expected_word)
 
             for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
                 self.assertFormSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
@@ -235,7 +233,7 @@ class FormRecognizerTest(AzureTestCase):
         self.assertBoundingBoxTransformCorrect(selection_mark.bounding_box, expected.bounding_box)
 
     def assertFieldElementsTransFormCorrect(self, field_elements, generated_elements, read_result):
-        if field_elements is None and generated_elements is None:
+        if field_elements is None and not generated_elements:
             return
         for element, json_pointer in zip(field_elements, generated_elements):
             element_type, expected, page_number = get_element(json_pointer, read_result)
@@ -376,6 +374,7 @@ class FormRecognizerTest(AzureTestCase):
         for table, expected_table in zip(layout, expected_layout):
             self.assertEqual(table.row_count, expected_table.rows)
             self.assertEqual(table.column_count, expected_table.columns)
+            self.assertBoundingBoxTransformCorrect(table.bounding_box, expected_table.bounding_bpx)
             for cell, expected_cell in zip(table.cells, expected_table.cells):
                 self.assertEqual(table.page_number, cell.page_number)
                 self.assertEqual(cell.text, expected_cell.text)
@@ -435,18 +434,13 @@ class FormRecognizerTest(AzureTestCase):
             self.assertIsNotNone(page.page_number)
             if page.lines:
                 for line in page.lines:
-                    self.assertIsNotNone(line.text)
-                    self.assertIsNotNone(line.page_number)
-                    self.assertBoundingBoxHasPoints(line.bounding_box)
-                    self.assertEqual(line.kind, "line")
-                    for word in line.words:
-                        self.assertEqual(word.kind, "word")
-                        self.assertFormWordHasValues(word, page.page_number)
+                    self.assertFormLineHasValues(line, page.page_number)
 
             if page.tables:
                 for table in page.tables:
                     self.assertEqual(table.page_number, page.page_number)
                     self.assertIsNotNone(table.row_count)
+                    self.assertIsNotNone(table.bounding_box)
                     self.assertIsNotNone(table.column_count)
                     for cell in table.cells:
                         self.assertIsNotNone(cell.text)
