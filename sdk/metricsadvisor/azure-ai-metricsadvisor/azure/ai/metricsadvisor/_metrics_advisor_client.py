@@ -442,6 +442,8 @@ class MetricsAdvisorClient(object):
         :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
         :return: Anomalies under a specific alert or detection configuration.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -605,6 +607,8 @@ class MetricsAdvisorClient(object):
         :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
         :return: AnomalyIncidents under a specific alert or detection configuration.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
         :raises ~azure.core.exceptions.HttpResponseError:
