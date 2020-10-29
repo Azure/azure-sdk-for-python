@@ -11,6 +11,7 @@ from msrest import Serializer, Deserializer
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core import MatchConditions
+from ._models import DigitalTwinsEventRoute
 
 from .._utils import (
     prep_if_match
@@ -474,7 +475,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         )
 
     @distributed_trace_async
-    async def create_models(self, model_list=None, **kwargs):
+    async def create_models(self, dtdl_models=None, **kwargs):
         # type: (Optional[List[object]], **Any) -> List[~azure.digitaltwins.models.ModelData]
         """Create one or more models. When any error occurs, no models are uploaded.
 
@@ -487,7 +488,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
             the provided models already exist.
         """
         return await self._client.digital_twin_models.add(
-            model_list,
+            dtdl_models,
             **kwargs
         )
 
@@ -534,12 +535,12 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def get_event_route(self, event_route_id, **kwargs):
-        # type: (str, **Any) -> ~azure.digitaltwins.models.EventRoute
+        # type: (str, **Any) -> DigitalTwinsEventRoute
         """Get an event route.
 
         :param str event_route_id: The Id of the event route.
-        :return: The EventRoute object.
-        :rtype: ~azure.digitaltwins.models.EventRoute
+        :return: The DigitalTwinsEventRoute object.
+        :rtype: DigitalTwinsEventRoute
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no
             event route with the provided id.
@@ -551,13 +552,13 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_event_routes(self, **kwargs):
-        # type: (**Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.EventRoute]
+        # type: (**Any) -> ~azure.core.paging.AsyncItemPaged[DigitalTwinsEventRoute]
         """Retrieves all event routes.
 
         :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
-        :return: An iterator instance of list of EventRoute.
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.digitaltwins.models.EventRoute]
+        :return: An iterator instance of list of DigitalTwinsEventRoute.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DigitalTwinsEventRoute]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: The request is invalid.
         """
@@ -573,11 +574,11 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def upsert_event_route(self, event_route_id, event_route, **kwargs):
-        # type: (str, "models.EventRoute", **Any) -> None
+        # type: (str, "DigitalTwinsEventRoute", **Any) -> None
         """Create or update an event route.
 
         :param str event_route_id: The Id of the event route to create or update.
-        :param ~azure.digitaltwins.models.EventRoute event_route: The event route data.
+        :param DigitalTwinsEventRoute event_route: The event route data.
         :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`
@@ -609,6 +610,9 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
     async def query_twins(self, query_expression, **kwargs):
         # type: (str, **Any) -> ~azure.core.async_paging.AsyncItemPaged[Dict[str, object]]
         """Query for digital twins.
+            Note: that there may be a delay between before changes in your instance are reflected in queries.
+            For more details on query limitations, see
+            https://docs.microsoft.com/en-us/azure/digital-twins/how-to-query-graph#query-limitations
 
         :param str query_expression: The query expression to execute.
         :return: The QueryResult object.
