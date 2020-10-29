@@ -507,6 +507,52 @@ class Identity(Model):
         self.type = type
 
 
+class Operation(Model):
+    """Microsoft.Solutions operation.
+
+    :param name: Operation name: {provider}/{resource}/{operation}
+    :type name: str
+    :param display: The object that represents the operation.
+    :type display:
+     ~azure.mgmt.resource.managedapplications.models.OperationDisplay
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+    }
+
+    def __init__(self, *, name: str=None, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = name
+        self.display = display
+
+
+class OperationDisplay(Model):
+    """The object that represents the operation.
+
+    :param provider: Service provider: Microsoft.Solutions
+    :type provider: str
+    :param resource: Resource on which the operation is performed:
+     Application, JitRequest, etc.
+    :type resource: str
+    :param operation: Operation type: Read, write, delete, etc.
+    :type operation: str
+    """
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+    }
+
+    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, **kwargs) -> None:
+        super(OperationDisplay, self).__init__(**kwargs)
+        self.provider = provider
+        self.resource = resource
+        self.operation = operation
+
+
 class Plan(Model):
     """Plan for the managed application.
 

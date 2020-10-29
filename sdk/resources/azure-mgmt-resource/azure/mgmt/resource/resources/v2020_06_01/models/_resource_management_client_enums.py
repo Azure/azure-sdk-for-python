@@ -24,6 +24,13 @@ class OnErrorDeploymentType(str, Enum):
     specific_deployment = "SpecificDeployment"
 
 
+class ExpressionEvaluationOptionsScopeType(str, Enum):
+
+    not_specified = "NotSpecified"
+    outer = "Outer"
+    inner = "Inner"
+
+
 class WhatIfResultFormat(str, Enum):
 
     resource_id_only = "ResourceIdOnly"
