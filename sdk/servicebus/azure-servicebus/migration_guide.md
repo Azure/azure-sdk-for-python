@@ -129,11 +129,11 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, receive_mo
         batch = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for message in batch:
             print("Message: {}".format(message))
-            message.complete()
+            receiver.complete_message(message)
 
         for message in receiver:
             print("Message: {}".format(message))
-            message.complete()
+            receiver.complete_message(message)
 ```
 
 

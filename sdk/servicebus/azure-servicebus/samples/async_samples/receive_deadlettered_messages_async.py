@@ -36,7 +36,7 @@ async def main():
             received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
                 print(str(msg))
-                await msg.dead_letter()
+                await receiver.dead_letter_message(msg)
 
         print('receiving deadlettered messages')
         dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
@@ -46,7 +46,7 @@ async def main():
             received_msgs = await dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
                 print(str(msg))
-                await msg.complete()
+                await dlq_receiver.complete_message(msg)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
