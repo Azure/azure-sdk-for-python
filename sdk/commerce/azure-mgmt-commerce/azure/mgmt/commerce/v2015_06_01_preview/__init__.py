@@ -9,21 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from ._configuration import UsageManagementClientConfiguration
+from ._usage_management_client import UsageManagementClient
+__all__ = ['UsageManagementClient', 'UsageManagementClientConfiguration']
 
+from .version import VERSION
 
-class InfoField(Model):
-    """Key-value pairs of instance details in the legacy format.
+__version__ = VERSION
 
-    :param project: Identifies the name of the instance provisioned by the
-     user.
-    :type project: str
-    """
-
-    _attribute_map = {
-        'project': {'key': 'project', 'type': 'str'},
-    }
-
-    def __init__(self, project=None):
-        super(InfoField, self).__init__()
-        self.project = project
