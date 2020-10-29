@@ -6,27 +6,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from typing import Any, Optional
+
+    from azure.core.credentials import TokenCredential
 
 from ._configuration import MonitorClientConfiguration
-from .operations import ActivityLogAlertsOperations
-from .. import models
+from .operations import ScheduledQueryRulesOperations
+from . import models
 
 
 class MonitorClient(object):
     """Monitor Management Client.
 
-    :ivar activity_log_alerts: ActivityLogAlertsOperations operations
-    :vartype activity_log_alerts: $(python-base-namespace).v2017_03_01_preview.aio.operations.ActivityLogAlertsOperations
+    :ivar scheduled_query_rules: ScheduledQueryRulesOperations operations
+    :vartype scheduled_query_rules: $(python-base-namespace).v2020_05_01_preview.operations.ScheduledQueryRulesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Azure subscription Id.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -34,29 +36,33 @@ class MonitorClient(object):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        base_url=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = MonitorClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.activity_log_alerts = ActivityLogAlertsOperations(
+        self.scheduled_query_rules = ScheduledQueryRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "MonitorClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> MonitorClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

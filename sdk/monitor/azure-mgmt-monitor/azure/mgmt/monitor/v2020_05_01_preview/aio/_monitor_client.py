@@ -16,15 +16,15 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import MonitorClientConfiguration
-from .operations import ActivityLogAlertsOperations
+from .operations import ScheduledQueryRulesOperations
 from .. import models
 
 
 class MonitorClient(object):
     """Monitor Management Client.
 
-    :ivar activity_log_alerts: ActivityLogAlertsOperations operations
-    :vartype activity_log_alerts: $(python-base-namespace).v2017_03_01_preview.aio.operations.ActivityLogAlertsOperations
+    :ivar scheduled_query_rules: ScheduledQueryRulesOperations operations
+    :vartype scheduled_query_rules: $(python-base-namespace).v2020_05_01_preview.aio.operations.ScheduledQueryRulesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Azure subscription Id.
@@ -48,7 +48,7 @@ class MonitorClient(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.activity_log_alerts = ActivityLogAlertsOperations(
+        self.scheduled_query_rules = ScheduledQueryRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:
