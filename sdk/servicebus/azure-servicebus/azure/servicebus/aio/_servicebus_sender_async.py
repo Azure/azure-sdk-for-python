@@ -179,6 +179,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 request_body = self._build_schedule_request(schedule_time_utc, send_span, messages)
             else:
                 request_body = self._build_schedule_request(schedule_time_utc, send_span, *messages)
+            if send_span:
+                await self._add_span_request_attributes(send_span)
             return await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
                 request_body,
