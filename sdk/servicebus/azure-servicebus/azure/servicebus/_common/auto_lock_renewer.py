@@ -134,7 +134,9 @@ class AutoLockRenewer(object):
         :rtype: None
         """
         if not isinstance(renewable, ReceivedMessage) and not isinstance(renewable, ServiceBusSession):
-            raise TypeError("AutoLockRenewer only supports registration of types azure.servicebus.ReceivedMessage (via a receiver's receive methods) and azure.servicebus.ServiceBusSession (via a session receiver's property receiver.session).")
+            raise TypeError("AutoLockRenewer only supports registration of types azure.servicebus.ReceivedMessage "
+                            "(via a receiver's receive methods) and azure.servicebus.ServiceBusSession "
+                            "(via a session receiver's property receiver.session).")
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
