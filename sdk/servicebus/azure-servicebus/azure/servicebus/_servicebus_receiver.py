@@ -146,7 +146,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             )
 
         self._populate_attributes(**kwargs)
-        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
+        self._session = ServiceBusSession(self._session_id, self) if self._session_id else None
 
     def __iter__(self):
         return self._iter_contextual_wrapper()

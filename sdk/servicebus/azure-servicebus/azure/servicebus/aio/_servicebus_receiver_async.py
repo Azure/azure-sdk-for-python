@@ -143,7 +143,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
 
         self._populate_attributes(**kwargs)
-        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
+        self._session = ServiceBusSession(self._session_id, self) if self._session_id else None
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
     # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.

@@ -34,6 +34,8 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 
+from .exceptions import AzureError
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -70,8 +72,13 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         # type: () -> Iterator[ReturnType]
         if self.continuation_token is None and self._did_a_call_already:
             raise StopIteration("End of paging")
+        try:
+            self._response = self._get_next(self.continuation_token)
+        except AzureError as error:
+            if not error.continuation_token:
+                error.continuation_token = self.continuation_token
+            raise
 
-        self._response = self._get_next(self.continuation_token)
         self._did_a_call_already = True
 
         self.continuation_token, self._current_page = self._extract_data(self._response)

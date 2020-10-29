@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/enrichment/anomalyDetection/configurations
+  response:
+    body:
+      string: '{"value":[{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}]}'
+    headers:
+      apim-request-id: f00c17f7-236b-4485-b4e7-10f87b6d4923
+      content-length: '818'
+      content-type: application/json; charset=utf-8
+      date: Mon, 26 Oct 2020 17:47:40 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '204'
+      x-request-id: f00c17f7-236b-4485-b4e7-10f87b6d4923
+    status:
+      code: 200
+      message: OK
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/metrics/27e3015f-04fd-44ba-a20b-bc529a0aebae/enrichment/anomalyDetection/configurations
+version: 1

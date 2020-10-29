@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/data/query
   response:
@@ -23,21 +23,21 @@ interactions:
         Angeles","category":"Homemade"}},"timestampList":[],"valueList":[]}]}'
     headers:
       apim-request-id:
-      - e49c991b-a68c-4718-b23f-b67729123b9c
+      - c66ba8b7-be11-4879-aa09-29bb69baa1bc
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 21 Oct 2020 21:42:51 GMT
+      - Mon, 26 Oct 2020 17:38:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '279'
+      - '808'
       x-request-id:
-      - e49c991b-a68c-4718-b23f-b67729123b9c
+      - c66ba8b7-be11-4879-aa09-29bb69baa1bc
     status:
       code: 200
       message: OK

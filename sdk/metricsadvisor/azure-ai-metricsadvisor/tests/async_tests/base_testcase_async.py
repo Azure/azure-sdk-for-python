@@ -207,10 +207,10 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             )
         )
 
-    async def _create_data_feed_and_anomaly_detection_config(self, name):
+    async def _create_data_feed_and_detection_config(self, name):
         data_feed = await self._create_data_feed(name)
         detection_config_name = create_random_name(name)
-        detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
+        detection_config = await self.admin_client.create_detection_configuration(
             AnomalyDetectionConfiguration(
                 name=detection_config_name,
                 metric_id=data_feed.metric_ids[0],
@@ -277,10 +277,10 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
 
         )
 
-    async def _create_anomaly_alert_config_for_update(self, name):
-        detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config(name)
+    async def _create_alert_config_for_update(self, name):
+        detection_config, data_feed = await self._create_data_feed_and_detection_config(name)
         alert_config_name = create_random_name(name)
-        alert_config = await self.admin_client.create_anomaly_alert_configuration(
+        alert_config = await self.admin_client.create_alert_configuration(
             AnomalyAlertConfiguration(
                 name=alert_config_name,
                 cross_metrics_operator="AND",
@@ -338,7 +338,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
     async def _create_detection_config_for_update(self, name):
         data_feed = await self._create_data_feed(name)
         detection_config_name = create_random_name("testupdated")
-        detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
+        detection_config = await self.admin_client.create_detection_configuration(
             AnomalyDetectionConfiguration(
                 name=detection_config_name,
                 metric_id=data_feed.metric_ids[0],

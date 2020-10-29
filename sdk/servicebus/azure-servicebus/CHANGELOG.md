@@ -44,6 +44,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Message `renew_lock` method is moved from `ServiceBusMessage` to `ServiceBusReceiver`:
   - Changed `ServiceBusReceivedMessage.renew_lock` to `ServiceBusReceiver.renew_message_lock`
 * `AutoLockRenewer.register` now takes `ServiceBusReceiver` as a positional parameter.
+* Removed `encoding` support from `ServiceBusMessage`.
 
 **BugFixes**
 
