@@ -59,6 +59,9 @@ from ._devices_for_subscription_operations import DevicesForSubscriptionOperatio
 from ._devices_for_hub_operations import DevicesForHubOperations
 from ._device_operations import DeviceOperations
 from ._on_premise_iot_sensors_operations import OnPremiseIotSensorsOperations
+from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations
+from ._sql_vulnerability_assessment_scan_results_operations import SqlVulnerabilityAssessmentScanResultsOperations
+from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 
 __all__ = [
     'ComplianceResultsOperations',
@@ -111,4 +114,7 @@ __all__ = [
     'DevicesForHubOperations',
     'DeviceOperations',
     'OnPremiseIotSensorsOperations',
+    'SqlVulnerabilityAssessmentScansOperations',
+    'SqlVulnerabilityAssessmentScanResultsOperations',
+    'SqlVulnerabilityAssessmentBaselineRulesOperations',
 ]

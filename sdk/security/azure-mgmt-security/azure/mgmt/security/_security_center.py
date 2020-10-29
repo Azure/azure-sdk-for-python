@@ -63,6 +63,9 @@ from .operations import DevicesForSubscriptionOperations
 from .operations import DevicesForHubOperations
 from .operations import DeviceOperations
 from .operations import OnPremiseIotSensorsOperations
+from .operations import SqlVulnerabilityAssessmentScansOperations
+from .operations import SqlVulnerabilityAssessmentScanResultsOperations
+from .operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 from . import models
 
 
@@ -172,6 +175,12 @@ class SecurityCenter(SDKClient):
     :vartype device: azure.mgmt.security.operations.DeviceOperations
     :ivar on_premise_iot_sensors: OnPremiseIotSensors operations
     :vartype on_premise_iot_sensors: azure.mgmt.security.operations.OnPremiseIotSensorsOperations
+    :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScans operations
+    :vartype sql_vulnerability_assessment_scans: azure.mgmt.security.operations.SqlVulnerabilityAssessmentScansOperations
+    :ivar sql_vulnerability_assessment_scan_results: SqlVulnerabilityAssessmentScanResults operations
+    :vartype sql_vulnerability_assessment_scan_results: azure.mgmt.security.operations.SqlVulnerabilityAssessmentScanResultsOperations
+    :ivar sql_vulnerability_assessment_baseline_rules: SqlVulnerabilityAssessmentBaselineRules operations
+    :vartype sql_vulnerability_assessment_baseline_rules: azure.mgmt.security.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -293,4 +302,10 @@ class SecurityCenter(SDKClient):
         self.device = DeviceOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.on_premise_iot_sensors = OnPremiseIotSensorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
