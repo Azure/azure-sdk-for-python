@@ -9,29 +9,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/incidents/incident_id/rootCause
   response:
     body:
-      string: '{"value":[]}'
+      string: '{"value":[{"rootCause":{"dimension":{"category":"Electronics (Consumer)","dimension_name":"Karachi"}},"path":["dimension_name"],"score":0.34265262137636504,"description":"Increase
+        on category = Electronics (Consumer) | dimension_name = Karachi contributes
+        the most to current incident."}]}'
     headers:
       apim-request-id:
-      - 88646f24-89dc-41fb-a333-401aa0134040
+      - 90fb6c36-5f75-4e4e-84ec-d5e503ab2b06
       content-length:
-      - '12'
+      - '259'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Sep 2020 16:54:04 GMT
+      - Mon, 26 Oct 2020 19:39:10 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '208'
+      - '5448'
       x-request-id:
-      - 88646f24-89dc-41fb-a333-401aa0134040
+      - 90fb6c36-5f75-4e4e-84ec-d5e503ab2b06
     status:
       code: 200
       message: OK

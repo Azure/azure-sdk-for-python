@@ -21,7 +21,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async]|Authenticate the client|
-|[sample_recognize_content.py][sample_recognize_content] and [sample_recognize_content_async.py][sample_recognize_content_async]|Recognize text and table structures of a document|
+|[sample_recognize_content.py][sample_recognize_content] and [sample_recognize_content_async.py][sample_recognize_content_async]|Recognize text, selection marks, and table structures in a document|
 |[sample_recognize_receipts.py][sample_recognize_receipts] and [sample_recognize_receipts_async.py][sample_recognize_receipts_async]|Recognize data from a file of a US sales receipt using a prebuilt model|
 |[sample_recognize_receipts_from_url.py][sample_recognize_receipts_from_url] and [sample_recognize_receipts_from_url_async.py][sample_recognize_receipts_from_url_async]|Recognize data from a URL of a US sales receipt using a prebuilt model|
 |[sample_recognize_business_cards.py][sample_recognize_business_cards] and [sample_recognize_business_cards_async.py][sample_recognize_business_cards_async]|Recognize data from a file of a business card using a prebuilt model|

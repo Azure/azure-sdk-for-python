@@ -64,14 +64,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+    def _prebuilt_callback(self, raw_response, _, headers, **kwargs):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
-        return prepare_prebuilt_models(analyze_result)
+        return prepare_prebuilt_models(analyze_result, **kwargs)
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
         # type: (Union[bytes, IO[bytes]], Any) -> LROPoller[List[RecognizedForm]]
-        """Extract field text and semantic values from a given US sales receipt.
+        """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
@@ -79,7 +79,6 @@ class FormRecognizerClient(FormRecognizerClientBase):
         https://aka.ms/formrecognizer/receiptfields
 
         :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
-             Currently only supports US sales receipts.
         :type receipt: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -106,7 +105,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 :end-before: [END recognize_receipts]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields.
+                :caption: Recognize sales receipt fields.
         """
         locale = kwargs.pop("locale", None)
         content_type = kwargs.pop("content_type", None)
@@ -137,15 +136,14 @@ class FormRecognizerClient(FormRecognizerClientBase):
     @distributed_trace
     def begin_recognize_receipts_from_url(self, receipt_url, **kwargs):
         # type: (str, Any) -> LROPoller[List[RecognizedForm]]
-        """Extract field text and semantic values from a given US sales receipt.
+        """Extract field text and semantic values from a given sales receipt.
         The input document must be the location (URL) of the receipt to be analyzed.
 
         See fields found on a receipt here:
         https://aka.ms/formrecognizer/receiptfields
 
         :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
-            US sales receipts.
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -167,7 +165,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 :end-before: [END recognize_receipts_from_url]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields from a URL.
+                :caption: Recognize sales receipt fields from a URL.
         """
         locale = kwargs.pop("locale", None)
         include_field_elements = kwargs.pop("include_field_elements", False)
@@ -234,7 +232,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 file_stream=business_card,
                 content_type=content_type,
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop("cls", lambda pipeline_response, _, response_headers: self._prebuilt_callback(
+                    pipeline_response, _, response_headers, business_card=True
+                )),
                 polling=True,
                 **kwargs
             )
@@ -279,7 +279,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             return self._client.begin_analyze_business_card_async(  # type: ignore
                 file_stream={"source": business_card_url},
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", self._prebuilt_callback),
+                cls=kwargs.pop("cls", lambda pipeline_response, _, response_headers: self._prebuilt_callback(
+                    pipeline_response, _, response_headers, business_card=True
+                )),
                 polling=True,
                 **kwargs
             )

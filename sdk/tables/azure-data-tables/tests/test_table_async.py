@@ -7,7 +7,6 @@ import pytest
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError, HttpResponseError
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import GlobalStorageAccountPreparer
 from azure.data.tables import (
     AccessPolicy,
     TableAnalyticsLogging,
@@ -86,7 +85,6 @@ class TableTestAsync(AsyncTableTestCase):
         # Assert
         self.assertIsInstance(created, TableClient)
         # self.assertEqual(len(existing), 1)
-        # TODO: the AsyncItemPaged does not have a length property, and cannot be used as an iterator
         await ts.delete_table(table_name=table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")

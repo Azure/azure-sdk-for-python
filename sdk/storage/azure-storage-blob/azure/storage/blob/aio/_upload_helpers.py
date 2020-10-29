@@ -101,6 +101,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 stream=stream,
                 validate_content=validate_content,
                 encryption_options=encryption_options,
+                headers=headers,
                 **kwargs
             )
         else:
@@ -112,6 +113,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
+                headers=headers,
                 **kwargs
             )
 
@@ -186,6 +188,7 @@ async def upload_page_blob(
             max_concurrency=max_concurrency,
             validate_content=validate_content,
             encryption_options=encryption_options,
+            headers=headers,
             **kwargs)
 
     except StorageErrorException as error:
@@ -234,6 +237,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                headers=headers,
                 **kwargs)
         except StorageErrorException as error:
             if error.response.status_code != 404:
@@ -261,6 +265,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
                 append_position_access_conditions=append_conditions,
+                headers=headers,
                 **kwargs)
     except StorageErrorException as error:
         process_storage_error(error)

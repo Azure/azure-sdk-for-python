@@ -1319,7 +1319,7 @@ class StorageTableEntityTest(TableTestCase):
     @pytest.mark.skip("Batch not implemented")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_large(self, resource_group, location, storage_account, storage_account_key):
+    async def test_query_entities_large(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         table_name = self._create_query_table(0)
         total_entities_count = 1000
@@ -1337,7 +1337,7 @@ class StorageTableEntityTest(TableTestCase):
                 entity.test4 = EntityProperty(1234567890)
                 entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
                 batch.create_entity(entity)
-            self.ts.commit_batch(table_name, batch)
+            await self.ts.send_batch(table_name, batch)
 
         # Act
         start_time = datetime.now()

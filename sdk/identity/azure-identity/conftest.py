@@ -6,7 +6,7 @@ import os
 import sys
 
 import pytest
-from azure.identity._constants import AZURE_CLI_CLIENT_ID, EnvironmentVariables
+from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 
 if sys.version_info < (3, 5, 3):
@@ -104,7 +104,7 @@ def live_certificate_with_password(live_service_principal):
 @pytest.fixture()
 def live_user_details():
     user_details = {
-        "client_id": AZURE_CLI_CLIENT_ID,
+        "client_id": DEVELOPER_SIGN_ON_CLIENT_ID,
         "username": os.environ.get(EnvironmentVariables.AZURE_USERNAME),
         "password": os.environ.get(EnvironmentVariables.AZURE_PASSWORD),
         "tenant": os.environ.get("USER_TENANT"),

@@ -471,3 +471,38 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.form_type_confidence, 1.0)
             self.assertEqual(form.model_id, model.model_id)
             self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(training=True, selection_marks=True)
+    def test_custom_form_selection_mark(self, client, container_sas_url):
+        fr_client = client.get_form_recognizer_client()
+
+        poller = client.begin_training(container_sas_url, use_training_labels=True)
+        model = poller.result()
+
+        with open(self.selection_form_pdf, "rb") as fd:
+            myfile = fd.read()
+
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
+            form = prepare_form_result(analyze_result, model.model_id)
+            responses.append(analyze_result)
+            responses.append(form)
+
+        poller = fr_client.begin_recognize_custom_forms(
+            model.model_id,
+            myfile,
+            include_field_elements=True,
+            cls=callback
+        )
+        form = poller.result()
+
+        actual = responses[0]
+        recognized_form = responses[1]
+        read_results = actual.analyze_result.read_results
+        page_results = actual.analyze_result.page_results
+        actual_fields = actual.analyze_result.document_results[0].fields
+
+        self.assertFormPagesTransformCorrect(recognized_form[0].pages, read_results, page_results)

@@ -36,7 +36,7 @@ both to demonstrate the ease of adjusting authentication, and to surface another
 """
 
 import os
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 from azure.identity import EnvironmentCredential
 
 
@@ -57,7 +57,7 @@ servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
-        sender.send_messages(Message('Single Message'))
+        sender.send_messages(ServiceBusMessage('Single Message'))
 
 
 print("Send message is done.")

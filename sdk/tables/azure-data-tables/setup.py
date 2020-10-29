@@ -78,7 +78,7 @@ setup(
         'azure.data',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.2.2",
+        "azure-core<2.0.0,>=1.6.0",
         "msrest>=0.6.10"
         # azure-data-tables
     ],

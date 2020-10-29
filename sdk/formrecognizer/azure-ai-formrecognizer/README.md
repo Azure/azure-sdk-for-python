@@ -4,8 +4,8 @@ Azure Cognitive Services Form Recognizer is a cloud service that uses machine le
 from form documents. It includes the following main functionalities:
 
 * Custom models - Recognize field values and table data from forms. These models are trained with your own data, so they're tailored to your forms.
-* Content API - Recognize text and table structures, along with their bounding box coordinates, from documents. Corresponds to the REST service's Layout API.
-* Prebuilt receipt model - Recognize data from USA sales receipts using a prebuilt model.
+* Content API - Recognize text, table structures, and selection marks, along with their bounding box coordinates, from documents. Corresponds to the REST service's Layout API.
+* Prebuilt receipt model - Recognize data from sales receipts using a prebuilt model.
 * Prebuilt business card model - Recognize data from business cards using a prebuilt model.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs]| [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
@@ -132,9 +132,9 @@ form_recognizer_client = FormRecognizerClient(
 `FormRecognizerClient` provides operations for:
 
  - Recognizing form fields and content using custom models trained to recognize your custom forms. These values are returned in a collection of `RecognizedForm` objects.
- - Recognizing common fields from US receipts, using a pre-trained receipt model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
+ - Recognizing common fields from sales receipts, using a pre-trained receipt model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
  - Recognizing common fields from business cards, using a pre-trained business card model. These fields and metadata are returned in a collection of `RecognizedForm` objects.
- - Recognizing form content, including tables, lines and words, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
+ - Recognizing form content, including tables, lines, words, and selection marks, without the need to train a model. Form content is returned in a collection of `FormPage` objects.
 
 Sample code snippets are provided to illustrate using a FormRecognizerClient [here](#recognize-forms-using-a-custom-model "Recognize Forms Using a Custom Model").
 
@@ -142,7 +142,7 @@ Sample code snippets are provided to illustrate using a FormRecognizerClient [he
 `FormTrainingClient` provides operations for:
 
 - Training custom models without labels to recognize all fields and values found in your custom forms. A `CustomFormModel` is returned indicating the form types the model will recognize, and the fields it will extract for each form type. See the [service documentation][fr-train-without-labels] for a more detailed explanation.
-- Training custom models with labels to recognize specific fields and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
+- Training custom models with labels to recognize specific fields, selection marks, and values you specify by labeling your custom forms. A `CustomFormModel` is returned indicating the fields the model will extract, as well as the estimated accuracy for each field. See the [service documentation][fr-train-with-labels] for a more detailed explanation.
 - Managing models created in your account.
 - Copying a custom model from one Form Recognizer resource to another.
 - Creating a composed model from a collection of existing trained models with labels.
@@ -239,10 +239,18 @@ for cell in table.cells:
     print("Cell text: {}".format(cell.text))
     print("Location: {}".format(cell.bounding_box))
     print("Confidence score: {}\n".format(cell.confidence))
+
+print("Selection marks found on page {}:".format(page[0].page_number))
+for selection_mark in page[0].selection_marks:
+    print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+        selection_mark.state,
+        selection_mark.bounding_box,
+        selection_mark.confidence
+    ))
 ```
 
 ### Recognize Receipts
-Recognize data from USA sales receipts using a prebuilt model. Receipt fields recognized by the service can be found [here][service_recognize_receipt].
+Recognize data from sales receipts using a prebuilt model. Receipt fields recognized by the service can be found [here][service_recognize_receipt].
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -382,8 +390,8 @@ model_id = "<model_id from the Train a Model sample>"
 
 custom_model = form_training_client.get_custom_model(model_id=model_id)
 print("Model ID: {}".format(custom_model.model_id))
-print("Model name: {}".format(model.model_name))
-print("Is composed model?: {}".format(model.properties.is_composed_model))
+print("Model name: {}".format(custom_model.model_name))
+print("Is composed model?: {}".format(custom_model.properties.is_composed_model))
 print("Status: {}".format(custom_model.status))
 print("Training started on: {}".format(custom_model.training_started_on))
 print("Training completed on: {}".format(custom_model.training_completed_on))

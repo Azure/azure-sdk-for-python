@@ -9,8 +9,9 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 import logging
+from uuid import uuid4
+
 from azure.core.pipeline import AsyncPipeline
-from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -19,7 +20,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
 )
-from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 
 from .._constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
 from .._authentication import SharedKeyCredentialPolicy
@@ -32,11 +33,10 @@ from .._policies import (
 )
 from ._policies_async import AsyncStorageResponseHook
 from .._error import _process_table_error
-from .._models import PartialBatchErrorException
+from .._models import BatchErrorException, BatchTransactionResult
 
 if TYPE_CHECKING:
     from azure.core.pipeline import Pipeline
-    from azure.core.pipeline.transport import HttpRequest
     from azure.core.configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
@@ -102,27 +102,35 @@ class AsyncStorageAccountHostsMixin(object):
         return config, AsyncPipeline(config.transport, policies=policies)
 
     async def _batch_send(
-        self, *reqs: 'HttpRequest',
+        self, entities, # type: List[TableEntity]
+        *reqs: 'HttpRequest',
         **kwargs
     ):
         """Given a series of request, do a Storage batch call.
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
+        policies = [StorageHeadersPolicy()]
+
+        changeset = HttpRequest('POST', None)
+        changeset.set_multipart_mixed(
+            *reqs,
+            policies=policies,
+            boundary="changeset_{}".format(uuid4())
+        )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            url='https://{}/$batch'.format(self._primary_hostname),
             headers={
-                'x-ms-version': self.api_version
+                'x-ms-version': self.api_version,
+                'DataServiceVersion': '3.0',
+                'MaxDataServiceVersion': '3.0;NetFx',
             }
         )
-
         request.set_multipart_mixed(
-            *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ],
-            enforce_https=False
+            changeset,
+            policies=policies,
+            enforce_https=False,
+            boundary="batch_{}".format(uuid4())
         )
 
         pipeline_response = await self._pipeline.run(
@@ -134,18 +142,18 @@ class AsyncStorageAccountHostsMixin(object):
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
             parts = response.parts() # Return an AsyncIterator
+            parts_list = []
+            async for part in parts:
+                parts_list.append(part)
+            transaction_result = BatchTransactionResult(reqs, parts_list, entities)
             if raise_on_any_failure:
-                parts_list = []
-                async for part in parts:
-                    parts_list.append(part)
                 if any(p for p in parts_list if not 200 <= p.status_code < 300):
-                    error = PartialBatchErrorException(
+                    error = BatchErrorException(
                         message="There is a partial failure in the batch operation.",
                         response=response, parts=parts_list
                     )
                     raise error
-                return AsyncList(parts_list)
-            return parts
+            return transaction_result
         except HttpResponseError as error:
             _process_table_error(error)
 

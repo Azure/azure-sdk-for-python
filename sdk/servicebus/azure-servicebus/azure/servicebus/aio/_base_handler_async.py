@@ -76,12 +76,11 @@ class ServiceBusSharedKeyCredential(object):
 class BaseHandler:
     def __init__(
         self,
-        fully_qualified_namespace,
-        entity_name,
-        credential,
-        **kwargs
-    ):
-        # type: (str, str, TokenCredential, Any) -> None
+        fully_qualified_namespace: str,
+        entity_name: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
         self._entity_name = entity_name
 
@@ -114,14 +113,51 @@ class BaseHandler:
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _handle_exception(self, exception):
-        error, error_need_close_handler, error_need_raise = _create_servicebus_exception(_LOGGER, exception, self)
+    async def _handle_exception(self, exception, **kwargs):
+        error, error_need_close_handler, error_need_raise = \
+            _create_servicebus_exception(_LOGGER, exception, self, **kwargs)
         if error_need_close_handler:
             await self._close_handler()
         if error_need_raise:
             raise error
 
         return error
+
+    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
+        # pylint: disable=protected-access
+        require_last_exception = kwargs.pop("require_last_exception", False)
+        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
+        retried_times = 0
+        max_retries = self._config.retry_total
+
+        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
+
+        while retried_times <= max_retries:
+            try:
+                if operation_requires_timeout and abs_timeout_time:
+                    remaining_timeout = abs_timeout_time - time.time()
+                    kwargs["timeout"] = remaining_timeout
+                return await operation(**kwargs)
+            except StopAsyncIteration:
+                raise
+            except Exception as exception:  # pylint: disable=broad-except
+                last_exception = await self._handle_exception(exception, **kwargs)
+                if require_last_exception:
+                    kwargs["last_exception"] = last_exception
+                retried_times += 1
+                if retried_times > max_retries:
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._container_id,
+                        last_exception,
+                    )
+                    raise last_exception
+                await self._backoff(
+                    retried_times=retried_times,
+                    last_exception=last_exception,
+                    abs_timeout_time=abs_timeout_time
+                )
 
     async def _backoff(
             self,
@@ -148,41 +184,6 @@ class BaseHandler:
                 last_exception,
             )
             raise last_exception
-
-    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
-        require_last_exception = kwargs.pop("require_last_exception", False)
-        operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
-        retried_times = 0
-        max_retries = self._config.retry_total
-
-        abs_timeout_time = (time.time() + timeout) if (operation_requires_timeout and timeout) else None
-
-        while retried_times <= max_retries:
-            try:
-                if operation_requires_timeout and abs_timeout_time:
-                    remaining_timeout = abs_timeout_time - time.time()
-                    kwargs["timeout"] = remaining_timeout
-                return await operation(**kwargs)
-            except StopAsyncIteration:
-                raise
-            except Exception as exception:  # pylint: disable=broad-except
-                last_exception = await self._handle_exception(exception)
-                if require_last_exception:
-                    kwargs["last_exception"] = last_exception
-                retried_times += 1
-                if retried_times > max_retries:
-                    _LOGGER.info(
-                        "%r operation has exhausted retry. Last exception: %r.",
-                        self._container_id,
-                        last_exception,
-                    )
-                    raise last_exception
-                await self._backoff(
-                    retried_times=retried_times,
-                    last_exception=last_exception,
-                    abs_timeout_time=abs_timeout_time
-                )
 
     async def _mgmt_request_response(
         self,
@@ -236,8 +237,8 @@ class BaseHandler:
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
-            raise ServiceBusError("Management request failed: {}".format(exp), exp)
+                raise OperationTimeoutError("Management operation timed out.", error=exp)
+            raise
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
@@ -263,8 +264,7 @@ class BaseHandler:
             self._handler = None
         self._running = False
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close down the handler connection.
 
         If the handler has already closed, this operation will do nothing. An optional exception can be passed in to

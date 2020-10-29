@@ -13,12 +13,13 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import unquote  # type: ignore
 
-from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
+from ._error import _process_table_error
 from ._generated import AzureTable
 from ._generated.models import (
     # AccessPolicy,
@@ -31,7 +32,8 @@ from ._base_client import parse_connection_str
 from ._table_client_base import TableClientBase
 from ._serialize import serialize_iso
 from ._deserialize import _return_headers_and_deserialized
-from ._error import _process_table_error
+
+from ._table_batch import TableBatchOperations
 from ._models import TableEntityPropertiesPaged, UpdateMode, AccessPolicy
 
 
@@ -63,6 +65,7 @@ class TableClient(TableClientBase):
         """
         super(TableClient, self).__init__(account_url, table_name, credential=credential, **kwargs)
         self._client = AzureTable(self.url, pipeline=self._pipeline)
+
 
     @classmethod
     def from_connection_string(
@@ -310,7 +313,6 @@ class TableClient(TableClientBase):
                 :dedent: 8
                 :caption: Creating and adding an entity to a Table
         """
-
         if "PartitionKey" in entity and "RowKey" in entity:
             entity = _add_entity_properties(entity)
         else:
@@ -557,3 +559,57 @@ class TableClient(TableClientBase):
             return _trim_service_metadata(metadata)
         except HttpResponseError as error:
             _process_table_error(error)
+
+    def create_batch(
+        self,
+        **kwargs # type: Dict[str, Any]
+    ):
+        # type: (...) -> TableBatchOperations
+        """Create a Batching object from a Table Client
+
+        :return: Object containing requests and responses
+        :rtype: TableBatchOperations
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Using batches to send multiple requests at once
+        return: Table batch operation for inserting new operations
+        rtype: ~azure.data.tables.TableBatchOperations
+        :raises: None
+        """
+        return TableBatchOperations(
+            self._client,
+            self._client._serialize,  # pylint:disable=protected-access
+            self._client._deserialize,  # pylint:disable=protected-access
+            self._client._config,  # pylint:disable=protected-access
+            self.table_name,
+            self,
+            **kwargs
+        )
+
+    def send_batch(
+        self, batch, # type: TableBatchOperations
+        **kwargs # type: Any
+    ):
+        # type: (...) -> None
+        """Commit a TableBatchOperations to send requests to the server
+
+        :return: Object containing requests and responses
+        :rtype: ~azure.data.tables.BatchTransactionResult
+        :raises: ~azure.data.tables.BatchErrorException
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_batching.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Using batches to send multiple requests at once
+        """
+        return self._batch_send(batch._entities, *batch._requests, **kwargs) # pylint:disable=protected-access
