@@ -208,7 +208,7 @@ class Operations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 201, 202, 204]:
             raise models.ErrorContractException(self._deserialize, response)
 
         if raw:
@@ -234,9 +234,11 @@ class Operations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: OperationResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.OperationResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         # Construct URL
         url = self.get_azure_async_header_result.metadata['url']
@@ -266,16 +268,12 @@ class Operations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 404, 500]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorContractException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('OperationResource', response)
-        if response.status_code == 500:
-            deserialized = self._deserialize('ErrorContract', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
