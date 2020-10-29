@@ -80,7 +80,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         """check whether the receiver is alive"""
         # pylint: disable=protected-access
         if self._session and self._session._lock_expired:  # pylint: disable=protected-access
-            raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
+            raise SessionLockExpired(error=self._session.auto_renew_error)
 
     def _get_source(self):
         # pylint: disable=protected-access

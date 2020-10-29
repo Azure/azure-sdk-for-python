@@ -37,10 +37,10 @@ def peek_op(status_code, message, description, receiver):
         return parsed
     if status_code in [202, 204]:
         return []
-    error = "Message peek failed with status code: {}.\n".format(status_code)
+    error_msg = "Message peek failed with status code: {}.\n".format(status_code)
     if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+        error_msg += "{}.".format(description)
+    raise ServiceBusError(error_msg)
 
 
 def list_sessions_op(status_code, message, description):
@@ -51,10 +51,10 @@ def list_sessions_op(status_code, message, description):
         return parsed
     if status_code in [202, 204]:
         return []
-    error = "List sessions failed with status code: {}.\n".format(status_code)
+    error_msg = "List sessions failed with status code: {}.\n".format(status_code)
     if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+        error_msg += "{}.".format(description)
+    raise ServiceBusError(error_msg)
 
 
 def deferred_message_op(
@@ -73,16 +73,16 @@ def deferred_message_op(
         return parsed
     if status_code in [202, 204]:
         return []
-    error = "Retrieving deferred messages failed with status code: {}.\n".format(status_code)
+    error_msg = "Retrieving deferred messages failed with status code: {}.\n".format(status_code)
     if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+        error_msg += "{}.".format(description)
+    raise ServiceBusError(error_msg)
 
 
 def schedule_op(status_code, message, description):
     if status_code == 200:
         return message.get_data()[b'sequence-numbers']
-    error = "Scheduling messages failed with status code: {}.\n".format(status_code)
+    error_msg = "Scheduling messages failed with status code: {}.\n".format(status_code)
     if description:
-        error += "{}.".format(description)
-    raise ServiceBusError(error)
+        error_msg += "{}.".format(description)
+    raise ServiceBusError(error_msg)

@@ -9,10 +9,18 @@
   - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
   - `ReceivedMessage`: `renew_lock`
+* `azure.servicebus.exceptions.ServiceBusError` now inherits from `azure.core.exceptions.AzureError`.
 
 **Breaking Changes**
 
 * Renamed `AutoLockRenew` to `AutoLockRenewer`.
+* Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+  - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+  - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
+* The parameter `inner_exception` that `ServiceBusError.__init__` takes is now renamed to `error`.
+* Renamed `azure.servicebus.exceptions.MessageError` to `azure.servicebus.exceptions.ServiceBusMessageError`
+* Removed error `azure.servicebus.exceptions.ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus
+resource does not exist when using the `ServiceBusAdministrationClient`.
 * Renamed `Message` to `ServiceBusMessage`.
 * Renamed `ReceivedMessage` to `ServiceBusReceivedMessage`.
 * Renamed `BatchMessage` to `ServiceBusMessageBatch`.
@@ -27,7 +35,6 @@ and methods that use amqp management link for request like `schedule_messages`, 
 now raise more concrete exception other than `MessageSettleFailed` and `ServiceBusError`.
 * Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
  now inherit from `azure.servicebus.exceptions.MessageError`.
-* Removed Exception `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus resource does not exist.
 * `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`.
 
 **BugFixes**

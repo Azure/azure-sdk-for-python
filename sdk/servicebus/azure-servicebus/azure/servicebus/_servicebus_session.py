@@ -39,7 +39,7 @@ class BaseSession(object):
 
     def _check_live(self):
         if self._lock_expired:
-            raise SessionLockExpired(inner_exception=self.auto_renew_error)
+            raise SessionLockExpired(error=self.auto_renew_error)
 
     @property
     def _lock_expired(self):

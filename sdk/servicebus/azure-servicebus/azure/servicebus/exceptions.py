@@ -4,9 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, Any
 
 from uamqp import errors, constants
+from azure.core.exceptions import AzureError
 
 from ._common.constants import SESSION_LOCK_LOST, SESSION_LOCK_TIMEOUT
 
@@ -147,9 +148,9 @@ def _handle_amqp_message_error(logger, exception, **kwargs):
         # handling general uamqp.errors.MessageException
         logger.info("Message send failed (%r)", exception)
         if exception.condition == constants.ErrorCodes.ClientError and 'timed out' in str(exception):
-            error = OperationTimeoutError("Send operation timed out", inner_exception=exception)
+            error = OperationTimeoutError("Send operation timed out", error=exception)
         else:
-            error = MessageSendFailed(exception)
+            error = MessageSendFailed(error=exception)
         error_need_raise = False
 
     return error, error_need_close_handler, error_need_raise
@@ -209,18 +210,18 @@ class _ServiceBusErrorPolicy(errors.ErrorPolicy):
         return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
 
-class ServiceBusError(Exception):
-    """An error occurred.
+class ServiceBusError(AzureError):
+    """Base exception for all Service Bus errors which can be used for default error handling.
 
-    This is the parent of all Service Bus errors and can
-    be used for default error handling.
-
+    :param str message: The message object stringified as 'message' attribute
+    :keyword error: The original exception if any
+    :paramtype error: Exception
+    :ivar exc_type: The exc_type from sys.exc_info()
+    :ivar exc_value: The exc_value from sys.exc_info()
+    :ivar exc_traceback: The exc_traceback from sys.exc_info()
+    :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
+    :ivar str message: A stringified version of the message parameter
     """
-
-    def __init__(self, message, inner_exception=None):
-        # type: (Optional[str], Optional[Exception]) -> None
-        self.inner_exception = inner_exception
-        super(ServiceBusError, self).__init__(message)
 
 
 class ServiceBusConnectionError(ServiceBusError):
@@ -259,6 +260,9 @@ class MessageAlreadySettled(ServiceBusMessageError):
     This error will also be raised if an attempt is made to settle a message
     received via ReceiveAndDelete mode.
 
+    :param str action: The settlement operation, there are four types of settlement,
+     `complete/abandon/defer/dead_letter`.
+
     """
 
     def __init__(self, action):
@@ -268,28 +272,32 @@ class MessageAlreadySettled(ServiceBusMessageError):
 
 
 class MessageSettleFailed(ServiceBusMessageError):
-    """An attempt to settle a message failed."""
+    """Attempt to settle a message failed.
 
-    def __init__(self, action, inner_exception):
+    :param str action: The settlement operation, there are four types of settlement,
+     `complete/abandon/defer/dead_letter`.
+    :param error: The original exception if any.
+    :type error: Exception
+
+    """
+    def __init__(self, action, error):
         # type: (str, Exception) -> None
-        message = "Failed to {} message. Error: {}".format(action, inner_exception)
-        self.inner_exception = inner_exception
-        super(MessageSettleFailed, self).__init__(message, inner_exception)
+        message = "Failed to {} message. Error: {}".format(action, error)
+        super(MessageSettleFailed, self).__init__(message, error=error)
 
 
 class MessageSendFailed(ServiceBusMessageError):
     """A message failed to send to the Service Bus entity."""
 
-    def __init__(self, inner_exception):
+    def __init__(self, error):
         # type: (Exception) -> None
-        message = "Message failed to send. Error: {}".format(inner_exception)
+        message = "Message failed to send. Error: {}".format(error)
         self.condition = None
         self.description = None
-        if hasattr(inner_exception, 'condition'):
-            self.condition = inner_exception.condition  # type: ignore
-            self.description = inner_exception.description  # type: ignore
-        self.inner_exception = inner_exception
-        super(MessageSendFailed, self).__init__(message, inner_exception)
+        if hasattr(error, 'condition'):
+            self.condition = error.condition  # type: ignore
+            self.description = error.description  # type: ignore
+        super(MessageSendFailed, self).__init__(message, error=error)
 
 
 class MessageLockExpired(ServiceBusMessageError):
@@ -299,10 +307,10 @@ class MessageLockExpired(ServiceBusMessageError):
 
     """
 
-    def __init__(self, message=None, inner_exception=None):
+    def __init__(self, message=None, error=None):
         # type: (Optional[str], Optional[Exception]) -> None
         message = message or "Message lock expired"
-        super(MessageLockExpired, self).__init__(message, inner_exception=inner_exception)
+        super(MessageLockExpired, self).__init__(message, error=error)
 
 
 class SessionLockExpired(ServiceBusError):
@@ -312,10 +320,10 @@ class SessionLockExpired(ServiceBusError):
 
     """
 
-    def __init__(self, message=None, inner_exception=None):
+    def __init__(self, message=None, error=None):
         # type: (Optional[str], Optional[Exception]) -> None
         message = message or "Session lock expired"
-        super(SessionLockExpired, self).__init__(message, inner_exception=inner_exception)
+        super(SessionLockExpired, self).__init__(message, error=error)
 
 
 class AutoLockRenewFailed(ServiceBusError):

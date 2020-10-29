@@ -31,9 +31,9 @@ from azure.servicebus.exceptions import (
     SessionLockExpired,
     MessageLockExpired,
     MessageAlreadySettled,
+    MessageSendFailed,
     AutoLockRenewTimeout,
-    MessageSettleFailed,
-    MessageSendFailed)
+    MessageSettleFailed)
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,

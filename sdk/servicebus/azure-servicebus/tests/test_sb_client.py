@@ -88,7 +88,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
-            with pytest.raises(ServiceBusAuthorizationError): 
+            with pytest.raises(ServiceBusAuthorizationError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
