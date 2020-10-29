@@ -12,13 +12,12 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
 from .._servicebus_session import ServiceBusSession
-from .message import ReceivedMessage
+from .message import ServiceBusReceivedMessage
 from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 from .utils import renewable_start_time, utc_now
 
 if TYPE_CHECKING:
     from typing import Callable, Union, Optional, Awaitable
-    from .message import ServiceBusReceivedMessage
     LockRenewFailureCallback = Callable[[Union[ServiceBusSession, ServiceBusReceivedMessage],
                                          Optional[Exception]], None]
 
@@ -134,10 +133,10 @@ class AutoLockRenewer(object):
 
         :rtype: None
         """
-        if not isinstance(renewable, ReceivedMessage) and not isinstance(renewable, ServiceBusSession):
-            raise TypeError("AutoLockRenewer only supports registration of types azure.servicebus.ReceivedMessage "
-                            "(via a receiver's receive methods) and azure.servicebus.ServiceBusSession "
-                            "(via a session receiver's property receiver.session).")
+        if not isinstance(renewable, ServiceBusReceivedMessage) and not isinstance(renewable, ServiceBusSession):
+            raise TypeError("AutoLockRenewer only supports registration of types "
+                            "azure.servicebus.ServiceBusReceivedMessage (via a receiver's receive methods) and "
+                            "azure.servicebus.ServiceBusSession (via a session receiver's property receiver.session).")
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")

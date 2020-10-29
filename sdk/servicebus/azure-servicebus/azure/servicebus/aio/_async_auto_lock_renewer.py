@@ -77,7 +77,7 @@ class AutoLockRenewer:
                 return False
         except AttributeError: # If for whatever reason the renewable isn't hooked up to a receiver
             raise ServiceBusError("Cannot renew an entity without an associated receiver.  "
-                "ReceivedMessage and active ServiceBusReceiver.Session objects are expected.")
+                "ServiceBusReceivedMessage and active ServiceBusReceiver.Session objects are expected.")
         return True
 
     async def _auto_lock_renew(self,
@@ -130,9 +130,10 @@ class AutoLockRenewer:
          Default value is None (no callback).
          :rtype: None
         """
-        if not isinstance(renewable, ReceivedMessage) and not isinstance(renewable, ServiceBusSession):
-            raise TypeError("AutoLockRenewer only supports registration of types azure.servicebus.aio.ReceivedMessage "
-                            "(via a receiver's receive methods) and azure.servicebus.aio.ServiceBusSession "
+        if not isinstance(renewable, ServiceBusReceivedMessage) and not isinstance(renewable, ServiceBusSession):
+            raise TypeError("AutoLockRenewer only supports registration of types "
+                            "azure.servicebus.aio.ServiceBusReceivedMessage (via a receiver's receive methods) and "
+                            "azure.servicebus.aio.ServiceBusSession "
                             "(via a session receiver's property receiver.session).")
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
