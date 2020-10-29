@@ -46,6 +46,7 @@ if TYPE_CHECKING:
     from .message import ServiceBusMessage
     from azure.core.tracing import AbstractSpan
     from .._servicebus_receiver import ServiceBusReceiver
+    from .receiver_mixins import ReceiverMixin
 
 _log = logging.getLogger(__name__)
 
@@ -194,7 +195,7 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
 
 @contextmanager
 def _receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE):
-    # type:(ServiceBusReceiver, Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
+    # type: (ReceiverMixin, Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
     """Tracing"""
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
     if span_impl_type is None:
