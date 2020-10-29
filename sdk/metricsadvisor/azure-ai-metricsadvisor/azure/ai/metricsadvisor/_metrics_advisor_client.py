@@ -175,8 +175,8 @@ class MetricsAdvisorClient(object):
         :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
                 "ChangePoint", "Period", "Comment".
         :paramtype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-        :keyword Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :keyword Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
                 "FeedbackCreatedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
@@ -270,8 +270,8 @@ class MetricsAdvisorClient(object):
         :param str detection_configuration_id: anomaly alerting configuration unique id.
         :param series: List of dimensions specified for series.
         :type series: ~azure.ai.metricsadvisor.models.SeriesIdentity or list[dict[str, str]]
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :return: Pageable of MetricEnrichedSeriesData
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -312,8 +312,8 @@ class MetricsAdvisorClient(object):
 
         :param alert_configuration_id: anomaly alert configuration unique id.
         :type alert_configuration_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time.
-        :param Union[str, ~datetime.datetime] end_time: end time.
+        :param Union[str, datetime.datetime] start_time: start time.
+        :param Union[str, datetime.datetime] end_time: end time.
         :param time_mode: time mode. Possible values include: "AnomalyTime", "CreatedTime",
                 "ModifiedTime".
         :type time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
@@ -421,8 +421,8 @@ class MetricsAdvisorClient(object):
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
@@ -439,10 +439,10 @@ class MetricsAdvisorClient(object):
         :keyword str alert_configuration_id: anomaly alert configuration unique id.
         :keyword str alert_id: alert id.
         :keyword str detection_configuration_id: anomaly detection configuration unique id.
-        :keyword Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :keyword Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :return: Anomalies under a specific alert.
+        :return: Anomalies under a specific alert or detection configuration.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -478,8 +478,8 @@ class MetricsAdvisorClient(object):
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
         :param str dimension_name: dimension to query.
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         :return: Dimension values of anomalies.
@@ -575,8 +575,8 @@ class MetricsAdvisorClient(object):
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         :return: AnomalyIncidents under a specific alert.
@@ -602,10 +602,10 @@ class MetricsAdvisorClient(object):
         :keyword str alert_configuration_id: anomaly alerting configuration unique id.
         :keyword str alert_id: alert id.
         :keyword str detection_configuration_id: anomaly detection configuration unique id.
-        :keyword Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :keyword Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :return: AnomalyIncidents under a specific alert.
+        :return: AnomalyIncidents under a specific alert or detection configuration.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -672,8 +672,8 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: metric unique id.
         :type metric_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :param series_to_filter: query specific series.
         :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
@@ -706,9 +706,9 @@ class MetricsAdvisorClient(object):
         :type metric_id: str
         :param active_since: Required. query series ingested after this time, the format should be
          yyyy-MM-ddTHH:mm:ssZ.
-        :type active_since: ~datetime.datetime
+        :type active_since: datetime.datetime
         :keyword int skip:
-        :keyword ~datetime.datetime active_since: query series ingested after this time, the format should be
+        :keyword datetime.datetime active_since: query series ingested after this time, the format should be
                  yyyy-MM-ddTHH:mm:ssZ.
         :keyword dimension_filter: filter specfic dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
@@ -739,8 +739,8 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: filter feedbacks by metric id.
         :type metric_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :return: Anomaly detection status.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
