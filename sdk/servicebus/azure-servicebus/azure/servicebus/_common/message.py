@@ -621,7 +621,7 @@ class ServiceBusPeekedMessage(ServiceBusMessage):
         )
 
     @property
-    def _dead_letter_error_description(self):
+    def dead_letter_error_description(self):
         # type: () -> Optional[str]
         """
         Dead letter error description, when the message is received from a deadletter subqueue of an entity.
@@ -636,7 +636,7 @@ class ServiceBusPeekedMessage(ServiceBusMessage):
         return None
 
     @property
-    def _dead_letter_reason(self):
+    def dead_letter_reason(self):
         # type: () -> Optional[str]
         """
         Dead letter reason, when the message is received from a deadletter subqueue of an entity.
@@ -651,7 +651,7 @@ class ServiceBusPeekedMessage(ServiceBusMessage):
         return None
 
     @property
-    def _dead_letter_source(self):
+    def dead_letter_source(self):
         # type: () -> Optional[str]
         """
         The name of the queue or subscription that this message was enqueued on, before it was deadlettered.
