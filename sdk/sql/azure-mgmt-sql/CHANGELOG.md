@@ -1,4 +1,24 @@
 # Release History
+
+## 0.23.0 (2020-10-29)
+
+**Features**
+
+  - Model Database has a new parameter secondary_type
+  - Model Database has a new parameter maintenance_configuration_id
+  - Model Database has a new parameter high_availability_replica_count
+  - Model DatabaseUpdate has a new parameter secondary_type
+  - Model DatabaseUpdate has a new parameter maintenance_configuration_id
+  - Model DatabaseUpdate has a new parameter high_availability_replica_count
+  - Model ElasticPoolUpdate has a new parameter maintenance_configuration_id
+  - Model ElasticPool has a new parameter maintenance_configuration_id
+
+**Breaking changes**
+
+  - Model Database no longer has parameter read_replica_count
+  - Model DatabaseUpdate no longer has parameter read_replica_count
+  - Removed operation DatabasesOperations.list_inaccessible_by_server
+  
 ## 0.22.0 (2020-10-09)
 
 **Features**
