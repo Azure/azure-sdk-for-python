@@ -13,162 +13,30 @@ interactions:
       Content-Length:
       - '2272'
       Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
+      - application/json; odata=minimalmetadata
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
+      - azsdk-python-batchservice/10.0.0 Python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit)
     method: POST
-    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates?api-version=2020-03-01.11.0
+    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates?api-version=2020-09-01.12.0
   response:
     body:
-      string: ''
-    headers:
-      dataserviceid:
-      - https://batchf0370dc6.westcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)
-      dataserviceversion:
-      - '3.0'
-      date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
-      location:
-      - https://batchf0370dc6.westcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)
-      request-id:
-      - ecc564cd-702d-4e7e-b553-2134e2ecff1a
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
-    method: GET
-    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates?api-version=2020-03-01.11.0
-  response:
-    body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.westcentralus.batch.azure.com/$metadata#certificates\",\"value\":[\r\n
-        \   {\r\n      \"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2020-03-24T16:12:31.7742009Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n
-        \   }\r\n  ]\r\n}"
-    headers:
-      content-type:
-      - application/json;odata=minimalmetadata
-      dataserviceversion:
-      - '3.0'
-      date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
-      request-id:
-      - 2095d962-5725-4192-8726-6e98e2ca3152
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
-    method: GET
-    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2020-03-01.11.0
-  response:
-    body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.westcentralus.batch.azure.com/$metadata#certificates/@Element\",\"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2020-03-24T16:12:31.7742009Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n}"
-    headers:
-      content-type:
-      - application/json;odata=minimalmetadata
-      dataserviceversion:
-      - '3.0'
-      date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
-      request-id:
-      - da5472a0-d961-46bd-aa4c-f92bc19e4ca5
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
-    method: POST
-    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2020-03-01.11.0
-  response:
-    body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"CertificateStateActive\",\"message\":{\r\n
-        \   \"lang\":\"en-US\",\"value\":\"The specified certificate is in active
-        state.\\nRequestId:82254765-35fb-4b97-a9a1-fd9091597ee2\\nTime:2020-03-24T16:12:32.0417503Z\"\r\n
-        \ }\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
+        ,\"code\":\"MissingRequiredHeader\",\"message\":{\r\n    \"lang\":\"en-US\"\
+        ,\"value\":\"An HTTP header that's mandatory for this request is not specified.\\\
+        nRequestId:2d6afaa2-c680-44d0-b115-c4b0212c2079\\nTime:2020-10-01T20:18:39.2235466Z\"\
+        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"HeaderName\",\"value\":\"\
+        Authorization\"\r\n    }\r\n  ]\r\n}"
     headers:
       content-length:
-      - '362'
+      - '462'
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
+      - Thu, 01 Oct 2020 20:18:38 GMT
       request-id:
-      - 82254765-35fb-4b97-a9a1-fd9091597ee2
+      - 2d6afaa2-c680-44d0-b115-c4b0212c2079
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -176,47 +44,6 @@ interactions:
       x-content-type-options:
       - nosniff
     status:
-      code: 409
-      message: The specified certificate is in active state.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      ocp-date:
-      - Tue, 24 Mar 2020 16:12:32 GMT
-    method: DELETE
-    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2020-03-01.11.0
-  response:
-    body:
-      string: ''
-    headers:
-      dataserviceversion:
-      - '3.0'
-      date:
-      - Tue, 24 Mar 2020 16:12:31 GMT
-      request-id:
-      - b2be93c3-b800-4f0a-ad6e-be01503377c7
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
+      code: 400
+      message: An HTTP header that's mandatory for this request is not specified.
 version: 1

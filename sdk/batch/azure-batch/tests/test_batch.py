@@ -10,10 +10,10 @@ import io
 import logging
 import time
 import unittest
-import requests
 
 import azure.batch
 from azure.batch import models
+from azure.core.exceptions import HttpResponseError
 
 from batch_preparers import (
     AccountPreparer,
@@ -40,42 +40,33 @@ class BatchTest(AzureMgmtTestCase):
         else:
             return 'https://' + batch.account_endpoint
 
-    def create_aad_client(self, batch_account, **kwargs):
-        credentials = self.settings.get_credentials(resource=BATCH_RESOURCE)
-        client = self.create_basic_client(
-            azure.batch.BatchServiceClient,
-            credentials=credentials,
-            batch_url=self._batch_url(batch_account)
-        )
-        return client
-
     def create_sharedkey_client(self, batch_account, credentials, **kwargs):
         client = azure.batch.BatchServiceClient(
-            credentials=credentials,
-            batch_url=self._batch_url(batch_account)
+            batch_url=self._batch_url(batch_account),
+            policies=[credentials]
         )
         return client
 
     def assertBatchError(self, code, func, *args, **kwargs):
         try:
             func(*args, **kwargs)
-            self.fail("BatchErrorException expected but not raised")
-        except models.BatchErrorException as err:
+            self.fail("HttpResponseError expected but not raised")
+        except HttpResponseError as err:
             self.assertEqual(err.error.code, code)
         except Exception as err:
-            self.fail("Expected BatchErrorExcption, instead got: {!r}".format(err))
+            self.fail("Expected HttpResponseError, instead got: {!r}".format(err))
 
     def assertCreateTasksError(self, code, func, *args, **kwargs):
         try:
             func(*args, **kwargs)
             self.fail("CreateTasksError expected but not raised")
-        except models.CreateTasksErrorException as err:
+        except HttpResponseError as err:
             try:
                 batch_error = err.errors.pop()
                 if code:
                     self.assertEqual(batch_error.error.code, code)
             except IndexError:
-                self.fail("Inner BatchErrorException expected but not exist")
+                self.fail("Inner HttpResponseError expected but not exist")
         except Exception as err:
             self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
@@ -420,8 +411,11 @@ class BatchTest(AzureMgmtTestCase):
         interval = datetime.timedelta(minutes=6)
         response = client.pool.enable_auto_scale(
             batch_pool.name,
-            auto_scale_formula='$TargetDedicatedNodes=2',
-            auto_scale_evaluation_interval=interval)
+            pool_enable_auto_scale_parameter=models.PoolEnableAutoScaleParameter(
+                auto_scale_formula='$TargetDedicatedNodes=2',
+                auto_scale_evaluation_interval=interval
+            )
+        )
 
         self.assertIsNone(response)
 
@@ -775,7 +769,7 @@ class BatchTest(AzureMgmtTestCase):
         )
         try:
             client.task.add(batch_job.id, task_param)
-        except models.BatchErrorException as e:
+        except HttpResponseError as e:
             message = "{}: ".format(e.error.code, e.error.message)
             for v in e.error.values:
                 message += "\n{}: {}".format(v.key, v.value)

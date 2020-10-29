@@ -7,7 +7,7 @@ import time
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.batch
-from azure.batch.batch_auth import SharedKeyCredentials
+from azure.batch.batch_auth import SharedKeyCredentialPolicy
 
 from azure_devtools.scenario_tests.preparers import (
     AbstractPreparer,
@@ -71,56 +71,72 @@ class AccountPreparer(AzureMgmtPreparer):
             self.client.application_package.activate(group_name, batch_name, 'application_id', 'v1.0', 'zip')
 
     def create_resource(self, name, **kwargs):
-        if self.is_live:
-            self.client = self.create_mgmt_client(
-                azure.mgmt.batch.BatchManagementClient)
-            group = self._get_resource_group(**kwargs)
-            batch_account = models.BatchAccountCreateParameters(
-                location=self.location,
-            )
-            storage = self._get_storage_account(**kwargs)
-            if storage:
-                storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
-                    self.test_class_instance.settings.SUBSCRIPTION_ID,
-                    group.name,
-                    storage.name
-                )
-                batch_account.auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
-            account_setup = self.client.batch_account.create(
-                group.name,
-                name,
-                batch_account)
-            self.resource = account_setup.result()
-            keys = self.client.batch_account.get_keys(
-                group.name,
-                name
-            )
-            credentials = SharedKeyCredentials(
-                keys.account_name,
-                keys.primary)
-            if storage:
-                self._add_app_package(group.name, name)
+        # if self.is_live:
+        #     self.client = self.create_mgmt_client(
+        #         azure.mgmt.batch.BatchManagementClient)
+        #     group = self._get_resource_group(**kwargs)
+        #     batch_account = models.BatchAccountCreateParameters(
+        #         location=self.location,
+        #     )
+        #     storage = self._get_storage_account(**kwargs)
+        #     if storage:
+        #         storage_resource = '/subscriptions/{}/resourceGroups/{}/providers/Microsoft.Storage/storageAccounts/{}'.format(
+        #             self.test_class_instance.settings.SUBSCRIPTION_ID,
+        #             group.name,
+        #             storage.name
+        #         )
+        #         batch_account.auto_storage=models.AutoStorageBaseProperties(storage_account_id=storage_resource)
+        #     account_setup = self.client.batch_account.create(
+        #         group.name,
+        #         name,
+        #         batch_account)
+        #     self.resource = account_setup.result()
+        #     keys = self.client.batch_account.get_keys(
+        #         group.name,
+        #         name
+        #     )
+        #     credentials = SharedKeyCredentialPolicy(
+        #         keys.account_name,
+        #         keys.primary)
+        #     if storage:
+        #         self._add_app_package(group.name, name)
 
-        else:
-            self.resource = FakeAccount(
-                name=name,
-                account_endpoint="https://{}.{}.batch.azure.com".format(name, self.location))
-            credentials = SharedKeyCredentials(
-                name,
-                'ZmFrZV9hY29jdW50X2tleQ==')
+        # else:
+        #     self.resource = FakeAccount(
+        #         name=name,
+        #         account_endpoint="https://{}.{}.batch.azure.com".format(name, self.location))
+        #     credentials = SharedKeyCredentialPolicy(
+        #         name,
+        #         'ZmFrZV9hY29jdW50X2tleQ==')
+        self.client = self.create_mgmt_client(
+                azure.mgmt.batch.BatchManagementClient)
+        account_setup = self.client.batch_account.get(
+                "sdktest",
+                "sdktest2"
+        )
+        self.resource = account_setup
+        keys = self.client.batch_account.get_keys(
+                "sdktest",
+                "sdktest2"
+        )
+        credentials = SharedKeyCredentialPolicy(
+                keys.account_name,
+                keys.primary
+        )
         return {
             self.parameter_name: self.resource,
             self.creds_parameter: credentials
         }
 
     def remove_resource(self, name, **kwargs):
-        if self.is_live:
-            group = self._get_resource_group(**kwargs)
-            deleting = self.client.batch_account.delete(group.name, name)
-            try:
-                deleting.wait()
-            except:
-                pass
+        pass
+        # if self.is_live:
+        #     group = self._get_resource_group(**kwargs)
+        #     deleting = self.client.batch_account.delete(group.name, name)
+        #     try:
+        #         deleting.wait()
+        #     except:
+        #         pass
 
 
 class PoolPreparer(AzureMgmtPreparer):
@@ -248,9 +264,10 @@ class JobPreparer(AzureMgmtPreparer):
     def _get_batch_client(self, **kwargs):
         try:
             account = kwargs[self.batch_account_parameter_name]
-            credentials = kwargs[self.batch_credentials_parameter_name]
+            cred_policy = kwargs[self.batch_credentials_parameter_name]
             return azure.batch.BatchServiceClient(
-                credentials, batch_url='https://' + account.account_endpoint)
+                'https://' + account.account_endpoint,
+                policies = [cred_policy])
         except KeyError:
             template = 'To create a batch job, a batch account is required. Please add ' \
                        'decorator @AccountPreparer in front of this job preparer.'
@@ -285,10 +302,10 @@ class JobPreparer(AzureMgmtPreparer):
             )
             try:
                 self.client.job.add(self.resource)
-            except azure.batch.models.BatchErrorException as e:
+            except azure.core.exceptions.HttpResponseError as e:
                 message = "{}:{} ".format(e.error.code, e.error.message)
-                for v in e.error.values:
-                    message += "\n{}: {}".format(v.key, v.value)
+                # for v in e.error.values:
+                #     message += "\n{}: {}".format(v.key, v.value)
                 raise AzureTestError(message)
         else:
             self.resource = FakeResource(name=name, id=name)

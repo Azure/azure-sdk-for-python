@@ -5,7 +5,8 @@ import threading
 import types
 import sys
 
-from ..models import BatchErrorException, TaskAddCollectionResult, TaskAddStatus
+from azure.core.exceptions import HttpResponseError
+from ..models import TaskAddCollectionResult, TaskAddStatus
 from ..custom.custom_errors import CreateTasksErrorException
 from ..operations._task_operations import TaskOperations
 
@@ -83,11 +84,11 @@ class _TaskWorkflowManager(object):
                 self._task_add_collection_options,
                 self._custom_headers,
                 self._raw)
-        except BatchErrorException as e:
+        except HttpResponseError as e:
             # In case of a chunk exceeding the MaxMessageSize split chunk in half
             # and resubmit smaller chunk requests
             # TODO: Replace string with constant variable once available in SDK
-            if e.error.code == "RequestBodyTooLarge":  # pylint: disable=no-member
+            if e.error == "RequestBodyTooLarge":  # pylint: disable=no-member
                 # In this case the task is misbehaved and will not be able to be added due to:
                 #   1) The task exceeding the max message size
                 #   2) A single cell of the task exceeds the per-cell limit, or
@@ -308,4 +309,3 @@ def patch_client():
     operations_modules = importlib.import_module('azure.batch.operations')
     operations_modules.TaskOperations.add_collection = build_new_add_collection(operations_modules.TaskOperations.add_collection)
     models = importlib.import_module('azure.batch.models')
-    models.BatchErrorException.__str__ = batch_error_exception_string

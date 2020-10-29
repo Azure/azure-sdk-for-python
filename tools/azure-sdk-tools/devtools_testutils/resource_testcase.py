@@ -85,18 +85,19 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         }
 
     def remove_resource(self, name, **kwargs):
-        if self.is_live and self._need_creation:
-            try:
-                if 'wait_timeout' in kwargs:
-                    azure_poller = self.client.resource_groups.delete(name)
-                    azure_poller.wait(kwargs.get('wait_timeout'))
-                    if azure_poller.done():
-                        return
-                    raise AzureTestError('Timed out waiting for resource group to be deleted.')
-                else:
-                    self.client.resource_groups.delete(name, polling=False)
-            except Exception:
-                pass
+        pass
+        # if self.is_live and self._need_creation:
+        #     try:
+        #         if 'wait_timeout' in kwargs:
+        #             azure_poller = self.client.resource_groups.delete(name)
+        #             azure_poller.wait(kwargs.get('wait_timeout'))
+        #             if azure_poller.done():
+        #                 return
+        #             raise AzureTestError('Timed out waiting for resource group to be deleted.')
+        #         else:
+        #             self.client.resource_groups.delete(name, polling=False)
+        #     except Exception:
+        #         pass
 
 RandomNameResourceGroupPreparer = functools.partial(ResourceGroupPreparer, random_name_enabled=True)
 CachedResourceGroupPreparer = functools.partial(ResourceGroupPreparer, use_cache=True, random_name_enabled=True)

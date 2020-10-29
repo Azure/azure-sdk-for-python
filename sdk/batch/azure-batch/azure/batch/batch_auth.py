@@ -17,6 +17,7 @@ from requests.auth import AuthBase
 from msrest.authentication import Authentication
 from msrest import Serializer
 from msrest.serialization import TZ_UTC
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 try:
     from urlparse import urlparse, parse_qs
@@ -24,7 +25,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse, parse_qs
 
-class SharedKeyAuth(AuthBase):
+class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     headers_to_sign = [
         'content-encoding',
@@ -39,12 +40,12 @@ class SharedKeyAuth(AuthBase):
         'if-unmodified-since',
         'range']
 
-    def __init__(self, header, account_name, key):
-        self._header = header
+    def __init__(self, account_name, key):
         self._account_name = account_name
         self._key = key
 
-    def __call__(self, request):
+    def on_request(self, request):
+        request = request.http_request
 
         if not request.headers.get('ocp-date'):
             now = datetime.datetime.utcnow()
@@ -90,7 +91,7 @@ class SharedKeyAuth(AuthBase):
         auth_string = "SharedKey {}:{}".format(
             self._account_name, self._sign_string(string_to_sign))
 
-        request.headers[self._header] = auth_string
+        request.headers["Authorization"] = auth_string
 
         return request
 
@@ -108,18 +109,3 @@ class SharedKeyAuth(AuthBase):
         digest = signed_hmac_sha256.digest()
 
         return base64.b64encode(digest).decode('utf-8')
-
-
-class SharedKeyCredentials(Authentication):
-
-    def __init__(self, account_name, key):
-        super(SharedKeyCredentials, self).__init__()
-        self.auth = SharedKeyAuth(self.header, account_name, key)
-    
-    def signed_session(self, session=None):
-
-        session = super(SharedKeyCredentials, self).signed_session(session=session)
-        session.auth = self.auth
-
-        return session
-    
