@@ -16,14 +16,14 @@ from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusEr
 from .utils import renewable_start_time, utc_now
 
 if TYPE_CHECKING:
-    from typing import Callable, Union, Optional, Awaitable
-    from .message import ReceivedMessage
-    LockRenewFailureCallback = Callable[[Union[ServiceBusSession, ReceivedMessage],
+    from typing import Callable, Union, Optional
+    from .message import ServiceBusReceivedMessage
+    LockRenewFailureCallback = Callable[[Union[ServiceBusSession, ServiceBusReceivedMessage],
                                          Optional[Exception]], None]
 
 _log = logging.getLogger(__name__)
 
-class AutoLockRenew(object):
+class AutoLockRenewer(object):
     """Auto renew locks for messages and sessions using a background thread pool.
 
     :param executor: A user-specified thread pool. This cannot be combined with
@@ -71,7 +71,7 @@ class AutoLockRenew(object):
 
     def __enter__(self):
         if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+            raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         return self
 
@@ -113,18 +113,18 @@ class AutoLockRenew(object):
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(
                 "Failed to auto-renew lock",
-                inner_exception=e)
+                error=e)
             renewable.auto_renew_error = error
         finally:
             if on_lock_renew_failure and not clean_shutdown:
                 on_lock_renew_failure(renewable, error)
 
     def register(self, renewable, timeout=300, on_lock_renew_failure=None):
-        # type: (Union[ReceivedMessage, ServiceBusSession], float, Optional[LockRenewFailureCallback]) -> None
+        # type: (Union[ServiceBusReceivedMessage, ServiceBusSession], float, Optional[LockRenewFailureCallback]) -> None
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
-        :type renewable: Union[~azure.servicebus.ReceivedMessage, ~azure.servicebus.ServiceBusSession]
+        :type renewable: Union[~azure.servicebus.ServiceBusReceivedMessage, ~azure.servicebus.ServiceBusSession]
         :param timeout: A time in seconds that the lock should be maintained for. Default value is 300 (5 minutes).
         :type timeout: float
         :param on_lock_renew_failure: A callback may be specified to be called when the lock is lost on the renewable
@@ -134,7 +134,7 @@ class AutoLockRenew(object):
         :rtype: None
         """
         if self._shutdown.is_set():
-            raise ServiceBusError("The AutoLockRenew has already been shutdown. Please create a new instance for"
+            raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         self._executor.submit(self._auto_lock_renew, renewable, starttime, timeout, on_lock_renew_failure)

@@ -16,6 +16,9 @@ from phone_number_testcase_async import AsyncPhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
 import os
 
+SKIP_PHONE_NUMBER_TESTS = True
+PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
+
 class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
 
     def setUp(self):
@@ -125,6 +128,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_all_phone_numbers(self):
         async with self._phone_number_administration_client:
             pages = self._phone_number_administration_client.list_all_phone_numbers()
@@ -136,6 +140,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_all_area_codes(self):
         async with self._phone_number_administration_client:
             area_codes = await self._phone_number_administration_client.get_all_area_codes(
@@ -147,6 +152,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_capabilities_update(self):
         async with self._phone_number_administration_client:
             capability_response = await self._phone_number_administration_client.get_capabilities_update(
@@ -156,6 +162,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_update_capabilities(self):
         update = NumberUpdateCapabilities(add=iter(["InboundCalling"]))
 
@@ -171,6 +178,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_all_supported_countries(self):
         async with self._phone_number_administration_client:
             countries = self._phone_number_administration_client.list_all_supported_countries()
@@ -182,6 +190,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_number_configuration(self):
         async with self._phone_number_administration_client:
             phone_number_response = await self._phone_number_administration_client.get_number_configuration(
@@ -191,6 +200,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_configure_number(self):
         pstnConfig = PstnConfiguration(
             callback_url="https://callbackurl",
@@ -205,6 +215,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_phone_plan_groups(self):
         async with self._phone_number_administration_client:
             phone_plan_group_response = self._phone_number_administration_client.list_phone_plan_groups(
@@ -219,6 +230,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_phone_plans(self):
         async with self._phone_number_administration_client:
             phone_plan_response = self._phone_number_administration_client.list_phone_plans(
@@ -234,6 +246,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_phone_plan_location_options(self):
         async with self._phone_number_administration_client:
             location_options_response = await self._phone_number_administration_client.get_phone_plan_location_options(
@@ -245,6 +258,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_release_by_id(self):
         async with self._phone_number_administration_client:
             phone_number_release_response = await self._phone_number_administration_client.get_release_by_id(
@@ -254,6 +268,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_all_releases(self):
         async with self._phone_number_administration_client:
             releases_response = self._phone_number_administration_client.list_all_releases()
@@ -266,6 +281,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_release_phone_numbers(self):
         async with self._phone_number_administration_client:
             releases_response = await self._phone_number_administration_client.release_phone_numbers(
@@ -275,6 +291,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_search_by_id(self):
         async with self._phone_number_administration_client:
             phone_number_search_response = await self._phone_number_administration_client.get_search_by_id(
@@ -284,6 +301,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_create_search(self):
         searchOptions = CreateSearchOptions(
             area_code=self.area_code_for_search,
@@ -300,6 +318,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_cancel_search(self):
         async with self._phone_number_administration_client:
             cancel_search_response = await self._phone_number_administration_client.cancel_search(
@@ -309,6 +328,7 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
 
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_purchase_search(self):
         async with self._phone_number_administration_client:
             purchase_search_response = await self._phone_number_administration_client.purchase_search(

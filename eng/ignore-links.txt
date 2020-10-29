@@ -1,2 +1,6 @@
 https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}
 https://pypi.org/project/azure-servicebus/7.0.0b7/
+https://github.com/Azure/azure-digital-twins/blob/private-preview/Documentation/how-to-manage-routes.md
+https://pypi.org/project/azure-digitaltwins-core
+
+

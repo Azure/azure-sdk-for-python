@@ -517,6 +517,50 @@ class PartialBatchErrorException(HttpResponseError):
         super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
+class BatchErrorException(HttpResponseError):
+    """There is a failure in batch operations.
+
+    :param str message: The message of the exception.
+    :param response: Server response to be deserialized.
+    :param list parts: A list of the parts in multipart response.
+    """
+
+    def __init__(self, message, response, parts):
+        self.parts = parts
+        super(BatchErrorException, self).__init__(message=message, response=response)
+
+
+class BatchTransactionResult(object):
+    """The result of a successful batch operation, can be used by a user to
+    recreate a request in the case of BatchErrorException
+
+    :param List[HttpRequest] requests: The requests of the batch
+    :param List[HttpResponse] results: The HTTP response of each request
+    """
+
+    def __init__(self, requests, results, entities):
+        self.requests = requests
+        self.results = results
+        self.entities = entities
+
+    def get_entity(self, row_key):
+        for entity in self.entities:
+            if entity['RowKey'] == row_key:
+                return entity
+        return None
+
+    def get_request(self, row_key):
+        for i, entity in enumerate(self.entities):
+            if entity['RowKey'] == row_key:
+                return self.requests[i]
+        return None
+
+    def get_result(self, row_key):
+        for i, entity in enumerate(self.entities):
+            if entity['RowKey'] == row_key:
+                return self.results[i]
+        return None
+
 
 class LocationMode(object):
     """

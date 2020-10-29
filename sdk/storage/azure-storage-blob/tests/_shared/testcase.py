@@ -58,8 +58,10 @@ class FakeTokenCredential(object):
     """
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
+        self.get_token_count = 0
 
     def get_token(self, *args):
+        self.get_token_count += 1
         return self.token
 
 

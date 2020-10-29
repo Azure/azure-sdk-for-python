@@ -21,15 +21,15 @@ from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
-    from ._servicebus_session_receiver import ServiceBusSessionReceiver
-    from .aio._servicebus_session_receiver_async import ServiceBusSessionReceiver as ServiceBusSessionReceiverAsync
+    from ._servicebus_receiver import ServiceBusReceiver
+    from .aio._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
     def __init__(self, session_id, receiver, encoding="UTF-8"):
-        # type: (str, Union[ServiceBusSessionReceiver, ServiceBusSessionReceiverAsync], str) -> None
+        # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync], str) -> None
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = encoding
@@ -39,7 +39,7 @@ class BaseSession(object):
 
     def _check_live(self):
         if self._lock_expired:
-            raise SessionLockExpired(inner_exception=self.auto_renew_error)
+            raise SessionLockExpired(error=self.auto_renew_error)
 
     @property
     def _lock_expired(self):
@@ -77,7 +77,7 @@ class ServiceBusSession(BaseSession):
     **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
 
-    :ivar auto_renew_error: Error when AutoLockRenew is used and it fails to renew the session lock.
+    :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the session lock.
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 
     .. admonition:: Example:
@@ -91,7 +91,7 @@ class ServiceBusSession(BaseSession):
     """
 
     def get_state(self, **kwargs):
-        # type: (Any) -> str
+        # type: (Any) -> bytes
         # pylint: disable=protected-access
         """Get the session state.
 
@@ -121,8 +121,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout
         )
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
-        if isinstance(session_state, six.binary_type):
-            session_state = session_state.decode(self._encoding)
         return session_state
 
     def set_state(self, state, **kwargs):
@@ -167,7 +165,7 @@ class ServiceBusSession(BaseSession):
         Once the lock is lost the connection will be closed; an expired lock cannot be renewed.
 
         This operation can also be performed as a threaded background task by registering the session
-        with an `azure.servicebus.AutoLockRenew` instance.
+        with an `azure.servicebus.AutoLockRenewer` instance.
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.

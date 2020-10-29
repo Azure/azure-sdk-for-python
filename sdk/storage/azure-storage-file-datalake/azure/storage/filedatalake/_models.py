@@ -130,7 +130,7 @@ class DirectoryProperties(DictMixin):
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
         self.etag = kwargs.get('ETag')
-        self.deleted = None
+        self.deleted = False
         self.metadata = kwargs.get('metadata')
         self.lease = LeaseProperties(**kwargs)
         self.last_modified = kwargs.get('Last-Modified')
@@ -161,7 +161,7 @@ class FileProperties(DictMixin):
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
         self.etag = kwargs.get('ETag')
-        self.deleted = None
+        self.deleted = False
         self.metadata = kwargs.get('metadata')
         self.lease = LeaseProperties(**kwargs)
         self.last_modified = kwargs.get('Last-Modified')

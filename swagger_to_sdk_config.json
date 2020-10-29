@@ -14,7 +14,7 @@
       "create_sdk_pull_requests": true,
       "sdk_generation_pull_request_base": "integration_branch"
     },
-    "repotag": "azure-sdk-for-python",
+    "repotag": "azure-sdk-for-python-track2",
     "version": "0.2.0"
   }
 }

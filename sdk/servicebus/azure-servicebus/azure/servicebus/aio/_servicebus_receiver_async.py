@@ -13,9 +13,10 @@ import six
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
+from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
-from .._common.message import PeekedMessage
-from ._async_message import ReceivedMessage
+from .._common.message import ServiceBusPeekedMessage
+from ._async_message import ServiceBusReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -107,7 +108,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        self._message_iter = None  # type: Optional[AsyncIterator[ReceivedMessage]]
+        self._message_iter = None  # type: Optional[AsyncIterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -135,6 +136,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
 
         self._populate_attributes(**kwargs)
+        self._session = ServiceBusSession(self._session_id, self, self._config.encoding) if self._session_id else None
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
     # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.
@@ -144,6 +146,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self.max_wait_time = max_wait_time
 
         async def __anext__(self):
+            # pylint: disable=protected-access
             original_timeout = None
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
@@ -183,7 +186,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if not self._message_iter:
             self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
-        message = self._build_message(uamqp_message, ReceivedMessage)
+        message = self._build_message(uamqp_message, ServiceBusReceivedMessage)
         return message
 
     def _create_handler(self, auth):
@@ -223,7 +226,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise
 
     async def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
+        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         await self._open()
 
@@ -264,7 +267,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
 
-        return [self._build_message(message, ReceivedMessage) for message in batch]
+        return [self._build_message(message, ServiceBusReceivedMessage) for message in batch]
 
     async def _settle_message(self, settlement, lock_tokens, dead_letter_details=None):
         message = {
@@ -291,11 +294,33 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=timeout
         )
 
+    @property
+    def session(self) -> ServiceBusSession:
+        """
+        Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
+        entities.
+
+        :rtype: ~azure.servicebus.aio.ServiceBusSession
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START get_session_async]
+                :end-before: [END get_session_async]
+                :language: python
+                :dedent: 4
+                :caption: Get session from a receiver
+        """
+        return self._session  # type: ignore
+
     async def close(self) -> None:
         await super(ServiceBusReceiver, self).close()
         self._message_iter = None
 
-    def get_streaming_message_iter(self, max_wait_time: Optional[float] = None) -> AsyncIterator[ReceivedMessage]:
+    def get_streaming_message_iter(
+        self,
+        max_wait_time: Optional[float] = None
+    ) -> AsyncIterator[ServiceBusReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
@@ -385,7 +410,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self,
         max_message_count: Optional[int] = None,
         max_wait_time: Optional[float] = None
-    ) -> List[ReceivedMessage]:
+    ) -> List[ServiceBusReceivedMessage]:
         """Receive a batch of messages at once.
 
         This approach is optimal if you wish to process multiple messages simultaneously, or
@@ -405,7 +430,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
          timeout period, an empty list will be returned.
-        :rtype: list[~azure.servicebus.aio.ReceivedMessage]
+        :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -432,7 +457,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self,
         sequence_numbers: Union[int, List[int]],
         **kwargs: Any
-    ) -> List[ReceivedMessage]:
+    ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -442,7 +467,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          deferred.
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: list[~azure.servicebus.aio.ReceivedMessage]
+        :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -476,7 +501,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         handler = functools.partial(mgmt_handlers.deferred_message_op,
                                     receive_mode=self._receive_mode,
-                                    message_type=ReceivedMessage,
+                                    message_type=ServiceBusReceivedMessage,
                                     receiver=self)
         with self._receive_trace_context_manager(span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
             messages = await self._mgmt_request_response_with_retry(
@@ -488,7 +513,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             trace_link_message(messages, receive_span)
             return messages
 
-    async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[PeekedMessage]:
+    async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[ServiceBusPeekedMessage]:
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -499,7 +524,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: list[~azure.servicebus.PeekedMessage]
+        :rtype: list[~azure.servicebus.ServiceBusPeekedMessage]
 
         .. admonition:: Example:
 

@@ -5,28 +5,23 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/enrichment/anomalyDetection/configurations
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metric_id/enrichment/anomalyDetection/configurations
   response:
     body:
-      string: '{"value":[{"anomalyDetectionConfigurationId":"2fe9e687-4c9e-4e1b-8ec8-6541553db969","name":"new
-        Name","description":"new description","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"OR","hardThresholdCondition":{"upperBound":500.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":5,"minRatio":5.0}},"changeThresholdCondition":{"changePercentage":44.0,"shiftPoint":2,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":4,"minRatio":4.0}}},"dimensionGroupOverrideConfigurations":[{"group":{"dimension":{"Dim1":"Common
-        Lime"}},"hardThresholdCondition":{"upperBound":400.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":2,"minRatio":2.0}}}],"seriesOverrideConfigurations":[{"series":{"seriesId":"54bdef99c03c71c764fd3ea671cd1260","dimension":{"Dim1":"Common
-        Beech","Dim2":"Ant"}},"changeThresholdCondition":{"changePercentage":33.0,"shiftPoint":1,"anomalyDetectorDirection":"Both","withinRange":true,"suppressCondition":{"minNumber":2,"minRatio":2.0}}}]},{"anomalyDetectionConfigurationId":"bd309211-64b5-4a7a-bb81-a2789599c526","name":"js-all-as-anomaly","description":"","metricId":"metric_id","wholeMetricConfiguration":{"hardThresholdCondition":{"upperBound":0.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"a420626b-b09b-4938-9bd3-91f263f50612","name":"test_detection_configuration_java","description":"","metricId":"metric_id","wholeMetricConfiguration":{"conditionOperator":"AND","smartDetectionCondition":{"sensitivity":68.0,"anomalyDetectorDirection":"Up","suppressCondition":{"minNumber":1,"minRatio":100.0}},"changeThresholdCondition":{"changePercentage":5.0,"shiftPoint":1,"anomalyDetectorDirection":"Up","withinRange":false,"suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[{"group":{"dimension":{"Dim1":"Common
-        Alder"}},"smartDetectionCondition":{"sensitivity":80.0,"anomalyDetectorDirection":"Down","suppressCondition":{"minNumber":1,"minRatio":100.0}}}],"seriesOverrideConfigurations":[{"series":{"seriesId":"8f0847fcd60e1002241f4da0f02b6d57","dimension":{"Dim1":"Common
-        Alder","Dim2":"American robin"}},"smartDetectionCondition":{"sensitivity":68.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}}]},{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":60.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}]}'
+      string: '{"value":[{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","name":"Default","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]},{"anomalyDetectionConfigurationId":"e17f32d4-3ddf-4dc7-84ee-b4130c7e1777","name":"detection-config","description":"","metricId":"metric_id","wholeMetricConfiguration":{"smartDetectionCondition":{"sensitivity":100.0,"anomalyDetectorDirection":"Both","suppressCondition":{"minNumber":1,"minRatio":100.0}}},"dimensionGroupOverrideConfigurations":[],"seriesOverrideConfigurations":[]}]}'
     headers:
-      apim-request-id: 70def1e6-8087-4389-8c38-526a92110321
-      content-length: '2925'
+      apim-request-id: aa24acd5-10f7-404f-ae5a-d001ace037f9
+      content-length: '818'
       content-type: application/json; charset=utf-8
-      date: Tue, 22 Sep 2020 01:48:02 GMT
+      date: Thu, 22 Oct 2020 15:55:04 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '2805'
-      x-request-id: 70def1e6-8087-4389-8c38-526a92110321
+      x-envoy-upstream-service-time: '138'
+      x-request-id: aa24acd5-10f7-404f-ae5a-d001ace037f9
     status:
       code: 200
       message: OK
-    url: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/metrics/3d48ed3e-6e6e-4391-b78f-b00dfee1e6f5/enrichment/anomalyDetection/configurations
+    url: https://js-metrics-advisor.cognitiveservices.azure.com//metricsadvisor/v1.0/metrics/27e3015f-04fd-44ba-a20b-bc529a0aebae/enrichment/anomalyDetection/configurations
 version: 1

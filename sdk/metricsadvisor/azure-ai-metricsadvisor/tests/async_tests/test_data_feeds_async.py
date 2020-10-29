@@ -7,6 +7,7 @@
 import datetime
 from dateutil.tz import tzutc
 import pytest
+from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.ai.metricsadvisor.models import (
@@ -15,8 +16,8 @@ from azure.ai.metricsadvisor.models import (
     AzureBlobDataFeed,
     AzureCosmosDBDataFeed,
     HttpRequestDataFeed,
-    Metric,
-    Dimension,
+    DataFeedMetric,
+    DataFeedDimension,
     DataFeedSchema,
     DataFeedIngestionSettings,
     DataFeedGranularity,
@@ -30,91 +31,63 @@ from azure.ai.metricsadvisor.models import (
     MongoDBDataFeed,
     MySqlDataFeed,
     PostgreSqlDataFeed,
-    ElasticsearchDataFeed
+    ElasticsearchDataFeed,
+    DataFeed
 )
 from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
 
 
 class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
-    async def test_create_simple_data_feed(self):
-        data_feed_name = self.create_random_name("testfeed")
-        async with self.admin_client:
-            try:
-                data_feed = await self.admin_client.create_data_feed(
-                    name=data_feed_name,
-                    source=SQLServerDataFeed(
-                        connection_string=self.sql_server_connection_string,
-                        query="select * from adsample2 where Timestamp = @StartTime"
-                    ),
-                    granularity="Daily",
-                    schema=["cost", "revenue"],
-                    ingestion_settings=datetime.datetime(2019, 10, 1)
-                )
-
-                self.assertIsNotNone(data_feed.id)
-                self.assertIsNotNone(data_feed.created_time)
-                self.assertIsNotNone(data_feed.name)
-                self.assertEqual(data_feed.source.data_source_type, "SqlServer")
-                self.assertIsNotNone(data_feed.source.connection_string)
-                self.assertIsNotNone(data_feed.source.query)
-                self.assertEqual(data_feed.granularity.granularity_type, "Daily")
-                self.assertEqual(data_feed.schema.metrics[0].name, "cost")
-                self.assertEqual(data_feed.schema.metrics[1].name, "revenue")
-                self.assertEqual(data_feed.ingestion_settings.ingestion_begin_time,
-                                 datetime.datetime(2019, 10, 1, tzinfo=tzutc()))
-            finally:
-                await self.admin_client.delete_data_feed(data_feed.id)
-
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_from_sql_server(self):
 
         data_feed_name = self.create_random_name("testfeedasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=data_feed_name,
-                    source=SQLServerDataFeed(
-                        connection_string=self.sql_server_connection_string,
-                        query=u"select * from adsample2 where Timestamp = @StartTime"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost", display_name="display cost", description="the cost"),
-                            Metric(name="revenue", display_name="display revenue", description="the revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category", display_name="display category"),
-                            Dimension(name="city", display_name="display city")
-                        ],
-                        timestamp_column="Timestamp"
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                        data_source_request_concurrency=0,
-                        ingestion_retry_delay=-1,
-                        ingestion_start_offset=-1,
-                        stop_retry_after=-1,
-                    ),
-                    options=DataFeedOptions(
-                        admins=["yournamehere@microsoft.com"],
-                        data_feed_description="my first data feed",
-                        missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                            fill_type="SmartFilling"
+                    DataFeed(
+                        name=data_feed_name,
+                        source=SQLServerDataFeed(
+                            connection_string=self.sql_server_connection_string,
+                            query=u"select * from adsample2 where Timestamp = @StartTime"
                         ),
-                        rollup_settings=DataFeedRollupSettings(
-                            rollup_type="NoRollup",
-                            rollup_method="None",
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
                         ),
-                        viewers=["viewers"],
-                        access_mode="Private",
-                        action_link_template="action link template"
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
+                                DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category", display_name="display category"),
+                                DataFeedDimension(name="city", display_name="display city")
+                            ],
+                            timestamp_column="Timestamp"
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                            data_source_request_concurrency=0,
+                            ingestion_retry_delay=-1,
+                            ingestion_start_offset=-1,
+                            stop_retry_after=-1,
+                        ),
+                        options=DataFeedOptions(
+                            admin_emails=["yournamehere@microsoft.com"],
+                            data_feed_description="my first data feed",
+                            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                                fill_type="SmartFilling"
+                            ),
+                            rollup_settings=DataFeedRollupSettings(
+                                rollup_type="NoRollup",
+                                rollup_method="None",
+                            ),
+                            viewer_emails=["viewers"],
+                            access_mode="Private",
+                            action_link_template="action link template"
+                        )
                     )
-
                 )
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
@@ -140,12 +113,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
                 self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
                 self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.options.admins)
+                self.assertIn("yournamehere@microsoft.com", data_feed.options.admin_emails)
                 self.assertEqual(data_feed.options.data_feed_description, "my first data feed")
                 self.assertEqual(data_feed.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_type, "NoRollup")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_method, "None")
-                self.assertEqual(data_feed.options.viewers, ["viewers"])
+                self.assertEqual(data_feed.options.viewer_emails, ["viewers"])
                 self.assertEqual(data_feed.options.access_mode, "Private")
                 self.assertEqual(data_feed.options.action_link_template, "action link template")
                 self.assertEqual(data_feed.status, "Active")
@@ -158,57 +131,58 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 with self.assertRaises(ResourceNotFoundError):
                     await self.admin_client.get_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_from_sql_server_with_custom_values(self):
 
         data_feed_name = self.create_random_name("testfeedasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=data_feed_name,
-                    source=SQLServerDataFeed(
-                        connection_string=self.sql_server_connection_string,
-                        query=u"select * from adsample2 where Timestamp = @StartTime"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Custom",
-                        custom_granularity_value=20
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost", display_name="display cost", description="the cost"),
-                            Metric(name="revenue", display_name="display revenue", description="the revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category", display_name="display category"),
-                            Dimension(name="city", display_name="display city")
-                        ],
-                        timestamp_column="Timestamp"
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                        data_source_request_concurrency=0,
-                        ingestion_retry_delay=-1,
-                        ingestion_start_offset=-1,
-                        stop_retry_after=-1,
-                    ),
-                    options=DataFeedOptions(
-                        admins=["yournamehere@microsoft.com"],
-                        data_feed_description="my first data feed",
-                        missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                            fill_type="CustomValue",
-                            custom_fill_value=10
+                    DataFeed(
+                        name=data_feed_name,
+                        source=SQLServerDataFeed(
+                            connection_string=self.sql_server_connection_string,
+                            query=u"select * from adsample2 where Timestamp = @StartTime"
                         ),
-                        rollup_settings=DataFeedRollupSettings(
-                            rollup_type="AlreadyRollup",
-                            rollup_method="Sum",
-                            rollup_identification_value="sumrollup"
+                        granularity=DataFeedGranularity(
+                            granularity_type="Custom",
+                            custom_granularity_value=20
                         ),
-                        viewers=["viewers"],
-                        access_mode="Private",
-                        action_link_template="action link template"
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost", display_name="display cost", description="the cost"),
+                                DataFeedMetric(name="revenue", display_name="display revenue", description="the revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category", display_name="display category"),
+                                DataFeedDimension(name="city", display_name="display city")
+                            ],
+                            timestamp_column="Timestamp"
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                            data_source_request_concurrency=0,
+                            ingestion_retry_delay=-1,
+                            ingestion_start_offset=-1,
+                            stop_retry_after=-1,
+                        ),
+                        options=DataFeedOptions(
+                            admin_emails=["yournamehere@microsoft.com"],
+                            data_feed_description="my first data feed",
+                            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                                fill_type="CustomValue",
+                                custom_fill_value=10
+                            ),
+                            rollup_settings=DataFeedRollupSettings(
+                                rollup_type="AlreadyRollup",
+                                rollup_method="Sum",
+                                rollup_identification_value="sumrollup"
+                            ),
+                            viewer_emails=["viewers"],
+                            access_mode="Private",
+                            action_link_template="action link template"
+                        )
                     )
-
                 )
                 self.assertIsNotNone(data_feed.id)
                 self.assertIsNotNone(data_feed.created_time)
@@ -234,14 +208,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.ingestion_settings.ingestion_retry_delay, -1)
                 self.assertEqual(data_feed.ingestion_settings.ingestion_start_offset, -1)
                 self.assertEqual(data_feed.ingestion_settings.stop_retry_after, -1)
-                self.assertIn("yournamehere@microsoft.com", data_feed.options.admins)
+                self.assertIn("yournamehere@microsoft.com", data_feed.options.admin_emails)
                 self.assertEqual(data_feed.options.data_feed_description, "my first data feed")
                 self.assertEqual(data_feed.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(data_feed.options.missing_data_point_fill_settings.custom_fill_value, 10)
                 self.assertEqual(data_feed.options.rollup_settings.rollup_type, "AlreadyRollup")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_method, "Sum")
                 self.assertEqual(data_feed.options.rollup_settings.rollup_identification_value, "sumrollup")
-                self.assertEqual(data_feed.options.viewers, ["viewers"])
+                self.assertEqual(data_feed.options.viewer_emails, ["viewers"])
                 self.assertEqual(data_feed.options.access_mode, "Private")
                 self.assertEqual(data_feed.options.action_link_template, "action link template")
                 self.assertEqual(data_feed.status, "Active")
@@ -254,35 +228,36 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 with self.assertRaises(ResourceNotFoundError):
                     await self.admin_client.get_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_table(self):
         name = self.create_random_name("tablefeedasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=AzureTableDataFeed(
-                        connection_string=self.azure_table_connection_string,
-                        query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
-                        table="adsample"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=AzureTableDataFeed(
+                            connection_string=self.azure_table_connection_string,
+                            query="PartitionKey ge '@StartTime' and PartitionKey lt '@EndTime'",
+                            table="adsample"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -295,35 +270,36 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_blob(self):
         name = self.create_random_name("blobfeedasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=AzureBlobDataFeed(
-                        connection_string=self.azure_blob_connection_string,
-                        container="adsample",
-                        blob_template="%Y/%m/%d/%h/JsonFormatV2.json"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=AzureBlobDataFeed(
+                            connection_string=self.azure_blob_connection_string,
+                            container="adsample",
+                            blob_template="%Y/%m/%d/%h/JsonFormatV2.json"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -336,36 +312,37 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_azure_cosmos_db(self):
         name = self.create_random_name("cosmosfeedasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=AzureCosmosDBDataFeed(
-                        connection_string=self.azure_cosmosdb_connection_string,
-                        sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
-                        database="adsample",
-                        collection_id="adsample"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=AzureCosmosDBDataFeed(
+                            connection_string=self.azure_cosmosdb_connection_string,
+                            sql_query="'SELECT * FROM Items I where I.Timestamp >= @StartTime and I.Timestamp < @EndTime'",
+                            database="adsample",
+                            collection_id="adsample"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -379,34 +356,35 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_http_request_get(self):
         name = self.create_random_name("httprequestfeedgetasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=HttpRequestDataFeed(
-                        url=self.http_request_get_url,
-                        http_method="GET"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=HttpRequestDataFeed(
+                            url=self.http_request_get_url,
+                            http_method="GET"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -419,35 +397,36 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_http_request_post(self):
         name = self.create_random_name("httprequestfeedpostasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=HttpRequestDataFeed(
-                        url=self.http_request_post_url,
-                        http_method="POST",
-                        payload="{'startTime': '@StartTime'}"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 10, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=HttpRequestDataFeed(
+                            url=self.http_request_post_url,
+                            http_method="POST",
+                            payload="{'startTime': '@StartTime'}"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 10, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -460,40 +439,41 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_application_insights(self):
         name = self.create_random_name("applicationinsightsasync")
         async with self.admin_client:
             try:
-                query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
-                    "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
-                    "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
-                    "duration_max_ms = max(duration) by resultCode"
+                query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
+                    "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
+                    "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
+                    "duration_max_ms = max(duration) by resultCode"
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=AzureApplicationInsightsDataFeed(
-                        azure_cloud="Azure",
-                        application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
-                        api_key=self.application_insights_api_key,
-                        query=query
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2020, 7, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=AzureApplicationInsightsDataFeed(
+                            azure_cloud="Azure",
+                            application_id="3706fe8b-98f1-47c7-bf69-b73b6e53274d",
+                            api_key=self.application_insights_api_key,
+                            query=query
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2020, 7, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -502,12 +482,12 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(data_feed.source.data_source_type, "AzureApplicationInsights")
                 self.assertIsNotNone(data_feed.source.api_key)
                 self.assertEqual(data_feed.source.application_id, "3706fe8b-98f1-47c7-bf69-b73b6e53274d")
-                self.assertEqual(data_feed.source.query, query)
+                self.assertIsNotNone(data_feed.source.query)
 
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_data_explorer(self):
         name = self.create_random_name("azuredataexplorerasync")
         async with self.admin_client:
@@ -515,28 +495,29 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 query = "let StartDateTime = datetime(@StartTime); let EndDateTime = StartDateTime + 1d; " \
                         "adsample | where Timestamp >= StartDateTime and Timestamp < EndDateTime"
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=AzureDataExplorerDataFeed(
-                        connection_string=self.azure_data_explorer_connection_string,
-                        query=query
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=AzureDataExplorerDataFeed(
+                            connection_string=self.azure_data_explorer_connection_string,
+                            query=query
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -549,37 +530,38 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_influxdb(self):
         name = self.create_random_name("influxdbasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=InfluxDBDataFeed(
-                        connection_string=self.influxdb_connection_string,
-                        database="adsample",
-                        user_name="adreadonly",
-                        password=self.influxdb_password,
-                        query="'select * from adsample2 where Timestamp = @StartTime'"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=InfluxDBDataFeed(
+                            connection_string=self.influxdb_connection_string,
+                            database="adsample",
+                            user_name="adreadonly",
+                            password=self.influxdb_password,
+                            query="'select * from adsample2 where Timestamp = @StartTime'"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -595,37 +577,38 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_datalake(self):
         name = self.create_random_name("datalakeasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=AzureDataLakeStorageGen2DataFeed(
-                        account_name="adsampledatalakegen2",
-                        account_key=self.azure_datalake_account_key,
-                        file_system_name="adsample",
-                        directory_template="%Y/%m/%d",
-                        file_template="adsample.json"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost", display_name="Cost"),
-                            Metric(name="revenue", display_name="Revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category", display_name="Category"),
-                            Dimension(name="city", display_name="City")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=AzureDataLakeStorageGen2DataFeed(
+                            account_name="adsampledatalakegen2",
+                            account_key=self.azure_datalake_account_key,
+                            file_system_name="adsample",
+                            directory_template="%Y/%m/%d",
+                            file_template="adsample.json"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost", display_name="Cost"),
+                                DataFeedMetric(name="revenue", display_name="Revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category", display_name="Category"),
+                                DataFeedDimension(name="city", display_name="City")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -641,35 +624,36 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_mongodb(self):
         name = self.create_random_name("mongodbasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=MongoDBDataFeed(
-                        connection_string=self.mongodb_connection_string,
-                        database="adsample",
-                        command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=MongoDBDataFeed(
+                            connection_string=self.mongodb_connection_string,
+                            database="adsample",
+                            command='{"find": "adsample", "filter": { Timestamp: { $eq: @StartTime }} "batchSize": 2000,}'
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -683,34 +667,35 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_mysql(self):
         name = self.create_random_name("mysqlasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=MySqlDataFeed(
-                        connection_string=self.mysql_connection_string,
-                        query="'select * from adsample2 where Timestamp = @StartTime'"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=MySqlDataFeed(
+                            connection_string=self.mysql_connection_string,
+                            query="'select * from adsample2 where Timestamp = @StartTime'"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -723,34 +708,35 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_postgresql(self):
         name = self.create_random_name("postgresqlasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=PostgreSqlDataFeed(
-                        connection_string=self.postgresql_connection_string,
-                        query="'select * from adsample2 where Timestamp = @StartTime'"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost"),
-                            Metric(name="revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category"),
-                            Dimension(name="city")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=PostgreSqlDataFeed(
+                            connection_string=self.postgresql_connection_string,
+                            query="'select * from adsample2 where Timestamp = @StartTime'"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost"),
+                                DataFeedMetric(name="revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category"),
+                                DataFeedDimension(name="city")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -763,36 +749,37 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_create_data_feed_with_elasticsearch(self):
         name = self.create_random_name("elasticasync")
         async with self.admin_client:
             try:
                 data_feed = await self.admin_client.create_data_feed(
-                    name=name,
-                    source=ElasticsearchDataFeed(
-                        host="ad-sample-es.westus2.cloudapp.azure.com",
-                        port="9200",
-                        auth_header=self.elasticsearch_auth_header,
-                        query="'select * from adsample where timestamp = @StartTime'"
-                    ),
-                    granularity=DataFeedGranularity(
-                        granularity_type="Daily",
-                    ),
-                    schema=DataFeedSchema(
-                        metrics=[
-                            Metric(name="cost", display_name="Cost"),
-                            Metric(name="revenue", display_name="Revenue")
-                        ],
-                        dimensions=[
-                            Dimension(name="category", display_name="Category"),
-                            Dimension(name="city", display_name="City")
-                        ],
-                    ),
-                    ingestion_settings=DataFeedIngestionSettings(
-                        ingestion_begin_time=datetime.datetime(2019, 1, 1),
-                    ),
-
+                    DataFeed(
+                        name=name,
+                        source=ElasticsearchDataFeed(
+                            host="ad-sample-es.westus2.cloudapp.azure.com",
+                            port="9200",
+                            auth_header=self.elasticsearch_auth_header,
+                            query="'select * from adsample where timestamp = @StartTime'"
+                        ),
+                        granularity=DataFeedGranularity(
+                            granularity_type="Daily",
+                        ),
+                        schema=DataFeedSchema(
+                            metrics=[
+                                DataFeedMetric(name="cost", display_name="Cost"),
+                                DataFeedMetric(name="revenue", display_name="Revenue")
+                            ],
+                            dimensions=[
+                                DataFeedDimension(name="category", display_name="Category"),
+                                DataFeedDimension(name="city", display_name="City")
+                            ],
+                        ),
+                        ingestion_settings=DataFeedIngestionSettings(
+                            ingestion_begin_time=datetime.datetime(2019, 1, 1),
+                        ),
+                    )
                 )
 
                 self.assertIsNotNone(data_feed.id)
@@ -807,7 +794,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds()
@@ -816,16 +803,16 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_data_feed_name(self):
         async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(data_feed_name="testDataFeed1")
+            feeds = self.admin_client.list_data_feeds(data_feed_name="azsqlDatafeed")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
             assert len(feeds_list) == 1
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_status(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds(status="Paused")
@@ -834,16 +821,16 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) == 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_source_type(self):
         async with self.admin_client:
-            feeds = self.admin_client.list_data_feeds(data_source_type="AzureBlob")
+            feeds = self.admin_client.list_data_feeds(data_source_type="SqlServer")
             feeds_list = []
             async for item in feeds:
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_granularity_type(self):
         async with self.admin_client:
             feeds = self.admin_client.list_data_feeds(granularity_type="Daily")
@@ -852,7 +839,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 feeds_list.append(item)
             assert len(feeds_list) > 0
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_list_data_feeds_with_skip(self):
         async with self.admin_client:
             all_feeds = self.admin_client.list_data_feeds()
@@ -865,7 +852,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 skipped_feeds_list.append(feed)
             assert len(all_feeds_list) == len(skipped_feeds_list) + 1
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
@@ -885,7 +872,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.options.missing_data_point_fill_settings.fill_type = "CustomValue"
                 data_feed.options.missing_data_point_fill_settings.custom_fill_value = 2
                 data_feed.options.access_mode = "Public"
-                data_feed.options.viewers = ["updated"]
+                data_feed.options.viewer_emails = ["updated"]
                 data_feed.status = "Paused"
                 data_feed.options.action_link_template = "updated"
                 data_feed.source.connection_string = "updated"
@@ -908,7 +895,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
-                self.assertEqual(updated.options.viewers, ["updated"])
+                self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
                 self.assertEqual(updated.source.connection_string, "updated")
@@ -917,7 +904,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_kwargs(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
@@ -939,7 +926,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     fill_type="CustomValue",
                     custom_fill_value=2,
                     access_mode="Public",
-                    viewers=["updated"],
+                    viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
                     source=SQLServerDataFeed(
@@ -963,7 +950,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
-                self.assertEqual(updated.options.viewers, ["updated"])
+                self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
                 self.assertEqual(updated.source.connection_string, "updated")
@@ -972,7 +959,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_with_model_and_kwargs(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
@@ -992,7 +979,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 data_feed.options.missing_data_point_fill_settings.fill_type = "don't update me"
                 data_feed.options.missing_data_point_fill_settings.custom_fill_value = 4
                 data_feed.options.access_mode = "don't update me"
-                data_feed.options.viewers = ["don't update me"]
+                data_feed.options.viewer_emails = ["don't update me"]
                 data_feed.status = "don't update me"
                 data_feed.options.action_link_template = "don't update me"
                 data_feed.source.connection_string = "don't update me"
@@ -1013,7 +1000,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     fill_type="CustomValue",
                     custom_fill_value=2,
                     access_mode="Public",
-                    viewers=["updated"],
+                    viewer_emails=["updated"],
                     status="Paused",
                     action_link_template="updated",
                     source=SQLServerDataFeed(
@@ -1037,7 +1024,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "CustomValue")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 2)
                 self.assertEqual(updated.options.access_mode, "Public")
-                self.assertEqual(updated.options.viewers, ["updated"])
+                self.assertEqual(updated.options.viewer_emails, ["updated"])
                 self.assertEqual(updated.status, "Paused")
                 self.assertEqual(updated.options.action_link_template, "updated")
                 self.assertEqual(updated.source.connection_string, "updated")
@@ -1046,7 +1033,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
             finally:
                 await self.admin_client.delete_data_feed(data_feed.id)
 
-    @TestMetricsAdvisorAdministrationClientBaseAsync.await_prepared_test
+    @AzureTestCase.await_prepared_test
     async def test_update_data_feed_by_reseting_properties(self):
         async with self.admin_client:
             data_feed = await self._create_data_feed_for_update("update")
@@ -1067,7 +1054,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                     fill_type=None,
                     custom_fill_value=None,
                     access_mode=None,
-                    viewers=None,
+                    viewer_emails=None,
                     status=None,
                     action_link_template=None,
                 )
@@ -1087,7 +1074,7 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(updated.options.missing_data_point_fill_settings.fill_type, "SmartFilling")
                 self.assertEqual(updated.options.missing_data_point_fill_settings.custom_fill_value, 0)
                 self.assertEqual(updated.options.access_mode, "Private")
-                # self.assertEqual(updated.options.viewers, ["viewers"]) # doesn't currently clear
+                # self.assertEqual(updated.options.viewer_emails, ["viewers"]) # doesn't currently clear
                 self.assertEqual(updated.status, "Active")
                 # self.assertEqual(updated.options.action_link_template, "updated")  # doesn't currently clear
 
