@@ -47,22 +47,6 @@ class ServiceBusConnectionStringProperties(DictMixin):
         """
         return self._shared_access_signature
 
-    @property
-    def _shared_access_key_name(self):
-        """
-        The name of the shared access key.
-        """
-        return self._shared_access_key_name
-
-    @property
-    def _shared_access_key(self):
-        """
-        Required for authentication along with the key name. A shared_access_signature can be used
-        alternatively.
-        """
-        return self._shared_access_key
-
-
 
 def parse_connection_string(conn_str):
     # type(str) -> ServiceBusConnectionStringProperties

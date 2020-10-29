@@ -11,7 +11,7 @@ An example to show the usage of connection string parser.
 import os
 from azure.servicebus import (
     ServiceBusClient,
-    Message,
+    ServiceBusMessage,
     ServiceBusConnectionStringProperties,
     parse_connection_string,
 )
@@ -36,6 +36,6 @@ servicebus_client = ServiceBusClient(
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     with sender:
-        sender.send_messages(Message('Single Message'))
+        sender.send_messages(ServiceBusMessage('Single Message'))
 
 print("Send message is done.")
