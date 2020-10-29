@@ -345,10 +345,9 @@ class TestContentFromStream(FormRecognizerTest):
         result = poller.result()
         assert len(result) == 1
 
-        # off-by-one error with elements, uncomment when fixed
-        # poller = client.begin_recognize_content(myform, pages=["1", "3"])
-        # result = poller.result()
-        # assert len(result) == 2
+        poller = client.begin_recognize_content(myform, pages=["1", "3"])
+        result = poller.result()
+        assert len(result) == 2
 
         poller = client.begin_recognize_content(myform, pages=["1-2"])
         result = poller.result()

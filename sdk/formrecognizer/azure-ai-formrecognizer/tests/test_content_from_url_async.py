@@ -267,10 +267,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert len(result) == 1
 
-            # off-by-one error with elements, uncomment when fixed
-            # poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1", "3"])
-            # result = await poller.result()
-            # assert len(result) == 2
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1", "3"])
+            result = await poller.result()
+            assert len(result) == 2
 
             poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1-2"])
             result = await poller.result()

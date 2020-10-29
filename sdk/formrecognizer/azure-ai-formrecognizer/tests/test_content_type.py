@@ -60,12 +60,5 @@ class TestContentType(FormRecognizerTest):
         self.assertEqual(content_type, "image/tiff")
 
     def test_bmp(self):
-        with open(self.form_bmp, "rb") as fd:
-            content_type = get_content_type(fd)
-        self.assertEqual(content_type, "image/bmp")
-
-    def test_bmp_bytes(self):
-        with open(self.form_bmp, "rb") as fd:
-            myfile = fd.read()
-        content_type = get_content_type(myfile)
+        content_type = get_content_type(b"\x42\x4D")
         self.assertEqual(content_type, "image/bmp")
