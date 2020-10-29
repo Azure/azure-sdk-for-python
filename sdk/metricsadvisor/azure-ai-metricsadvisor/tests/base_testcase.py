@@ -205,7 +205,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_data_feed_and_detection_config(self, name):
         data_feed = self._create_data_feed(name)
-        detection_config_name = self.create_random_name(name)
+        detection_config_name = create_random_name(name)
         detection_config = self.admin_client.create_detection_configuration(
             AnomalyDetectionConfiguration(
                 name=detection_config_name,
@@ -274,7 +274,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_alert_config_for_update(self, name):
         detection_config, data_feed = self._create_data_feed_and_detection_config(name)
-        alert_config_name = self.create_random_name(name)
+        alert_config_name = create_random_name(name)
         alert_config = self.admin_client.create_alert_configuration(
             AnomalyAlertConfiguration(
                 name=alert_config_name,
@@ -332,7 +332,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_detection_config_for_update(self, name):
         data_feed = self._create_data_feed(name)
-        detection_config_name = self.create_random_name("testupdated")
+        detection_config_name = create_random_name("testupdated")
         detection_config = self.admin_client.create_detection_configuration(
             AnomalyDetectionConfiguration(
                 name=detection_config_name,
