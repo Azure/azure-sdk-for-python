@@ -527,7 +527,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 for message in messages:
                     print_message(_logger, message)
                     with pytest.raises(MessageSettleFailed):
-                        await receiver.complete_message(message)
+                        receiver.complete_message(message)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -598,7 +598,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             renewer = AutoLockRenewer()
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
-                renewer.register(receiver.session, timeout=60, on_lock_renew_failure = lock_lost_callback)
+                renewer.register(receiver, receiver.session, timeout=60, on_lock_renew_failure = lock_lost_callback)
                 print("Registered lock renew thread", receiver.session._locked_until_utc, utc_now())
                 with pytest.raises(SessionLockExpired):
                     for message in receiver:
@@ -637,7 +637,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
                 session = receiver.session
-                renewer.register(session, timeout=5, on_lock_renew_failure=lock_lost_callback)
+                renewer.register(receiver, session, timeout=5, on_lock_renew_failure=lock_lost_callback)
             sleep_until_expired(receiver.session)
             assert not results
 

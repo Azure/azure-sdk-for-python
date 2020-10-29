@@ -54,7 +54,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     count += 1
-                    receiver.message.complete_message(message)
+                    receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -169,7 +169,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
             ) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
-                    receiver.message.complete_message(message)
+                    dl_receiver.complete_message(message)
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'

@@ -747,7 +747,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for message in messages:
                     print_message(_logger, message)
                     with pytest.raises(MessageSettleFailed):
-                        await receiver.complete_message(message)
+                        receiver.complete_message(message)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -797,7 +797,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert message.reply_to == 'reply_to'
                     assert message.time_to_live == timedelta(seconds=60)
                     with pytest.raises(MessageSettleFailed):
-                        await receiver.complete_message(message)
+                        receiver.complete_message(message)
 
                     sender.send_messages(message)
 
@@ -1426,7 +1426,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that in normal operation it does not get called
-            auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
             time.sleep(3)
             assert not results
             assert not errors
@@ -1437,7 +1437,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
             message = MockReceivedMessage(prevent_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             message._settled = True
             time.sleep(3)
             assert not results
@@ -1449,7 +1449,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is called when there is an overt renew failure
             message = MockReceivedMessage(exception_on_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             time.sleep(3)
             assert len(results) == 1 and results[-1]._lock_expired == True
             assert errors[-1]
@@ -1460,7 +1460,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is not called when the renewer is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             auto_lock_renew.close()
             time.sleep(3)
             assert not results
@@ -1472,7 +1472,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that it is not called when the receiver is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             message._receiver._running = False
             time.sleep(3)
             assert not results
@@ -1508,7 +1508,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 pass
 
         with pytest.raises(ServiceBusError):
-            auto_lock_renew.register(renewable=MockReceivedMessage())
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
 
     def test_queue_message_properties(self):
         scheduled_enqueue_time = (utc_now() + timedelta(seconds=20)).replace(microsecond=0)
@@ -1997,7 +1997,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
             raise uamqp.errors.AMQPConnectionError()
 
-        def _hack_sb_message_settle_message(self, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
+        def _hack_sb_receiver_settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
             raise uamqp.errors.AMQPError()
 
         with ServiceBusClient.from_connection_string(
@@ -2022,10 +2022,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(ServiceBusMessage("body"), timeout=5)
 
                 message = receiver.receive_messages()[0]
-                message._settle_message = types.MethodType(_hack_sb_message_settle_message, message)
-                with pytest.raises(ServiceBusConnectionError):
+
+                origin_sb_receiver_settle_message_method = receiver._settle_message
+                receiver._settle_message = types.MethodType(_hack_sb_receiver_settle_message, receiver)
+                with pytest.raises(MessageSettleFailed):
                     receiver.complete_message(message)
 
+                receiver._settle_message = origin_sb_receiver_settle_message_method
                 message = receiver.receive_messages(max_wait_time=6)[0]
                 receiver.complete_message(message)
 

@@ -272,6 +272,22 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         return [self._build_message(message) for message in batch]
 
+    def _settle_message_with_retry(
+        self,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None
+    ):
+        self._do_retryable_operation(
+            self._settle_message,
+            timeout=None,
+            message=message,
+            settle_operation=settle_operation,
+            dead_letter_reason=dead_letter_reason,
+            dead_letter_error_description=dead_letter_error_description
+        )
+
     def _settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         # pylint: disable=protected-access
@@ -301,8 +317,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 [message.lock_token],
                 dead_letter_details=dead_letter_details
             )
-        except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
+        except Exception as exception:
+            _LOGGER.info(
+                "Message settling: %r has encountered an exception (%r) through management link",
+                settle_operation,
+                exception
+            )
+            raise
 
     def _settle_message_via_mgmt_link(self, settlement, lock_tokens, dead_letter_details=None):
         # type: (str, List[Union[uuid.UUID, str]], Optional[Dict[str, Any]]) -> Any
@@ -585,7 +606,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         }
 
         self._populate_message_properties(message)
-
         handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION,
@@ -609,7 +629,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_COMPLETE)
-        self._settle_message(message, MESSAGE_COMPLETE)
+        self._settle_message_with_retry(message, MESSAGE_COMPLETE)
         message._settled = True  # pylint: disable=protected-access
 
     def abandon_message(self, message):
@@ -627,7 +647,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_ABANDON)
-        self._settle_message(message, MESSAGE_ABANDON)
+        self._settle_message_with_retry(message, MESSAGE_ABANDON)
         message._settled = True  # pylint: disable=protected-access
 
     def defer_message(self, message):
@@ -646,7 +666,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEFER)
-        self._settle_message(message, MESSAGE_DEFER)
+        self._settle_message_with_retry(message, MESSAGE_DEFER)
         message._settled = True  # pylint: disable=protected-access
 
     def dead_letter_message(self, message, reason=None, error_description=None):
@@ -668,7 +688,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEAD_LETTER)
-        self._settle_message(
+        self._settle_message_with_retry(
             message,
             MESSAGE_DEAD_LETTER,
             dead_letter_reason=reason,
