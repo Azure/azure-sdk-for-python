@@ -190,17 +190,17 @@ class LROPoller(Generic[PollingReturnType]):
         """
         try:
             self._polling_method.run()
-        except AzureError as err:
-            if not err.continuation_token:
+        except AzureError as error:
+            if not error.continuation_token:
                 try:
-                    err.continuation_token = self.continuation_token()
-                except Exception as err: # pylint: disable=broad-except
+                    error.continuation_token = self.continuation_token()
+                except Exception as err:  # pylint: disable=broad-except
                     _LOGGER.warning("Unable to retrieve continuation token: %s", err)
-                    err.continuation_token = None
+                    error.continuation_token = None
 
-            self._exception = err
-        except Exception as err: #pylint: disable=broad-except
-            self._exception = err
+            self._exception = error
+        except Exception as error:  # pylint: disable=broad-except
+            self._exception = error
 
         finally:
             self._done.set()
