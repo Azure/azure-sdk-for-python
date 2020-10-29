@@ -43,7 +43,6 @@ from .._common.constants import (
 from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
 from ._async_utils import create_authentication, get_running_loop
-from ..exceptions import MessageSettleFailed
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -287,7 +286,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         message: ServiceBusReceivedMessage,
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
-        dead_letter_error_description: Optional[str] =None
+        dead_letter_error_description: Optional[str] = None
     ):
         # pylint: disable=protected-access
         try:
@@ -723,7 +722,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
         try:
-            if self.session:  # type: ignore
+            if self.session:
                 raise TypeError("Session messages cannot be renewed. Please renew the session lock instead.")
         except AttributeError:
             pass
@@ -738,6 +737,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The timeout must be greater than 0.")
 
         expiry = await self._renew_locks(token, timeout=timeout)  # type: ignore
-        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
+        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: ignore
 
-        return message._expiry
+        return message._expiry  # type: ignore

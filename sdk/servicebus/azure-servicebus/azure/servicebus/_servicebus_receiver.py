@@ -44,9 +44,6 @@ from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
 
 from ._common.utils import utc_from_timestamp
-from .exceptions import (
-    MessageSettleFailed
-)
 from ._servicebus_session import ServiceBusSession
 
 
@@ -314,7 +311,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             } if settle_operation == MESSAGE_DEAD_LETTER else None
             self._settle_message_via_mgmt_link(
                 MESSAGE_MGMT_SETTLEMENT_TERM_MAP[settle_operation],
-                [message.lock_token],
+                [message.lock_token],  # type: ignore
                 dead_letter_details=dead_letter_details
             )
         except Exception as exception:
@@ -718,8 +715,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
         """
+        # type: ignore
         try:
-            if self.session:  # type: ignore
+            if self.session:
                 raise TypeError("Session messages cannot be renewed. Please renew the session lock instead.")
         except AttributeError:
             pass
@@ -734,6 +732,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise ValueError("The timeout must be greater than 0.")
 
         expiry = self._renew_locks(token, timeout=timeout)  # type: ignore
-        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)  # type: ignore
+        message._expiry = utc_from_timestamp(expiry[MGMT_RESPONSE_MESSAGE_EXPIRATION][0]/1000.0)
 
-        return message._expiry
+        return message._expiry  # type: ignore

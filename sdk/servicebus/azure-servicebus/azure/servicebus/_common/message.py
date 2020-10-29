@@ -575,7 +575,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     """
     def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
         # type: (uamqp.message.Message, ReceiveMode, Any) -> None
-        super(ServiceBusReceivedMessage, self).__init__(None, message=message)
+        super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
         self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)

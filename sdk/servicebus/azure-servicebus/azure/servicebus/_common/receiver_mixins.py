@@ -118,6 +118,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         dead_letter_error_description=None
     ):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> Callable
+        # pylint: disable=no-self-use
         if settle_operation == MESSAGE_COMPLETE:
             return functools.partial(message.message.accept)
         if settle_operation == MESSAGE_ABANDON:
