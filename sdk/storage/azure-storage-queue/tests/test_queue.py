@@ -50,7 +50,7 @@ class StorageQueueTest(StorageTestCase):
         queue = qsc.get_queue_client(queue_name)
         return queue
 
-    def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, queue_list = None):
+    def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, queue_list=None):
         queue = self._get_queue_reference(qsc, prefix)
         created = queue.create_queue()
         if queue_list is not None:
@@ -328,6 +328,8 @@ class StorageQueueTest(StorageTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
+        self.assertIsNone(queue_client.receive_message())
+
         queue_client.send_message(u'message1')
         queue_client.send_message(u'message2')
         queue_client.send_message(u'message3')
@@ -351,7 +353,6 @@ class StorageQueueTest(StorageTestCase):
 
         self.assertEqual(u'message3', peeked_message3.content)
         self.assertEqual(0, peeked_message3.dequeue_count)
-
 
     @GlobalStorageAccountPreparer()
     def test_get_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
