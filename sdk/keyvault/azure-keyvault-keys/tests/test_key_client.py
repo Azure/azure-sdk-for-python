@@ -12,7 +12,7 @@ import logging
 import sys
 import json
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.keyvault.keys import JsonWebKey, KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -215,10 +215,14 @@ class KeyClientTests(KeyVaultTestCase):
 
         # purge key
         client.purge_deleted_key(created_bundle.name)
+        self._poll_until_exception(
+            functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+        )
 
         # restore key
-        restored = client.restore_key_backup(key_backup)
-        self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
+        restore_function = functools.partial(client.restore_key_backup, key_backup)
+        restored_key = self._poll_until_no_exception(restore_function, ResourceExistsError)
+        self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()

@@ -10,7 +10,7 @@ import os
 import logging
 import json
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.keyvault.keys import JsonWebKey
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -319,9 +319,12 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         await client.purge_deleted_key(created_bundle.name)
 
         # restore key
-        restored = await client.restore_key_backup(key_backup)
-        self.assertEqual(created_bundle.id, restored.id)
-        self._assert_key_attributes_equal(created_bundle.properties, restored.properties)
+        await self._poll_until_no_exception(
+            client.restore_key_backup, key_backup, expected_exception=ResourceExistsError
+        )
+        restored_key = await client.get_key(name=key_name)
+        self.assertEqual(created_bundle.id, restored_key.id)
+        self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
