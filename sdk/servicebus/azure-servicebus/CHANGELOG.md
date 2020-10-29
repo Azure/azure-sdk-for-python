@@ -24,8 +24,8 @@ resource does not exist when using the `ServiceBusAdministrationClient`.
 * Renamed `Message` to `ServiceBusMessage`.
 * Renamed `ReceivedMessage` to `ServiceBusReceivedMessage`.
 * Renamed `BatchMessage` to `ServiceBusMessageBatch`.
-* Removed class `PeekedMessage`.
   - Renamed method `add` to `add_message` on the class.
+* Removed class `PeekedMessage`.
 * Renamed `ServiceBusSender.create_batch` to `ServiceBusSender.create_message_batch`.
 * Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
   - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
@@ -36,6 +36,14 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
  now inherit from `azure.servicebus.exceptions.MessageError`.
 * `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`.
+* Message settlement methods are moved from `ServiceBusMessage` to `ServiceBusReceiver`:
+  - Use `ServiceBusReceiver.complete_message` instead of `ServiceBusReceivedMessage.complete` to complete a message.
+  - Use `ServiceBusReceiver.abandon_message` instead of `ServiceBusReceivedMessage.abandon` to abandon a message.
+  - Use `ServiceBusReceiver.defer_message` instead of `ServiceBusReceivedMessage.defer` to defer a message.
+  - Use `ServiceBusReceiver.dead_letter_message` instead of `ServiceBusReceivedMessage.dead_letter` to dead letter a message.
+* Message `renew_lock` method is moved from `ServiceBusMessage` to `ServiceBusReceiver`:
+  - Changed `ServiceBusReceivedMessage.renew_lock` to `ServiceBusReceiver.renew_message_lock`
+* `AutoLockRenewer.register` now takes `ServiceBusReceiver` as a positional parameter.
 
 **BugFixes**
 

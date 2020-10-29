@@ -64,7 +64,7 @@ semantics with the sender or receiver lifetime.
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py) |
-| `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenewer().register(sb_client.get_queue_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
+| `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `receiver=sb_client.get_queue_receiver(session_id='foo')` <br> `AutoLockRenewer().register(receiver, receiver.session)`| [Access a session and ensure its lock is auto-renewed](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
 | `receiver.get_session_state()` | `receiver.session.get_state()` | [Perform session specific operations on a receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
 
 ### Working with UTC time
