@@ -392,7 +392,7 @@ try:
     from ._models_py3 import VirtualApplianceSkuProperties
     from ._models_py3 import VirtualHub
     from ._models_py3 import VirtualHubEffectiveRoute
-    from ._models_py3 import VirtualHubEffectiveRouteEffectiveRouteList
+    from ._models_py3 import VirtualHubEffectiveRouteList
     from ._models_py3 import VirtualHubId
     from ._models_py3 import VirtualHubRoute
     from ._models_py3 import VirtualHubRouteTable
@@ -834,7 +834,7 @@ except (SyntaxError, ImportError):
     from ._models import VirtualApplianceSkuProperties
     from ._models import VirtualHub
     from ._models import VirtualHubEffectiveRoute
-    from ._models import VirtualHubEffectiveRouteEffectiveRouteList
+    from ._models import VirtualHubEffectiveRouteList
     from ._models import VirtualHubId
     from ._models import VirtualHubRoute
     from ._models import VirtualHubRouteTable
@@ -1512,7 +1512,7 @@ __all__ = [
     'VirtualApplianceSkuProperties',
     'VirtualHub',
     'VirtualHubEffectiveRoute',
-    'VirtualHubEffectiveRouteEffectiveRouteList',
+    'VirtualHubEffectiveRouteList',
     'VirtualHubId',
     'VirtualHubRoute',
     'VirtualHubRouteTable',
