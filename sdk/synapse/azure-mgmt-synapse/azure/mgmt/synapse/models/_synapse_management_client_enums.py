@@ -20,6 +20,7 @@ class NodeSize(str, Enum):
     large = "Large"
     xlarge = "XLarge"
     xx_large = "XXLarge"
+    xxx_large = "XXXLarge"
 
 
 class NodeSizeFamily(str, Enum):
@@ -188,6 +189,28 @@ class SecurityAlertPolicyState(str, Enum):
     disabled = "Disabled"
 
 
+class DataMaskingState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingRuleState(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMaskingFunction(str, Enum):
+
+    default = "Default"
+    ccn = "CCN"
+    email = "Email"
+    number = "Number"
+    ssn = "SSN"
+    text = "Text"
+
+
 class ResourceIdentityType(str, Enum):
 
     none = "None"
@@ -298,6 +321,12 @@ class SsisObjectMetadataType(str, Enum):
     project = "Project"
     package = "Package"
     environment = "Environment"
+
+
+class SensitivityLabelSource(str, Enum):
+
+    current = "current"
+    recommended = "recommended"
 
 
 class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
