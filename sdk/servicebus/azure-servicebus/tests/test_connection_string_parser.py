@@ -14,7 +14,6 @@ from azure.servicebus import (
 )
 
 from devtools_testutils import AzureMgmtTestCase
-from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 
 class ServiceBusConnectionStringParserTests(AzureMgmtTestCase):
     def test_sb_conn_str_parse_cs(self, **kwargs):
