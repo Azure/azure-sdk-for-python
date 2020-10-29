@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class AdaptiveApplicationControlsOperations(object):
-    """AdaptiveApplicationControlsOperations operations.
+class IotDefenderSettingsOperations(object):
+    """IotDefenderSettingsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class AdaptiveApplicationControlsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2020-01-01".
+    :ivar api_version: API version for the operation. Constant value: "2020-08-06-preview".
     """
 
     models = models
@@ -35,27 +35,22 @@ class AdaptiveApplicationControlsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-01-01"
+        self.api_version = "2020-08-06-preview"
 
         self.config = config
 
     def list(
-            self, include_path_recommendations=None, summary=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of application control machine groups for the subscription.
+            self, custom_headers=None, raw=False, **operation_config):
+        """List IoT Defender Settings.
 
-        :param include_path_recommendations: Include the policy rules
-        :type include_path_recommendations: bool
-        :param summary: Return output in a summarized form
-        :type summary: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AdaptiveApplicationControlGroups or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroups
-         or ~msrest.pipeline.ClientRawResponse
+        :return: IotDefenderSettingsList or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.IotDefenderSettingsList or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -68,10 +63,6 @@ class AdaptiveApplicationControlsOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if include_path_recommendations is not None:
-            query_parameters['includePathRecommendations'] = self._serialize.query("include_path_recommendations", include_path_recommendations, 'bool')
-        if summary is not None:
-            query_parameters['summary'] = self._serialize.query("summary", summary, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -94,38 +85,33 @@ class AdaptiveApplicationControlsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AdaptiveApplicationControlGroups', response)
+            deserialized = self._deserialize('IotDefenderSettingsList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/applicationWhitelistings'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings'}
 
     def get(
-            self, group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an application control VM/server group.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Get IoT Defender Settings.
 
-        :param group_name: Name of an application control machine group
-        :type group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AdaptiveApplicationControlGroup or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroup or
+        :return: IotDefenderSettingsModel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.IotDefenderSettingsModel or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -154,41 +140,42 @@ class AdaptiveApplicationControlsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AdaptiveApplicationControlGroup', response)
+            deserialized = self._deserialize('IotDefenderSettingsModel', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default'}
 
-    def put(
-            self, group_name, body, custom_headers=None, raw=False, **operation_config):
-        """Update an application control machine group.
+    def create_or_update(
+            self, device_quota, sentinel_workspace_resource_ids, custom_headers=None, raw=False, **operation_config):
+        """Create or update IoT Defender settings.
 
-        :param group_name: Name of an application control machine group
-        :type group_name: str
-        :param body:
-        :type body:
-         ~azure.mgmt.security.models.AdaptiveApplicationControlGroup
+        :param device_quota: Size of the device quota (as a opposed to a Pay
+         as You Go billing model). Value is required to be in multiples of
+         1000.
+        :type device_quota: int
+        :param sentinel_workspace_resource_ids: Sentinel Workspace Resource
+         Ids
+        :type sentinel_workspace_resource_ids: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AdaptiveApplicationControlGroup or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.security.models.AdaptiveApplicationControlGroup or
+        :return: IotDefenderSettingsModel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.IotDefenderSettingsModel or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        iot_defender_settings_model = models.IotDefenderSettingsModel(device_quota=device_quota, sentinel_workspace_resource_ids=sentinel_workspace_resource_ids)
+
         # Construct URL
-        url = self.put.metadata['url']
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -208,34 +195,34 @@ class AdaptiveApplicationControlsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'AdaptiveApplicationControlGroup')
+        body_content = self._serialize.body(iot_defender_settings_model, 'IotDefenderSettingsModel')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('AdaptiveApplicationControlGroup', response)
+            deserialized = self._deserialize('IotDefenderSettingsModel', response)
+        if response.status_code == 201:
+            deserialized = self._deserialize('IotDefenderSettingsModel', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default'}
 
     def delete(
-            self, group_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an application control machine group.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Delete IoT Defender settings.
 
-        :param group_name: Name of an application control machine group
-        :type group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -248,9 +235,7 @@ class AdaptiveApplicationControlsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'ascLocation': self._serialize.url("self.config.asc_location", self.config.asc_location, 'str'),
-            'groupName': self._serialize.url("group_name", group_name, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -271,7 +256,7 @@ class AdaptiveApplicationControlsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -279,4 +264,59 @@ class AdaptiveApplicationControlsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/applicationWhitelistings/{groupName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default'}
+
+    def package_downloads_method(
+            self, custom_headers=None, raw=False, **operation_config):
+        """Information about downloadable packages.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PackageDownloads or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.PackageDownloads or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.package_downloads_method.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PackageDownloads', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    package_downloads_method.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/iotDefenderSettings/default/packageDownloads'}

@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class DevicesForHubOperations(object):
+    """DevicesForHubOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -25,7 +25,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-09-18".
+    :ivar api_version: API version for the operation. Constant value: "2020-08-06-preview".
     """
 
     models = models
@@ -35,32 +35,52 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-18"
+        self.api_version = "2020-08-06-preview"
 
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists available operations for the Microsoft.Kusto provider.
+            self, resource_id, limit=None, skip_token=None, device_management_type=None, custom_headers=None, raw=False, **operation_config):
+        """Get list of the devices for the specified IoT Hub resource.
 
+        :param resource_id: The identifier of the resource.
+        :type resource_id: str
+        :param limit: Limit the number of items returned in a single page
+        :type limit: int
+        :param skip_token: Skip token used for pagination
+        :type skip_token: str
+        :param device_management_type: Get devices only from specific type,
+         Managed or Unmanaged. Possible values include: 'Managed', 'Unmanaged'
+        :type device_management_type: str or
+         ~azure.mgmt.security.models.ManagementState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of Device
         :rtype:
-         ~azure.mgmt.kusto.models.OperationPaged[~azure.mgmt.kusto.models.Operation]
+         ~azure.mgmt.security.models.DevicePaged[~azure.mgmt.security.models.Device]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'resourceId': self._serialize.url("resource_id", resource_id, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if limit is not None:
+                    query_parameters['$limit'] = self._serialize.query("limit", limit, 'int')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if device_management_type is not None:
+                    query_parameters['deviceManagementType'] = self._serialize.query("device_management_type", device_management_type, 'str')
 
             else:
                 url = next_link
@@ -96,7 +116,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.DevicePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Kusto/operations'}
+    list.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/devices'}

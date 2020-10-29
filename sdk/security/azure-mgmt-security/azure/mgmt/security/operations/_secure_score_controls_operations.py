@@ -25,7 +25,7 @@ class SecureScoreControlsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2020-01-01-preview".
+    :ivar api_version: API version for the operation. Constant value: "2020-01-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class SecureScoreControlsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-01-01-preview"
+        self.api_version = "2020-01-01"
 
         self.config = config
 

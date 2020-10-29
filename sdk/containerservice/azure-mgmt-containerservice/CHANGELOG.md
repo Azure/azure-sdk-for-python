@@ -1,6 +1,5 @@
 # Release History
 
-
 ## 10.0.0 (2020-11-02)
 
 **Features**
@@ -10,7 +9,7 @@
 **Breaking changes**
 
   - Removed operation ManagedClustersOperations.upgrade_node_image_version
-  
+
 ## 9.4.0 (2020-09-11)
 
 **Features**

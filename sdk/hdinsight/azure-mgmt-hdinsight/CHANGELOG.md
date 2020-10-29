@@ -1,5 +1,18 @@
 # Release History
 
+## 2.0.0 (2020-10-20)
+
+**Features**
+
+  - Model ClusterGetProperties has a new parameter network_properties
+  - Model ClusterGetProperties has a new parameter cluster_id
+  - Model ClusterCreateProperties has a new parameter network_properties
+
+**Breaking changes**
+
+  - Model ClusterGetProperties no longer has parameter network_settings
+  - Model ClusterCreateProperties no longer has parameter network_settings
+  
 ## 1.7.0 (2020-08-13)
 
 **Features**

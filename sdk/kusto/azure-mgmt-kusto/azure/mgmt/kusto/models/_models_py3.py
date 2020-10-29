@@ -264,10 +264,10 @@ class AzureSku(Model):
      'Standard_DS14_v2+3TB_PS', 'Standard_DS14_v2+4TB_PS', 'Standard_D13_v2',
      'Standard_D14_v2', 'Standard_L8s', 'Standard_L16s', 'Standard_D11_v2',
      'Standard_D12_v2', 'Standard_L4s', 'Dev(No SLA)_Standard_D11_v2',
-     'Standard_E2a_v4', 'Standard_E4a_v4', 'Standard_E8a_v4',
-     'Standard_E16a_v4', 'Standard_E8as_v4+1TB_PS', 'Standard_E8as_v4+2TB_PS',
-     'Standard_E16as_v4+3TB_PS', 'Standard_E16as_v4+4TB_PS', 'Dev(No
-     SLA)_Standard_E2a_v4'
+     'Standard_E64i_v3', 'Standard_E2a_v4', 'Standard_E4a_v4',
+     'Standard_E8a_v4', 'Standard_E16a_v4', 'Standard_E8as_v4+1TB_PS',
+     'Standard_E8as_v4+2TB_PS', 'Standard_E16as_v4+3TB_PS',
+     'Standard_E16as_v4+4TB_PS', 'Dev(No SLA)_Standard_E2a_v4'
     :type name: str or ~azure.mgmt.kusto.models.AzureSkuName
     :param capacity: The number of instances of the cluster.
     :type capacity: int
@@ -524,6 +524,8 @@ class Cluster(TrackedResource):
     :param enable_double_encryption: A boolean value that indicates if double
      encryption is enabled. Default value: False .
     :type enable_double_encryption: bool
+    :param engine_type: The engine type. Possible values include: 'V2', 'V3'
+    :type engine_type: str or ~azure.mgmt.kusto.models.EngineType
     """
 
     _validation = {
@@ -563,9 +565,10 @@ class Cluster(TrackedResource):
         'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
         'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
         'enable_double_encryption': {'key': 'properties.enableDoubleEncryption', 'type': 'bool'},
+        'engine_type': {'key': 'properties.engineType', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, zones=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, engine_type=None, **kwargs) -> None:
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.zones = zones
@@ -584,6 +587,7 @@ class Cluster(TrackedResource):
         self.enable_purge = enable_purge
         self.language_extensions = None
         self.enable_double_encryption = enable_double_encryption
+        self.engine_type = engine_type
 
 
 class ClusterCheckNameRequest(Model):
@@ -788,6 +792,8 @@ class ClusterUpdate(Resource):
     :param enable_double_encryption: A boolean value that indicates if double
      encryption is enabled. Default value: False .
     :type enable_double_encryption: bool
+    :param engine_type: The engine type. Possible values include: 'V2', 'V3'
+    :type engine_type: str or ~azure.mgmt.kusto.models.EngineType
     """
 
     _validation = {
@@ -824,9 +830,10 @@ class ClusterUpdate(Resource):
         'enable_purge': {'key': 'properties.enablePurge', 'type': 'bool'},
         'language_extensions': {'key': 'properties.languageExtensions', 'type': 'LanguageExtensionsList'},
         'enable_double_encryption': {'key': 'properties.enableDoubleEncryption', 'type': 'bool'},
+        'engine_type': {'key': 'properties.engineType', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, sku=None, identity=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, key_vault_properties=None, enable_purge: bool=False, enable_double_encryption: bool=False, engine_type=None, **kwargs) -> None:
         super(ClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -846,6 +853,7 @@ class ClusterUpdate(Resource):
         self.enable_purge = enable_purge
         self.language_extensions = None
         self.enable_double_encryption = enable_double_encryption
+        self.engine_type = engine_type
 
 
 class Database(ProxyResource):
@@ -1311,6 +1319,11 @@ class EventGridDataConnection(DataConnection):
      'Microsoft.Storage.BlobRenamed'
     :type blob_storage_event_type: str or
      ~azure.mgmt.kusto.models.BlobStorageEventType
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
     """
 
     _validation = {
@@ -1321,6 +1334,7 @@ class EventGridDataConnection(DataConnection):
         'storage_account_resource_id': {'required': True},
         'event_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1337,6 +1351,7 @@ class EventGridDataConnection(DataConnection):
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'ignore_first_record': {'key': 'properties.ignoreFirstRecord', 'type': 'bool'},
         'blob_storage_event_type': {'key': 'properties.blobStorageEventType', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, storage_account_resource_id: str, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, ignore_first_record: bool=None, blob_storage_event_type=None, **kwargs) -> None:
@@ -1349,6 +1364,7 @@ class EventGridDataConnection(DataConnection):
         self.data_format = data_format
         self.ignore_first_record = ignore_first_record
         self.blob_storage_event_type = blob_storage_event_type
+        self.provisioning_state = None
         self.kind = 'EventGrid'
 
 
@@ -1393,6 +1409,11 @@ class EventHubDataConnection(DataConnection):
     :param compression: The event hub messages compression type. Possible
      values include: 'None', 'GZip'
     :type compression: str or ~azure.mgmt.kusto.models.Compression
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
     """
 
     _validation = {
@@ -1402,6 +1423,7 @@ class EventHubDataConnection(DataConnection):
         'kind': {'required': True},
         'event_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1417,6 +1439,7 @@ class EventHubDataConnection(DataConnection):
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
         'compression': {'key': 'properties.compression', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, compression=None, **kwargs) -> None:
@@ -1428,6 +1451,7 @@ class EventHubDataConnection(DataConnection):
         self.data_format = data_format
         self.event_system_properties = event_system_properties
         self.compression = compression
+        self.provisioning_state = None
         self.kind = 'EventHub'
 
 
@@ -1481,8 +1505,11 @@ class Identity(Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: Required. The identity type. Possible values include: 'None',
-     'SystemAssigned'
+    :param type: Required. The type of managed identity used. The type
+     'SystemAssigned, UserAssigned' includes both an implicitly created
+     identity and a set of user-assigned identities. The type 'None' will
+     remove all identities. Possible values include: 'None', 'SystemAssigned',
+     'UserAssigned', 'SystemAssigned, UserAssigned'
     :type type: str or ~azure.mgmt.kusto.models.IdentityType
     :param user_assigned_identities: The list of user identities associated
      with the Kusto cluster. The user identity dictionary key references will
@@ -1501,7 +1528,7 @@ class Identity(Model):
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'IdentityType'},
+        'type': {'key': 'type', 'type': 'str'},
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{IdentityUserAssignedIdentitiesValue}'},
     }
 
@@ -1582,6 +1609,11 @@ class IotHubDataConnection(DataConnection):
     :param shared_access_policy_name: Required. The name of the share access
      policy
     :type shared_access_policy_name: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
     """
 
     _validation = {
@@ -1592,6 +1624,7 @@ class IotHubDataConnection(DataConnection):
         'iot_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
         'shared_access_policy_name': {'required': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1607,6 +1640,7 @@ class IotHubDataConnection(DataConnection):
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
         'shared_access_policy_name': {'key': 'properties.sharedAccessPolicyName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, iot_hub_resource_id: str, consumer_group: str, shared_access_policy_name: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, **kwargs) -> None:
@@ -1618,6 +1652,7 @@ class IotHubDataConnection(DataConnection):
         self.data_format = data_format
         self.event_system_properties = event_system_properties
         self.shared_access_policy_name = shared_access_policy_name
+        self.provisioning_state = None
         self.kind = 'IotHub'
 
 
@@ -1628,15 +1663,17 @@ class KeyVaultProperties(Model):
 
     :param key_name: Required. The name of the key vault key.
     :type key_name: str
-    :param key_version: Required. The version of the key vault key.
+    :param key_version: The version of the key vault key.
     :type key_version: str
     :param key_vault_uri: Required. The Uri of the key vault.
     :type key_vault_uri: str
+    :param user_identity: The user assigned identity (ARM resource id) that
+     has access to the key.
+    :type user_identity: str
     """
 
     _validation = {
         'key_name': {'required': True},
-        'key_version': {'required': True},
         'key_vault_uri': {'required': True},
     }
 
@@ -1644,13 +1681,15 @@ class KeyVaultProperties(Model):
         'key_name': {'key': 'keyName', 'type': 'str'},
         'key_version': {'key': 'keyVersion', 'type': 'str'},
         'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
+        'user_identity': {'key': 'userIdentity', 'type': 'str'},
     }
 
-    def __init__(self, *, key_name: str, key_version: str, key_vault_uri: str, **kwargs) -> None:
+    def __init__(self, *, key_name: str, key_vault_uri: str, key_version: str=None, user_identity: str=None, **kwargs) -> None:
         super(KeyVaultProperties, self).__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
         self.key_vault_uri = key_vault_uri
+        self.user_identity = user_identity
 
 
 class LanguageExtension(Model):

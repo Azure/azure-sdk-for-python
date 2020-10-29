@@ -619,16 +619,21 @@ class Database(TrackedResource):
      may be routed to a readonly secondary replica in the same region. Possible
      values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
-    :param read_replica_count: The number of readonly secondary replicas
-     associated with the database.
-    :type read_replica_count: int
+    :param high_availability_replica_count: The number of secondary replicas
+     associated with the database that are used to provide high availability.
+    :type high_availability_replica_count: int
+    :param secondary_type: The secondary type of the database if it is a
+     secondary.  Valid values are Geo and Named. Possible values include:
+     'Geo', 'Named'
+    :type secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
     :param auto_pause_delay: Time in minutes after which database is
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Currently the only supported option is GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -640,6 +645,10 @@ class Database(TrackedResource):
     :ivar resumed_date: The date when database was resumed by user action or
      database login (ISO8601 format). Null if the database is paused.
     :vartype resumed_date: datetime
+    :param maintenance_configuration_id: Maintenance configuration id assigned
+     to the database. This configuration defines the period when the
+     maintenance updates will be rolled out.
+    :type maintenance_configuration_id: str
     """
 
     _validation = {
@@ -697,16 +706,18 @@ class Database(TrackedResource):
         'max_log_size_bytes': {'key': 'properties.maxLogSizeBytes', 'type': 'long'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'read_scale': {'key': 'properties.readScale', 'type': 'str'},
-        'read_replica_count': {'key': 'properties.readReplicaCount', 'type': 'int'},
+        'high_availability_replica_count': {'key': 'properties.highAvailabilityReplicaCount', 'type': 'int'},
+        'secondary_type': {'key': 'properties.secondaryType', 'type': 'str'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
         'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
         'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, read_replica_count: int=None, auto_pause_delay: int=None, storage_account_type=None, min_capacity: float=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, high_availability_replica_count: int=None, secondary_type=None, auto_pause_delay: int=None, storage_account_type=None, min_capacity: float=None, maintenance_configuration_id: str=None, **kwargs) -> None:
         super(Database, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
@@ -736,13 +747,15 @@ class Database(TrackedResource):
         self.max_log_size_bytes = None
         self.earliest_restore_date = None
         self.read_scale = read_scale
-        self.read_replica_count = read_replica_count
+        self.high_availability_replica_count = high_availability_replica_count
+        self.secondary_type = secondary_type
         self.current_sku = None
         self.auto_pause_delay = auto_pause_delay
         self.storage_account_type = storage_account_type
         self.min_capacity = min_capacity
         self.paused_date = None
         self.resumed_date = None
+        self.maintenance_configuration_id = maintenance_configuration_id
 
 
 class DatabaseAutomaticTuning(ProxyResource):
@@ -1270,16 +1283,21 @@ class DatabaseUpdate(Model):
      may be routed to a readonly secondary replica in the same region. Possible
      values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
-    :param read_replica_count: The number of readonly secondary replicas
-     associated with the database.
-    :type read_replica_count: int
+    :param high_availability_replica_count: The number of secondary replicas
+     associated with the database that are used to provide high availability.
+    :type high_availability_replica_count: int
+    :param secondary_type: The secondary type of the database if it is a
+     secondary.  Valid values are Geo and Named. Possible values include:
+     'Geo', 'Named'
+    :type secondary_type: str or ~azure.mgmt.sql.models.SecondaryType
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
     :param auto_pause_delay: Time in minutes after which database is
      automatically paused. A value of -1 means that automatic pause is disabled
     :type auto_pause_delay: int
     :param storage_account_type: The storage account type used to store
-     backups for this database. Possible values include: 'GRS', 'LRS', 'ZRS'
+     backups for this database. Currently the only supported option is GRS
+     (GeoRedundantStorage). Possible values include: 'GRS', 'LRS', 'ZRS'
     :type storage_account_type: str or
      ~azure.mgmt.sql.models.StorageAccountType
     :param min_capacity: Minimal capacity that database will always have
@@ -1291,6 +1309,10 @@ class DatabaseUpdate(Model):
     :ivar resumed_date: The date when database was resumed by user action or
      database login (ISO8601 format). Null if the database is paused.
     :vartype resumed_date: datetime
+    :param maintenance_configuration_id: Maintenance configuration id assigned
+     to the database. This configuration defines the period when the
+     maintenance updates will be rolled out.
+    :type maintenance_configuration_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -1337,17 +1359,19 @@ class DatabaseUpdate(Model):
         'max_log_size_bytes': {'key': 'properties.maxLogSizeBytes', 'type': 'long'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'read_scale': {'key': 'properties.readScale', 'type': 'str'},
-        'read_replica_count': {'key': 'properties.readReplicaCount', 'type': 'int'},
+        'high_availability_replica_count': {'key': 'properties.highAvailabilityReplicaCount', 'type': 'int'},
+        'secondary_type': {'key': 'properties.secondaryType', 'type': 'str'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
         'storage_account_type': {'key': 'properties.storageAccountType', 'type': 'str'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
         'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
         'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, read_replica_count: int=None, auto_pause_delay: int=None, storage_account_type=None, min_capacity: float=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, high_availability_replica_count: int=None, secondary_type=None, auto_pause_delay: int=None, storage_account_type=None, min_capacity: float=None, maintenance_configuration_id: str=None, tags=None, **kwargs) -> None:
         super(DatabaseUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.create_mode = create_mode
@@ -1375,13 +1399,15 @@ class DatabaseUpdate(Model):
         self.max_log_size_bytes = None
         self.earliest_restore_date = None
         self.read_scale = read_scale
-        self.read_replica_count = read_replica_count
+        self.high_availability_replica_count = high_availability_replica_count
+        self.secondary_type = secondary_type
         self.current_sku = None
         self.auto_pause_delay = auto_pause_delay
         self.storage_account_type = storage_account_type
         self.min_capacity = min_capacity
         self.paused_date = None
         self.resumed_date = None
+        self.maintenance_configuration_id = maintenance_configuration_id
         self.tags = tags
 
 
@@ -1884,6 +1910,10 @@ class ElasticPool(TrackedResource):
     :param license_type: The license type to apply for this elastic pool.
      Possible values include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
+    :param maintenance_configuration_id: Maintenance configuration id assigned
+     to the elastic pool. This configuration defines the period when the
+     maintenance updates will be rolled out.
+    :type maintenance_configuration_id: str
     """
 
     _validation = {
@@ -1910,9 +1940,10 @@ class ElasticPool(TrackedResource):
         'per_database_settings': {'key': 'properties.perDatabaseSettings', 'type': 'ElasticPoolPerDatabaseSettings'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, max_size_bytes: int=None, per_database_settings=None, zone_redundant: bool=None, license_type=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, max_size_bytes: int=None, per_database_settings=None, zone_redundant: bool=None, license_type=None, maintenance_configuration_id: str=None, **kwargs) -> None:
         super(ElasticPool, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
@@ -1922,6 +1953,7 @@ class ElasticPool(TrackedResource):
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
+        self.maintenance_configuration_id = maintenance_configuration_id
 
 
 class ElasticPoolActivity(ProxyResource):
@@ -2530,6 +2562,10 @@ class ElasticPoolUpdate(Model):
     :param license_type: The license type to apply for this elastic pool.
      Possible values include: 'LicenseIncluded', 'BasePrice'
     :type license_type: str or ~azure.mgmt.sql.models.ElasticPoolLicenseType
+    :param maintenance_configuration_id: Maintenance configuration id assigned
+     to the elastic pool. This configuration defines the period when the
+     maintenance updates will be rolled out.
+    :type maintenance_configuration_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -2540,16 +2576,18 @@ class ElasticPoolUpdate(Model):
         'per_database_settings': {'key': 'properties.perDatabaseSettings', 'type': 'ElasticPoolPerDatabaseSettings'},
         'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
+        'maintenance_configuration_id': {'key': 'properties.maintenanceConfigurationId', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, max_size_bytes: int=None, per_database_settings=None, zone_redundant: bool=None, license_type=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, max_size_bytes: int=None, per_database_settings=None, zone_redundant: bool=None, license_type=None, maintenance_configuration_id: str=None, tags=None, **kwargs) -> None:
         super(ElasticPoolUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.max_size_bytes = max_size_bytes
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
+        self.maintenance_configuration_id = maintenance_configuration_id
         self.tags = tags
 
 

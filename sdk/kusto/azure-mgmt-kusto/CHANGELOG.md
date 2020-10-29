@@ -1,5 +1,16 @@
 # Release History
 
+## 0.10.0 (2020-10-23)
+
+**Features**
+
+  - Model EventHubDataConnection has a new parameter provisioning_state
+  - Model KeyVaultProperties has a new parameter user_identity
+  - Model EventGridDataConnection has a new parameter provisioning_state
+  - Model IotHubDataConnection has a new parameter provisioning_state
+  - Model Cluster has a new parameter engine_type
+  - Model ClusterUpdate has a new parameter engine_type
+  
 ## 0.9.0 (2020-07-13)
 
 **Features**
