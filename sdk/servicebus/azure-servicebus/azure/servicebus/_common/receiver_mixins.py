@@ -101,12 +101,12 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             raise MessageAlreadySettled(action)
         try:
             if message._lock_expired:
-                raise MessageLockExpired(inner_exception=message.auto_renew_error)
+                raise MessageLockExpired(error=message.auto_renew_error)
         except TypeError:
             pass
         try:
             if self.session._lock_expired:
-                raise SessionLockExpired(inner_exception=self.session.auto_renew_error)
+                raise SessionLockExpired(error=self.session.auto_renew_error)
         except AttributeError:
             pass
 

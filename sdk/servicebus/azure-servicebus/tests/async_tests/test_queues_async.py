@@ -406,8 +406,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             assert count == 10
 
-            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as session:
-                deferred = await session.receive_deferred_messages(deferred_messages, timeout=None)
+            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                deferred = await receiver.receive_deferred_messages(deferred_messages, timeout=None)
                 assert len(deferred) == 10
                 for message in deferred:
                     assert isinstance(message, ServiceBusReceivedMessage)
@@ -720,7 +720,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     if not messages:
                         messages.append(message)
                         assert not message._lock_expired
-                        renewer.register(message, timeout=60)
+                        renewer.register(receiver, message, timeout=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         await asyncio.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)
