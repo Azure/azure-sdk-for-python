@@ -2,10 +2,6 @@
 
 ## 7.0.0b8 (Unreleased)
 
-**Breaking Changes**
-  - Renamed `AutoLockRenew` to `AutoLockRenewer`
-  - `encoding` support is removed from `Message`
-
 **New Features**
 
 * Added support for `timeout` parameter on the following operations:
