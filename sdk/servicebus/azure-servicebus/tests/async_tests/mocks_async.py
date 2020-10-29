@@ -1,13 +1,13 @@
 from datetime import timedelta
 
 from azure.servicebus._common.utils import utc_now
-from azure.servicebus.aio import ReceivedMessage
+from azure.servicebus.aio import ServiceBusReceivedMessage
 
 class MockReceiver:
     def __init__(self):
         self._running = True
 
-class MockReceivedMessage(ReceivedMessage):
+class MockReceivedMessage(ServiceBusReceivedMessage):
     def __init__(self, prevent_renew_lock=False, exception_on_renew_lock=False):
         self._lock_duration = 2
 
