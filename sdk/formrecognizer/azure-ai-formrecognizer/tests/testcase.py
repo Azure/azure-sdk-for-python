@@ -13,7 +13,12 @@ import pytest
 import re
 import logging
 from azure.core.credentials import AzureKeyCredential, AccessToken
-from azure.ai.formrecognizer._helpers import adjust_value_type
+from azure.ai.formrecognizer._helpers import (
+    adjust_value_type,
+    get_element,
+    adjust_confidence,
+    adjust_text_angle
+)
 from devtools_testutils import (
     AzureTestCase,
     AzureMgmtPreparer,
@@ -141,13 +146,13 @@ class FormRecognizerTest(AzureTestCase):
         self.logger.disabled = True
         self.logger.handlers = []
 
-    def assertModelTransformCorrect(self, model, actual, unlabeled=False):
-        self.assertEqual(model.model_id, actual.model_info.model_id)
-        self.assertEqual(model.training_started_on, actual.model_info.created_date_time)
-        self.assertEqual(model.training_completed_on, actual.model_info.last_updated_date_time)
-        self.assertEqual(model.status, actual.model_info.status)
-        self.assertEqual(model.errors, actual.train_result.errors)
-        for m, a in zip(model.training_documents, actual.train_result.training_documents):
+    def assertModelTransformCorrect(self, model, expected, unlabeled=False):
+        self.assertEqual(model.model_id, expected.model_info.model_id)
+        self.assertEqual(model.training_started_on, expected.model_info.created_date_time)
+        self.assertEqual(model.training_completed_on, expected.model_info.last_updated_date_time)
+        self.assertEqual(model.status, expected.model_info.status)
+        self.assertEqual(model.errors, expected.train_result.errors)
+        for m, a in zip(model.training_documents, expected.train_result.training_documents):
             self.assertEqual(m.name, a.document_name)
             if m.errors and a.errors:
                 self.assertEqual(m.errors, a.errors)
@@ -155,223 +160,234 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(m.status, a.status)
 
         if unlabeled:
-            if actual.keys.clusters:
-                for cluster_id, fields in actual.keys.clusters.items():
+            if expected.keys.clusters:
+                for cluster_id, fields in expected.keys.clusters.items():
                     self.assertEqual(cluster_id, model.submodels[int(cluster_id)].form_type[-1])
                     for field_idx, model_field in model.submodels[int(cluster_id)].fields.items():
                         self.assertIn(model_field.label, fields)
 
         else:
-            if actual.train_result:
-                if actual.train_result.fields:
-                    for a in actual.train_result.fields:
+            if expected.train_result:
+                if expected.train_result.fields:
+                    for a in expected.train_result.fields:
                         self.assertEqual(model.submodels[0].fields[a.field_name].name, a.field_name)
                         self.assertEqual(model.submodels[0].fields[a.field_name].accuracy, a.accuracy)
                     self.assertEqual(model.submodels[0].form_type, "custom:"+model.model_id)
-                    self.assertEqual(model.submodels[0].accuracy, actual.train_result.average_model_accuracy)
+                    self.assertEqual(model.submodels[0].accuracy, expected.train_result.average_model_accuracy)
 
-    def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None, **kwargs):
-        for page, actual_page in zip(pages, actual_read):
+    def assertFormPagesTransformCorrect(self, form_pages, read_result, page_result=None, **kwargs):
+        for page, expected_page in zip(form_pages, read_result):
             if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                 page = page.pages[0]
-            self.assertEqual(page.page_number, actual_page.page)
-            if actual_page.angle <= 180:
-                self.assertEqual(page.text_angle, actual_page.angle)
-            if actual_page.angle > 180:
-                self.assertEqual(page.text_angle, actual_page.angle - 360)
-            self.assertEqual(page.width, actual_page.width)
-            self.assertEqual(page.height, actual_page.height)
-            self.assertEqual(page.unit, actual_page.unit)
+            self.assertEqual(page.page_number, expected_page.page)
+            self.assertEqual(page.text_angle, adjust_text_angle(expected_page.angle))
+            self.assertEqual(page.width, expected_page.width)
+            self.assertEqual(page.height, expected_page.height)
+            self.assertEqual(page.unit, expected_page.unit)
 
-            if not page.lines and not actual_page.lines:
+            if not page.lines and not expected_page.lines:
                 continue
-            for p, a in zip(page.lines, actual_page.lines):
-                self.assertEqual(p.kind, "line")
-                self.assertEqual(p.text, a.text)
-                self.assertBoundingBoxTransformCorrect(p.bounding_box, a.bounding_box)
-                for wp, wa, in zip(p.words, a.words):
-                    self.assertEqual(wp.kind, "word")
-                    self.assertEqual(wp.text, wa.text)
-                    self.assertEqual(wp.confidence, wa.confidence if wa.confidence is not None else 1.0)
-                    self.assertBoundingBoxTransformCorrect(wp.bounding_box, wa.bounding_box)
+            for line, expected_line in zip(page.lines, expected_page.lines):
+                self.assertFormLineTransformCorrect(line, expected_line)
+                for word, expected_word, in zip(line.words, expected_line.words):
+                    self.assertFormWordTransformCorrect(word, expected_word)
 
-            for p, a in zip(page.selection_marks or [], actual_page.selection_marks or []):
-                self.assertEqual(p.kind, "selectionMark")
-                self.assertBoundingBoxTransformCorrect(p.bounding_box, a.bounding_box)
+            for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
+                self.assertFormSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
 
         if page_result:
-            for page, actual_page in zip(pages, page_result):
+            for page, expected_page in zip(form_pages, page_result):
                 if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                     page = page.pages[0]
-                self.assertTablesTransformCorrect(page.tables, actual_page.tables, actual_read, **kwargs)
+                self.assertTablesTransformCorrect(page.tables, expected_page.tables, read_result, **kwargs)
 
-    def assertBoundingBoxTransformCorrect(self, box, actual):
-        if box is None and actual is None:
+    def assertBoundingBoxTransformCorrect(self, box, expected):
+        if box is None and expected is None:
             return
-        self.assertEqual(box[0].x, actual[0])
-        self.assertEqual(box[0].y, actual[1])
-        self.assertEqual(box[1].x, actual[2])
-        self.assertEqual(box[1].y, actual[3])
-        self.assertEqual(box[2].x, actual[4])
-        self.assertEqual(box[2].y, actual[5])
-        self.assertEqual(box[3].x, actual[6])
-        self.assertEqual(box[3].y, actual[7])
+        self.assertEqual(box[0].x, expected[0])
+        self.assertEqual(box[0].y, expected[1])
+        self.assertEqual(box[1].x, expected[2])
+        self.assertEqual(box[1].y, expected[3])
+        self.assertEqual(box[2].x, expected[4])
+        self.assertEqual(box[2].y, expected[5])
+        self.assertEqual(box[3].x, expected[6])
+        self.assertEqual(box[3].y, expected[7])
 
-    def assertFieldElementsTransFormCorrect(self, field_elements, actual_elements, read_result):
-        if field_elements is None and actual_elements is None:
+    def assertFormWordTransformCorrect(self, word, expected):
+        self.assertEqual(word.text, expected.text)
+        self.assertEqual(word.confidence, adjust_confidence(expected.confidence))
+        self.assertEqual(word.kind, "word")
+        self.assertBoundingBoxTransformCorrect(word.bounding_box, expected.bounding_box)
+
+    def assertFormLineTransformCorrect(self, line, expected):
+        self.assertEqual(line.kind, "line")
+        self.assertEqual(line.text, expected.text)
+        self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
+        self.assertEqual(line.appearance.style.name, expected.appearance.style.name)
+        self.assertEqual(line.appearance.style.confidence, expected.appearance.style.confidence)
+        for word, expected_word in zip(line.words, expected.words):
+            self.assertFormWordTransformCorrect(word, expected_word)
+
+    def assertFormSelectionMarkTransformCorrect(self, selection_mark, expected):
+        self.assertEqual(selection_mark.kind, "selectionMark")
+        self.assertEqual(selection_mark.confidence, adjust_confidence(expected.confidence))
+        self.assertEqual(selection_mark.state, expected.state)
+        self.assertBoundingBoxTransformCorrect(selection_mark.bounding_box, expected.bounding_box)
+
+    def assertFieldElementsTransFormCorrect(self, field_elements, generated_elements, read_result):
+        if field_elements is None and generated_elements is None:
             return
-        for element, actual in zip(field_elements, actual_elements):
-            nums = [int(s) for s in re.findall(r'\d+', actual)]
-            read, line, word = nums[0:3]
-            actual_element = read_result[read].lines[line].words[word]
-            self.assertEqual(element.text, actual_element.text)
-            self.assertEqual(element.confidence, actual_element.confidence if actual_element.confidence is not None else 1.0)
-            self.assertEqual(element.kind, "word")
-            self.assertBoundingBoxTransformCorrect(element.bounding_box, actual_element.bounding_box)
+        for element, json_pointer in zip(field_elements, generated_elements):
+            element_type, expected, page_number = get_element(json_pointer, read_result)
+            if element_type == "word":
+                self.assertFormWordTransformCorrect(element, expected)
+            elif element_type == "line":
+                self.assertFormLineTransformCorrect(element, expected)
+            elif element_type == "selectionMark":
+                self.assertFormSelectionMarkTransformCorrect(element, expected)
 
-    def assertLabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
-        if actual_fields is None:
+    def assertLabeledFormFieldDictTransformCorrect(self, form_fields, generated_fields, read_results=None):
+        if generated_fields is None:
             return
 
-        b = form_fields
-        for label, a in actual_fields.items():
-            self.assertEqual(label, b[label].name)
-            self.assertEqual(a.confidence if a.confidence is not None else 1.0, b[label].confidence)
-            self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
-            self.assertEqual(a.text, b[label].value_data.text)
-            field_type = a.type
-            self.assertEqual(adjust_value_type(field_type), b[label].value_type)
+        for label, expected in generated_fields.items():
+            self.assertEqual(label, form_fields[label].name)
+            self.assertEqual(adjust_confidence(expected.confidence), form_fields[label].confidence)
+            self.assertBoundingBoxTransformCorrect(form_fields[label].value_data.bounding_box, expected.bounding_box)
+            self.assertEqual(expected.text, form_fields[label].value_data.text)
+            field_type = expected.type
+            self.assertEqual(adjust_value_type(field_type), form_fields[label].value_type)
             if field_type == "string":
-                self.assertEqual(b[label].value, a.value_string)
+                self.assertEqual(form_fields[label].value, expected.value_string)
             if field_type == "number":
-                self.assertEqual(b[label].value, a.value_number)
+                self.assertEqual(form_fields[label].value, expected.value_number)
             if field_type == "integer":
-                self.assertEqual(b[label].value, a.value_integer)
+                self.assertEqual(form_fields[label].value, expected.value_integer)
             if field_type == "date":
-                self.assertEqual(b[label].value, a.value_date)
+                self.assertEqual(form_fields[label].value, expected.value_date)
             if field_type == "phoneNumber":
-                self.assertEqual(b[label].value, a.value_phone_number)
+                self.assertEqual(form_fields[label].value, expected.value_phone_number)
             if field_type == "time":
-                self.assertEqual(b[label].value, a.value_time)
+                self.assertEqual(form_fields[label].value, expected.value_time)
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
-                    b[label].value_data.field_elements,
-                    a.elements,
+                    form_fields[label].value_data.field_elements,
+                    expected.elements,
                     read_results
                 )
 
-    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, actual_fields, read_results=None):
-        if actual_fields is None:
+    def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, generated_fields, read_results=None):
+        if generated_fields is None:
             return
-        for idx, a in enumerate(actual_fields):
-            self.assertEqual(a.confidence, form_fields["field-"+str(idx)].confidence if a.confidence is not None else 1.0)
-            self.assertEqual(a.key.text, form_fields["field-"+str(idx)].label_data.text)
-            self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, a.key.bounding_box)
+        for idx, expected in enumerate(generated_fields):
+            self.assertEqual(adjust_confidence(expected.confidence), form_fields["field-"+str(idx)].confidence)
+            self.assertEqual(expected.key.text, form_fields["field-"+str(idx)].label_data.text)
+            self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, expected.key.bounding_box)
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
                     form_fields["field-"+str(idx)].label_data.field_elements,
-                    a.key.elements,
+                    expected.key.elements,
                     read_results
                 )
-            self.assertEqual(a.value.text, form_fields["field-" + str(idx)].value_data.text)
-            self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, a.value.bounding_box)
+            self.assertEqual(expected.value.text, form_fields["field-" + str(idx)].value_data.text)
+            self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, expected.value.bounding_box)
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
                     form_fields["field-"+str(idx)].value_data.field_elements,
-                    a.value.elements,
+                    expected.value.elements,
                     read_results
                 )
 
-    def _assertFormFieldTransformCorrectHelper(self, receipt_field, actual_field, read_results=None):
-        field_type = actual_field.type
+    def _assertFormFieldTransformCorrectHelper(self, receipt_field, generated_field, read_results=None):
+        field_type = generated_field.type
         self.assertEqual(adjust_value_type(field_type), receipt_field.value_type)
         if field_type == "string":
-            self.assertEqual(receipt_field.value, actual_field.value_string)
+            self.assertEqual(receipt_field.value, generated_field.value_string)
         elif field_type == "number":
-            self.assertEqual(receipt_field.value, actual_field.value_number)
+            self.assertEqual(receipt_field.value, generated_field.value_number)
         elif field_type == "integer":
-            self.assertEqual(receipt_field.value, actual_field.value_integer)
+            self.assertEqual(receipt_field.value, generated_field.value_integer)
         elif field_type == "date":
-            self.assertEqual(receipt_field.value, actual_field.value_date)
+            self.assertEqual(receipt_field.value, generated_field.value_date)
         elif field_type == "phoneNumber":
-            self.assertEqual(receipt_field.value, actual_field.value_phone_number)
+            self.assertEqual(receipt_field.value, generated_field.value_phone_number)
         elif field_type == "time":
-            self.assertEqual(receipt_field.value, actual_field.value_time)
+            self.assertEqual(receipt_field.value, generated_field.value_time)
         elif field_type == "object":
-            self.assertLabeledFormFieldDictTransformCorrect(receipt_field.value, actual_field.value_object)
+            self.assertLabeledFormFieldDictTransformCorrect(receipt_field.value, generated_field.value_object)
         else:
             raise ValueError('field type {} not valid'.format(field_type))
 
 
-        self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, actual_field.bounding_box)
-        self.assertEqual(receipt_field.value_data.text, actual_field.text)
-        self.assertEqual(receipt_field.confidence, actual_field.confidence if actual_field.confidence is not None else 1.0)
+        self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, generated_field.bounding_box)
+        self.assertEqual(receipt_field.value_data.text, generated_field.text)
+        self.assertEqual(receipt_field.confidence, adjust_confidence(generated_field.confidence))
         if read_results:
             self.assertFieldElementsTransFormCorrect(
                 receipt_field.value_data.field_elements,
-                actual_field.elements,
+                generated_field.elements,
                 read_results
             )
 
-    def assertFormFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
-        if actual_field is None:
+    def assertFormFieldTransformCorrect(self, receipt_field, generated_field, read_results=None):
+        if generated_field is None:
             return
-        field_type = actual_field.type
+        field_type = generated_field.type
         if field_type == "array":
-            for i in range(len(actual_field.value_array)):
-                self._assertFormFieldTransformCorrectHelper(receipt_field.value[i], actual_field.value_array[i], read_results)
+            for i in range(len(generated_field.value_array)):
+                self._assertFormFieldTransformCorrectHelper(receipt_field.value[i], generated_field.value_array[i], read_results)
         else:
-            self._assertFormFieldTransformCorrectHelper(receipt_field, actual_field, read_results)
+            self._assertFormFieldTransformCorrectHelper(receipt_field, generated_field, read_results)
 
 
-    def assertReceiptItemsTransformCorrect(self, items, actual_items, read_results=None):
-        actual = actual_items.value_array
+    def assertReceiptItemsTransformCorrect(self, items, generated_items, read_results=None):
+        expected_items = generated_items.value_array
 
-        for r, a in zip(items, actual):
-            self.assertFormFieldTransformCorrect(r.value.get("Name"), a.value_object.get("Name"), read_results)
-            self.assertFormFieldTransformCorrect(r.value.get("Quantity"), a.value_object.get("Quantity"), read_results)
-            self.assertFormFieldTransformCorrect(r.value.get("TotalPrice"), a.value_object.get("TotalPrice"), read_results)
-            self.assertFormFieldTransformCorrect(r.value.get("Price"), a.value_object.get("Price"), read_results)
+        for r, expected in zip(items, expected_items):
+            self.assertFormFieldTransformCorrect(r.value.get("Name"), expected.value_object.get("Name"), read_results)
+            self.assertFormFieldTransformCorrect(r.value.get("Quantity"), expected.value_object.get("Quantity"), read_results)
+            self.assertFormFieldTransformCorrect(r.value.get("TotalPrice"), expected.value_object.get("TotalPrice"), read_results)
+            self.assertFormFieldTransformCorrect(r.value.get("Price"), expected.value_object.get("Price"), read_results)
 
-    def assertBusinessCardTransformCorrect(self, business_card, actual, read_results=None):
-        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), actual.get("ContactNames"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), actual.get("JobTitles"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), actual.get("Departments"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), actual.get("Emails"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), actual.get("Websites"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), actual.get("MobilePhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), actual.get("OtherPhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), actual.get("Faxes"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
+    def assertBusinessCardTransformCorrect(self, business_card, expected, read_results=None):
+        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), expected.get("ContactNames"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), expected.get("JobTitles"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), expected.get("Departments"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), expected.get("Emails"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), expected.get("Websites"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), expected.get("MobilePhones"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), expected.get("OtherPhones"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), expected.get("Faxes"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), expected.get("Addresses"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), expected.get("CompanyNames"), read_results)
 
-    def assertInvoiceTransformCorrect(self, invoice, actual, read_results=None):
-        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorName"), actual.get("VendorName"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorAddress"), actual.get("VendorAddress"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddressRecipient"), actual.get("CustomerAddressRecipient"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddress"), actual.get("CustomerAddress"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerName"), actual.get("CustomerName"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceId"), actual.get("InvoiceId"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceDate"), actual.get("InvoiceDate"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceTotal"), actual.get("InvoiceTotal"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("DueDate"), actual.get("DueDate"), read_results)
+    def assertInvoiceTransformCorrect(self, invoice, expected, read_results=None):
+        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorName"), expected.get("VendorName"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorAddress"), expected.get("VendorAddress"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddressRecipient"), expected.get("CustomerAddressRecipient"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddress"), expected.get("CustomerAddress"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerName"), expected.get("CustomerName"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceId"), expected.get("InvoiceId"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceDate"), expected.get("InvoiceDate"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceTotal"), expected.get("InvoiceTotal"), read_results)
+        self.assertFormFieldTransformCorrect(invoice.fields.get("DueDate"), expected.get("DueDate"), read_results)
 
-    def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None, **kwargs):
-        for table, actual_table in zip(layout, actual_layout):
-            self.assertEqual(table.row_count, actual_table.rows)
-            self.assertEqual(table.column_count, actual_table.columns)
-            for cell, actual_cell in zip(table.cells, actual_table.cells):
+    def assertTablesTransformCorrect(self, layout, expected_layout, read_results=None, **kwargs):
+        for table, expected_table in zip(layout, expected_layout):
+            self.assertEqual(table.row_count, expected_table.rows)
+            self.assertEqual(table.column_count, expected_table.columns)
+            for cell, expected_cell in zip(table.cells, expected_table.cells):
                 self.assertEqual(table.page_number, cell.page_number)
-                self.assertEqual(cell.text, actual_cell.text)
-                self.assertEqual(cell.row_index, actual_cell.row_index)
-                self.assertEqual(cell.column_index, actual_cell.column_index)
-                self.assertEqual(cell.row_span, actual_cell.row_span if actual_cell.row_span is not None else 1)
-                self.assertEqual(cell.column_span, actual_cell.column_span if actual_cell.column_span is not None else 1)
-                self.assertEqual(cell.confidence, actual_cell.confidence if actual_cell.confidence is not None else 1.0)
-                self.assertEqual(cell.is_header, actual_cell.is_header if actual_cell.is_header is not None else False)
-                self.assertEqual(cell.is_footer, actual_cell.is_footer if actual_cell.is_footer is not None else False)
-                self.assertBoundingBoxTransformCorrect(cell.bounding_box, actual_cell.bounding_box)
-                self.assertFieldElementsTransFormCorrect(cell.field_elements, actual_cell.elements, read_results)
+                self.assertEqual(cell.text, expected_cell.text)
+                self.assertEqual(cell.row_index, expected_cell.row_index)
+                self.assertEqual(cell.column_index, expected_cell.column_index)
+                self.assertEqual(cell.row_span, expected_cell.row_span if expected_cell.row_span is not None else 1)
+                self.assertEqual(cell.column_span, expected_cell.column_span if expected_cell.column_span is not None else 1)
+                self.assertEqual(cell.confidence, adjust_confidence(expected_cell.confidence))
+                self.assertEqual(cell.is_header, expected_cell.is_header if expected_cell.is_header is not None else False)
+                self.assertEqual(cell.is_footer, expected_cell.is_footer if expected_cell.is_footer is not None else False)
+                self.assertBoundingBoxTransformCorrect(cell.bounding_box, expected_cell.bounding_box)
+                self.assertFieldElementsTransFormCorrect(cell.field_elements, expected_cell.elements, read_results)
 
     def assertReceiptItemsHasValues(self, items, page_number, include_field_elements):
         for item in items:
@@ -450,17 +466,36 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertTrue(selection_mark.state in ["selected", "unselected"])
 
     def assertFormWordHasValues(self, word, page_number):
-        self.assertEqual(word.kind, "word")
         self.assertIsNotNone(word.confidence)
         self.assertIsNotNone(word.text)
         self.assertBoundingBoxHasPoints(word.bounding_box)
         self.assertEqual(word.page_number, page_number)
 
+    def assertFormLineHasValues(self, line, page_number):
+        self.assertIsNotNone(line.text)
+        self.assertBoundingBoxHasPoints(line.bounding_box)
+        self.assertIsNotNone(line.appearance.style.name)
+        self.assertIsNotNone(line.appearance.style.confidence)
+        self.assertEqual(line.page_number, page_number)
+        for word in line.words:
+            self.assertFormWordHasValues(word, page_number)
+
+    def assertFormSelectionMarkHasValues(self, selection_mark, page_number):
+        self.assertIsNotNone(selection_mark.confidence)
+        self.assertIsNotNone(selection_mark.state)
+        self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
+        self.assertEqual(selection_mark.page_number, page_number)
+
     def assertFieldElementsHasValues(self, elements, page_number):
         if elements is None:
             return
-        for word in elements:
-            self.assertFormWordHasValues(word, page_number)
+        for element in elements:
+            if element.kind == "word":
+                self.assertFormWordHasValues(element, page_number)
+            elif element.kind == "line":
+                self.assertFormLineHasValues(element, page_number)
+            elif element.kind == "selectionMark":
+                self.assertFormSelectionMarkHasValues(element, page_number)
 
     def assertComposedModelHasValues(self, composed, model_1, model_2):
         self.assertIsNotNone(composed.model_id)

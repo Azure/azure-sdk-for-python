@@ -530,7 +530,7 @@ class FormSelectionMark(FormElement):
     @classmethod
     def _from_generated(cls, mark, page):
         return cls(
-            confidence=mark.confidence,
+            confidence=adjust_confidence(mark.confidence),
             state=mark.state,
             bounding_box=get_bounding_box(mark),
             page_number=page
