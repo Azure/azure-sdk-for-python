@@ -9,8 +9,8 @@
 
 import os
 import time
+import six
 import pytest
-import re
 import logging
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from azure.ai.formrecognizer._helpers import (
@@ -35,6 +35,20 @@ from azure_devtools.scenario_tests.utilities import is_text_payload
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 REGION = os.getenv('REGION', 'centraluseuap')
+
+
+class RequestBodyReplacer(RecordingProcessor):
+    """Replace request body when a file is read."""
+
+    def __init__(self, max_request_body=128):
+        self._max_request_body = max_request_body
+
+    def process_request(self, request):
+        if request.body and six.binary_type(request.body) and len(request.body) > self._max_request_body * 1024:
+            request.body = '!!! The request body has been omitted from the recording because its ' \
+                           'size {} is larger than {}KB. !!!'.format(len(request.body),
+                                                                     self._max_request_body)
+        return request
 
 
 class AccessTokenReplacer(RecordingProcessor):
@@ -81,6 +95,7 @@ class FormRecognizerTest(AzureTestCase):
     def __init__(self, method_name):
         super(FormRecognizerTest, self).__init__(method_name)
         self.recording_processors.append(AccessTokenReplacer())
+        self.recording_processors.append(RequestBodyReplacer())
         self.configure_logging()
 
         # URL samples
