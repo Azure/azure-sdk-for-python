@@ -526,12 +526,12 @@ class ServiceBusMessageBatch(object):
         return self._count
 
     def _from_list(self, messages, parent_span=None):
-        # type: (Iterable[Message], AbstractSpan) -> None
+        # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
         for each in messages:
             if not isinstance(each, ServiceBusMessage):
                 raise TypeError("Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
                                 "objects are accepted. Received instead: {}".format(each.__class__.__name__))
-            self._add(each)
+            self._add(each, parent_span)
 
     @property
     def max_size_in_bytes(self):
@@ -567,7 +567,7 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
     def _add(self, message, parent_span=None):
-        # type: (Message, AbstractSpan) -> None
+        # type: (ServiceBusMessage, AbstractSpan) -> None
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_to_sendable_if_needed(message)
         trace_message(message, parent_span) # parent_span is e.g. if built as part of a send operation.

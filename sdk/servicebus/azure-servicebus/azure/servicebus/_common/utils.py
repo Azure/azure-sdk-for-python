@@ -9,7 +9,7 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict, Tuple, Iterable, Type, TYPE_CHECKING, Union
+from typing import Optional, Dict, Tuple, Iterable, Type, TYPE_CHECKING, Union, Iterator
 from contextlib import contextmanager
 from msrest.serialization import UTC
 
@@ -38,12 +38,14 @@ from .constants import (
     TRACE_NAMESPACE_PROPERTY,
     TRACE_PROPERTY_ENCODING,
     TRACE_ENQUEUED_TIME_PROPERTY,
-    SPAN_ENQUEUED_TIME_PROPERTY
+    SPAN_ENQUEUED_TIME_PROPERTY,
+    SPAN_NAME_RECEIVE
 )
 
 if TYPE_CHECKING:
-    from .message import Message
+    from .message import ServiceBusMessage
     from azure.core.tracing import AbstractSpan
+    from ._servicebus_receiver import ServiceBusReceiver
 
 _log = logging.getLogger(__name__)
 
@@ -190,6 +192,24 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
     else:
         yield None
 
+@contextmanager
+def _receive_trace_context_manager(receiver, message=None, span_name=SPAN_NAME_RECEIVE):
+    # type:(ServiceBusReceiver, Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
+    """Tracing"""
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is None:
+        yield
+    else:
+        receive_span = span_impl_type(name=span_name)
+        receiver._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
+        receive_span.kind = SpanKind.CONSUMER
+
+        # If it is desired to create link before span open
+        if message:
+            trace_link_message(message, receive_span)
+
+        with receive_span:
+            yield
 
 def add_link_to_send(message, send_span):
     """Add Diagnostic-Id from message to span as link.
@@ -206,7 +226,7 @@ def add_link_to_send(message, send_span):
 
 
 def trace_message(message, parent_span=None):
-    # type: (Message, Optional[AbstractSpan]) -> None
+    # type: (ServiceBusMessage, Optional[AbstractSpan]) -> None
     """Add tracing information to this message.
     Will open and close a "Azure.Servicebus.message" span, and
     add the "DiagnosticId" as app properties of the message.
@@ -231,7 +251,7 @@ def trace_message(message, parent_span=None):
 
 
 def trace_link_message(messages, parent_span=None):
-    # type: (Union[Message, Iterable[Message]], Optional[AbstractSpan]) -> None
+    # type: (Union[ServiceBusMessage, Iterable[ServiceBusMessage]], Optional[AbstractSpan]) -> None
     """Link the current message(s) to current span or provided parent span.
     Will extract DiagnosticId if available.
     """

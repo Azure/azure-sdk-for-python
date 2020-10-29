@@ -4,12 +4,9 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
-from contextlib import contextmanager
 from typing import Optional, Iterator, Iterable, TYPE_CHECKING, Type, Union
 
 from uamqp import Source
-from azure.core.settings import settings
-from azure.core.tracing import SpanKind
 
 from .message import ServiceBusReceivedMessage
 from .constants import (
@@ -18,8 +15,7 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    ReceiveMode,
-    SPAN_NAME_RECEIVE
+    ReceiveMode
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
@@ -88,32 +84,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
             return source
         return self._entity_uri
-
-    def _on_attach(self, source, target, properties, error):
-        pass
-
-    def _populate_message_properties(self, message):
-        pass
-
-    @contextmanager
-    def _receive_trace_context_manager(self, message=None, span_name=SPAN_NAME_RECEIVE):
-        # type: (Optional[Union[ServiceBusMessage, Iterable[ServiceBusMessage]]], str) -> Iterator[None]
-        """Tracing"""
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is None:
-            yield
-        else:
-            receive_span = span_impl_type(name=span_name)
-            self._add_span_request_attributes(receive_span)  # type: ignore  # pylint: disable=protected-access
-            receive_span.kind = SpanKind.CONSUMER
-
-            # If it is desired to create link before span open
-            if message:
-                trace_link_message(message, receive_span)
-
-            with receive_span:
-                yield
-
 
     def _on_attach(self, source, target, properties, error):
         # pylint: disable=protected-access, unused-argument
