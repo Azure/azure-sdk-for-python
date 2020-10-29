@@ -832,7 +832,7 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
         self.dns_service_ip = kwargs.get('dns_service_ip', "10.0.0.10")
         self.docker_bridge_cidr = kwargs.get('docker_bridge_cidr', "172.17.0.1/16")
         self.outbound_type = kwargs.get('outbound_type', "loadBalancer")
-        self.load_balancer_sku = kwargs.get('load_balancer_sku', None)
+        self.load_balancer_sku = kwargs.get('load_balancer_sku', "Standard")
         self.load_balancer_profile = kwargs.get('load_balancer_profile', None)
 
 

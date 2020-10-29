@@ -912,7 +912,7 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
         dns_service_ip: Optional[str] = "10.0.0.10",
         docker_bridge_cidr: Optional[str] = "172.17.0.1/16",
         outbound_type: Optional[Union[str, "OutboundType"]] = "loadBalancer",
-        load_balancer_sku: Optional[Union[str, "LoadBalancerSku"]] = None,
+        load_balancer_sku: Optional[Union[str, "LoadBalancerSku"]] = "Standard",
         load_balancer_profile: Optional["ManagedClusterLoadBalancerProfile"] = None,
         **kwargs
     ):
