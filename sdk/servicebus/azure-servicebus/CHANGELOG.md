@@ -26,6 +26,7 @@ resource does not exist when using the `ServiceBusAdministrationClient`.
 * Renamed `BatchMessage` to `ServiceBusMessageBatch`.
   - Renamed method `add` to `add_message` on the class.
 * Removed class `PeekedMessage`.
+* Removed class `ReceivedMessage` under module `azure.servicebus.aio`.
 * Renamed `ServiceBusSender.create_batch` to `ServiceBusSender.create_message_batch`.
 * Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
   - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
