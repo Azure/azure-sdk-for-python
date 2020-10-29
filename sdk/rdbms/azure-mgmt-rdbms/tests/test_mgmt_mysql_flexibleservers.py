@@ -141,7 +141,7 @@ class MgmtMySqlFlexibleServerTest(AzureMgmtTestCase):
 
       result = self.mgmt_client.location_based_capabilities.list(self.location)
 
-      # result = self.mgmt_client.operations.list()
+      result = self.mgmt_client.operations.list()
 
       result = self.mgmt_client.check_name_availability.execute(create_random_name(prefix="servernamethatdoesnotexist", length=40), type="Microsoft.DBforMySQL/flexibleServers")
       self.assertEqual(result.name_available, True)
