@@ -7,7 +7,7 @@ import functools
 import logging
 import json
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.keyvault.secrets.aio import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -224,9 +224,12 @@ class KeyVaultSecretTest(KeyVaultTestCase):
         await client.purge_deleted_secret(created_bundle.name)
 
         # restore secret
-        restored = await client.restore_secret_backup(secret_backup)
-        self.assertEqual(created_bundle.id, restored.id)
-        self._assert_secret_attributes_equal(created_bundle.properties, restored)
+        await self._poll_until_no_exception(
+            client.restore_secret_backup, secret_backup, expected_exception=ResourceExistsError
+        )
+        restored_secret = await client.get_secret(name=secret_name)
+        self.assertEqual(created_bundle.id, restored_secret.id)
+        self._assert_secret_attributes_equal(created_bundle.properties, restored_secret.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
