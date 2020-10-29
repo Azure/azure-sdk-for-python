@@ -22,7 +22,7 @@ from ._async_utils import get_running_loop
 _LOGGER = logging.getLogger(__name__)
 
 
-class ReceivedMessage(sync_message.ReceivedMessageBase):
+class ServiceBusReceivedMessage(sync_message.ServiceBusReceivedMessageBase):
     """A Service Bus Message received from service side.
 
     """

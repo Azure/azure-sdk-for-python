@@ -29,8 +29,9 @@ class CertificateCredential(ClientCredentialBase):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword bool send_certificate: if True, the credential will send public certificate material with token requests.
-          This is required to use Subject Name/Issuer (SNI) authentication. Defaults to False.
+    :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
+          header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults
+          to False.
     :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
           False.
     :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
@@ -57,7 +58,7 @@ class CertificateCredential(ClientCredentialBase):
         # TODO: msal doesn't formally support passwords (but soon will); the below depends on an implementation detail
         private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         client_credential = {"private_key": private_key, "thumbprint": hexlify(fingerprint).decode("utf-8")}
-        if kwargs.pop("send_certificate", False):
+        if kwargs.pop("send_certificate_chain", False):
             try:
                 # the JWT needs the whole chain but load_pem_x509_certificate deserializes only the signing cert
                 chain = extract_cert_chain(pem_bytes)
