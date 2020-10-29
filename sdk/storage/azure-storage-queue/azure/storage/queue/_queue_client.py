@@ -482,7 +482,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_one_message(self, **kwargs):
+    def receive_message(self, **kwargs):
         # type: (Optional[Any]) -> QueueMessage
         """Removes one message from the front of the queue.
 
@@ -531,7 +531,8 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            wrapped_message = QueueMessage._from_generated(message[0]) # pylint: disable=protected-access
+            wrapped_message = QueueMessage._from_generated(  # pylint: disable=protected-access
+                message[0]) if message != [] else None
             return wrapped_message
         except StorageErrorException as error:
             process_storage_error(error)

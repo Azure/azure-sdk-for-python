@@ -332,8 +332,8 @@ class StorageQueueTest(StorageTestCase):
         queue_client.send_message(u'message2')
         queue_client.send_message(u'message3')
 
-        message1 = queue_client.receive_one_message()
-        message2 = queue_client.receive_one_message()
+        message1 = queue_client.receive_message()
+        message2 = queue_client.receive_message()
         peeked_message3 = queue_client.peek_messages()[0]
 
         # Asserts

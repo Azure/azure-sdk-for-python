@@ -194,8 +194,8 @@ class QueueMessageSamples(object):
 
             # [START receive_one_message]
             # Pop two messages from the front of the queue
-            message1 = queue.receive_one_message()
-            message2 = queue.receive_one_message()
+            message1 = queue.receive_message()
+            message2 = queue.receive_message()
             # We should see message 3 if we peek
             message3 = queue.peek_messages()[0]
 

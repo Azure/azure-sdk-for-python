@@ -166,8 +166,8 @@ class QueueMessageSamplesAsync(object):
 
                 # [START receive_one_message]
                 # Pop two messages from the front of the queue
-                message1 = await queue.receive_one_message()
-                message2 = await queue.receive_one_message()
+                message1 = await queue.receive_message()
+                message2 = await queue.receive_message()
                 # We should see message 3 if we peek
                 message3 = await queue.peek_messages()
 

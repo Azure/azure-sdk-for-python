@@ -364,8 +364,8 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         await queue_client.send_message(u'message2')
         await queue_client.send_message(u'message3')
 
-        message1 = await queue_client.receive_one_message()
-        message2 = await queue_client.receive_one_message()
+        message1 = await queue_client.receive_message()
+        message2 = await queue_client.receive_message()
         peeked_message3 = await queue_client.peek_messages()
 
         # Asserts
