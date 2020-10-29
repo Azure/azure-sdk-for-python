@@ -566,12 +566,14 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     :vartype auto_renew_error: ~azure.servicebus.AutoLockRenewTimeout or ~azure.servicebus.AutoLockRenewFailed
 
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
             :start-after: [START receive_complex_message]
             :end-before: [END receive_complex_message]
             :language: python
             :dedent: 4
             :caption: Checking the properties on a received message.
+
     """
     def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
         # type: (uamqp.message.Message, ReceiveMode, Any) -> None
