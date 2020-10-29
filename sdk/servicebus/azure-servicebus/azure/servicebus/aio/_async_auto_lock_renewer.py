@@ -9,13 +9,13 @@ import logging
 import datetime
 from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
 
-from ._async_message import ReceivedMessage
+from ._async_message import ServiceBusReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
 from .._common.utils import renewable_start_time, utc_now
 from ._async_utils import get_running_loop
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
 
-AsyncLockRenewFailureCallback = Callable[[Union[ServiceBusSession, ReceivedMessage],
+AsyncLockRenewFailureCallback = Callable[[Union[ServiceBusSession, ServiceBusReceivedMessage],
                                      Optional[Exception]], Awaitable[None]]
 
 _log = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class AutoLockRenewer:
     async def __aexit__(self, *args: Iterable[Any]) -> None:
         await self.close()
 
-    def _renewable(self, renewable: Union[ReceivedMessage, ServiceBusSession]) -> bool:
+    def _renewable(self, renewable: Union[ServiceBusReceivedMessage, ServiceBusSession]) -> bool:
         # pylint: disable=protected-access
         if self._shutdown.is_set():
             return False
@@ -81,7 +81,7 @@ class AutoLockRenewer:
         return True
 
     async def _auto_lock_renew(self,
-                               renewable: Union[ReceivedMessage, ServiceBusSession],
+                               renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
                                starttime: datetime.datetime,
                                timeout: float,
                                on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None) -> None:
@@ -107,7 +107,7 @@ class AutoLockRenewer:
             _log.debug("Failed to auto-renew lock: %r. Closing thread.", e)
             error = AutoLockRenewFailed(
                 "Failed to auto-renew lock",
-                inner_exception=e)
+                error=e)
             renewable.auto_renew_error = error
         finally:
             if on_lock_renew_failure and not clean_shutdown:
@@ -115,14 +115,14 @@ class AutoLockRenewer:
 
     def register(
         self,
-        renewable: Union[ReceivedMessage, ServiceBusSession],
+        renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
         timeout: float = 300,
         on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None
     ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
         :param renewable: A locked entity that needs to be renewed.
-        :type renewable: Union[~azure.servicebus.aio.ReceivedMessage,~azure.servicebus.aio.ServiceBusSession]
+        :type renewable: Union[~azure.servicebus.aio.ServiceBusReceivedMessage,~azure.servicebus.aio.ServiceBusSession]
         :param float timeout: A time in seconds that the lock should be maintained for.
          Default value is 300 (5 minutes).
         :param Optional[AsyncLockRenewFailureCallback] on_lock_renew_failure:

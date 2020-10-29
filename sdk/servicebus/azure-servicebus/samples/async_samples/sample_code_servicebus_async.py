@@ -15,7 +15,7 @@ import os
 import datetime
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 
 
 _RUN_ITERATOR = False
@@ -189,17 +189,17 @@ async def example_send_and_receive_async():
     servicebus_sender = await example_create_servicebus_sender_async()
     servicebus_receiver = await example_create_servicebus_receiver_async()
 
-    from azure.servicebus import Message
+    from azure.servicebus import ServiceBusMessage
     # [START send_async]
     async with servicebus_sender:
-        message = Message("Hello World")
+        message = ServiceBusMessage("Hello World")
         await servicebus_sender.send_messages(message)
     # [END send_async]
 
     # [START create_batch_async]
     async with servicebus_sender:
-        batch_message = await servicebus_sender.create_batch()
-        batch_message.add(Message("Single message inside batch"))
+        batch_message = await servicebus_sender.create_message_batch()
+        batch_message.add_message(ServiceBusMessage("Single message inside batch"))
     # [END create_batch_async]
 
     # [START peek_messages_async]
@@ -240,7 +240,7 @@ async def example_receive_deferred_async():
     servicebus_sender = await example_create_servicebus_sender_async()
     servicebus_receiver = await example_create_servicebus_receiver_async()
     async with servicebus_sender:
-        await servicebus_sender.send_messages(Message("Hello World"))
+        await servicebus_sender.send_messages(ServiceBusMessage("Hello World"))
     # [START receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
@@ -266,24 +266,24 @@ async def example_session_ops_async():
 
     async with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
         # [START get_session_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
         # [END get_session_async]
 
         # [START get_session_state_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.get_state()
         # [END get_session_state_async]
 
         # [START set_session_state_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.set_state("START")
         # [END set_session_state_async]
 
         # [START session_renew_lock_async]
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             session_state = await session.renew_lock()
         # [END session_renew_lock_async]
@@ -292,7 +292,7 @@ async def example_session_ops_async():
         from azure.servicebus.aio import AutoLockRenewer
 
         lock_renewal = AutoLockRenewer()
-        async with servicebus_client.get_queue_session_receiver(queue_name=queue_name, session_id=session_id) as receiver:
+        async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
             lock_renewal.register(session, timeout=120)
@@ -308,7 +308,7 @@ async def example_schedule_ops_async():
     # [START scheduling_messages_async]
     async with servicebus_sender:
         scheduled_time_utc = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
-        scheduled_messages = [Message("Scheduled message") for _ in range(10)]
+        scheduled_messages = [ServiceBusMessage("Scheduled message") for _ in range(10)]
         sequence_nums = await servicebus_sender.schedule_messages(scheduled_messages, scheduled_time_utc)
     # [END scheduling_messages_async]
 
