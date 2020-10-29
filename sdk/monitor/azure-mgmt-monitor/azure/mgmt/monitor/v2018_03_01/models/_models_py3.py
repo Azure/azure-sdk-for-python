@@ -332,6 +332,10 @@ class MultiMetricCriteria(Model):
     :param dimensions: List of dimension conditions.
     :type dimensions:
      list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom
+     metric that isn't yet emitted, by causing the metric validation to be
+     skipped.
+    :type skip_metric_validation: bool
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
     """
@@ -350,6 +354,7 @@ class MultiMetricCriteria(Model):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
     }
 
@@ -357,7 +362,7 @@ class MultiMetricCriteria(Model):
         'criterion_type': {'StaticThresholdCriterion': 'MetricCriteria', 'DynamicThresholdCriterion': 'DynamicMetricCriteria'}
     }
 
-    def __init__(self, *, name: str, metric_name: str, time_aggregation, additional_properties=None, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
+    def __init__(self, *, name: str, metric_name: str, time_aggregation, additional_properties=None, metric_namespace: str=None, dimensions=None, skip_metric_validation: bool=None, **kwargs) -> None:
         super(MultiMetricCriteria, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.name = name
@@ -365,6 +370,7 @@ class MultiMetricCriteria(Model):
         self.metric_namespace = metric_namespace
         self.time_aggregation = time_aggregation
         self.dimensions = dimensions
+        self.skip_metric_validation = skip_metric_validation
         self.criterion_type = None
 
 
@@ -387,6 +393,10 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :param dimensions: List of dimension conditions.
     :type dimensions:
      list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom
+     metric that isn't yet emitted, by causing the metric validation to be
+     skipped.
+    :type skip_metric_validation: bool
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
     :param operator: Required. The operator used to compare the metric value
@@ -427,6 +437,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
         'operator': {'key': 'operator', 'type': 'str'},
         'alert_sensitivity': {'key': 'alertSensitivity', 'type': 'str'},
@@ -434,8 +445,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         'ignore_data_before': {'key': 'ignoreDataBefore', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, name: str, metric_name: str, time_aggregation, operator, alert_sensitivity, failing_periods, additional_properties=None, metric_namespace: str=None, dimensions=None, ignore_data_before=None, **kwargs) -> None:
-        super(DynamicMetricCriteria, self).__init__(additional_properties=additional_properties, name=name, metric_name=metric_name, metric_namespace=metric_namespace, time_aggregation=time_aggregation, dimensions=dimensions, **kwargs)
+    def __init__(self, *, name: str, metric_name: str, time_aggregation, operator, alert_sensitivity, failing_periods, additional_properties=None, metric_namespace: str=None, dimensions=None, skip_metric_validation: bool=None, ignore_data_before=None, **kwargs) -> None:
+        super(DynamicMetricCriteria, self).__init__(additional_properties=additional_properties, name=name, metric_name=metric_name, metric_namespace=metric_namespace, time_aggregation=time_aggregation, dimensions=dimensions, skip_metric_validation=skip_metric_validation, **kwargs)
         self.operator = operator
         self.alert_sensitivity = alert_sensitivity
         self.failing_periods = failing_periods
@@ -1057,6 +1068,10 @@ class MetricCriteria(MultiMetricCriteria):
     :param dimensions: List of dimension conditions.
     :type dimensions:
      list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom
+     metric that isn't yet emitted, by causing the metric validation to be
+     skipped.
+    :type skip_metric_validation: bool
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
     :param operator: Required. the criteria operator. Possible values include:
@@ -1084,13 +1099,14 @@ class MetricCriteria(MultiMetricCriteria):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
         'operator': {'key': 'operator', 'type': 'str'},
         'threshold': {'key': 'threshold', 'type': 'float'},
     }
 
-    def __init__(self, *, name: str, metric_name: str, time_aggregation, operator, threshold: float, additional_properties=None, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
-        super(MetricCriteria, self).__init__(additional_properties=additional_properties, name=name, metric_name=metric_name, metric_namespace=metric_namespace, time_aggregation=time_aggregation, dimensions=dimensions, **kwargs)
+    def __init__(self, *, name: str, metric_name: str, time_aggregation, operator, threshold: float, additional_properties=None, metric_namespace: str=None, dimensions=None, skip_metric_validation: bool=None, **kwargs) -> None:
+        super(MetricCriteria, self).__init__(additional_properties=additional_properties, name=name, metric_name=metric_name, metric_namespace=metric_namespace, time_aggregation=time_aggregation, dimensions=dimensions, skip_metric_validation=skip_metric_validation, **kwargs)
         self.operator = operator
         self.threshold = threshold
         self.criterion_type = 'StaticThresholdCriterion'
