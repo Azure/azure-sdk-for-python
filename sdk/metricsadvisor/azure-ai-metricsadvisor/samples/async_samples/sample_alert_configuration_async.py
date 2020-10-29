@@ -180,8 +180,8 @@ async def sample_list_alert_configs_async():
     # [END list_alert_configs_async]
 
 
-async def sample_list_alerts(alert_config_id):
-    # [START list_alerts]
+async def sample_list_alerts_async(alert_config_id):
+    # [START list_alerts_async]
     import datetime
     from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
     from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
@@ -207,7 +207,7 @@ async def sample_list_alerts(alert_config_id):
             print("Create on: {}".format(result.created_on))
         return tolist
 
-    # [END list_alerts]
+    # [END list_alerts_async]
 
 
 async def sample_list_anomalies_for_alert_async(alert_config_id, alert_id):
@@ -318,7 +318,7 @@ async def main():
     print("\n---List anomaly alert configurations...")
     await sample_list_alert_configs_async()
     print("\n---Query anomaly detection results...")
-    alerts = await sample_list_alerts_for_alert_config_async()
+    alerts = await sample_list_alerts_async()
     if len(alerts) > 0:
         print("\n---Query anomalies using alert id...")
         alert_id = alerts[0].id
