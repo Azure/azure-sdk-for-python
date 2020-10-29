@@ -12,48 +12,147 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import DataBoxManagementClientConfiguration
-from .operations import Operations
-from .operations import JobsOperations
-from .operations import ServiceOperations
-from . import models
 
 
-class DataBoxManagementClient(SDKClient):
+
+class DataBoxManagementClient(MultiApiClientMixin, SDKClient):
     """DataBoxManagementClient
+
+    This ready contains multiple API versions, to help you deal with all Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, uses latest API version available on public Azure.
+    For production, you should stick a particular api-version and/or profile.
+    The profile sets a mapping between the operation group and an API version.
+    The api-version parameter sets the default API version if the operation
+    group is not described in the profile.
 
     :ivar config: Configuration for client.
     :vartype config: DataBoxManagementClientConfiguration
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.databox.operations.Operations
-    :ivar jobs: Jobs operations
-    :vartype jobs: azure.mgmt.databox.operations.JobsOperations
-    :ivar service: Service operations
-    :vartype service: azure.mgmt.databox.operations.ServiceOperations
-
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Subscription Id
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
+    DEFAULT_API_VERSION = '2020-11-01'
+    _PROFILE_TAG = "azure.mgmt.databox.DataBoxManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
+        }},
+        _PROFILE_TAG + " latest"
+    )
 
+    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = DataBoxManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(DataBoxManagementClient, self).__init__(self.config.credentials, self.config)
+        super(DataBoxManagementClient, self).__init__(
+            credentials,
+            self.config,
+            api_version=api_version,
+            profile=profile
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-09-01'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
 
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.service = ServiceOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
+        """Module depends on the API version:
+
+           * 2018-01-01: :mod:`v2018_01_01.models<azure.mgmt.databox.v2018_01_01.models>`
+           * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.databox.v2019_09_01.models>`
+           * 2020-04-01: :mod:`v2020_04_01.models<azure.mgmt.databox.v2020_04_01.models>`
+           * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.databox.v2020_11_01.models>`
+        """
+        if api_version == '2018-01-01':
+            from .v2018_01_01 import models
+            return models
+        elif api_version == '2019-09-01':
+            from .v2019_09_01 import models
+            return models
+        elif api_version == '2020-04-01':
+            from .v2020_04_01 import models
+            return models
+        elif api_version == '2020-11-01':
+            from .v2020_11_01 import models
+            return models
+        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+
+    @property
+    def jobs(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01: :class:`JobsOperations<azure.mgmt.databox.v2018_01_01.operations.JobsOperations>`
+           * 2019-09-01: :class:`JobsOperations<azure.mgmt.databox.v2019_09_01.operations.JobsOperations>`
+           * 2020-04-01: :class:`JobsOperations<azure.mgmt.databox.v2020_04_01.operations.JobsOperations>`
+           * 2020-11-01: :class:`JobsOperations<azure.mgmt.databox.v2020_11_01.operations.JobsOperations>`
+        """
+        api_version = self._get_api_version('jobs')
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import JobsOperations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import JobsOperations as OperationClass
+        elif api_version == '2020-04-01':
+            from .v2020_04_01.operations import JobsOperations as OperationClass
+        elif api_version == '2020-11-01':
+            from .v2020_11_01.operations import JobsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01: :class:`Operations<azure.mgmt.databox.v2018_01_01.operations.Operations>`
+           * 2019-09-01: :class:`Operations<azure.mgmt.databox.v2019_09_01.operations.Operations>`
+           * 2020-04-01: :class:`Operations<azure.mgmt.databox.v2020_04_01.operations.Operations>`
+           * 2020-11-01: :class:`Operations<azure.mgmt.databox.v2020_11_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import Operations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import Operations as OperationClass
+        elif api_version == '2020-04-01':
+            from .v2020_04_01.operations import Operations as OperationClass
+        elif api_version == '2020-11-01':
+            from .v2020_11_01.operations import Operations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def service(self):
+        """Instance depends on the API version:
+
+           * 2018-01-01: :class:`ServiceOperations<azure.mgmt.databox.v2018_01_01.operations.ServiceOperations>`
+           * 2019-09-01: :class:`ServiceOperations<azure.mgmt.databox.v2019_09_01.operations.ServiceOperations>`
+           * 2020-04-01: :class:`ServiceOperations<azure.mgmt.databox.v2020_04_01.operations.ServiceOperations>`
+           * 2020-11-01: :class:`ServiceOperations<azure.mgmt.databox.v2020_11_01.operations.ServiceOperations>`
+        """
+        api_version = self._get_api_version('service')
+        if api_version == '2018-01-01':
+            from .v2018_01_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2019-09-01':
+            from .v2019_09_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2020-04-01':
+            from .v2020_04_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2020-11-01':
+            from .v2020_11_01.operations import ServiceOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
