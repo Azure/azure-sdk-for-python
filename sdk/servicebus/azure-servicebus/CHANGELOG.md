@@ -6,9 +6,8 @@
 
 * Added support for `timeout` parameter on the following operations:
   - `ServiceBusSender`: `send_messages`, `schedule_messages` and `cancel_scheduled_messages`
-  - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
+  - `ServiceBusReceiver`: `receive_deferred_messages`, `peek_messages` and `renew_message_lock`
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
-  - `ReceivedMessage`: `renew_lock`
 * `azure.servicebus.exceptions.ServiceBusError` now inherits from `azure.core.exceptions.AzureError`.
 
 **Breaking Changes**

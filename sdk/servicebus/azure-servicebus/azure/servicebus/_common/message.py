@@ -37,6 +37,7 @@ from .constants import (
 from ..exceptions import MessageContentTooLarge
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
+    from ..aio._servicebus_receiver_async import ServiceBusReceiver as AsyncServiceBusReceiver
     from .._servicebus_receiver import ServiceBusReceiver
 
 _LOGGER = logging.getLogger(__name__)
@@ -584,10 +585,11 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
         self.auto_renew_error = None  # type: Optional[Exception]
         try:
-            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver]
+            self._receiver = kwargs.pop("receiver")  # type: Union[ServiceBusReceiver, AsyncServiceBusReceiver]
         except KeyError:
-            raise TypeError("ReceivedMessage requires a receiver to be initialized.  This class should never be" +
-                            "initialized by a user; the Message class should be utilized instead.")
+            raise TypeError("ServiceBusReceivedMessage requires a receiver to be initialized. " +
+                            "This class should never be initialized by a user; " +
+                            "for outgoing messages, the ServiceBusMessage class should be utilized instead.")
         self._expiry = None # type: Optional[datetime.datetime]
 
     @property

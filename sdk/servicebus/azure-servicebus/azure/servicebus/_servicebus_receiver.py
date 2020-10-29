@@ -333,7 +333,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        # We don't do retry here, retry is done in the ReceivedMessage._settle_message
+        # We don't do retry here, retry is done in the ServiceBusReceivedMessage._settle_message
         return self._mgmt_request_response(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
             message,
@@ -386,7 +386,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
         :type max_wait_time: float
-        :rtype: Iterator[ReceivedMessage]
+        :rtype: Iterator[ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -617,14 +617,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         This removes the message from the queue.
 
         :param message: The received message to be completed.
-        :type message: ~azure.servicebus.ReceivedMessage
+        :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, MESSAGE_COMPLETE)
         self._settle_message_with_retry(message, MESSAGE_COMPLETE)
         message._settled = True  # pylint: disable=protected-access
@@ -635,14 +635,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         This message will be returned to the queue and made available to be received again.
 
         :param message: The received message to be abandoned.
-        :type message: ~azure.servicebus.ReceivedMessage
+        :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, MESSAGE_ABANDON)
         self._settle_message_with_retry(message, MESSAGE_ABANDON)
         message._settled = True  # pylint: disable=protected-access
@@ -654,14 +654,14 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         specifically by its sequence number in order to be received.
 
         :param message: The received message to be deferred.
-        :type message: ~azure.servicebus.ReceivedMessage
+        :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEFER)
         self._settle_message_with_retry(message, MESSAGE_DEFER)
         message._settled = True  # pylint: disable=protected-access
@@ -674,7 +674,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         or processing. The queue can also be configured to send expired messages to the Dead Letter queue.
 
         :param message: The received message to be dead-lettered.
-        :type message: ~azure.servicebus.ReceivedMessage
+        :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :param Optional[str] reason: The reason for dead-lettering the message.
         :param Optional[str] error_description: The detailed error description for dead-lettering the message.
         :rtype: None
@@ -683,7 +683,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
         if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ReceivedMessage")
+            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, MESSAGE_DEAD_LETTER)
         self._settle_message_with_retry(
             message,
@@ -707,6 +707,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
         This operation is only available for non-sessionful messages as well.
 
+        :param message: The message to renew the lock for.
+        :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.

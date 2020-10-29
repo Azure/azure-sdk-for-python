@@ -80,6 +80,7 @@ SETTLEMENT_ABANDON = "abandoned"
 SETTLEMENT_DEFER = "defered"
 SETTLEMENT_DEADLETTER = "suspended"
 
+# The following dict maps the term of settlement actions to the ones used in mgmt request defined by the service.
 MESSAGE_MGMT_SETTLEMENT_TERM_MAP = {
     MESSAGE_COMPLETE: SETTLEMENT_COMPLETE,
     MESSAGE_ABANDON: SETTLEMENT_ABANDON,

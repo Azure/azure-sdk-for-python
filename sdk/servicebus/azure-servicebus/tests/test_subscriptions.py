@@ -156,7 +156,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
-                    receiver.message.complete_message(message)
+                    receiver.complete_message(message)
                     count += 1
             assert count == 0
 
