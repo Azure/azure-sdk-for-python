@@ -45,7 +45,7 @@ from .constants import (
 if TYPE_CHECKING:
     from .message import ServiceBusMessage
     from azure.core.tracing import AbstractSpan
-    from ._servicebus_receiver import ServiceBusReceiver
+    from .._servicebus_receiver import ServiceBusReceiver
 
 _log = logging.getLogger(__name__)
 
