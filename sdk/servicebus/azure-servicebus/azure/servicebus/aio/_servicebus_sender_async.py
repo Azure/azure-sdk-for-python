@@ -10,7 +10,7 @@ from typing import Any, TYPE_CHECKING, Union, List
 import uamqp
 from uamqp import SendClientAsync, types
 
-from .._common.message import Message, BatchMessage
+from .._common.message import ServiceBusMessage, ServiceBusMessageBatch
 from .._servicebus_sender import SenderMixin
 from ._base_handler_async import BaseHandler
 from .._common.constants import (
@@ -140,14 +140,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
     async def schedule_messages(
         self,
-        messages: Union[Message, List[Message]],
+        messages: Union[ServiceBusMessage, List[ServiceBusMessage]],
         schedule_time_utc: datetime.datetime,
         **kwargs: Any
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
         :param messages: The message or list of messages to schedule.
-        :type messages: ~azure.servicebus.Message or list[~azure.servicebus.Message]
+        :type messages: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
@@ -168,7 +168,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(messages, Message):
+        if isinstance(messages, ServiceBusMessage):
             request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
             request_body = self._build_schedule_request(schedule_time_utc, *messages)
@@ -256,14 +256,19 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
         return cls(**constructor_args)
 
-    async def send_messages(self, message: Union[Message, BatchMessage, List[Message]], **kwargs: Any) -> None:
+    async def send_messages(
+        self,
+        message: Union[ServiceBusMessage, ServiceBusMessageBatch, List[ServiceBusMessage]],
+        **kwargs: Any
+    ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
         If a list of messages was provided, attempts to send them as a single batch, throwing a
         `ValueError` if they cannot fit in a single batch.
 
         :param message: The ServiceBus message to be sent.
-        :type message: ~azure.servicebus.Message or ~azure.servicebus.BatchMessage or list[~azure.servicebus.Message]
+        :type message: Union[~azure.servicebus.ServiceBusMessage,~azure.servicebus.ServiceBusMessageBatch,
+         list[~azure.servicebus.ServiceBusMessage]]
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
@@ -291,15 +296,18 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise ValueError("The timeout must be greater than 0.")
         message = transform_messages_to_sendable_if_needed(message)
         try:
-            batch = await self.create_batch()
+            batch = await self.create_message_batch()
             batch._from_list(message)  # pylint: disable=protected-access
             message = batch
         except TypeError:  # Message was not a list or generator.
             pass
-        if isinstance(message, BatchMessage) and len(message) == 0:  # pylint: disable=len-as-condition
-            raise ValueError("A BatchMessage or list of Message must have at least one Message")
-        if not isinstance(message, BatchMessage) and not isinstance(message, Message):
-            raise TypeError("Can only send azure.servicebus.<BatchMessage,Message> or lists of Messages.")
+        if isinstance(message, ServiceBusMessageBatch) and len(message) == 0:  # pylint: disable=len-as-condition
+            raise ValueError("A ServiceBusMessageBatch or list of Message must have at least one Message")
+        if not isinstance(message, ServiceBusMessageBatch) and not isinstance(message, ServiceBusMessage):
+            raise TypeError(
+                "Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage>"
+                " or lists of ServiceBusMessage."
+            )
 
         await self._do_retryable_operation(
             self._send,
@@ -309,13 +317,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             require_last_exception=True
         )
 
-    async def create_batch(self, max_size_in_bytes: int = None) -> BatchMessage:
-        """Create a BatchMessage object with the max size of all content being constrained by max_size_in_bytes.
-        The max_size should be no greater than the max allowed message size defined by the service.
+    async def create_message_batch(self, max_size_in_bytes: int = None) -> ServiceBusMessageBatch:
+        """Create a ServiceBusMessageBatch object with the max size of all content being constrained by
+        max_size_in_bytes. The max_size should be no greater than the max allowed message size defined by the service.
 
-        :param int max_size_in_bytes: The maximum size of bytes data that a BatchMessage object can hold. By
+        :param int max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can hold. By
          default, the value is determined by your Service Bus tier.
-        :rtype: ~azure.servicebus.BatchMessage
+        :rtype: ~azure.servicebus.ServiceBusMessageBatch
 
         .. admonition:: Example:
 
@@ -324,7 +332,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :end-before: [END create_batch_async]
                 :language: python
                 :dedent: 4
-                :caption: Create BatchMessage object within limited size
+                :caption: Create ServiceBusMessageBatch object within limited size
 
         """
         if not self._max_message_size_on_link:
@@ -337,6 +345,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 )
             )
 
-        return BatchMessage(
+        return ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )

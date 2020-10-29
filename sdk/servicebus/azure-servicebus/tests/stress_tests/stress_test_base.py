@@ -10,7 +10,7 @@ import concurrent
 import sys
 import uuid
 
-from azure.servicebus import ServiceBusClient, Message, BatchMessage
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusMessageBatch
 from azure.servicebus._common.constants import ReceiveMode
 from azure.servicebus.exceptions import MessageAlreadySettled
 
@@ -122,15 +122,15 @@ class StressTestRunner:
 
     def _construct_message(self):
         if self.send_batch_size != None:
-            batch = BatchMessage()
+            batch = ServiceBusMessageBatch()
             for _ in range(self.send_batch_size):
-                message = Message(self.pre_process_message_body("a" * self.message_size))
+                message = ServiceBusMessage(self.pre_process_message_body("a" * self.message_size))
                 self.pre_process_message(message)
-                batch.add(message)
-            self.pre_process_message_batch(batch)
+                batch.add_message(message)
+            self.PreProcessMessageBatch(batch)
             return batch
         else:
-            message = Message(self.pre_process_message_body("a" * self.message_size))
+            message = ServiceBusMessage(self.pre_process_message_body("a" * self.message_size))
             self.pre_process_message(message)
             return message
 
