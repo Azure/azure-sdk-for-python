@@ -33,6 +33,7 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
+    from ._models_py3 import ExpressionEvaluationOptions
     from ._models_py3 import GenericResource
     from ._models_py3 import GenericResourceExpanded
     from ._models_py3 import GenericResourceFilter
@@ -97,6 +98,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo
     from ._models import ErrorResponse
     from ._models import ExportTemplateRequest
+    from ._models import ExpressionEvaluationOptions
     from ._models import GenericResource
     from ._models import GenericResourceExpanded
     from ._models import GenericResourceFilter
@@ -147,6 +149,7 @@ from ._paged_models import TagDetailsPaged
 from ._resource_management_client_enums import (
     DeploymentMode,
     OnErrorDeploymentType,
+    ExpressionEvaluationOptionsScopeType,
     WhatIfResultFormat,
     AliasPathTokenType,
     AliasPathAttributes,
@@ -184,6 +187,7 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorResponse',
     'ExportTemplateRequest',
+    'ExpressionEvaluationOptions',
     'GenericResource',
     'GenericResourceExpanded',
     'GenericResourceFilter',
@@ -233,6 +237,7 @@ __all__ = [
     'DeploymentOperationPaged',
     'DeploymentMode',
     'OnErrorDeploymentType',
+    'ExpressionEvaluationOptionsScopeType',
     'WhatIfResultFormat',
     'AliasPathTokenType',
     'AliasPathAttributes',

@@ -13,12 +13,13 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
 from ._configuration import ApplicationClientConfiguration
+from .operations import ApplicationClientOperationsMixin
 from .operations import ApplicationsOperations
 from .operations import ApplicationDefinitionsOperations
 from . import models
 
 
-class ApplicationClient(SDKClient):
+class ApplicationClient(ApplicationClientOperationsMixin, SDKClient):
     """ARM applications
 
     :ivar config: Configuration for client.

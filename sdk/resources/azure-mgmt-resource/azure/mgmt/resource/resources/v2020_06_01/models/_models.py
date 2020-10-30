@@ -554,6 +554,12 @@ class DeploymentProperties(Model):
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment:
      ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeployment
+    :param expression_evaluation_options: Specifies whether template
+     expressions are evaluated within the scope of the parent template or
+     nested template. Only applicable to nested templates. If not specified,
+     default value is outer.
+    :type expression_evaluation_options:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptions
     """
 
     _validation = {
@@ -568,6 +574,7 @@ class DeploymentProperties(Model):
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
     }
 
     def __init__(self, **kwargs):
@@ -579,6 +586,7 @@ class DeploymentProperties(Model):
         self.mode = kwargs.get('mode', None)
         self.debug_setting = kwargs.get('debug_setting', None)
         self.on_error_deployment = kwargs.get('on_error_deployment', None)
+        self.expression_evaluation_options = kwargs.get('expression_evaluation_options', None)
 
 
 class DeploymentPropertiesExtended(Model):
@@ -797,6 +805,12 @@ class DeploymentWhatIfProperties(DeploymentProperties):
     :param on_error_deployment: The deployment on error behavior.
     :type on_error_deployment:
      ~azure.mgmt.resource.resources.v2020_06_01.models.OnErrorDeployment
+    :param expression_evaluation_options: Specifies whether template
+     expressions are evaluated within the scope of the parent template or
+     nested template. Only applicable to nested templates. If not specified,
+     default value is outer.
+    :type expression_evaluation_options:
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptions
     :param what_if_settings: Optional What-If operation settings.
     :type what_if_settings:
      ~azure.mgmt.resource.resources.v2020_06_01.models.DeploymentWhatIfSettings
@@ -814,6 +828,7 @@ class DeploymentWhatIfProperties(DeploymentProperties):
         'mode': {'key': 'mode', 'type': 'DeploymentMode'},
         'debug_setting': {'key': 'debugSetting', 'type': 'DebugSetting'},
         'on_error_deployment': {'key': 'onErrorDeployment', 'type': 'OnErrorDeployment'},
+        'expression_evaluation_options': {'key': 'expressionEvaluationOptions', 'type': 'ExpressionEvaluationOptions'},
         'what_if_settings': {'key': 'whatIfSettings', 'type': 'DeploymentWhatIfSettings'},
     }
 
@@ -935,6 +950,26 @@ class ExportTemplateRequest(Model):
         super(ExportTemplateRequest, self).__init__(**kwargs)
         self.resources = kwargs.get('resources', None)
         self.options = kwargs.get('options', None)
+
+
+class ExpressionEvaluationOptions(Model):
+    """Specifies whether template expressions are evaluated within the scope of
+    the parent template or nested template.
+
+    :param scope: The scope to be used for evaluation of parameters, variables
+     and functions in a nested template. Possible values include:
+     'NotSpecified', 'Outer', 'Inner'
+    :type scope: str or
+     ~azure.mgmt.resource.resources.v2020_06_01.models.ExpressionEvaluationOptionsScopeType
+    """
+
+    _attribute_map = {
+        'scope': {'key': 'scope', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExpressionEvaluationOptions, self).__init__(**kwargs)
+        self.scope = kwargs.get('scope', None)
 
 
 class Resource(Model):

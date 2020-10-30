@@ -202,6 +202,11 @@ class TemplateSpec(AzureResourceBase):
     :type description: str
     :param display_name: Template Spec display name.
     :type display_name: str
+    :ivar versions: High-level information about the versions within this
+     Template Spec. The keys are the version names. Only populated if the
+     $expand query parameter is set to 'versions'.
+    :vartype versions: dict[str,
+     ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecVersionInfo]
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -214,6 +219,7 @@ class TemplateSpec(AzureResourceBase):
         'location': {'required': True},
         'description': {'max_length': 4096},
         'display_name': {'max_length': 64},
+        'versions': {'readonly': True},
     }
 
     _attribute_map = {
@@ -224,6 +230,7 @@ class TemplateSpec(AzureResourceBase):
         'location': {'key': 'location', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'versions': {'key': 'properties.versions', 'type': '{TemplateSpecVersionInfo}'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -232,6 +239,7 @@ class TemplateSpec(AzureResourceBase):
         self.location = kwargs.get('location', None)
         self.description = kwargs.get('description', None)
         self.display_name = kwargs.get('display_name', None)
+        self.versions = None
         self.tags = kwargs.get('tags', None)
 
 
@@ -430,6 +438,39 @@ class TemplateSpecVersion(AzureResourceBase):
         self.description = kwargs.get('description', None)
         self.template = kwargs.get('template', None)
         self.tags = kwargs.get('tags', None)
+
+
+class TemplateSpecVersionInfo(Model):
+    """High-level information about a Template Spec version.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar description: Template Spec version description.
+    :vartype description: str
+    :ivar time_created: The timestamp of when the version was created.
+    :vartype time_created: datetime
+    :ivar time_modified: The timestamp of when the version was last modified.
+    :vartype time_modified: datetime
+    """
+
+    _validation = {
+        'description': {'readonly': True},
+        'time_created': {'readonly': True},
+        'time_modified': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'time_created': {'key': 'timeCreated', 'type': 'iso-8601'},
+        'time_modified': {'key': 'timeModified', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TemplateSpecVersionInfo, self).__init__(**kwargs)
+        self.description = None
+        self.time_created = None
+        self.time_modified = None
 
 
 class TemplateSpecVersionUpdateModel(AzureResourceBase):
