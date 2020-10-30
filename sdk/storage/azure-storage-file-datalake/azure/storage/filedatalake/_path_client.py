@@ -405,7 +405,7 @@ class PathClient(StorageAccountHostsMixin):
             'mode': mode,
             'force_flag': kwargs.pop('continue_on_failure', None),
             'timeout': kwargs.pop('timeout', None),
-            'continuation': kwargs.pop('continuation', None) or kwargs.pop('continuation_token', None),
+            'continuation': kwargs.pop('continuation_token', None),
             'max_records': kwargs.pop('batch_size', None),
             'acl': acl,
             'cls': return_headers_and_deserialized}
