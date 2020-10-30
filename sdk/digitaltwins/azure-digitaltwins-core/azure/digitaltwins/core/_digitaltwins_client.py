@@ -172,12 +172,12 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         json_patch,
         **kwargs
     ):
-        # type: (str, str, Dict[str, object], **Any) -> None
+        # type: (str, str, List[Dict[str, object]], **Any) -> None
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
         :param str component_path: The component being updated.
-        :param Dict[str, object] json_patch: An update specification described by JSON Patch.
+        :param List[Dict[str, object]] json_patch: An update specification described by JSON Patch.
         :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
         :keyword ~azure.core.MatchConditions match_condition: the match condition to use upon the etag
@@ -188,9 +188,6 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin with the provided id or the component path is invalid.
         """
-        etag = kwargs.get("etag", None)
-        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
-
         return self._client.digital_twins.update_component(
             digital_twin_id,
             component_path,

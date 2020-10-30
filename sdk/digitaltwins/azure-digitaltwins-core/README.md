@@ -218,11 +218,12 @@ To update a component or in other words to replace, remove and/or add a componen
 
 ```Python Snippet:dt_component_lifecycle
 component_path = "Component1"
-options = {
-    "patchDocument": {
-    "ComponentProp1": "value2"
-    }
-}
+options = [
+    {
+        "op": "replace",
+        "path": "/Property1",
+        "value": 42
+    }]
 service_client.update_component(digital_twin_id, component_path, options)
 ```
 
