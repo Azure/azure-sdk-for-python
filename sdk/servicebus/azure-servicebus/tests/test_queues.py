@@ -125,7 +125,17 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.reply_to = 'reply_to'
                     sender.send_messages(message)
 
+            with pytest.raises(ValueError):
+                sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=0)
+
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+
+            with pytest.raises(ValueError):
+                receiver.receive_messages(max_wait_time=0)
+
+            with pytest.raises(ValueError):
+                receiver.get_streaming_message_iter(max_wait_time=0)
+
             count = 0
             for message in receiver:
                 print_message(_logger, message)

@@ -63,7 +63,17 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ServiceBusConnectionError):
                 await (sb_client.get_queue_receiver(servicebus_queue.name, session_id="test", max_wait_time=5))._open_with_retry()
 
+            with pytest.raises(ValueError):
+                sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=0)
+
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+
+                with pytest.raises(ValueError):
+                    await receiver.receive_messages(max_wait_time=0)
+
+                with pytest.raises(ValueError):
+                    await receiver.get_streaming_message_iter(max_wait_time=0)
+
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
