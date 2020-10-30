@@ -58,7 +58,8 @@ class PrivateLinkResourcesOperations(object):
         :return: An iterator like instance of PrivateLinkResource
         :rtype:
          ~azure.mgmt.synapse.models.PrivateLinkResourcePaged[~azure.mgmt.synapse.models.PrivateLinkResource]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -99,9 +100,7 @@ class PrivateLinkResourcesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorContractException(self._deserialize, response)
 
             return response
 
