@@ -42,7 +42,7 @@ class AzureReservationAPIOperationsMixin(object):
         :raises:
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
-        api_version = "2019-04-01"
+        api_version = "2020-10-01-preview"
 
         # Construct URL
         url = self.get_catalog.metadata['url']
@@ -106,7 +106,7 @@ class AzureReservationAPIOperationsMixin(object):
         :raises:
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
-        api_version = "2019-04-01"
+        api_version = "2020-10-01-preview"
 
         # Construct URL
         url = self.get_applied_reservation_list.metadata['url']

@@ -15,6 +15,14 @@ try:
     from ._models_py3 import AppliedReservations
     from ._models_py3 import AqiSettings
     from ._models_py3 import AutoQuotaIncreaseDetail
+    from ._models_py3 import AvailableScopeProperties
+    from ._models_py3 import AvailableScopeRequest
+    from ._models_py3 import AvailableScopeRequestProperties
+    from ._models_py3 import BillingInformation
+    from ._models_py3 import CalculateExchangeOperationResultResponse
+    from ._models_py3 import CalculateExchangeRequest
+    from ._models_py3 import CalculateExchangeRequestProperties
+    from ._models_py3 import CalculateExchangeResponseProperties
     from ._models_py3 import CalculatePriceResponse
     from ._models_py3 import CalculatePriceResponseProperties
     from ._models_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
@@ -27,17 +35,23 @@ try:
     from ._models_py3 import EmailActions
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import ExceptionResponse, ExceptionResponseException
+    from ._models_py3 import ExchangeOperationResultResponse
+    from ._models_py3 import ExchangePolicyError
+    from ._models_py3 import ExchangePolicyErrors
+    from ._models_py3 import ExchangeRequest
+    from ._models_py3 import ExchangeRequestProperties
+    from ._models_py3 import ExchangeResponseProperties
     from ._models_py3 import ExtendedErrorInfo
     from ._models_py3 import ExtendedStatusInfo
     from ._models_py3 import MergeRequest
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationResponse
+    from ._models_py3 import OperationResultError
     from ._models_py3 import Patch
     from ._models_py3 import PatchPropertiesRenewProperties
     from ._models_py3 import PaymentDetail
     from ._models_py3 import PhoneAction
     from ._models_py3 import Price
-    from ._models_py3 import Properties
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from ._models_py3 import QuotaLimitsResponse
@@ -56,7 +70,13 @@ try:
     from ._models_py3 import ReservationProperties
     from ._models_py3 import ReservationResponse
     from ._models_py3 import ReservationSplitProperties
+    from ._models_py3 import ReservationToExchange
+    from ._models_py3 import ReservationToPurchaseCalculateExchange
+    from ._models_py3 import ReservationToPurchaseExchange
+    from ._models_py3 import ReservationToReturn
     from ._models_py3 import ResourceName
+    from ._models_py3 import ReturnRequest
+    from ._models_py3 import ReturnRequestProperties
     from ._models_py3 import ScopeProperties
     from ._models_py3 import ServiceError
     from ._models_py3 import ServiceErrorDetail
@@ -73,6 +93,14 @@ except (SyntaxError, ImportError):
     from ._models import AppliedReservations
     from ._models import AqiSettings
     from ._models import AutoQuotaIncreaseDetail
+    from ._models import AvailableScopeProperties
+    from ._models import AvailableScopeRequest
+    from ._models import AvailableScopeRequestProperties
+    from ._models import BillingInformation
+    from ._models import CalculateExchangeOperationResultResponse
+    from ._models import CalculateExchangeRequest
+    from ._models import CalculateExchangeRequestProperties
+    from ._models import CalculateExchangeResponseProperties
     from ._models import CalculatePriceResponse
     from ._models import CalculatePriceResponseProperties
     from ._models import CalculatePriceResponsePropertiesBillingCurrencyTotal
@@ -85,17 +113,23 @@ except (SyntaxError, ImportError):
     from ._models import EmailActions
     from ._models import Error, ErrorException
     from ._models import ExceptionResponse, ExceptionResponseException
+    from ._models import ExchangeOperationResultResponse
+    from ._models import ExchangePolicyError
+    from ._models import ExchangePolicyErrors
+    from ._models import ExchangeRequest
+    from ._models import ExchangeRequestProperties
+    from ._models import ExchangeResponseProperties
     from ._models import ExtendedErrorInfo
     from ._models import ExtendedStatusInfo
     from ._models import MergeRequest
     from ._models import OperationDisplay
     from ._models import OperationResponse
+    from ._models import OperationResultError
     from ._models import Patch
     from ._models import PatchPropertiesRenewProperties
     from ._models import PaymentDetail
     from ._models import PhoneAction
     from ._models import Price
-    from ._models import Properties
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
     from ._models import QuotaLimitsResponse
@@ -114,7 +148,13 @@ except (SyntaxError, ImportError):
     from ._models import ReservationProperties
     from ._models import ReservationResponse
     from ._models import ReservationSplitProperties
+    from ._models import ReservationToExchange
+    from ._models import ReservationToPurchaseCalculateExchange
+    from ._models import ReservationToPurchaseExchange
+    from ._models import ReservationToReturn
     from ._models import ResourceName
+    from ._models import ReturnRequest
+    from ._models import ReturnRequestProperties
     from ._models import ScopeProperties
     from ._models import ServiceError
     from ._models import ServiceErrorDetail
@@ -131,14 +171,16 @@ from ._paged_models import QuotaRequestDetailsPaged
 from ._paged_models import ReservationOrderResponsePaged
 from ._paged_models import ReservationResponsePaged
 from ._azure_reservation_api_enums import (
+    ReservedResourceType,
+    ReservationTerm,
+    ReservationBillingPlan,
+    AppliedScopeType,
+    InstanceFlexibility,
     ReservationStatusCode,
     ErrorResponseCode,
-    ReservationBillingPlan,
-    ReservationTerm,
+    CalculateExchangeOperationResultStatus,
+    ExchangeOperationResultStatus,
     PaymentStatus,
-    ReservedResourceType,
-    InstanceFlexibility,
-    AppliedScopeType,
 )
 
 __all__ = [
@@ -147,6 +189,14 @@ __all__ = [
     'AppliedReservations',
     'AqiSettings',
     'AutoQuotaIncreaseDetail',
+    'AvailableScopeProperties',
+    'AvailableScopeRequest',
+    'AvailableScopeRequestProperties',
+    'BillingInformation',
+    'CalculateExchangeOperationResultResponse',
+    'CalculateExchangeRequest',
+    'CalculateExchangeRequestProperties',
+    'CalculateExchangeResponseProperties',
     'CalculatePriceResponse',
     'CalculatePriceResponseProperties',
     'CalculatePriceResponsePropertiesBillingCurrencyTotal',
@@ -159,17 +209,23 @@ __all__ = [
     'EmailActions',
     'Error', 'ErrorException',
     'ExceptionResponse', 'ExceptionResponseException',
+    'ExchangeOperationResultResponse',
+    'ExchangePolicyError',
+    'ExchangePolicyErrors',
+    'ExchangeRequest',
+    'ExchangeRequestProperties',
+    'ExchangeResponseProperties',
     'ExtendedErrorInfo',
     'ExtendedStatusInfo',
     'MergeRequest',
     'OperationDisplay',
     'OperationResponse',
+    'OperationResultError',
     'Patch',
     'PatchPropertiesRenewProperties',
     'PaymentDetail',
     'PhoneAction',
     'Price',
-    'Properties',
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
     'QuotaLimitsResponse',
@@ -188,7 +244,13 @@ __all__ = [
     'ReservationProperties',
     'ReservationResponse',
     'ReservationSplitProperties',
+    'ReservationToExchange',
+    'ReservationToPurchaseCalculateExchange',
+    'ReservationToPurchaseExchange',
+    'ReservationToReturn',
     'ResourceName',
+    'ReturnRequest',
+    'ReturnRequestProperties',
     'ScopeProperties',
     'ServiceError',
     'ServiceErrorDetail',
@@ -204,12 +266,14 @@ __all__ = [
     'ReservationResponsePaged',
     'ReservationOrderResponsePaged',
     'OperationResponsePaged',
+    'ReservedResourceType',
+    'ReservationTerm',
+    'ReservationBillingPlan',
+    'AppliedScopeType',
+    'InstanceFlexibility',
     'ReservationStatusCode',
     'ErrorResponseCode',
-    'ReservationBillingPlan',
-    'ReservationTerm',
+    'CalculateExchangeOperationResultStatus',
+    'ExchangeOperationResultStatus',
     'PaymentStatus',
-    'ReservedResourceType',
-    'InstanceFlexibility',
-    'AppliedScopeType',
 ]

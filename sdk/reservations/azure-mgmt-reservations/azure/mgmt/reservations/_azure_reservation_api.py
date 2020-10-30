@@ -20,6 +20,8 @@ from .operations import AutoQuotaIncreaseOperations
 from .operations import ReservationOperations
 from .operations import ReservationOrderOperations
 from .operations import OperationOperations
+from .operations import CalculateExchangeOperations
+from .operations import ExchangeOperations
 from . import models
 
 
@@ -41,6 +43,10 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
     :vartype reservation_order: azure.mgmt.reservations.operations.ReservationOrderOperations
     :ivar operation: Operation operations
     :vartype operation: azure.mgmt.reservations.operations.OperationOperations
+    :ivar calculate_exchange: CalculateExchange operations
+    :vartype calculate_exchange: azure.mgmt.reservations.operations.CalculateExchangeOperations
+    :ivar exchange: Exchange operations
+    :vartype exchange: azure.mgmt.reservations.operations.ExchangeOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -69,4 +75,8 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
         self.reservation_order = ReservationOrderOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operation = OperationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.calculate_exchange = CalculateExchangeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.exchange = ExchangeOperations(
             self._client, self.config, self._serialize, self._deserialize)

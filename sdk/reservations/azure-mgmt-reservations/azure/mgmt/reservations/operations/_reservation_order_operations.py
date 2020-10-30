@@ -26,7 +26,7 @@ class ReservationOrderOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Supported version for this document is 2019-04-01. Constant value: "2019-04-01".
+    :ivar api_version: Supported version for this document is 2020-10-01-preview. Constant value: "2020-10-01-preview".
     """
 
     models = models
@@ -36,7 +36,7 @@ class ReservationOrderOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-04-01"
+        self.api_version = "2020-10-01-preview"
 
         self.config = config
 
