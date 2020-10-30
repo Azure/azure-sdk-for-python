@@ -579,7 +579,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(entities)
-            self.assertEqual(100, len(entities))
+            self.assertEqual(transaction_count, len(entities))
             e = self.table.get_entity('batch_inserts', '1')
         finally:
             self._tear_down()
