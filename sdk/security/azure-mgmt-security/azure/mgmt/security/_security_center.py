@@ -57,6 +57,9 @@ from .operations import SecureScoreControlsOperations
 from .operations import SecureScoreControlDefinitionsOperations
 from .operations import SecuritySolutionsOperations
 from .operations import ConnectorsOperations
+from .operations import SqlVulnerabilityAssessmentScansOperations
+from .operations import SqlVulnerabilityAssessmentScanResultsOperations
+from .operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 from .operations import IotDefenderSettingsOperations
 from .operations import IotSensorsOperations
 from .operations import DevicesForSubscriptionOperations
@@ -160,6 +163,12 @@ class SecurityCenter(SDKClient):
     :vartype security_solutions: azure.mgmt.security.operations.SecuritySolutionsOperations
     :ivar connectors: Connectors operations
     :vartype connectors: azure.mgmt.security.operations.ConnectorsOperations
+    :ivar sql_vulnerability_assessment_scans: SqlVulnerabilityAssessmentScans operations
+    :vartype sql_vulnerability_assessment_scans: azure.mgmt.security.operations.SqlVulnerabilityAssessmentScansOperations
+    :ivar sql_vulnerability_assessment_scan_results: SqlVulnerabilityAssessmentScanResults operations
+    :vartype sql_vulnerability_assessment_scan_results: azure.mgmt.security.operations.SqlVulnerabilityAssessmentScanResultsOperations
+    :ivar sql_vulnerability_assessment_baseline_rules: SqlVulnerabilityAssessmentBaselineRules operations
+    :vartype sql_vulnerability_assessment_baseline_rules: azure.mgmt.security.operations.SqlVulnerabilityAssessmentBaselineRulesOperations
     :ivar iot_defender_settings: IotDefenderSettings operations
     :vartype iot_defender_settings: azure.mgmt.security.operations.IotDefenderSettingsOperations
     :ivar iot_sensors: IotSensors operations
@@ -281,6 +290,12 @@ class SecurityCenter(SDKClient):
         self.security_solutions = SecuritySolutionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.connectors = ConnectorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_scans = SqlVulnerabilityAssessmentScansOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sql_vulnerability_assessment_baseline_rules = SqlVulnerabilityAssessmentBaselineRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_defender_settings = IotDefenderSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
