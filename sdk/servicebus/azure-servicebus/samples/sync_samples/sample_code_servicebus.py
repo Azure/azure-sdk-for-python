@@ -91,7 +91,7 @@ def example_create_servicebus_sender_sync():
     from azure.servicebus import ServiceBusClient
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
-    servicebus_client = ServiceBusClient._from_connection_string(conn_str=servicebus_connection_str)
+    servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     with servicebus_client:
         topic_sender = servicebus_client.get_topic_sender(topic_name=topic_name)
     # [END create_topic_sender_from_sb_client_sync]
