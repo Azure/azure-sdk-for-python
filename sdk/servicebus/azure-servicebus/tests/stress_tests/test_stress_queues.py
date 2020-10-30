@@ -17,9 +17,8 @@ from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 
 from servicebus_preparer import ServiceBusNamespacePreparer, ServiceBusQueuePreparer
 from stress_tests.stress_test_base import StressTestRunner, ReceiveType
-from utilities import get_logger
 
-_logger = get_logger(logging.DEBUG)
+LOGGING_ENABLE = False
 
 class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
@@ -30,7 +29,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_send_and_receive(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, debug=False)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
@@ -48,7 +47,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_send_and_pull_receive(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, debug=False)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
@@ -67,7 +66,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_batch_send_and_receive(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, debug=False)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
@@ -86,7 +85,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_slow_send_and_receive(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, debug=False)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
@@ -105,7 +104,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_receive_and_delete(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, debug=False)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ReceiveMode.ReceiveAndDelete)],
@@ -123,7 +122,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_unsettled_messages(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, debug=False)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
@@ -144,7 +143,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_receive_large_batch_size(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, debug=False)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
                                        receivers = [sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=50)],
@@ -169,12 +168,13 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
     def test_stress_queue_pull_receive_timeout(self, servicebus_namespace_connection_string, servicebus_queue):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=True)
+            servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
         
         stress_test = ServiceBusQueueStressTests.ReceiverTimeoutStressTestRunner(
             senders = [sb_client.get_queue_sender(servicebus_queue.name)],
             receivers = [sb_client.get_queue_receiver(servicebus_queue.name)],
             max_wait_time = 5,
+            receive_type=ReceiveType.pull,
             duration=timedelta(seconds=600))
 
         result = stress_test.Run()

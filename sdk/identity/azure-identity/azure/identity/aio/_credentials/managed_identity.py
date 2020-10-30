@@ -44,10 +44,16 @@ class ManagedIdentityCredential(AsyncContextManager):
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT) and os.environ.get(
             EnvironmentVariables.IDENTITY_HEADER
         ):
-            _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
-            from .app_service import AppServiceCredential
+            if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
+                _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+                from .service_fabric import ServiceFabricCredential
 
-            self._credential = AppServiceCredential(**kwargs)
+                self._credential = ServiceFabricCredential(**kwargs)
+            else:
+                _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+                from .app_service import AppServiceCredential
+
+                self._credential = AppServiceCredential(**kwargs)
         elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
@@ -75,7 +81,7 @@ class ManagedIdentityCredential(AsyncContextManager):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Asynchronously request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -122,7 +128,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -200,7 +206,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
     async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
         """Asynchronously request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`

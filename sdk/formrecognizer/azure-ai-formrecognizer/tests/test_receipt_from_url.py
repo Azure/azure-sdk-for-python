@@ -10,8 +10,8 @@ from datetime import date, time
 from azure.core.exceptions import HttpResponseError, ServiceRequestError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
-from azure.ai.formrecognizer._response_handlers import prepare_receipt
-from azure.ai.formrecognizer import FormRecognizerClient
+from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
+from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
 from testcase import FormRecognizerTest, GlobalFormRecognizerAccountPreparer
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
 
@@ -88,7 +88,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -140,7 +140,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -293,7 +293,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_receipt = prepare_receipt(analyze_result)
+            extracted_receipt = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_receipt)
 
@@ -353,3 +353,24 @@ class TestReceiptFromUrl(FormRecognizerTest):
         result = poller.result()
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_receipt_locale_specified(self, client):
+        poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-IN")
+        assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_receipt_locale_error(self, client):
+        with pytest.raises(HttpResponseError) as e:
+            client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="not a locale")
+        assert "UnsupportedLocale" == e.value.error.code
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    def test_receipt_locale_v2(self, client):
+        with pytest.raises(ValueError) as e:
+            client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")
+        assert "'locale' is only available for API version V2_1_PREVIEW and up" in str(e.value)

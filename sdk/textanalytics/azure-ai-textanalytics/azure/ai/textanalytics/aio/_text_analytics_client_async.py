@@ -128,7 +128,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or
             list[dict[str, str]]
-        :keyword str country_hint: A country hint for the entire batch. Accepts two
+        :keyword str country_hint: Country of origin hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
             "US". If you don't want to use a country hint, pass the string "none".
@@ -136,7 +136,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
-            level statistics.
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -200,7 +200,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -266,7 +267,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
@@ -346,7 +348,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -413,7 +416,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -452,7 +456,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
-        """Analyze sentiment for a batch of documents.
+        """Analyze sentiment for a batch of documents. Turn on opinion mining with `show_opinion_mining`.
 
         Returns a sentiment prediction, as well as sentiment scores for
         each sentiment class (Positive, Negative, and Neutral) for the document
@@ -483,7 +487,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and

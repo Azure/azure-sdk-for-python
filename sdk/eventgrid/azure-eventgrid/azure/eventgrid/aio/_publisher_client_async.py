@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union, List, Dict
+from typing import Any, Union, List, Dict, cast
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import (
@@ -24,21 +24,34 @@ from azure.core.pipeline.policies import (
 )
 from .._policies import CloudEventDistributedTracingPolicy
 from .._models import CloudEvent, EventGridEvent, CustomEvent
-from .._helpers import _get_topic_hostname_only_fqdn, _get_authentication_policy, _is_cloud_event
+from .._helpers import (
+    _get_topic_hostname_only_fqdn,
+    _get_authentication_policy,
+    _is_cloud_event,
+    _eventgrid_data_typecheck
+)
 from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
+from .._generated.models import CloudEvent as InternalCloudEvent, EventGridEvent as InternalEventGridEvent
 from .._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
 from .._version import VERSION
 
 SendType = Union[
-        CloudEvent,
-        EventGridEvent,
-        CustomEvent,
-        Dict,
-        List[CloudEvent],
-        List[EventGridEvent],
-        List[CustomEvent],
-        List[Dict]
-    ]
+    CloudEvent,
+    EventGridEvent,
+    CustomEvent,
+    Dict,
+    List[CloudEvent],
+    List[EventGridEvent],
+    List[CustomEvent],
+    List[Dict]
+]
+
+ListEventType = Union[
+    List[CloudEvent],
+    List[EventGridEvent],
+    List[CustomEvent],
+    List[Dict]
+]
 
 class EventGridPublisherClient():
     """Asynchronous EventGrid Python Publisher Client.
@@ -101,20 +114,36 @@ class EventGridPublisherClient():
         :raises: :class:`ValueError`, when events do not follow specified SendType.
          """
         if not isinstance(events, list):
-            events = [events]
+            events = cast(ListEventType, [events])
 
         if all(isinstance(e, CloudEvent) for e in events) or all(_is_cloud_event(e) for e in events):
             try:
-                events = [e._to_generated(**kwargs) for e in events] # pylint: disable=protected-access
+                events = [
+                    cast(CloudEvent, e)._to_generated(**kwargs) for e in events # pylint: disable=protected-access
+                    ]
             except AttributeError:
                 pass # means it's a dictionary
             kwargs.setdefault("content_type", "application/cloudevents-batch+json; charset=utf-8")
-            await self._client.publish_cloud_event_events(self._topic_hostname, events, **kwargs)
+            await self._client.publish_cloud_event_events(
+                self._topic_hostname,
+                cast(List[InternalCloudEvent], events),
+                **kwargs
+                )
         elif all(isinstance(e, EventGridEvent) for e in events) or all(isinstance(e, dict) for e in events):
             kwargs.setdefault("content_type", "application/json; charset=utf-8")
-            await self._client.publish_events(self._topic_hostname, events, **kwargs)
+            for event in events:
+                _eventgrid_data_typecheck(event)
+            await self._client.publish_events(
+                self._topic_hostname,
+                cast(List[InternalEventGridEvent], events),
+                **kwargs
+                )
         elif all(isinstance(e, CustomEvent) for e in events):
-            serialized_events = [dict(e) for e in events]
-            await self._client.publish_custom_event_events(self._topic_hostname, serialized_events, **kwargs)
+            serialized_events = [dict(e) for e in events] # type: ignore
+            await self._client.publish_custom_event_events(
+                self._topic_hostname,
+                cast(List, serialized_events),
+                **kwargs
+                )
         else:
             raise ValueError("Event schema is not correct.")

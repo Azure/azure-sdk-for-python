@@ -73,7 +73,7 @@ class PiiEntityDomainType(str, Enum):
 
 class DetectedLanguage(DictMixin):
     """DetectedLanguage contains the predicted language found in text,
-    its confidence score, and ISO 639-1 representation.
+    its confidence score, and its ISO 639-1 representation.
 
     :ivar name: Long name of a detected language (e.g. English,
         French).
@@ -116,7 +116,7 @@ class RecognizeEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -152,7 +152,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -258,7 +258,7 @@ class DetectLanguageResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -560,7 +560,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -594,7 +594,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -630,7 +630,7 @@ class AnalyzeSentimentResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -948,8 +948,8 @@ class SentenceSentiment(DictMixin):
     :ivar int offset: The sentence offset from the start of the document. Returned
         in unicode code points. Only returned for API versions v3.1-preview and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
-        For example in "The food is good, but the service is bad", we would
-        mind these two opinions "food is good", "service is bad". Only returned
+        For example in the sentence "The food is good, but the service is bad", we would
+        mine the two opinions "food is good" and "service is bad". Only returned
         if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
         api version is v3.1-preview and up.
     :vartype mined_opinions:

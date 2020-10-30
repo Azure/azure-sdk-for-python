@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
+from typing import Union, Any, Dict
 import datetime as dt
 import uuid
 import json
@@ -87,6 +88,7 @@ class CloudEvent(EventMixin):   #pylint:disable=too-many-instance-attributes
 
     @classmethod
     def _from_generated(cls, cloud_event, **kwargs):
+        # type: (Union[str, Dict, bytes], Any) -> CloudEvent
         generated = InternalCloudEvent.deserialize(cloud_event)
         if generated.additional_properties:
             extensions = dict(generated.additional_properties)

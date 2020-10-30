@@ -41,7 +41,7 @@ from azure.core.exceptions import (
     ResourceExistsError)
 
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
-from _shared.testcase import TableTestCase, GlobalStorageAccountPreparer
+from _shared.testcase import TableTestCase
 
 # ------------------------------------------------------------------------------
 

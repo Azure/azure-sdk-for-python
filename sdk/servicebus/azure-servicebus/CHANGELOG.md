@@ -1,8 +1,53 @@
 # Release History
 
-## 7.0.0b7 (Unreleased)
+## 7.0.0b8 (Unreleased)
+
+**New Features**
+
+* Added support for `timeout` parameter on the following operations:
+  - `ServiceBusSender`: `send_messages`, `schedule_messages` and `cancel_scheduled_messages`
+  - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
+  - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
+  - `ReceivedMessage`: `renew_lock`
+* `azure.servicebus.exceptions.ServiceBusError` now inherits from `azure.core.exceptions.AzureError`.
 
 **Breaking Changes**
+
+* Renamed `AutoLockRenew` to `AutoLockRenewer`.
+* Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+  - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+  - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
+* The parameter `inner_exception` that `ServiceBusError.__init__` takes is now renamed to `error`.
+* Renamed `azure.servicebus.exceptions.MessageError` to `azure.servicebus.exceptions.ServiceBusMessageError`
+* Removed error `azure.servicebus.exceptions.ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus
+resource does not exist when using the `ServiceBusAdministrationClient`.
+* Renamed `Message` to `ServiceBusMessage`.
+* Renamed `PeekedMessage` to `ServiceBusPeekedMessage`.
+* Renamed `ReceivedMessage` to `ServiceBusReceivedMessage`.
+* Renamed `BatchMessage` to `ServiceBusMessageBatch`.
+  - Renamed method `add` to `add_message` on the class.
+* Renamed `ServiceBusSender.create_batch` to `ServiceBusSender.create_message_batch`.
+* Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+  - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+  - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
+* Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)
+and methods that use amqp management link for request like `schedule_messages`, `received_deferred_messages`, etc.
+now raise more concrete exception other than `MessageSettleFailed` and `ServiceBusError`.
+* Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
+ now inherit from `azure.servicebus.exceptions.MessageError`.
+* `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`.
+* `encoding` support is removed from `ServiceBusMessage`
+
+**BugFixes**
+
+* Updated uAMQP dependency to 1.2.12.
+  - Added support for Python 3.9.
+  - Fixed bug where amqp message `footer` and `delivery_annotation` were not encoded into the outgoing payload.
+
+## 7.0.0b7 (2020-10-05)
+
+**Breaking Changes**
+
 * Passing any type other than `ReceiveMode` as parameter `receive_mode` now throws a `TypeError` instead of `AttributeError`.
 * Administration Client calls now take only entity names, not `<Entity>Descriptions` as well to reduce ambiguity in which entity was being acted on. TypeError will now be thrown on improper parameter types (non-string).
 * `AMQPMessage` (`Message.amqp_message`) properties are now read-only, changes of these properties would not be reflected in the underlying message.  This may be subject to change before GA.

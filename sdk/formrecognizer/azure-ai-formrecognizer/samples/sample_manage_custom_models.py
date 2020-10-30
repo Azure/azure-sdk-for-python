@@ -61,6 +61,8 @@ class ManageCustomModelsSample(object):
         custom_model = form_training_client.get_custom_model(model_id=first_model.model_id)
         print("\nModel ID: {}".format(custom_model.model_id))
         print("Status: {}".format(custom_model.status))
+        print("Model name: {}".format(custom_model.model_name))
+        print("Is this a composed model?: {}".format(custom_model.properties.is_composed_model))
         print("Training started on: {}".format(custom_model.training_started_on))
         print("Training completed on: {}".format(custom_model.training_completed_on))
         # [END get_custom_model]

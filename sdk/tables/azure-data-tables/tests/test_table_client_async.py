@@ -14,10 +14,7 @@ from devtools_testutils import (
     CachedResourceGroupPreparer,
     CachedStorageAccountPreparer
 )
-from _shared.testcase import (
-    GlobalStorageAccountPreparer,
-    TableTestCase
-)
+from _shared.testcase import TableTestCase
 
 from azure.core.exceptions import HttpResponseError
 # ------------------------------------------------------------------------------

@@ -12,7 +12,6 @@ from azure.core.exceptions import ServiceResponseTimeoutError
 from ._utils import is_retryable_status_code
 from ._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from ._generated import SearchIndexClient
-from ..indexes import SearchIndexClient as SearchServiceClient
 from ._generated.models import IndexBatch, IndexingResult
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
@@ -119,6 +118,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
     def _process(self, timeout=86400, **kwargs):
         # type: (int) -> bool
+        from ..indexes import SearchIndexClient as SearchServiceClient
         raise_error = kwargs.pop("raise_error", True)
         actions = self._index_documents_batch.dequeue_actions()
         has_error = False

@@ -10,8 +10,12 @@
 FILE: sample_recognize_content_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text and content information from a document
+    This sample demonstrates how to extract text, selection marks, and content information from a document
     given through a file.
+
+    Note that selection marks returned from begin_recognize_content() do not return the text associated with
+    the checkbox. For the API to return this information, train a custom model to recognize the checkbox and its text.
+    See sample_train_model_with_labels.py for more information.
 
 USAGE:
     python sample_recognize_content_async.py
@@ -35,7 +39,7 @@ class RecognizeContentSampleAsync(object):
 
     async def recognize_content(self):
         path_to_sample_forms = os.path.abspath(os.path.join(os.path.abspath(__file__),
-                                                            "..", "..", "./sample_forms/forms/Invoice_1.pdf"))
+                                                            "..", "..", "./sample_forms/forms/selection_mark_form.pdf"))
         # [START recognize_content_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -68,7 +72,7 @@ class RecognizeContentSampleAsync(object):
                             cell.text,
                             format_bounding_box(cell.bounding_box)
                         ))
-                        # [END recognize_content_async]
+
                 for line_idx, line in enumerate(content.lines):
                     print("Line # {} has word count '{}' and text '{}' within bounding box '{}'".format(
                         line_idx,
@@ -78,7 +82,16 @@ class RecognizeContentSampleAsync(object):
                     ))
                     for word in line.words:
                         print("...Word '{}' has a confidence of {}".format(word.text, word.confidence))
+
+                for selection_mark in content.selection_marks:
+                    print("Selection mark is '{}' within bounding box '{}' and has a confidence of {}".format(
+                        selection_mark.state,
+                        format_bounding_box(selection_mark.bounding_box),
+                        selection_mark.confidence
+                    ))
                 print("----------------------------------------")
+
+            # [END recognize_content_async]
 
 
 async def main():
