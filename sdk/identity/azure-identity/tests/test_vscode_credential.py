@@ -56,7 +56,7 @@ def test_user_agent():
 def test_request_url(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     access_token = "***"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
