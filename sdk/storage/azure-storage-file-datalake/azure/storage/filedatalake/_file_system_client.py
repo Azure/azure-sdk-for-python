@@ -12,6 +12,7 @@ except ImportError:
     from urllib2 import quote  # type: ignore
 
 import six
+from copy import deepcopy
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
@@ -740,7 +741,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
-                                       _configuration=self._config, _pipeline=self._pipeline,
+                                       _configuration=self._config, _pipeline=deepcopy(self._pipeline),
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
@@ -774,10 +775,9 @@ class FileSystemClient(StorageAccountHostsMixin):
             file_path = file_path.name
         except AttributeError:
             pass
-
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=deepcopy(self._pipeline),
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
