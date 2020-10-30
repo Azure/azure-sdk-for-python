@@ -239,6 +239,7 @@ page = poller.result()
 
 table = page[0].tables[0] # page 1, table 1
 print("Table found on page {}:".format(table.page_number))
+print("Table location {}:".format(table.bounding_box))
 for cell in table.cells:
     print("Cell text: {}".format(cell.text))
     print("Location: {}".format(cell.bounding_box))
