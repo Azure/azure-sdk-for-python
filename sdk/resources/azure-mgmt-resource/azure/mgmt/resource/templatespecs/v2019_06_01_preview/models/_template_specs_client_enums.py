@@ -18,3 +18,8 @@ class CreatedByType(str, Enum):
     application = "Application"
     managed_identity = "ManagedIdentity"
     key = "Key"
+
+
+class TemplateSpecExpandKind(str, Enum):
+
+    versions = "versions"  #: Includes version information with the Template Spec.

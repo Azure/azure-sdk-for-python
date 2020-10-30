@@ -18,6 +18,8 @@ try:
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import GenericResource
     from ._models_py3 import Identity
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
     from ._models_py3 import Plan
     from ._models_py3 import PlanPatchable
     from ._models_py3 import Resource
@@ -31,12 +33,15 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import GenericResource
     from ._models import Identity
+    from ._models import Operation
+    from ._models import OperationDisplay
     from ._models import Plan
     from ._models import PlanPatchable
     from ._models import Resource
     from ._models import Sku
 from ._paged_models import ApplicationDefinitionPaged
 from ._paged_models import ApplicationPaged
+from ._paged_models import OperationPaged
 from ._application_client_enums import (
     ProvisioningState,
     ApplicationLockLevel,
@@ -53,10 +58,13 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'GenericResource',
     'Identity',
+    'Operation',
+    'OperationDisplay',
     'Plan',
     'PlanPatchable',
     'Resource',
     'Sku',
+    'OperationPaged',
     'ApplicationPaged',
     'ApplicationDefinitionPaged',
     'ProvisioningState',
