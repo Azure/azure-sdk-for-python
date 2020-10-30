@@ -328,6 +328,23 @@ class FileSystemTest(StorageTestCase):
 
         self.assertEqual(acl, access_control['acl'])
 
+    @record
+    def test_file_system_sessions_closes_properly(self):
+        # Arrange
+        file_system_client = self._create_file_system("fs")
+        with file_system_client as fs_client:
+            with fs_client.get_file_client("file1.txt") as f_client:
+                f_client.create_file()
+            with fs_client.get_file_client("file2.txt") as f_client:
+                f_client.create_file()
+            with fs_client.get_directory_client("file1") as f_client:
+                f_client.create_directory()
+            with fs_client.get_directory_client("file2") as f_client:
+                f_client.create_directory()
+
+        # Assert
+        self.assertIsNone(fs_client._pipeline._transport.session)
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
