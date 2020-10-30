@@ -26,7 +26,7 @@ class ServicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2018-08-20-preview".
+    :ivar api_version: Client Api Version. Constant value: "2020-03-30".
     """
 
     models = models
@@ -36,7 +36,7 @@ class ServicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-20-preview"
+        self.api_version = "2020-03-30"
 
         self.config = config
 
@@ -71,7 +71,7 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=10)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -115,7 +115,7 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=10)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -206,8 +206,8 @@ class ServicesOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, resource_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        service_patch_description = models.ServicesPatchDescription(tags=tags)
+            self, resource_group_name, resource_name, tags=None, public_network_access=None, custom_headers=None, raw=False, **operation_config):
+        service_patch_description = models.ServicesPatchDescription(tags=tags, public_network_access=public_network_access)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -220,7 +220,7 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=10)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -255,7 +255,7 @@ class ServicesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, resource_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, tags=None, public_network_access=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update the metadata of a service instance.
 
         :param resource_group_name: The name of the resource group that
@@ -265,6 +265,11 @@ class ServicesOperations(object):
         :type resource_name: str
         :param tags: Instance tags
         :type tags: dict[str, str]
+        :param public_network_access: Control permission for data plane
+         traffic coming from public networks while private endpoint is enabled.
+         Possible values include: 'Enabled', 'Disabled'
+        :type public_network_access: str or
+         ~azure.mgmt.healthcareapis.models.PublicNetworkAccess
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -283,6 +288,7 @@ class ServicesOperations(object):
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             tags=tags,
+            public_network_access=public_network_access,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -320,7 +326,7 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=10)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -411,7 +417,7 @@ class ServicesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=10)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -480,7 +486,7 @@ class ServicesOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=10)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -550,7 +556,7 @@ class ServicesOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=10)
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

@@ -12,9 +12,13 @@
 from ._services_operations import ServicesOperations
 from ._operations import Operations
 from ._operation_results_operations import OperationResultsOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'ServicesOperations',
     'Operations',
     'OperationResultsOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
 ]
