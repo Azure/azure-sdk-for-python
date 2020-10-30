@@ -24,91 +24,93 @@
 #
 # --------------------------------------------------------------------------
 
-
-class _PagingOption(str, Enum):
-    """Known paging options from Swagger."""
-
-    TOKEN_INPUT_PARAMETER = "continuation-token-input-parameter"  # for token paging, which parameter will hold continuation token
-
-class BadStatus(Exception):
-    pass
-
-
-class BadResponse(Exception):
-    pass
-
-
-class OperationFailed(Exception):
-    pass
-
-def _raise_if_bad_http_status_and_method(response):
-    # type: (ResponseType) -> None
-    """Check response status code is valid.
-
-    Must be 200, 201, 202, or 204.
-
-    :raises: BadStatus if invalid status.
-    """
-    code = response.status_code
-    if code in {200, 201, 202, 204}:
-        return
-    raise BadStatus(
-        "Invalid return status {!r} for {!r} operation".format(
-            code, response.request.method
-        )
-    )
-
+from .exceptions import HttpResponseError
 
 class PagingMethodABC():
-    def __init__(
-        self,
-        client,
-        extract_data,
-        initial_request=None,
-        path_format_arguments=None,
-        **kwargs
-    ):
-        self._client = client
-        self.extract_data = extract_data
-        self._initial_request = initial_request
-        self._path_format_arguments = path_format_arguments
-        self._did_a_call_already = False
+
+    # making requests
 
     def get_initial_page(self):
+        """Gets the page from the first request to the service
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_next_link(self, continuation_token: str):
+        """Gets the next link to make a request against
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_next_request_parameters(self):
+        """Gets parameters to make next request
+        """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_next(self, continuation_token: str):
-        if not self._did_a_call_already:
-            response = self.get_initial_page()
-        else:
-            next_link = self.get_next_link(continuation_token)
-            if self._path_format_arguments:
-                next_link = self._client.format_url(next_link, **self._path_format_arguments)
-            request_params = self.get_next_request_parameters()
-            request = self._client.get(next_link, **request_params)
-            response = self._client._pipeline.run(self._initial_request, stream=False)
+        """Gets next page
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def finished(self, continuation_token):
+        """When paging is finished
+        """
+        raise NotImplementedError("This method needs to be implemented")
 
 
-        self._did_a_call_already = True
-        code = response.http_response.status_code
-        if not (200 <= code <= 299):
-            raise HttpResponseError(response=response.http_response)
+    # extracting data from response
 
-        return response
+    def get_list_elements(self, pipeline_response, deserialized):
+        """Extract the list elements from the current page to return to users
+        """
+        raise NotImplementedError("This method needs to be implemented")
 
-class PagingMethod(PagingMethodABC):
+    def mutate_list(self, pipeline_response, list_of_elem):
+        """Mutate list of elements in current page, i.e. if users passed in a cls calback
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def get_continuation_token(self, pipeline_response, deserialized):
+        """Get the continuation token from the current page
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def extract_data(self, pipeline_response):
+        """Return the continuation token and current list of elements to PageIterator
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+
+class BasicPagingMethod(PagingMethodABC):
     """This is the most common paging method. It uses the continuation token
     as the next link
     """
 
+    def __init__(
+        self,
+        client,
+        deserialize_output,
+        initial_request=None,
+        initial_response=None,
+        cls=None,
+        path_format_arguments=None,
+        item_name="value",
+        continuation_token_name="next_link",
+        **kwargs
+    ):
+        self._client = client
+        self._deserialize_output = deserialize_output
+        self._initial_request = initial_request
+        self._cls = cls
+        self._path_format_arguments = path_format_arguments
+        self._initial_response = initial_response
+        self._item_name = item_name
+        self._continuation_token_name = continuation_token_name
+        self._did_a_call_already = False
+
     def get_initial_page(self):
         # TODO: allow stream calls as well
+        if self._initial_response:
+            self._initial_request = self._initial_response.http_response.request
+            return self._initial_response
         response = self._client._pipeline.run(self._initial_request, stream=False)
         return response
 
@@ -125,32 +127,87 @@ class PagingMethod(PagingMethodABC):
             "content": body_parameters
         }
 
+    def get_next(self, continuation_token):
+        if not self._did_a_call_already:
+            response = self.get_initial_page()
+            self._initial_response = response
+        else:
+            next_link = self.get_next_link(continuation_token)
+            if self._path_format_arguments:
+                next_link = self._client.format_url(next_link, **self._path_format_arguments)
+            request_params = self.get_next_request_parameters()
+            request = self._client.get(next_link, **request_params)
+            response = self._client._pipeline.run(request, stream=False)
 
-class PagingMethodWithSeparateNextOperation(PagingMethodABC):
+
+        self._did_a_call_already = True
+        code = response.http_response.status_code
+        if not (200 <= code <= 299):
+            raise HttpResponseError(response=response.http_response)
+
+        return response
+
+    def finished(self, continuation_token):
+        return continuation_token is None and self._did_a_call_already
+
+    def get_list_elements(self, pipeline_response, deserialized):
+        if not hasattr(deserialized, self._item_name):
+            raise ValueError(
+                "The response object does not have property '{}' to extract element list from".format(self._item_name)
+            )
+        return getattr(deserialized, self._item_name)
+
+    def mutate_list(self, pipeline_response, list_of_elem):
+        if self._cls:
+            list_of_elem = self._cls(list_of_elem)
+        return iter(list_of_elem)
+
+    def get_continuation_token(self, pipeline_response, deserialized):
+        if not self._continuation_token_name:
+            return None
+        if not hasattr(deserialized, self._continuation_token_name):
+            raise ValueError(
+                "The response object does not have property '{}' to extract continuation token from".format(self._continuation_token_name)
+            )
+        return getattr(deserialized, self._continuation_token_name)
+
+    def extract_data(self, pipeline_response):
+        deserialized = self._deserialize_output(pipeline_response)
+        list_of_elem = self.get_list_elements(pipeline_response, deserialized)
+        list_of_elem = self.mutate_list(pipeline_response, list_of_elem)
+        continuation_token = self.get_continuation_token(pipeline_response, deserialized)
+        return continuation_token, list_of_elem
+
+
+class SeperateNextOperationPagingMethod(BasicPagingMethod):
     """Use this paging method if the swagger defines a separate next operation
     """
+
     def __init__(
         self,
         client,
-        extract_data,
+        deserialize_output,
         prepare_request_to_separate_next_operation,
-        initial_request,
+        initial_request=None,
+        initial_response=None,
+        cls=None,
         path_format_arguments=None,
+        item_name="value",
+        continuation_token_name="next_link",
         **kwargs
     ):
-        super(PagingMethodWithSeparateNextOperation, self).__init__(
+        super(SeperateNextOperationPagingMethod, self).__init__(
             client=client,
-            extract_data=extract_data,
+            deserialize_output=deserialize_output,
             initial_request=initial_request,
-            path_format_arguments=path_format_arguments
+            initial_response=initial_response,
+            cls=cls,
+            path_format_arguments=path_format_arguments,
+            item_name=item_name,
+            continuation_token_name=continuation_token_name,
         )
-        self._prepare_request_to_separate_next_operation
+        self._prepare_request_to_separate_next_operation = prepare_request_to_separate_next_operation
         self._next_request = None
-
-    def get_initial_page(self):
-        # TODO: allow stream calls as well
-        response = self._client._pipeline.run(self._initial_request, stream=False)
-        return response
 
     def get_next_link(self, continuation_token: str):
         self._next_request = self._prepare_request_to_separate_next_operation(continuation_token)
@@ -166,31 +223,34 @@ class PagingMethodWithSeparateNextOperation(PagingMethodABC):
             "content": body_parameters
         }
 
-class PagingMethodContinuationToken(PagingMethodABC):
+class ContinuationTokenPagingMethod(BasicPagingMethod):
     def __init__(
         self,
         client,
-        extract_data,
-        initial_request,
+        deserialize_output,
         continuation_token_input_parameter,
+        initial_request=None,
+        initial_response=None,
+        cls=None,
         path_format_arguments=None,
+        item_name="value",
+        continuation_token_name="next_link",
         **kwargs
     ):
-        super(PagingMethodContinuationToken, self).__init__(
+        super(ContinuationTokenPagingMethod, self).__init__(
             client=client,
-            extract_data=extract_data,
+            deserialize_output=deserialize_output,
             initial_request=initial_request,
-            path_format_arguments=path_format_arguments
+            initial_response=initial_response,
+            cls=cls,
+            path_format_arguments=path_format_arguments,
+            item_name=item_name,
+            continuation_token_name=continuation_token_name,
         )
         self._continuation_token_input_parameter = continuation_token_input_parameter
 
-    def get_initial_page(self):
-        # TODO: allow stream calls as well
-        response = self._client._pipeline.run(self._initial_request, stream=False)
-        return response
-
     def get_next_link(self, continuation_token: str):
-        return self._initial_request.url
+        return self._initial_response.request.url
 
     def _add_continuation_token_param(self, request_parameters):
         set_continuation_token = False
@@ -218,22 +278,3 @@ class PagingMethodContinuationToken(PagingMethodABC):
         }
         self._add_continuation_token_param(request_parameters)
         return request_parameters
-
-class PagingMethodWithInitialResponse(PagingMethodABC):
-    def __init__(
-        self,
-        client,
-        extract_data,
-        initial_response,
-        path_format_arguments=None,
-        **kwargs
-    ):
-        super(PagingMethodContinuationToken, self).__init__(
-            client=client,
-            extract_data=extract_data,
-            path_format_arguments=path_format_arguments
-        )
-        self._initial_response = initial_response
-
-    def get_initial_page(self):
-        return self._initial_response
