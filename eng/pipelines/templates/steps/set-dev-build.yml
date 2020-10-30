@@ -6,7 +6,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
 
   - task: PythonScript@0
-    condition: eq(variables['SetDevVersion'],'true')
+    condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'))
     displayName: "Update package versions for dev build"
     inputs:
       scriptPath: 'eng/versioning/version_set_dev.py'
