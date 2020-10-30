@@ -77,6 +77,19 @@ class FrontendEndpointPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(FrontendEndpointPaged, self).__init__(*args, **kwargs)
+class RulesEnginePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RulesEngine <azure.mgmt.frontdoor.models.RulesEngine>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RulesEngine]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RulesEnginePaged, self).__init__(*args, **kwargs)
 class WebApplicationFirewallPolicyPaged(Paged):
     """
     A paging container for iterating over a list of :class:`WebApplicationFirewallPolicy <azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy>` object
