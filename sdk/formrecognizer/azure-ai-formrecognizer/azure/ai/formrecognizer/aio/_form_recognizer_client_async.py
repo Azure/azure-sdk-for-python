@@ -319,8 +319,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         :param invoice: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type invoice: bytes or IO[bytes]
-        :keyword str locale: Locale of the invoice. Supported locales include: en-US, en-AU, en-CA, en-GB,
-            and en-IN.
+        :keyword str locale: Locale of the invoice. Supported locales include: en-US
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword content_type: Media type of the body sent to the API. Content-type is
@@ -384,8 +383,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         :param str invoice_url: The URL of the invoice to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
-        :keyword str locale: Locale of the invoice. Supported locales include: en-US, en-AU, en-CA, en-GB,
-            and en-IN.
+        :keyword str locale: Locale of the invoice. Supported locales include: en-US
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations

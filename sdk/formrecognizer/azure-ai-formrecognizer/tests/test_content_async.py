@@ -191,7 +191,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 2)
+        self.assertEqual(layout.tables[0].row_count, 3)
         self.assertEqual(layout.tables[0].column_count, 6)
         self.assertEqual(layout.tables[0].page_number, 1)
 
@@ -233,10 +233,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 4)
-        self.assertEqual(layout.tables[0].column_count, 3)
-        self.assertEqual(layout.tables[1].row_count, 6)
-        self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].row_count, 5)
+        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[1].row_count, 4)
+        self.assertEqual(layout.tables[1].column_count, 2)
         self.assertEqual(layout.tables[0].page_number, 1)
         self.assertEqual(layout.tables[1].page_number, 1)
 
@@ -304,8 +304,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertEqual(len(layout.tables), 2)
-        self.assertEqual(layout.tables[0].row_count, 30)
-        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[0].row_count, 29)
+        self.assertEqual(layout.tables[0].column_count, 4)
         self.assertEqual(layout.tables[0].page_number, 1)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 5)
@@ -313,7 +313,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[1]
         self.assertEqual(len(layout.tables), 1)
         self.assertEqual(layout.page_number, 2)
-        self.assertEqual(layout.tables[0].row_count, 24)
+        self.assertEqual(layout.tables[0].row_count, 23)
         self.assertEqual(layout.tables[0].column_count, 5)
         self.assertEqual(layout.tables[0].page_number, 2)
         self.assertFormPagesHasValues(result)

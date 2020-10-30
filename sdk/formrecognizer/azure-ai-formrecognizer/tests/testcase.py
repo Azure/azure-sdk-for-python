@@ -44,10 +44,13 @@ class RequestBodyReplacer(RecordingProcessor):
         self._max_request_body = max_request_body
 
     def process_request(self, request):
-        if request.body and six.binary_type(request.body) and len(request.body) > self._max_request_body * 1024:
-            request.body = '!!! The request body has been omitted from the recording because its ' \
-                           'size {} is larger than {}KB. !!!'.format(len(request.body),
-                                                                     self._max_request_body)
+        try:
+            if request.body and six.binary_type(request.body) and len(request.body) > self._max_request_body * 1024:
+                request.body = '!!! The request body has been omitted from the recording because its ' \
+                               'size {} is larger than {}KB. !!!'.format(len(request.body),
+                                                                         self._max_request_body)
+        except TypeError:
+            pass
         return request
 
 
@@ -126,6 +129,7 @@ class FormRecognizerTest(AzureTestCase):
         self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
         self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
         self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
+        self.form_bmp = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.bmp"))
 
     def get_oauth_endpoint(self):
         return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
@@ -235,8 +239,9 @@ class FormRecognizerTest(AzureTestCase):
         self.assertEqual(line.kind, "line")
         self.assertEqual(line.text, expected.text)
         self.assertBoundingBoxTransformCorrect(line.bounding_box, expected.bounding_box)
-        self.assertEqual(line.appearance.style.name, expected.appearance.style.name)
-        self.assertEqual(line.appearance.style.confidence, expected.appearance.style.confidence)
+        if expected.appearance:
+            self.assertEqual(line.appearance.style.name, expected.appearance.style.name)
+            self.assertEqual(line.appearance.style.confidence, expected.appearance.style.confidence)
         for word, expected_word in zip(line.words, expected.words):
             self.assertFormWordTransformCorrect(word, expected_word)
 
@@ -388,7 +393,7 @@ class FormRecognizerTest(AzureTestCase):
         for table, expected_table in zip(layout, expected_layout):
             self.assertEqual(table.row_count, expected_table.rows)
             self.assertEqual(table.column_count, expected_table.columns)
-            self.assertBoundingBoxTransformCorrect(table.bounding_box, expected_table.bounding_bpx)
+            self.assertBoundingBoxTransformCorrect(table.bounding_box, expected_table.bounding_box)
             for cell, expected_cell in zip(table.cells, expected_table.cells):
                 self.assertEqual(table.page_number, cell.page_number)
                 self.assertEqual(cell.text, expected_cell.text)
@@ -454,7 +459,8 @@ class FormRecognizerTest(AzureTestCase):
                 for table in page.tables:
                     self.assertEqual(table.page_number, page.page_number)
                     self.assertIsNotNone(table.row_count)
-                    self.assertIsNotNone(table.bounding_box)
+                    if table.bounding_box:
+                        self.assertBoundingBoxHasPoints(table.bounding_box)
                     self.assertIsNotNone(table.column_count)
                     for cell in table.cells:
                         self.assertIsNotNone(cell.text)
@@ -482,8 +488,9 @@ class FormRecognizerTest(AzureTestCase):
     def assertFormLineHasValues(self, line, page_number):
         self.assertIsNotNone(line.text)
         self.assertBoundingBoxHasPoints(line.bounding_box)
-        self.assertIsNotNone(line.appearance.style.name)
-        self.assertIsNotNone(line.appearance.style.confidence)
+        if line.appearance:
+            self.assertIsNotNone(line.appearance.style.name)
+            self.assertIsNotNone(line.appearance.style.confidence)
         self.assertEqual(line.page_number, page_number)
         for word in line.words:
             self.assertFormWordHasValues(word, page_number)
