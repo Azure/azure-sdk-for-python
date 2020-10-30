@@ -134,15 +134,15 @@ def check_beginning_bytes(form):
     if len(form) > 3:
         if form[:4] == b"\x25\x50\x44\x46":
             return "application/pdf"
-        elif form[:2] == b"\xff\xd8":
+        if form[:2] == b"\xff\xd8":
             return "image/jpeg"
-        elif form[:4] == b"\x89\x50\x4E\x47":
+        if form[:4] == b"\x89\x50\x4E\x47":
             return "image/png"
-        elif form[:4] == b"\x49\x49\x2A\x00":  # little-endian
+        if form[:4] == b"\x49\x49\x2A\x00":  # little-endian
             return "image/tiff"
-        elif form[:4] == b"\x4D\x4D\x00\x2A":  # big-endian
+        if form[:4] == b"\x4D\x4D\x00\x2A":  # big-endian
             return "image/tiff"
-        elif form[:2] == b"\x42\x4D":
+        if form[:2] == b"\x42\x4D":
             return "image/bmp"
     raise ValueError("Content type could not be auto-detected. Please pass the content_type keyword argument.")
 
