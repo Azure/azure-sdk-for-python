@@ -1,6 +1,7 @@
 import functools
 from urllib.parse import urlparse, parse_qsl
-from azure.core.async_paging import AsyncItemPaged
+from ._models import RequestStatistics
+from ._paging import HealthcareItemPagedAsync
 from ._response_handlers import healthcare_result, analyze_result
 
 async def healthcare_extract_page_data_async(response, obj, response_headers, health_job_state):
@@ -28,15 +29,17 @@ async def lro_get_next_page_async(lro_status_callback, first_page, continuation_
     return await lro_status_callback(job_id, **query_params)
     
 
-async def healthcare_paged_result_async(health_status_callback, response, obj, response_headers, show_stats=False):
-    return await AsyncItemPaged(
+def healthcare_paged_result_async(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False):
+    return HealthcareItemPagedAsync(
+        obj.results.model_version,
+        RequestStatistics._from_generated(obj.results.statistics) if show_stats else None,
         functools.partial(lro_get_next_page_async, health_status_callback, obj),
         functools.partial(healthcare_extract_page_data_async, response, obj, response_headers)
     )
 
 
-async def analyze_paged_result_async(analyze_status_callback, response, obj, response_headers):
-    return await AsyncItemPaged(
-        functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
-        functools.partial(analyze_extract_page_data_async, response, obj, response_headers)
-    )
+# async def analyze_paged_result_async(analyze_status_callback, response, obj, response_headers):
+#     return await AsyncItemPaged(
+#         functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
+#         functools.partial(analyze_extract_page_data_async, response, obj, response_headers)
+#     )

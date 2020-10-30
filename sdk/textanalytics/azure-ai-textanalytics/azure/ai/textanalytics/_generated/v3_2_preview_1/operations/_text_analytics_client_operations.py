@@ -67,8 +67,6 @@ class TextAnalyticsClientOperationsMixin(object):
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
-        print(vars(response.request))
-        # print(vars(pipeline_response))
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -76,7 +74,9 @@ class TextAnalyticsClientOperationsMixin(object):
 
         response_headers = {}
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-
+        print(response.headers.get('Operation-Location'))
+        pipeline_response.http_response.headers['Operation-Location'] = "%s/jobs/%s" % (url, response.headers.get('Operation-Location').split("/")[-1])
+        print(pipeline_response.http_response.headers['Operation-Location'])
         if cls:
             return cls(pipeline_response, None, response_headers)
 

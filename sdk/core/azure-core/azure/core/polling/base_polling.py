@@ -260,6 +260,7 @@ class OperationResourcePolling(LongRunningOperation):
             )
 
         body = _as_json(response)
+        print(body)
         status = body.get("status")
         if not status:
             raise BadResponse("No status found in body")

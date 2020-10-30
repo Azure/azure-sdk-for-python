@@ -36,10 +36,10 @@ from ._models import (
     TextAnalysisResult,
     EntitiesRecognitionTaskResult,
     PiiEntitiesRecognitionTaskResult,
-    EntityLinkingTaskResult,
     KeyPhraseExtractionTaskResult,
-    SentimentAnalysisTaskResult
+    RequestStatistics
 )
+from ._paging import HealthcareItemPaged
 
 class CSODataV4Format(ODataV4Format):
 
@@ -72,14 +72,18 @@ def order_results(response, combined):
     return ordered_response
 
 
+def order_lro_results(doc_id_order, combined):
+    mapping = {item.id: item for item in combined}
+    ordered_response = [mapping[i] for i in doc_id_order]
+    return ordered_response
+
+
 def prepare_result(func):
-    def wrapper(response, obj, response_headers, lro=False):  # pylint: disable=unused-argument
+    def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
         if obj.errors:
             combined = obj.documents + obj.errors
-            if lro:
-                results = combined
-            else:
-                results = order_results(response, combined)
+            results = order_results(response, combined)
+
         else:
             results = obj.documents
 
@@ -91,6 +95,26 @@ def prepare_result(func):
         return results
 
     return wrapper
+
+
+def prepare_lro_result(func):
+    def wrapper(doc_id_order, obj, response_headers):  # pylint: disable=unused-argument
+        if obj.errors:
+            combined = obj.documents + obj.errors
+
+            results = order_lro_results(doc_id_order, combined)
+        else:
+            results = obj.documents
+
+        for idx, item in enumerate(results):
+            if hasattr(item, "error"):
+                results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
+            else:
+                results[idx] = func(item, results)
+        return results
+
+    return wrapper
+
 
 
 @prepare_result
@@ -155,7 +179,7 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
     )
 
 
-@prepare_result
+@prepare_lro_result
 def healthcare_result(health_result, results):
     return RecognizeHealthcareEntitiesResult._from_generated(health_result)
 
@@ -174,29 +198,17 @@ def analyze_result(response, obj, response_headers, tasks):
                 results=[pii_entities_result(response, result, response_headers) for result in t.results]
             ) for t in tasks.entity_recognition_pii_tasks
         ],
-        entity_linking_results=[
-            EntityLinkingTaskResult(
-                name=t.name,
-                results=[linked_entities_result(response, result, response_headers) for result in t.results]
-            ) for t in tasks.entity_linking_tasks
-        ],
         key_phrase_extraction_results=[
             KeyPhraseExtractionTaskResult(
                 name=t.name,
                 results=[key_phrases_result(response, result, response_headers) for result in t.results]
             ) for t in tasks.key_phrase_extraction_tasks
-        ],
-        sentiment_analysis_results=[
-            SentimentAnalysisTaskResult(
-                name=t.name,
-                results=[sentiment_result(response, result, response_headers) for result in t.results]
-            ) for t in tasks.sentiment_analysis_tasks
         ]
     )
 
 
-def healthcare_extract_page_data(response, obj, response_headers, health_job_state):
-    return health_job_state.next_link, healthcare_result(response, health_job_state.results, response_headers, lro=True)
+def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job_state):
+    return health_job_state.next_link, healthcare_result(doc_id_order, health_job_state.results, response_headers)
 
 
 def analyze_extract_page_data(response, obj, response_headers, analyze_job_state):
@@ -220,10 +232,12 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token):
     return lro_status_callback(job_id, **query_params)
     
 
-def healthcare_paged_result(health_status_callback, response, obj, response_headers, show_stats=False):
-    return ItemPaged(
+def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False):
+    return HealthcareItemPaged(
+        obj.results.model_version,
+        RequestStatistics._from_generated(obj.results.statistics) if show_stats else None,
         functools.partial(lro_get_next_page, health_status_callback, obj),
-        functools.partial(healthcare_extract_page_data, response, obj, response_headers)
+        functools.partial(healthcare_extract_page_data, doc_id_order, obj, response_headers)
     )
 
 

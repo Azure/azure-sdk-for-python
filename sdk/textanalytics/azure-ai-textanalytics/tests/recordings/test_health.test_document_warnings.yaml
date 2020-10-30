@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "This won''t actually create a warning
+      :''(", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '98'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 437ac017-1865-42e6-9c14-4e2bb54d99a8
+      date:
+      - Thu, 29 Oct 2020 21:17:15 GMT
+      operation-location:
+      - https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/cfb7c692-aae6-48d0-adfe-19a551af75d8
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '399'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/cfb7c692-aae6-48d0-adfe-19a551af75d8
+  response:
+    body:
+      string: '{"jobId":"cfb7c692-aae6-48d0-adfe-19a551af75d8","lastUpdateDateTime":"2020-10-29T21:17:29Z","createdDateTime":"2020-10-29T21:17:14Z","expirationDateTime":"2020-10-30T21:17:14Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","statistics":{"charactersCount":40,"transactionsCount":1},"entities":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - 11839127-c571-4472-85db-54ad88b7a33e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Oct 2020 21:17:46 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '415'
+    status:
+      code: 200
+      message: OK
+version: 1

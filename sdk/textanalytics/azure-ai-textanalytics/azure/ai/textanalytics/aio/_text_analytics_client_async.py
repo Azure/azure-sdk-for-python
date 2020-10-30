@@ -40,7 +40,8 @@ from .._models import (
     DocumentError,
     RecognizePiiEntitiesResult,
 )
-
+from .._lro import TextAnalyticsOperationResourcePolling
+from .._response_handlers_async import healthcare_paged_result_async
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureKeyCredential
@@ -530,9 +531,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _healthcare_result_callback_async(self, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(self._client.models().HealthcareJobState, raw_response)
-        return healthcare_paged_result(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
+    def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
+        healthcare_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").HealthcareJobState, raw_response)
+        return healthcare_paged_result_async(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace_async
     async def begin_health(  # type: ignore
@@ -573,20 +574,28 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Analyze healthcare entities in a batch of documents.
         """
-
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", self._default_language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
+        doc_id_order = [doc.get("id") for doc in docs]
+
         try:
             return await self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
-                cls=kwargs.pop("cls", partial(self._healthcare_result_callback_async, show_stats=show_stats)),
-                polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
+                polling=AsyncLROBasePolling(
+                    timeout=polling_interval, 
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
                 continuation_token=continuation_token,
                 **kwargs
             )

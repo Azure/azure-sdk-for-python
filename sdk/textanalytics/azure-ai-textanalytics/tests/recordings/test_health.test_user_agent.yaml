@@ -1,0 +1,77 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 133dd160-8e09-4ac8-9f26-f1e741f1d9d0
+      date:
+      - Thu, 29 Oct 2020 22:36:11 GMT
+      operation-location:
+      - https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/42a480ab-1195-4573-aeb3-daf0090cc9ae
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '340'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/42a480ab-1195-4573-aeb3-daf0090cc9ae
+  response:
+    body:
+      string: '{"jobId":"42a480ab-1195-4573-aeb3-daf0090cc9ae","lastUpdateDateTime":"2020-10-29T22:36:15Z","createdDateTime":"2020-10-29T22:36:11Z","expirationDateTime":"2020-10-30T22:36:11Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","statistics":{"charactersCount":22,"transactionsCount":1},"entities":[]},{"id":"2","statistics":{"charactersCount":38,"transactionsCount":1},"entities":[]},{"id":"3","statistics":{"charactersCount":36,"transactionsCount":1},"entities":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - 8bf9ee1a-8174-4a67-95e6-66fbbe08e89a
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Oct 2020 22:36:41 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '59'
+    status:
+      code: 200
+      message: OK
+version: 1

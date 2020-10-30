@@ -68,6 +68,8 @@ class TestHealth(TextAnalyticsTest):
 
         response = client.begin_health(docs).result()
 
+        self.assertNone(response.statistics) # show_stats=False by default
+
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
@@ -87,7 +89,7 @@ class TestHealth(TextAnalyticsTest):
             u""
         ]
 
-        response = client.begin_health(docs).result()
+        response = list(client.begin_health(docs).result())
 
         for i in range(2):
             self.assertIsNotNone(response[i].id)
@@ -108,7 +110,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
                 {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
-        response = client.begin_health(docs).result()
+        response = list(client.begin_health(docs).result())
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -124,7 +126,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
                 {"id": "3", "language": "en", "text": ""}]
 
-        response = client.begin_health(docs).result()
+        response = list(client.begin_health(docs).result())
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
@@ -168,8 +170,8 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_health(docs)
-        assert excinfo.value.status_code == 413
-        assert excinfo.value.error.code == "BodyTooLarge"
+        assert excinfo.value.status_code == 413  # this will eventually be changed to 400 in the service
+        assert excinfo.value.error.code == "InvalidDocumentBatch"
         assert "Request Payload sent is too large to be processed. Limit request size to: 524288" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -184,10 +186,10 @@ class TestHealth(TextAnalyticsTest):
             {"id": "1", "text": "This won't actually create a warning :'("},
         ]
 
-        result = client.analyze_sentiment(docs)
+        result = client.begin_health(docs).result()
         for doc in result:
             doc_warnings = doc.warnings
-            self.assertEqual(len(doc_warnings), 0)
+            self.assertEqual(doc_warnings, None)  # Currently the service doesn't return any warnings at all even though it is expressed in the Swagger.
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -210,7 +212,11 @@ class TestHealth(TextAnalyticsTest):
             self.assertEqual(str(idx + 1), doc.id)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "text_analytics_account_key": "",
+        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+    })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_health(
@@ -218,7 +224,11 @@ class TestHealth(TextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": "xxxxxxxxxxxx"})
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "text_analytics_account_key": "xxxxxxxxxxxx",
+        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+    })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_health(
@@ -265,10 +275,12 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "19", "text": ":P"},
                 {"id": "1", "text": ":D"}]
 
-        response = client.begin_health(docs).result()
-        in_order = ["56", "0", "22", "19", "1"]
+        response = list(client.begin_health(docs).result())
+        expected_order = ["56", "0", "22", "19", "1"]
+        actual_order = [x.id for x in response]
+        print(actual_order)
         for idx, resp in enumerate(response):
-            self.assertEqual(resp.id, in_order[idx])
+            self.assertEqual(resp.id, expected_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -277,15 +289,6 @@ class TestHealth(TextAnalyticsTest):
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
     def test_show_stats_and_model_version(self, client):
-        def callback(response):
-            self.assertIsNotNone(response)
-            self.assertIsNotNone(response.model_version, msg=response.raw_response)
-            self.assertIsNotNone(response.raw_response)
-            self.assertEqual(response.statistics.document_count, 5)
-            self.assertEqual(response.statistics.transaction_count, 4)
-            self.assertEqual(response.statistics.valid_document_count, 4)
-            self.assertEqual(response.statistics.erroneous_document_count, 1)
-
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -295,9 +298,16 @@ class TestHealth(TextAnalyticsTest):
         response = client.begin_health(
             docs,
             show_stats=True,
-            model_version="latest",
-            raw_response_hook=callback
-        )
+            model_version="2020-09-03"
+        ).result()
+
+        self.assertIsNotNone(response)
+        self.assertIsNotNone(response.model_version)
+        self.assertEqual("2020-09-03", response.model_version)
+        self.assertEqual(response.statistics.documents_count, 5)
+        self.assertEqual(response.statistics.transactions_count, 4)
+        self.assertEqual(response.statistics.valid_documents_count, 4)
+        self.assertEqual(response.statistics.erroneous_documents_count, 1)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -312,7 +322,7 @@ class TestHealth(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = client.begin_health(docs, language="en").result()
+        response = list(client.begin_health(docs, language="en").result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -330,7 +340,7 @@ class TestHealth(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = client.begin_health(docs, language="").result()
+        response = list(client.begin_health(docs, language="").result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -346,7 +356,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_health(docs).result()
+        response = list(client.begin_health(docs).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -364,7 +374,7 @@ class TestHealth(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = client.begin_health(docs, language="en").result()
+        response = list(client.begin_health(docs, language="en").result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -380,7 +390,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_health(docs, language="en").result()
+        response = list(client.begin_health(docs, language="en").result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -397,10 +407,9 @@ class TestHealth(TextAnalyticsTest):
             TextDocumentInput(id="2", text="猫は幸せ"),
         ]
 
-        response = client.begin_health(docs, language="en").result()
+        response = list(client.begin_health(docs, language="en").result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
-        self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -413,19 +422,24 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_health(docs, language="en").result()
+        response = list(client.begin_health(docs, language="en").result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "en"})
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net",
+        "default_language": "en"
+    })
     def test_client_passed_default_language_hint(self, client):
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_health(docs).result()
+        response = list(client.begin_health(docs).result())
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -437,9 +451,9 @@ class TestHealth(TextAnalyticsTest):
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
     def test_invalid_language_hint_method(self, client):
-        response = client.begin_health(
+        response = list(client.begin_health(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
-        ).result()
+        ).result())
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -449,29 +463,32 @@ class TestHealth(TextAnalyticsTest):
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
     def test_invalid_language_hint_docs(self, client):
-        response = client.begin_health(
+        response = list(client.begin_health(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
-        ).result()
+        ).result())
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics_account = "https://cognitiveusw2dev.azure-api.net"
+        text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
+
         credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential)
+        client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_2_PREVIEW)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_health(docs)
+        response = client.begin_health(docs).result()
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
-            response = client.begin_health(docs)
+            response = client.begin_health(docs).result()
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
-        response = client.begin_health(docs)
+        response = client.begin_health(docs).result()
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -491,7 +508,13 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_health(docs, raw_response_hook=callback)
+        poller = client.begin_health(docs)
+        self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                VERSION, platform.python_version(), platform.platform()),
+                poller._polling_method._initial_response.http_request.headers["User-Agent"]
+            )
+
+        poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -501,7 +524,7 @@ class TestHealth(TextAnalyticsTest):
     })
     def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = client.begin_health(docs).result()
+        response = list(client.begin_health(docs).result())
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -527,7 +550,7 @@ class TestHealth(TextAnalyticsTest):
     })
     def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = client.begin_health(docs).result()
+        response = list(client.begin_health(docs).result())
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -568,7 +591,7 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        doc_errors = client.begin_health(docs).result()
+        doc_errors = list(client.begin_health(docs).result())
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")

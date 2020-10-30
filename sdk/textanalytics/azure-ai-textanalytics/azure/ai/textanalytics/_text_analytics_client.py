@@ -33,10 +33,9 @@ from ._helpers import _get_deserialize
 from ._models import (
     EntitiesRecognitionTask,
     PiiEntitiesRecognitionTask,
-    EntityLinkingTask,
     KeyPhraseExtractionTask,
-    SentimentAnalysisTask
 )
+from ._lro import TextAnalyticsOperationResourcePolling
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -387,9 +386,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _healthcare_result_callback(self, raw_response, _, headers, show_stats=False):
+    def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").HealthcareJobState, raw_response)
-        return healthcare_paged_result(self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
+        return healthcare_paged_result(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace
     def begin_health(  # type: ignore
@@ -430,20 +429,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 8
                 :caption: Recognize healthcare entities in a batch of documents.
         """
-
-        docs = _validate_input(documents, "language", self._default_language)
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
+
+        doc_id_order = [doc.get("id") for doc in docs]
 
         try:
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
-                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, show_stats=show_stats)),
-                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
+                polling=LROBasePolling(
+                    timeout=polling_interval, 
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
                 continuation_token=continuation_token,
                 **kwargs
             )
@@ -637,9 +644,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.EntitiesRecognitionTask]
         pii_entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.PiiEntitiesRecognitionTask]
-        entity_linking_tasks=None,  # type: List[~azure.ai.textanalytics.EntityLinkingTask]
         key_phrase_extraction_tasks=None,  # type: List[~azure.ai.textanalytics.KeyPhraseExtractionTask]
-        sentiment_analysis_tasks=None,  # type: List[~azure.ai.textanalytics.SentimentAnalysisTask]
         **kwargs  # type: Any
     ):  # type: (...) -> LROPoller[ItemPaged[TextAnalysisResult]]):
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
@@ -693,10 +698,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             analyze_tasks = self._client.models(api_version='v3.2-preview.1').JobManifestTasks(
                 entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks] if entities_recognition_tasks else [],
                 entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks] if pii_entities_recognition_tasks else [],
-                entity_linking_tasks = [t.to_generated() for t in entity_linking_tasks] if entity_linking_tasks else [],
                 key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks] if key_phrase_extraction_tasks else [],
-                sentiment_analysis_tasks = [t.to_generated() for t in sentiment_analysis_tasks] if sentiment_analysis_tasks else []
-                # TODO: add custom task types later
             )
             analyze_body = self._client.models(api_version='v3.2-preview.1').AnalyzeBatchInput(
                 display_name=display_name,

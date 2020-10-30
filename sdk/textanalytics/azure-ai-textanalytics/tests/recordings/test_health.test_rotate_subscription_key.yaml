@@ -1,0 +1,195 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - adc1cea0-ebfe-4017-b244-f39ec67d9e58
+      date:
+      - Thu, 29 Oct 2020 22:26:14 GMT
+      operation-location:
+      - https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/c4465fcf-e1d7-4fcb-8b87-674f3d444b51
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '472'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/c4465fcf-e1d7-4fcb-8b87-674f3d444b51
+  response:
+    body:
+      string: '{"jobId":"c4465fcf-e1d7-4fcb-8b87-674f3d444b51","lastUpdateDateTime":"2020-10-29T22:26:14Z","createdDateTime":"2020-10-29T22:26:13Z","expirationDateTime":"2020-10-30T22:26:13Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","statistics":{"charactersCount":22,"transactionsCount":1},"entities":[]},{"id":"2","statistics":{"charactersCount":38,"transactionsCount":1},"entities":[]},{"id":"3","statistics":{"charactersCount":36,"transactionsCount":1},"entities":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - c6fedc70-d2dd-48ba-9a31-6eeea8b4689a
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Oct 2020 22:26:44 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '271'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: '{"error":{"code":"401","message": "Access denied due to invalid subscription
+        key or wrong API endpoint. Make sure to provide a valid key for an active
+        subscription and use a correct regional API endpoint for your resource."}}'
+    headers:
+      apim-request-id:
+      - bb11aea5-4729-4926-b820-3d4d51ccc2e8
+      content-length:
+      - '225'
+      content-type:
+      - application/json
+      date:
+      - Thu, 29 Oct 2020 22:26:44 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      www-authenticate:
+      - AzureApiManagementKey realm="https://cognitiveusw2dev.azure-api.net/text/analytics",name="Ocp-Apim-Subscription-Key",type="header"
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 401
+      message: Access Denied
+- request:
+    body: '{"documents": [{"id": "1", "text": "I will go to the park.", "language":
+      "en"}, {"id": "2", "text": "I did not like the hotel we stayed at.", "language":
+      "en"}, {"id": "3", "text": "The restaurant had really good food.", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '240'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - ad7e1e88-ae79-4203-a392-8450a0f29156
+      date:
+      - Thu, 29 Oct 2020 22:26:44 GMT
+      operation-location:
+      - https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/cec9c1a7-df88-47ab-a8a9-35c6d9e945f9
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '115'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/cec9c1a7-df88-47ab-a8a9-35c6d9e945f9
+  response:
+    body:
+      string: '{"jobId":"cec9c1a7-df88-47ab-a8a9-35c6d9e945f9","lastUpdateDateTime":"2020-10-29T22:26:49Z","createdDateTime":"2020-10-29T22:26:44Z","expirationDateTime":"2020-10-30T22:26:44Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","statistics":{"charactersCount":22,"transactionsCount":1},"entities":[]},{"id":"2","statistics":{"charactersCount":38,"transactionsCount":1},"entities":[]},{"id":"3","statistics":{"charactersCount":36,"transactionsCount":1},"entities":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - 6127dd71-0c7b-405f-926c-f47351db83d2
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Oct 2020 22:27:14 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '196'
+    status:
+      code: 200
+      message: OK
+version: 1

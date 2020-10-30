@@ -38,10 +38,9 @@ from ._models import (
     HealthcareEntityLink,
     EntitiesRecognitionTask,
     PiiEntitiesRecognitionTask,
-    EntityLinkingTask,
     KeyPhraseExtractionTask,
-    SentimentAnalysisTask,
-    TextAnalysisResult
+    TextAnalysisResult,
+    RequestStatistics
 )
 
 __all__ = [
@@ -77,10 +76,9 @@ __all__ = [
     'HealthcareEntityLink',
     'EntitiesRecognitionTask',
     'PiiEntitiesRecognitionTask',
-    'EntityLinkingTask',
     'KeyPhraseExtractionTask',
-    'SentimentAnalysisTask',
-    'TextAnalysisResult'
+    'TextAnalysisResult',
+    'RequestStatistics'
 ]
 
 __version__ = VERSION

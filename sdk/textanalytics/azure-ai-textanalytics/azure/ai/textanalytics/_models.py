@@ -219,10 +219,11 @@ class RecognizeHealthcareEntitiesResult(DictMixin):
     def _from_generated(cls, healthcare_result):
         entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities]
         relations = []
-        for r in healthcare_result.relations:
-            _, source_idx = _get_indices(r.source)
-            _, target_idx = _get_indices(r.target)
-            relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx]))
+        if healthcare_result.relations:
+            for r in healthcare_result.relations:
+                _, source_idx = _get_indices(r.source)
+                _, target_idx = _get_indices(r.target)
+                relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx]))
         
         return cls(
             id=healthcare_result.id,
@@ -867,7 +868,7 @@ class LinkedEntityMatch(DictMixin):
         )[:1024]
 
 
-class TextDocumentInput(MultiLanguageInput):
+class TextDocumentInput(DictMixin, MultiLanguageInput):
     """The input document to be analyzed by the service.
 
     :ivar id: Required. A unique, non-empty document identifier.
@@ -1256,50 +1257,6 @@ class PiiEntitiesRecognitionTaskResult(DictMixin):
             .format(self.name, repr(self.results))[:1024]
 
 
-class EntityLinkingTask(DictMixin):
-    """EntityLinkingTask encapsulates the parameters for starting a long-running Entity Linking operation.
-
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
-        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
-        https://aka.ms/text-analytics-offsets
-    """
-
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
-        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
-
-    def __repr__(self, **kwargs):
-        return "EntityLinkingTask(model_version={}, string_index_type={})" \
-            .format(self.model_version, self.string_index_type)[:1024]
-
-    def to_generated(self):
-        return _v3_2_preview_1_models.EntityLinkingTask(
-            parameters=_v3_2_preview_1_models.EntityLinkingTaskParameters(
-                model_version=self.model_version,
-                string_index_type=self.string_index_type
-            )
-        )
-
-
-class EntityLinkingTaskResult(DictMixin):
-    """EntityLinkingTaskResult contains the results of a single Entity Linking task, including additional 
-        task metadata.
-
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.RecognizeLinkedEntitiesResult]
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "EntityLinkingTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-
 class KeyPhraseExtractionTask(DictMixin):
     """KeyPhraseExtractionTask encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
 
@@ -1339,54 +1296,6 @@ class KeyPhraseExtractionTaskResult(DictMixin):
             .format(self.name, repr(self.results))[:1024]
 
 
-class SentimentAnalysisTask(DictMixin):
-    """SentimentAnalysisTask encapsulates the parameters for starting a long-running Sentiment Analysis operation.
-
-    :ivar str model_version: The model version to use for the analysis.
-    :ivar bool enable_opinion_mining: A boolean value indicating whether or not to enable opinion mining for
-        the analysis.
-    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
-        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
-        https://aka.ms/text-analytics-offsets
-    """
-
-    def __init__(self, **kwargs):
-        self.model_version = kwargs.get("model_version", "latest")
-        self.enable_opinion_mining = kwargs.get("enable_opinion_mining", False)
-        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
-
-    def __repr__(self, **kwargs):
-        return "SentimentAnalysisTask(model_version={}, string_index_type={}, enable_opinion_mining={})" \
-            .format(self.model_version, self.string_index_type, self.enable_opinion_mining)[:1024]
-
-    def to_generated(self):
-        return _v3_2_preview_1_models.SentimentTask(
-            parameters=_v3_2_preview_1_models.SentimentTaskParameters(
-                model_version=self.model_version,
-                string_index_type=self.string_index_type,
-                opinion_mining=self.enable_opinion_mining
-            )
-        )
-
-
-class SentimentAnalysisTaskResult(DictMixin):
-    """SentimentAnalysisTaskResult contains the results of a single Sentiment Analysis task, including additional 
-        task metadata.
-
-    :ivar str name: The name of the task.
-    :ivar results: The results of the analysis.
-    :vartype results: list[~azure.ai.textanalytics.AnalyzeSentimentResult]
-    """
-
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.results = kwargs.get("results", [])
-
-    def __repr__(self, **kwargs):
-        return "SentimentAnalysisTaskResult(name={}, results={})" \
-            .format(self.name, repr(self.results))[:1024]
-
-
 class TextAnalysisResult(DictMixin):
     """TextAnalysisResult contains the results of multiple text analyses performed on a batch of documents.
 
@@ -1396,33 +1305,55 @@ class TextAnalysisResult(DictMixin):
     :ivar pii_entities_recognition_results: A list of objects containing results for all PII Entity Recognition
         tasks included in the analysis.
     :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionTaskResult]
-    :ivar entity_linking_results: A list of objects containing results for all Entity Linking tasks included in 
-        the analysis.
-    :vartype entity_linking_results: list[~azure.ai.textanalytics.EntityLinkingTaskResult]
     :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks 
         included in the analysis.
     :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionTaskResult]
-    :ivar sentiment_analysis_results: A list of objects containing results for all Sentiment Analysis tasks 
-        included in the analysis.
-    :vartype sentiment_analysis_results: list[~azure.ai.textanalytics.SentimentAnalysisTaskResult]
     """
     def __init__(self, **kwargs):
-
         self.entities_recognition_results = kwargs.get("entities_recognition_results", [])
         self.pii_entities_recognition_results = kwargs.get("pii_entities_recognition_results", [])
-        self.entity_linking_results = kwargs.get("entity_linking_results", [])
         self.key_phrase_extraction_results = kwargs.get("key_phrase_extraction_results", [])
-        self.sentiment_analysis_results = kwargs.get("sentiment_analysis_results", [])
 
     def __repr__(self):
         return "TextAnalysisResult(entities_recognition_results={}, pii_entities_recognition_results={}, \
-            entity_linking_results={}, key_phrase_extraction_results={}, sentiment_analysis_results={})" \
+            key_phrase_extraction_results={})" \
             .format(
                 repr(self.entities_extraction_results),
                 repr(self.pii_entities_extraction_results),
-                repr(self.entity_linking_results),
-                repr(self.key_phrase_extraction_results),
-                repr(self.sentiment_analysis_results)
+                repr(self.key_phrase_extraction_results)
             )[:1024]
+
+
+class RequestStatistics(DictMixin):
+    def __init__(self, **kwargs):
+        self.documents_count = kwargs.get("documents_count")
+        self.valid_documents_count = kwargs.get("valid_documents_count")
+        self.erroneous_documents_count = kwargs.get("erroneous_documents_count")
+        self.transactions_count = kwargs.get("transactions_count")
+
+    @classmethod
+    def _from_generated(cls, request_statistics):
+        return cls(
+            documents_count=request_statistics.documents_count,
+            valid_documents_count=request_statistics.valid_documents_count,
+            erroneous_documents_count=request_statistics.erroneous_documents_count,
+            transactions_count=request_statistics.transactions_count
+        )
+
+    def __repr__(self, **kwargs):  # TODO: why is this never called?
+        return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, \
+            transactions_count={}".format(
+                self.documents_count,
+                self.valid_documents_count,
+                self.erroneous_documents_count,
+                self.transactions_count
+            )[:1024]
+
+
+
+
+        
+
+
 
 

@@ -1,0 +1,77 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "I should take my cat to the veterinarian.",
+      "language": "en"}, {"id": "4", "text": "Este es un document escrito en Espa\u00f1ol.",
+      "language": "en"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '253'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - a544f194-559a-438e-8f25-2e90ce066604
+      date:
+      - Thu, 29 Oct 2020 21:51:35 GMT
+      operation-location:
+      - https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/8d36a45e-5ca0-4326-95e9-b1a57fcdca17
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '140'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b2 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/8d36a45e-5ca0-4326-95e9-b1a57fcdca17
+  response:
+    body:
+      string: '{"jobId":"8d36a45e-5ca0-4326-95e9-b1a57fcdca17","lastUpdateDateTime":"2020-10-29T21:51:42Z","createdDateTime":"2020-10-29T21:51:36Z","expirationDateTime":"2020-10-30T21:51:36Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","statistics":{"charactersCount":41,"transactionsCount":1},"entities":[{"offset":17,"length":3,"text":"cat","category":"TreatmentName","confidenceScore":0.74,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0280589"},{"dataSource":"CHV","id":"0000027342"},{"dataSource":"NCI","id":"C10277"},{"dataSource":"PDQ","id":"CDR0000040974"}]},{"offset":28,"length":12,"text":"veterinarian","category":"HealthcareProfession","confidenceScore":0.99,"isNegated":false}]},{"id":"4","statistics":{"charactersCount":39,"transactionsCount":1},"entities":[]},{"id":"3","statistics":{"charactersCount":4,"transactionsCount":1},"entities":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - 7f062a7c-6b9d-4eb9-906e-828244202369
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 29 Oct 2020 21:52:06 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '60'
+    status:
+      code: 200
+      message: OK
+version: 1

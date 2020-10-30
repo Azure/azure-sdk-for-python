@@ -57,12 +57,18 @@ class HealthSample(object):
             for revascularization with open heart surgery."
         ]
 
-        poller = text_analytics_client.begin_health(documents)
+        poller = text_analytics_client.begin_health(documents, show_stats=True)
         result = poller.result()
+        statistics = result.statistics
+        print(type(statistics))
+        print(vars(statistics))
+        exit(0)
         docs = [doc for doc in result if not doc.is_error]
 
         for idx, doc in enumerate(docs):
             print("Document text: {}\n".format(documents[idx]))
+            print(doc.statistics)
+            exit(0)
             for entity in doc.entities:
                 print("Entity: {}".format(entity.text))
                 print("...Category: {}".format(entity.category))
