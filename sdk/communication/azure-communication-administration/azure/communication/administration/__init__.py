@@ -32,8 +32,7 @@ from ._phonenumber._generated.models import (
     PstnConfiguration,
     ReleaseResponse,
     UpdateNumberCapabilitiesResponse,
-    UpdatePhoneNumberCapabilitiesResponse,
-    SearchStatus
+    UpdatePhoneNumberCapabilitiesResponse
 )
 
 from ._shared.models import (
@@ -73,7 +72,6 @@ __all__ = [
     'ReleaseResponse',
     'UpdateNumberCapabilitiesResponse',
     'UpdatePhoneNumberCapabilitiesResponse',
-    'SearchStatus',
 
     # from _shared
     'CommunicationUser',

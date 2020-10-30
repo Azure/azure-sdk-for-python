@@ -357,7 +357,7 @@ class PhoneNumberAdministrationClient(object):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[PhoneNumberRelease]
         """Begins creating a release for the given phone numbers.
         Caller must provide either phone_numbers, or continuation_token keywords to use the method.
         If both phone_numbers and continuation_token are specified, only continuation_token will be used to
@@ -442,7 +442,7 @@ class PhoneNumberAdministrationClient(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[PhoneNumberReservation]
         """Begins creating a phone number search to reserve phone numbers.
         Caller must provide either options, or continuation_token keywords to use the method.
         If both options and continuation_token are specified, only continuation_token will be used to
@@ -453,7 +453,7 @@ class PhoneNumberAdministrationClient(object):
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
-        search_polling = ReservePhoneNumberPolling(
+        reservation_polling = ReservePhoneNumberPolling(
             is_terminated=lambda status: status in [
                 SearchStatus.Reserved,
                 SearchStatus.Expired,
@@ -465,7 +465,7 @@ class PhoneNumberAdministrationClient(object):
 
         if cont_token is not None:
             return LROPoller.from_continuation_token(
-                polling_method=search_polling,
+                polling_method=reservation_polling,
                 continuation_token=cont_token,
                 client=self._phone_number_administration_client.phone_number_administration
             )
@@ -487,7 +487,7 @@ class PhoneNumberAdministrationClient(object):
         return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
                          initial_response=initial_state,
                          deserialization_callback=None,
-                         polling_method=search_polling)
+                         polling_method=reservation_polling)
 
     @distributed_trace
     def list_all_searches(
@@ -530,7 +530,7 @@ class PhoneNumberAdministrationClient(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller
+        # type: (...) -> LROPoller[PhoneNumberReservation]
         """Begins purchase the reserved phone numbers of a phone number search.
         Caller must provide either reservation_id, or continuation_token keywords to use the method.
         If both reservation_id and continuation_token are specified, only continuation_token will be used to
@@ -541,7 +541,7 @@ class PhoneNumberAdministrationClient(object):
         """
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
 
-        search_polling = PurchaseReservationPolling(
+        reservation_polling = PurchaseReservationPolling(
             is_terminated=lambda status: status in [
                 SearchStatus.Success,
                 SearchStatus.Expired,
@@ -552,7 +552,7 @@ class PhoneNumberAdministrationClient(object):
 
         if cont_token is not None:
             return LROPoller.from_continuation_token(
-                polling_method=search_polling,
+                polling_method=reservation_polling,
                 continuation_token=cont_token,
                 client=self._phone_number_administration_client.phone_number_administration
             )
@@ -572,4 +572,4 @@ class PhoneNumberAdministrationClient(object):
         return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
                          initial_response=initial_state,
                          deserialization_callback=None,
-                         polling_method=search_polling)
+                         polling_method=reservation_polling)
