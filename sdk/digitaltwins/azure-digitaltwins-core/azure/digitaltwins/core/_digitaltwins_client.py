@@ -195,7 +195,6 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
             digital_twin_id,
             component_path,
             patch_document=json_patch,
-            if_match=prep_if_match(etag, match_condition),
             **kwargs
         )
 
