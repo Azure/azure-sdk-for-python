@@ -1,8 +1,11 @@
 
 # Release History
 
-## 1.2.2 (Unreleased)
+## 1.2.2 (2020-11-09)
 
+### Bug Fixes
+
+- Fixed bug to allow polling for PATCH long-running-operation.
 
 ## 1.2.1 (2020-10-05)
 
