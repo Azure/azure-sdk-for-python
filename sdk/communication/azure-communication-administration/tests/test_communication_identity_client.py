@@ -22,8 +22,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             URIIdentityReplacer()])
 
     @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     def test_create_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)
@@ -32,8 +32,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
 
     @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     def test_issue_token(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)
@@ -45,8 +45,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert token_response.token is not None
     
     @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     def test_revoke_tokens(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)
@@ -59,8 +59,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert token_response.token is not None
     
     @pytest.mark.live_test_only
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     def test_delete_user(self, connection_string):
         identity_client = CommunicationIdentityClient.from_connection_string(
             connection_string)

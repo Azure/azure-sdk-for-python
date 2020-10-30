@@ -43,7 +43,7 @@ except (SyntaxError, ImportError):
     from ._models import TelemetryItem  # type: ignore
     from ._models import TrackResponse  # type: ignore
 
-from ._azure_monitor_exporter_enums import (
+from ._azure_monitor_client_enums import (
     ContextTagKeys,
     DataPointType,
     SeverityLevel,
