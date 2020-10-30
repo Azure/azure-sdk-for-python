@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import collections
 import logging
 import uuid
 import time
@@ -94,7 +93,7 @@ def _parse_conn_str(conn_str):
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> _AccessToken
+    # type: (str, str, str, Optional[timedelta]) -> AccessToken
     """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
@@ -148,7 +147,7 @@ class ServiceBusSharedKeyCredential(object):
         self.token_type = TOKEN_TYPE_SASTOKEN
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
