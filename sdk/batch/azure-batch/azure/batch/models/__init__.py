@@ -194,6 +194,7 @@ try:
     from ._models_py3 import TaskContainerExecutionInformation
     from ._models_py3 import TaskContainerSettings
     from ._models_py3 import TaskCounts
+    from ._models_py3 import TaskCountsResult
     from ._models_py3 import TaskDeleteOptions
     from ._models_py3 import TaskDependencies
     from ._models_py3 import TaskExecutionInformation
@@ -205,6 +206,7 @@ try:
     from ._models_py3 import TaskListSubtasksOptions
     from ._models_py3 import TaskReactivateOptions
     from ._models_py3 import TaskSchedulingPolicy
+    from ._models_py3 import TaskSlotCounts
     from ._models_py3 import TaskStatistics
     from ._models_py3 import TaskTerminateOptions
     from ._models_py3 import TaskUpdateOptions
@@ -402,6 +404,7 @@ except (SyntaxError, ImportError):
     from ._models import TaskContainerExecutionInformation
     from ._models import TaskContainerSettings
     from ._models import TaskCounts
+    from ._models import TaskCountsResult
     from ._models import TaskDeleteOptions
     from ._models import TaskDependencies
     from ._models import TaskExecutionInformation
@@ -413,6 +416,7 @@ except (SyntaxError, ImportError):
     from ._models import TaskListSubtasksOptions
     from ._models import TaskReactivateOptions
     from ._models import TaskSchedulingPolicy
+    from ._models import TaskSlotCounts
     from ._models import TaskStatistics
     from ._models import TaskTerminateOptions
     from ._models import TaskUpdateOptions
@@ -669,6 +673,7 @@ __all__ = [
     'TaskContainerExecutionInformation',
     'TaskContainerSettings',
     'TaskCounts',
+    'TaskCountsResult',
     'TaskDeleteOptions',
     'TaskDependencies',
     'TaskExecutionInformation',
@@ -680,6 +685,7 @@ __all__ = [
     'TaskListSubtasksOptions',
     'TaskReactivateOptions',
     'TaskSchedulingPolicy',
+    'TaskSlotCounts',
     'TaskStatistics',
     'TaskTerminateOptions',
     'TaskUpdateOptions',

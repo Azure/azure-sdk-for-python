@@ -24,7 +24,7 @@ class AccountOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-03-01.11.0".
+    :ivar api_version: Client API Version. Constant value: "2020-09-01.12.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class AccountOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-01.11.0"
+        self.api_version = "2020-09-01.12.0"
 
         self.config = config
 
@@ -140,7 +140,9 @@ class AccountOperations(object):
 
     def list_pool_node_counts(
             self, account_list_pool_node_counts_options=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the number of Compute Nodes in each state, grouped by Pool.
+        """Gets the number of Compute Nodes in each state, grouped by Pool. Note
+        that the numbers returned may not always be up to date. If you need
+        exact node counts, use a list query.
 
         :param account_list_pool_node_counts_options: Additional parameters
          for the operation

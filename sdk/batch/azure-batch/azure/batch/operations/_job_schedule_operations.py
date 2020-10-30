@@ -24,7 +24,7 @@ class JobScheduleOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-03-01.11.0".
+    :ivar api_version: Client API Version. Constant value: "2020-09-01.12.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class JobScheduleOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-01.11.0"
+        self.api_version = "2020-09-01.12.0"
 
         self.config = config
 

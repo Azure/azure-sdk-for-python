@@ -89,7 +89,7 @@ class OutputFileUploadCondition(str, Enum):
 class ComputeNodeFillType(str, Enum):
 
     spread = "spread"  #: Tasks should be assigned evenly across all Compute Nodes in the Pool.
-    pack = "pack"  #: As many Tasks as possible (maxTasksPerNode) should be assigned to each Compute Node in the Pool before any Tasks are assigned to the next Compute Node in the Pool.
+    pack = "pack"  #: As many Tasks as possible (taskSlotsPerNode) should be assigned to each Compute Node in the Pool before any Tasks are assigned to the next Compute Node in the Pool.
 
 
 class CertificateStoreLocation(str, Enum):
@@ -120,7 +120,7 @@ class StorageAccountType(str, Enum):
 
 class DiskEncryptionTarget(str, Enum):
 
-    os_disk = "osdisk"  #: The OS Disk on the compute node is encrypted.
+    os_disk = "osdisk"  #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other partitions (such as those on mounted data disks) when encryption occurs at boot time.
     temporary_disk = "temporarydisk"  #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other partitions (such as those on mounted data disks) when encryption occurs at boot time.
 
 
