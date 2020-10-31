@@ -12,9 +12,9 @@ import datetime
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from devtools_testutils import AzureTestCase
 from azure_devtools.scenario_tests import (
-    ReplayableTest
+    ReplayableTest,
+    create_random_name
 )
-
 from azure.ai.metricsadvisor import (
     MetricsAdvisorKeyCredential,
 )
@@ -179,7 +179,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
                                                                MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     async def _create_data_feed(self, name):
-        name = self.create_random_name(name)
+        name = create_random_name(name)
         return await self.admin_client.create_data_feed(
             DataFeed(
                 name=name,
@@ -207,10 +207,10 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
             )
         )
 
-    async def _create_data_feed_and_anomaly_detection_config(self, name):
+    async def _create_data_feed_and_detection_config(self, name):
         data_feed = await self._create_data_feed(name)
-        detection_config_name = self.create_random_name(name)
-        detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
+        detection_config_name = create_random_name(name)
+        detection_config = await self.admin_client.create_detection_configuration(
             AnomalyDetectionConfiguration(
                 name=detection_config_name,
                 metric_id=data_feed.metric_ids[0],
@@ -230,7 +230,7 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
         return detection_config, data_feed
 
     async def _create_data_feed_for_update(self, name):
-        data_feed_name = self.create_random_name(name)
+        data_feed_name = create_random_name(name)
         return await self.admin_client.create_data_feed(
             DataFeed(
                 name=data_feed_name,
@@ -277,10 +277,10 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
 
         )
 
-    async def _create_anomaly_alert_config_for_update(self, name):
-        detection_config, data_feed = await self._create_data_feed_and_anomaly_detection_config(name)
-        alert_config_name = self.create_random_name(name)
-        alert_config = await self.admin_client.create_anomaly_alert_configuration(
+    async def _create_alert_config_for_update(self, name):
+        detection_config, data_feed = await self._create_data_feed_and_detection_config(name)
+        alert_config_name = create_random_name(name)
+        alert_config = await self.admin_client.create_alert_configuration(
             AnomalyAlertConfiguration(
                 name=alert_config_name,
                 cross_metrics_operator="AND",
@@ -337,8 +337,8 @@ class TestMetricsAdvisorAdministrationClientBaseAsync(AzureTestCase):
 
     async def _create_detection_config_for_update(self, name):
         data_feed = await self._create_data_feed(name)
-        detection_config_name = self.create_random_name("testupdated")
-        detection_config = await self.admin_client.create_metric_anomaly_detection_configuration(
+        detection_config_name = create_random_name("testupdated")
+        detection_config = await self.admin_client.create_detection_configuration(
             AnomalyDetectionConfiguration(
                 name=detection_config_name,
                 metric_id=data_feed.metric_ids[0],

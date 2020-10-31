@@ -16,7 +16,7 @@ Example to show usage of AutoLockRenewer:
 import os
 import time
 
-from azure.servicebus import ServiceBusClient, AutoLockRenewer, Message
+from azure.servicebus import ServiceBusClient, AutoLockRenewer, ServiceBusMessage
 from azure.servicebus.exceptions import MessageLockExpired
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -29,7 +29,7 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
 
     with servicebus_client:
         with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
-            msgs_to_send = [Message("message: {}".format(i)) for i in range(10)]
+            msgs_to_send = [ServiceBusMessage("message: {}".format(i)) for i in range(10)]
             sender.send_messages(msgs_to_send)
             print('Send messages to non-sessionful queue.')
         
@@ -59,13 +59,13 @@ def renew_lock_on_session_of_the_sessionful_entity():
     with servicebus_client:
 
         with servicebus_client.get_queue_sender(queue_name=SESSION_QUEUE_NAME) as sender:
-            msgs_to_send = [Message("session message: {}".format(i), session_id='SESSION') for i in range(10)]
+            msgs_to_send = [ServiceBusMessage("session message: {}".format(i), session_id='SESSION') for i in range(10)]
             sender.send_messages(msgs_to_send)
             print('Send messages to sessionful queue.')
 
         renewer = AutoLockRenewer()
 
-        with servicebus_client.get_queue_session_receiver(
+        with servicebus_client.get_queue_receiver(
             queue_name=SESSION_QUEUE_NAME,
             session_id='SESSION',
             prefetch_count=10
@@ -91,7 +91,7 @@ def renew_lock_with_lock_renewal_failure_callback():
 
     with servicebus_client:
         with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
-            sender.send_messages(Message("message"))
+            sender.send_messages(ServiceBusMessage("message"))
         
         with AutoLockRenewer() as renewer:
             # For this sample we're going to set the renewal recurrence of the autolockrenewer to greater than the

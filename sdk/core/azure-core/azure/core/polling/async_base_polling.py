@@ -43,10 +43,12 @@ class AsyncLROBasePolling(LROBasePolling):
     async def run(self):  # pylint:disable=invalid-overridden-method
         try:
             await self._poll()
+
         except BadStatus as err:
             self._status = "Failed"
             raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
+                response=self._pipeline_response.http_response,
+                error=err
             )
 
         except BadResponse as err:
@@ -54,12 +56,13 @@ class AsyncLROBasePolling(LROBasePolling):
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 message=str(err),
-                error=err,
+                error=err
             )
 
         except OperationFailed as err:
             raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
+                response=self._pipeline_response.http_response,
+                error=err
             )
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
