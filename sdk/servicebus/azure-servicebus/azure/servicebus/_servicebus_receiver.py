@@ -276,6 +276,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         dead_letter_reason=None,
         dead_letter_error_description=None
     ):
+        if not isinstance(message, ServiceBusReceivedMessage):
+            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
+        self._check_message_alive(message, settle_operation)
         self._do_retryable_operation(
             self._settle_message,
             timeout=None,
@@ -284,6 +287,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             dead_letter_reason=dead_letter_reason,
             dead_letter_error_description=dead_letter_error_description
         )
+        message._settled = True  # pylint: disable=protected-access
 
     def _settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
@@ -623,11 +627,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
-        self._check_message_alive(message, MESSAGE_COMPLETE)
         self._settle_message_with_retry(message, MESSAGE_COMPLETE)
-        message._settled = True  # pylint: disable=protected-access
 
     def abandon_message(self, message):
         """Abandon the message.
@@ -641,11 +641,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
-        self._check_message_alive(message, MESSAGE_ABANDON)
         self._settle_message_with_retry(message, MESSAGE_ABANDON)
-        message._settled = True  # pylint: disable=protected-access
 
     def defer_message(self, message):
         """Defers the message.
@@ -660,11 +656,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
-        self._check_message_alive(message, MESSAGE_DEFER)
         self._settle_message_with_retry(message, MESSAGE_DEFER)
-        message._settled = True  # pylint: disable=protected-access
 
     def dead_letter_message(self, message, reason=None, error_description=None):
         """Move the message to the Dead Letter queue.
@@ -682,16 +674,12 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
         """
-        if not isinstance(message, ServiceBusReceivedMessage):
-            raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
-        self._check_message_alive(message, MESSAGE_DEAD_LETTER)
         self._settle_message_with_retry(
             message,
             MESSAGE_DEAD_LETTER,
             dead_letter_reason=reason,
             dead_letter_error_description=error_description
         )
-        message._settled = True  # pylint: disable=protected-access
 
     def renew_message_lock(self, message, **kwargs):
         # type: (ServiceBusReceivedMessage, Any) -> datetime.datetime
