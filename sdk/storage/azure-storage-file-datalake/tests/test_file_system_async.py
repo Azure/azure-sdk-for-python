@@ -535,9 +535,6 @@ class FileSystemTest(StorageTestCase):
             async with fs_client.get_directory_client("file2") as f_client:
                 await f_client.create_directory()
 
-        # Assert
-        self.assertIsNone(fs_client._pipeline._transport.session)
-
     @record
     def test_file_system_sessions_closes_properly_async(self):
         loop = asyncio.get_event_loop()
