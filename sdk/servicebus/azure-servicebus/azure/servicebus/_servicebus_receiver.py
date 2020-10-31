@@ -212,7 +212,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise
 
     def _receive(self, max_message_count, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ReceivedMessage]
+        # type: (int, Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         self._open()
 
@@ -229,7 +229,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if len(batch) >= max_message_count:
             return [self._build_message(message) for message in batch]
 
-        # Dynamically issue link credit the prefetch_count is the default value 1
+        # Dynamically issue link credit if the prefetch_count is the default value 1
         if self._prefetch_count == 1:
             link_credit_needed = max_message_count - len(batch)
             amqp_receive_client.message_handler.reset_link_credit(link_credit_needed)
