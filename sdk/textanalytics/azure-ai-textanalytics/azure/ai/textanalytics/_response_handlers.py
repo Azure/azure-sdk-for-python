@@ -30,7 +30,7 @@ from ._models import (
     TextAnalyticsWarning,
     RecognizePiiEntitiesResult,
     PiiEntity,
-    RecognizeHealthcareEntitiesResult,
+    AnalyzeHealthcareResultItem,
     HealthcareEntity,
     HealthcareRelation,
     TextAnalysisResult,
@@ -39,7 +39,7 @@ from ._models import (
     KeyPhraseExtractionTaskResult,
     RequestStatistics
 )
-from ._paging import HealthcareItemPaged
+from ._paging import AnalyzeHealthcareResult
 
 class CSODataV4Format(ODataV4Format):
 
@@ -181,7 +181,7 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
 
 @prepare_lro_result
 def healthcare_result(health_result, results):
-    return RecognizeHealthcareEntitiesResult._from_generated(health_result)
+    return AnalyzeHealthcareResultItem._from_generated(health_result)
 
 
 def analyze_result(response, obj, response_headers, tasks):
@@ -233,7 +233,7 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token):
     
 
 def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False):
-    return HealthcareItemPaged(
+    return AnalyzeHealthcareResult(
         obj.results.model_version,
         RequestStatistics._from_generated(obj.results.statistics) if show_stats else None,
         functools.partial(lro_get_next_page, health_status_callback, obj),

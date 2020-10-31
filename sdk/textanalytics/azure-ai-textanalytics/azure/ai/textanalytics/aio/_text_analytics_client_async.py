@@ -26,9 +26,9 @@ from .._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
-    healthcare_paged_result,
     analyze_paged_result
 )
+from .._response_handlers_async import healthcare_paged_result
 from .._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -41,7 +41,8 @@ from .._models import (
     RecognizePiiEntitiesResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._response_handlers_async import healthcare_paged_result_async
+from .._helpers import _get_deserialize
+
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureKeyCredential
@@ -104,6 +105,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._deserialize = _get_deserialize()
 
     @distributed_trace_async
     async def detect_language(  # type: ignore
@@ -538,14 +540,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         healthcare_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").HealthcareJobState, raw_response)
-        return healthcare_paged_result_async(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
+        return healthcare_paged_result(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace_async
-    async def begin_health(  # type: ignore
+    async def begin_analyze_healthcare(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[RecognizeHealthcareEntitiesResult]]
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResult]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
@@ -567,7 +569,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 30 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult`].
+            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResult`].
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -581,7 +583,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         """
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = _validate_input(documents, "language", self._default_language)
+        docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)

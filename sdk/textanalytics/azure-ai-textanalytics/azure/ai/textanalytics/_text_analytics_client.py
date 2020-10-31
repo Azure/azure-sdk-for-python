@@ -394,12 +394,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         return healthcare_paged_result(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace
-    def begin_health(  # type: ignore
+    def begin_analyze_healthcare(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[RecognizeHealthcareEntitiesResult]]
-        """Recognize healthcare entities and identify relationships between these entities in a batch of documents.
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareResult]]
+        """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
         Relations are comprised of a pair of entities and a directional relationship.
@@ -420,7 +420,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 30 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.textanalytics.RecognizeHealthcareEntitiesResult`].
+            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResult`].
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
@@ -461,7 +461,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def begin_cancel_health_operation(
+    def begin_cancel_analyze_healthcare(
         self,
         poller,  # type: LROPoller[None]
         **kwargs

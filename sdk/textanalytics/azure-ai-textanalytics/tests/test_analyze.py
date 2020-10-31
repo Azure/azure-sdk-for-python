@@ -14,11 +14,9 @@ from testcase import TextAnalyticsTest, GlobalTextAnalyticsAccountPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
-    SentimentAnalysisTask,
     EntitiesRecognitionTask,
     PiiEntitiesRecognitionTask,
     KeyPhraseExtractionTask,
-    EntityLinkingTask,
     TextDocumentInput,
     VERSION,
     TextAnalyticsApiVersion,

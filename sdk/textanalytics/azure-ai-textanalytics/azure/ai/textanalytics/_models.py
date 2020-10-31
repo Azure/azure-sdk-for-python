@@ -182,19 +182,19 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
-class RecognizeHealthcareEntitiesResult(DictMixin):
+class AnalyzeHealthcareResultItem(DictMixin):
     """
-    RecognizeHealthcareEntitiesResult is a result object which contains
-    the recognized Healthcare entities and relations from a particular document.
+    AnalyzeHealthcareResultItem contains the Healthcare entities and relations from a 
+    particular document.
 
     :ivar str id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
-    :ivar entities: Recognized Healthcare entities in the document.
+    :ivar entities: Identified Healthcare entities in the document.
     :vartype entities: 
         list[~azure.ai.textanalytics.HealthcareEntity]
     :ivar relations: A list of detected relations between recognized entities.
-    :vartype relations: 
+    :vartype relations:
         list[~azure.ai.textanalytics.HealthcareRelation]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
@@ -204,7 +204,7 @@ class RecognizeHealthcareEntitiesResult(DictMixin):
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
     :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a RecognizeHealthcareEntitiesResult.
+        results. Always False for an instance of a AnalyzeHealthcareResult.
     """
 
     def __init__(self, **kwargs):
@@ -234,7 +234,7 @@ class RecognizeHealthcareEntitiesResult(DictMixin):
         )
 
     def __repr__(self):
-        return "RecognizeHealthcareEntitiesResult(id={}, entities={}, relations={}, warnings={}, statistics={}, \
+        return "AnalyzeHealthcareResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
         is_error={})".format(
             self.id,
             self.entities,

@@ -461,7 +461,6 @@ class TextAnalyticsClientOperationsMixin(object):
 
         response_headers = {}
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-        pipeline_response.http_response.headers['Operation-Location'] = "%s/%s" % (url, response.headers.get('Operation-Location').split("/")[-1])
 
         if cls:
             return cls(pipeline_response, None, response_headers)
