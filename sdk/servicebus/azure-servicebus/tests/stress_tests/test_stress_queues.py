@@ -231,7 +231,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
 
         stress_test = ServiceBusQueueStressTests.LongSessionRenewStressTestRunner(
                                        senders = [sb_client.get_queue_sender(servicebus_queue.name)],
-                                       receivers = [sb_client.get_queue_session_receiver(servicebus_queue.name, session_id=session_id)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id)],
                                        duration=timedelta(seconds=3000),
                                        send_delay=300,
                                        send_session_id=session_id)
