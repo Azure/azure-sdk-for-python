@@ -742,11 +742,11 @@ class PhoneNumberReleaseDetails(msrest.serialization.Model):
         self.error_code = error_code
 
 
-class PhoneNumberSearch(msrest.serialization.Model):
+class PhoneNumberReservation(msrest.serialization.Model):
     """Represents a phone number search.
 
-    :param search_id: The id of the search.
-    :type search_id: str
+    :param reservation_id: The id of the search.
+    :type reservation_id: str
     :param display_name: The name of the search.
     :type display_name: str
     :param created_at: The creation time of the search.
@@ -775,7 +775,7 @@ class PhoneNumberSearch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'search_id': {'key': 'searchId', 'type': 'str'},
+        'reservation_id': {'key': 'searchId', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
         'description': {'key': 'description', 'type': 'str'},
@@ -792,7 +792,7 @@ class PhoneNumberSearch(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        search_id: Optional[str] = None,
+        reservation_id: Optional[str] = None,
         display_name: Optional[str] = None,
         created_at: Optional[datetime.datetime] = None,
         description: Optional[str] = None,
@@ -806,8 +806,8 @@ class PhoneNumberSearch(msrest.serialization.Model):
         error_code: Optional[int] = None,
         **kwargs
     ):
-        super(PhoneNumberSearch, self).__init__(**kwargs)
-        self.search_id = search_id
+        super(PhoneNumberReservation, self).__init__(**kwargs)
+        self.reservation_id = reservation_id
         self.display_name = display_name
         self.created_at = created_at
         self.description = description
