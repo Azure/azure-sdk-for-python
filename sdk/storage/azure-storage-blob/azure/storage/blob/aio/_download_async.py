@@ -18,7 +18,6 @@ from .._shared.response_handlers import process_storage_error, parse_length_from
 from .._deserialize import get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 
-
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
@@ -461,6 +460,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             _done, running_futures = await asyncio.wait(
                 running_futures, return_when=asyncio.FIRST_COMPLETED)
             try:
+                for task in _done:
+                    task.result()
+            except HttpResponseError as error:
+                process_storage_error(error)
+            try:
                 next_chunk = next(dl_tasks)
             except StopIteration:
                 break
@@ -469,7 +473,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         if running_futures:
             # Wait for the remaining downloads to finish
-            await asyncio.wait(running_futures)
+            try:
+                await asyncio.gather(running_futures)
+            except HttpResponseError as error:
+                process_storage_error(error)
         return self.size
 
     async def download_to_stream(self, stream, max_concurrency=1):
