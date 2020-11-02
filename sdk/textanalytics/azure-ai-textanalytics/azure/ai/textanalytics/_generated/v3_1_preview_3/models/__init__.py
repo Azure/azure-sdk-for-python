@@ -63,6 +63,7 @@ try:
     from ._models_py3 import TaskState
     from ._models_py3 import TasksState
     from ._models_py3 import TasksStateTasks
+    from ._models_py3 import TasksStateTasksDetails
     from ._models_py3 import TasksStateTasksEntityRecognitionPiiTasksItem
     from ._models_py3 import TasksStateTasksEntityRecognitionTasksItem
     from ._models_py3 import TasksStateTasksKeyPhraseExtractionTasksItem
@@ -125,6 +126,7 @@ except (SyntaxError, ImportError):
     from ._models import TaskState  # type: ignore
     from ._models import TasksState  # type: ignore
     from ._models import TasksStateTasks  # type: ignore
+    from ._models import TasksStateTasksDetails  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionPiiTasksItem  # type: ignore
     from ._models import TasksStateTasksEntityRecognitionTasksItem  # type: ignore
     from ._models import TasksStateTasksKeyPhraseExtractionTasksItem  # type: ignore
@@ -202,6 +204,7 @@ __all__ = [
     'TaskState',
     'TasksState',
     'TasksStateTasks',
+    'TasksStateTasksDetails',
     'TasksStateTasksEntityRecognitionPiiTasksItem',
     'TasksStateTasksEntityRecognitionTasksItem',
     'TasksStateTasksKeyPhraseExtractionTasksItem',
