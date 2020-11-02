@@ -16,7 +16,7 @@ class ServiceBusConnectionStringProperties(DictMixin):
     def __init__(self, **kwargs):
         self._fully_qualified_namespace = kwargs.pop('fully_qualified_namespace', None)
         self._endpoint = kwargs.pop('endpoint', None)
-        self._entity_path = kwargs.pop('entity_path', None)
+        self._entity_name = kwargs.pop('entity_name', None)
         self._shared_access_signature = kwargs.pop('shared_access_signature', None)
         self._shared_access_key_name = kwargs.pop('shared_access_key_name', None)
         self._shared_access_key = kwargs.pop('shared_access_key', None)
@@ -35,10 +35,10 @@ class ServiceBusConnectionStringProperties(DictMixin):
         return self._endpoint
 
     @property
-    def entity_path(self):
+    def entity_name(self):
         """Optional. Represents the name of the queue/topic.
         """
-        return self._entity_path
+        return self._entity_name
 
     @property
     def shared_access_signature(self):
@@ -77,7 +77,7 @@ def parse_connection_string(conn_str):
     props = {
         'fully_qualified_namespace': namespace,
         'endpoint': endpoint,
-        'entity_path': conn_settings.get('EntityPath'),
+        'entity_name': conn_settings.get('EntityPath'),
         'shared_access_signature': shared_access_signature,
         'shared_access_key_name': conn_settings.get('SharedAccessKeyName'),
         'shared_access_key': shared_access_key
