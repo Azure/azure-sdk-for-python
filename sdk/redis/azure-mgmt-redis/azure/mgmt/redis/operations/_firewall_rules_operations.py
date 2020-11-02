@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class FirewallRulesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2019-07-01".
+    :ivar api_version: Client Api Version. Constant value: "2020-06-01".
     """
 
     models = models
@@ -35,11 +34,11 @@ class FirewallRulesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-07-01"
+        self.api_version = "2020-06-01"
 
         self.config = config
 
-    def list_by_redis_resource(
+    def list(
             self, resource_group_name, cache_name, custom_headers=None, raw=False, **operation_config):
         """Gets all firewall rules in the specified redis cache.
 
@@ -55,12 +54,13 @@ class FirewallRulesOperations(object):
         :return: An iterator like instance of RedisFirewallRule
         :rtype:
          ~azure.mgmt.redis.models.RedisFirewallRulePaged[~azure.mgmt.redis.models.RedisFirewallRule]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list_by_redis_resource.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -96,9 +96,7 @@ class FirewallRulesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -109,7 +107,7 @@ class FirewallRulesOperations(object):
         deserialized = models.RedisFirewallRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_redis_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules'}
 
     def create_or_update(
             self, resource_group_name, cache_name, rule_name, start_ip, end_ip, custom_headers=None, raw=False, **operation_config):
@@ -133,7 +131,8 @@ class FirewallRulesOperations(object):
         :return: RedisFirewallRule or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisFirewallRule or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         parameters = models.RedisFirewallRuleCreateParameters(start_ip=start_ip, end_ip=end_ip)
 
@@ -170,9 +169,7 @@ class FirewallRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -185,7 +182,7 @@ class FirewallRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules/{ruleName}'}
 
     def get(
             self, resource_group_name, cache_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -205,7 +202,8 @@ class FirewallRulesOperations(object):
         :return: RedisFirewallRule or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.redis.models.RedisFirewallRule or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -236,9 +234,7 @@ class FirewallRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -249,7 +245,7 @@ class FirewallRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules/{ruleName}'}
 
     def delete(
             self, resource_group_name, cache_name, rule_name, custom_headers=None, raw=False, **operation_config):
@@ -268,7 +264,8 @@ class FirewallRulesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.redis.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -298,11 +295,9 @@ class FirewallRulesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/Redis/{cacheName}/firewallRules/{ruleName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{cacheName}/firewallRules/{ruleName}'}

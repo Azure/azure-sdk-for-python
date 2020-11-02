@@ -18,6 +18,8 @@ from .operations import RedisOperations
 from .operations import FirewallRulesOperations
 from .operations import PatchSchedulesOperations
 from .operations import LinkedServerOperations
+from .operations import PrivateEndpointConnectionsOperations
+from .operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -37,6 +39,10 @@ class RedisManagementClient(SDKClient):
     :vartype patch_schedules: azure.mgmt.redis.operations.PatchSchedulesOperations
     :ivar linked_server: LinkedServer operations
     :vartype linked_server: azure.mgmt.redis.operations.LinkedServerOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnections operations
+    :vartype private_endpoint_connections: azure.mgmt.redis.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.redis.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -55,7 +61,7 @@ class RedisManagementClient(SDKClient):
         super(RedisManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-07-01'
+        self.api_version = '2020-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -68,4 +74,8 @@ class RedisManagementClient(SDKClient):
         self.patch_schedules = PatchSchedulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.linked_server = LinkedServerOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
