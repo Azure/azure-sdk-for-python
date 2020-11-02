@@ -375,7 +375,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            with self.assertRaises(HttpResponseError):
+            with self.assertRaises(BatchErrorException):
                 await self.table.send_batch(batch)
 
             # Assert
