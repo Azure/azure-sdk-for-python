@@ -59,8 +59,6 @@ from .._generated.models import (
     ElasticsearchParameter as _ElasticsearchParameter,
     DimensionGroupIdentity as _DimensionGroupIdentity,
     SeriesIdentity as _SeriesIdentity,
-    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
-    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     AnomalyAlertingConfigurationPatch as _AnomalyAlertingConfigurationPatch,
     AnomalyDetectionConfigurationPatch as _AnomalyDetectionConfigurationPatch
 )
@@ -77,22 +75,6 @@ if TYPE_CHECKING:
         IncidentResult,
         RootCause,
     )
-
-    DataFeedSourceUnion = Union[
-        "AzureApplicationInsightsDataFeed",
-        "AzureBlobDataFeed",
-        "AzureCosmosDBDataFeed",
-        "AzureDataExplorerDataFeed",
-        "AzureTableDataFeed",
-        "HttpRequestDataFeed",
-        "InfluxDBDataFeed",
-        "MySqlDataFeed",
-        "PostgreSqlDataFeed",
-        "SQLServerDataFeed",
-        "MongoDBDataFeed",
-        "AzureDataLakeStorageGen2DataFeed",
-        "ElasticsearchDataFeed"
-    ]
 
 
 class MetricAnomalyAlertScopeType(str, Enum):
