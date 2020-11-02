@@ -9,6 +9,7 @@
 
 from typing import (
     Any,
+    List,
     Union,
     cast,
     TYPE_CHECKING
@@ -66,7 +67,6 @@ from .models._models import (
     WebNotificationHook,
     AnomalyAlertConfiguration,
     AnomalyDetectionConfiguration,
-    DataFeedIngestionProgress,
     DataFeedIngestionProgress,
     AzureApplicationInsightsDataFeed,
     AzureBlobDataFeed,

@@ -75,6 +75,7 @@ if TYPE_CHECKING:
         IncidentResult,
         RootCause,
     )
+    from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
 
 class MetricAnomalyAlertScopeType(str, Enum):
