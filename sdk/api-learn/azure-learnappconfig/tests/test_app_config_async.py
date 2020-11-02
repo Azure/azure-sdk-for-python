@@ -31,20 +31,6 @@ class AsyncAppConfigTestCase(AzureTestCase):
         async def close(self):
             pass
 
-    @staticmethod
-    def await_prepared_test(test_fn):
-        """Synchronous wrapper for async test methods. Used to avoid making changes
-        upstream to AbstractPreparer (which doesn't await the functions it wraps)
-        """
-
-        @functools.wraps(test_fn)
-        def run(test_class_instance, *args, **kwargs):
-            trim_kwargs_from_test_function(test_fn, kwargs)
-            loop = asyncio.get_event_loop()
-            return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
-
-        return run
-
     def create_basic_client(self, client_class, **kwargs):
         # This is the patch for creating client using aio identity
 
