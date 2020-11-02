@@ -13,31 +13,72 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-databoxedge/0.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-databoxedge/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename?api-version=2019-08-01
   response:
     body:
-      string: "{\r\n  \"location\": \"eastus\",\r\n  \"tags\": {},\r\n  \"sku\": {\r\
-        \n    \"name\": \"Edge\",\r\n    \"tier\": \"Standard\"\r\n  },\r\n  \"etag\"\
-        : \"W/\\\"datetime'2020-02-07T07%3A00%3A14.3645578Z'\\\"_W/\\\"datetime'2020-02-07T07%3A00%3A14.3694826Z'\\\
-        \"\",\r\n  \"properties\": {\r\n    \"dataBoxEdgeDeviceStatus\": \"ReadyToSetup\"\
-        ,\r\n    \"deviceType\": \"DataBoxEdgeDevice\",\r\n    \"deviceLocalCapacity\"\
-        : 0,\r\n    \"nodeCount\": 0\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename\"\
-        ,\r\n  \"name\": \"mydivicename\",\r\n  \"type\": \"Microsoft.DataBoxEdge/dataBoxEdgeDevices\"\
-        \r\n}"
+      string: '{"error":{"code":"MissingSubscriptionRegistration","message":"The subscription
+        is not registered to use namespace ''Microsoft.DataBoxEdge''. See https://aka.ms/rps-not-found
+        for how to register subscriptions.","details":[{"code":"MissingSubscriptionRegistration","target":"Microsoft.DataBoxEdge","message":"The
+        subscription is not registered to use namespace ''Microsoft.DataBoxEdge''.
+        See https://aka.ms/rps-not-found for how to register subscriptions."}]}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '658'
+      - '454'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 07 Feb 2020 07:00:16 GMT
+      - Mon, 02 Nov 2020 06:16:48 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-failure-cause:
+      - gateway
+    status:
+      code: 409
+      message: Conflict
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataBoxEdge/register?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataBoxEdge","namespace":"Microsoft.DataBoxEdge","authorizations":[{"applicationId":"2368d027-f996-4edb-bf48-928f98f2ab8c"}],"resourceTypes":[{"resourceType":"DataBoxEdgeDevices","locations":["East
+        US","West Europe","Southeast Asia","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-07-01","2020-06-01","2020-05-01-preview","2020-01-01","2019-08-01","2019-07-01","2019-03-01","2018-07-01","2017-09-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"DataBoxEdgeDevices/checkNameAvailability","locations":["East
+        US","West Europe","Southeast Asia","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-07-01","2020-06-01","2020-05-01-preview","2020-01-01","2019-08-01","2019-07-01","2019-03-01","2018-07-01","2017-09-01"]},{"resourceType":"operations","locations":["East
+        US 2 EUAP"],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-07-01","2020-06-01","2020-05-01-preview","2020-01-01","2019-08-01","2019-07-01","2019-03-01","2018-07-01","2017-09-01"]},{"resourceType":"availableSkus","locations":[],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-05-01-preview"]}],"registrationState":"Registering"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1434'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 02 Nov 2020 06:16:53 GMT
       expires:
       - '-1'
       pragma:
@@ -51,9 +92,109 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
-      x-powered-by:
-      - ASP.NET
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataBoxEdge?api-version=2016-02-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DataBoxEdge","namespace":"Microsoft.DataBoxEdge","authorizations":[{"applicationId":"2368d027-f996-4edb-bf48-928f98f2ab8c"}],"resourceTypes":[{"resourceType":"DataBoxEdgeDevices","locations":["East
+        US","West Europe","Southeast Asia","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-07-01","2020-06-01","2020-05-01-preview","2020-01-01","2019-08-01","2019-07-01","2019-03-01","2018-07-01","2017-09-01"],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"DataBoxEdgeDevices/checkNameAvailability","locations":["East
+        US","West Europe","Southeast Asia","East US 2 EUAP","Central US EUAP"],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-07-01","2020-06-01","2020-05-01-preview","2020-01-01","2019-08-01","2019-07-01","2019-03-01","2018-07-01","2017-09-01"]},{"resourceType":"operations","locations":["East
+        US 2 EUAP"],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-07-01","2020-06-01","2020-05-01-preview","2020-01-01","2019-08-01","2019-07-01","2019-03-01","2018-07-01","2017-09-01"]},{"resourceType":"availableSkus","locations":[],"apiVersions":["2020-09-01-preview","2020-09-01","2020-07-01-preview","2020-05-01-preview"]}],"registrationState":"Registered"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '1433'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 02 Nov 2020 06:17:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "eastus", "sku": {"name": "Edge", "tier": "Standard"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-databoxedge/0.2.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename?api-version=2019-08-01
+  response:
+    body:
+      string: "{\r\n  \"location\": \"eastus\",\r\n  \"tags\": {},\r\n  \"sku\": {\r\
+        \n    \"name\": \"Edge\",\r\n    \"tier\": \"Standard\"\r\n  },\r\n  \"etag\"\
+        : \"W/\\\"datetime'2020-11-02T06%3A17%3A11.5021182Z'\\\"_W/\\\"datetime'2020-11-02T06%3A17%3A11.5091231Z'\\\
+        \"\",\r\n  \"identity\": {\r\n    \"type\": \"None\"\r\n  },\r\n  \"properties\"\
+        : {\r\n    \"dataBoxEdgeDeviceStatus\": \"ReadyToSetup\",\r\n    \"deviceType\"\
+        : \"DataBoxEdgeDevice\",\r\n    \"deviceLocalCapacity\": 0,\r\n    \"nodeCount\"\
+        : 0,\r\n    \"resourceMoveDetails\": {\r\n      \"operationInProgress\": \"\
+        None\"\r\n    }\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename\"\
+        ,\r\n  \"name\": \"mydivicename\",\r\n  \"type\": \"Microsoft.DataBoxEdge/dataBoxEdgeDevices\"\
+        \r\n}"
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '776'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 02 Nov 2020 06:17:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
     status:
       code: 200
       message: OK
@@ -71,36 +212,39 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-databoxedge/0.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-databoxedge/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename?api-version=2019-08-01
   response:
     body:
       string: "{\r\n  \"location\": \"eastus\",\r\n  \"tags\": {\r\n    \"key1\":\
         \ \"value1\",\r\n    \"key2\": \"value2\"\r\n  },\r\n  \"sku\": {\r\n    \"\
         name\": \"Edge\",\r\n    \"tier\": \"Standard\"\r\n  },\r\n  \"etag\": \"\
-        W/\\\"datetime'2020-02-07T07%3A00%3A18.0616602Z'\\\"_W/\\\"datetime'2020-02-07T07%3A00%3A18.06666Z'\\\
+        W/\\\"datetime'2020-11-02T06%3A17%3A13.4774237Z'\\\"_W/\\\"datetime'2020-11-02T06%3A17%3A13.4874308Z'\\\
         \"\",\r\n  \"properties\": {\r\n    \"dataBoxEdgeDeviceStatus\": \"ReadyToSetup\"\
         ,\r\n    \"deviceType\": \"DataBoxEdgeDevice\",\r\n    \"deviceLocalCapacity\"\
-        : 0,\r\n    \"nodeCount\": 0\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename\"\
+        : 0,\r\n    \"nodeCount\": 0,\r\n    \"resourceMoveDetails\": {\r\n      \"\
+        operationInProgress\": \"None\"\r\n    }\r\n  },\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename\"\
         ,\r\n  \"name\": \"mydivicename\",\r\n  \"type\": \"Microsoft.DataBoxEdge/dataBoxEdgeDevices\"\
         \r\n}"
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '705'
+      - '782'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 07 Feb 2020 07:00:19 GMT
+      - Mon, 02 Nov 2020 06:17:14 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       transfer-encoding:
@@ -110,9 +254,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1196'
-      x-powered-by:
-      - ASP.NET
+      - '1197'
     status:
       code: 200
       message: OK
@@ -128,12 +270,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-databoxedge/0.1.0 Azure-SDK-For-Python
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+        msrest_azure/0.6.2 azure-mgmt-databoxedge/0.2.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_cli_mgmt_databoxedge_test_databoxedge707c1108/providers/Microsoft.DataBoxEdge/dataBoxEdgeDevices/mydivicename?api-version=2019-08-01
   response:
     body:
       string: ''
@@ -141,19 +283,19 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Fri, 07 Feb 2020 07:00:23 GMT
+      - Mon, 02 Nov 2020 06:17:21 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
-      x-powered-by:
-      - ASP.NET
+      - '14998'
     status:
       code: 204
       message: No Content

@@ -9,5 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.2.0"
+from ._configuration import DataBoxEdgeManagementClientConfiguration
+from ._data_box_edge_management_client import DataBoxEdgeManagementClient
+__all__ = ['DataBoxEdgeManagementClient', 'DataBoxEdgeManagementClientConfiguration']
+
+from .version import VERSION
+
+__version__ = VERSION
 
