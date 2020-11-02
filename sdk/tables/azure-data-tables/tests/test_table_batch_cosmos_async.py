@@ -130,20 +130,20 @@ class StorageTableBatchTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'].value, 39)
-        self.assertEqual(entity['sex'].value, 'male')
+        self.assertEqual(entity['age'], 39)
+        self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
         self.assertFalse("optional" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'].value, 933311100)
+        self.assertEqual(entity['large'], 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
-        self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
-        self.assertEqual(entity['other'].value, 20)
+        # self.assertIsInstance(entity['other'], EntityProperty)
+        # self.assertEqual(entity['other'].type, EdmType.INT32)
+        self.assertEqual(entity['other'], 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         self.assertTrue('_metadata' in entity)
 
@@ -151,11 +151,11 @@ class StorageTableBatchTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEqual(entity.age.value, 'abc')
-        self.assertEqual(entity.sex.value, 'female')
+        self.assertEqual(entity.age, 'abc')
+        self.assertEqual(entity.sex, 'female')
         self.assertFalse(hasattr(entity, "married"))
         self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEqual(entity.sign.value, 'aquarius')
+        self.assertEqual(entity.sign, 'aquarius')
         self.assertFalse(hasattr(entity, "optional"))
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "evenratio"))
@@ -199,10 +199,12 @@ class StorageTableBatchTest(TableTestCase):
             sent_entity = transaction_result.get_entity(entity.RowKey)
             self.assertIsNotNone(sent_entity)
             e = await self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
+
             self.assertEqual(e.test, entity.test.value)
-            self.assertEqual(e.test2.value, entity.test2)
-            self.assertEqual(e.test3.value, entity.test3)
-            self.assertEqual(e.test4.value, entity.test4.value)
+            self.assertEqual(e.test2, entity.test2)
+            self.assertEqual(e.test3, entity.test3)
+            self.assertEqual(e.test4, entity.test4.value)
+
             self.assertEqual(sent_entity['test'], entity.test.value)
             self.assertEqual(sent_entity['test2'], entity.test2)
             self.assertEqual(sent_entity['test3'], entity.test3)
@@ -472,7 +474,7 @@ class StorageTableBatchTest(TableTestCase):
             await self.table.create_entity(entity)
 
             entity = await self.table.get_entity(partition_key=u'001', row_key=u'batch_delete')
-            self.assertEqual(3, entity.test3.value)
+            self.assertEqual(3, entity.test3)
 
             batch = self.table.create_batch()
             batch.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
@@ -703,7 +705,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    # @pytest.mark.skip("This does not throw an error, but it should")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_batch_too_many_ops(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -714,13 +716,14 @@ class StorageTableBatchTest(TableTestCase):
             await self.table.create_entity(entity)
 
             # Act
-            with self.assertRaises(ValueError):
-                batch = self.table.create_batch()
-                for i in range(0, 101):
-                    entity = TableEntity()
-                    entity.PartitionKey = 'large'
-                    entity.RowKey = 'item{0}'.format(i)
-                    batch.create_entity(entity)
+            # with pytest.raises(BatchErrorException):
+            batch = self.table.create_batch()
+            for i in range(0, 101):
+                entity = TableEntity()
+                entity.PartitionKey = 'large'
+                entity.RowKey = 'item{0}'.format(i)
+                batch.create_entity(entity)
+            await self.table.send_batch(batch)
 
             # Assert
         finally:

@@ -698,7 +698,6 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_batch_too_many_ops(self, resource_group, location, storage_account, storage_account_key):
@@ -709,13 +708,14 @@ class StorageTableBatchTest(TableTestCase):
             await self.table.create_entity(entity)
 
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(BatchErrorException):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = TableEntity()
                     entity.PartitionKey = 'large'
                     entity.RowKey = 'item{0}'.format(i)
                     batch.create_entity(entity)
+                await self.table.send_batch(batch)
 
             # Assert
         finally:
