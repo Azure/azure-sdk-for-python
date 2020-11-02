@@ -484,6 +484,9 @@ class HTTPAdapter(BaseAdapter):
 
         try:
             conn = self.get_connection(request.url, proxies)
+            system_version = tuple(sys.version_info)[:3]
+            if system_version[:2] >= (3, 7):
+                conn.conn_kw = {"blocksize": 32768}
         except LocationValueError as e:
             raise InvalidURL(e, request=request)
 
