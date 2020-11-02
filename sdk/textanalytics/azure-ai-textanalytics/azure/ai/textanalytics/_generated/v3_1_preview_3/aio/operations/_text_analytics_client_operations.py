@@ -150,7 +150,7 @@ class TextAnalyticsClientOperationsMixin:
         completed, the job will transition to the completed state and results will be available for
         each task.
 
-        :param job_id: Job ID.
+        :param job_id: Job ID for Analyze.
         :type job_id: str
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
