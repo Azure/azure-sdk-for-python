@@ -1,5 +1,44 @@
 # Release History
 
+## 6.0.0 (2020-12-01)
+
+**Features**
+
+  - Model Origin has a new parameter tags
+
+**Breaking changes**
+
+  - Parameter host_name of model Origin is now required
+  - Model DeliveryRule no longer has parameter name
+  - Model Endpoint no longer has parameter default_origin_group
+  - Model Endpoint no longer has parameter web_application_firewall_policy_link
+  - Model Endpoint no longer has parameter origin_groups
+  - Model Endpoint no longer has parameter url_signing_keys
+  - Model UserManagedHttpsParameters no longer has parameter minimum_tls_version
+  - Model CustomDomainHttpsParameters no longer has parameter minimum_tls_version
+  - Model EndpointUpdateParameters no longer has parameter default_origin_group
+  - Model EndpointUpdateParameters no longer has parameter web_application_firewall_policy_link
+  - Model EndpointUpdateParameters no longer has parameter url_signing_keys
+  - Model CdnManagedHttpsParameters no longer has parameter minimum_tls_version
+  - Model Origin no longer has parameter weight
+  - Model Origin no longer has parameter private_link_location
+  - Model Origin no longer has parameter private_endpoint_status
+  - Model Origin no longer has parameter priority
+  - Model Origin no longer has parameter origin_host_header
+  - Model Origin no longer has parameter private_link_alias
+  - Model Origin no longer has parameter private_link_approval_message
+  - Model Origin no longer has parameter enabled
+  - Model Origin no longer has parameter private_link_resource_id
+  - Model Origin has a new required parameter location
+  - Model DeepCreatedOrigin has a new signature
+  - Model OriginUpdateParameters has a new signature
+  - Removed operation OriginsOperations.create
+  - Removed operation OriginsOperations.delete
+  - Removed operation group PoliciesOperations
+  - Removed operation group CdnManagementClientOperationsMixin
+  - Removed operation group OriginGroupsOperations
+  - Removed operation group ManagedRuleSetsOperations
+  
 ## 5.1.0 (2020-08-10)
 
 **Features**
