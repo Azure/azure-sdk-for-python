@@ -1670,16 +1670,28 @@ class ManagedClusterWindowsProfile(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param admin_username: Required. The administrator username to use for
-     Windows VMs.
+    :param admin_username: Required. Specifies the name of the administrator
+     account. <br><br> **restriction:** Cannot end in "." <br><br> **Disallowed
+     values:** "administrator", "admin", "user", "user1", "test", "user2",
+     "test1", "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2",
+     "aspnet", "backup", "console", "david", "guest", "john", "owner", "root",
+     "server", "sql", "support", "support_388945a0", "sys", "test2", "test3",
+     "user4", "user5". <br><br> **Minimum-length:** 1 character <br><br>
+     **Max-length:** 20 characters
     :type admin_username: str
-    :param admin_password: The administrator password to use for Windows VMs.
+    :param admin_password: Specifies the password of the administrator
+     account. <br><br> **Minimum-length:** 8 characters <br><br>
+     **Max-length:** 123 characters <br><br> **Complexity requirements:** 3 out
+     of 4 conditions below need to be fulfilled <br> Has lower characters
+     <br>Has upper characters <br> Has a digit <br> Has a special character
+     (Regex match [\\W_]) <br><br> **Disallowed values:** "abc@123",
+     "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1",
+     "Password!", "Password1", "Password22", "iloveyou!"
     :type admin_password: str
     """
 
     _validation = {
-        'admin_username': {'required': True, 'pattern': r'^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$'},
-        'admin_password': {'pattern': r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%\^&\*\(\)])[a-zA-Z\d!@#$%\^&\*\(\)]{12,123}$'},
+        'admin_username': {'required': True},
     }
 
     _attribute_map = {
