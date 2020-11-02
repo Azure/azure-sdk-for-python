@@ -385,19 +385,6 @@ class FormPage(object):
         self.lines = kwargs.get("lines", None)
         self.selection_marks = kwargs.get("selection_marks", None)
 
-    @classmethod
-    def _from_generated_prebuilt_model(cls, read_result):
-        return [cls(
-            page_number=page.page,
-            text_angle=adjust_text_angle(page.angle),
-            width=page.width,
-            height=page.height,
-            unit=page.unit,
-            tables=None,  # prebuilt model does not return tables
-            lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
-            if page.lines else None
-        ) for page in read_result]
-
     def __repr__(self):
         return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={}," \
                "selection_marks={})" \

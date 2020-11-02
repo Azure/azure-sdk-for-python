@@ -202,9 +202,7 @@ class FormRecognizerTest(AzureTestCase):
             self.assertEqual(page.height, expected_page.height)
             self.assertEqual(page.unit, expected_page.unit)
 
-            if not page.lines and not expected_page.lines:
-                continue
-            for line, expected_line in zip(page.lines, expected_page.lines):
+            for line, expected_line in zip(page.lines or [], expected_page.lines or []):
                 self.assertFormLineTransformCorrect(line, expected_line)
 
             for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
