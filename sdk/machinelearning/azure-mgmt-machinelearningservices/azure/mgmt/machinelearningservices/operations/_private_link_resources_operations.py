@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class VirtualMachineSizesOperations(object):
-    """VirtualMachineSizesOperations operations.
+class PrivateLinkResourcesOperations(object):
+    """PrivateLinkResourcesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,44 +39,40 @@ class VirtualMachineSizesOperations(object):
 
         self.config = config
 
-    def list(
-            self, location, compute_type=None, recommended=None, custom_headers=None, raw=False, **operation_config):
-        """Returns supported VM Sizes in a location.
+    def list_by_workspace(
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the private link resources that need to be created for a
+        workspace.
 
-        :param location: The location upon which virtual-machine-sizes is
-         queried.
-        :type location: str
-        :param compute_type: Type of compute to filter by.
-        :type compute_type: str
-        :param recommended: Specifies whether to return recommended vm sizes
-         or all vm sizes
-        :type recommended: bool
+        :param resource_group_name: Name of the resource group in which
+         workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VirtualMachineSizeListResult or ClientRawResponse if raw=true
+        :return: PrivateLinkResourceListResult or ClientRawResponse if
+         raw=true
         :rtype:
-         ~azure.mgmt.machinelearningservices.models.VirtualMachineSizeListResult
+         ~azure.mgmt.machinelearningservices.models.PrivateLinkResourceListResult
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.list_by_workspace.metadata['url']
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if compute_type is not None:
-            query_parameters['compute-type'] = self._serialize.query("compute_type", compute_type, 'str')
-        if recommended is not None:
-            query_parameters['recommended'] = self._serialize.query("recommended", recommended, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -99,11 +95,11 @@ class VirtualMachineSizesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('VirtualMachineSizeListResult', response)
+            deserialized = self._deserialize('PrivateLinkResourceListResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/vmSizes'}
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateLinkResources'}
