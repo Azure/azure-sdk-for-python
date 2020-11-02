@@ -31,7 +31,7 @@ def receive_process_and_complete_message(client, queue_name):
     with queue_client.get_receiver() as queue_receiver:
         for message in queue_receiver:
             print("Received message: ", message)
-            lock_renewal.register(message, timeout=10800)
+            lock_renewal.register(message, max_lock_renewal_duration=10800)
             process_message(message)
             print("Completing message")
             message.complete()

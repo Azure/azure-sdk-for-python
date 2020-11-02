@@ -35,6 +35,7 @@ from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from ._common.auto_lock_renewer import AutoLockRenewer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -80,6 +81,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :keyword Optional[AutoLockRenewer] auto_lock_renewer: An AutoLockRenewer can be provided such that messages are
+     automatically registered on receipt.  If the receiver is a session receiver, it will apply to the session
+     instead.
     :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
      performance but increase the chance that messages will expire while they are cached if they're not
@@ -171,6 +175,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self._message_iter = self._handler.receive_messages_iter()
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
+        if self._auto_lock_renewer and not self._session:
+            self._auto_lock_renewer.register(message)
         return message
 
     def _create_handler(self, auth):
@@ -210,6 +216,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         except:
             self.close()
             raise
+
+        if self._auto_lock_renewer and self._session:
+            self._auto_lock_renewer.register(self.session)
 
     def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
@@ -434,12 +443,16 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
-        return self._do_retryable_operation(
+        messages = self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
             operation_requires_timeout=True
         )
+        if self._auto_lock_renewer and not self._session:
+            for message in messages:
+                self._auto_lock_renewer.register(message)
+        return messages
 
     def receive_deferred_messages(self, sequence_numbers, **kwargs):
         # type: (Union[int,List[int]], Any) -> List[ServiceBusReceivedMessage]
@@ -491,6 +504,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             handler,
             timeout=timeout
         )
+        if self._auto_lock_renewer and not self._session:
+            for message in messages:
+                self._auto_lock_renewer.register(message)
         return messages
 
     def peek_messages(self, max_message_count=1, **kwargs):

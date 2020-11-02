@@ -714,7 +714,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     if not messages:
                         messages.append(message)
                         assert not message._lock_expired
-                        renewer.register(message, timeout=60)
+                        renewer.register(message, max_lock_renewal_duration=60)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         await asyncio.sleep(60)
                         print("Finished first sleep", message.locked_until_utc)

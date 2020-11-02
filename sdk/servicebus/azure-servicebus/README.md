@@ -336,9 +336,9 @@ session_id = os.environ['SERVICE_BUS_SESSION_ID']
 renewer = AutoLockRenewer()
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name, session_id=session_id) as receiver:
-        renewer.register(receiver.session, timeout=300) # Timeout for how long to maintain the lock for, in seconds.
+        renewer.register(receiver.session, max_lock_renewal_duration=300) # Duration for how long to maintain the lock for, in seconds.
         for msg in receiver.receive_messages():
-            renewer.register(msg, timeout=60)
+            renewer.register(msg, max_lock_renewal_duration=60)
             # Do your application logic here
             msg.complete()
 renewer.close()

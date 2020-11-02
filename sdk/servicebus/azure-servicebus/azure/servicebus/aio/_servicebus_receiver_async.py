@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import asyncio
 import collections
+import datetime
 import functools
 import logging
 from typing import Any, TYPE_CHECKING, List, Optional, AsyncIterator, Union
@@ -35,6 +36,7 @@ from .._common import mgmt_handlers
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
+    from .._common.auto_lock_renewer import AutoLockRenewer
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,6 +83,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :keyword Optional[AutoLockRenewer] auto_lock_renewer: An AutoLockRenewer can be provided such that messages are
+     automatically registered on receipt.  If the receiver is a session receiver, it will apply to the session
+     instead.
     :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
      performance but increase the chance that messages will expire while they are cached if they're not
@@ -174,6 +179,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message, ServiceBusReceivedMessage)
+        if self._auto_lock_renewer and not self._session:
+            self._auto_lock_renewer.register(message)
         return message
 
     def _create_handler(self, auth):
@@ -211,6 +218,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         except:
             await self.close()
             raise
+
+        if self._auto_lock_renewer and self._session:
+            self._auto_lock_renewer.register(self.session)
 
     async def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
@@ -430,12 +440,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
-        return await self._do_retryable_operation(
+        messages = await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
             operation_requires_timeout=True
         )
+        if self._auto_lock_renewer and not self._session:
+            for message in messages:
+                self._auto_lock_renewer.register(message)
+        return messages
 
     async def receive_deferred_messages(
         self,
@@ -493,6 +507,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             handler,
             timeout=timeout
         )
+        if self._auto_lock_renewer and not self._session:
+            for message in messages:
+                self._auto_lock_renewer.register(message)
         return messages
 
     async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[ServiceBusPeekedMessage]:
