@@ -232,7 +232,7 @@ class AzureTestCase(ReplayableTest):
     def create_client_from_credential(self, client_class, credential, **kwargs):
 
         # Real client creation
-        # FIXME decide what is the final argument for that
+        # TODO decide what is the final argument for that
         # if self.is_playback():
         #     kwargs.setdefault("polling_interval", 0)
         if _is_autorest_v3(client_class):
