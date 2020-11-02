@@ -651,7 +651,6 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -670,10 +669,11 @@ class StorageTableBatchTest(TableTestCase):
             batch.update_entity(entity)
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
 
             # Assert
-            with self.assertRaises(HttpResponseError):
-                batch.update_entity(entity, mode=UpdateMode.MERGE)
+            with pytest.raises(HttpResponseError):
+                await self.table.send_batch(batch)
         finally:
             await self._tear_down()
 

@@ -758,6 +758,7 @@ class StorageTableBatchTest(TableTestCase):
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
             batch.update_entity(entity, mode=UpdateMode.MERGE)
+
             # Assert
             with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
