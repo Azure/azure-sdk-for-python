@@ -10,7 +10,6 @@ from enum import Enum
 from collections import namedtuple
 from ._helpers import (
     adjust_value_type,
-    adjust_text_angle,
     adjust_confidence,
     adjust_page_number,
     get_element
