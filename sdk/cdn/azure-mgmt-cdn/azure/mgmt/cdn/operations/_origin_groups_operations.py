@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class ProfilesOperations(object):
-    """ProfilesOperations operations.
+class OriginGroupsOperations(object):
+    """OriginGroupsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -47,166 +47,111 @@ class ProfilesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    def list(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.ProfileListResult"]
-        """Lists all of the CDN profiles within an Azure subscription.
-
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ProfileListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.ProfileListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProfileListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('ProfileListResult', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/profiles'}  # type: ignore
-
-    def list_by_resource_group(
-        self,
-        resource_group_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.ProfileListResult"]
-        """Lists all of the CDN profiles within a resource group.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ProfileListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.ProfileListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ProfileListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list_by_resource_group.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.get(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('ProfileListResult', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles'}  # type: ignore
-
-    def get(
+    def list_by_endpoint(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
+        endpoint_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Profile"
-        """Gets a CDN profile with the specified profile name under the specified subscription and
-        resource group.
+        # type: (...) -> Iterable["models.OriginGroupListResult"]
+        """Lists all of the existing origin groups within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Profile, or the result of cls(response)
-        :rtype: ~azure.mgmt.cdn.models.Profile
+        :return: An iterator like instance of either OriginGroupListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.OriginGroupListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroupListResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2020-04-15"
+        accept = "application/json"
+
+        def prepare_request(next_link=None):
+            # Construct headers
+            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+            if not next_link:
+                # Construct URL
+                url = self.list_by_endpoint.metadata['url']  # type: ignore
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+                    'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+                # Construct parameters
+                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+                request = self._client.get(url, query_parameters, header_parameters)
+            else:
+                url = next_link
+                query_parameters = {}  # type: Dict[str, Any]
+                request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize('OriginGroupListResult', pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                error = self._deserialize(models.ErrorResponse, response)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_by_endpoint.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups'}  # type: ignore
+
+    def get(
+        self,
+        resource_group_name,  # type: str
+        profile_name,  # type: str
+        endpoint_name,  # type: str
+        origin_group_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "models.OriginGroup"
+        """Gets an existing origin group within an endpoint.
+
+        :param resource_group_name: Name of the Resource group within the Azure subscription.
+        :type resource_group_name: str
+        :param profile_name: Name of the CDN profile which is unique within the resource group.
+        :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :param origin_group_name: Name of the origin group which is unique within the endpoint.
+        :type origin_group_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: OriginGroup, or the result of cls(response)
+        :rtype: ~azure.mgmt.cdn.models.OriginGroup
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -219,6 +164,8 @@ class ProfilesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -240,23 +187,25 @@ class ProfilesOperations(object):
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Profile', pipeline_response)
+        deserialized = self._deserialize('OriginGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
 
     def _create_initial(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        profile,  # type: "models.Profile"
+        endpoint_name,  # type: str
+        origin_group_name,  # type: str
+        origin_group,  # type: "models.OriginGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Profile"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        # type: (...) -> "models.OriginGroup"
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -270,6 +219,8 @@ class ProfilesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -284,7 +235,7 @@ class ProfilesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(profile, 'Profile')
+        body_content = self._serialize.body(origin_group, 'OriginGroup')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -296,49 +247,54 @@ class ProfilesOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Profile', pipeline_response)
+            deserialized = self._deserialize('OriginGroup', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Profile', pipeline_response)
+            deserialized = self._deserialize('OriginGroup', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('Profile', pipeline_response)
+            deserialized = self._deserialize('OriginGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}  # type: ignore
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
 
     def begin_create(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        profile,  # type: "models.Profile"
+        endpoint_name,  # type: str
+        origin_group_name,  # type: str
+        origin_group,  # type: "models.OriginGroup"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Profile"]
-        """Creates a new CDN profile with a profile name under the specified subscription and resource
-        group.
+        # type: (...) -> LROPoller["models.OriginGroup"]
+        """Creates a new origin group within the specified endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param profile: Profile properties needed to create a new profile.
-        :type profile: ~azure.mgmt.cdn.models.Profile
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :param origin_group_name: Name of the origin group which is unique within the endpoint.
+        :type origin_group_name: str
+        :param origin_group: Origin group properties.
+        :type origin_group: ~azure.mgmt.cdn.models.OriginGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Profile or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
+        :return: An instance of LROPoller that returns either OriginGroup or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.OriginGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -348,7 +304,9 @@ class ProfilesOperations(object):
             raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
-                profile=profile,
+                endpoint_name=endpoint_name,
+                origin_group_name=origin_group_name,
+                origin_group=origin_group,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -357,7 +315,7 @@ class ProfilesOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Profile', pipeline_response)
+            deserialized = self._deserialize('OriginGroup', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -375,23 +333,23 @@ class ProfilesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}  # type: ignore
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
 
     def _update_initial(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        endpoint_name,  # type: str
+        origin_group_name,  # type: str
+        origin_group_update_properties,  # type: "models.OriginGroupUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Profile"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        # type: (...) -> "models.OriginGroup"
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _profile_update_parameters = models.ProfileUpdateParameters(tags=tags)
         api_version = "2020-04-15"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -401,6 +359,8 @@ class ProfilesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -415,7 +375,7 @@ class ProfilesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_profile_update_parameters, 'ProfileUpdateParameters')
+        body_content = self._serialize.body(origin_group_update_properties, 'OriginGroupUpdateParameters')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -427,46 +387,51 @@ class ProfilesOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Profile', pipeline_response)
+            deserialized = self._deserialize('OriginGroup', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('Profile', pipeline_response)
+            deserialized = self._deserialize('OriginGroup', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
 
     def begin_update(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
-        tags=None,  # type: Optional[Dict[str, str]]
+        endpoint_name,  # type: str
+        origin_group_name,  # type: str
+        origin_group_update_properties,  # type: "models.OriginGroupUpdateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Profile"]
-        """Updates an existing CDN profile with the specified profile name under the specified
-        subscription and resource group.
+        # type: (...) -> LROPoller["models.OriginGroup"]
+        """Updates an existing origin group within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
-        :param tags: Profile tags.
-        :type tags: dict[str, str]
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :param origin_group_name: Name of the origin group which is unique within the endpoint.
+        :type origin_group_name: str
+        :param origin_group_update_properties: Origin group properties.
+        :type origin_group_update_properties: ~azure.mgmt.cdn.models.OriginGroupUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either Profile or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
+        :return: An instance of LROPoller that returns either OriginGroup or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.OriginGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Profile"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.OriginGroup"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -476,7 +441,9 @@ class ProfilesOperations(object):
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
-                tags=tags,
+                endpoint_name=endpoint_name,
+                origin_group_name=origin_group_name,
+                origin_group_update_properties=origin_group_update_properties,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -485,7 +452,7 @@ class ProfilesOperations(object):
         kwargs.pop('content_type', None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('Profile', pipeline_response)
+            deserialized = self._deserialize('OriginGroup', pipeline_response)
 
             if cls:
                 return cls(pipeline_response, deserialized, {})
@@ -503,12 +470,14 @@ class ProfilesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
+        endpoint_name,  # type: str
+        origin_group_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -525,6 +494,8 @@ class ProfilesOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'profileName': self._serialize.url("profile_name", profile_name, 'str'),
+            'endpointName': self._serialize.url("endpoint_name", endpoint_name, 'str'),
+            'originGroupName': self._serialize.url("origin_group_name", origin_group_name, 'str'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -549,22 +520,27 @@ class ProfilesOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
 
     def begin_delete(
         self,
         resource_group_name,  # type: str
         profile_name,  # type: str
+        endpoint_name,  # type: str
+        origin_group_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """Deletes an existing CDN profile with the specified parameters. Deleting a profile will result
-        in the deletion of all of the sub-resources including endpoints, origins and custom domains.
+        """Deletes an existing origin group within an endpoint.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription.
         :type resource_group_name: str
         :param profile_name: Name of the CDN profile which is unique within the resource group.
         :type profile_name: str
+        :param endpoint_name: Name of the endpoint under the profile which is unique globally.
+        :type endpoint_name: str
+        :param origin_group_name: Name of the origin group which is unique within the endpoint.
+        :type origin_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -586,6 +562,8 @@ class ProfilesOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 profile_name=profile_name,
+                endpoint_name=endpoint_name,
+                origin_group_name=origin_group_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -609,205 +587,4 @@ class ProfilesOperations(object):
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}'}  # type: ignore
-
-    def generate_sso_uri(
-        self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SsoUri"
-        """Generates a dynamic SSO URI used to sign in to the CDN supplemental portal. Supplemental portal
-        is used to configure advanced feature capabilities that are not yet available in the Azure
-        portal, such as core reports in a standard profile; rules engine, advanced HTTP reports, and
-        real-time stats and alerts in a premium profile. The SSO URI changes approximately every 10
-        minutes.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
-        :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SsoUri, or the result of cls(response)
-        :rtype: ~azure.mgmt.cdn.models.SsoUri
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SsoUri"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.generate_sso_uri.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('SsoUri', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    generate_sso_uri.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/generateSsoUri'}  # type: ignore
-
-    def list_supported_optimization_types(
-        self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.SupportedOptimizationTypesListResult"
-        """Gets the supported optimization types for the current profile. A user can create an endpoint
-        with an optimization type from the listed values.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
-        :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SupportedOptimizationTypesListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.cdn.models.SupportedOptimizationTypesListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SupportedOptimizationTypesListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.list_supported_optimization_types.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('SupportedOptimizationTypesListResult', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    list_supported_optimization_types.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getSupportedOptimizationTypes'}  # type: ignore
-
-    def list_resource_usage(
-        self,
-        resource_group_name,  # type: str
-        profile_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.ResourceUsageListResult"]
-        """Checks the quota and actual usage of endpoints under the given CDN profile.
-
-        :param resource_group_name: Name of the Resource group within the Azure subscription.
-        :type resource_group_name: str
-        :param profile_name: Name of the CDN profile which is unique within the resource group.
-        :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ResourceUsageListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.ResourceUsageListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceUsageListResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-04-15"
-        accept = "application/json"
-
-        def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-            if not next_link:
-                # Construct URL
-                url = self.list_resource_usage.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'profileName': self._serialize.url("profile_name", profile_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-                request = self._client.post(url, query_parameters, header_parameters)
-            else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize('ResourceUsageListResult', pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_resource_usage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/checkResourceUsage'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/originGroups/{originGroupName}'}  # type: ignore
