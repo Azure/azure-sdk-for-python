@@ -1,5 +1,69 @@
 # Release History
 
+## 2.0.0 (2020-11-05)
+
+**Features**
+
+  - Model Workspace has a new parameter portal_url
+  - Model Workspace has a new parameter source
+  - Model ProxyResource has a new parameter tags
+  - Model SavedSearch has a new parameter e_tag
+  - Model SavedSearchesListResult has a new parameter metadata
+  - Model DataSource has a new parameter e_tag
+  - Model Resource has a new parameter tags
+  - Model Resource has a new parameter location
+  - Added operation SavedSearchesOperations.get_results
+  - Added operation WorkspacesOperations.get_search_results
+  - Added operation WorkspacesOperations.get_shared_keys
+  - Added operation WorkspacesOperations.list_management_groups
+  - Added operation WorkspacesOperations.update_search_results
+  - Added operation WorkspacesOperations.disable_intelligence_pack
+  - Added operation WorkspacesOperations.list_intelligence_packs
+  - Added operation WorkspacesOperations.list_usages
+  - Added operation WorkspacesOperations.list_link_targets
+  - Added operation WorkspacesOperations.enable_intelligence_pack
+  - Added operation WorkspacesOperations.get_schema
+  - Added operation WorkspacesOperations.purge
+  - Added operation group StorageInsightsOperations
+
+**Breaking changes**
+
+  - Operation SavedSearchesOperations.delete has a new signature
+  - Operation SavedSearchesOperations.create_or_update has a new signature
+  - Operation SavedSearchesOperations.get has a new signature
+  - Operation LinkedServicesOperations.create_or_update has a new signature
+  - Parameter version of model SavedSearch is now required
+  - Parameter resource_id of model LinkedService is now required
+  - Operation LinkedServicesOperations.create_or_update has a new signature
+  - Operation WorkspacesOperations.delete has a new signature
+  - Model OperationDisplay no longer has parameter description
+  - Model Workspace no longer has parameter workspace_capping
+  - Model Workspace no longer has parameter public_network_access_for_query
+  - Model Workspace no longer has parameter public_network_access_for_ingestion
+  - Model Workspace no longer has parameter private_link_scoped_resources
+  - Model WorkspacePurgeBodyFilters no longer has parameter key
+  - Model SavedSearch no longer has parameter function_parameters
+  - Model SavedSearch no longer has parameter function_alias
+  - Model SavedSearch no longer has parameter etag
+  - Model LinkedService no longer has parameter provisioning_state
+  - Model LinkedService no longer has parameter write_access_resource_id
+  - Model DataSource no longer has parameter etag
+  - Removed operation group TablesOperations
+  - Removed operation group DataExportsOperations
+  - Removed operation group WorkspacePurgeOperations
+  - Removed operation group StorageInsightConfigsOperations
+  - Removed operation group ManagementGroupsOperations
+  - Removed operation group SharedKeysOperations
+  - Removed operation group IntelligencePacksOperations
+  - Removed operation group LinkedStorageAccountsOperations
+  - Removed operation group AvailableServiceTiersOperations
+  - Removed operation group OperationStatusesOperations
+  - Removed operation group SchemaOperations
+  - Removed operation group DeletedWorkspacesOperations
+  - Removed operation group ClustersOperations
+  - Removed operation group UsagesOperations
+  - Removed operation group GatewaysOperations
+  
 ## 1.0.0 (2020-08-31)
 
 **Features**
