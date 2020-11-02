@@ -195,7 +195,7 @@ class TestMetricsAdvisorAdministrationClientBase(AzureTestCase):
 
     def _create_data_feed_and_detection_config(self, name):
         data_feed = self._create_data_feed(name)
-        detection_config_name = self.create_random_name(name)
+        detection_config_name = create_random_name(name)
         detection_config = self.admin_client.create_detection_configuration(
             name=detection_config_name,
             metric_id=data_feed.metric_ids[0],
