@@ -169,7 +169,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         self._client.__exit__(*args)  # pylint: disable=no-member
 
     @distributed_trace
-    def create_anomaly_alert_configuration(
+    def create_alert_configuration(
             self, alert_configuration,  # type: AnomalyAlertConfiguration
             **kwargs  # type: Any
     ):  # type: (...) -> AnomalyAlertConfiguration
@@ -183,9 +183,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
-                :start-after: [START create_anomaly_alert_config]
-                :end-before: [END create_anomaly_alert_config]
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START create_alert_config]
+                :end-before: [END create_alert_config]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly alert configuration
@@ -198,7 +198,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
         config_id = response_headers["Location"].split("configurations/")[1]
-        return self.get_anomaly_alert_configuration(config_id)
+        return self.get_alert_configuration(config_id)
 
     @distributed_trace
     def create_data_feed(
@@ -284,7 +284,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return self.get_hook(hook_id)
 
     @distributed_trace
-    def create_metric_anomaly_detection_configuration(
+    def create_detection_configuration(
             self, detection_configuration,  # type: AnomalyDetectionConfiguration
             **kwargs  # type: Any
     ):  # type: (...) -> AnomalyDetectionConfiguration
@@ -298,9 +298,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_detection_configuration.py
-                :start-after: [START create_anomaly_detection_config]
-                :end-before: [END create_anomaly_detection_config]
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START create_detection_config]
+                :end-before: [END create_detection_config]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly detection configuration
@@ -312,7 +312,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             **kwargs
         )
         config_id = response_headers["Location"].split("configurations/")[1]
-        return self.get_metric_anomaly_detection_configuration(config_id)
+        return self.get_detection_configuration(config_id)
 
     @distributed_trace
     def get_data_feed(self, data_feed_id, **kwargs):
@@ -342,7 +342,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return DataFeed._from_generated(data_feed)
 
     @distributed_trace
-    def get_anomaly_alert_configuration(self, alert_configuration_id, **kwargs):
+    def get_alert_configuration(self, alert_configuration_id, **kwargs):
         # type: (str, Any) -> AnomalyAlertConfiguration
         """Get a single anomaly alert configuration.
 
@@ -354,9 +354,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
-                :start-after: [START get_anomaly_alert_config]
-                :end-before: [END get_anomaly_alert_config]
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START get_alert_config]
+                :end-before: [END get_alert_config]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly alert configuration by its ID
@@ -366,7 +366,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return AnomalyAlertConfiguration._from_generated(config)
 
     @distributed_trace
-    def get_metric_anomaly_detection_configuration(self, detection_configuration_id, **kwargs):
+    def get_detection_configuration(self, detection_configuration_id, **kwargs):
         # type: (str, Any) -> AnomalyDetectionConfiguration
         """Get a single anomaly detection configuration.
 
@@ -378,9 +378,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_detection_configuration.py
-                :start-after: [START get_anomaly_detection_config]
-                :end-before: [END get_anomaly_detection_config]
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START get_detection_config]
+                :end-before: [END get_detection_config]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly detection configuration by its ID
@@ -491,7 +491,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def delete_anomaly_alert_configuration(self, alert_configuration_id, **kwargs):
+    def delete_alert_configuration(self, alert_configuration_id, **kwargs):
         # type: (str, Any) -> None
         """Delete an anomaly alert configuration by its ID.
 
@@ -503,9 +503,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
-                :start-after: [START delete_anomaly_alert_config]
-                :end-before: [END delete_anomaly_alert_config]
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START delete_alert_config]
+                :end-before: [END delete_alert_config]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly alert configuration by its ID
@@ -514,7 +514,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         self._client.delete_anomaly_alerting_configuration(alert_configuration_id, **kwargs)
 
     @distributed_trace
-    def delete_metric_anomaly_detection_configuration(self, detection_configuration_id, **kwargs):
+    def delete_detection_configuration(self, detection_configuration_id, **kwargs):
         # type: (str, Any) -> None
         """Delete an anomaly detection configuration by its ID.
 
@@ -526,9 +526,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_detection_configuration.py
-                :start-after: [START delete_anomaly_detection_config]
-                :end-before: [END delete_anomaly_detection_config]
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START delete_detection_config]
+                :end-before: [END delete_detection_config]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly detection configuration by its ID
@@ -684,7 +684,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return self.get_data_feed(data_feed_id)
 
     @distributed_trace
-    def update_anomaly_alert_configuration(
+    def update_alert_configuration(
         self,
         alert_configuration,  # type: Union[str, AnomalyAlertConfiguration]
         **kwargs  # type: Any
@@ -712,9 +712,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
-                :start-after: [START update_anomaly_alert_config]
-                :end-before: [END update_anomaly_alert_config]
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START update_alert_config]
+                :end-before: [END update_alert_config]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly alert configuration
@@ -748,10 +748,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             alert_configuration_patch,
             **kwargs
         )
-        return self.get_anomaly_alert_configuration(alert_configuration_id)
+        return self.get_alert_configuration(alert_configuration_id)
 
     @distributed_trace
-    def update_metric_anomaly_detection_configuration(
+    def update_detection_configuration(
         self,
         detection_configuration,  # type: Union[str, AnomalyDetectionConfiguration]
         **kwargs  # type: Any
@@ -783,9 +783,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_detection_configuration.py
-                :start-after: [START update_anomaly_detection_config]
-                :end-before: [END update_anomaly_detection_config]
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START update_detection_config]
+                :end-before: [END update_detection_config]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly detection configuration
@@ -819,7 +819,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             detection_config_patch,
             **kwargs
         )
-        return self.get_metric_anomaly_detection_configuration(detection_configuration_id)
+        return self.get_detection_configuration(detection_configuration_id)
 
     @distributed_trace
     def update_hook(
@@ -1006,7 +1006,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def list_anomaly_alert_configurations(
+    def list_alert_configurations(
         self,
         detection_configuration_id,  # type: str
         **kwargs  # type: Any
@@ -1022,9 +1022,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
-                :start-after: [START list_anomaly_alert_configs]
-                :end-before: [END list_anomaly_alert_configs]
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START list_alert_configs]
+                :end-before: [END list_alert_configs]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
@@ -1038,7 +1038,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def list_metric_anomaly_detection_configurations(
+    def list_detection_configurations(
         self,
         metric_id,  # type: str
         **kwargs  # type: Any
@@ -1054,9 +1054,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_detection_configuration.py
-                :start-after: [START list_anomaly_detection_configs]
-                :end-before: [END list_anomaly_detection_configs]
+            .. literalinclude:: ../samples/sample_detection_configuration.py
+                :start-after: [START list_detection_configs]
+                :end-before: [END list_detection_configs]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric

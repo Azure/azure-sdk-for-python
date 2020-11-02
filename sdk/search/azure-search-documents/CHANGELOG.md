@@ -1,7 +1,10 @@
 # Release History
 
-## 11.1.0b4 (Unreleased)
+## 11.1.0b4 (2020-11-10)
 
+**Features**
+
+- Added `get_search_indexing_buffered_sender` support for `SearchClient`
 
 ## 11.1.0b3 (2020-10-06)
 

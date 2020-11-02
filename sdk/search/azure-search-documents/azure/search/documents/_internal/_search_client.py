@@ -17,6 +17,7 @@ from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from .._headers_mixin import HeadersMixin
 from .._version import SDK_MONIKER
+from ._search_indexing_buffered_sender import SearchIndexingBufferedSender
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
@@ -99,6 +100,15 @@ class SearchClient(HeadersMixin):
 
         """
         return self._client.close()
+
+    def get_search_indexing_buffered_sender(self, **kwargs):
+        # type: (dict) -> SearchIndexingBufferedSender
+        """Return a SearchIndexingBufferedSender instance
+
+        :rtype: ~azure.search.documents.SearchIndexingBufferedSender
+
+        """
+        return SearchIndexingBufferedSender(self._endpoint, self._index_name, self._credential, **kwargs)
 
     @distributed_trace
     def get_document_count(self, **kwargs):

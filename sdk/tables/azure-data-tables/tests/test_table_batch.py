@@ -402,7 +402,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
 
             # Assert
@@ -446,7 +446,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
 
             # Assert
@@ -548,7 +548,7 @@ class StorageTableBatchTest(TableTestCase):
             self._assert_valid_batch_transaction(transaction_result, 1)
             self.assertIsNotNone(transaction_result.get_entity(entity.RowKey))
 
-            with self.assertRaises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError):
                 entity = self.table.get_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
         finally:
             self._tear_down()
@@ -584,7 +584,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(entities)
-            self.assertEqual(100, len(entities))
+            self.assertEqual(transaction_count, len(entities))
             e = self.table.get_entity('batch_inserts', '1')
         finally:
             self._tear_down()
@@ -736,7 +736,7 @@ class StorageTableBatchTest(TableTestCase):
             batch.create_entity(entity)
 
             self.table.send_batch(batch)
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 resp = table2.send_batch(batch)
 
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
@@ -764,7 +764,7 @@ class StorageTableBatchTest(TableTestCase):
                 '001', 'batch_negative_1')
             batch.update_entity(entity, mode=UpdateMode.MERGE)
             # Assert
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
 
         finally:
@@ -789,7 +789,7 @@ class StorageTableBatchTest(TableTestCase):
 
             entity = self._create_random_entity_dict(
                 '002', 'batch_negative_1')
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 batch.create_entity(entity)
         finally:
             self._tear_down()
@@ -805,7 +805,7 @@ class StorageTableBatchTest(TableTestCase):
             self.table.create_entity(entity)
 
             # Act
-            with self.assertRaises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = TableEntity()
@@ -830,7 +830,7 @@ class StorageTableBatchTest(TableTestCase):
 
             batch = self.table.create_batch()
             batch.create_entity(entity)
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 batch.create_entity(entity2)
 
             # Assert

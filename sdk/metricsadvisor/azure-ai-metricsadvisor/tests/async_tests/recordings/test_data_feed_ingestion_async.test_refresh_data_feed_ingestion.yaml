@@ -9,20 +9,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/data_feed_id/ingestionProgress/reset
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 3710fc40-1383-494e-b3c3-2b825e51ba0c
+      apim-request-id: 9e69b26c-3365-4f99-be17-a612b79bc001
       content-length: '0'
-      date: Fri, 23 Oct 2020 15:51:34 GMT
+      date: Mon, 26 Oct 2020 17:46:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '269'
-      x-request-id: 3710fc40-1383-494e-b3c3-2b825e51ba0c
+      x-envoy-upstream-service-time: '360'
+      x-request-id: 9e69b26c-3365-4f99-be17-a612b79bc001
     status:
       code: 204
       message: No Content

@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import uuid
 from uamqp import Source
-from .message import ReceivedMessage
+from .message import ServiceBusReceivedMessage
 from .constants import (
     NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
@@ -57,7 +57,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._further_pull_receive_timeout_ms = 200
         self._max_wait_time = kwargs.get("max_wait_time", None)
 
-    def _build_message(self, received, message_type=ReceivedMessage):
+    def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(message=received, receive_mode=self._receive_mode, receiver=self)
         self._last_received_sequenced_number = message.sequence_number
         return message
@@ -66,7 +66,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         """check whether the receiver is alive"""
         # pylint: disable=protected-access
         if self._session and self._session._lock_expired:  # pylint: disable=protected-access
-            raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
+            raise SessionLockExpired(error=self._session.auto_renew_error)
 
     def _get_source(self):
         # pylint: disable=protected-access
