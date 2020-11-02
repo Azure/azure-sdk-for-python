@@ -174,6 +174,7 @@ The following section provides several code snippets covering some of the most c
 * [Recognize Content](#recognize-content "Recognize Content")
 * [Recognize Receipts](#recognize-receipts "Recognize receipts")
 * [Recognize Business Cards](#recognize-business-cards "Recognize business cards")
+* [Recognize Invoices](#recognize-invoices "Recognize invoices")
 * [Train a Model](#train-a-model "Train a model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
@@ -313,6 +314,30 @@ for business_card in result:
             for item in field.value:
                 print("{}: {} has confidence {}".format(item.name, item.value, item.confidence))
 ```
+
+### Recognize Invoices
+Recognize data from invoices using a prebuilt model. Invoice fields recognized by the service can be found [here][service_recognize_invoice].
+
+```python
+from azure.ai.formrecognizer import FormRecognizerClient
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = "https://<region>.api.cognitive.microsoft.com/"
+credential = AzureKeyCredential("<api_key>")
+
+form_recognizer_client = FormRecognizerClient(endpoint, credential)
+
+with open("<path to your invoice>", "rb") as fd:
+    invoice = fd.read()
+
+poller = form_recognizer_client.begin_recognize_invoices(invoice)
+result = poller.result()
+
+for invoice in result:
+    for name, field in invoice.fields.items():
+        print("{}: {} has confidence {}".format(name, field.value, field.confidence))
+```
+
 
 ### Train a model
 Train a custom model on your own form type. The resulting model can be used to recognize values from the types of forms it was trained on.
