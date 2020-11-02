@@ -12,7 +12,7 @@ Example to show sending message(s) to and receiving messages from a Service Bus 
 # pylint: disable=C0111
 
 import os
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 SESSION_QUEUE_NAME = os.environ["SERVICE_BUS_SESSION_QUEUE_NAME"]
@@ -20,23 +20,23 @@ SESSION_ID = os.environ['SERVICE_BUS_SESSION_ID']
 
 
 def send_single_message(sender):
-    message = Message("Single session message", session_id=SESSION_ID)
+    message = ServiceBusMessage("Single session message", session_id=SESSION_ID)
     sender.send_messages(message)
 
 
 def send_a_list_of_messages(sender):
-    messages = [Message("Session Message in list", session_id=SESSION_ID) for _ in range(10)]
+    messages = [ServiceBusMessage("Session Message in list", session_id=SESSION_ID) for _ in range(10)]
     sender.send_messages(messages)
 
 
 def send_batch_message(sender):
-    batch_message = sender.create_batch()
+    batch_message = sender.create_message_batch()
     for _ in range(10):
         try:
-            batch_message.add(Message("Session Message inside a BatchMessage", session_id=SESSION_ID))
+            batch_message.add_message(ServiceBusMessage("Session Message inside a ServiceBusMessageBatch", session_id=SESSION_ID))
         except ValueError:
-            # BatchMessage object reaches max_size.
-            # New BatchMessage object can be created here to send more data.
+            # ServiceBusMessageBatch object reaches max_size.
+            # New ServiceBusMessageBatch object can be created here to send more data.
             break
     sender.send_messages(batch_message)
 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
         print("Send message is done.")
 
-        receiver = servicebus_client.get_queue_session_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID)
+        receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID)
         with receiver:
             receive_batch_message(receiver)
 

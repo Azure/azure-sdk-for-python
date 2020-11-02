@@ -18,20 +18,36 @@ from .._common.constants import (
 )
 from .._common.utils import utc_from_timestamp
 from ._async_utils import get_running_loop
-from ..exceptions import MessageSettleFailed
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class ReceivedMessage(sync_message.ReceivedMessageBase):
+class ServiceBusReceivedMessage(sync_message.ServiceBusReceivedMessageBase):
     """A Service Bus Message received from service side.
 
     """
+
+    async def _settle_message_with_retry(
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+        **kwargs
+    ):
+        # pylint: disable=unused-argument, protected-access
+        await self._receiver._do_retryable_operation(
+            self._settle_message,
+            timeout=None,
+            settle_operation=settle_operation,
+            dead_letter_reason=dead_letter_reason,
+            dead_letter_error_description=dead_letter_error_description
+        )
+
     async def _settle_message(  # type: ignore
-            self,
-            settle_operation,
-            dead_letter_reason=None,
-            dead_letter_error_description=None,
+        self,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
     ):
         try:
             if not self._is_deferred_message:
@@ -55,8 +71,13 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
             await self._settle_via_mgmt_link(settle_operation,
                                              dead_letter_reason=dead_letter_reason,
                                              dead_letter_error_description=dead_letter_error_description)()
-        except Exception as e:
-            raise MessageSettleFailed(settle_operation, e)
+        except Exception as exception:  # pylint: disable=broad-except
+            _LOGGER.info(
+                "Message settling: %r has encountered an exception (%r) through management link",
+                settle_operation,
+                exception
+            )
+            raise
 
     async def complete(self) -> None:  # type: ignore
         """Complete the message.
@@ -71,7 +92,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_COMPLETE)
-        await self._settle_message(MESSAGE_COMPLETE)
+        await self._settle_message_with_retry(MESSAGE_COMPLETE)
         self._settled = True
 
     async def dead_letter(  # type: ignore
@@ -93,7 +114,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEAD_LETTER)
-        await self._settle_message(MESSAGE_DEAD_LETTER,
+        await self._settle_message_with_retry(MESSAGE_DEAD_LETTER,
                                    dead_letter_reason=reason,
                                    dead_letter_error_description=error_description)
         self._settled = True
@@ -110,7 +131,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_ABANDON)
-        await self._settle_message(MESSAGE_ABANDON)
+        await self._settle_message_with_retry(MESSAGE_ABANDON)
         self._settled = True
 
     async def defer(self) -> None:  # type: ignore
@@ -126,7 +147,7 @@ class ReceivedMessage(sync_message.ReceivedMessageBase):
         """
         # pylint: disable=protected-access
         self._check_live(MESSAGE_DEFER)
-        await self._settle_message(MESSAGE_DEFER)
+        await self._settle_message_with_retry(MESSAGE_DEFER)
         self._settled = True
 
     async def renew_lock(self, **kwargs: Any) -> datetime.datetime:

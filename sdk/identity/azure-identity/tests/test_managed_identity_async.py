@@ -94,6 +94,73 @@ async def test_cloud_shell_user_assigned_identity():
 
 
 @pytest.mark.asyncio
+async def test_prefers_app_service_2017_09_01():
+    """When the environment is configured for both App Service versions, the credential should prefer 2017-09-01
+
+    Support for 2019-08-01 was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test
+    should be removed when that support is added back.
+    """
+
+    access_token = "****"
+    expires_on = 42
+    expected_token = AccessToken(access_token, expires_on)
+    url = "http://localhost:42/token"
+    secret = "expected-secret"
+    scope = "scope"
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                url,
+                method="GET",
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
+            )
+        ]
+        * 2,
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON,
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: url,
+            EnvironmentVariables.IDENTITY_HEADER: secret,
+            EnvironmentVariables.MSI_ENDPOINT: url,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+        clear=True,
+    ):
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+
+@pytest.mark.skip("2019-08-01 support was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test should be enabled when that support is added back.")
+@pytest.mark.asyncio
 async def test_app_service_2019_08_01():
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 
@@ -351,3 +418,43 @@ async def test_imds_user_assigned_identity():
     with mock.patch.dict("os.environ", clear=True):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
+
+
+@pytest.mark.asyncio
+async def test_service_fabric():
+    """Service Fabric 2019-07-01-preview"""
+
+    access_token = "****"
+    expires_on = 42
+    endpoint = "http://localhost:42/token"
+    secret = "expected-secret"
+    thumbprint = "SHA1HEX"
+    scope = "scope"
+
+    async def send(request, **_):
+        assert request.url.startswith(endpoint)
+        assert request.method == "GET"
+        assert request.headers["Secret"] == secret
+        assert request.query["api-version"] == "2019-07-01-preview"
+        assert request.query["resource"] == scope
+
+        return mock_response(
+            json_payload={
+                "access_token": access_token,
+                "expires_on": str(expires_on),
+                "resource": scope,
+                "token_type": "Bearer",
+            }
+        )
+
+    with mock.patch(
+        "os.environ",
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: secret,
+            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
+        },
+    ):
+        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        assert token.token == access_token
+        assert token.expires_on == expires_on

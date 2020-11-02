@@ -71,14 +71,6 @@ def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too
     return None
 
 
-class SelectionMarkState(str, Enum):
-    """State of the selection mark.
-    """
-
-    SELECTED = "selected"
-    UNSELECTED = "unselected"
-
-
 class FieldValueType(str, Enum):
     """Semantic data type of the field value.
     """
@@ -508,9 +500,8 @@ class FormSelectionMark(FormElement):
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar float confidence: Confidence value.
-    :ivar state: Required. State of the selection mark. Possible values include: "selected",
+    :ivar str state: Required. State of the selection mark. Possible values include: "selected",
      "unselected".
-    :type state: str or ~azure.ai.formrecognizer.SelectionMarkState
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormSelectionMark, this is "selectionMark".
@@ -688,6 +679,9 @@ class CustomFormModel(object):
 
     @classmethod
     def _from_generated(cls, model, api_version):
+        model_name = model.model_info.model_name if hasattr(model.model_info, "model_name") else None
+        properties = CustomFormModelProperties._from_generated(model.model_info) \
+            if hasattr(model.model_info, "attributes") else None
         return cls(
             model_id=model.model_info.model_id,
             status=model.model_info.status,
@@ -695,14 +689,14 @@ class CustomFormModel(object):
             training_completed_on=model.model_info.last_updated_date_time,
             submodels=CustomFormSubmodel._from_generated_unlabeled(model)
             if model.keys else CustomFormSubmodel._from_generated_labeled(
-                model, api_version, model_name=model.model_info.model_name
+                model, api_version, model_name=model_name
             ),
             errors=FormRecognizerError._from_generated(model.train_result.errors)
             if model.train_result else None,
             training_documents=TrainingDocumentInfo._from_generated(model.train_result)
             if model.train_result else None,
-            properties=CustomFormModelProperties._from_generated(model.model_info),
-            model_name=model.model_info.model_name
+            properties=properties,
+            model_name=model_name
         )
 
     @classmethod
@@ -879,7 +873,7 @@ class TrainingDocumentInfo(object):
                 status=doc.status,
                 page_count=doc.pages,
                 errors=FormRecognizerError._from_generated(doc.errors),
-                model_id=train_result.model_id
+                model_id=train_result.model_id if hasattr(train_result, "model_id") else None
             ) for doc in train_result.training_documents
         ] if train_result.training_documents else None
 
@@ -959,13 +953,15 @@ class CustomFormModelInfo(object):
         self.properties = kwargs.get("properties", None)
 
     @classmethod
-    def _from_generated(cls, model, model_id=None):
+    def _from_generated(cls, model, model_id=None, **kwargs):
         if model.status == "succeeded":  # map copy status to model status
             model.status = "ready"
 
         model_name = None
         if hasattr(model, "attributes"):
             properties = CustomFormModelProperties._from_generated(model)
+        elif kwargs.pop("api_version", None) == "2.0":
+            properties = None
         else:
             properties = CustomFormModelProperties(is_composed_model=False)
         if hasattr(model, "model_name"):
