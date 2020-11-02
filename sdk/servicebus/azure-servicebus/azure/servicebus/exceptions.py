@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Optional, Any
+from typing import Optional
 
 from uamqp import errors, constants
 from azure.core.exceptions import AzureError
@@ -106,20 +106,20 @@ def _handle_amqp_connection_error(logger, exception, handler):
         # In other link detach and connection case, should retry
         logger.info("Handler detached due to exception: (%r).", exception)
         if exception.condition == constants.ErrorCodes.UnauthorizedAccess:
-            error = ServiceBusAuthorizationError(str(exception), exception)
+            error = ServiceBusAuthorizationError(str(exception), error=exception)
         elif exception.condition == constants.ErrorCodes.NotAllowed and 'requires sessions' in str(exception):
             message = str(exception) + '\n\nsession_id must be set when getting a receiver for sessionful entity.'
-            error = ServiceBusConnectionError(message, exception)
+            error = ServiceBusConnectionError(message, error=exception)
         else:
-            error = ServiceBusConnectionError(str(exception), exception)
+            error = ServiceBusConnectionError(str(exception), error=exception)
     elif isinstance(exception, errors.MessageHandlerError):
         logger.info("Handler error: (%r).", exception)
-        error = ServiceBusConnectionError(str(exception), exception)
+        error = ServiceBusConnectionError(str(exception), error=exception)
     else:
         # handling general uamqp.errors.AMQPConnectionError
         logger.info("Failed to open handler: (%r).", exception)
         message = "Failed to open handler: {}.".format(exception)
-        error = ServiceBusConnectionError(message, exception)
+        error = ServiceBusConnectionError(message, error=exception)
         error_need_raise, error_need_close_handler = True, False
 
     return error, error_need_close_handler, error_need_raise
@@ -141,7 +141,7 @@ def _handle_amqp_message_error(logger, exception, **kwargs):
              exception.condition == constants.ErrorCodes.LinkMessageSizeExceeded):
         # This one doesn't need retry, should raise the error
         logger.info("Message content is too large (%r).", exception)
-        error = MessageContentTooLarge("Message content is too large.", exception)
+        error = MessageContentTooLarge("Message content is too large.", error=exception)
         error_need_close_handler = False
         error_need_raise = True
     else:
@@ -168,13 +168,13 @@ def _create_servicebus_exception(logger, exception, handler, **kwargs):  # pylin
             _handle_amqp_message_error(logger, exception, **kwargs)
     elif isinstance(exception, errors.AuthenticationException):
         logger.info("Authentication failed due to exception: (%r).", exception)
-        error = ServiceBusAuthenticationError(str(exception), exception)
+        error = ServiceBusAuthenticationError(str(exception), error=exception)
     else:
         logger.info("Unexpected error occurred (%r). Shutting down.", exception)
         if kwargs.get("settle_operation"):
-            error = MessageSettleFailed(kwargs.get("settle_operation"), exception)
+            error = MessageSettleFailed(kwargs.get("settle_operation"), error=exception)
         elif not isinstance(exception, ServiceBusError):
-            error = ServiceBusError("Handler failed: {}.".format(exception), exception)
+            error = ServiceBusError("Handler failed: {}.".format(exception), error=exception)
         else:
             error = exception
 
@@ -280,7 +280,6 @@ class MessageSettleFailed(ServiceBusMessageError):
     :type error: Exception
 
     """
-
     def __init__(self, action, error):
         # type: (str, Exception) -> None
         message = "Failed to {} message. Error: {}".format(action, error)
