@@ -51,7 +51,6 @@ class TableTestAsync(AsyncTableTestCase):
             pass
 
     # --Test cases for tables --------------------------------------------------
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_table(self, resource_group, location, storage_account, storage_account_key):
@@ -66,7 +65,6 @@ class TableTestAsync(AsyncTableTestCase):
         assert created.table_name == table_name
         await ts.delete_table(table_name=table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
@@ -113,7 +111,6 @@ class TableTestAsync(AsyncTableTestCase):
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
             excinfo)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_list_tables(self, resource_group, location, storage_account, storage_account_key):
@@ -135,7 +132,6 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertIsNotNone(tables[0])
         await ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
@@ -158,7 +154,6 @@ class TableTestAsync(AsyncTableTestCase):
             self.assertIsNotNone(table_item.table_name)
         await ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_list_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
@@ -178,10 +173,9 @@ class TableTestAsync(AsyncTableTestCase):
         async for s in ts.list_tables(results_per_page=3).by_page():
             small_page.append(s)
 
-        self.assertEqual(len(small_page), 2)
+        self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
@@ -215,7 +209,6 @@ class TableTestAsync(AsyncTableTestCase):
         self.assertEqual(tables2_len, 2)
         self.assertNotEqual(tables1, tables2)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_delete_table_with_existing_table(self, resource_group, location, storage_account,
@@ -233,7 +226,6 @@ class TableTestAsync(AsyncTableTestCase):
             tables.append(e)
         self.assertEqual(tables, [])
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, storage_account,
@@ -248,15 +240,12 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Assert
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account,
                                                      storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
         ts = TableServiceClient(url, storage_account_key)
         table_name = u'啊齄丂狛狜'
 
@@ -272,8 +261,6 @@ class TableTestAsync(AsyncTableTestCase):
     async def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
         table = await self._create_table(ts)
         try:
@@ -286,15 +273,12 @@ class TableTestAsync(AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
                                                                storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = await self._create_table(ts)
         try:
@@ -306,18 +290,14 @@ class TableTestAsync(AsyncTableTestCase):
             self.assertIsNotNone(acl)
             self.assertEqual(len(acl), 0)
         finally:
-            # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
                                                               storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = await self._create_table(ts)
         try:
@@ -335,15 +315,12 @@ class TableTestAsync(AsyncTableTestCase):
             # self._delete_table(table)
             await ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,
                                                          storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = await self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
@@ -364,14 +341,11 @@ class TableTestAsync(AsyncTableTestCase):
         finally:
             await ts.delete_table(table.table_name)
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, storage_account_key)
         table = await self._create_table(ts)
         try:
@@ -394,8 +368,6 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         tsc = TableServiceClient(url, storage_account_key)
         table = await self._create_table(tsc)
         try:
@@ -435,7 +407,6 @@ class TableTestAsync(AsyncTableTestCase):
         finally:
             await self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_locale(self, resource_group, location, storage_account, storage_account_key):

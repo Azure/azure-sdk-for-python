@@ -223,7 +223,6 @@ class TableServicePropertiesTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_too_many_cors_rules_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -234,13 +233,12 @@ class TableServicePropertiesTest(TableTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties, None, None, None, cors)
+        with pytest.raises(HttpResponseError):
+            await tsc.set_service_properties(None, None, None, cors)
         if self.is_live:
             sleep(SLEEP_DELAY)
 
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_retention_too_long_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -249,11 +247,9 @@ class TableServicePropertiesTest(TableTestCase):
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
-        await tsc.set_service_properties(None, None, minute_metrics)
         # Assert
-        self.assertRaises(HttpResponseError,
-                          tsc.set_service_properties,
-                          None, None, minute_metrics)
+        with pytest.raises(HttpResponseError):
+            await tsc.set_service_properties(None, None, minute_metrics)
         if self.is_live:
             sleep(SLEEP_DELAY)
 

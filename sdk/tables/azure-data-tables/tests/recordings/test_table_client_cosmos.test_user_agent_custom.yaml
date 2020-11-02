@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Fri, 30 Oct 2020 21:53:05 GMT
+      User-Agent:
+      - TestApp/v1.0 azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 30 Oct 2020 21:53:05 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: ''
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Fri, 30 Oct 2020 21:53:06 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+version: 1

@@ -10,7 +10,10 @@ from time import sleep
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import (
+    ResourceGroupPreparer,
+    StorageAccountPreparer
+)
 from _shared.testcase import (
     TableTestCase,
     RERUNS_DELAY,
@@ -269,8 +272,6 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -289,7 +290,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(
                 service._primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
+                    'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "table")))
             self.assertEqual(service.scheme, 'http')
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -449,7 +450,6 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_user_agent_default(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -457,12 +457,11 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
-                response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-table/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform()))
+            self.assertIn("azsdk-python-data-tables/{} Python/{} ({})".format(
+                VERSION,
+                platform.python_version(),
+                platform.platform()),
+                response.http_request.headers['User-Agent'])
 
         tables = list(service.list_tables(raw_response_hook=callback))
         self.assertIsInstance(tables, list)
@@ -557,7 +556,6 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("kierans theory")
     def test_create_table_client_with_invalid_name(self):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
@@ -578,15 +576,13 @@ class StorageTableClientTest(TableTestCase):
         for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
             for service_type in SERVICES.items():
                 # Act
-                with self.assertRaises(ValueError) as e:
+                with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    self.assertEqual(
-                        str(e.exception), "Connection string is either blank or malformed.")
+                    assert "Connection string is either blank or malformed." in str(e)
                 elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    self.assertEqual(
-                        str(e.exception), "Connection string missing required connection details.")
+                    assert "Connection string missing required connection details." in str(e)
 
         if self.is_live:
             sleep(SLEEP_DELAY)

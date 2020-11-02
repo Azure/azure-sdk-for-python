@@ -643,49 +643,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("Not sure this is how the batching should operate, will consult w/ Anna")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_batch_reuse(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        await self._set_up(storage_account, storage_account_key)
-        try:
-            table2 = self._get_table_reference('table2')
-            table2.create_table()
-
-            # Act
-            entity = TableEntity()
-            entity.PartitionKey = '003'
-            entity.RowKey = 'batch_all_operations_together-1'
-            entity.test = EntityProperty(True)
-            entity.test2 = 'value'
-            entity.test3 = 3
-            entity.test4 = EntityProperty(1234567890)
-            entity.test5 = datetime.utcnow()
-
-            batch = self.table.create_batch()
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-2'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-3'
-            batch.create_entity(entity)
-            entity.RowKey = 'batch_all_operations_together-4'
-            batch.create_entity(entity)
-
-            await self.table.send_batch(batch)
-            with self.assertRaises(HttpResponseError):
-                resp = await table2.send_batch(batch)
-
-            # Assert
-            entities = self.table.query_entities("PartitionKey eq '003'")
-            length = 0
-            async for e in entities:
-                length += 1
-            self.assertEqual(5, length)
-        finally:
-            await self._tear_down()
-
-    @pytest.mark.skip("This does not throw an error, but it should")
+    # @pytest.mark.skip("This does not throw an error, but it should")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
@@ -701,12 +659,14 @@ class StorageTableBatchTest(TableTestCase):
             entity = self._create_updated_entity_dict(
                 '001', 'batch_negative_1')
             batch.update_entity(entity)
+
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
 
             # Assert
             with self.assertRaises(HttpResponseError):
-                batch.update_entity(entity, mode=UpdateMode.MERGE)
+                await self.table.send_batch(batch)
         finally:
             await self._tear_down()
 

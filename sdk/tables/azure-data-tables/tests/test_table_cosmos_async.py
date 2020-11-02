@@ -158,7 +158,7 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("small page and large page issues")
+    @pytest.mark.skip("small page and large page issues, 6 != 3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_list_tables_with_num_results(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -178,13 +178,12 @@ class TableTestAsync(AsyncTableTestCase):
         async for s in ts.list_tables(results_per_page=3).by_page():
             small_page.append(s)
 
-        self.assertEqual(len(small_page), 2)
+        self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_list_tables_with_marker(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -195,22 +194,27 @@ class TableTestAsync(AsyncTableTestCase):
         for i in range(0, 4):
             await self._create_table(ts, prefix + str(i), table_names)
 
-        # table_names.sort()
-
         # Act
-        generator1 = ts.list_tables(query_options=QueryOptions(top=2)).by_page()
-        tables1 = []
-        async for el in await generator1:
-            tables1.append(el)
-        generator2 = ts.list_tables(query_options=QueryOptions(top=2)).by_page(
+        generator1 = ts.list_tables(results_per_page=2).by_page()
+        await generator1.__anext__()
+
+        generator2 = ts.list_tables(results_per_page=2).by_page(
             continuation_token=generator1.continuation_token)
-        tables2 = []
-        async for el in await generator2:
-            tables2.append(el)
+        await generator2.__anext__()
+
+        tables1 = generator1._current_page
+        tables2 = generator2._current_page
+
+        tables1_len = 0
+        async for _ in tables1:
+            tables1_len += 1
+        tables2_len = 0
+        async for _ in tables2:
+            tables2_len += 1
 
         # Assert
-        self.assertEqual(len(tables1), 2)
-        self.assertEqual(len(tables2), 2)
+        self.assertEqual(tables1_len, 2)
+        self.assertEqual(tables2_len, 2)
         self.assertNotEqual(tables1, tables2)
 
         if self.is_live:
@@ -294,7 +298,6 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
@@ -319,7 +322,6 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
@@ -347,7 +349,6 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
@@ -403,7 +404,6 @@ class TableTestAsync(AsyncTableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")

@@ -532,7 +532,6 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_entity_property_name_too_long(self, resource_group, location, cosmos_account,
@@ -721,7 +720,6 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_update_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1145,7 +1143,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Bad Request: Cosmos cannot handle single quotes in a PK/RK (confirm)")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
@@ -1276,7 +1274,7 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    @pytest.mark.skip("response time is three hours before the given one")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_timezone(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1815,7 +1813,7 @@ class StorageTableEntityTest(TableTestCase):
                 sleep(SLEEP_DELAY)
 
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Header authorization error")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")

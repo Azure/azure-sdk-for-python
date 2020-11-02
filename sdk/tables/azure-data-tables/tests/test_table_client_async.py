@@ -364,7 +364,6 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_custom_account_endpoint_path_async(self, resource_group, location, storage_account, storage_account_key):
@@ -402,7 +401,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
@@ -420,7 +418,6 @@ class StorageTableClientTest(TableTestCase):
         tables = service.list_tables(raw_response_hook=callback)
         self.assertIsNotNone(tables)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_custom_async(self, resource_group, location, storage_account, storage_account_key):

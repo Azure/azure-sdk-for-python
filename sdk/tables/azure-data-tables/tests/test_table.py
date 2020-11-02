@@ -87,7 +87,6 @@ class StorageTableTest(TableTestCase):
             pass
 
     # --Test cases for tables --------------------------------------------------
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
@@ -309,9 +308,6 @@ class StorageTableTest(TableTestCase):
         with self.assertRaises(HttpResponseError):
             ts.delete_table(table_name)
 
-        # Assert
-
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account, storage_account_key):
@@ -348,7 +344,6 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
@@ -370,7 +365,6 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
@@ -395,7 +389,6 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,
@@ -491,7 +484,6 @@ class StorageTableTest(TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_locale(self, resource_group, location, storage_account, storage_account_key):

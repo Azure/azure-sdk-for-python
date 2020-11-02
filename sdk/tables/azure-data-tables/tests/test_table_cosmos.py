@@ -95,7 +95,7 @@ class StorageTableTest(TableTestCase):
 
 
     # --Test cases for tables --------------------------------------------------
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_properties(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -108,7 +108,7 @@ class StorageTableTest(TableTestCase):
         # Assert
         assert created.table_name == table_name
 
-        properties = ts.get_service_properties()
+        # properties = ts.get_service_properties()
         ts.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
 
         p = ts.get_service_properties()
@@ -122,7 +122,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -317,7 +316,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -357,7 +355,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
@@ -382,7 +379,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
@@ -410,7 +406,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,

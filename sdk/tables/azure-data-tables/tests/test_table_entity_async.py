@@ -1083,15 +1083,15 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Header authorization error")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_operations_on_entity_with_partition_key_having_single_quote(self, resource_group, location,
                                                                                storage_account, storage_account_key):
 
         # Arrange
-        partition_key_with_single_quote = "a''''b"
-        row_key_with_single_quote = "a''''b"
+        partition_key_with_single_quote = u"a''''b"
+        row_key_with_single_quote = u"a''''b"
         await self._set_up(storage_account, storage_account_key)
         try:
             entity, _ = await self._insert_random_entity(pk=partition_key_with_single_quote,
@@ -1099,28 +1099,27 @@ class StorageTableEntityTest(TableTestCase):
 
             # Act
             sent_entity = self._create_updated_entity_dict(entity.PartitionKey, entity.RowKey)
-            resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
+            resp = await self.table.upsert_entity(mode=UpdateMode.MERGE, entity=sent_entity)
 
             # Assert
             self._assert_valid_metadata(resp)
             # row key here only has 2 quotes
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            received_entity = await self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
 
             # Act
-            sent_entity['newField'] = 'newFieldValue'
-            resp = await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
-            received_entity = await self.table.get_entity(
-                entity.PartitionKey, entity.RowKey)
+            sent_entity['newField'] = u'newFieldValue'
+            resp = await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
+
 
             # Assert
             self._assert_valid_metadata(resp)
+            received_entity = self.table.get_entity(entity.PartitionKey, entity.RowKey)
             self._assert_updated_entity(received_entity)
-            self.assertEqual(received_entity['newField'], 'newFieldValue')
+            self.assertEqual(received_entity['newField'].value, 'newFieldValue')
 
             # Act
-            resp = await self.table.delete_entity(entity.PartitionKey, entity.RowKey)
+            resp = self.table.delete_entity(entity.PartitionKey, entity.RowKey)
 
             # Assert
             self.assertIsNone(resp)
@@ -1209,7 +1208,7 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
+    @pytest.mark.skip("response time is three hours before the given one")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_timezone(self, resource_group, location, storage_account, storage_account_key):
@@ -1227,9 +1226,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(resp)
-            # times are not equal because request is made after
-        #  self.assertEqual(resp.date.astimezone(tzutc()), local_date.astimezone(tzutc()))
-        # self.assertEqual(resp.date.astimezone(local_tz), local_date)
+            self.assertEqual(resp.date.astimezone(tzutc()), local_date.astimezone(tzutc()))
+            self.assertEqual(resp.date.astimezone(local_tz), local_date)
         finally:
             await self._tear_down()
 
@@ -1314,40 +1312,6 @@ class StorageTableEntityTest(TableTestCase):
                 self._assert_default_entity_json_no_metadata(entity)
         finally:
             await self._tear_down()
-
-    # TODO: move this over to the batch test file when merged
-    @pytest.mark.skip("Batch not implemented")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedStorageAccountPreparer(name_prefix="tablestest")
-    async def test_query_entities_large(self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        table_name = self._create_query_table(0)
-        total_entities_count = 1000
-        entities_per_batch = 50
-
-        for j in range(total_entities_count // entities_per_batch):
-            batch = TableBatch()
-            for i in range(entities_per_batch):
-                entity = TableEntity()
-                entity.PartitionKey = 'large'
-                entity.RowKey = 'batch{0}-item{1}'.format(j, i)
-                entity.test = EntityProperty(True)
-                entity.test2 = 'hello world;' * 100
-                entity.test3 = 3
-                entity.test4 = EntityProperty(1234567890)
-                entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
-                batch.create_entity(entity)
-            await self.ts.send_batch(table_name, batch)
-
-        # Act
-        start_time = datetime.now()
-        entities = list(self.ts.query_entities(table_name))
-        elapsed_time = datetime.now() - start_time
-
-        # Assert
-        print('query_entities took {0} secs.'.format(elapsed_time.total_seconds()))
-        self.assertEqual(len(entities), total_entities_count)
-
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -1717,7 +1681,7 @@ class StorageTableEntityTest(TableTestCase):
             await self._tear_down()
 
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Header authorization error")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")

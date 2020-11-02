@@ -13,6 +13,7 @@ from azure.data.tables._version import VERSION
 from devtools_testutils import (
     ResourceGroupPreparer,
     CachedResourceGroupPreparer,
+    AzureTestCase
 )
 from _shared.testcase import (
     TableTestCase,
@@ -248,7 +249,6 @@ class StorageTableClientTest(TableTestCase):
             self.assertTrue(service._primary_endpoint.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
 
-    @pytest.mark.skip("Error with china cloud")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_connection_string_endpoint_protocol_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -267,7 +267,7 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(
                 service._primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
+                    'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "table")))
             self.assertEqual(service.scheme, 'http')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -370,7 +370,6 @@ class StorageTableClientTest(TableTestCase):
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_custom_account_endpoint_path_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -409,7 +408,6 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_default_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -424,10 +422,9 @@ class StorageTableClientTest(TableTestCase):
                     platform.python_version(),
                     platform.platform()))
 
-        tables = list(service.list_tables(raw_response_hook=callback))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback)
+        self.assertIsNotNone(tables)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_custom_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -445,8 +442,8 @@ class StorageTableClientTest(TableTestCase):
                 response.http_request.headers['User-Agent']
                 )
 
-        tables = list(service.list_tables(raw_response_hook=callback))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback)
+        self.assertIsNotNone(tables)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -458,8 +455,8 @@ class StorageTableClientTest(TableTestCase):
                 response.http_request.headers['User-Agent']
                 )
 
-        tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
-        self.assertIsInstance(tables, list)
+        tables = service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0")
+        self.assertIsNotNone(tables)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -480,7 +477,6 @@ class StorageTableClientTest(TableTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
 
-    @pytest.mark.skip("kierans theory")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_table_client_with_complete_table_url_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -506,33 +502,32 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service.table_name, 'bar')
         self.assertEqual(service.account_name, cosmos_account.name)
 
-    @pytest.mark.skip("kierans theory")
+    @AzureTestCase.await_prepared_test
     async def test_create_table_client_with_invalid_name_async(self):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
         invalid_table_name = "my_table"
 
         # Assert
-        with self.assertRaises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             service = TableClient(account_url=table_url, table_name=invalid_table_name, credential="cosmos_account_key")
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
 
+    @AzureTestCase.await_prepared_test
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 
         for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
             for service_type in SERVICES.items():
                 # Act
-                with self.assertRaises(ValueError) as e:
+                with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    self.assertEqual(
-                        str(e.exception), "Connection string is either blank or malformed.")
+                    assert "Connection string is either blank or malformed." in str(e)
                 elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    self.assertEqual(
-                        str(e.exception), "Connection string missing required connection details.")
+                    assert "Connection string missing required connection details." in str(e)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")

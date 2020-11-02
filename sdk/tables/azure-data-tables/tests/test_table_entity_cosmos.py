@@ -549,7 +549,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_too_many_properties(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -571,7 +570,6 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_property_name_too_long(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1266,7 +1264,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("response time is three hours before the given one")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_timezone(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -1762,7 +1760,7 @@ class StorageTableEntityTest(TableTestCase):
             self._tear_down()
             self.sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
+    @pytest.mark.skip("Header authorization error")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
