@@ -476,7 +476,7 @@ class StorageTableEntityTest(TableTestCase):
             received_entity = self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
             assert received_entity['large'].value == dict64['large'].value
 
-            dict64['RowKey'] = 'negative'
+            dict64['RowKey'] = u'negative'
             dict64['large'] = EntityProperty(-(2 ** 50 + 1), EdmType.INT64)
             self.table.create_entity(entity=dict64)
 
