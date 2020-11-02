@@ -2234,8 +2234,8 @@ class TasksStateTasks(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param details: Any object.
-    :type details: object
+    :param details:
+    :type details: ~azure.ai.textanalytics.v3_1_preview_3.models.TasksStateTasksDetails
     :param completed: Required.
     :type completed: int
     :param failed: Required.
@@ -2263,7 +2263,7 @@ class TasksStateTasks(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'details': {'key': 'details', 'type': 'object'},
+        'details': {'key': 'details', 'type': 'TasksStateTasksDetails'},
         'completed': {'key': 'completed', 'type': 'int'},
         'failed': {'key': 'failed', 'type': 'int'},
         'in_progress': {'key': 'inProgress', 'type': 'int'},
@@ -2280,7 +2280,7 @@ class TasksStateTasks(msrest.serialization.Model):
         failed: int,
         in_progress: int,
         total: int,
-        details: Optional[object] = None,
+        details: Optional["TasksStateTasksDetails"] = None,
         entity_recognition_tasks: Optional[List["TasksStateTasksEntityRecognitionTasksItem"]] = None,
         entity_recognition_pii_tasks: Optional[List["TasksStateTasksEntityRecognitionPiiTasksItem"]] = None,
         key_phrase_extraction_tasks: Optional[List["TasksStateTasksKeyPhraseExtractionTasksItem"]] = None,
@@ -2295,6 +2295,27 @@ class TasksStateTasks(msrest.serialization.Model):
         self.entity_recognition_tasks = entity_recognition_tasks
         self.entity_recognition_pii_tasks = entity_recognition_pii_tasks
         self.key_phrase_extraction_tasks = key_phrase_extraction_tasks
+
+
+class TasksStateTasksDetails(msrest.serialization.Model):
+    """TasksStateTasksDetails.
+
+    :param allof:
+    :type allof: ~azure.ai.textanalytics.v3_1_preview_3.models.TaskState
+    """
+
+    _attribute_map = {
+        'allof': {'key': 'allof', 'type': 'TaskState'},
+    }
+
+    def __init__(
+        self,
+        *,
+        allof: Optional["TaskState"] = None,
+        **kwargs
+    ):
+        super(TasksStateTasksDetails, self).__init__(**kwargs)
+        self.allof = allof
 
 
 class TaskState(msrest.serialization.Model):
