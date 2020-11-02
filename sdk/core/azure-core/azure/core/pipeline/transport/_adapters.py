@@ -464,8 +464,7 @@ class HTTPAdapter(BaseAdapter):
             timeout=None,
             verify=True,
             cert=None,
-            proxies=None,
-            **kwargs):
+            proxies=None):
         """Sends PreparedRequest object. Returns Response object.
 
         :param request: The :class:`PreparedRequest <PreparedRequest>` being sent.
@@ -523,8 +522,7 @@ class HTTPAdapter(BaseAdapter):
                     preload_content=False,
                     decode_content=False,
                     retries=self.max_retries,
-                    timeout=timeout,
-                    **kwargs
+                    timeout=timeout
                 )
 
             # Send the request.
