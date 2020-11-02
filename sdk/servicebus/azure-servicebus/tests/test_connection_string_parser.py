@@ -47,3 +47,15 @@ class ServiceBusConnectionStringParserTests(AzureMgmtTestCase):
         assert parse_result.fully_qualified_namespace == 'resourcename.servicebus.windows.net'
         assert parse_result.shared_access_signature == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         assert parse_result._shared_access_key_name == None
+
+    def test_sb_parse_conn_str_no_keyname(self, **kwargs):
+        conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
+        with pytest.raises(ValueError) as e:
+            parse_result = parse_connection_string(conn_str)
+        assert str(e.value) == 'Connection string must have both SharedAccessKeyName and SharedAccessKey.'
+
+    def test_sb_parse_conn_str_no_key(self, **kwargs):
+        conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessKeyName=Test'
+        with pytest.raises(ValueError) as e:
+            parse_result = parse_connection_string(conn_str)
+        assert str(e.value) == 'Connection string must have both SharedAccessKeyName and SharedAccessKey.'
