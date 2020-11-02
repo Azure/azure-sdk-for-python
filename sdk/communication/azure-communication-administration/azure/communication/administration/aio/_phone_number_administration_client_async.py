@@ -5,10 +5,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Dict, List
+
+from azure.communication.administration._phonenumber._generated.models import ReleaseStatus
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import AsyncLROPoller
+
 from .._version import SDK_MONIKER
+from ._polling_async import ReleasePhoneNumberPollingAsync, \
+    ReservePhoneNumberPollingAsync, \
+    PurchaseReservationPollingAsync
 
 from .._phonenumber._generated.aio._phone_number_administration_service_async\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
@@ -16,18 +23,17 @@ from .._phonenumber._generated.aio._phone_number_administration_service_async\
 from .._phonenumber._generated.models import (
     AcquiredPhoneNumbers,
     AreaCodes,
-    CreateSearchResponse,
     LocationOptionsResponse,
     NumberConfigurationResponse,
     NumberUpdateCapabilities,
     PhoneNumberCountries,
     PhoneNumberEntities,
     PhoneNumberRelease,
-    PhoneNumberSearch,
+    PhoneNumberReservation,
     PhonePlanGroups,
     PhonePlansResponse,
     PstnConfiguration,
-    ReleaseResponse,
+    SearchStatus,
     UpdateNumberCapabilitiesResponse,
     UpdatePhoneNumberCapabilitiesResponse
 )
@@ -358,22 +364,51 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace_async
-    async def release_phone_numbers(
+    async def begin_release_phone_numbers(
             self,
-            phone_numbers,  # type: List[str]
             **kwargs  # type: Any
     ):
-        # type: (...) -> ReleaseResponse
-        """Creates a release for the given phone numbers.
+        # type: (...) -> AsyncLROPoller[PhoneNumberRelease]
+        """Begins creating a release for the given phone numbers.
+        Caller must provide either phone_numbers, or continuation_token keywords to use the method.
+        If both phone_numbers and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword phone_numbers will be ignored.
 
-        :param phone_numbers: The list of phone numbers in the release request.
-        :type phone_numbers: list[str]
-        :rtype: ~azure.communication.administration.ReleaseResponse
+        :keyword list[str] phone_numbers: The list of phone numbers in the release request.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberRelease]
         """
-        return await self._phone_number_administration_client.phone_number_administration.release_phone_numbers(
-            phone_numbers,
-            **kwargs
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        release_polling = ReleasePhoneNumberPollingAsync(
+            is_terminated=lambda status: status in [
+                ReleaseStatus.Complete,
+                ReleaseStatus.Failed,
+                ReleaseStatus.Expired
+            ]
         )
+
+        if cont_token is not None:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=release_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        if "phone_numbers" not in kwargs:
+            raise ValueError("Either kwarg 'phone_numbers' or 'continuation_token' needs to be specified")
+
+        create_release_response = await self._phone_number_administration_client.\
+            phone_number_administration.release_phone_numbers(
+                **kwargs
+            )
+        initial_state = await self._phone_number_administration_client.phone_number_administration.get_release_by_id(
+            release_id=create_release_response.release_id
+        )
+        return AsyncLROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=release_polling)
 
     @distributed_trace
     def list_all_releases(
@@ -394,39 +429,74 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace_async
-    async def get_search_by_id(
+    async def get_reservation_by_id(
             self,
-            search_id,  # type: str
+            reservation_id,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> PhoneNumberSearch
-        """Get search by search id.
+        # type: (...) -> PhoneNumberReservation
+        """Get reservation by reservation id.
 
-        :param search_id: The search id to be searched for.
-        :type search_id: str
-        :rtype: ~azure.communication.administration.PhoneNumberSearch
+        :param reservation_id: The reservation id to get reservation.
+        :type reservation_id: str
+        :rtype: ~azure.communication.administration.PhoneNumberReservation
         """
         return await self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id,
+            search_id=reservation_id,
             **kwargs
         )
 
+
     @distributed_trace_async
-    async def create_search(
+    async def begin_reserve_phone_numbers(
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> CreateSearchResponse
-        """Creates a phone number search.
-
-        :keyword azure.communication.administration.CreateSearchOptions body:
-        An optional parameter for defining the search options.
-        The default is None.
-        :rtype: ~azure.communication.administration.CreateSearchResponse
+        # type: (...) -> AsyncLROPoller[PhoneNumberReservation]
+        """Begins creating a phone number search to reserve phone numbers.
+        Caller must provide either options, or continuation_token keywords to use the method.
+        If both options and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword options will be ignored.
+        :keyword azure.communication.administration.CreateSearchOptions options: reservation options.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
-        return await self._phone_number_administration_client.phone_number_administration.create_search(
-            **kwargs
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        reservation_polling = ReservePhoneNumberPollingAsync(
+            is_terminated=lambda status: status in [
+                SearchStatus.Reserved,
+                SearchStatus.Expired,
+                SearchStatus.Success,
+                SearchStatus.Cancelled,
+                SearchStatus.Error
+            ]
         )
+
+        if cont_token is not None:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=reservation_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        if "options" not in kwargs:
+            raise ValueError("Either kwarg 'options' or 'continuation_token' needs to be specified")
+
+        reservation_options = kwargs.pop('options')  # type: str
+
+        create_search_response = await self._phone_number_administration_client.\
+            phone_number_administration.create_search(
+                body=reservation_options,
+                **kwargs
+            )
+        initial_state = await self._phone_number_administration_client.phone_number_administration.get_search_by_id(
+            search_id=create_search_response.search_id
+        )
+        return AsyncLROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=reservation_polling)
 
     @distributed_trace
     def list_all_searches(
@@ -447,40 +517,71 @@ class PhoneNumberAdministrationClient(object):
         )
 
     @distributed_trace_async
-    async def cancel_search(
+    async def cancel_reservation(
             self,
-            search_id,  # type: str
+            reservation_id,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Cancels the search. This means existing numbers in the search will be made available.
+        """Cancels the reservation. This means existing numbers in the reservation will be made available.
 
-        :param search_id: The search id to be canceled.
-        :type search_id: str
+        :param reservation_id: The reservation id to be canceled.
+        :type reservation_id: str
         :rtype: None
         """
         return await self._phone_number_administration_client.phone_number_administration.cancel_search(
-            search_id,
+            search_id=reservation_id,
             **kwargs
         )
 
     @distributed_trace_async
-    async def purchase_search(
+    async def begin_purchase_reservation(
             self,
-            search_id,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
-        """Purchases the phone number search.
 
-        :param search_id: The search id to be purchased.
-        :type search_id: str
-        :rtype: None
+        # type: (...) -> AsyncLROPoller[PhoneNumberReservation]
+        """Begins purchase the reserved phone numbers of a phone number search.
+        Caller must provide either reservation_id, or continuation_token keywords to use the method.
+        If both reservation_id and continuation_token are specified, only continuation_token will be used to
+        restart a poller from a saved state, and keyword reservation_id will be ignored.
+        :keyword str reservation_id: The reservation id to be purchased.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
-        return await self._phone_number_administration_client.phone_number_administration.purchase_search(
-            search_id,
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+
+        reservation_polling = PurchaseReservationPollingAsync(
+            is_terminated=lambda status: status in [
+                SearchStatus.Success,
+                SearchStatus.Expired,
+                SearchStatus.Cancelled,
+                SearchStatus.Error
+            ]
+        )
+
+        if cont_token is not None:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=reservation_polling,
+                continuation_token=cont_token,
+                client=self._phone_number_administration_client.phone_number_administration
+            )
+
+        reservation_id = kwargs.pop('reservation_id', None)  # type: str
+        if reservation_id is None:
+            raise ValueError("Either kwarg 'reservation_id' or 'continuation_token' needs to be specified")
+
+        await self._phone_number_administration_client.phone_number_administration.purchase_search(
+            reservation_id,
             **kwargs
         )
+        initial_state = await self._phone_number_administration_client.phone_number_administration.get_search_by_id(
+            search_id=reservation_id
+        )
+        return AsyncLROPoller(client=self._phone_number_administration_client.phone_number_administration,
+                         initial_response=initial_state,
+                         deserialization_callback=None,
+                         polling_method=reservation_polling)
 
     async def __aenter__(self) -> "PhoneNumberAdministrationClient":
         await self._phone_number_administration_client.__aenter__()
