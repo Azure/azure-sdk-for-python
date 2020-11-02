@@ -50,10 +50,11 @@ class ServiceBusConnectionStringProperties(DictMixin):
 
 def parse_connection_string(conn_str):
     # type(str) -> ServiceBusConnectionStringProperties
-    """Parse the connection string.
+    """Parse the connection string into a properties bag containing its component parts.
 
     :param conn_str: The connection string that has to be parsed.
     :type conn_str: str
+    :rtype: ~azure.servicebus.ServiceBusConnectionStringProperties
     """
     conn_settings = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings):
