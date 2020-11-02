@@ -59,10 +59,9 @@ class AnalyzeHealthcareSampleAsync(object):
         ]
 
         async with text_analytics_client:
-            poller = await text_analytics_client.analyze_healthcare_async(documents)
+            poller = await text_analytics_client.begin_analyze_healthcare(documents)
             result = await poller.result()
-            
-        docs = [doc for doc in result if not doc.is_error]
+            docs = [doc async for doc in result if not doc.is_error]
 
         for idx, doc in enumerate(docs):
             print("Document text: {}\n".format(documents[idx]))

@@ -34,9 +34,7 @@ class AnalyzeSample(object):
         from azure.ai.textanalytics import TextAnalyticsClient, \
             EntitiesRecognitionTask, \
             PiiEntitiesRecognitionTask, \
-            EntityLinkingTask, \
-            KeyPhraseExtractionTask, \
-            SentimentAnalysisTask
+            KeyPhraseExtractionTask
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -44,7 +42,7 @@ class AnalyzeSample(object):
         text_analytics_client = TextAnalyticsClient(
             endpoint=endpoint, 
             credential=AzureKeyCredential(key),
-            api_version="v3.2-preview.1"
+            api_version="v3.1-preview.3"
         )
 
         documents = [
@@ -55,7 +53,7 @@ class AnalyzeSample(object):
         poller = text_analytics_client.begin_analyze(
             documents,
             display_name="Sample Text Analysis",
-            entities_recognition_tasks=[EntitiesRecognitionTask()],
+            entities_recognition_tasks=[EntitiesRecognitionTask()]
             # pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             # entity_linking_tasks=[EntityLinkingTask()],
             # key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],

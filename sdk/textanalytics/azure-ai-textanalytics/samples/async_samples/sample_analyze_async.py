@@ -34,9 +34,7 @@ class AnalyzeSampleAsync(object):
         from azure.ai.textanalytics.aio import TextAnalyticsClient
         from azure.ai.textanalytics import EntitiesRecognitionTask, \
             PiiEntitiesRecognitionTask, \
-            EntityLinkingTask, \
-            KeyPhraseExtractionTask, \
-            SentimentAnalysisTask
+            KeyPhraseExtractionTask
 
         endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
         key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
@@ -44,7 +42,7 @@ class AnalyzeSampleAsync(object):
         text_analytics_client = TextAnalyticsClient(
             endpoint=endpoint, 
             credential=AzureKeyCredential(key),
-            api_version="v3.2-preview.1"
+            api_version="v3.1-preview.3"
         )
 
         documents = [

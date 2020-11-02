@@ -390,7 +390,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").HealthcareJobState, raw_response)
+        healthcare_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").HealthcareJobState, raw_response)
         return healthcare_paged_result(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace
@@ -640,7 +640,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, raw_response, _, headers):
-        analyze_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").AnalyzeJobState, raw_response)
+        analyze_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, raw_response)
         return analyze_paged_result(self._client.analyze_status, raw_response, analyze_result, headers)
 
     @distributed_trace
@@ -694,18 +694,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.2-preview.1").MultiLanguageBatchInput(documents=_validate_input(documents, "language", language))
+        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(documents=_validate_input(documents, "language", language))
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         try:
-            analyze_tasks = self._client.models(api_version='v3.2-preview.1').JobManifestTasks(
+            analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
                 entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks] if entities_recognition_tasks else [],
                 entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks] if pii_entities_recognition_tasks else [],
                 key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks] if key_phrase_extraction_tasks else [],
             )
-            analyze_body = self._client.models(api_version='v3.2-preview.1').AnalyzeBatchInput(
+            analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
                 display_name=display_name,
                 tasks=analyze_tasks,
                 analysis_input=docs
@@ -718,7 +718,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
 
         except NameError:
-            raise NotImplementedError("Service method 'begin_analyze_text' is only available for API versions v3.2-preview.1 and up.")
+            raise NotImplementedError("Service method 'begin_analyze_text' is only available for API versions v3.1-preview.3 and up.")
         
         except HttpResponseError as error:
             process_http_response_error(error)
