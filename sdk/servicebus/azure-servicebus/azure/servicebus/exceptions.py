@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Optional, Any
+from typing import Optional
 
 from uamqp import errors, constants
 from azure.core.exceptions import AzureError
