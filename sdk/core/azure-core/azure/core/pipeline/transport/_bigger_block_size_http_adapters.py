@@ -27,7 +27,7 @@
 import socket
 import sys
 from requests.adapters import HTTPAdapter
-from requests.exceptions import (
+from requests.exceptions import (   # pylint: disable=W0622
     ConnectionError,
     ConnectTimeout,
     ReadTimeout,
