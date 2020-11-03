@@ -189,43 +189,40 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
-    def _get_credential(self, is_async):
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
-            if is_async:
-                from azure.identity.aio import ClientSecretCredential
-            return ClientSecretCredential(
-                tenant_id=self.tenant_id,
-                client_id=self.client_id,
-                client_secret=self.secret
-            )
-
-        if is_async:
-            return AsyncFakeCredential()
-        return self.settings.get_azure_core_credentials()
-
     def get_credential(self, client_class, **kwargs):
 
-        self.tenant_id = os.environ.get("AZURE_TENANT_ID", None)
-        self.client_id = os.environ.get("AZURE_CLIENT_ID", None)
-        self.secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
+        client_id = os.environ.get("AZURE_CLIENT_ID", None)
+        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
         is_async = kwargs.pop("is_async", False)
 
-        if self.tenant_id and self.client_id and self.secret and self.is_live:
+        if tenant_id and client_id and secret and self.is_live:
             if _is_autorest_v3(client_class):
                 # Create azure-identity class
-                return self._get_credential(is_async=is_async)
+                from azure.identity import ClientSecretCredential
+                if is_async:
+                    from azure.identity.aio import ClientSecretCredential
+                return ClientSecretCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    client_secret=secret
+                )
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
                 return ServicePrincipalCredentials(
-                    tenant=self.tenant_id,
-                    client_id=self.client_id,
-                    secret=self.secret
+                    tenant=tenant_id,
+                    client_id=client_id,
+                    secret=secret
                 )
         else:
             if _is_autorest_v3(client_class):
-                return self._get_credential(is_async)
+                if is_async:
+                    if self.is_live:
+                        raise ValueError("Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET")
+                    return AsyncFakeCredential()
+                else:
+                    return self.settings.get_azure_core_credentials()
             else:
                 return self.settings.get_credentials()
 
