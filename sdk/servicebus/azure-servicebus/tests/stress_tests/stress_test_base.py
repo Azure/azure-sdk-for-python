@@ -202,7 +202,7 @@ class StressTestRunner:
                             self.OnReceive(self._state, message)
                             try:
                                 if self.should_complete_messages:
-                                    message.complete()
+                                    receiver.complete_message(message)
                             except MessageAlreadySettled: # It may have been settled in the plugin callback.
                                 pass
                             self._state.total_received += 1

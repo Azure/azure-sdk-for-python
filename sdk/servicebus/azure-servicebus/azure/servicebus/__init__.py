@@ -12,12 +12,7 @@ from ._servicebus_client import ServiceBusClient
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._servicebus_session import ServiceBusSession
-from ._common.message import (
-    ServiceBusMessage,
-    ServiceBusMessageBatch,
-    ServiceBusPeekedMessage,
-    ServiceBusReceivedMessage
-)
+from ._common.message import ServiceBusMessage, ServiceBusMessageBatch, ServiceBusReceivedMessage
 from ._common.constants import ReceiveMode, SubQueue, NEXT_AVAILABLE_SESSION
 from ._common.auto_lock_renewer import AutoLockRenewer
 
@@ -26,7 +21,6 @@ TransportType = constants.TransportType
 __all__ = [
     'ServiceBusMessage',
     'ServiceBusMessageBatch',
-    'ServiceBusPeekedMessage',
     'ServiceBusReceivedMessage',
     'NEXT_AVAILABLE_SESSION',
     'SubQueue',
