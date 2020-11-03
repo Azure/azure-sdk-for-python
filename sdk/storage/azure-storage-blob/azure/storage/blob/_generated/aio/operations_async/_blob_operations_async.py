@@ -1119,7 +1119,7 @@ class BlobOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         header_parameters['x-ms-expiry-option'] = self._serialize.header("expiry_options", expiry_options, 'str')
         if expires_on is not None:
-            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'rfc-1123')
+            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -2876,7 +2876,7 @@ class BlobOperations:
         return deserialized
     query.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def get_tags(self, timeout=None, request_id=None, snapshot=None, version_id=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def get_tags(self, timeout=None, request_id=None, snapshot=None, version_id=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """The Get Tags operation enables users to get the tags associated with a
         blob.
 
@@ -2903,6 +2903,10 @@ class BlobOperations:
          operation
         :type modified_access_conditions:
          ~azure.storage.blob.models.ModifiedAccessConditions
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: BlobTags or the result of cls(response)
@@ -2914,6 +2918,9 @@ class BlobOperations:
         if_tags = None
         if modified_access_conditions is not None:
             if_tags = modified_access_conditions.if_tags
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
 
         comp = "tags"
 
@@ -2942,6 +2949,8 @@ class BlobOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if if_tags is not None:
             header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -2970,7 +2979,7 @@ class BlobOperations:
         return deserialized
     get_tags.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def set_tags(self, timeout=None, version_id=None, transactional_content_md5=None, transactional_content_crc64=None, request_id=None, tags=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def set_tags(self, timeout=None, version_id=None, transactional_content_md5=None, transactional_content_crc64=None, request_id=None, tags=None, modified_access_conditions=None, lease_access_conditions=None, *, cls=None, **kwargs):
         """The Set Tags operation enables users to set tags on a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For
@@ -2998,6 +3007,10 @@ class BlobOperations:
          operation
         :type modified_access_conditions:
          ~azure.storage.blob.models.ModifiedAccessConditions
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -3009,6 +3022,9 @@ class BlobOperations:
         if_tags = None
         if modified_access_conditions is not None:
             if_tags = modified_access_conditions.if_tags
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
 
         comp = "tags"
 
@@ -3039,6 +3055,8 @@ class BlobOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if if_tags is not None:
             header_parameters['x-ms-if-tags'] = self._serialize.header("if_tags", if_tags, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
 
         # Construct body
         if tags is not None:
