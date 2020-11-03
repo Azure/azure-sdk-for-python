@@ -10,6 +10,7 @@
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
 * `azure.servicebus.exceptions.ServiceBusError` now inherits from `azure.core.exceptions.AzureError`.
 * Added a `parse_connection_string` method which parses a connection string into a properties bag containing its component parts
+* Add support for `auto_lock_renewer` parameter on `get_queue_receiver` and `get_subscription_receiver` calls to allow auto-registration of messages and sessions for auto-renewal.
 
 **Breaking Changes**
 
