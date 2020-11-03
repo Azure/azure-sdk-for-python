@@ -63,7 +63,8 @@ class SqlPoolSensitivityLabelsOperations(object):
         :return: An iterator like instance of SensitivityLabel
         :rtype:
          ~azure.mgmt.synapse.models.SensitivityLabelPaged[~azure.mgmt.synapse.models.SensitivityLabel]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -107,9 +108,7 @@ class SqlPoolSensitivityLabelsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorContractException(self._deserialize, response)
 
             return response
 
@@ -360,7 +359,7 @@ class SqlPoolSensitivityLabelsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -369,6 +368,85 @@ class SqlPoolSensitivityLabelsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}'}
+
+    def get(
+            self, resource_group_name, workspace_name, sql_pool_name, schema_name, table_name, column_name, sensitivity_label_source, custom_headers=None, raw=False, **operation_config):
+        """Gets the sensitivity label of a given column.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace
+        :type workspace_name: str
+        :param sql_pool_name: SQL pool name
+        :type sql_pool_name: str
+        :param schema_name: The name of the schema.
+        :type schema_name: str
+        :param table_name: The name of the table.
+        :type table_name: str
+        :param column_name: The name of the column.
+        :type column_name: str
+        :param sensitivity_label_source: The source of the sensitivity label.
+         Possible values include: 'current', 'recommended'
+        :type sensitivity_label_source: str or
+         ~azure.mgmt.synapse.models.SensitivityLabelSource
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SensitivityLabel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.SensitivityLabel or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
+            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str'),
+            'columnName': self._serialize.url("column_name", column_name, 'str'),
+            'sensitivityLabelSource': self._serialize.url("sensitivity_label_source", sensitivity_label_source, 'SensitivityLabelSource')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SensitivityLabel', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}'}
 
     def enable_recommendation(
             self, resource_group_name, workspace_name, sql_pool_name, schema_name, table_name, column_name, custom_headers=None, raw=False, **operation_config):

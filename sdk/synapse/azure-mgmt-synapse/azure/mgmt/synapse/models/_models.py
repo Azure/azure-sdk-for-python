@@ -129,16 +129,19 @@ class AvailableRpOperationDisplayInfo(Model):
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -162,19 +165,21 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -199,6 +204,22 @@ class AzureEntityResource(Resource):
         self.etag = None
 
 
+class BabylonConfiguration(Model):
+    """Babylon Configuration.
+
+    :param babylon_resource_id: Babylon Resource ID
+    :type babylon_resource_id: str
+    """
+
+    _attribute_map = {
+        'babylon_resource_id': {'key': 'babylonResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BabylonConfiguration, self).__init__(**kwargs)
+        self.babylon_resource_id = kwargs.get('babylon_resource_id', None)
+
+
 class BigDataPoolPatchInfo(Model):
     """Patch for a Big Data pool.
 
@@ -218,20 +239,23 @@ class BigDataPoolPatchInfo(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -270,13 +294,13 @@ class BigDataPoolResourceInfo(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -293,12 +317,22 @@ class BigDataPoolResourceInfo(TrackedResource):
     :param is_compute_isolation_enabled: Whether compute isolation is required
      or not.
     :type is_compute_isolation_enabled: bool
+    :param session_level_packages_enabled: Whether session level
+     library/package management is enabled or not.
+    :type session_level_packages_enabled: bool
     :param spark_events_folder: The Spark events folder
     :type spark_events_folder: str
     :param node_count: The number of nodes in the Big Data pool.
     :type node_count: int
     :param library_requirements: Library version requirements
     :type library_requirements: ~azure.mgmt.synapse.models.LibraryRequirements
+    :param custom_libraries: List of custom libraries/packages associated with
+     the spark pool.
+    :type custom_libraries: list[~azure.mgmt.synapse.models.LibraryInfo]
+    :param spark_config_properties: Spark configuration file to specify
+     additional properties
+    :type spark_config_properties:
+     ~azure.mgmt.synapse.models.LibraryRequirements
     :param spark_version: The Apache Spark version.
     :type spark_version: str
     :param default_spark_log_folder: The default folder where Spark logs will
@@ -306,7 +340,7 @@ class BigDataPoolResourceInfo(TrackedResource):
     :type default_spark_log_folder: str
     :param node_size: The level of compute power that each node in the Big
      Data pool has. Possible values include: 'None', 'Small', 'Medium',
-     'Large', 'XLarge', 'XXLarge'
+     'Large', 'XLarge', 'XXLarge', 'XXXLarge'
     :type node_size: str or ~azure.mgmt.synapse.models.NodeSize
     :param node_size_family: The kind of nodes that the Big Data pool
      provides. Possible values include: 'None', 'MemoryOptimized'
@@ -331,9 +365,12 @@ class BigDataPoolResourceInfo(TrackedResource):
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'auto_pause': {'key': 'properties.autoPause', 'type': 'AutoPauseProperties'},
         'is_compute_isolation_enabled': {'key': 'properties.isComputeIsolationEnabled', 'type': 'bool'},
+        'session_level_packages_enabled': {'key': 'properties.sessionLevelPackagesEnabled', 'type': 'bool'},
         'spark_events_folder': {'key': 'properties.sparkEventsFolder', 'type': 'str'},
         'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
         'library_requirements': {'key': 'properties.libraryRequirements', 'type': 'LibraryRequirements'},
+        'custom_libraries': {'key': 'properties.customLibraries', 'type': '[LibraryInfo]'},
+        'spark_config_properties': {'key': 'properties.sparkConfigProperties', 'type': 'LibraryRequirements'},
         'spark_version': {'key': 'properties.sparkVersion', 'type': 'str'},
         'default_spark_log_folder': {'key': 'properties.defaultSparkLogFolder', 'type': 'str'},
         'node_size': {'key': 'properties.nodeSize', 'type': 'str'},
@@ -347,9 +384,12 @@ class BigDataPoolResourceInfo(TrackedResource):
         self.creation_date = kwargs.get('creation_date', None)
         self.auto_pause = kwargs.get('auto_pause', None)
         self.is_compute_isolation_enabled = kwargs.get('is_compute_isolation_enabled', None)
+        self.session_level_packages_enabled = kwargs.get('session_level_packages_enabled', None)
         self.spark_events_folder = kwargs.get('spark_events_folder', None)
         self.node_count = kwargs.get('node_count', None)
         self.library_requirements = kwargs.get('library_requirements', None)
+        self.custom_libraries = kwargs.get('custom_libraries', None)
+        self.spark_config_properties = kwargs.get('spark_config_properties', None)
         self.spark_version = kwargs.get('spark_version', None)
         self.default_spark_log_folder = kwargs.get('default_spark_log_folder', None)
         self.node_size = kwargs.get('node_size', None)
@@ -575,6 +615,33 @@ class CreateSqlPoolRestorePointDefinition(Model):
         self.restore_point_label = kwargs.get('restore_point_label', None)
 
 
+class CustomerManagedKeyDetails(Model):
+    """Details of the customer managed key associated with the workspace.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar status: The customer managed key status on the workspace
+    :vartype status: str
+    :param key: The key object of the workspace
+    :type key: ~azure.mgmt.synapse.models.WorkspaceKeyDetails
+    """
+
+    _validation = {
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'WorkspaceKeyDetails'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomerManagedKeyDetails, self).__init__(**kwargs)
+        self.status = None
+        self.key = kwargs.get('key', None)
+
+
 class DataLakeStorageAccountDetails(Model):
     """Details of the data lake storage account associated with the workspace.
 
@@ -596,19 +663,21 @@ class DataLakeStorageAccountDetails(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -628,19 +697,210 @@ class ProxyResource(Resource):
         super(ProxyResource, self).__init__(**kwargs)
 
 
+class DataMaskingPolicy(ProxyResource):
+    """Represents a database data masking policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param data_masking_state: Required. The state of the data masking policy.
+     Possible values include: 'Disabled', 'Enabled'
+    :type data_masking_state: str or
+     ~azure.mgmt.synapse.models.DataMaskingState
+    :param exempt_principals: The list of the exempt principals. Specifies the
+     semicolon-separated list of database users for which the data masking
+     policy does not apply. The specified users receive data results without
+     masking for all of the database queries.
+    :type exempt_principals: str
+    :ivar application_principals: The list of the application principals. This
+     is a legacy parameter and is no longer used.
+    :vartype application_principals: str
+    :ivar masking_level: The masking level. This is a legacy parameter and is
+     no longer used.
+    :vartype masking_level: str
+    :ivar location: The location of the data masking policy.
+    :vartype location: str
+    :ivar kind: The kind of data masking policy. Metadata, used for Azure
+     portal.
+    :vartype kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'data_masking_state': {'required': True},
+        'application_principals': {'readonly': True},
+        'masking_level': {'readonly': True},
+        'location': {'readonly': True},
+        'kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'data_masking_state': {'key': 'properties.dataMaskingState', 'type': 'DataMaskingState'},
+        'exempt_principals': {'key': 'properties.exemptPrincipals', 'type': 'str'},
+        'application_principals': {'key': 'properties.applicationPrincipals', 'type': 'str'},
+        'masking_level': {'key': 'properties.maskingLevel', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataMaskingPolicy, self).__init__(**kwargs)
+        self.data_masking_state = kwargs.get('data_masking_state', None)
+        self.exempt_principals = kwargs.get('exempt_principals', None)
+        self.application_principals = None
+        self.masking_level = None
+        self.location = None
+        self.kind = None
+
+
+class DataMaskingRule(ProxyResource):
+    """Represents a Sql pool data masking rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar data_masking_rule_id: The rule Id.
+    :vartype data_masking_rule_id: str
+    :param alias_name: The alias name. This is a legacy parameter and is no
+     longer used.
+    :type alias_name: str
+    :param rule_state: The rule state. Used to delete a rule. To delete an
+     existing rule, specify the schemaName, tableName, columnName,
+     maskingFunction, and specify ruleState as disabled. However, if the rule
+     doesn't already exist, the rule will be created with ruleState set to
+     enabled, regardless of the provided value of ruleState. Possible values
+     include: 'Disabled', 'Enabled'
+    :type rule_state: str or ~azure.mgmt.synapse.models.DataMaskingRuleState
+    :param schema_name: Required. The schema name on which the data masking
+     rule is applied.
+    :type schema_name: str
+    :param table_name: Required. The table name on which the data masking rule
+     is applied.
+    :type table_name: str
+    :param column_name: Required. The column name on which the data masking
+     rule is applied.
+    :type column_name: str
+    :param masking_function: Required. The masking function that is used for
+     the data masking rule. Possible values include: 'Default', 'CCN', 'Email',
+     'Number', 'SSN', 'Text'
+    :type masking_function: str or
+     ~azure.mgmt.synapse.models.DataMaskingFunction
+    :param number_from: The numberFrom property of the masking rule. Required
+     if maskingFunction is set to Number, otherwise this parameter will be
+     ignored.
+    :type number_from: str
+    :param number_to: The numberTo property of the data masking rule. Required
+     if maskingFunction is set to Number, otherwise this parameter will be
+     ignored.
+    :type number_to: str
+    :param prefix_size: If maskingFunction is set to Text, the number of
+     characters to show unmasked in the beginning of the string. Otherwise,
+     this parameter will be ignored.
+    :type prefix_size: str
+    :param suffix_size: If maskingFunction is set to Text, the number of
+     characters to show unmasked at the end of the string. Otherwise, this
+     parameter will be ignored.
+    :type suffix_size: str
+    :param replacement_string: If maskingFunction is set to Text, the
+     character to use for masking the unexposed part of the string. Otherwise,
+     this parameter will be ignored.
+    :type replacement_string: str
+    :ivar location: The location of the data masking rule.
+    :vartype location: str
+    :ivar kind: The kind of Data Masking Rule. Metadata, used for Azure
+     portal.
+    :vartype kind: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'data_masking_rule_id': {'readonly': True},
+        'schema_name': {'required': True},
+        'table_name': {'required': True},
+        'column_name': {'required': True},
+        'masking_function': {'required': True},
+        'location': {'readonly': True},
+        'kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'data_masking_rule_id': {'key': 'properties.id', 'type': 'str'},
+        'alias_name': {'key': 'properties.aliasName', 'type': 'str'},
+        'rule_state': {'key': 'properties.ruleState', 'type': 'DataMaskingRuleState'},
+        'schema_name': {'key': 'properties.schemaName', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+        'column_name': {'key': 'properties.columnName', 'type': 'str'},
+        'masking_function': {'key': 'properties.maskingFunction', 'type': 'DataMaskingFunction'},
+        'number_from': {'key': 'properties.numberFrom', 'type': 'str'},
+        'number_to': {'key': 'properties.numberTo', 'type': 'str'},
+        'prefix_size': {'key': 'properties.prefixSize', 'type': 'str'},
+        'suffix_size': {'key': 'properties.suffixSize', 'type': 'str'},
+        'replacement_string': {'key': 'properties.replacementString', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataMaskingRule, self).__init__(**kwargs)
+        self.data_masking_rule_id = None
+        self.alias_name = kwargs.get('alias_name', None)
+        self.rule_state = kwargs.get('rule_state', None)
+        self.schema_name = kwargs.get('schema_name', None)
+        self.table_name = kwargs.get('table_name', None)
+        self.column_name = kwargs.get('column_name', None)
+        self.masking_function = kwargs.get('masking_function', None)
+        self.number_from = kwargs.get('number_from', None)
+        self.number_to = kwargs.get('number_to', None)
+        self.prefix_size = kwargs.get('prefix_size', None)
+        self.suffix_size = kwargs.get('suffix_size', None)
+        self.replacement_string = kwargs.get('replacement_string', None)
+        self.location = None
+        self.kind = None
+
+
 class DataWarehouseUserActivities(ProxyResource):
     """User activities of a data warehouse.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar active_queries_count: Count of running and suspended queries.
     :vartype active_queries_count: int
@@ -663,6 +923,33 @@ class DataWarehouseUserActivities(ProxyResource):
     def __init__(self, **kwargs):
         super(DataWarehouseUserActivities, self).__init__(**kwargs)
         self.active_queries_count = None
+
+
+class EncryptionDetails(Model):
+    """Details of the encryption associated with the workspace.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar double_encryption_enabled: Double Encryption enabled
+    :vartype double_encryption_enabled: bool
+    :param cmk: Customer Managed Key Details
+    :type cmk: ~azure.mgmt.synapse.models.CustomerManagedKeyDetails
+    """
+
+    _validation = {
+        'double_encryption_enabled': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'double_encryption_enabled': {'key': 'doubleEncryptionEnabled', 'type': 'bool'},
+        'cmk': {'key': 'cmk', 'type': 'CustomerManagedKeyDetails'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EncryptionDetails, self).__init__(**kwargs)
+        self.double_encryption_enabled = None
+        self.cmk = kwargs.get('cmk', None)
 
 
 class EntityReference(Model):
@@ -802,7 +1089,11 @@ class ErrorDetail(Model):
 
 
 class ErrorResponse(Model):
-    """The resource management error response.
+    """Error Response.
+
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -845,6 +1136,177 @@ class ErrorResponse(Model):
         self.additional_info = None
 
 
+class ExtendedSqlPoolBlobAuditingPolicy(ProxyResource):
+    """An extended Sql pool blob auditing policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param predicate_expression: Specifies condition of where clause when
+     creating an audit.
+    :type predicate_expression: str
+    :param state: Required. Specifies the state of the policy. If state is
+     Enabled, storageEndpoint or isAzureMonitorTargetEnabled are required.
+     Possible values include: 'Enabled', 'Disabled'
+    :type state: str or ~azure.mgmt.synapse.models.BlobAuditingPolicyState
+    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+     https://MyAccount.blob.core.windows.net). If state is Enabled,
+     storageEndpoint or isAzureMonitorTargetEnabled is required.
+    :type storage_endpoint: str
+    :param storage_account_access_key: Specifies the identifier key of the
+     auditing storage account.
+     If state is Enabled and storageEndpoint is specified, not specifying the
+     storageAccountAccessKey will use SQL server system-assigned managed
+     identity to access the storage.
+     Prerequisites for using managed identity authentication:
+     1. Assign SQL Server a system-assigned managed identity in Azure Active
+     Directory (AAD).
+     2. Grant SQL Server identity access to the storage account by adding
+     'Storage Blob Data Contributor' RBAC role to the server identity.
+     For more information, see [Auditing to storage using Managed Identity
+     authentication](https://go.microsoft.com/fwlink/?linkid=2114355)
+    :type storage_account_access_key: str
+    :param retention_days: Specifies the number of days to keep in the audit
+     logs in the storage account.
+    :type retention_days: int
+    :param audit_actions_and_groups: Specifies the Actions-Groups and Actions
+     to audit.
+     The recommended set of action groups to use is the following combination -
+     this will audit all the queries and stored procedures executed against the
+     database, as well as successful and failed logins:
+     BATCH_COMPLETED_GROUP,
+     SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
+     FAILED_DATABASE_AUTHENTICATION_GROUP.
+     This above combination is also the set that is configured by default when
+     enabling auditing from the Azure portal.
+     The supported action groups to audit are (note: choose only specific
+     groups that cover your auditing needs. Using unnecessary groups could lead
+     to very large quantities of audit records):
+     APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
+     BACKUP_RESTORE_GROUP
+     DATABASE_LOGOUT_GROUP
+     DATABASE_OBJECT_CHANGE_GROUP
+     DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP
+     DATABASE_OBJECT_PERMISSION_CHANGE_GROUP
+     DATABASE_OPERATION_GROUP
+     DATABASE_PERMISSION_CHANGE_GROUP
+     DATABASE_PRINCIPAL_CHANGE_GROUP
+     DATABASE_PRINCIPAL_IMPERSONATION_GROUP
+     DATABASE_ROLE_MEMBER_CHANGE_GROUP
+     FAILED_DATABASE_AUTHENTICATION_GROUP
+     SCHEMA_OBJECT_ACCESS_GROUP
+     SCHEMA_OBJECT_CHANGE_GROUP
+     SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP
+     SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP
+     SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP
+     USER_CHANGE_PASSWORD_GROUP
+     BATCH_STARTED_GROUP
+     BATCH_COMPLETED_GROUP
+     These are groups that cover all sql statements and stored procedures
+     executed against the database, and should not be used in combination with
+     other groups as this will result in duplicate audit logs.
+     For more information, see [Database-Level Audit Action
+     Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
+     For Database auditing policy, specific Actions can also be specified (note
+     that Actions cannot be specified for Server auditing policy). The
+     supported actions to audit are:
+     SELECT
+     UPDATE
+     INSERT
+     DELETE
+     EXECUTE
+     RECEIVE
+     REFERENCES
+     The general form for defining an action to be audited is:
+     {action} ON {object} BY {principal}
+     Note that <object> in the above format can refer to an object like a
+     table, view, or stored procedure, or an entire database or schema. For the
+     latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are
+     used, respectively.
+     For example:
+     SELECT on dbo.myTable by public
+     SELECT on DATABASE::myDatabase by public
+     SELECT on SCHEMA::mySchema by public
+     For more information, see [Database-Level Audit
+     Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
+    :type audit_actions_and_groups: list[str]
+    :param storage_account_subscription_id: Specifies the blob storage
+     subscription Id.
+    :type storage_account_subscription_id: str
+    :param is_storage_secondary_key_in_use: Specifies whether
+     storageAccountAccessKey value is the storage's secondary key.
+    :type is_storage_secondary_key_in_use: bool
+    :param is_azure_monitor_target_enabled: Specifies whether audit events are
+     sent to Azure Monitor.
+     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
+     and 'isAzureMonitorTargetEnabled' as true.
+     When using REST API to configure auditing, Diagnostic Settings with
+     'SQLSecurityAuditEvents' diagnostic logs category on the database should
+     be also created.
+     Note that for server level audit you should use the 'master' database as
+     {databaseName}.
+     Diagnostic Settings URI format:
+     PUT
+     https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
+     For more information, see [Diagnostic Settings REST
+     API](https://go.microsoft.com/fwlink/?linkid=2033207)
+     or [Diagnostic Settings
+     PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
+    :type is_azure_monitor_target_enabled: bool
+    :param queue_delay_ms: Specifies the amount of time in milliseconds that
+     can elapse before audit actions are forced to be processed.
+     The default minimum value is 1000 (1 second). The maximum is
+     2,147,483,647.
+    :type queue_delay_ms: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'state': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'predicate_expression': {'key': 'properties.predicateExpression', 'type': 'str'},
+        'state': {'key': 'properties.state', 'type': 'BlobAuditingPolicyState'},
+        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
+        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
+        'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'audit_actions_and_groups': {'key': 'properties.auditActionsAndGroups', 'type': '[str]'},
+        'storage_account_subscription_id': {'key': 'properties.storageAccountSubscriptionId', 'type': 'str'},
+        'is_storage_secondary_key_in_use': {'key': 'properties.isStorageSecondaryKeyInUse', 'type': 'bool'},
+        'is_azure_monitor_target_enabled': {'key': 'properties.isAzureMonitorTargetEnabled', 'type': 'bool'},
+        'queue_delay_ms': {'key': 'properties.queueDelayMs', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExtendedSqlPoolBlobAuditingPolicy, self).__init__(**kwargs)
+        self.predicate_expression = kwargs.get('predicate_expression', None)
+        self.state = kwargs.get('state', None)
+        self.storage_endpoint = kwargs.get('storage_endpoint', None)
+        self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
+        self.retention_days = kwargs.get('retention_days', None)
+        self.audit_actions_and_groups = kwargs.get('audit_actions_and_groups', None)
+        self.storage_account_subscription_id = kwargs.get('storage_account_subscription_id', None)
+        self.is_storage_secondary_key_in_use = kwargs.get('is_storage_secondary_key_in_use', None)
+        self.is_azure_monitor_target_enabled = kwargs.get('is_azure_monitor_target_enabled', None)
+        self.queue_delay_ms = kwargs.get('queue_delay_ms', None)
+
+
 class GeoBackupPolicy(ProxyResource):
     """A database geo backup policy.
 
@@ -853,13 +1315,13 @@ class GeoBackupPolicy(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param state: Required. The state of the geo backup policy. Possible
      values include: 'Disabled', 'Enabled'
@@ -1305,13 +1767,13 @@ class SubResource(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1343,13 +1805,13 @@ class IntegrationRuntimeResource(SubResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -1591,13 +2053,13 @@ class IpFirewallRuleInfo(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param end_ip_address: The end IP address of the firewall rule. Must be
      IPv4 format. Must be greater than or equal to startIpAddress
@@ -1667,6 +2129,81 @@ class IpFirewallRuleProperties(Model):
         self.end_ip_address = kwargs.get('end_ip_address', None)
         self.provisioning_state = None
         self.start_ip_address = kwargs.get('start_ip_address', None)
+
+
+class Key(ProxyResource):
+    """A workspace key.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :param is_active_cmk: Used to activate the workspace after a customer
+     managed key is provided.
+    :type is_active_cmk: bool
+    :param key_vault_url: The Key Vault Url of the workspace key.
+    :type key_vault_url: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'is_active_cmk': {'key': 'properties.isActiveCMK', 'type': 'bool'},
+        'key_vault_url': {'key': 'properties.keyVaultUrl', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Key, self).__init__(**kwargs)
+        self.is_active_cmk = kwargs.get('is_active_cmk', None)
+        self.key_vault_url = kwargs.get('key_vault_url', None)
+
+
+class LibraryInfo(Model):
+    """Information about a library/package created at the workspace level.
+
+    Library/package information of a Big Data pool powered by Apache Spark.
+
+    :param name: Name of the library.
+    :type name: str
+    :param path: Storage blob path of library.
+    :type path: str
+    :param container_name: Storage blob container name.
+    :type container_name: str
+    :param uploaded_timestamp: The last update time of the library.
+    :type uploaded_timestamp: datetime
+    :param type: Type of the library.
+    :type type: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'uploaded_timestamp': {'key': 'uploadedTimestamp', 'type': 'iso-8601'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LibraryInfo, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.path = kwargs.get('path', None)
+        self.container_name = kwargs.get('container_name', None)
+        self.uploaded_timestamp = kwargs.get('uploaded_timestamp', None)
+        self.type = kwargs.get('type', None)
 
 
 class LibraryRequirements(Model):
@@ -1875,13 +2412,13 @@ class ManagedIdentitySqlControlSettingsModel(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param grant_sql_control_to_managed_identity: Grant sql control to managed
      identity
@@ -2189,6 +2726,32 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         self.type = 'Managed'
 
 
+class ManagedVirtualNetworkSettings(Model):
+    """Managed Virtual Network Settings.
+
+    :param prevent_data_exfiltration: Prevent Data Exfiltration
+    :type prevent_data_exfiltration: bool
+    :param linked_access_check_on_target_resource: Linked Access Check On
+     Target Resource
+    :type linked_access_check_on_target_resource: bool
+    :param allowed_aad_tenant_ids_for_linking: Allowed Aad Tenant Ids For
+     Linking
+    :type allowed_aad_tenant_ids_for_linking: list[str]
+    """
+
+    _attribute_map = {
+        'prevent_data_exfiltration': {'key': 'preventDataExfiltration', 'type': 'bool'},
+        'linked_access_check_on_target_resource': {'key': 'linkedAccessCheckOnTargetResource', 'type': 'bool'},
+        'allowed_aad_tenant_ids_for_linking': {'key': 'allowedAadTenantIdsForLinking', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedVirtualNetworkSettings, self).__init__(**kwargs)
+        self.prevent_data_exfiltration = kwargs.get('prevent_data_exfiltration', None)
+        self.linked_access_check_on_target_resource = kwargs.get('linked_access_check_on_target_resource', None)
+        self.allowed_aad_tenant_ids_for_linking = kwargs.get('allowed_aad_tenant_ids_for_linking', None)
+
+
 class MetadataSyncConfig(ProxyResource):
     """Metadata sync configuration.
 
@@ -2197,16 +2760,18 @@ class MetadataSyncConfig(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param enabled: Indicates whether the metadata sync is enabled or disabled
     :type enabled: bool
+    :param sync_interval_in_minutes: The Sync Interval in minutes.
+    :type sync_interval_in_minutes: int
     """
 
     _validation = {
@@ -2220,11 +2785,13 @@ class MetadataSyncConfig(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'sync_interval_in_minutes': {'key': 'properties.syncIntervalInMinutes', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(MetadataSyncConfig, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
+        self.sync_interval_in_minutes = kwargs.get('sync_interval_in_minutes', None)
 
 
 class OperationMetaLogSpecification(Model):
@@ -2431,13 +2998,13 @@ class PrivateEndpointConnection(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param private_endpoint: The private endpoint which the connection belongs
      to.
@@ -2474,6 +3041,90 @@ class PrivateEndpointConnection(ProxyResource):
         self.provisioning_state = None
 
 
+class PrivateEndpointConnectionForPrivateLinkHubBasic(Model):
+    """Private Endpoint Connection For Private Link Hub - Basic.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: identifier
+    :vartype id: str
+    :param private_endpoint: The private endpoint which the connection belongs
+     to.
+    :type private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: Provisioning state of the private endpoint
+     connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionForPrivateLinkHubBasic, self).__init__(**kwargs)
+        self.id = None
+        self.private_endpoint = kwargs.get('private_endpoint', None)
+        self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
+        self.provisioning_state = None
+
+
+class PrivateEndpointConnectionForPrivateLinkHub(PrivateEndpointConnectionForPrivateLinkHubBasic):
+    """PrivateEndpointConnectionForPrivateLinkHub.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: identifier
+    :vartype id: str
+    :param private_endpoint: The private endpoint which the connection belongs
+     to.
+    :type private_endpoint: ~azure.mgmt.synapse.models.PrivateEndpoint
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.synapse.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: Provisioning state of the private endpoint
+     connection.
+    :vartype provisioning_state: str
+    :param name:
+    :type name: str
+    :param type:
+    :type type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateEndpointConnectionForPrivateLinkHub, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
+
+
 class PrivateLinkHub(TrackedResource):
     """A privateLinkHub.
 
@@ -2482,21 +3133,23 @@ class PrivateLinkHub(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
-    :ivar provisioning_state: PrivateLinkHub provisioning state. Possible
-     values include: 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or ~azure.mgmt.synapse.models.enum
+    :param provisioning_state: PrivateLinkHub provisioning state
+    :type provisioning_state: str
+    :ivar private_endpoint_connections: List of private endpoint connections
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHubBasic]
     """
 
     _validation = {
@@ -2504,7 +3157,7 @@ class PrivateLinkHub(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'provisioning_state': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2514,11 +3167,13 @@ class PrivateLinkHub(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnectionForPrivateLinkHubBasic]'},
     }
 
     def __init__(self, **kwargs):
         super(PrivateLinkHub, self).__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.private_endpoint_connections = None
 
 
 class PrivateLinkHubPatchInfo(Model):
@@ -2543,13 +3198,13 @@ class PrivateLinkResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar properties: The private link resource properties.
     :vartype properties:
@@ -2615,9 +3270,8 @@ class PrivateLinkServiceConnectionState(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param status: The private link service connection status. Possible values
-     include: 'Approved', 'Pending', 'Rejected', 'Disconnected'
-    :type status: str or ~azure.mgmt.synapse.models.enum
+    :param status: The private link service connection status.
+    :type status: str
     :param description: The private link service connection description.
     :type description: str
     :ivar actions_required: The actions required for private link service
@@ -2783,13 +3437,13 @@ class ReplicationLink(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar location: Location of the workspace that contains this firewall
      rule.
@@ -2896,19 +3550,98 @@ class ResourceMoveDefinition(Model):
         self.id = kwargs.get('id', None)
 
 
+class RestorableDroppedSqlPool(ProxyResource):
+    """A restorable dropped Sql pool.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
+    :vartype type: str
+    :ivar location: The geo-location where the resource lives
+    :vartype location: str
+    :ivar database_name: The name of the database
+    :vartype database_name: str
+    :ivar edition: The edition of the database
+    :vartype edition: str
+    :ivar max_size_bytes: The max size in bytes of the database
+    :vartype max_size_bytes: str
+    :ivar service_level_objective: The service level objective name of the
+     database
+    :vartype service_level_objective: str
+    :ivar elastic_pool_name: The elastic pool name of the database
+    :vartype elastic_pool_name: str
+    :ivar creation_date: The creation date of the database (ISO8601 format)
+    :vartype creation_date: datetime
+    :ivar deletion_date: The deletion date of the database (ISO8601 format)
+    :vartype deletion_date: datetime
+    :ivar earliest_restore_date: The earliest restore date of the database
+     (ISO8601 format)
+    :vartype earliest_restore_date: datetime
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'readonly': True},
+        'database_name': {'readonly': True},
+        'edition': {'readonly': True},
+        'max_size_bytes': {'readonly': True},
+        'service_level_objective': {'readonly': True},
+        'elastic_pool_name': {'readonly': True},
+        'creation_date': {'readonly': True},
+        'deletion_date': {'readonly': True},
+        'earliest_restore_date': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'edition': {'key': 'properties.edition', 'type': 'str'},
+        'max_size_bytes': {'key': 'properties.maxSizeBytes', 'type': 'str'},
+        'service_level_objective': {'key': 'properties.serviceLevelObjective', 'type': 'str'},
+        'elastic_pool_name': {'key': 'properties.elasticPoolName', 'type': 'str'},
+        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
+        'deletion_date': {'key': 'properties.deletionDate', 'type': 'iso-8601'},
+        'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(RestorableDroppedSqlPool, self).__init__(**kwargs)
+        self.location = None
+        self.database_name = None
+        self.edition = None
+        self.max_size_bytes = None
+        self.service_level_objective = None
+        self.elastic_pool_name = None
+        self.creation_date = None
+        self.deletion_date = None
+        self.earliest_restore_date = None
+
+
 class RestorePoint(ProxyResource):
     """Database restore points.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
@@ -3026,7 +3759,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
     :type description: str
     :param type: Required. Constant filled by server.
     :type type: str
-    :param linked_info:
+    :param linked_info: Linked integration runtime type from data factory
     :type linked_info: ~azure.mgmt.synapse.models.LinkedIntegrationRuntimeType
     """
 
@@ -3199,6 +3932,9 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
     :vartype create_time: datetime
     :ivar task_queue_id: The task queue id of the integration runtime.
     :vartype task_queue_id: str
+    :ivar node_communication_channel_encryption_mode: The node communication
+     Channel encryption mode
+    :vartype node_communication_channel_encryption_mode: str
     :ivar internal_channel_encryption: It is used to set the encryption mode
      for node-node communication channel (when more than 2 self-hosted
      integration runtime nodes exist). Possible values include: 'NotSet',
@@ -3249,6 +3985,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'type': {'required': True},
         'create_time': {'readonly': True},
         'task_queue_id': {'readonly': True},
+        'node_communication_channel_encryption_mode': {'readonly': True},
         'internal_channel_encryption': {'readonly': True},
         'version': {'readonly': True},
         'scheduled_update_date': {'readonly': True},
@@ -3270,6 +4007,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         'type': {'key': 'type', 'type': 'str'},
         'create_time': {'key': 'typeProperties.createTime', 'type': 'iso-8601'},
         'task_queue_id': {'key': 'typeProperties.taskQueueId', 'type': 'str'},
+        'node_communication_channel_encryption_mode': {'key': 'typeProperties.nodeCommunicationChannelEncryptionMode', 'type': 'str'},
         'internal_channel_encryption': {'key': 'typeProperties.internalChannelEncryption', 'type': 'str'},
         'version': {'key': 'typeProperties.version', 'type': 'str'},
         'nodes': {'key': 'typeProperties.nodes', 'type': '[SelfHostedIntegrationRuntimeNode]'},
@@ -3290,6 +4028,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         super(SelfHostedIntegrationRuntimeStatus, self).__init__(**kwargs)
         self.create_time = None
         self.task_queue_id = None
+        self.node_communication_channel_encryption_mode = None
         self.internal_channel_encryption = None
         self.version = None
         self.nodes = kwargs.get('nodes', None)
@@ -3313,13 +4052,13 @@ class SensitivityLabel(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param label_name: The label name.
     :type label_name: str
@@ -3400,13 +4139,13 @@ class SqlPool(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -3481,13 +4220,13 @@ class SqlPoolBlobAuditingPolicy(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar kind: Resource kind.
     :vartype kind: str
@@ -3634,13 +4373,13 @@ class SqlPoolColumn(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param column_type: The column data type. Possible values include:
      'image', 'text', 'uniqueidentifier', 'date', 'time', 'datetime2',
@@ -3676,13 +4415,13 @@ class SqlPoolConnectionPolicy(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar kind: Resource kind.
     :vartype kind: str
@@ -3747,13 +4486,13 @@ class SqlPoolOperation(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar database_name: The name of the Sql pool the operation is being
      performed on.
@@ -3914,13 +4653,13 @@ class SqlPoolSchema(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -3948,13 +4687,13 @@ class SqlPoolSecurityAlertPolicy(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param state: Required. Specifies the state of the policy, whether it is
      enabled or disabled or a policy has not been applied yet on the specific
@@ -4024,13 +4763,13 @@ class SqlPoolTable(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -4110,13 +4849,13 @@ class SqlPoolVulnerabilityAssessment(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param storage_container_path: A blob storage container path to hold the
      scan results (e.g. https://myStorage.blob.core.windows.net/VaScans/).  It
@@ -4169,13 +4908,13 @@ class SqlPoolVulnerabilityAssessmentRuleBaseline(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param baseline_results: Required. The rule baseline result
     :type baseline_results:
@@ -4229,13 +4968,13 @@ class SqlPoolVulnerabilityAssessmentScansExport(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar exported_report_location: Location of the exported report (e.g.
      https://myStorage.blob.core.windows.net/VaScans/scans/serverName/databaseName/scan_scanId.xlsx).
@@ -4741,13 +5480,13 @@ class TransparentDataEncryption(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
@@ -4903,13 +5642,13 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar scan_id: The scan ID.
     :vartype scan_id: str
@@ -4983,13 +5722,13 @@ class Workspace(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -5026,8 +5765,18 @@ class Workspace(TrackedResource):
      workspace
     :type private_endpoint_connections:
      list[~azure.mgmt.synapse.models.PrivateEndpointConnection]
+    :param encryption: The encryption details of the workspace
+    :type encryption: ~azure.mgmt.synapse.models.EncryptionDetails
+    :ivar workspace_uid: The workspace unique identifier
+    :vartype workspace_uid: str
     :ivar extra_properties: Workspace level configs and feature flags
     :vartype extra_properties: dict[str, object]
+    :param managed_virtual_network_settings: Managed Virtual Network Settings
+    :type managed_virtual_network_settings:
+     ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
+    :param babylon_configuration: Babylon Configuration
+    :type babylon_configuration:
+     ~azure.mgmt.synapse.models.BabylonConfiguration
     :param identity: Identity of the workspace
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
     """
@@ -5038,6 +5787,7 @@ class Workspace(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
+        'workspace_uid': {'readonly': True},
         'extra_properties': {'readonly': True},
     }
 
@@ -5056,7 +5806,11 @@ class Workspace(TrackedResource):
         'connectivity_endpoints': {'key': 'properties.connectivityEndpoints', 'type': '{str}'},
         'managed_virtual_network': {'key': 'properties.managedVirtualNetwork', 'type': 'str'},
         'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionDetails'},
+        'workspace_uid': {'key': 'properties.workspaceUID', 'type': 'str'},
         'extra_properties': {'key': 'properties.extraProperties', 'type': '{object}'},
+        'managed_virtual_network_settings': {'key': 'properties.managedVirtualNetworkSettings', 'type': 'ManagedVirtualNetworkSettings'},
+        'babylon_configuration': {'key': 'properties.babylonConfiguration', 'type': 'BabylonConfiguration'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
     }
 
@@ -5071,7 +5825,11 @@ class Workspace(TrackedResource):
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
         self.managed_virtual_network = kwargs.get('managed_virtual_network', None)
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.workspace_uid = None
         self.extra_properties = None
+        self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
+        self.babylon_configuration = kwargs.get('babylon_configuration', None)
         self.identity = kwargs.get('identity', None)
 
 
@@ -5081,13 +5839,13 @@ class WorkspaceAadAdminInfo(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tenant_id: Tenant ID of the workspace active directory
      administrator
@@ -5124,6 +5882,26 @@ class WorkspaceAadAdminInfo(ProxyResource):
         self.sid = kwargs.get('sid', None)
 
 
+class WorkspaceKeyDetails(Model):
+    """Details of the customer managed key associated with the workspace.
+
+    :param name: Workspace Key sub-resource name
+    :type name: str
+    :param key_vault_url: Workspace Key sub-resource key vault url
+    :type key_vault_url: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'key_vault_url': {'key': 'keyVaultUrl', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkspaceKeyDetails, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.key_vault_url = kwargs.get('key_vault_url', None)
+
+
 class WorkspacePatchInfo(Model):
     """Workspace patch details.
 
@@ -5136,6 +5914,12 @@ class WorkspacePatchInfo(Model):
     :type identity: ~azure.mgmt.synapse.models.ManagedIdentity
     :param sql_administrator_login_password: SQL administrator login password
     :type sql_administrator_login_password: str
+    :param managed_virtual_network_settings: Managed Virtual Network Settings
+    :type managed_virtual_network_settings:
+     ~azure.mgmt.synapse.models.ManagedVirtualNetworkSettings
+    :param babylon_configuration: Babylon Configuration
+    :type babylon_configuration:
+     ~azure.mgmt.synapse.models.BabylonConfiguration
     :ivar provisioning_state: Resource provisioning state
     :vartype provisioning_state: str
     """
@@ -5148,6 +5932,8 @@ class WorkspacePatchInfo(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
         'sql_administrator_login_password': {'key': 'properties.sqlAdministratorLoginPassword', 'type': 'str'},
+        'managed_virtual_network_settings': {'key': 'properties.managedVirtualNetworkSettings', 'type': 'ManagedVirtualNetworkSettings'},
+        'babylon_configuration': {'key': 'properties.babylonConfiguration', 'type': 'BabylonConfiguration'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
@@ -5156,4 +5942,6 @@ class WorkspacePatchInfo(Model):
         self.tags = kwargs.get('tags', None)
         self.identity = kwargs.get('identity', None)
         self.sql_administrator_login_password = kwargs.get('sql_administrator_login_password', None)
+        self.managed_virtual_network_settings = kwargs.get('managed_virtual_network_settings', None)
+        self.babylon_configuration = kwargs.get('babylon_configuration', None)
         self.provisioning_state = None
