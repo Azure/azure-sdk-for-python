@@ -17,7 +17,7 @@ from .operations import VaultsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import Operations
-from .operations import KeysOperations
+from .operations import ManagedHsmsOperations
 from . import models
 
 
@@ -28,15 +28,15 @@ class KeyVaultManagementClient(SDKClient):
     :vartype config: KeyVaultManagementClientConfiguration
 
     :ivar vaults: Vaults operations
-    :vartype vaults: azure.mgmt.keyvault.v2019_09_01.operations.VaultsOperations
+    :vartype vaults: azure.mgmt.keyvault.v2020_04_01_preview.operations.VaultsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
-    :vartype private_endpoint_connections: azure.mgmt.keyvault.v2019_09_01.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.keyvault.v2020_04_01_preview.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResources operations
-    :vartype private_link_resources: azure.mgmt.keyvault.v2019_09_01.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.keyvault.v2020_04_01_preview.operations.PrivateLinkResourcesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.keyvault.v2019_09_01.operations.Operations
-    :ivar keys: Keys operations
-    :vartype keys: azure.mgmt.keyvault.v2019_09_01.operations.KeysOperations
+    :vartype operations: azure.mgmt.keyvault.v2020_04_01_preview.operations.Operations
+    :ivar managed_hsms: ManagedHsms operations
+    :vartype managed_hsms: azure.mgmt.keyvault.v2020_04_01_preview.operations.ManagedHsmsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -55,7 +55,6 @@ class KeyVaultManagementClient(SDKClient):
         super(KeyVaultManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-09-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -67,5 +66,5 @@ class KeyVaultManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.keys = KeysOperations(
+        self.managed_hsms = ManagedHsmsOperations(
             self._client, self.config, self._serialize, self._deserialize)
