@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._vaults_operations import VaultsOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._private_link_resources_operations import PrivateLinkResourcesOperations
-from ._operations import Operations
-from ._keys_operations import KeysOperations
+from ._configuration import KeyVaultManagementClientConfiguration
+from ._key_vault_management_client import KeyVaultManagementClient
+__all__ = ['KeyVaultManagementClient', 'KeyVaultManagementClientConfiguration']
 
-__all__ = [
-    'VaultsOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'Operations',
-    'KeysOperations',
-]
+from .version import VERSION
+
+__version__ = VERSION
+
