@@ -50,9 +50,9 @@ class Operations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.OperationList"]
-        """Gets a list of possible operations.
+        """Get a list of all available REST API operations.
 
-        Gets a list of possible operations.
+        Get a list of all available REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationList or the result of cls(response)
@@ -100,7 +100,7 @@ class Operations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultError, response)
+                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

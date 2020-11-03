@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 from ._configuration import WorkloadMonitorAPIConfiguration
 from .operations import Operations
-from .operations import MonitorsOperations
+from .operations import HealthMonitorsOperations
 from .. import models
 
 
@@ -26,8 +26,8 @@ class WorkloadMonitorAPI(object):
 
     :ivar operations: Operations operations
     :vartype operations: workload_monitor_api.aio.operations.Operations
-    :ivar monitors: MonitorsOperations operations
-    :vartype monitors: workload_monitor_api.aio.operations.MonitorsOperations
+    :ivar health_monitors: HealthMonitorsOperations operations
+    :vartype health_monitors: workload_monitor_api.aio.operations.HealthMonitorsOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
@@ -50,7 +50,7 @@ class WorkloadMonitorAPI(object):
 
         self.operations = Operations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.monitors = MonitorsOperations(
+        self.health_monitors = HealthMonitorsOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:
