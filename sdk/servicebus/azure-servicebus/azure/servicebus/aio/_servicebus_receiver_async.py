@@ -81,8 +81,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      if the client fails to process the message.
      The default mode is PeekLock.
     :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-     automatically shutdown. The default value is 0, meaning no timeout.
+    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
+     will automatically stop receiving. The default value is None, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
@@ -402,6 +402,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :dedent: 4
                 :caption: Receive indefinitely from an iterator in streaming fashion.
         """
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
         return self._IterContextualWrapper(self, max_wait_time)
 
     @classmethod
@@ -425,8 +427,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          if the client fails to process the message.
          The default mode is PeekLock.
         :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -504,6 +506,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Receive messages from ServiceBus.
 
         """
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
         self._check_live()
         return await self._do_retryable_operation(
             self._receive,

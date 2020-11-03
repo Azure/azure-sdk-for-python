@@ -47,11 +47,25 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 message = ServiceBusMessage(b"Sample topic message")
                 await sender.send_messages(message)
 
+            with pytest.raises(ValueError):
+                sb_client.get_subscription_receiver(
+                    topic_name=servicebus_topic.name,
+                    subscription_name=servicebus_subscription.name,
+                    max_wait_time=0
+                )
+
             async with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
                     subscription_name=servicebus_subscription.name,
                     max_wait_time=5
             ) as receiver:
+
+                with pytest.raises(ValueError):
+                    await receiver.receive_messages(max_wait_time=-1)
+
+                with pytest.raises(ValueError):
+                    await receiver.get_streaming_message_iter(max_wait_time=0)
+
                 count = 0
                 async for message in receiver:
                     count += 1
