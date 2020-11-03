@@ -19,12 +19,12 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @FormRecognizerClientPreparer()
     def test_default_api_version_form_recognizer_client(self, client):
-        assert "v2.1-preview.1" in client._client._client._base_url
+        assert "v2.1-preview.2" in client._client._client._base_url
 
     @GlobalFormRecognizerAccountPreparer()
     @FormTrainingClientPreparer()
     def test_default_api_version_form_training_client(self, client):
-        assert "v2.1-preview.1" in client._client._client._base_url
+        assert "v2.1-preview.2" in client._client._client._base_url
 
     @GlobalFormRecognizerAccountPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
@@ -39,12 +39,12 @@ class TestMultiapi(AsyncFormRecognizerTest):
     @GlobalFormRecognizerAccountPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1_PREVIEW})
     def test_v2_1_preview_1_form_recognizer_client(self, client):
-        assert "v2.1-preview.1" in client._client._client._base_url
+        assert "v2.1-preview.2" in client._client._client._base_url
 
     @GlobalFormRecognizerAccountPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1_PREVIEW})
     def test_v2_1_preview_1_form_training_client(self, client):
-        assert "v2.1-preview.1" in client._client._client._base_url
+        assert "v2.1-preview.2" in client._client._client._base_url
 
     @GlobalFormRecognizerAccountPreparer()
     @FormTrainingClientPreparer(training=True, client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
@@ -66,8 +66,8 @@ class TestMultiapi(AsyncFormRecognizerTest):
 
             form_client = client.get_form_recognizer_client()
             async with form_client:
-                label_poller = await form_client.begin_recognize_custom_forms_from_url(label_result.model_id, self.form_url_jpg)
-                unlabel_poller = await form_client.begin_recognize_custom_forms_from_url(unlabel_result.model_id, self.form_url_jpg)
+                label_poller = await form_client.begin_recognize_custom_forms_from_url(label_result.model_id, self.form_url_jpg, include_field_elements=True)
+                unlabel_poller = await form_client.begin_recognize_custom_forms_from_url(unlabel_result.model_id, self.form_url_jpg, include_field_elements=True)
 
                 label_form_result = await label_poller.result()
                 unlabel_form_result = await unlabel_poller.result()
@@ -76,6 +76,10 @@ class TestMultiapi(AsyncFormRecognizerTest):
             assert label_form_result[0].form_type_confidence is None
             assert unlabel_form_result[0].pages[0].selection_marks is None
             assert label_form_result[0].pages[0].selection_marks is None
+            assert unlabel_form_result[0].pages[0].tables[0].bounding_box is None
+            assert label_form_result[0].pages[0].tables[0].bounding_box is None
+            assert unlabel_form_result[0].pages[0].lines[0].appearance is None
+            assert label_form_result[0].pages[0].lines[0].appearance is None
 
             models = client.list_custom_models()
             first_model = await models.__anext__()

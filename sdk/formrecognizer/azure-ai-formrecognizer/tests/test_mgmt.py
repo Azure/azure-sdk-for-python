@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import functools
+import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
@@ -148,6 +149,7 @@ class TestManagement(FormRecognizerTest):
             client.get_custom_model(unlabeled_model_from_train.model_id)
 
     @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.skip
     def test_get_form_recognizer_client(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
         transport = RequestsTransport()
         ftc = FormTrainingClient(endpoint=form_recognizer_account, credential=AzureKeyCredential(form_recognizer_account_key), transport=transport)

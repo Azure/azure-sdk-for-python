@@ -19,6 +19,7 @@ from testcase import GlobalClientPreparer as _GlobalClientPreparer
 GlobalClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
+@pytest.mark.skip
 class TestReceiptFromUrl(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()

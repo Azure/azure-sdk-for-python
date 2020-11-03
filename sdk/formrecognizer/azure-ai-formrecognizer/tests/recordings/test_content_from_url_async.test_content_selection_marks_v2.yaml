@@ -9,20 +9,20 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 06ab19f2-c165-4f9c-9c67-ecf119d1ba5d
+      apim-request-id: d664b0e8-f16d-4ede-b772-c8328eb31fdf
       content-length: '0'
-      date: Wed, 14 Oct 2020 22:33:47 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/06ab19f2-c165-4f9c-9c67-ecf119d1ba5d
+      date: Fri, 30 Oct 2020 00:06:52 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/d664b0e8-f16d-4ede-b772-c8328eb31fdf
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '479'
+      x-envoy-upstream-service-time: '111'
     status:
       code: 202
       message: Accepted
@@ -31,36 +31,36 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/06ab19f2-c165-4f9c-9c67-ecf119d1ba5d
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/d664b0e8-f16d-4ede-b772-c8328eb31fdf
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-10-14T22:33:47Z", "lastUpdatedDateTime":
-        "2020-10-14T22:33:47Z"}'
+      string: '{"status": "running", "createdDateTime": "2020-10-30T00:06:53Z", "lastUpdatedDateTime":
+        "2020-10-30T00:06:53Z"}'
     headers:
-      apim-request-id: 02f5b8de-5bc0-42b7-ab8b-80f3db85c3f0
+      apim-request-id: e2b4fe47-6aa2-426d-b3f8-e67c3483429c
       content-length: '106'
       content-type: application/json; charset=utf-8
-      date: Wed, 14 Oct 2020 22:33:52 GMT
+      date: Fri, 30 Oct 2020 00:06:57 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '15'
+      x-envoy-upstream-service-time: '10'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/06ab19f2-c165-4f9c-9c67-ecf119d1ba5d
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/d664b0e8-f16d-4ede-b772-c8328eb31fdf
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/06ab19f2-c165-4f9c-9c67-ecf119d1ba5d
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/d664b0e8-f16d-4ede-b772-c8328eb31fdf
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-14T22:33:47Z",
-        "lastUpdatedDateTime": "2020-10-14T22:33:53Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-10-30T00:06:53Z",
+        "lastUpdatedDateTime": "2020-10-30T00:06:59Z", "analyzeResult": {"version":
         "2.0.0", "readResults": [{"page": 1, "language": "en", "angle": 0, "width":
         8.5, "height": 11, "unit": "inch", "lines": [{"boundingBox": [3.2791, 0.7167,
         5.0584, 0.7167, 5.0584, 0.8109, 3.2791, 0.8109], "text": "STATE OF CALIFORNIA:
@@ -537,15 +537,15 @@ interactions:
         6.7146, 6.4104, 6.7146], "elements": ["#/readResults/0/lines/33/words/0",
         "#/readResults/0/lines/33/words/1", "#/readResults/0/lines/34/words/0"]}]}]}]}}'
     headers:
-      apim-request-id: 1806c6ef-ef20-457c-aade-b9a12471cd18
+      apim-request-id: 5255ddda-d6ae-48eb-bc5a-010d3644e86c
       content-length: '33933'
       content-type: application/json; charset=utf-8
-      date: Wed, 14 Oct 2020 22:33:57 GMT
+      date: Fri, 30 Oct 2020 00:07:03 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '25'
+      x-envoy-upstream-service-time: '41'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/06ab19f2-c165-4f9c-9c67-ecf119d1ba5d
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.0/layout/analyzeResults/d664b0e8-f16d-4ede-b772-c8328eb31fdf
 version: 1

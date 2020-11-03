@@ -8,6 +8,12 @@ from ._version import VERSION
 from ._form_recognizer_client import FormRecognizerClient
 from ._form_training_client import FormTrainingClient
 
+from ._generated.v2_1_preview_2.models import (
+    Appearance,
+    Style
+)
+
+
 from ._models import (
     FormElement,
     LengthUnit,
@@ -67,6 +73,8 @@ __all__ = [
     'FieldValueType',
     'CustomFormModelProperties',
     'FormSelectionMark',
+    'Appearance',
+    'Style'
 ]
 
 __VERSION__ = VERSION

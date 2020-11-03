@@ -10,7 +10,6 @@ from enum import Enum
 from collections import namedtuple
 from ._helpers import (
     adjust_value_type,
-    adjust_text_angle,
     adjust_confidence,
     adjust_page_number,
     get_element
@@ -115,12 +114,16 @@ class CustomFormModelStatus(str, Enum):
 
 class FormContentType(str, Enum):
     """Content type for upload.
+
+    .. versionadded:: v2.1-preview
+        Support for image/bmp
     """
 
     APPLICATION_PDF = "application/pdf"
     IMAGE_JPEG = "image/jpeg"
     IMAGE_PNG = "image/png"
     IMAGE_TIFF = "image/tiff"
+    IMAGE_BMP = "image/bmp"
 
 
 class Point(namedtuple("Point", "x y")):
@@ -381,19 +384,6 @@ class FormPage(object):
         self.lines = kwargs.get("lines", None)
         self.selection_marks = kwargs.get("selection_marks", None)
 
-    @classmethod
-    def _from_generated_prebuilt_model(cls, read_result):
-        return [cls(
-            page_number=page.page,
-            text_angle=adjust_text_angle(page.angle),
-            width=page.width,
-            height=page.height,
-            unit=page.unit,
-            tables=None,  # prebuilt model does not return tables
-            lines=[FormLine._from_generated(line, page=page.page) for line in page.lines]
-            if page.lines else None
-        ) for page in read_result]
-
     def __repr__(self):
         return "FormPage(page_number={}, text_angle={}, width={}, height={}, unit={}, tables={}, lines={}," \
                "selection_marks={})" \
@@ -423,30 +413,38 @@ class FormLine(FormElement):
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormLine, this is "line".
+    :ivar appearance: Text appearance properties.
+    :vartype appearance: ~azure.ai.formrecognizer.Appearance
+    .. versionadded:: v2.1-preview
+        *appearance* property
     """
 
     def __init__(self, **kwargs):
         super(FormLine, self).__init__(kind="line", **kwargs)
         self.words = kwargs.get("words", None)
+        self.appearance = kwargs.get("appearance", None)
 
     @classmethod
     def _from_generated(cls, line, page):
+        line_appearance = line.appearance if hasattr(line, "appearance") else None
         return cls(
             text=line.text,
             bounding_box=get_bounding_box(line),
             page_number=page,
             words=[FormWord._from_generated(word, page) for word in line.words]
-            if line.words else None
+            if line.words else None,
+            appearance=line_appearance
         )
 
     def __repr__(self):
-        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={})" \
+        return "FormLine(text={}, bounding_box={}, words={}, page_number={}, kind={}, appearance={})" \
             .format(
                 self.text,
                 self.bounding_box,
                 repr(self.words),
                 self.page_number,
-                self.kind
+                self.kind,
+                self.appearance
             )[:1024]
 
 
@@ -518,7 +516,7 @@ class FormSelectionMark(FormElement):
     @classmethod
     def _from_generated(cls, mark, page):
         return cls(
-            confidence=mark.confidence,
+            confidence=adjust_confidence(mark.confidence),
             state=mark.state,
             bounding_box=get_bounding_box(mark),
             page_number=page
@@ -546,6 +544,13 @@ class FormTable(object):
         Number of rows in table.
     :ivar int column_count:
         Number of columns in table.
+    :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
+        A list of 4 points representing the quadrilateral bounding box
+        that outlines the table. The points are listed in clockwise
+        order: top-left, top-right, bottom-right, bottom-left.
+        Units are in pixels for images and inches for PDF.
+    .. versionadded:: v2.1-preview
+        The *bounding_box* property.
     """
 
     def __init__(self, **kwargs):
@@ -553,14 +558,16 @@ class FormTable(object):
         self.cells = kwargs.get("cells", None)
         self.row_count = kwargs.get("row_count", None)
         self.column_count = kwargs.get("column_count", None)
+        self.bounding_box = kwargs.get("bounding_box", None)
 
     def __repr__(self):
-        return "FormTable(page_number={}, cells={}, row_count={}, column_count={})" \
+        return "FormTable(page_number={}, cells={}, row_count={}, column_count={}, bounding_box={})" \
             .format(
                 self.page_number,
                 repr(self.cells),
                 self.row_count,
-                self.column_count
+                self.column_count,
+                self.bounding_box
             )[:1024]
 
 

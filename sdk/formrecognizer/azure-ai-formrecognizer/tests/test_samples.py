@@ -178,3 +178,10 @@ class TestSamples(FormRecognizerTest):
         os.environ["PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL"] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
         os.environ["PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL"] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
         _test_file('sample_create_composed_model.py', form_recognizer_account, form_recognizer_account_key)
+
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_recognize_invoices(
+            self, resource_group, location, form_recognizer_account, form_recognizer_account_key
+    ):
+        _test_file('sample_recognize_invoices.py', form_recognizer_account, form_recognizer_account_key)

@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      147362 is larger than 128KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Content-Type:
+      - application/pdf
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false&locale=not%20a%20locale
+  response:
+    body:
+      string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
+        "51d344c5-7a4e-4ba0-8704-cb72bd2339fb"}, "message": "Locale unsupported. Supported
+        locale includes en-US."}}'
+    headers:
+      apim-request-id: 51d344c5-7a4e-4ba0-8704-cb72bd2339fb
+      content-length: '169'
+      content-type: application/json; charset=utf-8
+      date: Fri, 30 Oct 2020 01:12:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '209'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false&locale=not%20a%20locale
+version: 1
