@@ -144,7 +144,7 @@ class AutoLockRenewer(object):
 
         :rtype: None
         """
-        if not isinstance(renewable, ServiceBusReceivedMessage) and not isinstance(renewable, ServiceBusSession):
+        if not isinstance(renewable, (ServiceBusReceivedMessage, ServiceBusSession)):
             raise TypeError("AutoLockRenewer only supports registration of types "
                             "azure.servicebus.ServiceBusReceivedMessage (via a receiver's receive methods) and "
                             "azure.servicebus.ServiceBusSession (via a session receiver's property receiver.session).")
