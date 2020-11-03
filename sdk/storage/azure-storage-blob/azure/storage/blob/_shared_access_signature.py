@@ -70,7 +70,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param BlobSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, add, create, write, delete, delete version, tag.
+            Permissions must be ordered read, add, create, write, delete, delete version, list, tag, move, execute.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
@@ -133,7 +133,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
-        sas.add_info_for_hns_account(**kwargs)
+        sas.add_info_for_account(**kwargs)
         sas.add_resource_signature(self.account_name, self.account_key, resource_path,
                                    user_delegation_key=self.user_delegation_key)
 
@@ -153,7 +153,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param ContainerSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
-            Permissions must be ordered read, add, create, write, delete, list, delete version, tag.
+            Permissions must be ordered read, add, create, write, delete, delete version, list, tag, move, execute.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
@@ -208,7 +208,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         sas.add_override_response_headers(cache_control, content_disposition,
                                           content_encoding, content_language,
                                           content_type)
-        sas.add_info_for_hns_account(**kwargs)
+        sas.add_info_for_account(**kwargs)
         sas.add_resource_signature(self.account_name, self.account_key, container_name,
                                    user_delegation_key=self.user_delegation_key)
         return sas.get_token()
@@ -219,7 +219,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
     def add_timestamp(self, timestamp):
         self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)
 
-    def add_info_for_hns_account(self, **kwargs):
+    def add_info_for_account(self, **kwargs):
         self._add_query(QueryStringConstants.SIGNED_DIRECTORY_DEPTH, kwargs.pop('sdd', None))
         self._add_query(QueryStringConstants.SIGNED_AUTHORIZED_OID, kwargs.pop('preauthorized_agent_object_id', None))
         self._add_query(QueryStringConstants.SIGNED_UNAUTHORIZED_OID, kwargs.pop('agent_object_id', None))
@@ -402,7 +402,7 @@ def generate_container_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, add, create, write, delete, list, delete version, tag.
+        Permissions must be ordered read, add, create, write, delete, delete version, list, tag, move, execute.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
@@ -518,7 +518,7 @@ def generate_blob_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Permissions must be ordered read, add, create, write, delete, delete version, tag.
+        Permissions must be ordered read, add, create, write, delete, delete version, list, tag, move, execute.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
