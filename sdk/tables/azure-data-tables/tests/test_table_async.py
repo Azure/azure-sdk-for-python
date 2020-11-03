@@ -430,8 +430,8 @@ class TableTestAsync(AsyncTableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].text.value, 'hello')
-            self.assertEqual(entities[1].text.value, 'hello')
+            self.assertEqual(entities[0].text, u'hello')
+            self.assertEqual(entities[1].text, u'hello')
         finally:
             await self._delete_table(table=table, ts=tsc)
 
