@@ -22,19 +22,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 3b67c5c6-dfaa-4ebd-b6fd-a0838d1c63fd
+      - f374261a-d19a-410e-bdba-db8b2357d52f
       content-length:
       - '0'
       date:
-      - Fri, 30 Oct 2020 01:11:42 GMT
+      - Tue, 03 Nov 2020 17:15:11 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/3b67c5c6-dfaa-4ebd-b6fd-a0838d1c63fd
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/f374261a-d19a-410e-bdba-db8b2357d52f
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '213'
+      - '279'
     status:
       code: 202
       message: Accepted
@@ -50,26 +50,26 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/3b67c5c6-dfaa-4ebd-b6fd-a0838d1c63fd
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/f374261a-d19a-410e-bdba-db8b2357d52f
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-10-30T01:11:42Z", "lastUpdatedDateTime":
-        "2020-10-30T01:11:42Z"}'
+      string: '{"status": "running", "createdDateTime": "2020-11-03T17:15:11Z", "lastUpdatedDateTime":
+        "2020-11-03T17:15:11Z"}'
     headers:
       apim-request-id:
-      - cb0cde5b-824d-45fb-b52e-1df51495787e
+      - e4277d3f-6374-4fe6-9ad6-c68a9c56ac96
       content-length:
       - '106'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:11:46 GMT
+      - Tue, 03 Nov 2020 17:15:16 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '9'
+      - '10'
     status:
       code: 200
       message: OK
@@ -85,11 +85,11 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/3b67c5c6-dfaa-4ebd-b6fd-a0838d1c63fd
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/f374261a-d19a-410e-bdba-db8b2357d52f
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-30T01:11:42Z",
-        "lastUpdatedDateTime": "2020-10-30T01:11:50Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-11-03T17:15:11Z",
+        "lastUpdatedDateTime": "2020-11-03T17:15:21Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"text": "Contoso", "boundingBox": [0.5384, 1.1583,
         1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "words": [{"text": "Contoso",
@@ -211,15 +211,15 @@ interactions:
         5, "text": "PT", "boundingBox": [6.1079, 3.311, 7.4922, 3.311, 7.4922, 3.6393,
         6.1079, 3.6393], "elements": ["#/readResults/0/lines/17/words/0"]}, {"rowIndex":
         2, "columnIndex": 5, "boundingBox": [6.1079, 3.6393, 7.4922, 3.6393, 7.4922,
-        3.8534, 6.1079, 3.8534]}], "boundingBox": [0.4985, 2.7802, 7.4933, 2.7816,
-        7.4913, 3.8459, 0.4966, 3.8447]}]}], "documentResults": [{"docType": "prebuilt:invoice",
-        "pageRange": [1, 1], "fields": {"VendorName": {"type": "string", "valueString":
-        "Contoso", "text": "Contoso", "boundingBox": [0.5384, 1.1583, 1.4466, 1.1583,
-        1.4466, 1.3534, 0.5384, 1.3534], "page": 1, "confidence": 0.948, "elements":
-        ["#/readResults/0/lines/0/words/0"]}, "CustomerAddressRecipient": {"type":
-        "string", "valueString": "Microsoft", "text": "Microsoft", "boundingBox":
-        [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151], "page":
-        1, "confidence": 0.986, "elements": ["#/readResults/0/lines/2/words/2"]},
+        3.8534, 6.1079, 3.8534], "text": "", "elements": []}], "boundingBox": [0.4985,
+        2.7802, 7.4933, 2.7816, 7.4913, 3.8459, 0.4966, 3.8447]}]}], "documentResults":
+        [{"docType": "prebuilt:invoice", "pageRange": [1, 1], "fields": {"VendorName":
+        {"type": "string", "valueString": "Contoso", "text": "Contoso", "boundingBox":
+        [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "page":
+        1, "confidence": 0.948, "elements": ["#/readResults/0/lines/0/words/0"]},
+        "CustomerAddressRecipient": {"type": "string", "valueString": "Microsoft",
+        "text": "Microsoft", "boundingBox": [5.2045, 1.5114, 5.8155, 1.5114, 5.8155,
+        1.6151, 5.2045, 1.6151], "page": 1, "confidence": 0.986, "elements": ["#/readResults/0/lines/2/words/2"]},
         "VendorAddress": {"type": "string", "valueString": "1 Redmond way Suite 6000
         Redmond, WA 99243", "text": "1 Redmond way Suite 6000 Redmond, WA 99243",
         "boundingBox": [0.8019, 1.7033, 2.1445, 1.7033, 2.1445, 2.1911, 0.8019, 2.1911],
@@ -249,19 +249,19 @@ interactions:
         "page": 1, "confidence": 0.986, "elements": ["#/readResults/0/lines/2/words/2"]}}}]}}'
     headers:
       apim-request-id:
-      - 87745bd4-9fc8-436b-b809-899ff84f1ecc
+      - 14b3b2d8-568e-4320-b33a-a31d036e8c6d
       content-length:
-      - '11396'
+      - '11420'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 30 Oct 2020 01:11:52 GMT
+      - Tue, 03 Nov 2020 17:15:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '17'
+      - '18'
     status:
       code: 200
       message: OK

@@ -16,13 +16,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: cbd0d7c6-38f9-497b-a745-002c998d95f7
+      apim-request-id: 77d1a1e1-1cc9-4d29-89b7-f19e67d31802
       content-length: '0'
-      date: Fri, 30 Oct 2020 01:12:52 GMT
-      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/cbd0d7c6-38f9-497b-a745-002c998d95f7
+      date: Tue, 03 Nov 2020 17:20:48 GMT
+      operation-location: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/77d1a1e1-1cc9-4d29-89b7-f19e67d31802
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '199'
+      x-envoy-upstream-service-time: '209'
     status:
       code: 202
       message: Accepted
@@ -33,34 +33,34 @@ interactions:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/cbd0d7c6-38f9-497b-a745-002c998d95f7
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/77d1a1e1-1cc9-4d29-89b7-f19e67d31802
   response:
     body:
-      string: '{"status": "running", "createdDateTime": "2020-10-30T01:12:52Z", "lastUpdatedDateTime":
-        "2020-10-30T01:12:53Z"}'
+      string: '{"status": "running", "createdDateTime": "2020-11-03T17:20:49Z", "lastUpdatedDateTime":
+        "2020-11-03T17:20:49Z"}'
     headers:
-      apim-request-id: c3f7e244-e733-402c-a134-b98fd39c1db4
+      apim-request-id: d07f5f90-bcd7-4853-9ea6-50dee791ce4c
       content-length: '106'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 01:12:57 GMT
+      date: Tue, 03 Nov 2020 17:20:53 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '11'
+      x-envoy-upstream-service-time: '12'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/cbd0d7c6-38f9-497b-a745-002c998d95f7
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/77d1a1e1-1cc9-4d29-89b7-f19e67d31802
 - request:
     body: null
     headers:
       User-Agent:
       - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/cbd0d7c6-38f9-497b-a745-002c998d95f7
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/77d1a1e1-1cc9-4d29-89b7-f19e67d31802
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-30T01:12:52Z",
-        "lastUpdatedDateTime": "2020-10-30T01:13:01Z", "analyzeResult": {"version":
+      string: '{"status": "succeeded", "createdDateTime": "2020-11-03T17:20:49Z",
+        "lastUpdatedDateTime": "2020-11-03T17:20:58Z", "analyzeResult": {"version":
         "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
         "unit": "inch", "lines": [{"text": "Contoso", "boundingBox": [0.5384, 1.1583,
         1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "words": [{"text": "Contoso",
@@ -182,15 +182,15 @@ interactions:
         5, "text": "PT", "boundingBox": [6.1079, 3.311, 7.4922, 3.311, 7.4922, 3.6393,
         6.1079, 3.6393], "elements": ["#/readResults/0/lines/17/words/0"]}, {"rowIndex":
         2, "columnIndex": 5, "boundingBox": [6.1079, 3.6393, 7.4922, 3.6393, 7.4922,
-        3.8534, 6.1079, 3.8534]}], "boundingBox": [0.4985, 2.7802, 7.4933, 2.7816,
-        7.4913, 3.8459, 0.4966, 3.8447]}]}], "documentResults": [{"docType": "prebuilt:invoice",
-        "pageRange": [1, 1], "fields": {"VendorName": {"type": "string", "valueString":
-        "Contoso", "text": "Contoso", "boundingBox": [0.5384, 1.1583, 1.4466, 1.1583,
-        1.4466, 1.3534, 0.5384, 1.3534], "page": 1, "confidence": 0.948, "elements":
-        ["#/readResults/0/lines/0/words/0"]}, "CustomerAddressRecipient": {"type":
-        "string", "valueString": "Microsoft", "text": "Microsoft", "boundingBox":
-        [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151], "page":
-        1, "confidence": 0.986, "elements": ["#/readResults/0/lines/2/words/2"]},
+        3.8534, 6.1079, 3.8534], "text": "", "elements": []}], "boundingBox": [0.4985,
+        2.7802, 7.4933, 2.7816, 7.4913, 3.8459, 0.4966, 3.8447]}]}], "documentResults":
+        [{"docType": "prebuilt:invoice", "pageRange": [1, 1], "fields": {"VendorName":
+        {"type": "string", "valueString": "Contoso", "text": "Contoso", "boundingBox":
+        [0.5384, 1.1583, 1.4466, 1.1583, 1.4466, 1.3534, 0.5384, 1.3534], "page":
+        1, "confidence": 0.948, "elements": ["#/readResults/0/lines/0/words/0"]},
+        "CustomerAddressRecipient": {"type": "string", "valueString": "Microsoft",
+        "text": "Microsoft", "boundingBox": [5.2045, 1.5114, 5.8155, 1.5114, 5.8155,
+        1.6151, 5.2045, 1.6151], "page": 1, "confidence": 0.986, "elements": ["#/readResults/0/lines/2/words/2"]},
         "VendorAddress": {"type": "string", "valueString": "1 Redmond way Suite 6000
         Redmond, WA 99243", "text": "1 Redmond way Suite 6000 Redmond, WA 99243",
         "boundingBox": [0.8019, 1.7033, 2.1445, 1.7033, 2.1445, 2.1911, 0.8019, 2.1911],
@@ -219,15 +219,15 @@ interactions:
         "boundingBox": [5.2045, 1.5114, 5.8155, 1.5114, 5.8155, 1.6151, 5.2045, 1.6151],
         "page": 1, "confidence": 0.986, "elements": ["#/readResults/0/lines/2/words/2"]}}}]}}'
     headers:
-      apim-request-id: fa80b48a-f245-4961-b289-e844ba97aba6
-      content-length: '11396'
+      apim-request-id: ca3cb322-1983-44fa-8a65-50b7fd2341bc
+      content-length: '11420'
       content-type: application/json; charset=utf-8
-      date: Fri, 30 Oct 2020 01:13:02 GMT
+      date: Tue, 03 Nov 2020 17:20:59 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '17'
+      x-envoy-upstream-service-time: '23'
     status:
       code: 200
       message: OK
-    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/cbd0d7c6-38f9-497b-a745-002c998d95f7
+    url: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyzeResults/77d1a1e1-1cc9-4d29-89b7-f19e67d31802
 version: 1
