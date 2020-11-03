@@ -460,7 +460,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -469,8 +469,6 @@ class StorageTableTest(TableTestCase):
 
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         tsc = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(tsc)
         try:

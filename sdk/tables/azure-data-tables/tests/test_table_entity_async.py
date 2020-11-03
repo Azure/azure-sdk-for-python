@@ -527,15 +527,13 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             await self._tear_down()
 
-
+    @pytest.mark.skip("Cosmos supports large property names.")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_insert_entity_property_name_too_long(self, resource_group, location, storage_account,
                                                         storage_account_key):
         # Arrange
         await self._set_up(storage_account, storage_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large property names.")
         try:
             entity = self._create_random_base_entity_dict()
             entity['a' * 256] = 'badval'

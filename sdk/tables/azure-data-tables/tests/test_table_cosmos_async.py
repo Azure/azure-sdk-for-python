@@ -259,13 +259,8 @@ class TableTestAsync(AsyncTableTestCase):
                                                      cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos URLs support unicode table names")
         ts = TableServiceClient(url, cosmos_account_key)
         table_name = u'啊齄丂狛狜'
-
-        # Act
-        # with self.assertRaises(HttpResponseError):
 
         with pytest.raises(ValueError) as excinfo:
             await ts.create_table(table_name=table_name)

@@ -54,16 +54,18 @@ class StorageTableEntityTest(TableTestCase):
 
     async def _tear_down(self):
         if self.is_live:
-            try:
-                await self.ts.delete_table(self.table_name)
-            except:
-                pass
-
-            for table_name in self.query_tables:
+            with self.ts as t:
                 try:
-                    await self.ts.delete_table(table_name)
+                    await t.delete_table(self.table_name)
                 except:
                     pass
+
+                for table_name in self.query_tables:
+                    try:
+                        await t.delete_table(table_name)
+                    except:
+                        pass
+
 
     # --Helpers-----------------------------------------------------------------
 
@@ -1326,17 +1328,17 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(2)
+            async with await self._create_query_table(2) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities():
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities():
+                    entities.append(t)
 
-            # Assert
-            self.assertEqual(len(entities), 2)
-            for entity in entities:
-                self._assert_default_entity(entity)
+                # Assert
+                self.assertEqual(len(entities), 2)
+                for entity in entities:
+                    self._assert_default_entity(entity)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -1348,15 +1350,15 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(0)
+            async with await self._create_query_table(0) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities():
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities():
+                    entities.append(t)
 
-            # Assert
-            self.assertEqual(len(entities), 0)
+                # Assert
+                self.assertEqual(len(entities), 0)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -1368,17 +1370,17 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(2)
+            async with await self._create_query_table(2) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities(headers={'accept': 'application/json;odata=fullmetadata'}):
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities(headers={'accept': 'application/json;odata=fullmetadata'}):
+                    entities.append(t)
 
-            # Assert
-            self.assertEqual(len(entities), 2)
-            for entity in entities:
-                self._assert_default_entity_json_full_metadata(entity)
+                # Assert
+                self.assertEqual(len(entities), 2)
+                for entity in entities:
+                    self._assert_default_entity_json_full_metadata(entity)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -1390,55 +1392,21 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(2)
+            async with await self._create_query_table(2) as table:
 
-            # Act
-            entities = []
-            async for t in table.list_entities(headers={'accept': 'application/json;odata=nometadata'}):
-                entities.append(t)
+                # Act
+                entities = []
+                async for t in table.list_entities(headers={'accept': 'application/json;odata=nometadata'}):
+                    entities.append(t)
 
-            # Assert
-            self.assertEqual(len(entities), 2)
-            for entity in entities:
-                self._assert_default_entity_json_no_metadata(entity)
+                # Assert
+                self.assertEqual(len(entities), 2)
+                for entity in entities:
+                    self._assert_default_entity_json_no_metadata(entity)
         finally:
             await self._tear_down()
             if self.is_live:
                 sleep(SLEEP_DELAY)
-
-    @pytest.mark.skip("Batch not implemented")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_query_entities_large(self, resource_group, location, cosmos_account, cosmos_account_key):
-        # Arrange
-        table_name = self._create_query_table(0)
-        total_entities_count = 1000
-        entities_per_batch = 50
-
-        for j in range(total_entities_count // entities_per_batch):
-            batch = TableBatch()
-            for i in range(entities_per_batch):
-                entity = TableEntity()
-                entity.PartitionKey = 'large'
-                entity.RowKey = 'batch{0}-item{1}'.format(j, i)
-                entity.test = EntityProperty(True)
-                entity.test2 = 'hello world;' * 100
-                entity.test3 = 3
-                entity.test4 = EntityProperty(1234567890)
-                entity.test5 = datetime(2016, 12, 31, 11, 59, 59, 0)
-                batch.create_entity(entity)
-            self.ts.commit_batch(table_name, batch)
-
-        # Act
-        start_time = datetime.now()
-        entities = list(self.ts.query_entities(table_name))
-        elapsed_time = datetime.now() - start_time
-
-        # Assert
-        print('query_entities took {0} secs.'.format(elapsed_time.total_seconds()))
-        # azure allocates 5 seconds to execute a query
-        # if it runs slowly, it will return fewer results and make the test fail
-        self.assertEqual(len(entities), total_entities_count)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -1495,15 +1463,15 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(3)
-            # circular dependencies made this return a list not an item paged - problem when calling by page
-            # Act
-            entities = []
-            async for t in table.list_entities(results_per_page=2).by_page():
-                entities.append(t)
+            async with await self._create_query_table(3) as table:
 
-            # Assert
-            self.assertEqual(len(entities), 2)
+                # Act
+                entities = []
+                async for t in table.list_entities(results_per_page=2).by_page():
+                    entities.append(t)
+
+                # Assert
+                self.assertEqual(len(entities), 2)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -1516,33 +1484,33 @@ class StorageTableEntityTest(TableTestCase):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
-            table = await self._create_query_table(5)
+            async with await self._create_query_table(5) as table:
 
-            # Act
-            resp1 = table.list_entities(results_per_page=2).by_page()
-            entities1 = []
-            async for el in await resp1.__anext__():
-                entities1.append(el)
-            resp2 = table.list_entities(results_per_page=2).by_page(
-                continuation_token=resp1.continuation_token)
-            entities2 = []
-            async for el in await resp2.__anext__():
-                entities2.append(el)
-            resp3 = table.list_entities(results_per_page=2).by_page(
-                continuation_token=resp2.continuation_token)
-            entities3 = []
-            async for el in await resp3.__anext__():
-                entities3.append(el)
+                # Act
+                resp1 = table.list_entities(results_per_page=2).by_page()
+                entities1 = []
+                async for el in await resp1.__anext__():
+                    entities1.append(el)
+                resp2 = table.list_entities(results_per_page=2).by_page(
+                    continuation_token=resp1.continuation_token)
+                entities2 = []
+                async for el in await resp2.__anext__():
+                    entities2.append(el)
+                resp3 = table.list_entities(results_per_page=2).by_page(
+                    continuation_token=resp2.continuation_token)
+                entities3 = []
+                async for el in await resp3.__anext__():
+                    entities3.append(el)
 
-            # Assert
-            self.assertEqual(len(entities1), 2)
-            self.assertEqual(len(entities2), 2)
-            self.assertEqual(len(entities3), 1)
-            self._assert_default_entity(entities1[0])
-            self._assert_default_entity(entities1[1])
-            self._assert_default_entity(entities2[0])
-            self._assert_default_entity(entities2[1])
-            self._assert_default_entity(entities3[0])
+                # Assert
+                self.assertEqual(len(entities1), 2)
+                self.assertEqual(len(entities2), 2)
+                self.assertEqual(len(entities3), 1)
+                self._assert_default_entity(entities1[0])
+                self._assert_default_entity(entities1[1])
+                self._assert_default_entity(entities2[0])
+                self._assert_default_entity(entities2[1])
+                self._assert_default_entity(entities3[0])
         finally:
             await self._tear_down()
             if self.is_live:
