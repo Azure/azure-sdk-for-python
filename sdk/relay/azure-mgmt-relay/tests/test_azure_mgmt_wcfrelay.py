@@ -8,9 +8,9 @@
 import unittest
 import time
 
-from msrestazure.azure_exceptions import CloudError
 import azure.mgmt.relay.models
-from azure.mgmt.relay.models import RelayNamespace, Sku, SkuTier, Relaytype, AuthorizationRule, AccessRights, AccessKeys, WcfRelay, ErrorResponseException, ErrorResponse
+from msrestazure.azure_exceptions import CloudError
+from azure.mgmt.relay.models import RelayNamespace, Sku, Relaytype, AuthorizationRule, AccessRights, AccessKeys, WcfRelay, ErrorResponse
 from azure.common.credentials import ServicePrincipalCredentials
 
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
@@ -22,7 +22,7 @@ class MgmtWcfRelayTest(AzureMgmtTestCase):
         super(MgmtWcfRelayTest, self).setUp()
 
         self.relay_client = self.create_mgmt_client(
-            azure.mgmt.relay.RelayManagementClient
+            azure.mgmt.relay.RelayAPI
         )
 
     @ResourceGroupPreparer()
@@ -33,8 +33,8 @@ class MgmtWcfRelayTest(AzureMgmtTestCase):
         #Create a Namespace
         namespace_name = "testingpythontestcaseeventhubnamespaceEventhub"
 
-        namespaceparameter = RelayNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=Sku(tier=SkuTier.standard))
-        creatednamespace = self.relay_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
+        namespaceparameter = RelayNamespace(location=location, tags={'tag1': 'value1', 'tag2': 'value2'}, sku=Sku(tier="standard"))
+        creatednamespace = self.relay_client.namespaces.begin_create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
         self.assertEqual(creatednamespace.name, namespace_name)
 
         #
@@ -68,15 +68,16 @@ class MgmtWcfRelayTest(AzureMgmtTestCase):
         self.assertGreater(len(getlistbynamespacewcfrelayresponse), 0)
 
         # update the Created eventhub
-
         wcfrelayupdateparameter = WcfRelay(
             relay_type=Relaytype.net_tcp,
             user_metadata="User data for WcfRelay updated"
-            )
-
-        updatewcfrelayresponse = self.relay_client.wcf_relays.create_or_update(resource_group_name, namespace_name,
-                                                                                   wcfrelay_name, wcfrelayupdateparameter)
-
+        )
+        updatewcfrelayresponse = self.relay_client.wcf_relays.create_or_update(
+            resource_group_name,
+            namespace_name,
+            wcfrelay_name,
+            wcfrelayupdateparameter
+        )
         self.assertEqual(updatewcfrelayresponse.name, wcfrelay_name)
         self.assertEqual(updatewcfrelayresponse.requires_transport_security, True)
         self.assertEqual(updatewcfrelayresponse.requires_client_authorization, True)
@@ -84,7 +85,9 @@ class MgmtWcfRelayTest(AzureMgmtTestCase):
 
         # Create a new authorizationrule
         authoRule_name = "testingauthrulepy"
-        createwcfrelayauthorule = self.relay_client.wcf_relays.create_or_update_authorization_rule(resource_group_name, namespace_name, wcfrelay_name, authoRule_name,[AccessRights('Send'),AccessRights('Listen')])
+        createwcfrelayauthorule = self.relay_client.wcf_relays.create_or_update_authorization_rule(resource_group_name, namespace_name, wcfrelay_name, authoRule_name, {
+            "rights": [AccessRights('Send'),AccessRights('Listen')]
+        })
         self.assertEqual(createwcfrelayauthorule.name, authoRule_name, "Authorization rule name not as created - create_or_update_authorization_rule ")
         self.assertEqual(len(createwcfrelayauthorule.rights), 2)
 
@@ -95,7 +98,7 @@ class MgmtWcfRelayTest(AzureMgmtTestCase):
 
         # update the rights of the authorizatiorule
         getwcfrelayauthorule.rights.append('Manage')
-        updatewcfrelayauthorule = self.relay_client.wcf_relays.create_or_update_authorization_rule(resource_group_name, namespace_name, wcfrelay_name, authoRule_name, getwcfrelayauthorule.rights)
+        updatewcfrelayauthorule = self.relay_client.wcf_relays.create_or_update_authorization_rule(resource_group_name, namespace_name, wcfrelay_name, authoRule_name, getwcfrelayauthorule)
         self.assertEqual(updatewcfrelayauthorule.name, authoRule_name, "Authorization rule name not as passed as parameter for update call - create_or_update_authorization_rule ")
         self.assertEqual(len(updatewcfrelayauthorule.rights), 3, "Access rights mis match as updated  - create_or_update_authorization_rule ")
 
@@ -108,11 +111,15 @@ class MgmtWcfRelayTest(AzureMgmtTestCase):
         self.assertIsNotNone(listkeysauthorizationrule)
 
         # regenerate Keys for authorizationrule - Primary
-        regenratePrimarykeyauthorizationrule = self.relay_client.wcf_relays.regenerate_keys(resource_group_name, namespace_name, wcfrelay_name, authoRule_name, 'PrimaryKey')
+        regenratePrimarykeyauthorizationrule = self.relay_client.wcf_relays.regenerate_keys(resource_group_name, namespace_name, wcfrelay_name, authoRule_name, {
+            "key_type": 'PrimaryKey'
+        })
         self.assertNotEqual(listkeysauthorizationrule.primary_key,regenratePrimarykeyauthorizationrule.primary_key)
 
         # regenerate Keys for authorizationrule - Primary
-        regenrateSecondarykeyauthorizationrule = self.relay_client.wcf_relays.regenerate_keys(resource_group_name,namespace_name, wcfrelay_name, authoRule_name, 'SecondaryKey')
+        regenrateSecondarykeyauthorizationrule = self.relay_client.wcf_relays.regenerate_keys(resource_group_name,namespace_name, wcfrelay_name, authoRule_name, {
+            "key_type": 'SecondaryKey'
+        })
         self.assertNotEqual(listkeysauthorizationrule.secondary_key, regenrateSecondarykeyauthorizationrule.secondary_key)
 
         # delete the authorizationrule
@@ -122,7 +129,7 @@ class MgmtWcfRelayTest(AzureMgmtTestCase):
         getwcfrelayresponse = self.relay_client.wcf_relays.delete(resource_group_name, namespace_name, wcfrelay_name)
 
         # Delete the create namespace
-        self.relay_client.namespaces.delete(resource_group_name, namespace_name).result()
+        self.relay_client.namespaces.begin_delete(resource_group_name, namespace_name).result()
 
 
 # ------------------------------------------------------------------------------

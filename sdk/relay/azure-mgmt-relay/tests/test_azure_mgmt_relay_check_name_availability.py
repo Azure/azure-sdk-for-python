@@ -16,7 +16,7 @@ class MgmtRelayTest(AzureMgmtTestCase):
         super(MgmtRelayTest, self).setUp()
 
         self.relay_client = self.create_mgmt_client(
-            azure.mgmt.relay.RelayManagementClient
+            azure.mgmt.relay.RelayAPI
         )
 
     def process(self, result):
@@ -24,7 +24,9 @@ class MgmtRelayTest(AzureMgmtTestCase):
 
     def test_eh_namespace_available(self):
         # Check the namespace availability
-        availabilityresult = self.relay_client.namespaces.check_name_availability_method("Testingehnamespaceavailabilityforpython")
+        availabilityresult = self.relay_client.namespaces.check_name_availability({
+            "name": "Testingehnamespaceavailabilityforpython"
+        })
         self.assertEqual(availabilityresult.name_available, True)
 
 
