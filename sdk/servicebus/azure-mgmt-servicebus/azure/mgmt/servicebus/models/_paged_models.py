@@ -90,6 +90,19 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
+class ArmDisasterRecoveryPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ArmDisasterRecovery <azure.mgmt.servicebus.models.ArmDisasterRecovery>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ArmDisasterRecovery]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ArmDisasterRecoveryPaged, self).__init__(*args, **kwargs)
 class SBQueuePaged(Paged):
     """
     A paging container for iterating over a list of :class:`SBQueue <azure.mgmt.servicebus.models.SBQueue>` object
@@ -116,19 +129,6 @@ class SBTopicPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SBTopicPaged, self).__init__(*args, **kwargs)
-class ArmDisasterRecoveryPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ArmDisasterRecovery <azure.mgmt.servicebus.models.ArmDisasterRecovery>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ArmDisasterRecovery]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ArmDisasterRecoveryPaged, self).__init__(*args, **kwargs)
 class EventhubPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Eventhub <azure.mgmt.servicebus.models.Eventhub>` object

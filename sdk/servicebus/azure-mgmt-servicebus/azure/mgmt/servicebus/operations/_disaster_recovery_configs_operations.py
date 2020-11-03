@@ -24,7 +24,7 @@ class DisasterRecoveryConfigsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2017-04-01".
+    :ivar api_version: Client API version. Constant value: "2018-01-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class DisasterRecoveryConfigsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-04-01"
+        self.api_version = "2018-01-01-preview"
 
         self.config = config
 
@@ -437,7 +437,7 @@ class DisasterRecoveryConfigsOperations(object):
     break_pairing.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/breakPairing'}
 
     def fail_over(
-            self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, alias, is_safe_failover=None, custom_headers=None, raw=False, **operation_config):
         """Invokes GEO DR failover and reconfigure the alias to point to the
         secondary namespace.
 
@@ -448,6 +448,10 @@ class DisasterRecoveryConfigsOperations(object):
         :type namespace_name: str
         :param alias: The Disaster Recovery configuration name
         :type alias: str
+        :param is_safe_failover: Safe failover is to indicate the service
+         should wait for pending replication to finish before switching to the
+         secondary.
+        :type is_safe_failover: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -458,6 +462,10 @@ class DisasterRecoveryConfigsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.servicebus.models.ErrorResponseException>`
         """
+        parameters = None
+        if is_safe_failover is not None:
+            parameters = models.FailoverProperties(is_safe_failover=is_safe_failover)
+
         # Construct URL
         url = self.fail_over.metadata['url']
         path_format_arguments = {
@@ -474,6 +482,7 @@ class DisasterRecoveryConfigsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -481,8 +490,14 @@ class DisasterRecoveryConfigsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'FailoverProperties')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -566,7 +581,7 @@ class DisasterRecoveryConfigsOperations(object):
         deserialized = models.SBAuthorizationRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules'}
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules'}
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -633,7 +648,7 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}'}
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}'}
 
     def list_keys(
             self, resource_group_name, namespace_name, alias, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -700,4 +715,4 @@ class DisasterRecoveryConfigsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}/listKeys'}
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/authorizationRules/{authorizationRuleName}/listKeys'}

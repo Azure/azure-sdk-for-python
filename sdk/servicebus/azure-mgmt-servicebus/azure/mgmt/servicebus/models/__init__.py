@@ -24,6 +24,7 @@ try:
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import ErrorResponseError
     from ._models_py3 import Eventhub
+    from ._models_py3 import FailoverProperties
     from ._models_py3 import Identity
     from ._models_py3 import IpFilterRule
     from ._models_py3 import KeyVaultProperties
@@ -72,6 +73,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import ErrorResponseError
     from ._models import Eventhub
+    from ._models import FailoverProperties
     from ._models import Identity
     from ._models import IpFilterRule
     from ._models import KeyVaultProperties
@@ -123,8 +125,8 @@ from ._service_bus_management_client_enums import (
     IPAction,
     SkuName,
     SkuTier,
-    KeySource,
     IdentityType,
+    KeySource,
     PrivateLinkConnectionStatus,
     EndPointProvisioningState,
     NetworkRuleIPAction,
@@ -155,6 +157,7 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'ErrorResponseError',
     'Eventhub',
+    'FailoverProperties',
     'Identity',
     'IpFilterRule',
     'KeyVaultProperties',
@@ -194,9 +197,9 @@ __all__ = [
     'SBAuthorizationRulePaged',
     'PrivateEndpointConnectionPaged',
     'OperationPaged',
+    'ArmDisasterRecoveryPaged',
     'SBQueuePaged',
     'SBTopicPaged',
-    'ArmDisasterRecoveryPaged',
     'EventhubPaged',
     'MigrationConfigPropertiesPaged',
     'PremiumMessagingRegionsPaged',
@@ -205,8 +208,8 @@ __all__ = [
     'IPAction',
     'SkuName',
     'SkuTier',
-    'KeySource',
     'IdentityType',
+    'KeySource',
     'PrivateLinkConnectionStatus',
     'EndPointProvisioningState',
     'NetworkRuleIPAction',

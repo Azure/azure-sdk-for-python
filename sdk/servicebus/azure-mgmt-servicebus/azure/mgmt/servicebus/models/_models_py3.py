@@ -606,6 +606,24 @@ class Eventhub(Resource):
         self.capture_description = capture_description
 
 
+class FailoverProperties(Model):
+    """Safe failover is to indicate the service should wait for pending
+    replication to finish before switching to the secondary.
+
+    :param is_safe_failover: Safe failover is to indicate the service should
+     wait for pending replication to finish before switching to the secondary.
+    :type is_safe_failover: bool
+    """
+
+    _attribute_map = {
+        'is_safe_failover': {'key': 'properties.IsSafeFailover', 'type': 'bool'},
+    }
+
+    def __init__(self, *, is_safe_failover: bool=None, **kwargs) -> None:
+        super(FailoverProperties, self).__init__(**kwargs)
+        self.is_safe_failover = is_safe_failover
+
+
 class Identity(Model):
     """Properties to configure Identity for Bring your Own Keys.
 
@@ -1352,6 +1370,8 @@ class SBNamespace(TrackedResource):
     :type tags: dict[str, str]
     :param sku: Properties of SKU
     :type sku: ~azure.mgmt.servicebus.models.SBSku
+    :param identity: Properties of BYOK Identity description
+    :type identity: ~azure.mgmt.servicebus.models.Identity
     :ivar provisioning_state: Provisioning state of the namespace.
     :vartype provisioning_state: str
     :ivar created_at: The time the namespace was created
@@ -1389,6 +1409,7 @@ class SBNamespace(TrackedResource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'SBSku'},
+        'identity': {'key': 'identity', 'type': 'Identity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
         'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
@@ -1398,9 +1419,10 @@ class SBNamespace(TrackedResource):
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, zone_redundant: bool=None, encryption=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, identity=None, zone_redundant: bool=None, encryption=None, **kwargs) -> None:
         super(SBNamespace, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
+        self.identity = identity
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None

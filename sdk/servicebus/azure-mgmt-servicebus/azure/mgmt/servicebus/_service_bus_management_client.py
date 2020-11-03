@@ -17,9 +17,9 @@ from .operations import NamespacesOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import Operations
+from .operations import DisasterRecoveryConfigsOperations
 from .operations import QueuesOperations
 from .operations import TopicsOperations
-from .operations import DisasterRecoveryConfigsOperations
 from .operations import EventHubsOperations
 from .operations import MigrationConfigsOperations
 from .operations import PremiumMessagingRegionsOperations
@@ -43,12 +43,12 @@ class ServiceBusManagementClient(SDKClient):
     :vartype private_link_resources: azure.mgmt.servicebus.operations.PrivateLinkResourcesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicebus.operations.Operations
+    :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
+    :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
     :ivar queues: Queues operations
     :vartype queues: azure.mgmt.servicebus.operations.QueuesOperations
     :ivar topics: Topics operations
     :vartype topics: azure.mgmt.servicebus.operations.TopicsOperations
-    :ivar disaster_recovery_configs: DisasterRecoveryConfigs operations
-    :vartype disaster_recovery_configs: azure.mgmt.servicebus.operations.DisasterRecoveryConfigsOperations
     :ivar event_hubs: EventHubs operations
     :vartype event_hubs: azure.mgmt.servicebus.operations.EventHubsOperations
     :ivar migration_configs: MigrationConfigs operations
@@ -90,11 +90,11 @@ class ServiceBusManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.queues = QueuesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.topics = TopicsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.event_hubs = EventHubsOperations(
             self._client, self.config, self._serialize, self._deserialize)
