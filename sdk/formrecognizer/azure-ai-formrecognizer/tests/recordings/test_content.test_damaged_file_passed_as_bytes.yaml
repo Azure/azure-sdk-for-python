@@ -13,28 +13,30 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/layout/analyze
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/layout/analyze
   response:
     body:
-      string: '{"error": {"code": "InvalidImage", "message": "The input data is not
-        a valid image or password protected."}}'
+      string: '{"error": {"code": "InvalidImage", "message": "The file submitted couldn''t
+        be parsed. This can be due to one of the following reasons: the file format
+        is not supported ( Supported formats include JPEG, PNG, BMP, PDF and TIFF),
+        the file is corrupted or password protected."}}'
     headers:
       apim-request-id:
-      - 7cca32b3-a1b9-45b2-8a2d-933f61940c66
+      - d28a23b4-5850-43ea-816e-6cf011d2212d
       content-length:
-      - '104'
+      - '270'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 19:23:26 GMT
+      - Thu, 29 Oct 2020 23:34:39 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '6'
     status:
       code: 400
       message: Bad Request

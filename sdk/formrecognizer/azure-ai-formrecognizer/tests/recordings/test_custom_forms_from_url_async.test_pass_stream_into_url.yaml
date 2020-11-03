@@ -9,17 +9,17 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models/xxx/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/custom/models/xxx/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "1001", "message": "Specified model not found or
         not ready, Model Id: xxx"}}'
     headers:
-      apim-request-id: a1d82763-bd07-4731-8c6c-79a0197f7eeb
+      apim-request-id: 8d4e7d7e-f54e-4dac-b449-8f5e80939816
       content-type: application/json; charset=utf-8
-      date: Mon, 14 Sep 2020 20:23:10 GMT
+      date: Fri, 30 Oct 2020 00:59:10 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -27,5 +27,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.1/custom/models/xxx/analyze?includeTextDetails=false
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/custom/models/xxx/analyze?includeTextDetails=false
 version: 1
