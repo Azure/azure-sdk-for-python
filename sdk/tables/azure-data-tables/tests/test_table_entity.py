@@ -478,7 +478,6 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_insert_entity_missing_pk(self, resource_group, location, storage_account, storage_account_key):
@@ -538,12 +537,12 @@ class StorageTableEntityTest(TableTestCase):
             entity = {'PartitionKey': u'pk', 'RowKey': u''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with self.assertRaises(HttpResponseError):
-                    self.table.create_entity(entity=entity)
-            else:
-                resp = self.table.create_entity(entity=entity)
-                self._assert_valid_metadata(resp)
+            # if 'cosmos' in self.table.url:
+            #     with self.assertRaises(HttpResponseError):
+            #         self.table.create_entity(entity=entity)
+            # else:
+            resp = self.table.create_entity(entity=entity)
+            self._assert_valid_metadata(resp)
 
         finally:
             self._tear_down()
@@ -1709,8 +1708,6 @@ class StorageTableEntityTest(TableTestCase):
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         self._set_up(storage_account, storage_account_key)
         try:
             # Arrange

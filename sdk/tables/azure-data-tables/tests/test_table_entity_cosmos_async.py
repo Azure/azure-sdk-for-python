@@ -1555,8 +1555,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_query(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
 
         await self._set_up(cosmos_account, cosmos_account_key)
         try:

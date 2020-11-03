@@ -445,8 +445,6 @@ class StorageTableTest(TableTestCase):
 
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         tsc = TableServiceClient(url, storage_account_key)
         table = self._create_table(tsc)
         try:
