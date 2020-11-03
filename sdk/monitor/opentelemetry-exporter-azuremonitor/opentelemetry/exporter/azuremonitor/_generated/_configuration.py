@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class AzureMonitorExporterConfiguration(Configuration):
-    """Configuration for AzureMonitorExporter.
+class AzureMonitorClientConfiguration(Configuration):
+    """Configuration for AzureMonitorClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -35,10 +35,10 @@ class AzureMonitorExporterConfiguration(Configuration):
         # type: (...) -> None
         if host is None:
             raise ValueError("Parameter 'host' must not be None.")
-        super(AzureMonitorExporterConfiguration, self).__init__(**kwargs)
+        super(AzureMonitorClientConfiguration, self).__init__(**kwargs)
 
         self.host = host
-        kwargs.setdefault('sdk_moniker', 'azuremonitorexporter/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'azuremonitorclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

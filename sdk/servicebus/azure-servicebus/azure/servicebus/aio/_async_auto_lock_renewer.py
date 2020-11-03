@@ -9,14 +9,16 @@ import logging
 import datetime
 from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
 
-from ._async_message import ServiceBusReceivedMessage
+from .._common.message import ServiceBusReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
+from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common.utils import renewable_start_time, utc_now
 from ._async_utils import get_running_loop
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
 
 AsyncLockRenewFailureCallback = Callable[[Union[ServiceBusSession, ServiceBusReceivedMessage],
                                      Optional[Exception]], Awaitable[None]]
+Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
 
 _log = logging.getLogger(__name__)
 
@@ -80,11 +82,14 @@ class AutoLockRenewer:
                 "ServiceBusReceivedMessage and active ServiceBusReceiver.Session objects are expected.")
         return True
 
-    async def _auto_lock_renew(self,
-                               renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
-                               starttime: datetime.datetime,
-                               timeout: float,
-                               on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None) -> None:
+    async def _auto_lock_renew(
+        self,
+        receiver: ServiceBusReceiver,
+        renewable: Renewable,
+        starttime: datetime.datetime,
+        timeout: float,
+        on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None
+    ) -> None:
         # pylint: disable=protected-access
         _log.debug("Running async lock auto-renew for %r seconds", timeout)
         error = None # type: Optional[Exception]
@@ -96,7 +101,12 @@ class AutoLockRenewer:
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(timeout))
                 if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=self._renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", self._renew_period)
-                    await renewable.renew_lock()
+                    try:
+                        # Renewable is a session
+                        await renewable.renew_lock()  # type: ignore
+                    except AttributeError:
+                        # Renewable is a message
+                        await receiver.renew_message_lock(renewable)  # type: ignore
                 await asyncio.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
@@ -115,12 +125,16 @@ class AutoLockRenewer:
 
     def register(
         self,
+        receiver: ServiceBusReceiver,
         renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
         timeout: float = 300,
         on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None
     ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
+        :param receiver: The ServiceBusReceiver instance that is associated with the message or the session to
+         be auto-lock-renewed.
+        :type receiver: ~azure.servicebus.aio.ServiceBusReceiver
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.aio.ServiceBusReceivedMessage,~azure.servicebus.aio.ServiceBusSession]
         :param float timeout: A time in seconds that the lock should be maintained for.
@@ -140,7 +154,7 @@ class AutoLockRenewer:
                                   " auto lock renewing.")
         starttime = renewable_start_time(renewable)
         renew_future = asyncio.ensure_future(
-            self._auto_lock_renew(renewable, starttime, timeout, on_lock_renew_failure),
+            self._auto_lock_renew(receiver, renewable, starttime, timeout, on_lock_renew_failure),
             loop=self._loop)
         self._futures.append(renew_future)
 
