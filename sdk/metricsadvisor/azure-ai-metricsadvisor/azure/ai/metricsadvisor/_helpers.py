@@ -15,6 +15,11 @@ import six
 from msrest import Serializer
 from azure.core.exceptions import HttpResponseError
 from .models import (
+    DataFeedGranularityType,
+    DataFeedGranularity,
+    DataFeedSchema,
+    DataFeedMetric,
+    DataFeedIngestionSettings,
     AnomalyFeedback,
     ChangePointFeedback,
     CommentFeedback,
@@ -124,6 +129,21 @@ def convert_to_generated_data_feed_type(
         ElasticsearchDataFeed]
     :return: The generated model for the data source type
     """
+
+    if isinstance(granularity, (DataFeedGranularityType, six.string_types)):
+        granularity = DataFeedGranularity(
+            granularity_type=granularity,
+        )
+
+    if isinstance(schema, list):
+        schema = DataFeedSchema(
+            metrics=[DataFeedMetric(name=metric_name) for metric_name in schema]
+        )
+
+    if isinstance(ingestion_settings, (datetime.datetime, six.string_types)):
+        ingestion_settings = DataFeedIngestionSettings(
+            ingestion_begin_time=ingestion_settings
+        )
 
     return generated_feed_type(
         data_source_parameter=source.__dict__,

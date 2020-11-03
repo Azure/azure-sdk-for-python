@@ -198,6 +198,7 @@ class StorageTableBatchTest(TableTestCase):
             self._assert_valid_batch_transaction(transaction_result, 1)
             sent_entity = transaction_result.get_entity(entity.RowKey)
             self.assertIsNotNone(sent_entity)
+
             e = await self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
 
             self.assertEqual(e.test, entity.test.value)

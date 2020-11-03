@@ -115,11 +115,6 @@ class StorageTableClientTest(TableTestCase):
             'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
         }
 
-    def _assert_default_entity(self, entity, headers=None):
-        '''
-        Asserts that the entity passed in matches the default entity.
-        '''
-
     def _assert_default_entity(self, entity):
         '''
         Asserts that the entity passed in matches the default entity.
