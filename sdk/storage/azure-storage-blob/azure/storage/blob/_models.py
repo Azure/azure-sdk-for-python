@@ -977,6 +977,10 @@ class BlobSasPermissions(object):
     :param bool read:
         Read the content, properties, metadata and block list. Use the blob as
         the source of a copy operation.
+    :param bool add:
+        Add a block to an append blob.
+    :param bool create:
+        Write a new blob, snapshot a blob, or copy a blob to a new blob.
     :param bool write:
         Create or write content, properties, metadata, or block list. Snapshot
         or lease the blob. Resize the blob (page blob only). Use the blob as the
@@ -987,10 +991,6 @@ class BlobSasPermissions(object):
         Delete the previous blob version for the versioning enabled storage account.
     :param bool tag:
         Set or get tags on the blob.
-    :param bool add:
-        Add a block to an append blob.
-    :param bool create:
-        Write a new blob, snapshot a blob, or copy a blob to a new blob.
     :param bool list:
         Sets the list permission.
     :param bool move:
@@ -1000,15 +1000,15 @@ class BlobSasPermissions(object):
     """
     def __init__(self,
                  read=False,
+                 add=False,
+                 create=False,
                  write=False,
                  delete=False,
                  delete_previous_version=False,
                  tag=True,
-                 add=False,
-                 create=False,
                  list=False,    # pylint: disable=redefined-builtin
                  move=False,
-                 execute=False):  # pylint: disable=redefined-builtin
+                 execute=False):
         self.read = read
         self.add = add
         self.create = create
