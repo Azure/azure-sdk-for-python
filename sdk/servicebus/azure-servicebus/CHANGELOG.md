@@ -36,7 +36,6 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
  now inherit from `azure.servicebus.exceptions.MessageError`.
 * `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`.
-* `encoding` support is removed from `ServiceBusMessage`
 * `ServiceBusReceiver.receive_messages/get_streaming_message_iter` and
  `ServiceBusClient.get_<queue/subscription>_receiver` now raises ValueError if the given `max_wait_time` is less than 0.
 * Message settlement methods are moved from `ServiceBusMessage` to `ServiceBusReceiver`:
