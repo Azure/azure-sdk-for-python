@@ -4,7 +4,6 @@
 # ------------------------------------
 from typing import TYPE_CHECKING
 
-
 from ..._exceptions import CredentialUnavailableError
 from ..._constants import AZURE_VSCODE_CLIENT_ID
 from .._internal import AsyncContextManager
