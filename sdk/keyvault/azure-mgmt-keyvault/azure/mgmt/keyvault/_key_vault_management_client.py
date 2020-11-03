@@ -101,6 +101,19 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
+    def keys(self):
+        """Instance depends on the API version:
+
+           * 2019-09-01: :class:`KeysOperations<azure.mgmt.keyvault.v2019_09_01.operations.KeysOperations>`
+        """
+        api_version = self._get_api_version('keys')
+        if api_version == '2019-09-01':
+            from .v2019_09_01.operations import KeysOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'keys'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def managed_hsms(self):
         """Instance depends on the API version:
 
