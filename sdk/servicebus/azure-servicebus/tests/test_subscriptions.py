@@ -54,7 +54,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     count += 1
-                    message.complete()
+                    receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -86,7 +86,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     count += 1
-                    message.complete()
+                    receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.skip(reason="Pending management apis")
@@ -142,7 +142,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        message.dead_letter(reason="Testing reason", error_description="Testing description")
+                        receiver.dead_letter_message(message, reason="Testing reason", error_description="Testing description")
                     messages = receiver.receive_messages()
 
             assert count == 10
@@ -156,7 +156,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
-                    message.complete()
+                    receiver.complete_message(message)
                     count += 1
             assert count == 0
 
@@ -169,7 +169,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
             ) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
-                    message.complete()
+                    dl_receiver.complete_message(message)
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'

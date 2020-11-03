@@ -214,14 +214,14 @@ async def example_send_and_receive_async():
         messages = await servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             print(str(message))
-            await message.complete()
+            await servicebus_receiver.complete_message(message)
     # [END receive_async]
 
     # [START receive_forever_async]
     async with servicebus_receiver:
         async for message in servicebus_receiver.get_streaming_message_iter():
             print(str(message))
-            await message.complete()
+            await servicebus_receiver.complete_message(message)
     # [END receive_forever_async]
 
     # [START auto_lock_renew_message_async]
@@ -232,7 +232,7 @@ async def example_send_and_receive_async():
         async for message in servicebus_receiver:
             lock_renewal.register(message, timeout=60)
             await process_message(message)
-            await message.complete()
+            await servicebus_receiver.complete_message(message)
     # [END auto_lock_renew_message_async]
 
 
@@ -248,14 +248,14 @@ async def example_receive_deferred_async():
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(str(message))
-            await message.defer()
+            await servicebus_receiver.defer_message(message)
 
         received_deferred_msg = await servicebus_receiver.receive_deferred_messages(
             sequence_numbers=deferred_sequenced_numbers
         )
 
         for msg in received_deferred_msg:
-            await msg.complete()
+            await servicebus_receiver.complete_message(message)
     # [END receive_defer_async]
 
 
@@ -298,7 +298,7 @@ async def example_session_ops_async():
             lock_renewal.register(session, timeout=120)
             async for message in receiver:
                 await process_message(message)
-                await message.complete()
+                await receiver.complete_message(message)
         # [END auto_lock_renew_session_async]
                 break
 

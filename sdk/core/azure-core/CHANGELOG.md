@@ -1,7 +1,12 @@
 
 # Release History
 
-## 1.8.3 (Unreleased)
+## 1.9.0 (unreleased)
+
+### Features
+
+- Add a `continuation_token` attribute to the base `AzureError` exception, and set this value for errors raised
+  during paged or long-running operations.
 
 
 ## 1.8.2 (2020-10-05)

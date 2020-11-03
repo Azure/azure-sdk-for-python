@@ -55,7 +55,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     count += 1
-                    await message.complete()
+                    await receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -87,7 +87,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     count += 1
-                    await message.complete()
+                    await receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -122,7 +122,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        await message.dead_letter(reason="Testing reason", error_description="Testing description")
+                        await receiver.dead_letter_message(message, reason="Testing reason", error_description="Testing description")
                     messages = await receiver.receive_messages()
 
                 assert count == 10
@@ -136,7 +136,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
-                    await message.complete()
+                    await receiver.complete_message(message)
                     count += 1
             assert count == 0
 
@@ -149,7 +149,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             ) as dl_receiver:
                 count = 0
                 async for message in dl_receiver:
-                    await message.complete()
+                    await dl_receiver.complete_message(message)
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
