@@ -48,14 +48,14 @@ def upload_document():
 
 def merge_document():
     # [START merge_document]
-    result = search_client.upload_documents(documents=[{"HotelId": "1000", "Rating": 4.5}])
+    result = search_client.merge_documents(documents=[{"HotelId": "1000", "Rating": 4.5}])
 
     print("Merge into new document succeeded: {}".format(result[0].succeeded))
     # [END merge_document]
 
 def delete_document():
     # [START delete_document]
-    result = search_client.upload_documents(documents=[{"HotelId": "1000"}])
+    result = search_client.delete_documents(documents=[{"HotelId": "1000"}])
 
     print("Delete new document succeeded: {}".format(result[0].succeeded))
     # [END delete_document]
