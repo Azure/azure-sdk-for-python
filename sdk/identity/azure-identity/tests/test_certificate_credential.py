@@ -36,7 +36,11 @@ except ImportError:  # python < 3.3
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
 CERT_PASSWORD = "password"
-BOTH_CERTS = ((CERT_PATH, None), (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD))
+BOTH_CERTS = (
+    (CERT_PATH, None),
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD),  # credential should accept passwords as str or bytes
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
+)
 
 
 def test_no_scopes():
