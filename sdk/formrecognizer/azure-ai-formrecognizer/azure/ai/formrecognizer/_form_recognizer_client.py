@@ -345,7 +345,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
-            raise TypeError("Call begin_recognize_invoice_from_url() to analyze a invoice from a URL.")
+            raise TypeError("Call begin_recognize_invoice_from_url() to analyze an invoice from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
