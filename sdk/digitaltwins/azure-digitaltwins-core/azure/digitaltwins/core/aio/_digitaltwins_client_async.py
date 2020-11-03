@@ -548,7 +548,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def get_event_route(self, event_route_id, **kwargs):
-        # type: (str, **Any) -> DigitalTwinsEventRoute
+        # type: (str, **Any) -> ~azure.digitaltwins.models.DigitalTwinsEventRoute
         """Get an event route.
 
         :param str event_route_id: The Id of the event route.
@@ -565,7 +565,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_event_routes(self, **kwargs):
-        # type: (**Any) -> ~azure.core.paging.AsyncItemPaged[DigitalTwinsEventRoute]
+        # type: (**Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.DigitalTwinsEventRoute]
         """Retrieves all event routes.
 
         :keyword int results_per_page: The maximum number of items to retrieve per request.
@@ -587,7 +587,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def upsert_event_route(self, event_route_id, event_route, **kwargs):
-        # type: (str, "DigitalTwinsEventRoute", **Any) -> None
+        # type: (str, ~azure.digitaltwins.models.DigitalTwinsEventRoute, **Any) -> None
         """Create or update an event route.
 
         :param str event_route_id: The Id of the event route to create or update.
