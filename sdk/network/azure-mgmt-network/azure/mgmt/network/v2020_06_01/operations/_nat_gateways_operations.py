@@ -230,8 +230,6 @@ class NatGatewaysOperations(object):
             deserialized = self._deserialize('NatGateway', response)
         if response.status_code == 201:
             deserialized = self._deserialize('NatGateway', response)
-        if response.status_code == 202:
-            deserialized = self._deserialize('NatGateway', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

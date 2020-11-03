@@ -241,9 +241,15 @@ try:
     from ._models_py3 import LoadBalancingRule
     from ._models_py3 import LocalNetworkGateway
     from ._models_py3 import LogSpecification
+    from ._models_py3 import ManagedRuleGroupOverride
+    from ._models_py3 import ManagedRuleOverride
+    from ._models_py3 import ManagedRulesDefinition
+    from ._models_py3 import ManagedRuleSet
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
+    from ._models_py3 import MatchCondition
     from ._models_py3 import MatchedRule
+    from ._models_py3 import MatchVariable
     from ._models_py3 import MetricSpecification
     from ._models_py3 import NatGateway
     from ._models_py3 import NatGatewaySku
@@ -276,6 +282,7 @@ try:
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationPropertiesFormatServiceSpecification
     from ._models_py3 import OutboundRule
+    from ._models_py3 import OwaspCrsExclusionEntry
     from ._models_py3 import P2SConnectionConfiguration
     from ._models_py3 import P2SVpnConnectionHealth
     from ._models_py3 import P2SVpnConnectionHealthRequest
@@ -291,6 +298,7 @@ try:
     from ._models_py3 import PatchRouteFilter
     from ._models_py3 import PatchRouteFilterRule
     from ._models_py3 import PeerExpressRouteCircuitConnection
+    from ._models_py3 import PolicySettings
     from ._models_py3 import PrepareNetworkPoliciesRequest
     from ._models_py3 import PrivateDnsZoneConfig
     from ._models_py3 import PrivateDnsZoneGroup
@@ -420,6 +428,8 @@ try:
     from ._models_py3 import VpnSiteId
     from ._models_py3 import VpnSiteLink
     from ._models_py3 import VpnSiteLinkConnection
+    from ._models_py3 import WebApplicationFirewallCustomRule
+    from ._models_py3 import WebApplicationFirewallPolicy
 except (SyntaxError, ImportError):
     from ._models import AadAuthenticationParameters
     from ._models import AddressSpace
@@ -652,9 +662,15 @@ except (SyntaxError, ImportError):
     from ._models import LoadBalancingRule
     from ._models import LocalNetworkGateway
     from ._models import LogSpecification
+    from ._models import ManagedRuleGroupOverride
+    from ._models import ManagedRuleOverride
+    from ._models import ManagedRulesDefinition
+    from ._models import ManagedRuleSet
     from ._models import ManagedServiceIdentity
     from ._models import ManagedServiceIdentityUserAssignedIdentitiesValue
+    from ._models import MatchCondition
     from ._models import MatchedRule
+    from ._models import MatchVariable
     from ._models import MetricSpecification
     from ._models import NatGateway
     from ._models import NatGatewaySku
@@ -687,6 +703,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationDisplay
     from ._models import OperationPropertiesFormatServiceSpecification
     from ._models import OutboundRule
+    from ._models import OwaspCrsExclusionEntry
     from ._models import P2SConnectionConfiguration
     from ._models import P2SVpnConnectionHealth
     from ._models import P2SVpnConnectionHealthRequest
@@ -702,6 +719,7 @@ except (SyntaxError, ImportError):
     from ._models import PatchRouteFilter
     from ._models import PatchRouteFilterRule
     from ._models import PeerExpressRouteCircuitConnection
+    from ._models import PolicySettings
     from ._models import PrepareNetworkPoliciesRequest
     from ._models import PrivateDnsZoneConfig
     from ._models import PrivateDnsZoneGroup
@@ -831,6 +849,8 @@ except (SyntaxError, ImportError):
     from ._models import VpnSiteId
     from ._models import VpnSiteLink
     from ._models import VpnSiteLinkConnection
+    from ._models import WebApplicationFirewallCustomRule
+    from ._models import WebApplicationFirewallPolicy
 from ._paged_models import ApplicationGatewayPaged
 from ._paged_models import ApplicationGatewayPrivateEndpointConnectionPaged
 from ._paged_models import ApplicationGatewayPrivateLinkResourcePaged
@@ -924,6 +944,7 @@ from ._paged_models import VpnServerConfigurationPaged
 from ._paged_models import VpnSiteLinkConnectionPaged
 from ._paged_models import VpnSiteLinkPaged
 from ._paged_models import VpnSitePaged
+from ._paged_models import WebApplicationFirewallPolicyPaged
 from ._network_management_client_enums import (
     ApplicationGatewayProtocol,
     ProvisioningState,
@@ -1044,6 +1065,17 @@ from ._network_management_client_enums import (
     HubVirtualNetworkConnectionStatus,
     VpnGatewayTunnelingProtocol,
     VpnAuthenticationType,
+    WebApplicationFirewallEnabledState,
+    WebApplicationFirewallMode,
+    WebApplicationFirewallRuleType,
+    WebApplicationFirewallMatchVariable,
+    WebApplicationFirewallOperator,
+    WebApplicationFirewallTransform,
+    WebApplicationFirewallAction,
+    WebApplicationFirewallPolicyResourceState,
+    OwaspCrsExclusionEntryMatchVariable,
+    OwaspCrsExclusionEntrySelectorMatchOperator,
+    ManagedRuleEnabledState,
 )
 
 __all__ = [
@@ -1278,9 +1310,15 @@ __all__ = [
     'LoadBalancingRule',
     'LocalNetworkGateway',
     'LogSpecification',
+    'ManagedRuleGroupOverride',
+    'ManagedRuleOverride',
+    'ManagedRulesDefinition',
+    'ManagedRuleSet',
     'ManagedServiceIdentity',
     'ManagedServiceIdentityUserAssignedIdentitiesValue',
+    'MatchCondition',
     'MatchedRule',
+    'MatchVariable',
     'MetricSpecification',
     'NatGateway',
     'NatGatewaySku',
@@ -1313,6 +1351,7 @@ __all__ = [
     'OperationDisplay',
     'OperationPropertiesFormatServiceSpecification',
     'OutboundRule',
+    'OwaspCrsExclusionEntry',
     'P2SConnectionConfiguration',
     'P2SVpnConnectionHealth',
     'P2SVpnConnectionHealthRequest',
@@ -1328,6 +1367,7 @@ __all__ = [
     'PatchRouteFilter',
     'PatchRouteFilterRule',
     'PeerExpressRouteCircuitConnection',
+    'PolicySettings',
     'PrepareNetworkPoliciesRequest',
     'PrivateDnsZoneConfig',
     'PrivateDnsZoneGroup',
@@ -1457,6 +1497,8 @@ __all__ = [
     'VpnSiteId',
     'VpnSiteLink',
     'VpnSiteLinkConnection',
+    'WebApplicationFirewallCustomRule',
+    'WebApplicationFirewallPolicy',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationGatewayPrivateLinkResourcePaged',
@@ -1550,6 +1592,7 @@ __all__ = [
     'BgpConnectionPaged',
     'HubIpConfigurationPaged',
     'HubRouteTablePaged',
+    'WebApplicationFirewallPolicyPaged',
     'ApplicationGatewayProtocol',
     'ProvisioningState',
     'IPAllocationMethod',
@@ -1669,4 +1712,15 @@ __all__ = [
     'HubVirtualNetworkConnectionStatus',
     'VpnGatewayTunnelingProtocol',
     'VpnAuthenticationType',
+    'WebApplicationFirewallEnabledState',
+    'WebApplicationFirewallMode',
+    'WebApplicationFirewallRuleType',
+    'WebApplicationFirewallMatchVariable',
+    'WebApplicationFirewallOperator',
+    'WebApplicationFirewallTransform',
+    'WebApplicationFirewallAction',
+    'WebApplicationFirewallPolicyResourceState',
+    'OwaspCrsExclusionEntryMatchVariable',
+    'OwaspCrsExclusionEntrySelectorMatchOperator',
+    'ManagedRuleEnabledState',
 ]
