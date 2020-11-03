@@ -146,7 +146,7 @@ class AutoLockRenewer:
         """
         if not isinstance(renewable, (ServiceBusReceivedMessage, ServiceBusSession)):
             raise TypeError("AutoLockRenewer only supports registration of types "
-                            "azure.servicebus.aio.ServiceBusReceivedMessage (via a receiver's receive methods) and "
+                            "azure.servicebus.ServiceBusReceivedMessage (via a receiver's receive methods) and "
                             "azure.servicebus.aio.ServiceBusSession "
                             "(via a session receiver's property receiver.session).")
         if self._shutdown.is_set():
