@@ -259,8 +259,8 @@ class AzureTestCase(ReplayableTest):
 
     def create_basic_client(self, client_class, **kwargs):
         """ DO NOT USE ME ANYMORE."""
-        logger = logging.getLogger().setLevel(logging.WARNING)
-        logger.warn(
+        logger = logging.getLogger()
+        logger.warning(
             "'create_basic_client' will be deprecated in the future. It is recommended that you use \
                 'get_credential' and 'create_client_from_credential' to create your client."
         )
