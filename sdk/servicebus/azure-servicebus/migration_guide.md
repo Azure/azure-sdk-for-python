@@ -87,7 +87,7 @@ semantics with the sender or receiver lifetime.
 ### Working with Message properties
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `azure.servicebus.Message.user_properties` | `azure.servicebus.Message.application_properties` | Some message properties have been renamed, e.g. accessing the application specific properties of a message. |
+| `azure.servicebus.Message.user_properties` | `azure.servicebus.ServiceBusMessage.application_properties` | Some message properties have been renamed, e.g. accessing the application specific properties of a message. |
 
 
 ## Migration samples
