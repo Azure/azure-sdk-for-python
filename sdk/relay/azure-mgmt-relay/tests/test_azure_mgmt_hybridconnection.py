@@ -8,7 +8,6 @@
 import unittest
 import time
 
-from msrestazure.azure_exceptions import CloudError
 import azure.mgmt.relay.models
 from azure.mgmt.relay.models import RelayNamespace, Sku, AccessRights
 from azure.common.credentials import ServicePrincipalCredentials

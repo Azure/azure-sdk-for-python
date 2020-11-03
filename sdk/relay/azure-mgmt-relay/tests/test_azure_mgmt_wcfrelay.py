@@ -9,7 +9,6 @@ import unittest
 import time
 
 import azure.mgmt.relay.models
-from msrestazure.azure_exceptions import CloudError
 from azure.mgmt.relay.models import RelayNamespace, Sku, Relaytype, AuthorizationRule, AccessRights, AccessKeys, WcfRelay, ErrorResponse
 from azure.common.credentials import ServicePrincipalCredentials
 
