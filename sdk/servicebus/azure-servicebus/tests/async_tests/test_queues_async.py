@@ -42,7 +42,7 @@ from azure.servicebus.exceptions import (
     MessageContentTooLarge,
     OperationTimeoutError
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer, AzureMgmtPreparer
+from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer, AzureTestCase
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
@@ -1135,7 +1135,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 await receiver.complete_message(messages[0])
 
-    @AzureMgmtPreparer(None, None)
+    @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_auto_lock_renew_callback(self):
         results = []
         errors = []
@@ -1215,7 +1215,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             assert not results
             assert not errors
 
-    @AzureMgmtPreparer(None, None)
+    @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
