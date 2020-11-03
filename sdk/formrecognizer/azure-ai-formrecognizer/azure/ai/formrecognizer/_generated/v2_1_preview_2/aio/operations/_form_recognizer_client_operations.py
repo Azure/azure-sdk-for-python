@@ -285,7 +285,7 @@ class FormRecognizerClientOperationsMixin:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff']:
+        if header_parameters['Content-Type'].split(";")[0] in ['application/pdf', 'image/jpeg', 'image/png', 'image/tiff']:
             body_content_kwargs['stream_content'] = file_stream
         elif header_parameters['Content-Type'].split(";")[0] in ['application/json']:
             if file_stream is not None:
@@ -296,7 +296,7 @@ class FormRecognizerClientOperationsMixin:
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/pdf', 'image/bmp', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
+                "['application/pdf', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(header_parameters['Content-Type'])
             )
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -336,7 +336,7 @@ class FormRecognizerClientOperationsMixin:
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
-         Allowed values are: "application/pdf", "image/bmp", "image/jpeg", "image/png", "image/tiff", "application/json".
+         Allowed values are: "application/pdf", "image/jpeg", "image/png", "image/tiff", "application/json".
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -789,7 +789,7 @@ class FormRecognizerClientOperationsMixin:
     async def _analyze_business_card_async_initial(
         self,
         include_text_details: Optional[bool] = False,
-        locale: Optional[str] = None,
+        locale: Optional[Union[str, "models.Locale"]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> None:
@@ -854,7 +854,7 @@ class FormRecognizerClientOperationsMixin:
     async def begin_analyze_business_card_async(
         self,
         include_text_details: Optional[bool] = False,
-        locale: Optional[str] = None,
+        locale: Optional[Union[str, "models.Locale"]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
@@ -867,9 +867,9 @@ class FormRecognizerClientOperationsMixin:
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
-        :param locale: Locale of the business card. Supported locales include: en-AU, en-CA, en-GB, en-
-         IN, en-US(default).
-        :type locale: str
+        :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
+         en-IN, en-US(default).
+        :type locale: str or ~azure.ai.formrecognizer.models.Locale
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
@@ -983,7 +983,7 @@ class FormRecognizerClientOperationsMixin:
     async def _analyze_invoice_async_initial(
         self,
         include_text_details: Optional[bool] = False,
-        locale: Optional[str] = None,
+        locale: Optional[Union[str, "models.Locale"]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> None:
@@ -1048,7 +1048,7 @@ class FormRecognizerClientOperationsMixin:
     async def begin_analyze_invoice_async(
         self,
         include_text_details: Optional[bool] = False,
-        locale: Optional[str] = None,
+        locale: Optional[Union[str, "models.Locale"]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
@@ -1061,9 +1061,9 @@ class FormRecognizerClientOperationsMixin:
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
-        :param locale: Locale of the invoice. Supported locales include: en-AU, en-CA, en-GB, en-IN,
-         en-US(default).
-        :type locale: str
+        :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
+         en-IN, en-US(default).
+        :type locale: str or ~azure.ai.formrecognizer.models.Locale
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
@@ -1177,7 +1177,7 @@ class FormRecognizerClientOperationsMixin:
     async def _analyze_receipt_async_initial(
         self,
         include_text_details: Optional[bool] = False,
-        locale: Optional[str] = None,
+        locale: Optional[Union[str, "models.Locale"]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> None:
@@ -1242,7 +1242,7 @@ class FormRecognizerClientOperationsMixin:
     async def begin_analyze_receipt_async(
         self,
         include_text_details: Optional[bool] = False,
-        locale: Optional[str] = None,
+        locale: Optional[Union[str, "models.Locale"]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
@@ -1255,9 +1255,9 @@ class FormRecognizerClientOperationsMixin:
 
         :param include_text_details: Include text lines and element references in the result.
         :type include_text_details: bool
-        :param locale: Locale of the receipt. Supported locales include: en-AU, en-CA, en-GB, en-IN,
-         en-US(default).
-        :type locale: str
+        :param locale: Locale of the input document. Supported locales include: en-AU, en-CA, en-GB,
+         en-IN, en-US(default).
+        :type locale: str or ~azure.ai.formrecognizer.models.Locale
         :param file_stream: .json, .pdf, .jpg, .png or .tiff type file stream.
         :type file_stream: IO or ~azure.ai.formrecognizer.models.SourcePath
         :keyword str content_type: Media type of the body sent to the API. Default value is "application/json".
@@ -1370,6 +1370,7 @@ class FormRecognizerClientOperationsMixin:
 
     async def _analyze_layout_async_initial(
         self,
+        language: Optional[Union[str, "models.Language"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
@@ -1391,6 +1392,8 @@ class FormRecognizerClientOperationsMixin:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if language is not None:
+            query_parameters['language'] = self._serialize.query("language", language, 'str')
         if pages is not None:
             query_parameters['Pages'] = self._serialize.query("pages", pages, '[str]', div=',')
 
@@ -1432,6 +1435,7 @@ class FormRecognizerClientOperationsMixin:
 
     async def begin_analyze_layout_async(
         self,
+        language: Optional[Union[str, "models.Language"]] = None,
         pages: Optional[List[str]] = None,
         file_stream: Optional[Union[IO, "models.SourcePath"]] = None,
         **kwargs
@@ -1443,6 +1447,13 @@ class FormRecognizerClientOperationsMixin:
         'image/bmp'. Alternatively, use 'application/json' type to specify the location (Uri or local
         path) of the document to be analyzed.
 
+        :param language: The BCP-47 language code of the text in the document. Currently, only English
+         ('en'), Dutch (‘nl’), French (‘fr’), German (‘de’), Italian (‘it’), Portuguese (‘pt'),
+         simplified Chinese ('zh-Hans') and Spanish ('es') are supported (print – nine languages and
+         handwritten – English only). Layout supports auto language identification and multi language
+         documents, so only provide a language code if you would like to force the documented to be
+         processed as that specific language.
+        :type language: str or ~azure.ai.formrecognizer.models.Language
         :param pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
          pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
          range with a comma or space.
@@ -1470,6 +1481,7 @@ class FormRecognizerClientOperationsMixin:
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._analyze_layout_async_initial(
+                language=language,
                 pages=pages,
                 file_stream=file_stream,
                 cls=lambda x,y,z: x,
