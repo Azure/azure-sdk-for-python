@@ -550,7 +550,7 @@ class VirtualHubsOperations(object):
         :type virtual_hub_name: str
         :param resource_id: The resource whose effective routes are being
          requested.
-        :type resource_id: ~azure.mgmt.network.v2020_06_01.models.Resource
+        :type resource_id: str
         :param virtual_wan_resource_type: The type of the specified resource
          like RouteTable, ExpressRouteConnection, HubVirtualNetworkConnection,
          VpnConnection and P2SConnection.

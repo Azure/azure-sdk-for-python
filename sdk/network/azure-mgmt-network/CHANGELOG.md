@@ -1,5 +1,46 @@
 # Release History
 
+## 13.0.0 (2020-11-06)
+
+**Features**
+
+  - Model VirtualNetwork has a new parameter extended_location
+  - Model PublicIPAddress has a new parameter extended_location
+  - Model PublicIPPrefix has a new parameter extended_location
+  - Model VpnGateway has a new parameter is_routing_preference_internet
+  - Model ServiceTagsListResult has a new parameter next_link
+  - Model LoadBalancerSku has a new parameter tier
+  - Model P2SVpnGateway has a new parameter is_routing_preference_internet
+  - Model VirtualNetworkGatewayConnection has a new parameter connection_mode
+  - Model ApplicationRule has a new parameter target_urls
+  - Model ApplicationRule has a new parameter terminate_tls
+  - Model ApplicationRule has a new parameter web_categories
+  - Model NatRule has a new parameter translated_fqdn
+  - Model IpGroup has a new parameter firewall_policies
+  - Model VirtualHub has a new parameter allow_branch_to_branch_traffic
+  - Model VirtualNetworkGateway has a new parameter extended_location
+  - Model VirtualNetworkGateway has a new parameter virtual_network_extended_location_resource_id
+  - Model PublicIPAddressSku has a new parameter tier
+  - Model LoadBalancer has a new parameter extended_location
+  - Model LoadBalancerBackendAddress has a new parameter load_balancer_frontend_ip_configuration
+  - Model FirewallPolicy has a new parameter transport_security
+  - Model FirewallPolicy has a new parameter intrusion_detection
+  - Model FirewallPolicy has a new parameter identity
+  - Model FirewallPolicy has a new parameter sku
+  - Model PublicIPPrefixSku has a new parameter tier
+  - Model ExpressRouteConnection has a new parameter express_route_gateway_bypass
+  - Model VirtualNetworkGatewayConnectionListEntity has a new parameter connection_mode
+  - Model VirtualNetworkPeering has a new parameter sync_remote_address_space
+  - Model VirtualNetworkPeering has a new parameter peering_sync_level
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_address_space
+  - Model NetworkInterface has a new parameter extended_location
+  - Added operation group WebCategoriesOperations
+
+**Breaking changes**
+
+  - Operation ConnectionMonitorsOperations.create_or_update has a new signature
+  - Model VirtualHub no longer has parameter enable_virtual_router_route_propogation
+  
 ## 12.0.0 (2020-09-01)
 
 **Features**

@@ -1221,3 +1221,16 @@ class HubRouteTablePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(HubRouteTablePaged, self).__init__(*args, **kwargs)
+class WebApplicationFirewallPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WebApplicationFirewallPolicy <azure.mgmt.network.v2020_05_01.models.WebApplicationFirewallPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WebApplicationFirewallPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WebApplicationFirewallPolicyPaged, self).__init__(*args, **kwargs)
