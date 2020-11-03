@@ -9,8 +9,9 @@ import logging
 import datetime
 from typing import Optional, Iterable, Any, Union, Callable, Awaitable, List
 
-from ._async_message import ServiceBusReceivedMessage
+from .._common.message import ServiceBusReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
+from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common.utils import get_renewable_start_time, utc_now, get_renewable_lock_duration
 from ._async_utils import get_running_loop
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
@@ -89,15 +90,18 @@ class AutoLockRenewer:
                 return False
         except AttributeError: # If for whatever reason the renewable isn't hooked up to a receiver
             raise ServiceBusError("Cannot renew an entity without an associated receiver.  "
-                "ReceivedMessage and active ServiceBusReceiver.Session objects are expected.")
+                "ServiceBusReceivedMessage and active ServiceBusReceiver.Session objects are expected.")
         return True
 
-    async def _auto_lock_renew(self,
-                               renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
-                               starttime: datetime.datetime,
-                               max_lock_renewal_duration: float,
-                               on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None,
-                               renew_period_override: float = None) -> None:
+    async def _auto_lock_renew(
+        self,
+        receiver: ServiceBusReceiver,
+        renewable: Renewable,
+        starttime: datetime.datetime,
+        max_lock_renewal_duration: float,
+        on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None,
+        renew_period_override: float = None
+    ) -> None:
         # pylint: disable=protected-access
         _log.debug("Running async lock auto-renew for %r seconds", max_lock_renewal_duration)
         error = None # type: Optional[Exception]
@@ -111,7 +115,12 @@ class AutoLockRenewer:
                 renew_period = renew_period_override or self._renew_period
                 if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", renew_period)
-                    await renewable.renew_lock()
+                    try:
+                        # Renewable is a session
+                        await renewable.renew_lock()  # type: ignore
+                    except AttributeError:
+                        # Renewable is a message
+                        await receiver.renew_message_lock(renewable)  # type: ignore
                 await asyncio.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
@@ -130,12 +139,16 @@ class AutoLockRenewer:
 
     def register(
         self,
+        receiver: ServiceBusReceiver,
         renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
         max_lock_renewal_duration: Optional[float] = None,
         on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None
     ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
+        :param receiver: The ServiceBusReceiver instance that is associated with the message or the session to
+         be auto-lock-renewed.
+        :type receiver: ~azure.servicebus.aio.ServiceBusReceiver
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.aio.ServiceBusReceivedMessage,~azure.servicebus.aio.ServiceBusSession]
         :param max_lock_renewal_duration: A time in seconds that locks registered to this renewer
@@ -160,7 +173,8 @@ class AutoLockRenewer:
             renew_period_override = time_until_expiry.seconds * .75
 
         renew_future = asyncio.ensure_future(
-            self._auto_lock_renew(renewable,
+            self._auto_lock_renew(receiver,
+                                  renewable,
                                   starttime,
                                   max_lock_renewal_duration or self._max_lock_renewal_duration,
                                   on_lock_renew_failure or self._on_lock_renew_failure,

@@ -11,6 +11,11 @@
    application.
    ([#14354](https://github.com/Azure/azure-sdk-for-python/issues/14354))
 
+### Fixed
+- `ManagedIdentityCredential` uses the API version supported by Azure Functions
+  on Linux consumption hosting plans
+  ([#14670](https://github.com/Azure/azure-sdk-for-python/issues/14670))
+
 ## 1.5.0b2 (2020-10-07)
 ### Fixed
 - `AzureCliCredential.get_token` correctly sets token expiration time,

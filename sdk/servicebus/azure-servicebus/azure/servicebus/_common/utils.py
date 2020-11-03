@@ -30,7 +30,7 @@ from .constants import (
 )
 
 if TYPE_CHECKING:
-    from .message import ServiceBusReceivedMessageBase
+    from .message import ServiceBusReceivedMessage
     from .._servicebus_session import BaseSession
 
 _log = logging.getLogger(__name__)
@@ -98,7 +98,7 @@ def get_renewable_start_time(renewable):
 
 
 def get_renewable_lock_duration(renewable):
-    # type: (Union[ServiceBusReceivedMessageBase, BaseSession]) -> datetime.timedelta
+    # type: (Union[ServiceBusReceivedMessage, BaseSession]) -> datetime.timedelta
     # pylint: disable=protected-access
     try:
         return max(renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0))

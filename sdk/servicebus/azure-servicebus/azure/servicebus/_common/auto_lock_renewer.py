@@ -11,6 +11,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
+from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
 from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 from .utils import get_renewable_start_time, utc_now, get_renewable_lock_duration
@@ -23,6 +24,7 @@ if TYPE_CHECKING:
                                          Optional[Exception]], None]
 
 _log = logging.getLogger(__name__)
+
 
 class AutoLockRenewer(object):
     """Auto renew locks for messages and sessions using a background thread pool.
@@ -106,6 +108,7 @@ class AutoLockRenewer(object):
         return True
 
     def _auto_lock_renew(self,
+                         receiver,
                          renewable,
                          starttime,
                          max_lock_renewal_duration,
@@ -114,7 +117,7 @@ class AutoLockRenewer(object):
         # pylint: disable=protected-access
         _log.debug("Running lock auto-renew thread for %r seconds", max_lock_renewal_duration)
         error = None
-        clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
+        clean_shutdown = False  # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         try:
             while self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(seconds=max_lock_renewal_duration):
@@ -124,7 +127,12 @@ class AutoLockRenewer(object):
                 renew_period = renew_period_override or self._renew_period
                 if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", renew_period)
-                    renewable.renew_lock()
+                    try:
+                        # Renewable is a session
+                        renewable.renew_lock()  # type: ignore
+                    except AttributeError:
+                        # Renewable is a message
+                        receiver.renew_message_lock(renewable)  # type: ignore
                 time.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
@@ -141,10 +149,13 @@ class AutoLockRenewer(object):
             if on_lock_renew_failure and not clean_shutdown:
                 on_lock_renew_failure(renewable, error)
 
-    def register(self, renewable, max_lock_renewal_duration=None, on_lock_renew_failure=None):
-        # type: (Renewable, Optional[float], Optional[LockRenewFailureCallback]) -> None
+    def register(self, receiver, renewable, max_lock_renewal_duration=None, on_lock_renew_failure=None):
+        # type: (ServiceBusReceiver, Renewable, Optional[float], Optional[LockRenewFailureCallback]) -> None
         """Register a renewable entity for automatic lock renewal.
 
+        :param receiver: The ServiceBusReceiver instance that is associated with the message or the session to
+         be auto-lock-renewed.
+        :type receiver: ~azure.servicebus.ServiceBusReceiver
         :param renewable: A locked entity that needs to be renewed.
         :type renewable: Union[~azure.servicebus.ServiceBusReceivedMessage, ~azure.servicebus.ServiceBusSession]
         :param max_lock_renewal_duration: A time in seconds that the lock should be maintained for.
@@ -170,6 +181,7 @@ class AutoLockRenewer(object):
             renew_period_override = time_until_expiry.seconds * .75
 
         self._executor.submit(self._auto_lock_renew,
+                              receiver,
                               renewable,
                               starttime,
                               max_lock_renewal_duration or self._max_lock_renewal_duration,

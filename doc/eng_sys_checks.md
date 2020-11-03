@@ -116,7 +116,7 @@ It is lot of combinations if we need to run tests for all released versions with
 
 Following are the additional tests we run during nightly CI checks.
 
-####Latest Dependency Test 
+#### Latest Dependency Test 
  
 This test makes sure that a package being developed works absolutely fine using latest released version of required Azure SDK package as long as there is a released version which satisfies the requirement specification. Workflow of this test is as follows: 
  
@@ -133,7 +133,7 @@ Tox name of this test is `latestdependency` and steps to manually run this test 
         `Tox –e latestdependency –c ../../../tox/tox.ini`
  
  
-####Oldest Dependency Test 
+#### Minimum Dependency Test 
  
 This test makes sure that a package being developed works absolutely fine using oldest released version of required Azure SDK package as long as there is a released version which satisfies the requirement specification. Workflow of this test is as follows: 
  
@@ -150,7 +150,7 @@ Tox name of this test is `mindependency` and steps to manually run this test loc
 `Tox –e mindependency –c ../../../tox/tox.ini`
  
  
-####Regression Test 
+#### Regression Test 
  
 As mentioned earlier, regression test or reverse dependency test is added to avoid a regression scenario for customers when any new change is made in a package that is required by other packages. Currently we have only very few Azure SDK packages that are added as required package by other Azure SDK package. As of now, list of these required packages are: 
 `azure-core`

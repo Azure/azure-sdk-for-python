@@ -32,7 +32,7 @@ with servicebus_client:
         for msg in received_msgs:
             print("Deferring msg: {}".format(str(msg)))
             deferred_sequenced_numbers.append(msg.sequence_number)
-            msg.defer()
+            receiver.defer_message(msg)
 
         if deferred_sequenced_numbers:
             received_deferred_msg = receiver.receive_deferred_messages(
@@ -41,7 +41,7 @@ with servicebus_client:
 
             for msg in received_deferred_msg:
                 print("Completing deferred msg: {}".format(str(msg)))
-                msg.complete()
+                receiver.complete_message(msg)
         else:
             print("No messages received.")
 
