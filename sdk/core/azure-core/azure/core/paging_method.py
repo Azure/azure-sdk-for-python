@@ -40,7 +40,7 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_next_request_parameters(self):
+    def get_next_request_parameters(self, continuation_token):
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -93,7 +93,7 @@ class BasicPagingMethod(PagingMethodABC):
         cls=None,
         path_format_arguments=None,
         item_name="value",
-        continuation_token_name="next_link",
+        continuation_token_location="next_link",
         **kwargs
     ):
         self._client = client
@@ -103,7 +103,7 @@ class BasicPagingMethod(PagingMethodABC):
         self._path_format_arguments = path_format_arguments
         self._initial_response = initial_response
         self._item_name = item_name
-        self._continuation_token_name = continuation_token_name
+        self._continuation_token_location = continuation_token_location
         self._did_a_call_already = False
 
     def get_initial_page(self):
@@ -117,7 +117,7 @@ class BasicPagingMethod(PagingMethodABC):
     def get_next_link(self, continuation_token: str):
         return continuation_token
 
-    def get_next_request_parameters(self):
+    def get_next_request_parameters(self, continuation_token):
         query_parameters = self._initial_request.query
         header_parameters = self._initial_request.headers
         body_parameters = self._initial_request.body
@@ -163,13 +163,13 @@ class BasicPagingMethod(PagingMethodABC):
         return iter(list_of_elem)
 
     def get_continuation_token(self, pipeline_response, deserialized):
-        if not self._continuation_token_name:
+        if not self._continuation_token_location:
             return None
-        if not hasattr(deserialized, self._continuation_token_name):
+        if not hasattr(deserialized, self._continuation_token_location):
             raise ValueError(
-                "The response object does not have property '{}' to extract continuation token from".format(self._continuation_token_name)
+                "The response object does not have property '{}' to extract continuation token from".format(self._continuation_token_location)
             )
-        return getattr(deserialized, self._continuation_token_name)
+        return getattr(deserialized, self._continuation_token_location)
 
     def extract_data(self, pipeline_response):
         deserialized = self._deserialize_output(pipeline_response)
@@ -179,24 +179,24 @@ class BasicPagingMethod(PagingMethodABC):
         return continuation_token, list_of_elem
 
 
-class SeperateNextOperationPagingMethod(BasicPagingMethod):
-    """Use this paging method if the swagger defines a separate next operation
+class DifferenteNextOperationPagingMethod(BasicPagingMethod):
+    """Use this paging method if the swagger defines a different next operation
     """
 
     def __init__(
         self,
         client,
         deserialize_output,
-        prepare_request_to_separate_next_operation,
+        prepare_next_request,
         initial_request=None,
         initial_response=None,
         cls=None,
         path_format_arguments=None,
         item_name="value",
-        continuation_token_name="next_link",
+        continuation_token_location="next_link",
         **kwargs
     ):
-        super(SeperateNextOperationPagingMethod, self).__init__(
+        super(DifferenteNextOperationPagingMethod, self).__init__(
             client=client,
             deserialize_output=deserialize_output,
             initial_request=initial_request,
@@ -204,13 +204,13 @@ class SeperateNextOperationPagingMethod(BasicPagingMethod):
             cls=cls,
             path_format_arguments=path_format_arguments,
             item_name=item_name,
-            continuation_token_name=continuation_token_name,
+            continuation_token_location=continuation_token_location,
         )
-        self._prepare_request_to_separate_next_operation = prepare_request_to_separate_next_operation
+        self._prepare_next_request = prepare_next_request
         self._next_request = None
 
     def get_next_link(self, continuation_token: str):
-        self._next_request = self._prepare_request_to_separate_next_operation(continuation_token)
+        self._next_request = self._prepare_next_request(continuation_token)
         return self._next_request.url
 
     def get_next_request_parameters(self):
@@ -234,7 +234,7 @@ class ContinuationTokenPagingMethod(BasicPagingMethod):
         cls=None,
         path_format_arguments=None,
         item_name="value",
-        continuation_token_name="next_link",
+        continuation_token_location="next_link",
         **kwargs
     ):
         super(ContinuationTokenPagingMethod, self).__init__(
@@ -245,19 +245,19 @@ class ContinuationTokenPagingMethod(BasicPagingMethod):
             cls=cls,
             path_format_arguments=path_format_arguments,
             item_name=item_name,
-            continuation_token_name=continuation_token_name,
+            continuation_token_location=continuation_token_location,
         )
         self._continuation_token_input_parameter = continuation_token_input_parameter
 
     def get_next_link(self, continuation_token: str):
         return self._initial_response.request.url
 
-    def _add_continuation_token_param(self, request_parameters):
+    def add_continuation_token_to_request(self, request_parameters, continuation_token):
         set_continuation_token = False
         for api_parameter_type, api_parameters in request_parameters:
             for param_name, param_value in api_parameters.items():
                 if param_name == self._continuation_token_input_parameter:
-                    request_params[api_parameter_type][param_name] = self._continuation_token
+                    request_params[api_parameter_type][param_name] = continuation_token
                     set_continuation_token = True
                     break
 
@@ -267,7 +267,7 @@ class ContinuationTokenPagingMethod(BasicPagingMethod):
                 "the continuation token {} is not present in the API parameters".format(self._paging_options[_PagingOption.TOKEN_INPUT_PARAMETER])
             )
 
-    def get_next_request_parameters(self):
+    def get_next_request_parameters(self, continuation_token):
         query_parameters = self._initial_request.query
         header_parameters = self._initial_request.headers
         body_parameters = self._initial_request.body
@@ -276,5 +276,5 @@ class ContinuationTokenPagingMethod(BasicPagingMethod):
             "headers": header_parameters,
             "content": body_parameters
         }
-        self._add_continuation_token_param(request_parameters)
+        self.add_continuation_token_to_request(request_parameters, continuation_token)
         return request_parameters
