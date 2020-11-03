@@ -54,7 +54,8 @@
         "vaults": "VaultsOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
         "private_link_resources": "PrivateLinkResourcesOperations",
-        "operations": "Operations"
+        "operations": "Operations",
+        "keys": "KeysOperations"
     },
     "operation_mixins": {
     },
