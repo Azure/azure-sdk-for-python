@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class ComplianceState(str, Enum):
+class ComplianceStateType(str, Enum):
 
     pending = "Pending"
     compliant = "Compliant"
@@ -21,7 +21,7 @@ class ComplianceState(str, Enum):
     failed = "Failed"
 
 
-class MessageLevel(str, Enum):
+class MessageLevelType(str, Enum):
 
     error = "Error"
     warning = "Warning"
@@ -33,19 +33,13 @@ class OperatorType(str, Enum):
     flux = "Flux"
 
 
-class OperatorScope(str, Enum):
+class OperatorScopeType(str, Enum):
 
     cluster = "cluster"
     namespace = "namespace"
 
 
-class EnableHelmOperator(str, Enum):
-
-    true = "true"
-    false = "false"
-
-
-class ProvisioningState(str, Enum):
+class ProvisioningStateType(str, Enum):
 
     accepted = "Accepted"
     deleting = "Deleting"
