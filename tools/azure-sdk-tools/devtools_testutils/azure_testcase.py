@@ -5,6 +5,7 @@
 #--------------------------------------------------------------------------
 import functools
 import inspect
+import logging
 import os.path
 import sys
 import zlib
@@ -258,6 +259,12 @@ class AzureTestCase(ReplayableTest):
 
     def create_basic_client(self, client_class, **kwargs):
         """ DO NOT USE ME ANYMORE."""
+        logger = logging.getLogger().setLevel(logging.WARNING)
+        logger.warn(
+            "'create_basic_client' will be deprecated in the future. It is recommended that you use \
+                'get_credential' and 'create_client_from_credential' to create your client."
+        )
+
         credentials = self.get_credential(client_class)
         return self.create_client_from_credential(client_class, credentials, **kwargs)
 
