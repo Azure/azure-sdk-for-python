@@ -4,7 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
-from typing import Optional, Iterator, Iterable, TYPE_CHECKING, Type, Union
+import functools
+from typing import Optional, Callable, TYPE_CHECKING
 
 from uamqp import Source
 
@@ -15,11 +16,22 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    ReceiveMode
+    ReceiveMode,
+    DEADLETTERNAME,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+    MESSAGE_COMPLETE,
+    MESSAGE_DEAD_LETTER,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
-    SessionLockExpired
+    ServiceBusMessageError,
+    MessageAlreadySettled,
+    MessageLockExpired,
+    SessionLockExpired,
+    MessageSettleFailed
 )
 from .utils import utc_from_timestamp, utc_now, trace_link_message
 
@@ -84,6 +96,52 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
             return source
         return self._entity_uri
+
+    def _check_message_alive(self, message, action):
+        # pylint: disable=no-member, protected-access
+        if message._is_peeked_message:
+            raise MessageSettleFailed(action, ServiceBusMessageError("Messages received by peek can not be settled."))
+        if not self._running:
+            raise MessageSettleFailed(action, ServiceBusMessageError("Orphan message had no open connection."))
+        if message._settled:
+            raise MessageAlreadySettled(action)
+        try:
+            if message._lock_expired:
+                raise MessageLockExpired(error=message.auto_renew_error)
+        except TypeError:
+            pass
+        try:
+            if self.session._lock_expired:
+                raise SessionLockExpired(error=self.session.auto_renew_error)
+        except AttributeError:
+            pass
+
+    def _settle_message_via_receiver_link(
+        self,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None
+    ):
+        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> Callable
+        # pylint: disable=no-self-use
+        if settle_operation == MESSAGE_COMPLETE:
+            return functools.partial(message.message.accept)
+        if settle_operation == MESSAGE_ABANDON:
+            return functools.partial(message.message.modify, True, False)
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            return functools.partial(
+                message.message.reject,
+                condition=DEADLETTERNAME,
+                description=dead_letter_error_description,
+                info={
+                    RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description
+                }
+            )
+        if settle_operation == MESSAGE_DEFER:
+            return functools.partial(message.message.modify, True, True)
+        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
 
     def _on_attach(self, source, target, properties, error):
         # pylint: disable=protected-access, unused-argument

@@ -23,8 +23,9 @@
 # THE SOFTWARE.
 #
 #--------------------------------------------------------------------------
-
+import base64
 import json
+import pickle
 import re
 import types
 import unittest
@@ -226,7 +227,7 @@ class TestArmPolling(object):
         response = Response()
         response._content_consumed = True
         response._content = json.dumps(body).encode('ascii') if body is not None else None
-        response.request = mock.create_autospec(Request)
+        response.request = Request()
         response.request.method = method
         response.request.url = RESOURCE_URL
         response.request.headers = {
@@ -583,8 +584,9 @@ class TestArmPolling(object):
         poll = LROPoller(CLIENT, response,
             TestArmPolling.mock_outputs,
             ARMPolling(0))
-        with pytest.raises(HttpResponseError): # TODO: Node.js raises on deserialization
+        with pytest.raises(HttpResponseError) as error: # TODO: Node.js raises on deserialization
             poll.result()
+        assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode('ascii')
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200
