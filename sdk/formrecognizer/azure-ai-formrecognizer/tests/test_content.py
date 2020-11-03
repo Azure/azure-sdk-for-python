@@ -356,3 +356,30 @@ class TestContentFromStream(FormRecognizerTest):
         poller = client.begin_recognize_content(myform, pages=["1-2", "3"])
         result = poller.result()
         assert len(result) == 3
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_content_language_specified(self, client):
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        poller = client.begin_recognize_content(myfile, language="de")
+        assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+        poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_content_language_error(self, client):
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        with pytest.raises(HttpResponseError) as e:
+            client.begin_recognize_content(myfile, language="not a language")
+        assert "NotSupportedLanguage" == e.value.error.code
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    def test_content_language_v2(self, client):
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        with pytest.raises(ValueError) as e:
+            client.begin_recognize_content(myfile, language="en")
+        assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
