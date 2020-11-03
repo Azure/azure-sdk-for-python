@@ -166,7 +166,7 @@ class AutoLockRenewer(object):
         time_until_expiry = get_renewable_lock_duration(renewable)
         renew_period_override = None
         # Default is 10 seconds, but let's leave ourselves a small margin of error because clock skew is a real problem
-        if time_until_expiry <= datetime.timedelta(seconds=self._renew_period + 1):
+        if time_until_expiry <= datetime.timedelta(seconds=self._renew_period + .5):
             renew_period_override = time_until_expiry.seconds * .75
 
         self._executor.submit(self._auto_lock_renew,
