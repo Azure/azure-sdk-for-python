@@ -11,7 +11,6 @@ from msrest import Serializer, Deserializer
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core import MatchConditions
-from ._models import DigitalTwinsEventRoute
 
 from .._utils import (
     prep_if_match
@@ -76,6 +75,9 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         :param str digital_twin_id: The Id of the digital twin.
         :param Dict[str, object] digital_twin:
             Dictionary containing the twin to create or update.
+        :keyword str etag: Only perform the operation if the entity does not already exist.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag
         :return: Dictionary containing the created or updated twin.
         :rtype: Dict[str, object]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
@@ -84,9 +86,13 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         :raises :class: `~azure.core.exceptions.ResourceExistsError`:
             If the digital twin is already exist.
         """
-        return await self._client.digital_twins.add(
+        etag = kwargs.get("etag", None)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
+
+        return self._client.digital_twins.add(
             digital_twin_id,
             digital_twin,
+            if_none_match=prep_if_none_match(etag, match_condition),
             **kwargs
         )
 
@@ -157,12 +163,12 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         )
 
     @distributed_trace_async
-    async def get_component(self, digital_twin_id, component_path, **kwargs):
+    async def get_component(self, digital_twin_id, component_name, **kwargs):
         # type: (str, str, **Any) -> Dict[str, object]
         """Get a component on a digital twin.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :param str component_path: The component being retrieved.
+        :param str component_name: The component being retrieved.
         :return: Dictionary containing the component.
         :rtype: Dict[str, object]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
@@ -171,7 +177,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         """
         return await self._client.digital_twins.get_component(
             digital_twin_id,
-            component_path,
+            component_name,
             **kwargs
         )
 
@@ -179,7 +185,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
     async def update_component(
         self,
         digital_twin_id,
-        component_path,
+        component_name,
         json_patch,
         **kwargs
     ):
@@ -187,7 +193,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         """Update properties of a component on a digital twin using a JSON patch.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :param str component_path: The component being updated.
+        :param str component_name: The component being updated.
         :param Dict[str, object] json_patch: An update specification described by JSON Patch.
         :keyword str etag: Only perform the operation if the entity's etag matches one of
             the etags provided or * is provided.
@@ -204,7 +210,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
         return await self._client.digital_twins.update_component(
             digital_twin_id,
-            component_path,
+            component_name,
             patch_document=json_patch,
             if_match=prep_if_match(etag, match_condition),
             **kwargs
@@ -237,6 +243,9 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         :param str digital_twin_id: The Id of the digital twin.
         :param str relationship_id: The Id of the relationship to retrieve.
         :param Dict[str, object] relationship: Dictionary containing the relationship.
+        :keyword str etag: Only perform the operation if the entity does not already exist.
+        :keyword ~azure.core.MatchConditions match_condition:
+            The match condition to use upon the etag
         :return: The created or updated relationship.
         :rtype: Dict[str, object]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
@@ -244,10 +253,14 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is either no
             digital twin, target digital twin or relationship with the provided id.
         """
-        return await self._client.digital_twins.add_relationship(
+        etag = kwargs.get("etag", None)
+        match_condition = kwargs.get("match_condition", MatchConditions.Unconditionally)
+
+        return self._client.digital_twins.add_relationship(
             id=digital_twin_id,
             relationship_id=relationship_id,
             relationship=relationship,
+            if_none_match=prep_if_none_match(etag, match_condition),
             **kwargs
         )
 
@@ -389,7 +402,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
     async def publish_component_telemetry(
         self,
         digital_twin_id,
-        component_path,
+        component_name,
         payload,
         message_id=None,
         **kwargs
@@ -399,7 +412,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
             one or many destination endpoints (subscribers) defined under.
 
         :param str digital_twin_id: The Id of the digital twin.
-        :param str component_path: The name of the DTDL component.
+        :param str component_name: The name of the DTDL component.
         :param object payload: The telemetry payload to be sent.
         :param str message_id: The message Id.
         :return: None
@@ -415,7 +428,7 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
         return await self._client.digital_twins.send_component_telemetry(
             digital_twin_id,
-            component_path,
+            component_name,
             dt_id=message_id,
             telemetry=payload,
             dt_timestamp=timestamp,

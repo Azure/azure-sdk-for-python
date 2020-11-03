@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._digitaltwins_client_async import DigitalTwinsClient
-from ._models import DigitalTwinsEventRoute
 from .._generated.models import DigitalTwinsModelData
 from .._generated.models import QueryResult
 from .._generated.models import IncomingRelationship
