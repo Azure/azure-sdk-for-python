@@ -10,8 +10,6 @@ import time
 
 import azure.mgmt.relay.models
 from azure.mgmt.relay.models import RelayNamespace, Sku, AccessRights
-from azure.common.credentials import ServicePrincipalCredentials
-
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 
