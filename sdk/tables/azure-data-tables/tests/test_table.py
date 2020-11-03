@@ -509,6 +509,7 @@ class StorageTableTest(TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
+    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_locale(self, resource_group, location, storage_account, storage_account_key):
