@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._cognitive_services_management_client import CognitiveServicesManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['CognitiveServicesManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
