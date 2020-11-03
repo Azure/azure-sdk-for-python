@@ -766,6 +766,19 @@ class RecoverableManagedDatabasePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RecoverableManagedDatabasePaged, self).__init__(*args, **kwargs)
+class BackupShortTermRetentionPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BackupShortTermRetentionPolicy <azure.mgmt.sql.models.BackupShortTermRetentionPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BackupShortTermRetentionPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(BackupShortTermRetentionPolicyPaged, self).__init__(*args, **kwargs)
 class ManagedInstanceVulnerabilityAssessmentPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ManagedInstanceVulnerabilityAssessment <azure.mgmt.sql.models.ManagedInstanceVulnerabilityAssessment>` object
@@ -1013,19 +1026,6 @@ class ManagedInstancePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ManagedInstancePaged, self).__init__(*args, **kwargs)
-class BackupShortTermRetentionPolicyPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`BackupShortTermRetentionPolicy <azure.mgmt.sql.models.BackupShortTermRetentionPolicy>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[BackupShortTermRetentionPolicy]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(BackupShortTermRetentionPolicyPaged, self).__init__(*args, **kwargs)
 class ManagedDatabasePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object

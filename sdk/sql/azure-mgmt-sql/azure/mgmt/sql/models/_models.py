@@ -280,11 +280,6 @@ class BackupShortTermRetentionPolicy(ProxyResource):
     :param retention_days: The backup retention period in days. This is how
      many days Point-in-Time Restore will be supported.
     :type retention_days: int
-    :param diff_backup_interval_in_hours: The differential backup interval in
-     hours. This is how many interval hours between each differential backup
-     will be supported. This is only applicable to live databases but not
-     dropped databases.
-    :type diff_backup_interval_in_hours: int
     """
 
     _validation = {
@@ -298,13 +293,11 @@ class BackupShortTermRetentionPolicy(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
-        'diff_backup_interval_in_hours': {'key': 'properties.diffBackupIntervalInHours', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(BackupShortTermRetentionPolicy, self).__init__(**kwargs)
         self.retention_days = kwargs.get('retention_days', None)
-        self.diff_backup_interval_in_hours = kwargs.get('diff_backup_interval_in_hours', None)
 
 
 class CheckNameAvailabilityRequest(Model):
