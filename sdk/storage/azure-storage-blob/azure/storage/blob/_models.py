@@ -1014,8 +1014,8 @@ class BlobSasPermissions(object):
         self.create = create
         self.write = write
         self.delete = delete
-        self.list = list
         self.delete_previous_version = delete_previous_version
+        self.list = list
         self.tag = tag
         self.move = move
         self.execute = execute
@@ -1047,17 +1047,17 @@ class BlobSasPermissions(object):
         :rtype: ~azure.storage.blob.BlobSasPermissions
         """
         p_read = 'r' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_list = 'l' in permission
-        p_delete_previous_version = 'x' in permission
-        p_tag = 't' in permission
         p_add = 'a' in permission
         p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_delete_previous_version = 'x' in permission
+        p_list = 'l' in permission
+        p_tag = 't' in permission
         p_move = 'm' in permission
         p_execute = 'e' in permission
-        parsed = cls(read=p_read, write=p_write, delete=p_delete,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add, create=p_create,
+        parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
+                     delete_previous_version=p_delete_previous_version, tag=p_tag,
                      list=p_list, move=p_move, execute=p_execute)
 
         return parsed
