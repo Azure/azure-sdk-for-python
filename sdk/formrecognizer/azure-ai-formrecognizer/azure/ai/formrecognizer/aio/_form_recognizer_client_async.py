@@ -432,6 +432,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
+        :keyword str language: The BCP-47 language code of the text in the document. Currently, only English
+            ('en'), Dutch ('nl'), French ('fr'), German ('de'), Italian ('it'), Portuguese ('pt'),
+            simplified Chinese ('zh-Hans') and Spanish ('es') are supported (print – nine languages and
+            handwritten – English only). Layout supports auto language identification and multilanguage
+            documents, so only provide a language code if you would like to force the documented to be
+            processed as that specific language.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -444,7 +450,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         .. versionadded:: v2.1-preview
-            The *pages* keyword argument
+            The *pages* and *language* keyword arguments
 
         .. admonition:: Example:
 
@@ -456,6 +462,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 :caption: Recognize text and content/layout information from a form.
         """
         pages = kwargs.pop("pages", None)
+        language = kwargs.pop("language", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
@@ -470,6 +477,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
+
+        if language:
+            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"language": language})
+            else:
+                raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
 
         return await self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=form,
@@ -489,6 +502,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
+        :keyword str language: The BCP-47 language code of the text in the document. Currently, only English
+            ('en'), Dutch ('nl'), French ('fr'), German ('de'), Italian ('it'), Portuguese ('pt'),
+            simplified Chinese ('zh-Hans') and Spanish ('es') are supported (print – nine languages and
+            handwritten – English only). Layout supports auto language identification and multilanguage
+            documents, so only provide a language code if you would like to force the documented to be
+            processed as that specific language.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -497,9 +516,10 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         .. versionadded:: v2.1-preview
-            The *pages* keyword argument
+            The *pages* and *language* keyword arguments
         """
         pages = kwargs.pop("pages", None)
+        language = kwargs.pop("language", None)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -508,6 +528,12 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
+
+        if language:
+            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"language": language})
+            else:
+                raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
 
         return await self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},
