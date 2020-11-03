@@ -1,5 +1,40 @@
 # Release History
 
+## 13.0.0 (2020-11-06)
+
+**Features**
+
+  - Model P2SVpnGateway has a new parameter is_routing_preference_internet
+  - Model ServiceTagsListResult has a new parameter next_link
+  - Model LoadBalancer has a new parameter extended_location
+  - Model VirtualNetworkGatewayConnectionListEntity has a new parameter connection_mode
+  - Model ExpressRouteConnection has a new parameter express_route_gateway_bypass
+  - Model PublicIPPrefix has a new parameter extended_location
+  - Model VirtualHub has a new parameter allow_branch_to_branch_traffic
+  - Model LoadBalancerBackendAddress has a new parameter load_balancer_frontend_ip_configuration
+  - Model FirewallPolicy has a new parameter intrusion_detection
+  - Model FirewallPolicy has a new parameter sku
+  - Model FirewallPolicy has a new parameter identity
+  - Model FirewallPolicy has a new parameter transport_security
+  - Model PublicIPAddressSku has a new parameter tier
+  - Model VirtualNetwork has a new parameter extended_location
+  - Model VirtualNetworkGatewayConnection has a new parameter connection_mode
+  - Model PublicIPPrefixSku has a new parameter tier
+  - Model VirtualNetworkGateway has a new parameter extended_location
+  - Model VirtualNetworkGateway has a new parameter virtual_network_extended_location_resource_id
+  - Model LoadBalancerSku has a new parameter tier
+  - Model NatRule has a new parameter translated_fqdn
+  - Model VpnGateway has a new parameter is_routing_preference_internet
+  - Model IpGroup has a new parameter firewall_policies
+  - Model NetworkInterface has a new parameter extended_location
+  - Model VirtualNetworkPeering has a new parameter sync_remote_address_space
+  - Model VirtualNetworkPeering has a new parameter remote_virtual_network_address_space
+  - Model VirtualNetworkPeering has a new parameter peering_sync_level
+  - Model ApplicationRule has a new parameter target_urls
+  - Model ApplicationRule has a new parameter web_categories
+  - Model ApplicationRule has a new parameter terminate_tls
+  - Model PublicIPAddress has a new parameter extended_location
+  
 ## 12.0.0 (2020-09-01)
 
 **Features**
