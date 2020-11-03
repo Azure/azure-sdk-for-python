@@ -64,12 +64,12 @@ async def recursive_access_control_sample(filesystem_client):
         acl_change_result = await directory_client.set_access_control_recursive(acl=acl,
                                                                                 progress_callback=progress_callback,
                                                                                 batch_size=5)
-    except AzureError:
+    except AzureError as error:
         # if the error has continuation_token, you can restart the operation using that continuation_token
-        if AzureError.continuation_token:
+        if error.continuation_token:
             acl_change_result = \
                 await directory_client.set_access_control_recursive(acl=acl,
-                                                                    continuation_token=AzureError.continuation_token,
+                                                                    continuation_token=error.continuation_token,
                                                                     progress_callback=progress_callback,
                                                                     batch_size=5)
 
