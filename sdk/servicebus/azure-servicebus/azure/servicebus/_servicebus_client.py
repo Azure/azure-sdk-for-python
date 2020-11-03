@@ -222,8 +222,8 @@ class ServiceBusClient(object):
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default receive_mode is PeekLock.
         :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically stop receiving. The default value is 0, meaning no timeout.
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword Optional[AutoLockRenewer] auto_lock_renewer: An AutoLockRenewer can be provided such that messages are
          automatically registered on receipt.  If the receiver is a session receiver, it will apply to the session
          instead.
@@ -331,8 +331,8 @@ class ServiceBusClient(object):
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default receive_mode is PeekLock.
         :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically stop receiving. The default value is 0, meaning no timeout.
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword Optional[AutoLockRenewer] auto_lock_renewer: An AutoLockRenewer can be provided such that messages are
          automatically registered on receipt.  If the receiver is a session receiver, it will apply to the session
          instead.

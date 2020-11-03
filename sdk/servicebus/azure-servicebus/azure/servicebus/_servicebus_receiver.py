@@ -78,8 +78,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-     automatically shutdown. The default value is 0, meaning no timeout.
+    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+     receiver will automatically stop receiving. The default value is None, meaning no timeout.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
      lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
@@ -190,7 +190,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
         if self._auto_lock_renewer and not self._session:
-            self._auto_lock_renewer.register(message)
+            self._auto_lock_renewer.register(self, message)
         return message
 
     def _create_handler(self, auth):
@@ -232,7 +232,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise
 
         if self._auto_lock_renewer and self._session:
-            self._auto_lock_renewer.register(self.session)
+            self._auto_lock_renewer.register(self, self.session)
 
     def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
@@ -390,7 +390,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
     def get_streaming_message_iter(self, max_wait_time=None):
-        # type: (float) -> Iterator[ServiceBusReceivedMessage]
+        # type: (Optional[float]) -> Iterator[ServiceBusReceivedMessage]
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 
@@ -398,7 +398,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
-        :type max_wait_time: float
+        :type max_wait_time: Optional[float]
         :rtype: Iterator[ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -410,6 +410,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :dedent: 4
                 :caption: Receive indefinitely from an iterator in streaming fashion.
         """
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
         return self._iter_contextual_wrapper(max_wait_time)
 
     @classmethod
@@ -435,8 +437,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          if the client fails to process the message.
          The default mode is PeekLock.
         :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -493,9 +495,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return as soon as at least one message is received and there is a gap in incoming messages regardless
         of the specified batch size.
 
-        :param int max_message_count: Maximum number of messages in the batch. Actual number
+        :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count and incoming stream rate.
-        :param float max_wait_time: Maximum time to wait in seconds for the first message to arrive.
+        :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
@@ -512,6 +514,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive messages from ServiceBus.
 
         """
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
         self._check_live()
         messages = self._do_retryable_operation(
             self._receive,
@@ -521,7 +525,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
         if self._auto_lock_renewer and not self._session:
             for message in messages:
-                self._auto_lock_renewer.register(message)
+                self._auto_lock_renewer.register(self, message)
         return messages
 
     def receive_deferred_messages(self, sequence_numbers, **kwargs):
@@ -576,7 +580,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         )
         if self._auto_lock_renewer and not self._session:
             for message in messages:
-                self._auto_lock_renewer.register(message)
+                self._auto_lock_renewer.register(self, message)
         return messages
 
     def peek_messages(self, max_message_count=1, **kwargs):

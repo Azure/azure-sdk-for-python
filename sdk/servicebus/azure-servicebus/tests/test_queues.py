@@ -131,7 +131,17 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.reply_to = 'reply_to'
                     sender.send_messages(message)
 
+            with pytest.raises(ValueError):
+                sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=0)
+
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+
+            with pytest.raises(ValueError):
+                receiver.receive_messages(max_wait_time=0)
+
+            with pytest.raises(ValueError):
+                receiver.get_streaming_message_iter(max_wait_time=0)
+
             count = 0
             for message in receiver:
                 print_message(_logger, message)
@@ -986,7 +996,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message._lock_expired
                         try:
-                            message.complete()
+                            receiver.complete_message(message)
                             raise AssertionError("Didn't raise MessageLockExpired")
                         except MessageLockExpired as e:
                             assert isinstance(e.inner_exception, AutoLockRenewTimeout)
@@ -995,7 +1005,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             assert message._lock_expired
                             with pytest.raises(MessageLockExpired):
-                                message.complete()
+                                receiver.complete_message(message)
                         else:
                             assert message.delivery_count >= 1
                             print("Remaining messages", message.locked_until_utc, utc_now())

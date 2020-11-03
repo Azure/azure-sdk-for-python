@@ -69,7 +69,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         # In large max_message_count case, like 5000, the pull receive would always return hundreds of messages limited
         # by the perf and time.
         self._further_pull_receive_timeout_ms = 200
-        self._max_wait_time = kwargs.get("max_wait_time", None)
+        max_wait_time = kwargs.get("max_wait_time", None)
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
+        self._max_wait_time = max_wait_time
 
         self._auto_lock_renewer = kwargs.get("auto_lock_renewer", None)
 

@@ -82,8 +82,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      if the client fails to process the message.
      The default mode is PeekLock.
     :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-    :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-     automatically shutdown. The default value is 0, meaning no timeout.
+    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
+     will automatically stop receiving. The default value is None, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
@@ -189,7 +189,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message)
         if self._auto_lock_renewer and not self._session:
-            self._auto_lock_renewer.register(message)
+            self._auto_lock_renewer.register(self, message)
         return message
 
     def _create_handler(self, auth):
@@ -229,7 +229,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise
 
         if self._auto_lock_renewer and self._session:
-            self._auto_lock_renewer.register(self.session)
+            self._auto_lock_renewer.register(self, self.session)
 
     async def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
@@ -411,6 +411,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :dedent: 4
                 :caption: Receive indefinitely from an iterator in streaming fashion.
         """
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
         return self._IterContextualWrapper(self, max_wait_time)
 
     @classmethod
@@ -434,8 +436,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          if the client fails to process the message.
          The default mode is PeekLock.
         :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword float max_wait_time: The timeout in seconds between received messages after which the receiver will
-         automatically shutdown. The default value is 0, meaning no timeout.
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -513,6 +515,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Receive messages from ServiceBus.
 
         """
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
         self._check_live()
         messages = await self._do_retryable_operation(
             self._receive,
@@ -522,7 +526,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         if self._auto_lock_renewer and not self._session:
             for message in messages:
-                self._auto_lock_renewer.register(message)
+                self._auto_lock_renewer.register(self, message)
         return messages
 
     async def receive_deferred_messages(
@@ -583,7 +587,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         if self._auto_lock_renewer and not self._session:
             for message in messages:
-                self._auto_lock_renewer.register(message)
+                self._auto_lock_renewer.register(self, message)
         return messages
 
     async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[ServiceBusReceivedMessage]:
