@@ -19,8 +19,8 @@ class ServiceBusConnectionStringParserTests(AzureMgmtTestCase):
         parse_result = parse_connection_string(conn_str)
         assert parse_result.endpoint == 'sb://resourcename.servicebus.windows.net/'
         assert parse_result.fully_qualified_namespace == 'resourcename.servicebus.windows.net'
-        assert parse_result._shared_access_key_name == 'test'
-        assert parse_result._shared_access_key == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
+        assert parse_result.shared_access_key_name == 'test'
+        assert parse_result.shared_access_key == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
 
     def test_sb_conn_str_parse_sas_and_shared_key(self, **kwargs):
         conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;SharedAccessSignature=THISISASASXXXXXXX='
@@ -46,7 +46,7 @@ class ServiceBusConnectionStringParserTests(AzureMgmtTestCase):
         assert parse_result.endpoint == 'sb://resourcename.servicebus.windows.net/'
         assert parse_result.fully_qualified_namespace == 'resourcename.servicebus.windows.net'
         assert parse_result.shared_access_signature == 'THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
-        assert parse_result._shared_access_key_name == None
+        assert parse_result.shared_access_key_name == None
 
     def test_sb_parse_conn_str_no_keyname(self, **kwargs):
         conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
