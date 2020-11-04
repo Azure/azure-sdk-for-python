@@ -139,6 +139,9 @@ print(get_twin)
 
 Query the Azure Digital Twins instance for digital twins using the [Azure Digital Twins Query Store lanaguage](https://review.docs.microsoft.com/azure/digital-twins/concepts-query-language). Query calls support paging. Here's an example of how to query for digital twins and how to iterate over the results.
 
+Note that there may be a delay between before changes in your instance are reflected in queries.
+For more details on query limitations, see (https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitations)
+
 ```Python Snippet:dt_digitaltwins_query
 query_expression = 'SELECT * FROM digitaltwins'
 query_result = service_client.query_twins(query_expression)
