@@ -13,12 +13,12 @@ from typing import TYPE_CHECKING
 
 from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
+from .message import ServiceBusReceivedMessage
 from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 from .utils import get_renewable_start_time, utc_now, get_renewable_lock_duration
 
 if TYPE_CHECKING:
     from typing import Callable, Union, Optional
-    from .message import ServiceBusReceivedMessage
     Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
     LockRenewFailureCallback = Callable[[Renewable,
                                          Optional[Exception]], None]
@@ -167,6 +167,10 @@ class AutoLockRenewer(object):
 
         :rtype: None
         """
+        if not isinstance(renewable, (ServiceBusReceivedMessage, ServiceBusSession)):
+            raise TypeError("AutoLockRenewer only supports registration of types "
+                            "azure.servicebus.ServiceBusReceivedMessage (via a receiver's receive methods) and "
+                            "azure.servicebus.ServiceBusSession (via a session receiver's property receiver.session).")
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")

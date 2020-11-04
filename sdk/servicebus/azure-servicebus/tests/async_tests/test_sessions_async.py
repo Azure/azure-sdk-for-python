@@ -267,8 +267,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await receiver.complete_message(message)
             assert count == 10
 
@@ -372,8 +372,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await receiver.complete_message(message)
                     count += 1
             assert count == 10
@@ -580,9 +580,9 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                                 message._lock_expired
                             assert message.locked_until_utc is None
                             with pytest.raises(TypeError):
-                                await receiver.renew_message_lock(message)
+                                await session.renew_message_lock(message)
                             assert message.lock_token is not None
-                            await message.complete()
+                            await session.complete_message(message)
                             messages.append(message)
 
                         elif len(messages) == 1:
@@ -592,7 +592,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                             assert session.session._lock_expired
                             assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
-                                await message.complete()
+                                await session.complete_message(message)
                                 raise AssertionError("Didn't raise SessionLockExpired")
                             except SessionLockExpired as e:
                                 assert isinstance(e.inner_exception, AutoLockRenewTimeout)

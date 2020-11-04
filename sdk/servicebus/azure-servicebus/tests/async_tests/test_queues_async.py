@@ -42,10 +42,10 @@ from azure.servicebus.exceptions import (
     MessageContentTooLarge,
     OperationTimeoutError
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer, AzureTestCase
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
-from mocks_async import MockReceivedMessage
+from mocks_async import MockReceivedMessage, MockReceiver
 
 _logger = get_logger(logging.DEBUG)
 
@@ -432,8 +432,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await receiver.complete_message(message)
             assert count == 10
 
@@ -549,8 +549,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10
 
     @pytest.mark.liveTest
@@ -591,8 +591,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await receiver.complete_message(message)
                     count += 1
             assert count == 10
@@ -768,6 +768,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # The 10 iterations is "important" because it gives time for the timed out message to be received again.
                 for i in range(10):
                     message = ServiceBusMessage("{}".format(i))
                     await sender.send_messages(message)
@@ -1197,7 +1198,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 await receiver.complete_message(messages[0])
 
-    @pytest.mark.asyncio
+    @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_auto_lock_renew_callback(self):
         # A warning to future devs: If the renew period override heuristic in registration
         # ever changes, it may break this (since it adjusts renew period if it is not short enough)
@@ -1209,11 +1210,16 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             if error:
                 errors.append(error)
 
+        receiver = MockReceiver()
         auto_lock_renew = AutoLockRenewer()
-        auto_lock_renew._renew_period = 1 # So we can run the test fast.
-        async with auto_lock_renew: # Check that it is called when the object expires for any reason (silent renew failure)
+        with pytest.raises(TypeError):
+            auto_lock_renew.register(receiver, renewable=Exception())  # an arbitrary invalid type.
+
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1  # So we can run the test fast.
+        async with auto_lock_renew:  # Check that it is called when the object expires for any reason (silent renew failure)
             message = MockReceivedMessage(prevent_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             await asyncio.sleep(3)
             assert len(results) == 1 and results[-1]._lock_expired == True
             assert not errors
@@ -1222,8 +1228,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         del errors[:]
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
-        async with auto_lock_renew: # Check that in normal operation it does not get called
-            auto_lock_renew.register(renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
+        async with auto_lock_renew:  # Check that in normal operation it does not get called
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
             await asyncio.sleep(3)
             assert not results
             assert not errors
@@ -1232,9 +1238,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         del errors[:]
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
-        async with auto_lock_renew: # Check that when a message is settled, it will not get called even after expiry
+        async with auto_lock_renew:  # Check that when a message is settled, it will not get called even after expiry
             message = MockReceivedMessage(prevent_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             message._settled = True
             await asyncio.sleep(3)
             assert not results
@@ -1246,7 +1252,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         auto_lock_renew._renew_period = 1
         async with auto_lock_renew: # Check that it is called when there is an overt renew failure
             message = MockReceivedMessage(exception_on_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             await asyncio.sleep(3)
             assert len(results) == 1 and results[-1]._lock_expired == True
             assert errors[-1]
@@ -1255,9 +1261,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         del errors[:]
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
-        async with auto_lock_renew: # Check that it is not called when the renewer is shutdown
+        async with auto_lock_renew:  # Check that it is not called when the renewer is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             await auto_lock_renew.close()
             await asyncio.sleep(3)
             assert not results
@@ -1267,22 +1273,22 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         del errors[:]
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
-        async with auto_lock_renew: # Check that it is not called when the receiver is shutdown
+        async with auto_lock_renew:  # Check that it is not called when the receiver is shutdown
             message = MockReceivedMessage(prevent_renew_lock=True)
-            auto_lock_renew.register(renewable=message, on_lock_renew_failure=callback_mock)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
             message._receiver._running = False
             await asyncio.sleep(3)
             assert not results
             assert not errors
 
-
-    @pytest.mark.asyncio
+    @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
+        receiver = MockReceiver()
         async with auto_lock_renew:
-            auto_lock_renew.register(renewable=MockReceivedMessage())
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
             await asyncio.sleep(3)
 
         with pytest.raises(ServiceBusError):
@@ -1290,12 +1296,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 pass
 
         with pytest.raises(ServiceBusError):
-            auto_lock_renew.register(renewable=MockReceivedMessage())
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
 
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
-        auto_lock_renew.register(renewable=MockReceivedMessage())
+        auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
         time.sleep(3)
 
         await auto_lock_renew.close()
@@ -1305,7 +1311,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 pass
 
         with pytest.raises(ServiceBusError):
-            auto_lock_renew.register(renewable=MockReceivedMessage())
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1320,7 +1326,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(20):
                     yield ServiceBusMessage(
                         body="ServiceBusMessage no. {}".format(i),
-                        label='1st'
+                        subject='1st'
                     )
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
@@ -1346,12 +1352,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     receive_counter += 1
                     for message in messages:
                         print_message(_logger, message)
-                        if message.label == '1st':
+                        if message.subject == '1st':
                             message_1st_received_cnt += 1
                             await receiver.complete_message(message)
-                            message.label = '2nd'
+                            message.subject = '2nd'
                             await sender.send_messages(message)  # resending received message
-                        elif message.label == '2nd':
+                        elif message.subject == '2nd':
                             message_2nd_received_cnt += 1
                             await receiver.complete_message(message)
 

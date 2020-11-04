@@ -49,6 +49,13 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
   - Changed `ServiceBusReceivedMessage.renew_lock` to `ServiceBusReceiver.renew_message_lock`
 * `AutoLockRenewer.register` now takes `ServiceBusReceiver` as a positional parameter.
 * Removed `encoding` support from `ServiceBusMessage`.
+* `ServiceBusMessage.amqp_message` has been renamed to `ServiceBusMessage.amqp_annotated_message` for cross-sdk consistency.
+* All `name` parameters in `ServiceBusAdministrationClient` are now precisely specified ala `queue_name` or `rule_name`
+* `ServiceBusMessage.via_partition_key` is no longer exposed, this is pending a full implementation of transactions as it has no external use.  If needed, the underlying value can still be accessed in `ServiceBusMessage.amqp_annotated_message.annotations`.
+* `ServiceBusMessage.properties` has been renamed to `ServiceBusMessage.application_properties` for consistency with service verbiage.
+* Sub-client (`ServiceBusSender` and `ServiceBusReceiver`) `from_connection_string` initializers have been made internal until needed.  Clients should be initialized from root `ServiceBusClient`.
+* `ServiceBusMessage.label` has been renamed to `ServiceBusMessage.subject`.
+* `ServiceBusMessage.amqp_annotated_message` has had its type renamed from `AMQPMessage` to `AMQPAnnotatedMessage`
 
 **BugFixes**
 

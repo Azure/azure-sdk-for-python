@@ -36,7 +36,24 @@ except ImportError:  # python < 3.3
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
 CERT_PASSWORD = "password"
-BOTH_CERTS = ((CERT_PATH, None), (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD))
+BOTH_CERTS = (
+    (CERT_PATH, None),
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD),  # credential should accept passwords as str or bytes
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
+)
+
+
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        CertificateCredential(tenant, "client-id", CERT_PATH)
+
+    invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            CertificateCredential(tenant, "client-id", CERT_PATH)
 
 
 def test_no_scopes():
@@ -78,7 +95,7 @@ def test_user_agent():
 def test_authority(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority
     expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)

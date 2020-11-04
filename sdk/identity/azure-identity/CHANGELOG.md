@@ -10,6 +10,10 @@
    provided, the credential will authenticate users to an Azure development
    application.
    ([#14354](https://github.com/Azure/azure-sdk-for-python/issues/14354))
+- Credentials raise `ValueError` when constructed with tenant IDs containing
+  invalid characters
+  ([#14821](https://github.com/Azure/azure-sdk-for-python/issues/14821))
+- Raised minimum msal version to 1.6.0
 
 ### Fixed
 - `ManagedIdentityCredential` uses the API version supported by Azure Functions

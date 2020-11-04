@@ -159,6 +159,11 @@ class AutoLockRenewer:
          Default value is None (no callback).
          :rtype: None
         """
+        if not isinstance(renewable, (ServiceBusReceivedMessage, ServiceBusSession)):
+            raise TypeError("AutoLockRenewer only supports registration of types "
+                            "azure.servicebus.ServiceBusReceivedMessage (via a receiver's receive methods) and "
+                            "azure.servicebus.aio.ServiceBusSession "
+                            "(via a session receiver's property receiver.session).")
         if self._shutdown.is_set():
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
