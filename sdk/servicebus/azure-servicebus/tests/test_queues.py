@@ -247,7 +247,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages.append(message)
                     with pytest.raises(MessageAlreadySettled):
                         receiver.complete_message(message)
-                    with pytest.raises(TypeError): # ReceiveAndDelete messages cannot be lock renewed.
+                    with pytest.raises(ValueError): # ReceiveAndDelete messages cannot be lock renewed.
                         renewer = AutoLockRenewer()
                         renewer.register(receiver, message)
     
@@ -1922,6 +1922,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 
                     raise Exception("Should not get here, should fail fast.")
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_receiver_invalid_autolockrenew_mode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            with pytest.raises(ValueError):
+                with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                  receive_mode=ReceiveMode.ReceiveAndDelete,
+                                                  auto_lock_renewer=AutoLockRenewer()) as receiver:
+                
+                    raise Exception("Should not get here, should fail fast because ReceiveAndDelete messages cannot be autorenewed.")
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

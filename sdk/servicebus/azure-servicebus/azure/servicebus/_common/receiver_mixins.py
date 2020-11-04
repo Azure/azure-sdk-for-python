@@ -75,7 +75,11 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._max_wait_time = max_wait_time
 
         self._auto_lock_renewer = kwargs.get("auto_lock_renewer", None)
-
+        if self._auto_lock_renewer \
+                and self._receive_mode == ReceiveMode.ReceiveAndDelete \
+                and self._session_id is None:
+            raise ValueError("Messages received in ReceiveAndDelete receive mode cannot have their locks removed "
+                             "as they have been deleted, providing an AutoLockRenewer in this mode is invalid.")
 
     def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(message=received, receive_mode=self._receive_mode, receiver=self)
