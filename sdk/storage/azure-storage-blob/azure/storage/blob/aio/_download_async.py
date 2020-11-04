@@ -18,7 +18,6 @@ from .._shared.response_handlers import process_storage_error, parse_length_from
 from .._deserialize import get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 
-
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
@@ -390,7 +389,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This operation is blocking until all data is downloaded.
 
-        :keyword int max_concurrency:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
         :param str encoding:
             Test encoding to decode the downloaded bytes. Default is UTF-8.
@@ -458,8 +457,13 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         ]
         while running_futures:
             # Wait for some download to finish before adding a new one
-            _done, running_futures = await asyncio.wait(
+            done, running_futures = await asyncio.wait(
                 running_futures, return_when=asyncio.FIRST_COMPLETED)
+            try:
+                for task in done:
+                    task.result()
+            except HttpResponseError as error:
+                process_storage_error(error)
             try:
                 next_chunk = next(dl_tasks)
             except StopIteration:
@@ -469,7 +473,12 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         if running_futures:
             # Wait for the remaining downloads to finish
-            await asyncio.wait(running_futures)
+            done, _running_futures = await asyncio.wait(running_futures)
+            try:
+                for task in done:
+                    task.result()
+            except HttpResponseError as error:
+                process_storage_error(error)
         return self.size
 
     async def download_to_stream(self, stream, max_concurrency=1):
@@ -479,6 +488,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
+        :param int max_concurrency:
+            The number of parallel connections with which to download.
         :returns: The properties of the downloaded blob.
         :rtype: Any
         """

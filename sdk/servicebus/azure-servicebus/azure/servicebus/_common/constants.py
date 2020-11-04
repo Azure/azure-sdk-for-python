@@ -41,11 +41,6 @@ REQUEST_RESPONSE_ADD_RULE_OPERATION = VENDOR + b":add-rule"
 REQUEST_RESPONSE_REMOVE_RULE_OPERATION = VENDOR + b":remove-rule"
 REQUEST_RESPONSE_GET_RULES_OPERATION = VENDOR + b":enumerate-rules"
 
-SETTLEMENT_COMPLETE = "completed"
-SETTLEMENT_ABANDON = "abandoned"
-SETTLEMENT_DEFER = "defered"
-SETTLEMENT_DEADLETTER = "suspended"
-
 CONTAINER_PREFIX = "servicebus.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
 USER_AGENT_PREFIX = "azsdk-python-servicebus"
@@ -79,6 +74,19 @@ MESSAGE_DEAD_LETTER = 'dead-letter'
 MESSAGE_ABANDON = 'abandon'
 MESSAGE_DEFER = 'defer'
 MESSAGE_RENEW_LOCK = 'renew'
+
+SETTLEMENT_COMPLETE = "completed"
+SETTLEMENT_ABANDON = "abandoned"
+SETTLEMENT_DEFER = "defered"
+SETTLEMENT_DEADLETTER = "suspended"
+
+# The following dict maps the term of settlement actions to the ones used in mgmt request defined by the service.
+MESSAGE_MGMT_SETTLEMENT_TERM_MAP = {
+    MESSAGE_COMPLETE: SETTLEMENT_COMPLETE,
+    MESSAGE_ABANDON: SETTLEMENT_ABANDON,
+    MESSAGE_DEFER: SETTLEMENT_DEFER,
+    MESSAGE_DEAD_LETTER: SETTLEMENT_DEADLETTER
+}
 
 TOKEN_TYPE_JWT = b"jwt"
 TOKEN_TYPE_SASTOKEN = b"servicebus.windows.net:sastoken"
@@ -131,4 +139,4 @@ ANNOTATION_SYMBOL_KEY_MAP = {
 }
 
 
-NEXT_AVAILABLE = SessionFilter.NextAvailable
+NEXT_AVAILABLE_SESSION = SessionFilter.NextAvailable

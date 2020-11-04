@@ -10,6 +10,19 @@
    provided, the credential will authenticate users to an Azure development
    application.
    ([#14354](https://github.com/Azure/azure-sdk-for-python/issues/14354))
+- Credentials raise `ValueError` when constructed with tenant IDs containing
+  invalid characters
+  ([#14821](https://github.com/Azure/azure-sdk-for-python/issues/14821))
+- Raised minimum msal version to 1.6.0
+
+### Fixed
+- Prevent `VisualStudioCodeCredential` using invalid authentication data when
+  no user is signed in to Visual Studio Code
+  ([#14438](https://github.com/Azure/azure-sdk-for-python/issues/14438))
+- `ManagedIdentityCredential` uses the API version supported by Azure Functions
+  on Linux consumption hosting plans
+  ([#14670](https://github.com/Azure/azure-sdk-for-python/issues/14670))
+
 
 ## 1.5.0b2 (2020-10-07)
 ### Fixed

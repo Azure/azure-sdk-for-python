@@ -18,7 +18,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds
   response:
@@ -26,21 +26,21 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - c2babfa4-5d37-4624-a22f-e0389af2928e
+      - 3ab856a7-514e-4108-8921-4d3758e9d39e
       content-length:
       - '0'
       date:
-      - Thu, 22 Oct 2020 15:50:01 GMT
+      - Mon, 26 Oct 2020 17:34:46 GMT
       location:
-      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/78333f6d-aece-46d4-ba41-cd2554ef721c
+      - https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/15a6453c-0232-4b6c-be0b-4d183d299f3a
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '353'
+      - '540'
       x-request-id:
-      - c2babfa4-5d37-4624-a22f-e0389af2928e
+      - 3ab856a7-514e-4108-8921-4d3758e9d39e
     status:
       code: 201
       message: Created
@@ -54,29 +54,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/78333f6d-aece-46d4-ba41-cd2554ef721c
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/15a6453c-0232-4b6c-be0b-4d183d299f3a
   response:
     body:
-      string: '{"dataFeedId":"78333f6d-aece-46d4-ba41-cd2554ef721c","dataFeedName":"httprequestfeedgetcb44180e","metrics":[{"metricId":"1b55ca3f-bb3c-4d40-b252-2141943283fd","metricName":"cost","metricDisplayName":"cost","metricDescription":""},{"metricId":"ea0e5ae5-a4a6-427e-8a53-72444a962a0b","metricName":"revenue","metricDisplayName":"revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"category"},{"dimensionName":"city","dimensionDisplayName":"city"}],"dataStartFrom":"2019-10-01T00:00:00Z","dataSourceType":"HttpRequest","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["krpratic@microsoft.com"],"viewers":[],"creator":"krpratic@microsoft.com","status":"Active","createdTime":"2020-10-22T15:50:02Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"httpMethod":"GET","url":"connectionstring"}}'
+      string: '{"dataFeedId":"15a6453c-0232-4b6c-be0b-4d183d299f3a","dataFeedName":"httprequestfeedgetcb44180e","metrics":[{"metricId":"90905e43-ae42-48e0-a34c-2091aa5320ee","metricName":"cost","metricDisplayName":"cost","metricDescription":""},{"metricId":"f876ed33-f7e6-471f-a9c4-1469dda333eb","metricName":"revenue","metricDisplayName":"revenue","metricDescription":""}],"dimension":[{"dimensionName":"category","dimensionDisplayName":"category"},{"dimensionName":"city","dimensionDisplayName":"city"}],"dataStartFrom":"2019-10-01T00:00:00Z","dataSourceType":"HttpRequest","timestampColumn":"","startOffsetInSeconds":0,"maxQueryPerMinute":30.0,"granularityName":"Daily","granularityAmount":null,"allUpIdentification":null,"needRollup":"NoRollup","fillMissingPointType":"PreviousValue","fillMissingPointValue":0.0,"rollUpMethod":"None","rollUpColumns":[],"dataFeedDescription":"","stopRetryAfterInSeconds":-1,"minRetryIntervalInSeconds":-1,"maxConcurrency":-1,"viewMode":"Private","admins":["krpratic@microsoft.com"],"viewers":[],"creator":"krpratic@microsoft.com","status":"Active","createdTime":"2020-10-26T17:34:47Z","isAdmin":true,"actionLinkTemplate":"","dataSourceParameter":{"httpMethod":"GET","url":"connectionstring"}}'
     headers:
       apim-request-id:
-      - 653f01fc-7157-4f1b-8d49-6ba0574d1640
+      - 378f00cd-c82d-4096-87d3-8ad806f9459c
       content-length:
       - '1293'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 22 Oct 2020 15:50:02 GMT
+      - Mon, 26 Oct 2020 17:34:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '143'
+      - '252'
       x-request-id:
-      - 653f01fc-7157-4f1b-8d49-6ba0574d1640
+      - 378f00cd-c82d-4096-87d3-8ad806f9459c
     status:
       code: 200
       message: OK
@@ -92,27 +92,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/78333f6d-aece-46d4-ba41-cd2554ef721c
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/15a6453c-0232-4b6c-be0b-4d183d299f3a
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - c7581aa0-25e1-44ac-a159-ac21b679d650
+      - 5ad71689-494b-4067-bf81-9939aadaa556
       content-length:
       - '0'
       date:
-      - Thu, 22 Oct 2020 15:50:02 GMT
+      - Mon, 26 Oct 2020 17:34:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '306'
+      - '671'
       x-request-id:
-      - c7581aa0-25e1-44ac-a159-ac21b679d650
+      - 5ad71689-494b-4067-bf81-9939aadaa556
     status:
       code: 204
       message: No Content

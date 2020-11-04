@@ -41,20 +41,7 @@ class ManagedIdentityCredential(AsyncContextManager):
     def __init__(self, **kwargs: "Any") -> None:
         self._credential = None
 
-        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT) and os.environ.get(
-            EnvironmentVariables.IDENTITY_HEADER
-        ):
-            if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
-                _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
-                from .service_fabric import ServiceFabricCredential
-
-                self._credential = ServiceFabricCredential(**kwargs)
-            else:
-                _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
-                from .app_service import AppServiceCredential
-
-                self._credential = AppServiceCredential(**kwargs)
-        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
                 from .app_service import AppServiceCredential
@@ -63,6 +50,15 @@ class ManagedIdentityCredential(AsyncContextManager):
             else:
                 _LOGGER.info("%s will use MSI", self.__class__.__name__)
                 self._credential = MsiCredential(**kwargs)
+        elif (
+            os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
+            and os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
+            and os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
+        ):
+            _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+            from .service_fabric import ServiceFabricCredential
+
+            self._credential = ServiceFabricCredential(**kwargs)
         else:
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)

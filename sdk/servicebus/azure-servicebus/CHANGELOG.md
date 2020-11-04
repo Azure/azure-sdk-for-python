@@ -2,25 +2,59 @@
 
 ## 7.0.0b8 (Unreleased)
 
-**Breaking Changes**
-  - Renamed `AutoLockRenew` to `AutoLockRenewer`
-
 **New Features**
 
 * Added support for `timeout` parameter on the following operations:
   - `ServiceBusSender`: `send_messages`, `schedule_messages` and `cancel_scheduled_messages`
-  - `ServiceBusReceiver`: `receive_deferred_messages` and `peek_messages`
+  - `ServiceBusReceiver`: `receive_deferred_messages`, `peek_messages` and `renew_message_lock`
   - `ServiceBusSession`: `get_state`, `set_state` and `renew_lock`
-  - `ReceivedMessage`: `renew_lock`
+* `azure.servicebus.exceptions.ServiceBusError` now inherits from `azure.core.exceptions.AzureError`.
+* Added a `parse_connection_string` method which parses a connection string into a properties bag containing its component parts
 
 **Breaking Changes**
 
+* Renamed `AutoLockRenew` to `AutoLockRenewer`.
+* Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+  - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+  - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
+* The parameter `inner_exception` that `ServiceBusError.__init__` takes is now renamed to `error`.
+* Renamed `azure.servicebus.exceptions.MessageError` to `azure.servicebus.exceptions.ServiceBusMessageError`
+* Removed error `azure.servicebus.exceptions.ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus
+resource does not exist when using the `ServiceBusAdministrationClient`.
+* Renamed `Message` to `ServiceBusMessage`.
+* Renamed `ReceivedMessage` to `ServiceBusReceivedMessage`.
+* Renamed `BatchMessage` to `ServiceBusMessageBatch`.
+  - Renamed method `add` to `add_message` on the class.
+* Removed class `PeekedMessage`.
+* Removed class `ReceivedMessage` under module `azure.servicebus.aio`.
+* Renamed `ServiceBusSender.create_batch` to `ServiceBusSender.create_message_batch`.
+* Removed class `ServiceBusSessionReceiver` which is now unified within class `ServiceBusReceiver`.
+  - Removed methods `ServiceBusClient.get_queue_session_receiver` and `ServiceBusClient.get_subscription_session_receiver`.
+  - `ServiceBusClient.get_queue_receiver` and `ServiceBusClient.get_subscription_receiver` now take keyword parameter `session_id` which must be set when getting a receiver for the sessionful entity.
 * Message settlement methods (`complete`, `abandon`, `defer` and `dead_letter`)
 and methods that use amqp management link for request like `schedule_messages`, `received_deferred_messages`, etc.
 now raise more concrete exception other than `MessageSettleFailed` and `ServiceBusError`.
 * Exceptions `MessageSendFailed`, `MessageSettleFailed` and `MessageLockExpired`
  now inherit from `azure.servicebus.exceptions.MessageError`.
-* Removed Exception `ServiceBusResourceNotFound` as `azure.core.exceptions.ResourceNotFoundError` is now raised when a Service Bus resource does not exist.
+* `get_state` in `ServiceBusSession` now returns `bytes` instead of a `string`.
+* `ServiceBusReceiver.receive_messages/get_streaming_message_iter` and
+ `ServiceBusClient.get_<queue/subscription>_receiver` now raises ValueError if the given `max_wait_time` is less than 0.
+* Message settlement methods are moved from `ServiceBusMessage` to `ServiceBusReceiver`:
+  - Use `ServiceBusReceiver.complete_message` instead of `ServiceBusReceivedMessage.complete` to complete a message.
+  - Use `ServiceBusReceiver.abandon_message` instead of `ServiceBusReceivedMessage.abandon` to abandon a message.
+  - Use `ServiceBusReceiver.defer_message` instead of `ServiceBusReceivedMessage.defer` to defer a message.
+  - Use `ServiceBusReceiver.dead_letter_message` instead of `ServiceBusReceivedMessage.dead_letter` to dead letter a message.
+* Message `renew_lock` method is moved from `ServiceBusMessage` to `ServiceBusReceiver`:
+  - Changed `ServiceBusReceivedMessage.renew_lock` to `ServiceBusReceiver.renew_message_lock`
+* `AutoLockRenewer.register` now takes `ServiceBusReceiver` as a positional parameter.
+* Removed `encoding` support from `ServiceBusMessage`.
+* `ServiceBusMessage.amqp_message` has been renamed to `ServiceBusMessage.amqp_annotated_message` for cross-sdk consistency.
+* All `name` parameters in `ServiceBusAdministrationClient` are now precisely specified ala `queue_name` or `rule_name`
+* `ServiceBusMessage.via_partition_key` is no longer exposed, this is pending a full implementation of transactions as it has no external use.  If needed, the underlying value can still be accessed in `ServiceBusMessage.amqp_annotated_message.annotations`.
+* `ServiceBusMessage.properties` has been renamed to `ServiceBusMessage.application_properties` for consistency with service verbiage.
+* Sub-client (`ServiceBusSender` and `ServiceBusReceiver`) `from_connection_string` initializers have been made internal until needed.  Clients should be initialized from root `ServiceBusClient`.
+* `ServiceBusMessage.label` has been renamed to `ServiceBusMessage.subject`.
+* `ServiceBusMessage.amqp_annotated_message` has had its type renamed from `AMQPMessage` to `AMQPAnnotatedMessage`
 
 **BugFixes**
 

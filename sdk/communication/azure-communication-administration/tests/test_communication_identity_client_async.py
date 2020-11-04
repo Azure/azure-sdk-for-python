@@ -20,8 +20,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test
@@ -32,8 +32,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
 
         assert user.identifier is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test
@@ -46,8 +46,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test
@@ -61,8 +61,8 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
 
-    @ResourceGroupPreparer(random_name_enabled=True)
-    @CommunicationServicePreparer()
+    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
+    @CommunicationServicePreparer(use_cache=True)
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test

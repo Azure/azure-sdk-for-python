@@ -14,7 +14,7 @@ from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken
 
-from .._base_handler import _generate_sas_token, _AccessToken, BaseHandler as BaseHandlerSync
+from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync
 from .._common._configuration import Configuration
 from .._common.utils import create_properties
 from .._common.constants import (
@@ -67,7 +67,7 @@ class ServiceBusSharedKeyCredential(object):
         self.key = key
         self.token_type = TOKEN_TYPE_SASTOKEN
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> _AccessToken:  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -237,7 +237,7 @@ class BaseHandler:
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
+                raise OperationTimeoutError("Management operation timed out.", error=exp)
             raise
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
