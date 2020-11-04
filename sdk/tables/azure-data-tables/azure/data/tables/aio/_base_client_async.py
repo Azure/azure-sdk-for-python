@@ -134,7 +134,7 @@ class AsyncStorageAccountHostsMixin(object):
         )
 
         error = None
-        parts = None
+        parts_list = None
         try:
             pipeline_response = await self._pipeline.run(
                 request, **kwargs
@@ -146,17 +146,17 @@ class AsyncStorageAccountHostsMixin(object):
             parts_list = []
             async for part in parts:
                 parts_list.append(part)
-            transaction_result = BatchTransactionResult(reqs, parts, entities)
+            transaction_result = BatchTransactionResult(reqs, parts_list, entities)
             if raise_on_any_failure:
                 if any(p for p in parts_list if not 200 <= p.status_code < 300):
                     error = BatchErrorException(
                         message="There is a failure in the batch operation.",
-                        response=response, parts=parts
+                        response=response, parts=parts_list
                     )
             if error is None:
                 return transaction_result
         except HttpResponseError as error:
-            raise_with_traceback(BatchErrorException, response=response, parts=parts, error=error)
+            raise_with_traceback(BatchErrorException, response=response, parts=parts_list, error=error)
         if error:
             raise error
 
