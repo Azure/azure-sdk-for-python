@@ -11,7 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AadClient
+from .._internal import AadClient, validate_tenant_id
 from .._internal.decorators import log_get_token, wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
@@ -53,6 +53,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         if self._auth_record:
             # authenticate in the tenant that produced the record unless "tenant_id" specifies another
             self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
+            validate_tenant_id(self._tenant_id)
             self._cache = kwargs.pop("_cache", None)
             self._app = None
             self._client_kwargs = kwargs
