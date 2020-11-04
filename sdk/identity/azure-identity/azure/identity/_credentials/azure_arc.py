@@ -2,14 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import copy
 import functools
 import os
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline import PipelineContext, PipelineRequest
-from azure.core.exceptions import ServiceRequestError
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
@@ -28,7 +26,7 @@ from .._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List, Optional, Union
+    from typing import Any, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -71,7 +69,7 @@ class AzureArcCredential(GetTokenMixin):
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
-            ArcChallengeAuthPolicy(self)
+            ArcChallengeAuthPolicy(self),
         ]
 
     def _get_client_args(self, **kwargs):
@@ -100,19 +98,34 @@ def _get_request(url, scope, identity_config):
     return request
 
 
-def _update_headers(request, **kwargs):
-    # type: (PipelineRequest, **Any) -> PipelineRequest
+def _update_headers(request, secret_key=None):
+    # type: (PipelineRequest, str) -> PipelineRequest
     request.http_request.headers = {"Metadata": "true"}
-
-    secret_key = kwargs.pop("secret_key", None)
     if secret_key:
         request.http_request.headers["Authorization"] = "Basic {}".format(secret_key)
 
-    token = kwargs.pop("token", None)
-    if token:
-        request.http_request.headers["Authorization"] = "Bearer {}".format(token)
-
     return request
+
+
+def _get_secret_key(response):
+    # type: (PipelineResponse) -> str
+    # expecting header containing path to secret key file
+    header = response.http_response.headers.get("Www-Authenticate")
+    if header is None:
+        raise CredentialUnavailableError(message="Did not receive a value from Www-Authenticate header")
+
+    secret_key = None
+
+    # expecting header with structure like 'Basic realm=<file path>'
+    key_file = header.split("=")[1]
+    with open(key_file, "r") as file:
+        try:
+            secret_key = file.read()
+        except Exception as error:  # pylint:disable=broad-except
+            # user is expected to have obtained read permission prior to this being called
+            raise CredentialUnavailableError(message="Could not read file {} contents: {}".format(key_file, error))
+
+    return secret_key
 
 
 class _ArcChallengeAuthPolicyBase(object):
@@ -140,37 +153,15 @@ class ArcChallengeAuthPolicy(_ArcChallengeAuthPolicyBase, HTTPPolicy):
 
     def send(self, request):
         # type: (PipelineRequest) -> HttpResponse
-        self.on_challenge(request)
+        if self._scope is None:
+            self._scope = request.http_request.query.get("resource")
+
+        request = _update_headers(request)
         response = self.next.send(request)
 
         if response.http_response.status_code == 401:
-            # expecting header containing path to secret key file
-            header = response.http_response.headers.get("Www-Authenticate")
-            if not header:
-                raise CredentialUnavailableError(
-                    message="Did not receive a value from Www-Authenticate header"
-                )
-
-            key_file = header.split("=")[1]
-            with open(key_file, 'r') as file:
-                try:
-                    self._secret_key = file.read()
-                except Exception as error:  # pylint:disable=broad-except
-                    raise CredentialUnavailableError(
-                        message="Could not read file {} contents: {}".format(key_file, error)
-                    )
-
-            _update_headers(request, secret_key=self._secret_key)
+            self._secret_key = _get_secret_key(response)
+            request = _update_headers(request, secret_key=self._secret_key)
             response = self.next.send(request)
 
         return response
-
-    def on_challenge(self, request):
-        # type: (PipelineRequest) -> None
-        """authenticate according to challenge, add Authorization header to request"""
-
-        if self._need_new_token:
-            self._scope = request.http_request.query.get("resource")
-            self._token = self._credential.get_token(*self._scope)
-
-        _update_headers(request, token=self._token.token)
