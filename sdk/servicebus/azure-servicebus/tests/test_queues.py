@@ -1010,7 +1010,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             assert message.delivery_count >= 1
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             messages.append(message)
-                            message.complete()
+                            receiver.complete_message(message)
             renewer.close()
             assert len(messages) == 4
 

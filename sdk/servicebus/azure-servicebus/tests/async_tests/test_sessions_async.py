@@ -580,7 +580,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                                 message._lock_expired
                             assert message.locked_until_utc is None
                             with pytest.raises(TypeError):
-                                await message.renew_lock()
+                                await receiver.renew_message_lock(message)
                             assert message.lock_token is not None
                             await message.complete()
                             messages.append(message)
