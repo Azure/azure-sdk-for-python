@@ -100,14 +100,6 @@ def _get_request(url, scope, identity_config):
     return request
 
 
-def _enforce_https(request):
-    # type: (PipelineRequest) -> None
-    if not request.http_request.url.lower().startswith("https"):
-        raise ServiceRequestError(
-            "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-        )
-
-
 def _update_headers(request, **kwargs):
     # type: (PipelineRequest, **Any) -> PipelineRequest
     request.http_request.headers = {"Metadata": "true"}
@@ -148,7 +140,6 @@ class ArcChallengeAuthPolicy(_ArcChallengeAuthPolicyBase, HTTPPolicy):
 
     def send(self, request):
         # type: (PipelineRequest) -> HttpResponse
-        _enforce_https(request)
         self.on_challenge(request)
         response = self.next.send(request)
 
