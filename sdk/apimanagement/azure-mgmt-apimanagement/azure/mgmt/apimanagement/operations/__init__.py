@@ -29,6 +29,9 @@ from ._authorization_server_operations import AuthorizationServerOperations
 from ._backend_operations import BackendOperations
 from ._cache_operations import CacheOperations
 from ._certificate_operations import CertificateOperations
+from ._content_type_operations import ContentTypeOperations
+from ._content_type_content_item_operations import ContentTypeContentItemOperations
+from ._deleted_services_operations import DeletedServicesOperations
 from ._api_management_operations import ApiManagementOperations
 from ._api_management_service_skus_operations import ApiManagementServiceSkusOperations
 from ._api_management_service_operations import ApiManagementServiceOperations
@@ -95,6 +98,9 @@ __all__ = [
     'BackendOperations',
     'CacheOperations',
     'CertificateOperations',
+    'ContentTypeOperations',
+    'ContentTypeContentItemOperations',
+    'DeletedServicesOperations',
     'ApiManagementOperations',
     'ApiManagementServiceSkusOperations',
     'ApiManagementServiceOperations',
