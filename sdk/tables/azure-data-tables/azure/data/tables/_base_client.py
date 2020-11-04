@@ -58,7 +58,6 @@ from ._policies import (
     StorageHosts,
     TablesRetryPolicy,
 )
-from ._error import _process_table_error
 from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
@@ -255,7 +254,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         ]
         return config, Pipeline(config.transport, policies=policies)
 
-    def _batch_send(
+    def _batch_send( # pylint: disable=inconsistent-return-statements
         self, entities, # type: List[TableEntity]
         *reqs,  # type: List[HttpRequest]
         **kwargs

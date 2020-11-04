@@ -32,7 +32,6 @@ from .._policies import (
     StorageHeadersPolicy
 )
 from ._policies_async import AsyncStorageResponseHook
-from .._error import _process_table_error
 from .._models import BatchErrorException, BatchTransactionResult
 
 if TYPE_CHECKING:

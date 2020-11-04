@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from azure.core.exceptions import HttpResponseError, AzureError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from azure.data.tables._generated.models import TableServiceStats as GenTableServiceStats
 
