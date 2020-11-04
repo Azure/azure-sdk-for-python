@@ -448,7 +448,7 @@ class BlobOperations:
             return cls(response, None, response_headers)
     get_properties.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def delete(self, snapshot=None, version_id=None, timeout=None, delete_snapshots=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def delete(self, snapshot=None, version_id=None, timeout=None, delete_snapshots=None, request_id=None, blob_delete_type=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """If the storage account's soft delete feature is disabled then, when a
         blob is deleted, it is permanently removed from the storage account. If
         the storage account's soft delete feature is enabled, then, when a blob
@@ -491,6 +491,11 @@ class BlobOperations:
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param blob_delete_type: Optional.  Only possible value is
+         'permanent', which specifies to permanently delete a blob if blob soft
+         delete is enabled. Possible values include: 'Permanent'
+        :type blob_delete_type: str or
+         ~azure.storage.blob.models.BlobDeleteType
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
@@ -541,6 +546,8 @@ class BlobOperations:
             query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if blob_delete_type is not None:
+            query_parameters['deletetype'] = self._serialize.query("blob_delete_type", blob_delete_type, 'BlobDeleteType')
 
         # Construct headers
         header_parameters = {}
@@ -1119,7 +1126,7 @@ class BlobOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         header_parameters['x-ms-expiry-option'] = self._serialize.header("expiry_options", expiry_options, 'str')
         if expires_on is not None:
-            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'rfc-1123')
+            header_parameters['x-ms-expiry-time'] = self._serialize.header("expires_on", expires_on, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)

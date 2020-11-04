@@ -130,6 +130,7 @@ class StorageErrorCode(str, Enum):
     unsupported_http_verb = "UnsupportedHttpVerb"
     append_position_condition_not_met = "AppendPositionConditionNotMet"
     blob_already_exists = "BlobAlreadyExists"
+    blob_immutable_due_to_policy = "BlobImmutableDueToPolicy"
     blob_not_found = "BlobNotFound"
     blob_overwritten = "BlobOverwritten"
     blob_tier_inadequate_for_content_length = "BlobTierInadequateForContentLength"
@@ -262,6 +263,11 @@ class PremiumPageBlobAccessTier(str, Enum):
     p60 = "P60"
     p70 = "P70"
     p80 = "P80"
+
+
+class BlobDeleteType(str, Enum):
+
+    permanent = "Permanent"
 
 
 class BlobExpiryOptions(str, Enum):
