@@ -429,12 +429,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
-        :keyword str language: The BCP-47 language code of the text in the document. Currently, only English
-            ('en'), Dutch ('nl'), French ('fr'), German ('de'), Italian ('it'), Portuguese ('pt'),
-            simplified Chinese ('zh-Hans') and Spanish ('es') are supported. For handwritten text,
-            only English is supported currently. Content supports auto language identification and multilanguage
-            documents, so only provide a language code if you would like to force the documented to be
-            processed as that specific language.
+        :keyword str language: The BCP-47 language code of the text in the document.
+            Supported languages include: 'en', 'nl', 'fr','de', 'it', 'pt', 'zh-Hans' and 'es'.
+            For handwritten text, only "en" is supported currently. Content supports auto language
+            identification and multilanguage documents, so only provide a language code if you
+            would like to force the documented to be processed as that specific language.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -500,12 +499,11 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
-        :keyword str language: The BCP-47 language code of the text in the document. Currently, only English
-            ('en'), Dutch ('nl'), French ('fr'), German ('de'), Italian ('it'), Portuguese ('pt'),
-            simplified Chinese ('zh-Hans') and Spanish ('es') are supported. For handwritten text,
-            only English is supported currently. Content supports auto language identification and multilanguage
-            documents, so only provide a language code if you would like to force the documented to be
-            processed as that specific language.
+        :keyword str language: The BCP-47 language code of the text in the document.
+            Supported languages include: 'en', 'nl', 'fr','de', 'it', 'pt', 'zh-Hans' and 'es'.
+            For handwritten text, only "en" is supported currently. Content supports auto language
+            identification and multilanguage documents, so only provide a language code if you
+            would like to force the documented to be processed as that specific language.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
