@@ -79,6 +79,7 @@ from ._managed_instance_tde_certificates_operations import ManagedInstanceTdeCer
 from ._managed_instance_keys_operations import ManagedInstanceKeysOperations
 from ._managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
 from ._recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
+from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from ._server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
@@ -97,7 +98,6 @@ from ._server_azure_ad_administrators_operations import ServerAzureADAdministrat
 from ._sync_groups_operations import SyncGroupsOperations
 from ._sync_members_operations import SyncMembersOperations
 from ._managed_instances_operations import ManagedInstancesOperations
-from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
 from ._managed_databases_operations import ManagedDatabasesOperations
 from ._server_azure_ad_only_authentications_operations import ServerAzureADOnlyAuthenticationsOperations
@@ -176,6 +176,7 @@ __all__ = [
     'ManagedInstanceKeysOperations',
     'ManagedInstanceEncryptionProtectorsOperations',
     'RecoverableManagedDatabasesOperations',
+    'BackupShortTermRetentionPoliciesOperations',
     'ManagedInstanceVulnerabilityAssessmentsOperations',
     'ServerVulnerabilityAssessmentsOperations',
     'ManagedDatabaseSensitivityLabelsOperations',
@@ -194,7 +195,6 @@ __all__ = [
     'SyncGroupsOperations',
     'SyncMembersOperations',
     'ManagedInstancesOperations',
-    'BackupShortTermRetentionPoliciesOperations',
     'ManagedDatabaseRestoreDetailsOperations',
     'ManagedDatabasesOperations',
     'ServerAzureADOnlyAuthenticationsOperations',

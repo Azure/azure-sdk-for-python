@@ -83,6 +83,7 @@ from .operations import ManagedInstanceTdeCertificatesOperations
 from .operations import ManagedInstanceKeysOperations
 from .operations import ManagedInstanceEncryptionProtectorsOperations
 from .operations import RecoverableManagedDatabasesOperations
+from .operations import BackupShortTermRetentionPoliciesOperations
 from .operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .operations import ServerVulnerabilityAssessmentsOperations
 from .operations import ManagedDatabaseSensitivityLabelsOperations
@@ -101,7 +102,6 @@ from .operations import ServerAzureADAdministratorsOperations
 from .operations import SyncGroupsOperations
 from .operations import SyncMembersOperations
 from .operations import ManagedInstancesOperations
-from .operations import BackupShortTermRetentionPoliciesOperations
 from .operations import ManagedDatabaseRestoreDetailsOperations
 from .operations import ManagedDatabasesOperations
 from .operations import ServerAzureADOnlyAuthenticationsOperations
@@ -257,6 +257,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_instance_encryption_protectors: azure.mgmt.sql.operations.ManagedInstanceEncryptionProtectorsOperations
     :ivar recoverable_managed_databases: RecoverableManagedDatabases operations
     :vartype recoverable_managed_databases: azure.mgmt.sql.operations.RecoverableManagedDatabasesOperations
+    :ivar backup_short_term_retention_policies: BackupShortTermRetentionPolicies operations
+    :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar managed_instance_vulnerability_assessments: ManagedInstanceVulnerabilityAssessments operations
     :vartype managed_instance_vulnerability_assessments: azure.mgmt.sql.operations.ManagedInstanceVulnerabilityAssessmentsOperations
     :ivar server_vulnerability_assessments: ServerVulnerabilityAssessments operations
@@ -293,8 +295,6 @@ class SqlManagementClient(SDKClient):
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
     :ivar managed_instances: ManagedInstances operations
     :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
-    :ivar backup_short_term_retention_policies: BackupShortTermRetentionPolicies operations
-    :vartype backup_short_term_retention_policies: azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar managed_database_restore_details: ManagedDatabaseRestoreDetails operations
     :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
     :ivar managed_databases: ManagedDatabases operations
@@ -467,6 +467,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.recoverable_managed_databases = RecoverableManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(
@@ -502,8 +504,6 @@ class SqlManagementClient(SDKClient):
         self.sync_members = SyncMembersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instances = ManagedInstancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_short_term_retention_policies = BackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
