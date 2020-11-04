@@ -13,6 +13,7 @@ from .._common.message import ServiceBusReceivedMessage
 from ._servicebus_session_async import ServiceBusSession
 from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common.utils import get_renewable_start_time, utc_now, get_renewable_lock_duration
+from .._common.auto_lock_renewer import SHORT_RENEW_OFFSET, SHORT_RENEW_SCALING_FACTOR
 from ._async_utils import get_running_loop
 from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusError
 
@@ -106,13 +107,13 @@ class AutoLockRenewer:
         _log.debug("Running async lock auto-renew for %r seconds", max_lock_renewal_duration)
         error = None # type: Optional[Exception]
         clean_shutdown = False # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
+        renew_period = renew_period_override or self._renew_period
         try:
             while self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(seconds=max_lock_renewal_duration):
                     _log.debug("Reached max auto lock renew duration - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(
                         max_lock_renewal_duration))
-                renew_period = renew_period_override or self._renew_period
                 if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", renew_period)
                     try:
@@ -174,8 +175,8 @@ class AutoLockRenewer:
         time_until_expiry = get_renewable_lock_duration(renewable)
         renew_period_override = None
         # Default is 10 seconds, but let's leave ourselves a small margin of error because clock skew is a real problem
-        if time_until_expiry <= datetime.timedelta(seconds=self._renew_period + 1):
-            renew_period_override = time_until_expiry.seconds * .75
+        if time_until_expiry <= datetime.timedelta(seconds=self._renew_period + SHORT_RENEW_OFFSET):
+            renew_period_override = time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
 
         renew_future = asyncio.ensure_future(
             self._auto_lock_renew(receiver,

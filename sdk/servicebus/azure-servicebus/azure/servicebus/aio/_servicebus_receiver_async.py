@@ -45,7 +45,7 @@ from .._common.utils import utc_from_timestamp
 from ._async_utils import create_authentication, get_running_loop
 
 if TYPE_CHECKING:
-    from .._common.auto_lock_renewer import AutoLockRenewer
+    from ._async_auto_lock_renewer import AutoLockRenewer
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)

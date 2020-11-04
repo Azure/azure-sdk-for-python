@@ -56,6 +56,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Sub-client (`ServiceBusSender` and `ServiceBusReceiver`) `from_connection_string` initializers have been made internal until needed.  Clients should be initialized from root `ServiceBusClient`.
 * `ServiceBusMessage.label` has been renamed to `ServiceBusMessage.subject`.
 * `ServiceBusMessage.amqp_annotated_message` has had its type renamed from `AMQPMessage` to `AMQPAnnotatedMessage`
+* `AutoLockRenewer` `timeout` parameter is renamed to `max_lock_renew_duration`
 
 **BugFixes**
 

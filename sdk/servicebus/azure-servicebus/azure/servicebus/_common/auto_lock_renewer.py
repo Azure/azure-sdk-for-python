@@ -25,6 +25,9 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
+SHORT_RENEW_OFFSET = .5 # Seconds that if a renew period is longer than lock duration + offset, it's "too long"
+SHORT_RENEW_SCALING_FACTOR = .75 # In this situation we need a "Short renew" and should scale by this factor.
+
 
 class AutoLockRenewer(object):
     """Auto renew locks for messages and sessions using a background thread pool.
@@ -118,13 +121,13 @@ class AutoLockRenewer(object):
         _log.debug("Running lock auto-renew thread for %r seconds", max_lock_renewal_duration)
         error = None
         clean_shutdown = False  # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
+        renew_period = renew_period_override or self._renew_period
         try:
             while self._renewable(renewable):
                 if (utc_now() - starttime) >= datetime.timedelta(seconds=max_lock_renewal_duration):
                     _log.debug("Reached max auto lock renew duration - letting lock expire.")
                     raise AutoLockRenewTimeout("Auto-renew period ({} seconds) elapsed.".format(
                         max_lock_renewal_duration))
-                renew_period = renew_period_override or self._renew_period
                 if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(seconds=renew_period):
                     _log.debug("%r seconds or less until lock expires - auto renewing.", renew_period)
                     try:
@@ -181,8 +184,8 @@ class AutoLockRenewer(object):
         time_until_expiry = get_renewable_lock_duration(renewable)
         renew_period_override = None
         # Default is 10 seconds, but let's leave ourselves a small margin of error because clock skew is a real problem
-        if time_until_expiry <= datetime.timedelta(seconds=self._renew_period + .5):
-            renew_period_override = time_until_expiry.seconds * .75
+        if time_until_expiry <= datetime.timedelta(seconds=self._renew_period + SHORT_RENEW_OFFSET):
+            renew_period_override = time_until_expiry.seconds * SHORT_RENEW_SCALING_FACTOR
 
         self._executor.submit(self._auto_lock_renew,
                               receiver,
