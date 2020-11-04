@@ -53,17 +53,17 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         # type: (...) -> None
         """Create TableClient from a Credential.
 
-              :param account_url:
-                  A url to an Azure Storage account.
-              :type account_url: str
-              :param table_name: The table name.
-              :type table_name: str
-              :param credential:
-                  The credentials with which to authenticate. This is optional if the
-                  account URL already has a SAS token, or the connection string already has shared
-                  access key values. The value can be a SAS token string, an account shared access
-                  key.
-              :type credential: str
+                :param account_url:
+                    A url to an Azure Storage account.
+                :type account_url: str
+                :param table_name: The table name.
+                :type table_name: str
+                :param credential:
+                    The credentials with which to authenticate. This is optional if the
+                    account URL already has a SAS token, or the connection string already has shared
+                    access key values. The value can be a SAS token string, an account shared access
+                    key.
+                :type credential: Union[str,~azure.core.credentials.TokenCredential]
 
               :returns: None
               """

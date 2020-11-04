@@ -40,7 +40,7 @@ class TableServiceClient(TableServiceClientBase):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key.
-        :type credential: str
+        :type credential: Union[str,~azure.core.credentials.TokenCredential]
         :returns: None
 
         .. admonition:: Example:

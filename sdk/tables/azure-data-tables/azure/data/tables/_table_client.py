@@ -59,7 +59,7 @@ class TableClient(TableClientBase):
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,TokenCredential]
+        :type credential: Union[str,~azure.core.credentials.TokenCredential]
 
         :returns: None
         """
