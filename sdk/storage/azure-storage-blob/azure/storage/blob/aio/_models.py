@@ -136,6 +136,6 @@ class FilteredBlobPaged(AsyncPageIterator):
     @staticmethod
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tag_value=item.tag_value)  # pylint: disable=protected-access
+            blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=item.tags)  # pylint: disable=protected-access
             return blob
         return item
