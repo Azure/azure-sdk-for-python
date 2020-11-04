@@ -247,6 +247,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages.append(message)
                     with pytest.raises(MessageAlreadySettled):
                         receiver.complete_message(message)
+                    with pytest.raises(TypeError): # ReceiveAndDelete messages cannot be lock renewed.
+                        renewer = AutoLockRenewer()
+                        renewer.register(receiver, message)
     
             assert len(messages) == 10
             assert not receiver._running
