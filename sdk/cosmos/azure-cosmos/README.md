@@ -106,6 +106,15 @@ As of August 2020 the features below are **not supported**.
 
 If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 
+## Boolean Data Type
+
+While the Python language [uses](https://docs.python.org/3/library/stdtypes.html?highlight=boolean#truth-value-testing) "True" and "False" for boolean types, Cosmos DB [accepts](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-is-bool) "true" and "false". In other words, the Python language uses Boolean values with the first uppercase letter and all other lowercase letters, while Cosmos DB and its SQL language use only lowercase letters for those same Boolean values.How to deal with this challenge?
+
+* Your JSON documents created with Python must use "True" and "False", to pass the language validation. The SDK will convert it to "true" and "false" for you. Meaning that "true" and "false" is what will be stored in Cosmos DB. 
+* If you retrieve those documents with the Cosmos DB Portal's Data Explorer, you will see "true" and "false". 
+* If you retrieve those documents this Python SDK, "true" and "false" values will be automatically converted to "True" and "False".
+
+
 ## Examples
 
 The following sections provide several code snippets covering some of the most common Cosmos DB tasks, including:
