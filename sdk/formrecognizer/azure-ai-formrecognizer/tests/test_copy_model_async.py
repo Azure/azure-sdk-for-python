@@ -235,3 +235,5 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
         self.assertNotEqual(target["modelId"], composed_model.model_id)
         self.assertIsNotNone(copied_model)
         self.assertEqual(copied_model.model_name, "composedmodel")
+        for submodel in copied_model.submodels:
+            assert submodel.model_id in [model_1.model_id, model_2.model_id]
