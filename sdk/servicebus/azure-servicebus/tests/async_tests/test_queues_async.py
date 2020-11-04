@@ -432,8 +432,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await receiver.complete_message(message)
             assert count == 10
 
@@ -549,8 +549,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10
 
     @pytest.mark.liveTest
@@ -591,8 +591,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     await receiver.complete_message(message)
                     count += 1
             assert count == 10
@@ -1265,7 +1265,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 for i in range(20):
                     yield ServiceBusMessage(
                         body="ServiceBusMessage no. {}".format(i),
-                        label='1st'
+                        subject='1st'
                     )
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
@@ -1291,12 +1291,12 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     receive_counter += 1
                     for message in messages:
                         print_message(_logger, message)
-                        if message.label == '1st':
+                        if message.subject == '1st':
                             message_1st_received_cnt += 1
                             await receiver.complete_message(message)
-                            message.label = '2nd'
+                            message.subject = '2nd'
                             await sender.send_messages(message)  # resending received message
-                        elif message.label == '2nd':
+                        elif message.subject == '2nd':
                             message_2nd_received_cnt += 1
                             await receiver.complete_message(message)
 

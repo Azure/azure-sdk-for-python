@@ -120,13 +120,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
-                    message.properties = {'key': 'value'}
-                    message.label = 'label'
+                    message.application_properties = {'key': 'value'}
+                    message.subject = 'label'
                     message.content_type = 'application/text'
                     message.correlation_id = 'cid'
                     message.message_id = str(i)
                     message.partition_key = 'pk'
-                    message.via_partition_key = 'via_pk'
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     sender.send_messages(message)
@@ -146,14 +145,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             for message in receiver:
                 print_message(_logger, message)
                 assert message.delivery_count == 0
-                assert message.properties
-                assert message.properties[b'key'] == b'value'
-                assert message.label == 'label'
+                assert message.application_properties
+                assert message.application_properties[b'key'] == b'value'
+                assert message.subject == 'label'
                 assert message.content_type == 'application/text'
                 assert message.correlation_id == 'cid'
                 assert message.message_id == str(count)
                 assert message.partition_key == 'pk'
-                assert message.via_partition_key == 'via_pk'
                 assert message.to == 'to'
                 assert message.reply_to == 'reply_to'
                 assert message.sequence_number
@@ -185,11 +183,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for i in range(10):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
                     message.partition_key = 'pkey'
-                    message.via_partition_key = 'vpkey'
                     message.time_to_live = timedelta(seconds=60)
                     message.scheduled_enqueue_time_utc = utc_now() + timedelta(seconds=60)
                     message.partition_key = None
-                    message.via_partition_key = None
                     message.time_to_live = None
                     message.scheduled_enqueue_time_utc = None
                     message.session_id = None
@@ -201,12 +197,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for message in receiver:
                     print_message(_logger, message)
                     assert message.delivery_count == 0
-                    assert not message.properties
-                    assert not message.label
+                    assert not message.application_properties
+                    assert not message.subject
                     assert not message.content_type
                     assert not message.correlation_id
                     assert not message.partition_key
-                    assert not message.via_partition_key
                     assert not message.to
                     assert not message.reply_to
                     assert not message.scheduled_enqueue_time_utc
@@ -238,12 +233,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                               receive_mode=ReceiveMode.ReceiveAndDelete, 
                                               max_wait_time=8) as receiver:
                 for message in receiver:
-                    assert not message.properties
-                    assert not message.label
+                    assert not message.application_properties
+                    assert not message.subject
                     assert not message.content_type
                     assert not message.correlation_id
                     assert not message.partition_key
-                    assert not message.via_partition_key
                     assert not message.to
                     assert not message.reply_to
                     assert not message.scheduled_enqueue_time_utc
@@ -536,8 +530,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     receiver.complete_message(message)
             assert count == 10
 
@@ -663,8 +657,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10
 
     @pytest.mark.liveTest
@@ -711,8 +705,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     print_message(_logger, message)
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                     dl_receiver.complete_message(message)
                     count += 1
             assert count == 10
@@ -777,13 +771,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for i in range(5):
                     message = ServiceBusMessage(
                         body="Test message",
-                        properties={'key': 'value'},
-                        label='label',
+                        application_properties={'key': 'value'},
+                        subject='label',
                         content_type='application/text',
                         correlation_id='cid',
                         message_id='mid',
                         partition_key='pk',
-                        via_partition_key='via_pk',
                         to='to',
                         reply_to='reply_to',
                         time_to_live=timedelta(seconds=60)
@@ -796,13 +789,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for message in messages:
                     print_message(_logger, message)
                     assert b''.join(message.body) == b'Test message'
-                    assert message.properties[b'key'] == b'value'
-                    assert message.label == 'label'
+                    assert message.application_properties[b'key'] == b'value'
+                    assert message.subject == 'label'
                     assert message.content_type == 'application/text'
                     assert message.correlation_id == 'cid'
                     assert message.message_id == 'mid'
                     assert message.partition_key == 'pk'
-                    assert message.via_partition_key == 'via_pk'
                     assert message.to == 'to'
                     assert message.reply_to == 'reply_to'
                     assert message.time_to_live == timedelta(seconds=60)
@@ -814,13 +806,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 cnt = 0
                 for message in receiver:
                     assert b''.join(message.body) == b'Test message'
-                    assert message.properties[b'key'] == b'value'
-                    assert message.label == 'label'
+                    assert message.application_properties[b'key'] == b'value'
+                    assert message.subject == 'label'
                     assert message.content_type == 'application/text'
                     assert message.correlation_id == 'cid'
                     assert message.message_id == 'mid'
                     assert message.partition_key == 'pk'
-                    assert message.via_partition_key == 'via_pk'
                     assert message.to == 'to'
                     assert message.reply_to == 'reply_to'
                     assert message.time_to_live == timedelta(seconds=60)
@@ -1164,13 +1155,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             def message_content():
                 for i in range(5):
                     message = ServiceBusMessage("ServiceBusMessage no. {}".format(i))
-                    message.properties = {'key': 'value'}
-                    message.label = 'label'
+                    message.application_properties = {'key': 'value'}
+                    message.subject = 'label'
                     message.content_type = 'application/text'
                     message.correlation_id = 'cid'
                     message.message_id = str(i)
                     message.partition_key = 'pk'
-                    message.via_partition_key = 'via_pk'
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     message.time_to_live = timedelta(seconds=60)
@@ -1194,14 +1184,13 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 count = 0
                 for message in messages:
                     assert message.delivery_count == 0
-                    assert message.properties
-                    assert message.properties[b'key'] == b'value'
-                    assert message.label == 'label'
+                    assert message.application_properties
+                    assert message.application_properties[b'key'] == b'value'
+                    assert message.subject == 'label'
                     assert message.content_type == 'application/text'
                     assert message.correlation_id == 'cid'
                     assert message.message_id == str(count)
                     assert message.partition_key == 'pk'
-                    assert message.via_partition_key == 'via_pk'
                     assert message.to == 'to'
                     assert message.reply_to == 'reply_to'
                     assert message.sequence_number
@@ -1272,12 +1261,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message_b.message_id = message_id_b
                 message_arry = [message_a, message_b]
                 for message in message_arry:
-                    message.properties = {'key': 'value'}
-                    message.label = 'label'
+                    message.application_properties = {'key': 'value'}
+                    message.subject = 'label'
                     message.content_type = 'application/text'
                     message.correlation_id = 'cid'
                     message.partition_key = 'pk'
-                    message.via_partition_key = 'via_pk'
                     message.to = 'to'
                     message.reply_to = 'reply_to'
 
@@ -1301,13 +1289,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert messages[0].scheduled_enqueue_time_utc == scheduled_enqueue_time
                         assert messages[0].scheduled_enqueue_time_utc <= messages[0].enqueued_time_utc.replace(microsecond=0)
                         assert messages[0].delivery_count == 0
-                        assert messages[0].properties
-                        assert messages[0].properties[b'key'] == b'value'
-                        assert messages[0].label == 'label'
+                        assert messages[0].application_properties
+                        assert messages[0].application_properties[b'key'] == b'value'
+                        assert messages[0].subject == 'label'
                         assert messages[0].content_type == 'application/text'
                         assert messages[0].correlation_id == 'cid'
                         assert messages[0].partition_key == 'pk'
-                        assert messages[0].via_partition_key == 'via_pk'
                         assert messages[0].to == 'to'
                         assert messages[0].reply_to == 'reply_to'
                         assert messages[0].sequence_number
@@ -1524,28 +1511,26 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         scheduled_enqueue_time = (utc_now() + timedelta(seconds=20)).replace(microsecond=0)
         message = ServiceBusMessage(
             body='data',
-            properties={'key': 'value'},
+            application_properties={'key': 'value'},
             session_id='sid',
-            label='label',
+            subject='label',
             content_type='application/text',
             correlation_id='cid',
             message_id='mid',
             partition_key='pk',
-            via_partition_key='via_pk',
             to='to',
             reply_to='reply_to',
             reply_to_session_id='reply_to_sid',
             scheduled_enqueue_time_utc=scheduled_enqueue_time
         )
 
-        assert message.properties
-        assert message.properties['key'] == 'value'
-        assert message.label == 'label'
+        assert message.application_properties
+        assert message.application_properties['key'] == 'value'
+        assert message.subject == 'label'
         assert message.content_type == 'application/text'
         assert message.correlation_id == 'cid'
         assert message.message_id == 'mid'
         assert message.partition_key == 'pk'
-        assert message.via_partition_key == 'via_pk'
         assert message.to == 'to'
         assert message.reply_to == 'reply_to'
         assert message.session_id == 'sid'
@@ -1553,11 +1538,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         assert message.scheduled_enqueue_time_utc == scheduled_enqueue_time
 
         message.partition_key = 'updated'
-        message.via_partition_key = 'updated'
         new_scheduled_time = (utc_now() + timedelta(hours=5)).replace(microsecond=0)
         message.scheduled_enqueue_time_utc = new_scheduled_time
         assert message.partition_key == 'updated'
-        assert message.via_partition_key == 'updated'
         assert message.scheduled_enqueue_time_utc == new_scheduled_time
 
         message.partition_key = None
@@ -1565,7 +1548,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         message.scheduled_enqueue_time_utc = None
 
         assert message.partition_key is None
-        assert message.via_partition_key is None
         assert message.scheduled_enqueue_time_utc is None
 
         try:
@@ -1584,25 +1566,20 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         )
         received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
         assert received_message.partition_key == 'r_key'
-        assert received_message.via_partition_key == 'r_via_key'
         assert received_message.scheduled_enqueue_time_utc == new_scheduled_time
 
         new_scheduled_time = utc_now() + timedelta(hours=1, minutes=49, seconds=32)
 
         received_message.partition_key = 'new_r_key'
-        received_message.via_partition_key = 'new_r_via_key'
         received_message.scheduled_enqueue_time_utc = new_scheduled_time
 
         assert received_message.partition_key == 'new_r_key'
-        assert received_message.via_partition_key == 'new_r_via_key'
         assert received_message.scheduled_enqueue_time_utc == new_scheduled_time
 
         received_message.partition_key = None
-        received_message.via_partition_key = None
         received_message.scheduled_enqueue_time_utc = None
 
         assert message.partition_key is None
-        assert message.via_partition_key is None
         assert message.scheduled_enqueue_time_utc is None
 
     @pytest.mark.liveTest
@@ -1618,13 +1595,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 for i in range(20):
                     yield ServiceBusMessage(
                         body="Test message",
-                        properties={'key': 'value'},
-                        label='1st',
+                        application_properties={'key': 'value'},
+                        subject='1st',
                         content_type='application/text',
                         correlation_id='cid',
                         message_id='mid',
                         partition_key='pk',
-                        via_partition_key='via_pk',
                         to='to',
                         reply_to='reply_to',
                         time_to_live=timedelta(seconds=60)
@@ -1652,22 +1628,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         assert b''.join(message.body) == b'Test message'
-                        assert message.properties[b'key'] == b'value'
+                        assert message.application_properties[b'key'] == b'value'
                         assert message.content_type == 'application/text'
                         assert message.correlation_id == 'cid'
                         assert message.message_id == 'mid'
                         assert message.partition_key == 'pk'
-                        assert message.via_partition_key == 'via_pk'
                         assert message.to == 'to'
                         assert message.reply_to == 'reply_to'
                         assert message.time_to_live == timedelta(seconds=60)
 
-                        if message.label == '1st':
+                        if message.subject == '1st':
                             message_1st_received_cnt += 1
                             receiver.complete_message(message)
-                            message.label = '2nd'
+                            message.subject = '2nd'
                             sender.send_messages(message)  # resending received message
-                        elif message.label == '2nd':
+                        elif message.subject == '2nd':
                             message_2nd_received_cnt += 1
                             receiver.complete_message(message)
 
@@ -1806,6 +1781,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 
                     time_1 = receiver._handler._counter.get_current_ms()
+                    time_3 = time_1 # In case inner loop isn't hit, fail sanely.
                     for message in receiver.get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                         receiver.complete_message(message)
@@ -1893,20 +1869,20 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         message = ServiceBusMessage("body")
 
         with pytest.raises(AttributeError): # Note: If this is made read-writeable, this would be TypeError
-            message.amqp_message.properties = {"properties":1}
+            message.amqp_annotated_message.properties = {"properties":1}
         # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
-        # message.amqp_message.properties.subject = "subject"
+        # message.amqp_annotated_message.properties.subject = "subject"
         # 
-        # message.amqp_message.application_properties = {b"application_properties":1}
+        # message.amqp_annotated_message.application_properties = {b"application_properties":1}
         # 
-        # message.amqp_message.annotations = {b"annotations":2}
-        # message.amqp_message.delivery_annotations = {b"delivery_annotations":3}
+        # message.amqp_annotated_message.annotations = {b"annotations":2}
+        # message.amqp_annotated_message.delivery_annotations = {b"delivery_annotations":3}
         # 
         # with pytest.raises(TypeError):
-        #     message.amqp_message.header = {"header":4}
-        # message.amqp_message.header.priority = 5
+        #     message.amqp_annotated_message.header = {"header":4}
+        # message.amqp_annotated_message.header.priority = 5
         # 
-        # message.amqp_message.footer = {b"footer":6}
+        # message.amqp_annotated_message.footer = {b"footer":6}
 
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -1915,21 +1891,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message)
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     message = receiver.receive_messages()[0]
-                    assert message.amqp_message.application_properties == None \
-                        and message.amqp_message.annotations != None \
-                        and message.amqp_message.delivery_annotations != None \
-                        and message.amqp_message.footer == None \
-                        and message.amqp_message.properties != None \
-                        and message.amqp_message.header != None
+                    assert message.amqp_annotated_message.application_properties == None \
+                        and message.amqp_annotated_message.annotations != None \
+                        and message.amqp_annotated_message.delivery_annotations != None \
+                        and message.amqp_annotated_message.footer == None \
+                        and message.amqp_annotated_message.properties != None \
+                        and message.amqp_annotated_message.header != None
                     # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
                     #
-                    # assert message.amqp_message.properties.subject == b"subject"
-                    # assert message.amqp_message.application_properties[b"application_properties"] == 1
-                    # assert message.amqp_message.annotations[b"annotations"] == 2
+                    # assert message.amqp_annotated_message.properties.subject == b"subject"
+                    # assert message.amqp_annotated_message.application_properties[b"application_properties"] == 1
+                    # assert message.amqp_annotated_message.annotations[b"annotations"] == 2
                     # # delivery_annotations and footer disabled pending uamqp bug https://github.com/Azure/azure-uamqp-python/issues/169
-                    # #assert message.amqp_message.delivery_annotations[b"delivery_annotations"] == 3
-                    # assert message.amqp_message.header.priority == 5
-                    # #assert message.amqp_message.footer[b"footer"] == 6
+                    # #assert message.amqp_annotated_message.delivery_annotations[b"delivery_annotations"] == 3
+                    # assert message.amqp_annotated_message.header.priority == 5
+                    # #assert message.amqp_annotated_message.footer[b"footer"] == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
