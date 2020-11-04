@@ -474,7 +474,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return cls(**constructor_args)
 
     def receive_messages(self, max_message_count=1, max_wait_time=None):
-        # type: (int, float) -> List[ServiceBusReceivedMessage]
+        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         """Receive a batch of messages at once.
 
         This approach is optimal if you wish to process multiple messages simultaneously, or

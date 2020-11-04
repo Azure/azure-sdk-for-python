@@ -55,6 +55,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * Sub-client (`ServiceBusSender` and `ServiceBusReceiver`) `from_connection_string` initializers have been made internal until needed.  Clients should be initialized from root `ServiceBusClient`.
 * `ServiceBusMessage.label` has been renamed to `ServiceBusMessage.subject`.
 * `ServiceBusMessage.amqp_annotated_message` has had its type renamed from `AMQPMessage` to `AMQPAnnotatedMessage`
+* The default value of parameter `max_message_count` on `ServiceBusReceiver.receive_messages` is now `1` instead of `None` and will raise error if the given value is less than or equal to 0.
 
 **BugFixes**
 
