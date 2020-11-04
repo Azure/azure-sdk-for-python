@@ -12,7 +12,7 @@ import logging
 from uuid import uuid4
 
 from azure.core.pipeline import AsyncPipeline
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, raise_with_traceback
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -133,29 +133,32 @@ class AsyncStorageAccountHostsMixin(object):
             boundary="batch_{}".format(uuid4())
         )
 
-        pipeline_response = await self._pipeline.run(
-            request, **kwargs
-        )
-        response = pipeline_response.http_response
-
+        error = None
+        parts = None
         try:
+            pipeline_response = await self._pipeline.run(
+                request, **kwargs
+            )
+            response = pipeline_response.http_response
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            parts = response.parts() # Return an AsyncIterator
+            parts = response.parts()
             parts_list = []
             async for part in parts:
                 parts_list.append(part)
-            transaction_result = BatchTransactionResult(reqs, parts_list, entities)
+            transaction_result = BatchTransactionResult(reqs, parts, entities)
             if raise_on_any_failure:
                 if any(p for p in parts_list if not 200 <= p.status_code < 300):
                     error = BatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts_list
+                        message="There is a failure in the batch operation.",
+                        response=response, parts=parts
                     )
-                    raise error
-            return transaction_result
+            if error is None:
+                return transaction_result
         except HttpResponseError as error:
-            _process_table_error(error)
+            raise_with_traceback(BatchErrorException, response=response, parts=parts, error=error)
+        if error:
+            raise error
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

@@ -688,7 +688,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    # @pytest.mark.skip("This does not throw an error, but it should")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
@@ -706,10 +706,11 @@ class StorageTableBatchTest(TableTestCase):
             batch.update_entity(entity)
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
+            batch.update_entity(entity)
 
             # Assert
-            with self.assertRaises(HttpResponseError):
-                batch.update_entity(entity, mode=UpdateMode.MERGE)
+            with pytest.raises(BatchErrorException):
+                await self.table.send_batch(batch)
         finally:
             await self._tear_down()
 
