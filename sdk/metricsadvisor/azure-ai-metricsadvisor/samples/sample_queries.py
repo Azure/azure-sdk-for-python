@@ -177,9 +177,9 @@ def sample_list_metric_enrichment_status():
 if __name__ == '__main__':
     print("---List metric enriched series data...")
     sample_list_metric_enriched_series_data()
-    print("---List dimention values...")
+    print("---List dimension values...")
     sample_list_dimension_values()
-    print("---List metric dimention values...")
+    print("---List metric dimension values...")
     sample_list_metric_dimension_values()
     print("---List metric series data...")
     sample_list_metrics_series_data()
