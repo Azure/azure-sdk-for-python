@@ -193,11 +193,14 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         Indicates the number of days that metrics or logging or
         soft-deleted data should be retained. All data older than this value will
         be deleted. If enabled=True, the number of days must be specified.
+    :param bool allow_permanent_delete: Indicates whether permanent delete is
+     allowed on this storage account.
     """
 
-    def __init__(self, enabled=False, days=None):
+    def __init__(self, enabled=False, days=None, allow_permanent_delete=False):
         self.enabled = enabled
         self.days = days
+        self.allow_permanent_delete = allow_permanent_delete
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -208,6 +211,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         return cls(
             enabled=generated.enabled,
             days=generated.days,
+            allow_permanent_delete=generated.allow_permanent_delete,
         )
 
 
