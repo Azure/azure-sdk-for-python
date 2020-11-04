@@ -6,10 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._marketplace_agreements_operations import MarketplaceAgreementsOperations
-from ._operations import Operations
-
-__all__ = [
-    'MarketplaceAgreementsOperations',
-    'Operations',
-]
+from ._marketplace_ordering_agreements import MarketplaceOrderingAgreements
+__all__ = ['MarketplaceOrderingAgreements']
