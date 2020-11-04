@@ -18,3 +18,35 @@ vanilla: true
 clear-output-folder: true
 python: true
 ```
+
+### Replace dtTimestamp with timestamp
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.paths..parameters[*]
+    transform: >
+      if ($.name === "dt-timestamp") {
+        $["x-ms-client-name"] = "timestamp";
+      }
+```
+
+### Expose If-None_match header
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $..[?(@.name=='If-None-Match')]
+    transform: delete $.enum;
+```
+
+### Rename EventRoute
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions.EventRoute
+    transform: >
+      $["x-ms-client-name"] = "DigitalTwinsEventRoute"
+```
+

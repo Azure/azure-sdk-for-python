@@ -16,9 +16,13 @@
 - Raised minimum msal version to 1.6.0
 
 ### Fixed
+- Prevent `VisualStudioCodeCredential` using invalid authentication data when
+  no user is signed in to Visual Studio Code
+  ([#14438](https://github.com/Azure/azure-sdk-for-python/issues/14438))
 - `ManagedIdentityCredential` uses the API version supported by Azure Functions
   on Linux consumption hosting plans
   ([#14670](https://github.com/Azure/azure-sdk-for-python/issues/14670))
+
 
 ## 1.5.0b2 (2020-10-07)
 ### Fixed
