@@ -431,8 +431,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document. Currently, only English
             ('en'), Dutch ('nl'), French ('fr'), German ('de'), Italian ('it'), Portuguese ('pt'),
-            simplified Chinese ('zh-Hans') and Spanish ('es') are supported (print – nine languages and
-            handwritten – English only). Layout supports auto language identification and multilanguage
+            simplified Chinese ('zh-Hans') and Spanish ('es') are supported. For handwritten text,
+            only English is supported currently. Content supports auto language identification and multilanguage
             documents, so only provide a language code if you would like to force the documented to be
             processed as that specific language.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
@@ -502,8 +502,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document. Currently, only English
             ('en'), Dutch ('nl'), French ('fr'), German ('de'), Italian ('it'), Portuguese ('pt'),
-            simplified Chinese ('zh-Hans') and Spanish ('es') are supported (print – nine languages and
-            handwritten – English only). Layout supports auto language identification and multilanguage
+            simplified Chinese ('zh-Hans') and Spanish ('es') are supported. For handwritten text,
+            only English is supported currently. Content supports auto language identification and multilanguage
             documents, so only provide a language code if you would like to force the documented to be
             processed as that specific language.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -546,10 +546,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
+        'image/jpeg', 'image/png', or 'image/tiff'.
 
         :param str model_id: Custom model identifier.
-        :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :param form: JPEG, PNG, PDF, or TIFF type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -612,7 +612,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str model_id: Custom model identifier.
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+            of one of the supported formats: JPEG, PNG, PDF, or TIFF.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
