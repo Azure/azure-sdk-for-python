@@ -77,8 +77,6 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
         url = self.account_url(storage_account, "table")
         suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -96,8 +94,6 @@ class StorageTableClientTest(TableTestCase):
     def test_create_service_with_token(self, resource_group, location, storage_account, storage_account_key):
         url = self.account_url(storage_account, "table")
         suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(url, credential=self.token_credential, table_name='foo')
@@ -123,12 +119,9 @@ class StorageTableClientTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_china(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        # TODO: Confirm regional cloud cosmos URLs
         for service_type in SERVICES.items():
             # Act
             url = self.account_url(storage_account, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
-            if 'cosmos.azure' in url:
-                pytest.skip("Confirm cosmos national cloud URLs")
             service = service_type[0](
                 url, credential=storage_account_key, table_name='foo')
 

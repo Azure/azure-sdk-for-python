@@ -316,13 +316,12 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not suppor table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos URLs support unicode table names")
         ts = TableServiceClient(url, cosmos_account_key)
         table_name = u'啊齄丂狛狜'
 
@@ -333,13 +332,12 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not suppor table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table = self._create_table(ts)
         try:
@@ -355,14 +353,13 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not suppor table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
                                                          cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
@@ -379,14 +376,13 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not suppor table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
                                                         cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
@@ -406,14 +402,13 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not suppor table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
                                                    cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
@@ -436,13 +431,12 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not suppor table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:

@@ -85,9 +85,7 @@ class StorageTableClientTest(TableTestCase):
     async def test_create_service_with_sas_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
+        suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -104,9 +102,7 @@ class StorageTableClientTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_token_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         url = self.account_url(cosmos_account, "cosmos")
-        suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
+        suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(url, credential=self.token_credential, table_name='foo')
@@ -128,6 +124,7 @@ class StorageTableClientTest(TableTestCase):
                 url = self.account_url(cosmos_account, "cosmos").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
+    @pytest.mark.skip("Confirm cosmos national cloud URLs")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_china_async(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -136,8 +133,6 @@ class StorageTableClientTest(TableTestCase):
         for service_type in SERVICES.items():
             # Act
             url = self.account_url(cosmos_account, "cosmos").replace('core.windows.net', 'core.chinacloudapi.cn')
-            if 'cosmos.azure' in url:
-                pytest.skip("Confirm cosmos national cloud URLs")
             service = service_type[0](
                 url, credential=cosmos_account_key, table_name='foo')
 

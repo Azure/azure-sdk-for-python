@@ -342,8 +342,6 @@ class StorageTableTest(TableTestCase):
     def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         account_url = self.account_url(storage_account, "table")
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = self._create_table(ts)
@@ -363,8 +361,6 @@ class StorageTableTest(TableTestCase):
                                                          storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
@@ -386,8 +382,6 @@ class StorageTableTest(TableTestCase):
                                                         storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
@@ -412,8 +406,6 @@ class StorageTableTest(TableTestCase):
                                                    storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
@@ -440,8 +432,6 @@ class StorageTableTest(TableTestCase):
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 

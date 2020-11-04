@@ -54,7 +54,7 @@ class StorageTableEntityTest(TableTestCase):
 
     async def _tear_down(self):
         if self.is_live:
-            with self.ts as t:
+            async with self.ts as t:
                 try:
                     await t.delete_table(self.table_name)
                 except:
@@ -477,14 +477,8 @@ class StorageTableEntityTest(TableTestCase):
             entity = {'RowKey': 'rk', 'PartitionKey': ''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with self.assertRaises(HttpResponseError):
-                    await self.table.create_entity(entity=entity)
-            else:
-                resp = await self.table.create_entity(entity=entity)
-
-                # Assert
-            #  self.assertIsNone(resp)
+            with self.assertRaises(HttpResponseError):
+                await self.table.create_entity(entity=entity)
         finally:
             await self._tear_down()
             if self.is_live:
@@ -517,36 +511,28 @@ class StorageTableEntityTest(TableTestCase):
             entity = {'PartitionKey': 'pk', 'RowKey': ''}
 
             # Act
-            if 'cosmos' in self.table.url:
-                with self.assertRaises(HttpResponseError):
-                    await self.table.create_entity(entity=entity)
-            else:
-                resp = await self.table.create_entity(entity=entity)
+            with self.assertRaises(HttpResponseError):
+                await self.table.create_entity(entity=entity)
 
-                # Assert
-            #  self.assertIsNone(resp)
         finally:
             await self._tear_down()
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_insert_entity_too_many_properties(self, resource_group, location, cosmos_account,
                                                      cosmos_account_key):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large number of properties.")
         try:
             entity = self._create_random_base_entity_dict()
             for i in range(255):
                 entity['key{0}'.format(i)] = 'value{0}'.format(i)
 
             # Act
-            with self.assertRaises(HttpResponseError):
-                resp = await self.table.create_entity(entity=entity)
+            resp = await self.table.create_entity(entity=entity)
+            self._assert_valid_metadata(resp)
 
             # Assert
         finally:
@@ -560,15 +546,13 @@ class StorageTableEntityTest(TableTestCase):
                                                         cosmos_account_key):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
-        if 'cosmos' in self.table.url:
-            pytest.skip("Cosmos supports large property names.")
         try:
             entity = self._create_random_base_entity_dict()
             entity['a' * 256] = 'badval'
 
             # Act
-            with self.assertRaises(HttpResponseError):
-                resp = await self.table.create_entity(entity=entity)
+            resp = await self.table.create_entity(entity=entity)
+            self._assert_valid_metadata(resp)
 
             # Assert
         finally:
@@ -1564,8 +1548,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_add(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1605,8 +1587,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_add_inside_range(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1645,8 +1625,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_add_outside_range(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1684,8 +1662,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_update(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1724,8 +1700,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_delete(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1762,8 +1736,6 @@ class StorageTableEntityTest(TableTestCase):
     async def test_sas_upper_case_table_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
@@ -1799,15 +1771,13 @@ class StorageTableEntityTest(TableTestCase):
                 sleep(SLEEP_DELAY)
 
 
-    @pytest.mark.skip("Header authorization error")
+    @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_sas_signed_identifier(self, resource_group, location, cosmos_account, cosmos_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             # Arrange
