@@ -1,5 +1,11 @@
 # Release History
 
+## 0.3.0 (2020-11-05)
+
+**Features**
+
+- Support for `5_0_preview.1` service verison.
+
 ## 0.2.0 (2020-03-17)
 
 **Features**
