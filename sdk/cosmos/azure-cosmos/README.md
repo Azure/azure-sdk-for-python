@@ -114,7 +114,7 @@ While the Python language [uses](https://docs.python.org/3/library/stdtypes.html
 * If you retrieve those documents with the Cosmos DB Portal's Data Explorer, you will see "true" and "false". 
 * If you retrieve those documents this Python SDK, "true" and "false" values will be automatically converted to "True" and "False".
 
-# SQL Queries x FROM Clause Subitems
+## SQL Queries x FROM Clause Subitems
 
 This SDK uses the [query_items](https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.containerproxy?preserve-view=true&view=azure-python#query-items-query--parameters-none--partition-key-none--enable-cross-partition-query-none--max-item-count-none--enable-scan-in-query-none--populate-query-metrics-none----kwargs-) method to submit SQL queries to Azure Cosmos DB. 
 
