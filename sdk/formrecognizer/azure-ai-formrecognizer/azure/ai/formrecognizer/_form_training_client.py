@@ -282,6 +282,8 @@ class FormTrainingClient(FormRecognizerClientBase):
             raise ValueError("model_id cannot be None or empty.")
 
         response = self._client.get_custom_model(model_id=model_id, include_keys=True, **kwargs)
+        if hasattr(response, "composed_train_results") and response.composed_train_results:
+            return CustomFormModel._from_generated_composed(response)
         return CustomFormModel._from_generated(response, api_version=self.api_version)
 
     @distributed_trace
