@@ -7,6 +7,7 @@ import os
 import time
 from typing import TYPE_CHECKING
 
+from azure.core.configuration import Configuration
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.policies import (
@@ -26,7 +27,7 @@ from .._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, Union
+    from typing import Any, List, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -38,7 +39,7 @@ class AzureArcCredential(GetTokenMixin):
         # type: (**Any) -> None
         super(AzureArcCredential, self).__init__()
 
-        client_args = self._get_client_args(**kwargs)
+        client_args = _get_client_args(self, **kwargs)
         if client_args:
             self._client = ManagedIdentityClient(**client_args)
         else:
@@ -60,35 +61,38 @@ class AzureArcCredential(GetTokenMixin):
         # type: (*str, **Any) -> AccessToken
         return self._client.request_token(*scopes, **kwargs)
 
-    def _get_policies(self, config, **kwargs):
-        return [
-            HeadersPolicy(**kwargs),
-            UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
-            config.proxy_policy,
-            config.retry_policy,
-            NetworkTraceLoggingPolicy(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-            ArcChallengeAuthPolicy(self),
-        ]
 
-    def _get_client_args(self, **kwargs):
-        # type: (**Any) -> Optional[dict]
-        identity_config = kwargs.pop("_identity_config", None) or {}
+def _get_policies(credential, config, **kwargs):
+    # type: (AzureArcCredential, Configuration, **Any) -> List[PolicyType]
+    return [
+        HeadersPolicy(**kwargs),
+        UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
+        config.proxy_policy,
+        config.retry_policy,
+        NetworkTraceLoggingPolicy(**kwargs),
+        DistributedTracingPolicy(**kwargs),
+        HttpLoggingPolicy(**kwargs),
+        ArcChallengeAuthPolicy(credential),
+    ]
 
-        url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-        if not url:
-            # Azure Arc managed identity isn't available in this environment
-            return None
 
-        config = _get_configuration()
+def _get_client_args(credential, **kwargs):
+    # type: (AzureArcCredential, **Any) -> Optional[dict]
+    identity_config = kwargs.pop("_identity_config", None) or {}
 
-        return dict(
-            kwargs,
-            _identity_config=identity_config,
-            policies=self._get_policies(config),
-            request_factory=functools.partial(_get_request, url),
-        )
+    url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
+    if not url:
+        # Azure Arc managed identity isn't available in this environment
+        return None
+
+    config = _get_configuration()
+
+    return dict(
+        kwargs,
+        _identity_config=identity_config,
+        policies=_get_policies(credential, config),
+        request_factory=functools.partial(_get_request, url),
+    )
 
 
 def _get_request(url, scope, identity_config):
@@ -129,9 +133,10 @@ def _get_secret_key(response):
 
 
 class _ArcChallengeAuthPolicyBase(object):
-    """Sans I/O base for challenge authentication policies"""
+    """Sans I/O base for Azure Arc's challenge authentication policy"""
 
     def __init__(self, **kwargs):
+        # type: (**Any) -> None
         self._token = None  # type: Optional[AccessToken]
         super(_ArcChallengeAuthPolicyBase, self).__init__(**kwargs)
 
@@ -142,7 +147,7 @@ class _ArcChallengeAuthPolicyBase(object):
 
 
 class ArcChallengeAuthPolicy(_ArcChallengeAuthPolicyBase, HTTPPolicy):
-    """policy for handling HTTP authentication challenges"""
+    """Policy for handling Azure Arc's challenge authentication"""
 
     def __init__(self, credential, **kwargs):
         # type: (AzureArcCredential, **Any) -> None
