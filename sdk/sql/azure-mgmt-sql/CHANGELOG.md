@@ -1,5 +1,551 @@
 # Release History
 
+## 0.24.0 (2020-11-04)
+
+**Features**
+
+  - Model DataMaskingRule has a new parameter data_masking_rule_id
+  - Model SyncAgent has a new parameter sync_agent_name
+  - Model SyncGroup has a new parameter private_endpoint_name
+  - Model SyncMember has a new parameter private_endpoint_name
+  - Model ElasticPoolUpdate has a new parameter maintenance_configuration_id
+  - Model Database has a new parameter storage_account_type
+  - Model Database has a new parameter high_availability_replica_count
+  - Model Database has a new parameter maintenance_configuration_id
+  - Model Database has a new parameter secondary_type
+  - Model DatabaseUpdate has a new parameter storage_account_type
+  - Model DatabaseUpdate has a new parameter high_availability_replica_count
+  - Model DatabaseUpdate has a new parameter maintenance_configuration_id
+  - Model DatabaseUpdate has a new parameter secondary_type
+  - Model RecommendedElasticPoolMetric has a new parameter date_time_property
+  - Model ElasticPool has a new parameter maintenance_configuration_id
+  - Added operation ManagedBackupShortTermRetentionPoliciesOperations.create_or_update
+  - Added operation ManagedBackupShortTermRetentionPoliciesOperations.update
+  - Added operation JobAgentsOperations.create_or_update
+  - Added operation JobAgentsOperations.delete
+  - Added operation JobAgentsOperations.update
+  - Added operation RestorePointsOperations.create
+  - Added operation ServerCommunicationLinksOperations.create_or_update
+  - Added operation JobExecutionsOperations.create_or_update
+  - Added operation JobExecutionsOperations.create
+  - Added operation BackupShortTermRetentionPoliciesOperations.create_or_update
+  - Added operation BackupShortTermRetentionPoliciesOperations.update
+  - Added operation SyncGroupsOperations.refresh_hub_schema
+  - Added operation SyncGroupsOperations.delete
+  - Added operation SyncGroupsOperations.create_or_update
+  - Added operation SyncGroupsOperations.update
+  - Added operation ReplicationLinksOperations.failover
+  - Added operation ReplicationLinksOperations.unlink
+  - Added operation ReplicationLinksOperations.failover_allow_data_loss
+  - Added operation SyncAgentsOperations.create_or_update
+  - Added operation SyncAgentsOperations.delete
+  - Added operation ManagedDatabasesOperations.create_or_update
+  - Added operation ManagedDatabasesOperations.delete
+  - Added operation ManagedDatabasesOperations.complete_restore
+  - Added operation ManagedDatabasesOperations.update
+  - Added operation WorkloadGroupsOperations.create_or_update
+  - Added operation WorkloadGroupsOperations.delete
+  - Added operation LongTermRetentionBackupsOperations.delete
+  - Added operation LongTermRetentionBackupsOperations.delete_by_resource_group
+  - Added operation ElasticPoolsOperations.failover
+  - Added operation ElasticPoolsOperations.delete
+  - Added operation ElasticPoolsOperations.create_or_update
+  - Added operation ElasticPoolsOperations.update
+  - Added operation ServerSecurityAlertPoliciesOperations.create_or_update
+  - Added operation InstancePoolsOperations.create_or_update
+  - Added operation InstancePoolsOperations.delete
+  - Added operation InstancePoolsOperations.update
+  - Added operation VirtualClustersOperations.delete
+  - Added operation VirtualClustersOperations.update
+  - Added operation ManagedInstanceAdministratorsOperations.create_or_update
+  - Added operation ManagedInstanceAdministratorsOperations.delete
+  - Added operation ServerKeysOperations.create_or_update
+  - Added operation ServerKeysOperations.delete
+  - Added operation EncryptionProtectorsOperations.create_or_update
+  - Added operation EncryptionProtectorsOperations.revalidate
+  - Added operation BackupLongTermRetentionPoliciesOperations.create_or_update
+  - Added operation ManagedServerSecurityAlertPoliciesOperations.create_or_update
+  - Added operation ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations.create_or_update
+  - Added operation ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations.update
+  - Added operation ServerAzureADAdministratorsOperations.create_or_update
+  - Added operation ServerAzureADAdministratorsOperations.delete
+  - Added operation ManagedInstanceLongTermRetentionPoliciesOperations.create_or_update
+  - Added operation ExtendedServerBlobAuditingPoliciesOperations.create_or_update
+  - Added operation PrivateEndpointConnectionsOperations.create_or_update
+  - Added operation PrivateEndpointConnectionsOperations.delete
+  - Added operation LongTermRetentionManagedInstanceBackupsOperations.delete
+  - Added operation LongTermRetentionManagedInstanceBackupsOperations.delete_by_resource_group
+  - Added operation ManagedInstancesOperations.failover
+  - Added operation ManagedInstancesOperations.delete
+  - Added operation ManagedInstancesOperations.create_or_update
+  - Added operation ManagedInstancesOperations.update
+  - Added operation SyncMembersOperations.create_or_update
+  - Added operation SyncMembersOperations.delete
+  - Added operation SyncMembersOperations.refresh_member_schema
+  - Added operation SyncMembersOperations.update
+  - Added operation ServerDnsAliasesOperations.create_or_update
+  - Added operation ServerDnsAliasesOperations.delete
+  - Added operation ServerDnsAliasesOperations.acquire
+  - Added operation ServersOperations.create_or_update
+  - Added operation ServersOperations.delete
+  - Added operation ServersOperations.import_database
+  - Added operation ServersOperations.update
+  - Added operation ManagedDatabaseVulnerabilityAssessmentScansOperations.initiate_scan
+  - Added operation WorkloadClassifiersOperations.create_or_update
+  - Added operation WorkloadClassifiersOperations.delete
+  - Added operation DatabaseVulnerabilityAssessmentScansOperations.initiate_scan
+  - Added operation ServerBlobAuditingPoliciesOperations.create_or_update
+  - Added operation DatabasesOperations.export
+  - Added operation DatabasesOperations.upgrade_data_warehouse
+  - Added operation DatabasesOperations.failover
+  - Added operation DatabasesOperations.pause
+  - Added operation DatabasesOperations.update
+  - Added operation DatabasesOperations.resume
+  - Added operation DatabasesOperations.create_or_update
+  - Added operation DatabasesOperations.delete
+  - Added operation ManagedInstanceEncryptionProtectorsOperations.create_or_update
+  - Added operation ManagedInstanceEncryptionProtectorsOperations.revalidate
+  - Added operation ManagedInstanceKeysOperations.create_or_update
+  - Added operation ManagedInstanceKeysOperations.delete
+  - Added operation ServerAzureADOnlyAuthenticationsOperations.create_or_update
+  - Added operation ServerAzureADOnlyAuthenticationsOperations.delete
+  - Added operation VirtualNetworkRulesOperations.create_or_update
+  - Added operation VirtualNetworkRulesOperations.delete
+  - Added operation TdeCertificatesOperations.create
+  - Added operation ManagedInstanceTdeCertificatesOperations.create
+  - Added operation FailoverGroupsOperations.force_failover_allow_data_loss
+  - Added operation FailoverGroupsOperations.failover
+  - Added operation FailoverGroupsOperations.update
+  - Added operation FailoverGroupsOperations.create_or_update
+  - Added operation FailoverGroupsOperations.delete
+  - Added operation InstanceFailoverGroupsOperations.failover
+  - Added operation InstanceFailoverGroupsOperations.force_failover_allow_data_loss
+  - Added operation InstanceFailoverGroupsOperations.delete
+  - Added operation InstanceFailoverGroupsOperations.create_or_update
+  - Added operation group DatabaseOperations
+  - Added operation group ManagedInstanceAzureADOnlyAuthenticationsOperations
+  - Added operation group ManagedInstanceOperations
+  - Added operation group ElasticPoolOperations
+  - Added operation group ImportExportOperations
+  - Added operation group ServerTrustGroupsOperations
+
+**Breaking changes**
+
+  - Operation SyncGroupsOperations.list_logs has a new signature
+  - Operation JobCredentialsOperations.create_or_update has a new signature
+  - Operation JobCredentialsOperations.create_or_update has a new signature
+  - Operation JobTargetGroupsOperations.create_or_update has a new signature
+  - Operation JobsOperations.create_or_update has a new signature
+  - Operation JobsOperations.create_or_update has a new signature
+  - Operation DatabasesOperations.rename has a new signature
+  - Parameter database_id of model JobAgent is now required
+  - Parameter server_key_type of model ManagedInstanceKey is now required
+  - Parameter password of model JobCredential is now required
+  - Parameter username of model JobCredential is now required
+  - Parameter read_write_endpoint of model InstanceFailoverGroup is now required
+  - Parameter partner_regions of model InstanceFailoverGroup is now required
+  - Parameter managed_instance_pairs of model InstanceFailoverGroup is now required
+  - Parameter column_name of model DataMaskingRule is now required
+  - Parameter schema_name of model DataMaskingRule is now required
+  - Parameter table_name of model DataMaskingRule is now required
+  - Parameter start_ip_address of model FirewallRule is now required
+  - Parameter end_ip_address of model FirewallRule is now required
+  - Parameter members of model JobTargetGroup is now required
+  - Parameter max_resource_percent of model WorkloadGroup is now required
+  - Parameter min_resource_percent of model WorkloadGroup is now required
+  - Parameter min_resource_percent_per_request of model WorkloadGroup is now required
+  - Parameter baseline_results of model DatabaseVulnerabilityAssessmentRuleBaseline is now required
+  - Parameter action of model JobStep is now required
+  - Parameter target_group of model JobStep is now required
+  - Parameter credential of model JobStep is now required
+  - Parameter private_blob of model TdeCertificate is now required
+  - Parameter server_key_type of model EncryptionProtector is now required
+  - Parameter administrator_type of model ManagedInstanceAdministrator is now required
+  - Parameter sid of model ManagedInstanceAdministrator is now required
+  - Parameter login of model ManagedInstanceAdministrator is now required
+  - Parameter storage_container_path of model ManagedInstanceVulnerabilityAssessment is now required
+  - Parameter partner_server of model ServerCommunicationLink is now required
+  - Parameter member_name of model WorkloadClassifier is now required
+  - Parameter storage_container_path of model ServerVulnerabilityAssessment is now required
+  - Parameter virtual_network_subnet_id of model VirtualNetworkRule is now required
+  - Parameter server_key_type of model ServerKey is now required
+  - Parameter azure_ad_only_authentication of model ServerAzureADOnlyAuthentication is now required
+  - Parameter administrator_type of model ServerAzureADAdministrator is now required
+  - Parameter sid of model ServerAzureADAdministrator is now required
+  - Parameter login of model ServerAzureADAdministrator is now required
+  - Parameter server_key_type of model ManagedInstanceEncryptionProtector is now required
+  - Parameter read_write_endpoint of model FailoverGroup is now required
+  - Parameter partner_servers of model FailoverGroup is now required
+  - Parameter license_type of model InstancePool is now required
+  - Parameter v_cores of model InstancePool is now required
+  - Parameter subnet_id of model InstancePool is now required
+  - Parameter state of model ManagedServerSecurityAlertPolicy is now required
+  - Parameter state of model ServerSecurityAlertPolicy is now required
+  - Parameter state of model ManagedDatabaseSecurityAlertPolicy is now required
+  - Parameter masking_function of model DataMaskingRule is now required
+  - Parameter state of model DatabaseSecurityAlertPolicy is now required
+  - Parameter state of model ExtendedServerBlobAuditingPolicy is now required
+  - Parameter state of model ServerBlobAuditingPolicy is now required
+  - Parameter state of model ExtendedDatabaseBlobAuditingPolicy is now required
+  - Parameter data_masking_state of model DataMaskingPolicy is now required
+  - Parameter state of model DatabaseBlobAuditingPolicy is now required
+  - Parameter connection_type of model ServerConnectionPolicy is now required
+  - Operation WorkloadGroupsOperations.list_by_database has a new signature
+  - Operation WorkloadGroupsOperations.get has a new signature
+  - Operation WorkloadClassifiersOperations.list_by_workload_group has a new signature
+  - Operation WorkloadClassifiersOperations.get has a new signature
+  - Operation VirtualNetworkRulesOperations.list_by_server has a new signature
+  - Operation VirtualNetworkRulesOperations.get has a new signature
+  - Operation VirtualClustersOperations.list_by_resource_group has a new signature
+  - Operation VirtualClustersOperations.get has a new signature
+  - Operation UsagesOperations.list_by_instance_pool has a new signature
+  - Operation SyncMembersOperations.list_member_schemas has a new signature
+  - Operation SyncMembersOperations.list_by_sync_group has a new signature
+  - Operation SyncMembersOperations.get has a new signature
+  - Operation SyncGroupsOperations.trigger_sync has a new signature
+  - Operation SyncGroupsOperations.list_sync_database_ids has a new signature
+  - Operation SyncGroupsOperations.list_logs has a new signature
+  - Operation SyncGroupsOperations.list_hub_schemas has a new signature
+  - Operation SyncGroupsOperations.list_by_database has a new signature
+  - Operation SyncGroupsOperations.get has a new signature
+  - Operation SyncGroupsOperations.cancel_sync has a new signature
+  - Operation SyncAgentsOperations.list_linked_databases has a new signature
+  - Operation SyncAgentsOperations.list_by_server has a new signature
+  - Operation SyncAgentsOperations.get has a new signature
+  - Operation SyncAgentsOperations.generate_key has a new signature
+  - Operation SubscriptionUsagesOperations.list_by_location has a new signature
+  - Operation SubscriptionUsagesOperations.get has a new signature
+  - Operation ServiceTierAdvisorsOperations.list_by_database has a new signature
+  - Operation ServiceTierAdvisorsOperations.get has a new signature
+  - Operation ServiceObjectivesOperations.list_by_server has a new signature
+  - Operation ServiceObjectivesOperations.get has a new signature
+  - Operation ServersOperations.list_by_resource_group has a new signature
+  - Operation ServersOperations.get has a new signature
+  - Operation ServerVulnerabilityAssessmentsOperations.list_by_server has a new signature
+  - Operation ServerUsagesOperations.list_by_server has a new signature
+  - Operation ServerSecurityAlertPoliciesOperations.list_by_server has a new signature
+  - Operation ServerKeysOperations.list_by_server has a new signature
+  - Operation ServerKeysOperations.get has a new signature
+  - Operation ServerDnsAliasesOperations.list_by_server has a new signature
+  - Operation ServerDnsAliasesOperations.get has a new signature
+  - Operation ServerCommunicationLinksOperations.list_by_server has a new signature
+  - Operation ServerCommunicationLinksOperations.get has a new signature
+  - Operation ServerCommunicationLinksOperations.delete has a new signature
+  - Operation ServerBlobAuditingPoliciesOperations.list_by_server has a new signature
+  - Operation ServerBlobAuditingPoliciesOperations.get has a new signature
+  - Operation ServerAzureADOnlyAuthenticationsOperations.list_by_server has a new signature
+  - Operation ServerAzureADAdministratorsOperations.list_by_server has a new signature
+  - Operation ServerAutomaticTuningOperations.get has a new signature
+  - Operation SensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation SensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation SensitivityLabelsOperations.get has a new signature
+  - Operation SensitivityLabelsOperations.enable_recommendation has a new signature
+  - Operation SensitivityLabelsOperations.disable_recommendation has a new signature
+  - Operation SensitivityLabelsOperations.delete has a new signature
+  - Operation SensitivityLabelsOperations.create_or_update has a new signature
+  - Operation RestorePointsOperations.list_by_database has a new signature
+  - Operation RestorePointsOperations.get has a new signature
+  - Operation RestorePointsOperations.delete has a new signature
+  - Operation RestorableDroppedManagedDatabasesOperations.list_by_instance has a new signature
+  - Operation RestorableDroppedManagedDatabasesOperations.get has a new signature
+  - Operation RestorableDroppedDatabasesOperations.list_by_server has a new signature
+  - Operation RestorableDroppedDatabasesOperations.get has a new signature
+  - Operation ReplicationLinksOperations.list_by_database has a new signature
+  - Operation ReplicationLinksOperations.get has a new signature
+  - Operation ReplicationLinksOperations.delete has a new signature
+  - Operation RecoverableManagedDatabasesOperations.list_by_instance has a new signature
+  - Operation RecoverableManagedDatabasesOperations.get has a new signature
+  - Operation RecoverableDatabasesOperations.list_by_server has a new signature
+  - Operation RecoverableDatabasesOperations.get has a new signature
+  - Operation RecommendedElasticPoolsOperations.list_metrics has a new signature
+  - Operation RecommendedElasticPoolsOperations.list_by_server has a new signature
+  - Operation RecommendedElasticPoolsOperations.get has a new signature
+  - Operation PrivateLinkResourcesOperations.list_by_server has a new signature
+  - Operation PrivateLinkResourcesOperations.get has a new signature
+  - Operation PrivateEndpointConnectionsOperations.list_by_server has a new signature
+  - Operation PrivateEndpointConnectionsOperations.get has a new signature
+  - Operation ManagedServerSecurityAlertPoliciesOperations.list_by_instance has a new signature
+  - Operation ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations.list_by_restorable_dropped_database has a new signature
+  - Operation ManagedInstancesOperations.list_by_resource_group has a new signature
+  - Operation ManagedInstancesOperations.list_by_instance_pool has a new signature
+  - Operation ManagedInstancesOperations.get has a new signature
+  - Operation ManagedInstanceVulnerabilityAssessmentsOperations.list_by_instance has a new signature
+  - Operation ManagedInstanceLongTermRetentionPoliciesOperations.list_by_database has a new signature
+  - Operation ManagedInstanceKeysOperations.list_by_instance has a new signature
+  - Operation ManagedInstanceKeysOperations.get has a new signature
+  - Operation ManagedInstanceEncryptionProtectorsOperations.list_by_instance has a new signature
+  - Operation ManagedInstanceAdministratorsOperations.list_by_instance has a new signature
+  - Operation ManagedInstanceAdministratorsOperations.get has a new signature
+  - Operation ManagedDatabasesOperations.list_inaccessible_by_instance has a new signature
+  - Operation ManagedDatabasesOperations.list_by_instance has a new signature
+  - Operation ManagedDatabasesOperations.get has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentsOperations.list_by_database has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentScansOperations.get has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentScansOperations.get has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.get has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.enable_recommendation has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.disable_recommendation has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.delete has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.create_or_update has a new signature
+  - Operation ManagedDatabaseSecurityAlertPoliciesOperations.list_by_database has a new signature
+  - Operation ManagedBackupShortTermRetentionPoliciesOperations.list_by_database has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_instance has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_database has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_instance has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_database has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.get_by_resource_group has a new signature
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.get has a new signature
+  - Operation LongTermRetentionBackupsOperations.list_by_server has a new signature
+  - Operation LongTermRetentionBackupsOperations.list_by_resource_group_server has a new signature
+  - Operation LongTermRetentionBackupsOperations.list_by_resource_group_location has a new signature
+  - Operation LongTermRetentionBackupsOperations.list_by_resource_group_database has a new signature
+  - Operation LongTermRetentionBackupsOperations.list_by_location has a new signature
+  - Operation LongTermRetentionBackupsOperations.list_by_database has a new signature
+  - Operation LongTermRetentionBackupsOperations.get_by_resource_group has a new signature
+  - Operation LongTermRetentionBackupsOperations.get has a new signature
+  - Operation JobsOperations.list_by_agent has a new signature
+  - Operation JobsOperations.get has a new signature
+  - Operation JobsOperations.delete has a new signature
+  - Operation JobVersionsOperations.list_by_job has a new signature
+  - Operation JobVersionsOperations.get has a new signature
+  - Operation JobTargetGroupsOperations.list_by_agent has a new signature
+  - Operation JobTargetGroupsOperations.get has a new signature
+  - Operation JobTargetGroupsOperations.delete has a new signature
+  - Operation JobTargetGroupsOperations.create_or_update has a new signature
+  - Operation JobTargetExecutionsOperations.list_by_step has a new signature
+  - Operation JobTargetExecutionsOperations.list_by_job_execution has a new signature
+  - Operation JobTargetExecutionsOperations.get has a new signature
+  - Operation JobStepsOperations.list_by_version has a new signature
+  - Operation JobStepsOperations.list_by_job has a new signature
+  - Operation JobStepsOperations.get_by_version has a new signature
+  - Operation JobStepsOperations.get has a new signature
+  - Operation JobStepsOperations.delete has a new signature
+  - Operation JobStepsOperations.create_or_update has a new signature
+  - Operation JobStepExecutionsOperations.list_by_job_execution has a new signature
+  - Operation JobStepExecutionsOperations.get has a new signature
+  - Operation JobExecutionsOperations.list_by_job has a new signature
+  - Operation JobExecutionsOperations.list_by_agent has a new signature
+  - Operation JobExecutionsOperations.get has a new signature
+  - Operation JobExecutionsOperations.cancel has a new signature
+  - Operation JobCredentialsOperations.list_by_agent has a new signature
+  - Operation JobCredentialsOperations.get has a new signature
+  - Operation JobCredentialsOperations.delete has a new signature
+  - Operation JobAgentsOperations.list_by_server has a new signature
+  - Operation JobAgentsOperations.get has a new signature
+  - Operation InstancePoolsOperations.list_by_resource_group has a new signature
+  - Operation InstancePoolsOperations.get has a new signature
+  - Operation GeoBackupPoliciesOperations.list_by_database has a new signature
+  - Operation FirewallRulesOperations.list_by_server has a new signature
+  - Operation FirewallRulesOperations.get has a new signature
+  - Operation FirewallRulesOperations.delete has a new signature
+  - Operation ExtendedServerBlobAuditingPoliciesOperations.list_by_server has a new signature
+  - Operation ExtendedServerBlobAuditingPoliciesOperations.get has a new signature
+  - Operation ExtendedDatabaseBlobAuditingPoliciesOperations.list_by_database has a new signature
+  - Operation ExtendedDatabaseBlobAuditingPoliciesOperations.get has a new signature
+  - Operation ExtendedDatabaseBlobAuditingPoliciesOperations.create_or_update has a new signature
+  - Operation EncryptionProtectorsOperations.list_by_server has a new signature
+  - Operation ElasticPoolsOperations.list_metrics has a new signature
+  - Operation ElasticPoolsOperations.list_metric_definitions has a new signature
+  - Operation ElasticPoolsOperations.list_by_server has a new signature
+  - Operation ElasticPoolsOperations.get has a new signature
+  - Operation ElasticPoolDatabaseActivitiesOperations.list_by_elastic_pool has a new signature
+  - Operation ElasticPoolActivitiesOperations.list_by_elastic_pool has a new signature
+  - Operation DatabasesOperations.rename has a new signature
+  - Operation DatabasesOperations.list_metrics has a new signature
+  - Operation DatabasesOperations.list_metric_definitions has a new signature
+  - Operation DatabasesOperations.list_by_server has a new signature
+  - Operation DatabasesOperations.list_by_elastic_pool has a new signature
+  - Operation DatabasesOperations.get has a new signature
+  - Operation DatabaseVulnerabilityAssessmentsOperations.list_by_database has a new signature
+  - Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+  - Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+  - Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+  - Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+  - Operation DatabaseUsagesOperations.list_by_database has a new signature
+  - Operation DatabaseBlobAuditingPoliciesOperations.list_by_database has a new signature
+  - Operation DatabaseBlobAuditingPoliciesOperations.get has a new signature
+  - Operation DatabaseBlobAuditingPoliciesOperations.create_or_update has a new signature
+  - Operation DatabaseAutomaticTuningOperations.get has a new signature
+  - Operation DataMaskingRulesOperations.list_by_database has a new signature
+  - Operation DataMaskingRulesOperations.create_or_update has a new signature
+  - Operation DataMaskingPoliciesOperations.get has a new signature
+  - Operation CapabilitiesOperations.list_by_location has a new signature
+  - Operation BackupShortTermRetentionPoliciesOperations.list_by_database has a new signature
+  - Operation BackupLongTermRetentionPoliciesOperations.list_by_database has a new signature
+  - Operation ManagedBackupShortTermRetentionPoliciesOperations.get has a new signature
+  - Operation TransparentDataEncryptionsOperations.create_or_update has a new signature
+  - Operation TransparentDataEncryptionsOperations.get has a new signature
+  - Operation TransparentDataEncryptionActivitiesOperations.list_by_configuration has a new signature
+  - Operation DatabaseVulnerabilityAssessmentsOperations.create_or_update has a new signature
+  - Operation DatabaseVulnerabilityAssessmentsOperations.delete has a new signature
+  - Operation DatabaseVulnerabilityAssessmentsOperations.get has a new signature
+  - Operation ServerAutomaticTuningOperations.update has a new signature
+  - Operation BackupShortTermRetentionPoliciesOperations.get has a new signature
+  - Operation FirewallRulesOperations.create_or_update has a new signature
+  - Operation ManagedInstanceVulnerabilityAssessmentsOperations.create_or_update has a new signature
+  - Operation ManagedInstanceVulnerabilityAssessmentsOperations.delete has a new signature
+  - Operation ManagedInstanceVulnerabilityAssessmentsOperations.get has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
+  - Operation ServerSecurityAlertPoliciesOperations.get has a new signature
+  - Operation InstancePoolsOperations.list has a new signature
+  - Operation ManagedDatabaseRestoreDetailsOperations.get has a new signature
+  - Operation ManagedDatabaseSecurityAlertPoliciesOperations.create_or_update has a new signature
+  - Operation ManagedDatabaseSecurityAlertPoliciesOperations.get has a new signature
+  - Operation GeoBackupPoliciesOperations.create_or_update has a new signature
+  - Operation GeoBackupPoliciesOperations.get has a new signature
+  - Operation VirtualClustersOperations.list has a new signature
+  - Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
+  - Operation EncryptionProtectorsOperations.get has a new signature
+  - Operation BackupLongTermRetentionPoliciesOperations.get has a new signature
+  - Operation DatabaseThreatDetectionPoliciesOperations.create_or_update has a new signature
+  - Operation DatabaseThreatDetectionPoliciesOperations.get has a new signature
+  - Operation DataMaskingPoliciesOperations.create_or_update has a new signature
+  - Operation ManagedServerSecurityAlertPoliciesOperations.get has a new signature
+  - Operation ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations.get has a new signature
+  - Operation ServerAzureADAdministratorsOperations.get has a new signature
+  - Operation ServerVulnerabilityAssessmentsOperations.create_or_update has a new signature
+  - Operation ServerVulnerabilityAssessmentsOperations.delete has a new signature
+  - Operation ServerVulnerabilityAssessmentsOperations.get has a new signature
+  - Operation ManagedInstanceLongTermRetentionPoliciesOperations.get has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentsOperations.create_or_update has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentsOperations.delete has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentsOperations.get has a new signature
+  - Operation ManagedInstancesOperations.list has a new signature
+  - Operation ServersOperations.check_name_availability has a new signature
+  - Operation ServersOperations.list has a new signature
+  - Operation DatabaseAutomaticTuningOperations.update has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentScansOperations.export has a new signature
+  - Operation ManagedDatabaseVulnerabilityAssessmentScansOperations.list_by_database has a new signature
+  - Operation DatabaseVulnerabilityAssessmentScansOperations.export has a new signature
+  - Operation DatabaseVulnerabilityAssessmentScansOperations.list_by_database has a new signature
+  - Operation DatabaseVulnerabilityAssessmentScansOperations.get has a new signature
+  - Operation ManagedInstanceEncryptionProtectorsOperations.get has a new signature
+  - Operation ServerConnectionPoliciesOperations.create_or_update has a new signature
+  - Operation ServerConnectionPoliciesOperations.get has a new signature
+  - Operation Operations.list has a new signature
+  - Operation ServerAzureADOnlyAuthenticationsOperations.get has a new signature
+  - Model BackupShortTermRetentionPolicy no longer has parameter diff_backup_interval_in_hours
+  - Model DataMaskingRule no longer has parameter id_properties_id
+  - Model SyncAgent no longer has parameter name_properties_name
+  - Model Database no longer has parameter read_replica_count
+  - Model DatabaseUpdate no longer has parameter read_replica_count
+  - Model RecommendedElasticPoolMetric no longer has parameter date_time
+  - Removed operation ManagedBackupShortTermRetentionPoliciesOperations.begin_create_or_update
+  - Removed operation ManagedBackupShortTermRetentionPoliciesOperations.begin_update
+  - Removed operation JobAgentsOperations.begin_create_or_update
+  - Removed operation JobAgentsOperations.begin_update
+  - Removed operation JobAgentsOperations.begin_delete
+  - Removed operation RestorePointsOperations.begin_create
+  - Removed operation ServerCommunicationLinksOperations.begin_create_or_update
+  - Removed operation JobExecutionsOperations.begin_create_or_update
+  - Removed operation JobExecutionsOperations.begin_create
+  - Removed operation BackupShortTermRetentionPoliciesOperations.begin_create_or_update
+  - Removed operation BackupShortTermRetentionPoliciesOperations.begin_update
+  - Removed operation SyncGroupsOperations.begin_create_or_update
+  - Removed operation SyncGroupsOperations.begin_refresh_hub_schema
+  - Removed operation SyncGroupsOperations.begin_update
+  - Removed operation SyncGroupsOperations.begin_delete
+  - Removed operation ReplicationLinksOperations.begin_failover_allow_data_loss
+  - Removed operation ReplicationLinksOperations.begin_failover
+  - Removed operation ReplicationLinksOperations.begin_unlink
+  - Removed operation SyncAgentsOperations.begin_create_or_update
+  - Removed operation SyncAgentsOperations.begin_delete
+  - Removed operation ManagedDatabasesOperations.begin_create_or_update
+  - Removed operation ManagedDatabasesOperations.begin_complete_restore
+  - Removed operation ManagedDatabasesOperations.begin_update
+  - Removed operation ManagedDatabasesOperations.begin_delete
+  - Removed operation WorkloadGroupsOperations.begin_create_or_update
+  - Removed operation WorkloadGroupsOperations.begin_delete
+  - Removed operation LongTermRetentionBackupsOperations.begin_delete_by_resource_group
+  - Removed operation LongTermRetentionBackupsOperations.begin_delete
+  - Removed operation ElasticPoolsOperations.begin_create_or_update
+  - Removed operation ElasticPoolsOperations.begin_failover
+  - Removed operation ElasticPoolsOperations.begin_update
+  - Removed operation ElasticPoolsOperations.begin_delete
+  - Removed operation ServerSecurityAlertPoliciesOperations.begin_create_or_update
+  - Removed operation InstancePoolsOperations.begin_create_or_update
+  - Removed operation InstancePoolsOperations.begin_update
+  - Removed operation InstancePoolsOperations.begin_delete
+  - Removed operation VirtualClustersOperations.begin_update
+  - Removed operation VirtualClustersOperations.begin_delete
+  - Removed operation ManagedInstanceAdministratorsOperations.begin_create_or_update
+  - Removed operation ManagedInstanceAdministratorsOperations.begin_delete
+  - Removed operation ServerKeysOperations.begin_create_or_update
+  - Removed operation ServerKeysOperations.begin_delete
+  - Removed operation EncryptionProtectorsOperations.begin_revalidate
+  - Removed operation EncryptionProtectorsOperations.begin_create_or_update
+  - Removed operation BackupLongTermRetentionPoliciesOperations.begin_create_or_update
+  - Removed operation ManagedServerSecurityAlertPoliciesOperations.begin_create_or_update
+  - Removed operation ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations.begin_create_or_update
+  - Removed operation ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations.begin_update
+  - Removed operation ServerAzureADAdministratorsOperations.begin_create_or_update
+  - Removed operation ServerAzureADAdministratorsOperations.begin_delete
+  - Removed operation ManagedInstanceLongTermRetentionPoliciesOperations.begin_create_or_update
+  - Removed operation ExtendedServerBlobAuditingPoliciesOperations.begin_create_or_update
+  - Removed operation PrivateEndpointConnectionsOperations.begin_create_or_update
+  - Removed operation PrivateEndpointConnectionsOperations.begin_delete
+  - Removed operation LongTermRetentionManagedInstanceBackupsOperations.begin_delete_by_resource_group
+  - Removed operation LongTermRetentionManagedInstanceBackupsOperations.begin_delete
+  - Removed operation ManagedInstancesOperations.begin_create_or_update
+  - Removed operation ManagedInstancesOperations.begin_failover
+  - Removed operation ManagedInstancesOperations.begin_update
+  - Removed operation ManagedInstancesOperations.begin_delete
+  - Removed operation SyncMembersOperations.begin_refresh_member_schema
+  - Removed operation SyncMembersOperations.begin_create_or_update
+  - Removed operation SyncMembersOperations.begin_update
+  - Removed operation SyncMembersOperations.begin_delete
+  - Removed operation ServerDnsAliasesOperations.begin_acquire
+  - Removed operation ServerDnsAliasesOperations.begin_create_or_update
+  - Removed operation ServerDnsAliasesOperations.begin_delete
+  - Removed operation ServersOperations.begin_create_or_update
+  - Removed operation ServersOperations.begin_update
+  - Removed operation ServersOperations.begin_delete
+  - Removed operation ManagedDatabaseVulnerabilityAssessmentScansOperations.begin_initiate_scan
+  - Removed operation WorkloadClassifiersOperations.begin_create_or_update
+  - Removed operation WorkloadClassifiersOperations.begin_delete
+  - Removed operation DatabaseVulnerabilityAssessmentScansOperations.begin_initiate_scan
+  - Removed operation ServerBlobAuditingPoliciesOperations.begin_create_or_update
+  - Removed operation DatabasesOperations.begin_create_or_update
+  - Removed operation DatabasesOperations.begin_delete
+  - Removed operation DatabasesOperations.begin_create_import_operation
+  - Removed operation DatabasesOperations.begin_failover
+  - Removed operation DatabasesOperations.begin_export
+  - Removed operation DatabasesOperations.begin_import_method
+  - Removed operation DatabasesOperations.begin_pause
+  - Removed operation DatabasesOperations.begin_update
+  - Removed operation DatabasesOperations.begin_upgrade_data_warehouse
+  - Removed operation DatabasesOperations.begin_resume
+  - Removed operation ManagedInstanceEncryptionProtectorsOperations.begin_revalidate
+  - Removed operation ManagedInstanceEncryptionProtectorsOperations.begin_create_or_update
+  - Removed operation ManagedInstanceKeysOperations.begin_create_or_update
+  - Removed operation ManagedInstanceKeysOperations.begin_delete
+  - Removed operation ServerAzureADOnlyAuthenticationsOperations.begin_create_or_update
+  - Removed operation ServerAzureADOnlyAuthenticationsOperations.begin_delete
+  - Removed operation VirtualNetworkRulesOperations.begin_create_or_update
+  - Removed operation VirtualNetworkRulesOperations.begin_delete
+  - Removed operation TdeCertificatesOperations.begin_create
+  - Removed operation ManagedInstanceTdeCertificatesOperations.begin_create
+  - Removed operation FailoverGroupsOperations.begin_create_or_update
+  - Removed operation FailoverGroupsOperations.begin_delete
+  - Removed operation FailoverGroupsOperations.begin_failover
+  - Removed operation FailoverGroupsOperations.begin_update
+  - Removed operation FailoverGroupsOperations.begin_force_failover_allow_data_loss
+  - Removed operation InstanceFailoverGroupsOperations.begin_create_or_update
+  - Removed operation InstanceFailoverGroupsOperations.begin_failover
+  - Removed operation InstanceFailoverGroupsOperations.begin_force_failover_allow_data_loss
+  - Removed operation InstanceFailoverGroupsOperations.begin_delete
+  - Removed operation group ManagedInstanceOperationsOperations
+  - Removed operation group DatabaseOperationsOperations
+  - Removed operation group ElasticPoolOperationsOperations
+  
 ## 0.23.0 (2020-10-29)
 
 **Features**
