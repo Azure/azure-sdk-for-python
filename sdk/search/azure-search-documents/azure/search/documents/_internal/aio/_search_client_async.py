@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
+import six
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
@@ -208,47 +209,27 @@ class SearchClient(HeadersMixin):
         select = kwargs.pop("select", None)
         skip = kwargs.pop("skip", None)
         top = kwargs.pop("top", None)
+        query = SearchQuery(
+            search_text=search_text,
+            include_total_result_count=include_total_result_count,
+            facets=facets,
+            filter=filter_arg,
+            highlight_fields=highlight_fields,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            query_type=query_type,
+            scoring_parameters=scoring_parameters,
+            scoring_profile=scoring_profile,
+            search_fields=search_fields,
+            search_mode=search_mode,
+            select=select if isinstance(select, six.string_types) else None,
+            skip=skip,
+            top=top
+        )
         if isinstance(select, list):
-            query = SearchQuery(
-                search_text=search_text,
-                include_total_result_count=include_total_result_count,
-                facets=facets,
-                filter=filter_arg,
-                highlight_fields=highlight_fields,
-                highlight_post_tag=highlight_post_tag,
-                highlight_pre_tag=highlight_pre_tag,
-                minimum_coverage=minimum_coverage,
-                order_by=order_by,
-                query_type=query_type,
-                scoring_parameters=scoring_parameters,
-                scoring_profile=scoring_profile,
-                search_fields=search_fields,
-                search_mode=search_mode,
-                skip=skip,
-                top=top
-            )
             query.select(select)
-        else:
-            query = SearchQuery(
-                search_text=search_text,
-                include_total_result_count=include_total_result_count,
-                facets=facets,
-                filter=filter_arg,
-                highlight_fields=highlight_fields,
-                highlight_post_tag=highlight_post_tag,
-                highlight_pre_tag=highlight_pre_tag,
-                minimum_coverage=minimum_coverage,
-                order_by=order_by,
-                query_type=query_type,
-                scoring_parameters=scoring_parameters,
-                scoring_profile=scoring_profile,
-                search_fields=search_fields,
-                search_mode=search_mode,
-                select=select,
-                skip=skip,
-                top=top
-            )
-
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return AsyncSearchItemPaged(
             self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
@@ -309,35 +290,21 @@ class SearchClient(HeadersMixin):
         search_fields = kwargs.pop("search_fields", None)
         select = kwargs.pop("select", None)
         top = kwargs.pop("top", None)
+        query = SuggestQuery(
+            search_text=search_text,
+            suggester_name=suggester_name,
+            filter=filter_arg,
+            use_fuzzy_matching=use_fuzzy_matching,
+            highlight_post_tag=highlight_post_tag,
+            highlight_pre_tag=highlight_pre_tag,
+            minimum_coverage=minimum_coverage,
+            order_by=order_by,
+            search_fields=search_fields,
+            select=select if isinstance(select, six.string_types) else None,
+            top=top
+        )
         if isinstance(select, list):
-            query = SuggestQuery(
-                search_text=search_text,
-                suggester_name=suggester_name,
-                filter=filter_arg,
-                use_fuzzy_matching=use_fuzzy_matching,
-                highlight_post_tag=highlight_post_tag,
-                highlight_pre_tag=highlight_pre_tag,
-                minimum_coverage=minimum_coverage,
-                order_by=order_by,
-                search_fields=search_fields,
-                top=top
-            )
             query.select(select)
-        else:
-            query = SuggestQuery(
-                search_text=search_text,
-                suggester_name=suggester_name,
-                filter=filter_arg,
-                use_fuzzy_matching=use_fuzzy_matching,
-                highlight_post_tag=highlight_post_tag,
-                highlight_pre_tag=highlight_pre_tag,
-                minimum_coverage=minimum_coverage,
-                order_by=order_by,
-                search_fields=search_fields,
-                select=select,
-                top=top
-            )
-
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = await self._client.documents.suggest_post(
             suggest_request=query.request, **kwargs
