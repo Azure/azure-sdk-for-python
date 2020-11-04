@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import datetime
 import time
 import logging
 import functools
@@ -48,6 +47,7 @@ from ._servicebus_session import ServiceBusSession
 
 
 if TYPE_CHECKING:
+    import datetime
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -152,6 +152,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._iter_contextual_wrapper()
 
     def _iter_contextual_wrapper(self, max_wait_time=None):
+        """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
+        and per-iter argument passing that requires the former."""
         # pylint: disable=protected-access
         original_timeout = None
         while True:
@@ -406,7 +408,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._iter_contextual_wrapper(max_wait_time)
 
     @classmethod
-    def from_connection_string(
+    def _from_connection_string(
         cls,
         conn_str,
         **kwargs

@@ -35,7 +35,7 @@ def print_message(_logger, message):
     _logger.debug("Sequence number: {}".format(message.sequence_number))
     _logger.debug("Enqueue Sequence numger: {}".format(message.enqueued_sequence_number))
     _logger.debug("Partition Key: {}".format(message.partition_key))
-    _logger.debug("Properties: {}".format(message.properties))
+    _logger.debug("Application Properties: {}".format(message.application_properties))
     _logger.debug("Delivery count: {}".format(message.delivery_count))
     try:
         _logger.debug("Locked until: {}".format(message.locked_until_utc))
