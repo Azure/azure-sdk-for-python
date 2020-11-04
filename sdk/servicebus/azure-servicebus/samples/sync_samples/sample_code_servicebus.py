@@ -222,7 +222,7 @@ def example_send_and_receive_sync():
     with servicebus_receiver:
         for message in servicebus_receiver:
             # Auto renew message for 1 minute.
-            lock_renewal.register(message, max_lock_renewal_duration=60)
+            lock_renewal.register(servicebus_receiver, message, max_lock_renewal_duration=60)
             process_message(message)
             servicebus_receiver.complete_message(message)
     # [END auto_lock_renew_message_sync]

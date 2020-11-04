@@ -94,7 +94,7 @@ def get_renewable_start_time(renewable):
         return renewable._session_start  # pylint: disable=protected-access
     except AttributeError:
         raise TypeError("Registered object is not renewable, renewable must be" +
-                        "a ReceivedMessage or a sessionful ServiceBusReceiver")
+                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
 
 
 def get_renewable_lock_duration(renewable):
@@ -104,7 +104,7 @@ def get_renewable_lock_duration(renewable):
         return max(renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0))
     except AttributeError:
         raise TypeError("Registered object is not renewable, renewable must be" +
-                        "a ReceivedMessage or a sessionful ServiceBusReceiver")
+                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
 
 
 def create_authentication(client):
