@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._runtime_operations import RuntimeOperations
+from .runtime_operations import RuntimeOperations
 
 __all__ = [
     'RuntimeOperations',
