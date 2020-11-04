@@ -279,7 +279,7 @@ class TestInvoice(FormRecognizerTest):
 
         initial_poller = client.begin_recognize_invoices(invoice)
         cont_token = initial_poller.continuation_token()
-        poller = client.begin_recognize_invoices(invoice, continuation_token=cont_token)
+        poller = client.begin_recognize_invoices(None, continuation_token=cont_token)
         result = poller.result()
         self.assertIsNotNone(result)
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

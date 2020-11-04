@@ -358,7 +358,7 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 cont_token = initial_poller.continuation_token()
                 poller = await fr_client.begin_recognize_custom_forms_from_url(
                     model.model_id,
-                    self.form_url_jpg,
+                    None,
                     continuation_token=cont_token
                 )
                 result = await poller.result()

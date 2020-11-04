@@ -267,7 +267,7 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         async with client:
             initial_poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_training(training_files_url=container_sas_url, use_training_labels=False, continuation_token=cont_token)
+            poller = await client.begin_training(None, None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

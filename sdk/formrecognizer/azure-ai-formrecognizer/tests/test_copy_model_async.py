@@ -156,7 +156,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
             initial_poller = await client.begin_copy_model(model.model_id, target=target)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_copy_model(model.model_id, target=target, continuation_token=cont_token)
+            poller = await client.begin_copy_model(model.model_id, None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
 

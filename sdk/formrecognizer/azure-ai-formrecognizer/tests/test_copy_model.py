@@ -152,7 +152,7 @@ class TestCopyModel(FormRecognizerTest):
         initial_poller = client.begin_copy_model(model.model_id, target=target)
         cont_token = initial_poller.continuation_token()
 
-        poller = client.begin_copy_model(model.model_id, target=target, continuation_token=cont_token)
+        poller = client.begin_copy_model(model.model_id, None, continuation_token=cont_token)
         result = poller.result()
         self.assertIsNotNone(result)
 

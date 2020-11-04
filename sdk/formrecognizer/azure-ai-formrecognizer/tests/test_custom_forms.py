@@ -385,7 +385,7 @@ class TestCustomForms(FormRecognizerTest):
         cont_token = initial_poller.continuation_token()
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            None,
             continuation_token=cont_token
         )
         result = poller.result()
