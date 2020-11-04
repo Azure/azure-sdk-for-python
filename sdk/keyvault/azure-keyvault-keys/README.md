@@ -153,6 +153,7 @@ This section contains code snippets covering common tasks:
 * [Delete a Key](#delete-a-key "Delete a Key")
 * [List Keys](#list-keys "List Keys")
 * [Perform cryptographic operations](#cryptographic-operations)
+* [Async API](#async-api "Async API")
 * [Asynchronously create a Key](#asynchronously-create-a-key "Asynchronously create a Key")
 * [Asynchronously list Keys](#asynchronously-list-keys "Asynchronously list Keys")
 

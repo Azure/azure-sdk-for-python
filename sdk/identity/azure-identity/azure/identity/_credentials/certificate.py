@@ -6,7 +6,7 @@ from binascii import hexlify
 from typing import TYPE_CHECKING
 
 from cryptography import x509
-from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import six
 
@@ -57,9 +57,10 @@ class CertificateCredential(ClientCredentialBase):
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
 
-        # TODO: msal doesn't formally support passwords (but soon will); the below depends on an implementation detail
-        private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
-        client_credential = {"private_key": private_key, "thumbprint": hexlify(fingerprint).decode("utf-8")}
+        client_credential = {"private_key": pem_bytes, "thumbprint": hexlify(fingerprint).decode("utf-8")}
+        if password:
+            client_credential["passphrase"] = password
+
         if kwargs.pop("send_certificate_chain", False):
             try:
                 # the JWT needs the whole chain but load_pem_x509_certificate deserializes only the signing cert
