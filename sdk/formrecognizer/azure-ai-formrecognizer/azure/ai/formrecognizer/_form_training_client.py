@@ -35,7 +35,6 @@ from ._polling import TrainingPolling, CopyPolling
 from ._form_recognizer_client import FormRecognizerClient
 from ._form_base_client import FormRecognizerClientBase
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpResponse
     from azure.core.paging import ItemPaged
@@ -358,12 +357,20 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
+
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
-            copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated(copy_result, target["modelId"], api_version=self.api_version)
+            copy_operation = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
+            model_id = copy_operation.copy_result.model_id if hasattr(copy_operation, "copy_result") else None
+            if model_id:
+                return CustomFormModelInfo._from_generated(copy_operation, model_id, api_version=self.api_version)
+            if target:
+                return CustomFormModelInfo._from_generated(
+                    copy_operation, target["model_id"], api_version=self.api_version
+                )
+            return CustomFormModelInfo._from_generated(copy_operation, None, api_version=self.api_version)
 
         return self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
@@ -375,7 +382,7 @@ class FormTrainingClient(FormRecognizerClientBase):
                     model_id=target["modelId"],
                     expiration_date_time_ticks=target["expirationDateTimeTicks"]
                 )
-            ),
+            ) if target else None,
             cls=kwargs.pop("cls", _copy_callback),
             polling=LROBasePolling(timeout=polling_interval, lro_algorithms=[CopyPolling()], **kwargs),
             continuation_token=continuation_token,
