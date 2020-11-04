@@ -15,7 +15,7 @@ from opentelemetry.trace.status import StatusCanonicalCode
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import ProxyPolicy, RetryPolicy
 from opentelemetry.exporter.azuremonitor import utils
-from opentelemetry.exporter.azuremonitor._generated import AzureMonitorExporter
+from opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
 from opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem, TrackResponse
 from opentelemetry.exporter.azuremonitor.options import ExporterOptions
 from opentelemetry.exporter.azuremonitor.storage import LocalFileStorage
@@ -42,7 +42,7 @@ class BaseExporter:
         self.options = ExporterOptions(**options)
         retry_policy = RetryPolicy(timeout=self.options.timeout)
         proxy_policy = ProxyPolicy(proxies=self.options.proxies)
-        self.client = AzureMonitorExporter(
+        self.client = AzureMonitorClient(
             self.options.endpoint, proxy_policy=proxy_policy, retry_policy=retry_policy)
         self.storage = LocalFileStorage(
             path=self.options.storage_path,
