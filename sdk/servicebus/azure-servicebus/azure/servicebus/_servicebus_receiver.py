@@ -229,8 +229,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if len(batch) >= max_message_count:
             return [self._build_message(message) for message in batch]
 
-        # Dynamically issue link credit if the prefetch_count is the default value 1
-        if self._prefetch_count == 1:
+        # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
+        if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
             link_credit_needed = max_message_count - len(batch)
             amqp_receive_client.message_handler.reset_link_credit(link_credit_needed)
 
@@ -415,7 +415,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         of the specified batch size.
 
         :param int max_message_count: Maximum number of messages in the batch. Actual number
-         returned will depend on prefetch_count and incoming stream rate. The default value is 1.
+         returned will depend on prefetch_count and incoming stream rate.
+         Setting to None will fully depend on the prefetch config. The default value is 1.
         :param float max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
@@ -434,6 +435,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
         """
         self._check_live()
+        if max_message_count is not None and max_message_count <= 0:
+            raise ValueError("The max_message_count must be greater than 0")
         return self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
