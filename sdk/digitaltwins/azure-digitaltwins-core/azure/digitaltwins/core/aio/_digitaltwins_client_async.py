@@ -13,7 +13,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core import MatchConditions
 
 from .._utils import (
-    prep_if_match
+    prep_if_match,
+    prep_if_none_match
 )
 
 from .._generated import models
@@ -548,12 +549,12 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def get_event_route(self, event_route_id, **kwargs):
-        # type: (str, **Any) -> ~azure.digitaltwins.models.DigitalTwinsEventRoute
+        # type: (str, **Any) -> DigitalTwinsEventRoute
         """Get an event route.
 
         :param str event_route_id: The Id of the event route.
-        :return: The DigitalTwinsEventRoute object.
-        :rtype: DigitalTwinsEventRoute
+        :return: The ~azure.digitaltwins.models.DigitalTwinsEventRoute object.
+        :rtype: ~azure.digitaltwins.models.DigitalTwinsEventRoute
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: There is no
             event route with the provided id.
@@ -565,12 +566,12 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def list_event_routes(self, **kwargs):
-        # type: (**Any) -> ~azure.core.paging.AsyncItemPaged[~azure.digitaltwins.models.DigitalTwinsEventRoute]
+        # type: (**Any) -> ~azure.core.paging.AsyncItemPaged[DigitalTwinsEventRoute]
         """Retrieves all event routes.
 
         :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
-        :return: An iterator instance of list of DigitalTwinsEventRoute.
+        :return: An iterator instance of list of ~azure.digitaltwins.models.DigitalTwinsEventRoute.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[DigitalTwinsEventRoute]
         :raises :class: `~azure.core.exceptions.HttpResponseError`
         :raises :class: `~azure.core.exceptions.ServiceRequestError`: The request is invalid.
@@ -587,11 +588,11 @@ class DigitalTwinsClient(object): # type: ignore #pylint: disable=too-many-publi
 
     @distributed_trace_async
     async def upsert_event_route(self, event_route_id, event_route, **kwargs):
-        # type: (str, ~azure.digitaltwins.models.DigitalTwinsEventRoute, **Any) -> None
+        # type: (str, DigitalTwinsEventRoute, **Any) -> None
         """Create or update an event route.
 
         :param str event_route_id: The Id of the event route to create or update.
-        :param DigitalTwinsEventRoute event_route: The event route data.
+        :param ~azure.digitaltwins.models.DigitalTwinsEventRoute event_route: The event route data.
         :return: None
         :rtype: None
         :raises :class: `~azure.core.exceptions.HttpResponseError`

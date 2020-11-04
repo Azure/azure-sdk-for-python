@@ -3,8 +3,10 @@
 ## 1.0.0 (2020-10-30)
 
 - The is the GA release containing the following changes:
-  - Expose if_none_match optional parameters for upsert_digital_twin and upsert_relationship APIs
+  - Added etag and match_condition parameters to upsert_digital_twin and upsert_relationship APIs to support conditional operation.
   - Rename EventRoute type to DigitalTwinsEventRoute
+  - Rename component_path to component_name
+  - Rename models to dtdl_models
   - Fix some documentation
 
 ## 1.0.0b1 (2020-10-31)
