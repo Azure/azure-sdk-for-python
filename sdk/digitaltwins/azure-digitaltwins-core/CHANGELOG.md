@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2020-10-30)
+## 1.0.0 (unreleased)
 
 - The is the GA release containing the following changes:
   - Added etag and match_condition parameters to upsert_digital_twin and upsert_relationship APIs to support conditional operation.
