@@ -212,8 +212,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self.close()
             raise
 
-    async def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
+    async def _receive(self, max_message_count, timeout=None):
+        # type: (int, Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         await self._open()
 
@@ -395,7 +395,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     async def receive_messages(
         self,
-        max_message_count: Optional[int] = None,
+        max_message_count: Optional[int] = 1,
         max_wait_time: Optional[float] = None
     ) -> List[ServiceBusReceivedMessage]:
         """Receive a batch of messages at once.
@@ -413,6 +413,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count size and incoming stream rate.
+         Setting to None will fully depend on the prefetch config. The default value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
@@ -430,6 +431,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         """
         self._check_live()
+        if max_message_count is not None and max_message_count <= 0:
+            raise ValueError("The max_message_count must be greater than 0")
         return await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
