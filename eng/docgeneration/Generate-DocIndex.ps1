@@ -140,7 +140,7 @@ function GenerateDocfxTocContent([Hashtable]$tocContent, [String]$lang) {
     Copy-Item "${DocGenDir}/assets/logo.svg" -Destination "${DocOutDir}/_site/" -Force    
 }
 
-if ((Get-ChildItem -Path Function: | ? { $_.Name -eq $GetGithubIoDocIndexFn  }).Count -gt 0)
+if (Test-Path "function:$GetGithubIoDocIndexFn")
 {
     &$GetGithubIoDocIndexFn
 }
