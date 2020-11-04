@@ -395,7 +395,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus.py
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
                 :start-after: [START receive_forever_async]
                 :end-before: [END receive_forever_async]
                 :language: python

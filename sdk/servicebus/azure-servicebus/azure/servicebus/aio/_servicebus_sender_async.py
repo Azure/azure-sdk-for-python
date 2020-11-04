@@ -146,6 +146,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
+
         :param messages: The message or list of messages to schedule.
         :type messages: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
