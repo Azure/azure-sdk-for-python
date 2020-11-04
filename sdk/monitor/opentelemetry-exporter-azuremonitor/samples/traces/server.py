@@ -3,10 +3,11 @@
 # pylint: disable=import-error
 # pylint: disable=no-member
 # pylint: disable=no-name-in-module
+import os
 import requests
 from opentelemetry import trace
-from opentelemetry.ext.flask import FlaskInstrumentor
-from opentelemetry.ext.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
@@ -19,7 +20,7 @@ trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
 exporter = AzureMonitorSpanExporter(
-    connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
+    connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
 )
 
 # SpanExporter receives the spans and send them to the target location.

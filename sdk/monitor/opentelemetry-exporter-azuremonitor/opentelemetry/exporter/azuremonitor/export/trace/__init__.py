@@ -39,12 +39,7 @@ class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
 
     def export(self, spans: Sequence[Span]) -> SpanExportResult:
         envelopes = list(map(self._span_to_envelope, spans))
-        envelopes = list(
-            map(
-                lambda x: x,
-                self._apply_telemetry_processors(envelopes),
-            )
-        )
+        envelopes = self._apply_telemetry_processors(envelopes)
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
@@ -57,8 +52,6 @@ class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
             logger.exception("Exception occurred while exporting the data.")
             return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
-    # pylint: disable=too-many-statements
-    # pylint: disable=too-many-branches
     def _span_to_envelope(self, span: Span) -> TelemetryItem:
         if not span:
             return None
@@ -70,8 +63,6 @@ class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 def convert_span_to_envelope(span: Span) -> TelemetryItem:
-    if not span:
-        return None
     envelope = TelemetryItem(
         name="",
         instrumentation_key="",
@@ -80,8 +71,6 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
     )
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
     parent = span.parent
-    if isinstance(parent, Span):
-        parent = parent.context
     if parent:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
             parent.span_id

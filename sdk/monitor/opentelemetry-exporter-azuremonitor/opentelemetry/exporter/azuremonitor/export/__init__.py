@@ -162,6 +162,7 @@ class BaseExporter:
         Determine if response is retryable
         """
         if response_code in (
+            206,  # Retriable
             408,  # Timeout
             429,  # Throttle, too Many Requests
             439,  # Quota, too Many Requests over extended time

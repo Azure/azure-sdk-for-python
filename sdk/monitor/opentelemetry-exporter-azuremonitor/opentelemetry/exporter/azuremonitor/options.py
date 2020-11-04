@@ -136,7 +136,7 @@ class ExporterOptions(BaseObject):
             raise ValueError("Instrumentation key cannot be none or empty.")
         match = uuid_regex_pattern.match(self.instrumentation_key)
         if not match:
-            raise ValueError("Invalid instrumentation key.")
+            raise ValueError("Invalid instrumentation key. It should be a valid UUID.")
 
 
 def parse_connection_string(connection_string) -> typing.Dict:

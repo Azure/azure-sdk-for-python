@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import os
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
@@ -14,7 +15,7 @@ def callback_function(envelope):
 
 
 exporter = AzureMonitorSpanExporter(
-    connection_string="InstrumentationKey=<INSTRUMENTATION KEY HERE>"
+    connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
 )
 exporter.add_telemetry_processor(callback_function)
 

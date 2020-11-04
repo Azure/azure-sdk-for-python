@@ -45,7 +45,7 @@ def throw(exc_type, *args, **kwargs):
 # pylint: disable=import-error
 # pylint: disable=protected-access
 # pylint: disable=too-many-lines
-class TestAzureExporter(unittest.TestCase):
+class TestAzureSpanExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         os.environ.clear()
@@ -213,13 +213,10 @@ class TestAzureExporter(unittest.TestCase):
             storage_path=os.path.join(TEST_FOLDER, self.id()),
         )
 
-        parent_span = Span(
-            name="test",
-            context=SpanContext(
-                trace_id=36873507687745823477771305566750195431,
-                span_id=12030755672171557338,
-                is_remote=False,
-            ),
+        parent_span = SpanContext(
+            trace_id=36873507687745823477771305566750195431,
+            span_id=12030755672171557338,
+            is_remote=False,
         )
 
         start_time = 1575494316027613500
@@ -251,7 +248,8 @@ class TestAzureExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span.status = Status(canonical_code=StatusCanonicalCode.OK)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key, "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -296,7 +294,8 @@ class TestAzureExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key, "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -339,7 +338,8 @@ class TestAzureExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key, "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -391,7 +391,8 @@ class TestAzureExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key, "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
@@ -445,7 +446,8 @@ class TestAzureExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key, "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
@@ -499,7 +501,8 @@ class TestAzureExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key, "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.Request"
         )
@@ -536,7 +539,8 @@ class TestAzureExporter(unittest.TestCase):
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.instrumentation_key, "12345678-1234-5678-abcd-12345678abcd")
+        self.assertEqual(envelope.instrumentation_key,
+                         "12345678-1234-5678-abcd-12345678abcd")
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )

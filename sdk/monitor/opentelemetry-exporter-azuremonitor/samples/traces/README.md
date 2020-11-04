@@ -25,7 +25,7 @@ $ python trace.py
 * Run the sample
 
 ```sh
-$ pip install opentelemetry-ext-http-requests
+$ pip install opentelemetry-instrumentation-requests
 $ # from this directory
 $ python request.py
 ```
@@ -37,8 +37,8 @@ $ python request.py
 * Run the sample
 
 ```sh
-$ pip install opentelemetry-ext-http-requests
-$ pip install opentelemetry-ext-wsgi
+$ pip install opentelemetry-instrumentation-requests
+$ pip install opentelemetry-instrumentation-wsgi
 $ # from this directory
 $ python server.py
 ```
