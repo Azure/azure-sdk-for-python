@@ -190,7 +190,7 @@ async def sample_list_metric_enrichment_status_async():
 async def main():
     print("---List metric enriched series data...")
     await sample_list_metric_enriched_series_data_async()
-    print("---List dimention values...")
+    print("---List dimension values...")
     await sample_list_dimension_values_async()
     print("---List metric dimention values...")
     await sample_list_metric_dimension_values_async()
