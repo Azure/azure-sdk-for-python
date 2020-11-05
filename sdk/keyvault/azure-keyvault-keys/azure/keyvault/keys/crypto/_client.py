@@ -14,7 +14,7 @@ from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
 from .._models import KeyVaultKey
-from .._shared import KeyVaultClientBase, parse_vault_id
+from .._shared import KeyVaultClientBase, parse_key_vault_id
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -53,10 +53,10 @@ class CryptographyClient(KeyVaultClientBase):
 
         if isinstance(key, KeyVaultKey):
             self._key = key
-            self._key_id = parse_vault_id(key.id)
+            self._key_id = parse_key_vault_id(key.id)
         elif isinstance(key, six.string_types):
             self._key = None
-            self._key_id = parse_vault_id(key)
+            self._key_id = parse_key_vault_id(key)
             self._keys_get_forbidden = None  # type: Optional[bool]
         else:
             raise ValueError("'key' must be a KeyVaultKey instance or a key ID string including a version")
