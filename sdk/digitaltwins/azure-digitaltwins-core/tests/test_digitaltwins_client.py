@@ -61,7 +61,7 @@ class TestDigitalTinwsClient(object):
         digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
         digital_twin_client.upsert_digital_twin(fake_digital_twin_id, fake_digital_twin)
-        add.assert_called_with(fake_digital_twin_id, fake_digital_twin)
+        add.assert_called_with(fake_digital_twin_id, fake_digital_twin, if_none_match=None,)
 
     @mock.patch(
         'azure.digitaltwins.core._generated.operations._digital_twins_operations.DigitalTwinsOperations.add'
@@ -75,7 +75,7 @@ class TestDigitalTinwsClient(object):
         digital_twin_client = DigitalTwinsClient(fake_endpoint, fake_credential)
 
         digital_twin_client.upsert_digital_twin(fake_digital_twin_id, fake_digital_twin, **fake_kwargs)
-        add.assert_called_with(fake_digital_twin_id, fake_digital_twin, **fake_kwargs)
+        add.assert_called_with(fake_digital_twin_id, fake_digital_twin, if_none_match=None,**fake_kwargs)
 
     @mock.patch(
         'azure.digitaltwins.core._generated.operations._digital_twins_operations.DigitalTwinsOperations.update'
@@ -409,7 +409,8 @@ class TestDigitalTinwsClient(object):
         add_relationship.assert_called_with(
             id=fake_digital_twin_id,
             relationship_id=fake_relationship_id,
-            relationship=None
+            relationship=None,
+            if_none_match=None
         )
 
     @mock.patch(
@@ -431,7 +432,8 @@ class TestDigitalTinwsClient(object):
         add_relationship.assert_called_with(
             id=fake_digital_twin_id,
             relationship_id=fake_relationship_id,
-            relationship=fake_relationship
+            relationship=fake_relationship,
+            if_none_match=None
         )
 
     @mock.patch(
@@ -454,6 +456,7 @@ class TestDigitalTinwsClient(object):
             id=fake_digital_twin_id,
             relationship_id=fake_relationship_id,
             relationship=None,
+            if_none_match=None,
             **fake_kwargs
         )
 

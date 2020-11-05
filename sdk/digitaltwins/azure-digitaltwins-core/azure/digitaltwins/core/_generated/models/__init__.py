@@ -16,6 +16,7 @@ try:
     from ._models_py3 import DigitalTwinsAddRelationshipOptions
     from ._models_py3 import DigitalTwinsDeleteOptions
     from ._models_py3 import DigitalTwinsDeleteRelationshipOptions
+    from ._models_py3 import DigitalTwinsEventRoute
     from ._models_py3 import DigitalTwinsGetByIdOptions
     from ._models_py3 import DigitalTwinsGetComponentOptions
     from ._models_py3 import DigitalTwinsGetRelationshipByIdOptions
@@ -29,7 +30,6 @@ try:
     from ._models_py3 import DigitalTwinsUpdateRelationshipOptions
     from ._models_py3 import Error
     from ._models_py3 import ErrorResponse
-    from ._models_py3 import EventRoute
     from ._models_py3 import EventRouteCollection
     from ._models_py3 import EventRoutesAddOptions
     from ._models_py3 import EventRoutesDeleteOptions
@@ -53,6 +53,7 @@ except (SyntaxError, ImportError):
     from ._models import DigitalTwinsAddRelationshipOptions  # type: ignore
     from ._models import DigitalTwinsDeleteOptions  # type: ignore
     from ._models import DigitalTwinsDeleteRelationshipOptions  # type: ignore
+    from ._models import DigitalTwinsEventRoute  # type: ignore
     from ._models import DigitalTwinsGetByIdOptions  # type: ignore
     from ._models import DigitalTwinsGetComponentOptions  # type: ignore
     from ._models import DigitalTwinsGetRelationshipByIdOptions  # type: ignore
@@ -66,7 +67,6 @@ except (SyntaxError, ImportError):
     from ._models import DigitalTwinsUpdateRelationshipOptions  # type: ignore
     from ._models import Error  # type: ignore
     from ._models import ErrorResponse  # type: ignore
-    from ._models import EventRoute  # type: ignore
     from ._models import EventRouteCollection  # type: ignore
     from ._models import EventRoutesAddOptions  # type: ignore
     from ._models import EventRoutesDeleteOptions  # type: ignore
@@ -91,6 +91,7 @@ __all__ = [
     'DigitalTwinsAddRelationshipOptions',
     'DigitalTwinsDeleteOptions',
     'DigitalTwinsDeleteRelationshipOptions',
+    'DigitalTwinsEventRoute',
     'DigitalTwinsGetByIdOptions',
     'DigitalTwinsGetComponentOptions',
     'DigitalTwinsGetRelationshipByIdOptions',
@@ -104,7 +105,6 @@ __all__ = [
     'DigitalTwinsUpdateRelationshipOptions',
     'Error',
     'ErrorResponse',
-    'EventRoute',
     'EventRouteCollection',
     'EventRoutesAddOptions',
     'EventRoutesDeleteOptions',

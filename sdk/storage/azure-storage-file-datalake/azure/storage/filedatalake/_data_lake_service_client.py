@@ -10,9 +10,10 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import Pipeline
 
 from azure.storage.blob import BlobServiceClient
-from ._shared.base_client import StorageAccountHostsMixin, parse_query, parse_connection_str
+from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._file_system_client import FileSystemClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
@@ -325,9 +326,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         except AttributeError:
             file_system_name = file_system
 
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return FileSystemClient(self.url, file_system_name, credential=self._raw_credential,
                                 _configuration=self._config,
-                                _pipeline=self._pipeline, _hosts=self._hosts,
+                                _pipeline=_pipeline, _hosts=self._hosts,
                                 require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
                                 key_resolver_function=self.key_resolver_function)
 
@@ -367,9 +372,14 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             directory_name = directory.name
         except AttributeError:
             directory_name = directory
+
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeDirectoryClient(self.url, file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
-                                       _configuration=self._config, _pipeline=self._pipeline,
+                                       _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
@@ -413,9 +423,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         except AttributeError:
             pass
 
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeFileClient(
             self.url, file_system_name, file_path=file_path, credential=self._raw_credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
