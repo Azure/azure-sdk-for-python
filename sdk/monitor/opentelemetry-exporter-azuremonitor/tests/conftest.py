@@ -23,11 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import platform
 import sys
 
 
-# Ignore async tests for Python < 3.5
+# Ignore tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5):
     collect_ignore_glob.append("*")
