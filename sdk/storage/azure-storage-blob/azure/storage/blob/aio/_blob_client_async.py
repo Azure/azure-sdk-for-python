@@ -142,7 +142,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             copy_source_blob_properties=True,  # type: Optional[bool]
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs):
-        # type: (...) -> Any
+        # type: (...) -> Dict[str, Any]
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
         The content of an existing blob is overwritten with the new blob.
