@@ -407,6 +407,36 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return kwargs
 
     @distributed_trace
+    def upload_blob_from_url(
+            self, source_url,
+            copy_source_blob_properties=True,   # type: Optional[bool]
+            metadata=None,  # type: Optional[Dict[str, str]]
+            **kwargs):
+        # type: (...) -> Any
+        """
+        Creates a new Block Blob where the content of the blob is read from a given URL.
+
+        :param str source_url:
+            A URL of up to 2 KB in length that specifies a file or blob.
+            The value should be URL-encoded as it would appear in a request URI.
+            If the source is in another account, the source must either be public
+            or must be authenticated via a shared access signature. If the source
+            is public, no authentication is required.
+            Examples:
+            https://myaccount.blob.core.windows.net/mycontainer/myblob
+
+            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+
+            https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :param bool copy_source_blob_properties:
+            Indicates if properties from the source blob should be copied. Defaults to True.
+        :param metadata:
+            Name-value pairs associated with the blob as metadata.
+        :type metadata: dict(str, str)
+        """
+
+
+    @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
