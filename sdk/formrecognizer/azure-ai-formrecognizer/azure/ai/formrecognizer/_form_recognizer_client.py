@@ -429,6 +429,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
+        :keyword str language: The BCP-47 language code of the text in the document.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
+            Content supports auto language identification and multilanguage documents, so only
+            provide a language code if you would like to force the documented to be processed as
+            that specific language.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -441,7 +447,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         .. versionadded:: v2.1-preview
-            The *pages* keyword argument
+            The *pages* and *language* keyword arguments
 
         .. admonition:: Example:
 
@@ -453,6 +459,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 :caption: Recognize text and content/layout information from a form.
         """
         pages = kwargs.pop("pages", None)
+        language = kwargs.pop("language", None)
         content_type = kwargs.pop("content_type", None)
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
@@ -467,6 +474,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
+
+        if language:
+            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"language": language})
+            else:
+                raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream=form,
@@ -487,6 +500,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword list[str] pages: Custom page numbers for multi-page documents(PDF/TIFF), input the number of the
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
+        :keyword str language: The BCP-47 language code of the text in the document.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
+            Content supports auto language identification and multilanguage documents, so only
+            provide a language code if you would like to force the documented to be processed as
+            that specific language.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -495,9 +514,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
         .. versionadded:: v2.1-preview
-            The *pages* keyword argument
+            The *pages* and *language* keyword arguments
         """
         pages = kwargs.pop("pages", None)
+        language = kwargs.pop("language", None)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
         # signatures across API versions
@@ -506,6 +526,12 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 kwargs.update({"pages": pages})
             else:
                 raise ValueError("'pages' is only available for API version V2_1_PREVIEW and up")
+
+        if language:
+            if self.api_version == FormRecognizerApiVersion.V2_1_PREVIEW:
+                kwargs.update({"language": language})
+            else:
+                raise ValueError("'language' is only available for API version V2_1_PREVIEW and up")
 
         return self._client.begin_analyze_layout_async(  # type: ignore
             file_stream={"source": form_url},
@@ -520,10 +546,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
         """Analyze a custom form with a model trained with or without labels. The form
         to analyze should be of the same type as the forms that were used to train the model.
         The input document must be of one of the supported content types - 'application/pdf',
-        'image/jpeg', 'image/png', 'image/tiff' or 'image/bmp'.
+        'image/jpeg', 'image/png', or 'image/tiff'.
 
         :param str model_id: Custom model identifier.
-        :param form: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
+        :param form: JPEG, PNG, PDF, or TIFF type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -586,7 +612,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
 
         :param str model_id: Custom model identifier.
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
+            of one of the supported formats: JPEG, PNG, PDF, or TIFF.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations

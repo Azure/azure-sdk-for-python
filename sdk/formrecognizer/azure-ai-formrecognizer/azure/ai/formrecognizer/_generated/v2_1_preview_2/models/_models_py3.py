@@ -358,7 +358,7 @@ class DataTable(msrest.serialization.Model):
     :type columns: int
     :param cells: Required. List of cells contained in the table.
     :type cells: list[~azure.ai.formrecognizer.models.DataTableCell]
-    :param bounding_box: Bounding box of the table.
+    :param bounding_box: Required. Bounding box of the table.
     :type bounding_box: list[float]
     """
 
@@ -366,7 +366,7 @@ class DataTable(msrest.serialization.Model):
         'rows': {'required': True, 'minimum': 1},
         'columns': {'required': True, 'minimum': 1},
         'cells': {'required': True},
-        'bounding_box': {'max_items': 8, 'min_items': 8},
+        'bounding_box': {'required': True, 'max_items': 8, 'min_items': 8},
     }
 
     _attribute_map = {
@@ -382,7 +382,7 @@ class DataTable(msrest.serialization.Model):
         rows: int,
         columns: int,
         cells: List["DataTableCell"],
-        bounding_box: Optional[List[float]] = None,
+        bounding_box: List[float],
         **kwargs
     ):
         super(DataTable, self).__init__(**kwargs)
@@ -482,7 +482,7 @@ class DocumentResult(msrest.serialization.Model):
     :type model_id: str
     :param page_range: Required. First and last page number where the document is found.
     :type page_range: list[int]
-    :param doc_type_confidence: Confidence score.
+    :param doc_type_confidence: Predicted document type confidence.
     :type doc_type_confidence: float
     :param fields: Required. Dictionary of named field values.
     :type fields: dict[str, ~azure.ai.formrecognizer.models.FieldValue]
@@ -1063,7 +1063,7 @@ class ReadResult(msrest.serialization.Model):
      "inch".
     :type unit: str or ~azure.ai.formrecognizer.models.LengthUnit
     :param language: The detected language on the page overall. Possible values include: "en",
-     "es".
+     "es", "de", "fr", "it", "nl", "pt", "zh-Hans".
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param lines: When includeTextDetails is set to true, a list of recognized text lines. The
      maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
@@ -1227,7 +1227,7 @@ class TextLine(msrest.serialization.Model):
     :param bounding_box: Required. Bounding box of an extracted line.
     :type bounding_box: list[float]
     :param language: The detected language of this line, if different from the overall page
-     language. Possible values include: "en", "es".
+     language. Possible values include: "en", "es", "de", "fr", "it", "nl", "pt", "zh-Hans".
     :type language: str or ~azure.ai.formrecognizer.models.Language
     :param words: Required. List of words in the text line.
     :type words: list[~azure.ai.formrecognizer.models.TextWord]

@@ -278,3 +278,27 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1-2", "3"])
             result = await poller.result()
             assert len(result) == 3
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_language_specified(self, client):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
+            assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+            await poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_language_error(self, client):
+        async with client:
+            with pytest.raises(HttpResponseError) as e:
+                await client.begin_recognize_content_from_url(self.form_url_jpg, language="not a language")
+            assert "NotSupportedLanguage" == e.value.error.code
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    async def test_content_language_v2(self, client):
+        async with client:
+            with pytest.raises(ValueError) as e:
+                await client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
+            assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
