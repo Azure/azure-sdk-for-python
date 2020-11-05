@@ -38,7 +38,7 @@ class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
         self.add_telemetry_processor(indicate_processed_by_metric_extractors)
 
     def export(self, spans: Sequence[Span]) -> SpanExportResult:
-        envelopes = list(map(self._span_to_envelope, spans))
+        envelopes = [self._span_to_envelope(span) for span in spans]
         envelopes = self._apply_telemetry_processors(envelopes)
         try:
             result = self._transmit(envelopes)
