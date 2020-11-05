@@ -43,7 +43,7 @@ jobs:
         parameters:
           SourceDirectory: $(Build.ArtifactStagingDirectory)
       - pwsh: |
-          Copy-Item -Path $(Build.SourcesDirectory)/eng/common/* -Destination ./ -Recurse -Force
+          Copy-Item -Path $(Build.SourcesDirectory)/eng/* -Destination ./ -Recurse -Force
           echo "##vso[task.setvariable variable=toolPath]$(Build.BinariesDirectory)"
         workingDirectory: $(Build.BinariesDirectory)
         displayName: Move eng/common to Tool Directory  
@@ -71,7 +71,7 @@ jobs:
         inputs:
           pwsh: true
           workingDirectory: $(Build.SourcesDirectory)
-          filePath: $(toolPath)/scripts/git-branch-push.ps1
+          filePath: $(toolPath)/common/scripts/git-branch-push.ps1
           arguments: >
             -PRBranchName "gh-pages"
             -CommitMsg "Auto-generated docs from SHA(s) $(Build.SourceVersion)"
