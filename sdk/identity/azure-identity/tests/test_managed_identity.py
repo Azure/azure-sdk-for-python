@@ -489,3 +489,39 @@ def test_service_fabric():
         token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
         assert token.token == access_token
         assert token.expires_on == expires_on
+
+
+def test_azure_arc():
+    """Azure Arc 2019-08-15"""
+
+    access_token = "****"
+    expires_on = 42
+    identity_endpoint = "http://localhost:42/token"
+    imds_endpoint = "http://localhost:42"
+    scope = "scope"
+
+    def send(request, **_):
+        assert request.url.startswith(identity_endpoint)
+        assert request.method == "GET"
+        assert request.query["api-version"] == "2019-08-15"
+        assert request.query["resource"] == scope
+
+        return mock_response(
+            json_payload={
+                "access_token": access_token,
+                "expires_on": str(expires_on),
+                "resource": scope,
+                "token_type": "Bearer",
+            }
+        )
+
+    with mock.patch(
+            "os.environ",
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint,
+                EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint,
+            },
+    ):
+        token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        assert token.token == access_token
+        assert token.expires_on == expires_on

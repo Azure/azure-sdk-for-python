@@ -7,7 +7,6 @@ import os
 import time
 from typing import TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.policies import (
@@ -28,6 +27,7 @@ from .._internal.user_agent import USER_AGENT
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, List, Optional, Union
+    from azure.core.configuration import Configuration
     from azure.core.credentials import AccessToken
     from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -132,13 +132,13 @@ def _get_secret_key(response):
     return secret_key
 
 
-class _ArcChallengeAuthPolicyBase(object):
+class ArcChallengeAuthPolicyBase(object):
     """Sans I/O base for Azure Arc's challenge authentication policy"""
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self._token = None  # type: Optional[AccessToken]
-        super(_ArcChallengeAuthPolicyBase, self).__init__(**kwargs)
+        super(ArcChallengeAuthPolicyBase, self).__init__(**kwargs)
 
     @property
     def _need_new_token(self):
@@ -146,7 +146,7 @@ class _ArcChallengeAuthPolicyBase(object):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-class ArcChallengeAuthPolicy(_ArcChallengeAuthPolicyBase, HTTPPolicy):
+class ArcChallengeAuthPolicy(ArcChallengeAuthPolicyBase, HTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
 
     def __init__(self, credential, **kwargs):
