@@ -13,8 +13,6 @@ from uuid import uuid4
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import (
-    HttpResponseError,
-    raise_with_traceback,
     ResourceNotFoundError,
     ClientAuthenticationError
 )
@@ -147,12 +145,12 @@ class AsyncStorageAccountHostsMixin(object):
                 message="There was an error authenticating with the service",
                 response=response
             )
-        elif response.status_code == 404:
+        if response.status_code == 404:
             raise ResourceNotFoundError(
                 message="The resource could not be found",
                 response=response
             )
-        elif response.status_code != 202:
+        if response.status_code != 202:
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
                 response=response, parts=None
@@ -175,33 +173,6 @@ class AsyncStorageAccountHostsMixin(object):
                     response=response, parts=parts
                 )
         return transaction_result
-
-        # error = None
-        # parts_list = None
-        # try:
-        #     pipeline_response = await self._pipeline.run(
-        #         request, **kwargs
-        #     )
-        #     response = pipeline_response.http_response
-        #     if response.status_code not in [202]:
-        #         raise HttpResponseError(response=response)
-        #     parts = response.parts()
-        #     parts_list = []
-        #     async for part in parts:
-        #         parts_list.append(part)
-        #     transaction_result = BatchTransactionResult(reqs, parts_list, entities)
-        #     if raise_on_any_failure:
-        #         if any(p for p in parts_list if not 200 <= p.status_code < 300):
-        #             error = BatchErrorException(
-        #                 message="There is a failure in the batch operation.",
-        #                 response=response, parts=parts_list
-        #             )
-        #     if error is None:
-        #         return transaction_result
-        # except HttpResponseError as error:
-        #     raise_with_traceback(BatchErrorException, response=response, parts=parts_list, error=error)
-        # if error:
-        #     raise error
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

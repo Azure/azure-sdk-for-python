@@ -29,8 +29,6 @@ except ImportError:
 import six
 from azure.core.configuration import Configuration
 from azure.core.exceptions import (
-    HttpResponseError,
-    raise_with_traceback,
     ClientAuthenticationError,
     ResourceNotFoundError
 )
@@ -302,12 +300,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 message="There was an error authenticating with the service",
                 response=response
             )
-        elif response.status_code == 404:
+        if response.status_code == 404:
             raise ResourceNotFoundError(
                 message="The resource could not be found",
                 response=response
             )
-        elif response.status_code != 202:
+        if response.status_code != 202:
             raise BatchErrorException(
                 message="There is a failure in the batch operation.",
                 response=response, parts=None
