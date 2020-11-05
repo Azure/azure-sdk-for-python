@@ -23,8 +23,11 @@
 
 **New Features**
 
+##### Sync `PhoneNumberAdministrationClient`
 - Add long run operation polling method `ReservePhoneNumberPolling`,`PurchaseReservationPolling`,
 `ReleasePhoneNumberPolling`
+
+##### Async `PhoneNumberAdministrationClient`
 - Add async long run operation polling method `ReservePhoneNumberPollingAsync`,`PurchaseReservationPollingAsync`,
 `ReleasePhoneNumberPollingAsync`
 
