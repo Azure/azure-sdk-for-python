@@ -121,7 +121,7 @@ This SDK uses the [query_items](https://docs.microsoft.com/python/api/azure-cosm
 Cosmos DB SQL language allows you to [get subitems by using the FROM clause](https://docs.microsoft.com/azure/cosmos-db/sql-query-from#get-subitems-by-using-the-from-clause), to reduce the source to a smaller subset. As an example, you can use `select * from Families.children` instead of `select * from Families`. But please note that:
 
 * For SQL queries using the `query_items` method, this SDK demands that you specify the `partition_key` or use the `enable_cross_partition_query` flag. 
-* If you are getting subitems and specifing the `partition_key`, please make sure that your partition key is included in the subitems, what is not true for most of the cases.
+* If you are getting subitems and specifying the `partition_key`, please make sure that your partition key is included in the subitems, which is not true for most of the cases.
 
 ## Examples
 
