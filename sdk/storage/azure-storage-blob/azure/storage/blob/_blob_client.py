@@ -415,6 +415,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Any
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
+        The content of an existing blob is overwritten with the new blob.
 
         :param str source_url:
             A URL of up to 2 KB in length that specifies a file or blob.
@@ -485,14 +486,22 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :paramtype source_lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-
         :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the service. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+        :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
+            A standard blob tier value to set the blob to. For this version of the library,
+            this is only applicable to block blobs on standard storage accounts.
         """
 
     @distributed_trace
