@@ -112,7 +112,7 @@ While the Python language [uses](https://docs.python.org/3/library/stdtypes.html
 
 * Your JSON documents created with Python must use "True" and "False", to pass the language validation. The SDK will convert it to "true" and "false" for you. Meaning that "true" and "false" is what will be stored in Cosmos DB. 
 * If you retrieve those documents with the Cosmos DB Portal's Data Explorer, you will see "true" and "false". 
-* If you retrieve those documents this Python SDK, "true" and "false" values will be automatically converted to "True" and "False".
+* If you retrieve those documents with this Python SDK, "true" and "false" values will be automatically converted to "True" and "False".
 
 ## SQL Queries x FROM Clause Subitems
 
