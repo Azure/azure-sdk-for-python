@@ -58,6 +58,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 * `ServiceBusMessage.amqp_annotated_message` has had its type renamed from `AMQPMessage` to `AMQPAnnotatedMessage`
 * `AutoLockRenewer` `timeout` parameter is renamed to `max_lock_renew_duration`
 * Attempting to autorenew a non-renewable message, such as one received in `ReceiveAndDelete` mode, or configure auto-autorenewal on a `ReceiveAndDelete` receiver, will raise a `ValueError`.
+* The default value of parameter `max_message_count` on `ServiceBusReceiver.receive_messages` is now `1` instead of `None` and will raise ValueError if the given value is less than or equal to 0.
 
 **BugFixes**
 
