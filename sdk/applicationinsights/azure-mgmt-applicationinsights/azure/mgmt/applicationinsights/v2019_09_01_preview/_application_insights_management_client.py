@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import ApplicationInsightsManagementClientConfiguration
 from .operations import QueriesOperations
+from .operations import Operations
 from .operations import QueryPacksOperations
 from . import models
 
@@ -26,6 +27,8 @@ class ApplicationInsightsManagementClient(SDKClient):
 
     :ivar queries: Queries operations
     :vartype queries: azure.mgmt.applicationinsights.v2019_09_01_preview.operations.QueriesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.applicationinsights.v2019_09_01_preview.operations.Operations
     :ivar query_packs: QueryPacks operations
     :vartype query_packs: azure.mgmt.applicationinsights.v2019_09_01_preview.operations.QueryPacksOperations
 
@@ -49,6 +52,8 @@ class ApplicationInsightsManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.queries = QueriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.query_packs = QueryPacksOperations(
             self._client, self.config, self._serialize, self._deserialize)

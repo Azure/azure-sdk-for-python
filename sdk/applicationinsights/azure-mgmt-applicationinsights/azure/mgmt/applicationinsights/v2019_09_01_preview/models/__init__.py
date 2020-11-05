@@ -11,31 +11,58 @@
 
 try:
     from ._models_py3 import AzureResourceProperties
+    from ._models_py3 import ErrorDetail
+    from ._models_py3 import ErrorInfo
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import LogAnalyticsQueryPack
     from ._models_py3 import LogAnalyticsQueryPackQuery
+    from ._models_py3 import LogAnalyticsQueryPackQueryPropertiesRelated
     from ._models_py3 import LogAnalyticsQueryPackQuerySearchProperties
+    from ._models_py3 import LogAnalyticsQueryPackQuerySearchPropertiesRelated
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
     from ._models_py3 import QueryPacksResource
+    from ._models_py3 import SystemData
     from ._models_py3 import TagsResource
 except (SyntaxError, ImportError):
     from ._models import AzureResourceProperties
+    from ._models import ErrorDetail
+    from ._models import ErrorInfo
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import LogAnalyticsQueryPack
     from ._models import LogAnalyticsQueryPackQuery
+    from ._models import LogAnalyticsQueryPackQueryPropertiesRelated
     from ._models import LogAnalyticsQueryPackQuerySearchProperties
+    from ._models import LogAnalyticsQueryPackQuerySearchPropertiesRelated
+    from ._models import Operation
+    from ._models import OperationDisplay
     from ._models import QueryPacksResource
+    from ._models import SystemData
     from ._models import TagsResource
 from ._paged_models import LogAnalyticsQueryPackPaged
 from ._paged_models import LogAnalyticsQueryPackQueryPaged
+from ._paged_models import OperationPaged
+from ._application_insights_management_client_enums import (
+    IdentityType,
+)
 
 __all__ = [
     'AzureResourceProperties',
+    'ErrorDetail',
+    'ErrorInfo',
     'ErrorResponse', 'ErrorResponseException',
     'LogAnalyticsQueryPack',
     'LogAnalyticsQueryPackQuery',
+    'LogAnalyticsQueryPackQueryPropertiesRelated',
     'LogAnalyticsQueryPackQuerySearchProperties',
+    'LogAnalyticsQueryPackQuerySearchPropertiesRelated',
+    'Operation',
+    'OperationDisplay',
     'QueryPacksResource',
+    'SystemData',
     'TagsResource',
     'LogAnalyticsQueryPackQueryPaged',
+    'OperationPaged',
     'LogAnalyticsQueryPackPaged',
+    'IdentityType',
 ]
