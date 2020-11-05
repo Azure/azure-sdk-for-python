@@ -39,14 +39,14 @@ class SearchClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_get_search_simple_paged(self, api_key, endpoint, index_name, **kwargs):
+    def test_get_search_simple_topped(self, api_key, endpoint, index_name, **kwargs):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
         results = list(client.search(search_text="hotel", top=3))
-        assert len(results) == 7
+        assert len(results) == 3
 
-        results = list(client.search(search_text="motel"))
+        results = list(client.search(search_text="motel", top=3))
         assert len(results) == 2
 
     @ResourceGroupPreparer(random_name_enabled=True)
