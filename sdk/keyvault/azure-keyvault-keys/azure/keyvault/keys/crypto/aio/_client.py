@@ -72,7 +72,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         :rtype: str
         """
-        return "/".join(self._key_id)
+        return self._key_id.source_id
 
     @distributed_trace_async
     async def _initialize(self, **kwargs):
