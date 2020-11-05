@@ -433,10 +433,11 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
-            Supported languages include: 'en', 'nl', 'fr','de', 'it', 'pt', 'zh-Hans' and 'es'.
-            For handwritten text, only "en" is supported currently. Content supports auto language
-            identification and multilanguage documents, so only provide a language code if you
-            would like to force the documented to be processed as that specific language.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
+            Content supports auto language identification and multilanguage documents, so only
+            provide a language code if you would like to force the documented to be processed as
+            that specific language.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -502,10 +503,11 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             pages you want to get OCR result. For a range of pages, use a hyphen. Separate each page or
             range with a comma.
         :keyword str language: The BCP-47 language code of the text in the document.
-            Supported languages include: 'en', 'nl', 'fr','de', 'it', 'pt', 'zh-Hans' and 'es'.
-            For handwritten text, only "en" is supported currently. Content supports auto language
-            identification and multilanguage documents, so only provide a language code if you
-            would like to force the documented to be processed as that specific language.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/form-recognizer/language-support.
+            Content supports auto language identification and multilanguage documents, so only
+            provide a language code if you would like to force the documented to be processed as
+            that specific language.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
