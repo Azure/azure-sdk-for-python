@@ -222,8 +222,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self.close()
             raise
 
-    async def _receive(self, max_message_count, timeout=None):
-        # type: (int, Optional[float]) -> List[ServiceBusReceivedMessage]
+    async def _receive(self, max_message_count=None, timeout=None):
+        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         await self._open()
 

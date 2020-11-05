@@ -227,8 +227,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self.close()
             raise
 
-    def _receive(self, max_message_count, timeout=None):
-        # type: (int, Optional[float]) -> List[ServiceBusReceivedMessage]
+    def _receive(self, max_message_count=None, timeout=None):
+        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
         self._open()
 
