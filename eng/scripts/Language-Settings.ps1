@@ -110,10 +110,6 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 function Get-python-GithubIoDocIndex() {
   # Fetch out all package metadata from csv file.
   $metadata = Get-CSVMetadata -MetadataUri $MetadataUri
-  # Leave the track 2 packages if multiple packages fetched out.
-  # $clientPackages = $metadata | Where-Object { $_.GroupId -eq 'com.azure' } 
-  # $nonClientPackages = $metadata | Where-Object { $_.GroupId -ne 'com.azure' -and !$clientPackages.Package.Contains($_.Package) }
-  # $uniquePackages = $clientPackages + $nonClientPackages
   # Get the artifacts name from blob storage
   $artifacts =  Get-BlobStorage-Artifacts -blobStorageUrl $BlobStorageUrl -blobDirectoryRegex "^python/(.*)/$" -blobArtifactsReplacement '$1'
   # Build up the artifact to service name mapping for GithubIo toc.
