@@ -553,7 +553,7 @@ class ListSharesResponse(Model):
     :param max_results:
     :type max_results: int
     :param share_items:
-    :type share_items: list[~azure.storage.fileshare.models.ShareItem]
+    :type share_items: list[~azure.storage.fileshare.models.ShareItemInternal]
     :param next_marker: Required.
     :type next_marker: str
     """
@@ -568,7 +568,7 @@ class ListSharesResponse(Model):
         'prefix': {'key': 'Prefix', 'type': 'str', 'xml': {'name': 'Prefix'}},
         'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
         'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
-        'share_items': {'key': 'ShareItems', 'type': '[ShareItem]', 'xml': {'name': 'Shares', 'itemsName': 'Shares', 'wrapped': True}},
+        'share_items': {'key': 'ShareItems', 'type': '[ShareItemInternal]', 'xml': {'name': 'Shares', 'itemsName': 'Shares', 'wrapped': True}},
         'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
     }
     _xml_map = {
@@ -679,7 +679,7 @@ class ShareFileRangeList(Model):
         self.clear_ranges = kwargs.get('clear_ranges', None)
 
 
-class ShareItem(Model):
+class ShareItemInternal(Model):
     """A listed Azure Storage share item.
 
     All required parameters must be populated in order to send to Azure.
@@ -693,7 +693,7 @@ class ShareItem(Model):
     :param version:
     :type version: str
     :param properties: Required.
-    :type properties: ~azure.storage.fileshare.models.ShareProperties
+    :type properties: ~azure.storage.fileshare.models.SharePropertiesInternal
     :param metadata:
     :type metadata: dict[str, str]
     """
@@ -708,7 +708,7 @@ class ShareItem(Model):
         'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
         'deleted': {'key': 'Deleted', 'type': 'bool', 'xml': {'name': 'Deleted'}},
         'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
-        'properties': {'key': 'Properties', 'type': 'ShareProperties', 'xml': {'name': 'Properties'}},
+        'properties': {'key': 'Properties', 'type': 'SharePropertiesInternal', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': '{str}', 'xml': {'name': 'Metadata'}},
     }
     _xml_map = {
@@ -716,7 +716,7 @@ class ShareItem(Model):
     }
 
     def __init__(self, **kwargs):
-        super(ShareItem, self).__init__(**kwargs)
+        super(ShareItemInternal, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.snapshot = kwargs.get('snapshot', None)
         self.deleted = kwargs.get('deleted', None)
@@ -750,7 +750,7 @@ class SharePermission(Model):
         self.permission = kwargs.get('permission', None)
 
 
-class ShareProperties(Model):
+class SharePropertiesInternal(Model):
     """Properties of a share.
 
     All required parameters must be populated in order to send to Azure.
@@ -787,6 +787,11 @@ class ShareProperties(Model):
     :param lease_duration: Possible values include: 'infinite', 'fixed'
     :type lease_duration: str or
      ~azure.storage.fileshare.models.LeaseDurationType
+    :param enabled_protocols:
+    :type enabled_protocols: str
+    :param root_squash: Possible values include: 'NoRootSquash', 'RootSquash',
+     'AllSquash'
+    :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
     """
 
     _validation = {
@@ -811,12 +816,14 @@ class ShareProperties(Model):
         'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType', 'xml': {'name': 'LeaseStatus'}},
         'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType', 'xml': {'name': 'LeaseState'}},
         'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType', 'xml': {'name': 'LeaseDuration'}},
+        'enabled_protocols': {'key': 'EnabledProtocols', 'type': 'str', 'xml': {'name': 'EnabledProtocols'}},
+        'root_squash': {'key': 'RootSquash', 'type': 'ShareRootSquash', 'xml': {'name': 'RootSquash'}},
     }
     _xml_map = {
     }
 
     def __init__(self, **kwargs):
-        super(ShareProperties, self).__init__(**kwargs)
+        super(SharePropertiesInternal, self).__init__(**kwargs)
         self.last_modified = kwargs.get('last_modified', None)
         self.etag = kwargs.get('etag', None)
         self.quota = kwargs.get('quota', None)
@@ -832,6 +839,8 @@ class ShareProperties(Model):
         self.lease_status = kwargs.get('lease_status', None)
         self.lease_state = kwargs.get('lease_state', None)
         self.lease_duration = kwargs.get('lease_duration', None)
+        self.enabled_protocols = kwargs.get('enabled_protocols', None)
+        self.root_squash = kwargs.get('root_squash', None)
 
 
 class ShareProtocolSettings(Model):
