@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchecb9188e.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    uri: https://search1f281970.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":2.245087,"hotelId":"10","hotelName":"Countryside
@@ -42,9 +42,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 05 Nov 2020 23:26:07 GMT
+      - Thu, 05 Nov 2020 23:57:12 GMT
       elapsed-time:
-      - '150'
+      - '144'
       expires:
       - '-1'
       odata-version:
@@ -54,7 +54,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 47dabd13-1fbe-11eb-8b99-a0481ca055a9
+      - 9f562e41-1fc2-11eb-884f-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:
@@ -78,7 +78,7 @@ interactions:
       User-Agent:
       - azsdk-python-search-documents/11.1.0b4 Python/3.8.6 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchecb9188e.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
+    uri: https://search1f281970.search.windows.net/indexes('drgqefsg')/docs/search.post.search?api-version=2020-06-30
   response:
     body:
       string: '{"value":[{"@search.score":8.376183,"hotelId":"2","hotelName":"Roach
@@ -109,9 +109,9 @@ interactions:
       content-type:
       - application/json; odata.metadata=none
       date:
-      - Thu, 05 Nov 2020 23:26:07 GMT
+      - Thu, 05 Nov 2020 23:57:13 GMT
       elapsed-time:
-      - '9'
+      - '6'
       expires:
       - '-1'
       odata-version:
@@ -121,7 +121,7 @@ interactions:
       preference-applied:
       - odata.include-annotations="*"
       request-id:
-      - 4821f420-1fbe-11eb-8d5e-a0481ca055a9
+      - 9fade421-1fc2-11eb-af87-a0481ca055a9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       vary:

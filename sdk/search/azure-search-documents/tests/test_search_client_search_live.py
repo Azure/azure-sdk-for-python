@@ -39,7 +39,7 @@ class SearchClientTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    def test_get_search_simple_topped(self, api_key, endpoint, index_name, **kwargs):
+    def test_get_search_simple_with_top(self, api_key, endpoint, index_name, **kwargs):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
