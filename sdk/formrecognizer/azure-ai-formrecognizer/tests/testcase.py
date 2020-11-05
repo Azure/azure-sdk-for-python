@@ -260,35 +260,49 @@ class FormRecognizerTest(AzureTestCase):
             elif element_type == "selectionMark":
                 self.assertFormSelectionMarkTransformCorrect(element, expected)
 
-    def assertLabeledFormFieldDictTransformCorrect(self, form_fields, generated_fields, read_results=None):
+    def assertFormFieldValueTransformCorrect(self, form_field, expected, read_results=None):
+        if expected is None:
+            return
+        field_type = expected.type
+        if field_type == "string":
+            self.assertEqual(form_field.value, expected.value_string)
+        if field_type == "number":
+            self.assertEqual(form_field.value, expected.value_number)
+        if field_type == "integer":
+            self.assertEqual(form_field.value, expected.value_integer)
+        if field_type == "date":
+            self.assertEqual(form_field.value, expected.value_date)
+        if field_type == "phoneNumber":
+            self.assertEqual(form_field.value, expected.value_phone_number)
+        if field_type == "time":
+            self.assertEqual(form_field.value, expected.value_time)
+        if field_type == "array":
+            for i in range(len(expected.value_array)):
+                self.assertFormFieldValueTransformCorrect(form_field.value[i], expected.value_array[i], read_results)
+        if field_type == "object":
+            self.assertFormFieldsTransformCorrect(form_field.value, expected.value_object, read_results)
+
+        if field_type not in ["array", "object"] and form_field.value_data:
+            self.assertBoundingBoxTransformCorrect(form_field.value_data.bounding_box, expected.bounding_box)
+            self.assertEqual(expected.text, form_field.value_data.text)
+            self.assertEqual(expected.page, form_field.value_data.page_number)
+            if read_results:
+                self.assertFieldElementsTransFormCorrect(
+                    form_field.value_data.field_elements,
+                    expected.elements,
+                    read_results
+                )
+
+    def assertFormFieldsTransformCorrect(self, form_fields, generated_fields, read_results=None):
         if generated_fields is None:
             return
 
         for label, expected in generated_fields.items():
-            self.assertEqual(label, form_fields[label].name)
-            self.assertEqual(adjust_confidence(expected.confidence), form_fields[label].confidence)
-            self.assertBoundingBoxTransformCorrect(form_fields[label].value_data.bounding_box, expected.bounding_box)
-            self.assertEqual(expected.text, form_fields[label].value_data.text)
             field_type = expected.type
             self.assertEqual(adjust_value_type(field_type), form_fields[label].value_type)
-            if field_type == "string":
-                self.assertEqual(form_fields[label].value, expected.value_string)
-            if field_type == "number":
-                self.assertEqual(form_fields[label].value, expected.value_number)
-            if field_type == "integer":
-                self.assertEqual(form_fields[label].value, expected.value_integer)
-            if field_type == "date":
-                self.assertEqual(form_fields[label].value, expected.value_date)
-            if field_type == "phoneNumber":
-                self.assertEqual(form_fields[label].value, expected.value_phone_number)
-            if field_type == "time":
-                self.assertEqual(form_fields[label].value, expected.value_time)
-            if read_results:
-                self.assertFieldElementsTransFormCorrect(
-                    form_fields[label].value_data.field_elements,
-                    expected.elements,
-                    read_results
-                )
+            self.assertEqual(label, form_fields[label].name)
+            self.assertEqual(adjust_confidence(expected.confidence), form_fields[label].confidence)
+            self.assertFormFieldValueTransformCorrect(form_fields[label], expected, read_results)
 
     def assertUnlabeledFormFieldDictTransformCorrect(self, form_fields, generated_fields, read_results=None):
         if generated_fields is None:
@@ -311,80 +325,6 @@ class FormRecognizerTest(AzureTestCase):
                     expected.value.elements,
                     read_results
                 )
-
-    def _assertFormFieldTransformCorrectHelper(self, receipt_field, generated_field, read_results=None):
-        field_type = generated_field.type
-        self.assertEqual(adjust_value_type(field_type), receipt_field.value_type)
-        if field_type == "string":
-            self.assertEqual(receipt_field.value, generated_field.value_string)
-        elif field_type == "number":
-            self.assertEqual(receipt_field.value, generated_field.value_number)
-        elif field_type == "integer":
-            self.assertEqual(receipt_field.value, generated_field.value_integer)
-        elif field_type == "date":
-            self.assertEqual(receipt_field.value, generated_field.value_date)
-        elif field_type == "phoneNumber":
-            self.assertEqual(receipt_field.value, generated_field.value_phone_number)
-        elif field_type == "time":
-            self.assertEqual(receipt_field.value, generated_field.value_time)
-        elif field_type == "object":
-            self.assertLabeledFormFieldDictTransformCorrect(receipt_field.value, generated_field.value_object)
-        else:
-            raise ValueError('field type {} not valid'.format(field_type))
-
-
-        self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, generated_field.bounding_box)
-        self.assertEqual(receipt_field.value_data.text, generated_field.text)
-        self.assertEqual(receipt_field.confidence, adjust_confidence(generated_field.confidence))
-        if read_results:
-            self.assertFieldElementsTransFormCorrect(
-                receipt_field.value_data.field_elements,
-                generated_field.elements,
-                read_results
-            )
-
-    def assertFormFieldTransformCorrect(self, receipt_field, generated_field, read_results=None):
-        if generated_field is None:
-            return
-        field_type = generated_field.type
-        if field_type == "array":
-            for i in range(len(generated_field.value_array)):
-                self._assertFormFieldTransformCorrectHelper(receipt_field.value[i], generated_field.value_array[i], read_results)
-        else:
-            self._assertFormFieldTransformCorrectHelper(receipt_field, generated_field, read_results)
-
-
-    def assertReceiptItemsTransformCorrect(self, items, generated_items, read_results=None):
-        expected_items = generated_items.value_array
-
-        for r, expected in zip(items, expected_items):
-            self.assertFormFieldTransformCorrect(r.value.get("Name"), expected.value_object.get("Name"), read_results)
-            self.assertFormFieldTransformCorrect(r.value.get("Quantity"), expected.value_object.get("Quantity"), read_results)
-            self.assertFormFieldTransformCorrect(r.value.get("TotalPrice"), expected.value_object.get("TotalPrice"), read_results)
-            self.assertFormFieldTransformCorrect(r.value.get("Price"), expected.value_object.get("Price"), read_results)
-
-    def assertBusinessCardTransformCorrect(self, business_card, expected, read_results=None):
-        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), expected.get("ContactNames"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), expected.get("JobTitles"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), expected.get("Departments"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), expected.get("Emails"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), expected.get("Websites"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), expected.get("MobilePhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), expected.get("OtherPhones"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), expected.get("Faxes"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), expected.get("Addresses"), read_results)
-        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), expected.get("CompanyNames"), read_results)
-
-    def assertInvoiceTransformCorrect(self, invoice, expected, read_results=None):
-        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorName"), expected.get("VendorName"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("VendorAddress"), expected.get("VendorAddress"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddressRecipient"), expected.get("CustomerAddressRecipient"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerAddress"), expected.get("CustomerAddress"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("CustomerName"), expected.get("CustomerName"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceId"), expected.get("InvoiceId"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceDate"), expected.get("InvoiceDate"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("InvoiceTotal"), expected.get("InvoiceTotal"), read_results)
-        self.assertFormFieldTransformCorrect(invoice.fields.get("DueDate"), expected.get("DueDate"), read_results)
 
     def assertTablesTransformCorrect(self, layout, expected_layout, read_results=None, **kwargs):
         for table, expected_table in zip(layout, expected_layout):
