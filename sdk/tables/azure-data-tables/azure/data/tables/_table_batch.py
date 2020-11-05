@@ -84,7 +84,7 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
-        :raises: ValueError
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -198,7 +198,7 @@ class TableBatchOperations(object):
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
-        :raises: ValueError
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -273,7 +273,7 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -361,7 +361,7 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -427,7 +427,7 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :raises: ValueError
+        :raises None:
 
         .. admonition:: Example:
 
@@ -493,7 +493,7 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -547,7 +547,7 @@ class TableBatchOperations(object):
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :raises: ValueError
+        :raises None:
 
         .. admonition:: Example:
 

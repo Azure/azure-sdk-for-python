@@ -128,7 +128,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
                 :keyword callable cls: A custom type or function that will be passed the direct response
                 :return: TableServiceStats, or the result of cls(response)
                 :rtype: ~azure.data.tables.models.TableServiceStats
-                :raises: ~azure.core.exceptions.HttpResponseError
+                :raises ~azure.core.exceptions.HttpResponseError:
                 """
         try:
             timeout = kwargs.pop('timeout', None)
@@ -147,7 +147,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TableServiceProperties, or the result of cls(response)
         :rtype: ~azure.data.tables.models.TableServiceProperties
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -179,7 +179,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
        :type cors: ~azure.data.tables.CorsRule
        :return: None
        :rtype: None
-       :raises: ~azure.core.exceptions.HttpResponseError
+       :raises ~azure.core.exceptions.HttpResponseError:
         """
         props = TableServiceProperties(
             logging=analytics_logging,
@@ -206,7 +206,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :type table_name: ~azure.data.tables._models.Table
         :return: TableClient, or the result of cls(response)
         :rtype: ~azure.data.tables.TableClient or None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceExistsError:
 
         .. admonition:: Example:
 
@@ -236,7 +236,6 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :type table_name: str
         :return: TableClient
         :rtype: ~azure.data.tables.aio.TableClient
-        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
@@ -261,12 +260,13 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Creates a new table under the given account.
+        """Deletes the table under the current account
 
         :param table_name: The Table name.
         :type table_name: str
         :return: None
-        :rtype: ~None
+        :rtype: None
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         .. admonition:: Example:
 
@@ -292,7 +292,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: AsyncItemPaged
         :rtype: ~AsyncItemPaged[TableItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -325,14 +325,15 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     ):
         # type: (...) -> AsyncItemPaged[TableItem]
         """Queries tables under the given account.
-        :param filter: Specify a filter to return certain tables
+
+        :param filter: Specify a filter to return certain tables.
         :type filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: A query of tables
-        :rtype: AsyncItemPaged[TableItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword dict[str, str] parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: An ItemPaged of tables
+        :rtype: ItemPaged[TableItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 

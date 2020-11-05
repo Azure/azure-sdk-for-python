@@ -97,7 +97,7 @@ class TableServiceClient(TableServiceClientBase):
 
         :return: Dictionary of Service Stats
         :rtype:dict[str, object]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         try:
             timeout = kwargs.pop('timeout', None)
@@ -115,7 +115,7 @@ class TableServiceClient(TableServiceClientBase):
 
         :return: Dictionary of service properties
         :rtype:dict[str, Any]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -147,7 +147,7 @@ class TableServiceClient(TableServiceClientBase):
        :type cors: ~azure.data.tables.CorsRule
        :return: None
        :rtype: None
-       :raises: ~azure.core.exceptions.HttpResponseError
+       :raises ~azure.core.exceptions.HttpResponseError:
        """
         props = TableServiceProperties(
             logging=analytics_logging,
@@ -173,7 +173,7 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceExistsError:
 
         .. admonition:: Example:
 
@@ -203,7 +203,7 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -234,6 +234,7 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         .. admonition:: Example:
 
@@ -255,14 +256,15 @@ class TableServiceClient(TableServiceClientBase):
     ):
         # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
-        :param filter: Specify a filter to return certain tables
+
+        :param filter: Specify a filter to return certain tables.
         :type filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: A query of tables
+        :keyword dict[str, str] parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: An ItemPaged of tables
         :rtype: ItemPaged[TableItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -301,7 +303,7 @@ class TableServiceClient(TableServiceClientBase):
         :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
         :return: A query of tables
         :rtype: ItemPaged[TableItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
