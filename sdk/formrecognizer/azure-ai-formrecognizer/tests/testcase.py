@@ -109,6 +109,7 @@ class FormRecognizerTest(AzureTestCase):
         self.business_card_multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-multipage.pdf"
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
         self.invoice_url_tiff = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"
+        self.multipage_vendor_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multi1.pdf"
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
         self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
         self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
@@ -212,7 +213,8 @@ class FormRecognizerTest(AzureTestCase):
             for page, expected_page in zip(form_pages, page_result):
                 if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                     page = page.pages[0]
-                self.assertTablesTransformCorrect(page.tables, expected_page.tables, read_result, **kwargs)
+                if expected_page.tables:
+                    self.assertTablesTransformCorrect(page.tables, expected_page.tables, read_result, **kwargs)
 
     def assertBoundingBoxTransformCorrect(self, box, expected):
         if box is None and expected is None:

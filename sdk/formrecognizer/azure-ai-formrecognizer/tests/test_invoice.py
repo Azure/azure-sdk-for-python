@@ -209,6 +209,49 @@ class TestInvoice(FormRecognizerTest):
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
+    def test_invoice_stream_multipage_transform_pdf(self, client):
+        responses = []
+
+        def callback(raw_response, _, headers):
+            analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
+            extracted_invoice = prepare_prebuilt_models(analyze_result)
+            responses.append(analyze_result)
+            responses.append(extracted_invoice)
+
+        with open(self.multipage_vendor_pdf, "rb") as fd:
+            myfile = fd.read()
+
+        poller = client.begin_recognize_invoices(
+            invoice=myfile,
+            include_field_elements=True,
+            cls=callback
+        )
+
+        result = poller.result()
+        raw_response = responses[0]
+        returned_models = responses[1]
+        read_results = raw_response.analyze_result.read_results
+        document_results = raw_response.analyze_result.document_results
+        page_results = raw_response.analyze_result.page_results
+
+        self.assertEqual(1, len(returned_models))
+        returned_model = returned_models[0]
+        self.assertEqual(2, len(returned_model.pages))
+        self.assertEqual(1, returned_model.page_range.first_page_number)
+        self.assertEqual(2, returned_model.page_range.last_page_number)
+
+
+        self.assertEqual(1, len(document_results))
+        document_result = document_results[0]
+        self.assertEqual(1, document_result.page_range[0])  # checking first page number
+        self.assertEqual(2, document_result.page_range[1])  # checking last page number
+
+        self.assertInvoiceTransformCorrect(returned_model, document_result.fields, read_results)
+
+        self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
     def test_invoice_pdf(self, client):
 
         with open(self.invoice_pdf, "rb") as fd:
@@ -252,6 +295,33 @@ class TestInvoice(FormRecognizerTest):
         self.assertEqual(invoice.fields.get("InvoiceDate").value, date(2017, 6, 18))
         self.assertEqual(invoice.fields.get("InvoiceTotal").value, 56651.49)
         self.assertEqual(invoice.fields.get("DueDate").value, date(2017, 6, 24))
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    def test_invoice_multipage_pdf(self, client):
+
+        with open(self.multipage_vendor_pdf, "rb") as fd:
+            invoice = fd.read()
+        poller = client.begin_recognize_invoices(invoice)
+        result = poller.result()
+
+        self.assertEqual(len(result), 1)
+        invoice = result[0]
+        self.assertEqual("prebuilt:invoice", invoice.form_type)
+        self.assertEqual(1, invoice.page_range.first_page_number)
+        self.assertEqual(2, invoice.page_range.last_page_number)
+
+        vendor_name = invoice.fields["VendorName"]
+        self.assertEqual(vendor_name.value, 'Southridge Video')
+        self.assertEqual(vendor_name.value_data.page_number, 2)
+
+        remittance_address_recipient = invoice.fields["RemittanceAddressRecipient"]
+        self.assertEqual(remittance_address_recipient.value, "Contoso Ltd.")
+        self.assertEqual(remittance_address_recipient.value_data.page_number, 1)
+
+        remittance_address = invoice.fields["RemittanceAddress"]
+        self.assertEqual(remittance_address.value, '2345 Dogwood Lane Birch, Kansas 98123')
+        self.assertEqual(remittance_address.value_data.page_number, 1)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
