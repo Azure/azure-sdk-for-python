@@ -480,7 +480,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True, lock_duration='PT5S')
     async def test_async_session_by_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -498,12 +498,12 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             renewer = AutoLockRenewer()
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=20) as receiver:
-                renewer.register(receiver, receiver.session, timeout=60)
+                renewer.register(receiver, receiver.session, max_lock_renewal_duration=10)
                 print("Registered lock renew thread", receiver.session.locked_until_utc, utc_now())
                 with pytest.raises(SessionLockExpired):
                     async for message in receiver:
                         if not messages:
-                            await asyncio.sleep(45)
+                            await asyncio.sleep(10)
                             print("First sleep {}".format(receiver.session.locked_until_utc - utc_now()))
                             assert not receiver.session._lock_expired
                             with pytest.raises(TypeError):
@@ -517,7 +517,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
                         elif len(messages) == 1:
                             assert not results
-                            await asyncio.sleep(45)
+                            await asyncio.sleep(10)
                             print("Second sleep {}".format(receiver.session.locked_until_utc - utc_now()))
                             assert receiver.session._lock_expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
@@ -534,7 +534,81 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
                 session = receiver.session
-                renewer.register(receiver, session, timeout=5, on_lock_renew_failure=lock_lost_callback)
+                renewer.register(receiver, session, max_lock_renewal_duration=5, on_lock_renew_failure=lock_lost_callback)
+            await asyncio.sleep(max(0,(session.locked_until_utc - utc_now()).total_seconds()+1)) # If this pattern repeats make sleep_until_expired_async
+            assert not results
+
+            await renewer.close()
+            assert len(messages) == 2
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True, lock_duration='PT5S')
+    async def test_async_session_by_conn_str_receive_handler_with_auto_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            session_id = str(uuid.uuid4())
+
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("{}".format(i), session_id=session_id)
+                    await sender.send_messages(message)
+
+            results = []
+            async def lock_lost_callback(renewable, error):
+                results.append(renewable)
+
+            renewer = AutoLockRenewer(max_lock_renewal_duration=10)
+            messages = []
+            async with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                    session_id=session_id,
+                                                    max_wait_time=5,
+                                                    receive_mode=ReceiveMode.PeekLock,
+                                                    prefetch_count=20,
+                                                    auto_lock_renewer=renewer) as session:
+                print("Registered lock renew thread", session.session.locked_until_utc, utc_now())
+                with pytest.raises(SessionLockExpired):
+                    async for message in session:
+                        if not messages:
+                            await asyncio.sleep(10)
+                            print("First sleep {}".format(session.session.locked_until_utc - utc_now()))
+                            assert not session.session._lock_expired
+                            with pytest.raises(TypeError):
+                                message._lock_expired
+                            assert message.locked_until_utc is None
+                            with pytest.raises(TypeError):
+                                await session.renew_message_lock(message)
+                            assert message.lock_token is not None
+                            await session.complete_message(message)
+                            messages.append(message)
+
+                        elif len(messages) == 1:
+                            assert not results
+                            await asyncio.sleep(10)
+                            print("Second sleep {}".format(session.session.locked_until_utc - utc_now()))
+                            assert session.session._lock_expired
+                            assert isinstance(session.session.auto_renew_error, AutoLockRenewTimeout)
+                            try:
+                                await session.complete_message(message)
+                                raise AssertionError("Didn't raise SessionLockExpired")
+                            except SessionLockExpired as e:
+                                assert isinstance(e.inner_exception, AutoLockRenewTimeout)
+                            messages.append(message)
+
+            # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
+            renewer._renew_period = 1
+            session = None
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                    session_id=session_id,
+                                                    max_wait_time=5,
+                                                    receive_mode=ReceiveMode.PeekLock,
+                                                    prefetch_count=10,
+                                                    auto_lock_renewer=renewer) as receiver:
+                session = receiver.session
             await asyncio.sleep(max(0,(session.locked_until_utc - utc_now()).total_seconds()+1)) # If this pattern repeats make sleep_until_expired_async
             assert not results
 
@@ -626,7 +700,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             messages = []
             renewer = AutoLockRenewer()
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
-                renewer.register(receiver, receiver.session, timeout=140)
+                renewer.register(receiver, receiver.session, max_lock_renewal_duration=140)
                 messages.extend(await receiver.receive_messages(max_wait_time=120))
                 messages.extend(await receiver.receive_messages(max_wait_time=5))
                 if messages:
@@ -666,7 +740,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             renewer = AutoLockRenewer()
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, prefetch_count=20) as receiver:
-                renewer.register(receiver, receiver.session, timeout=140)
+                renewer.register(receiver, receiver.session, max_lock_renewal_duration=140)
                 messages.extend(await receiver.receive_messages(max_wait_time=120))
                 messages.extend(await receiver.receive_messages(max_wait_time=5))
                 if messages:
@@ -701,7 +775,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             renewer = AutoLockRenewer()
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
-                renewer.register(receiver, receiver.session, timeout=140)
+                renewer.register(receiver, receiver.session, max_lock_renewal_duration=140)
                 messages.extend(await receiver.receive_messages(max_wait_time=120))
                 messages.extend(await receiver.receive_messages(max_wait_time=5))
                 try:
