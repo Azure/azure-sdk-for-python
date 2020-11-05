@@ -247,6 +247,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages.append(message)
                     with pytest.raises(MessageAlreadySettled):
                         receiver.complete_message(message)
+                    with pytest.raises(ValueError): # ReceiveAndDelete messages cannot be lock renewed.
+                        renewer = AutoLockRenewer()
+                        renewer.register(receiver, message)
     
             assert len(messages) == 10
             assert not receiver._running
@@ -903,7 +906,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
     def test_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         
         with ServiceBusClient.from_connection_string(
@@ -924,9 +927,63 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     if not messages:
                         messages.append(message)
                         assert not message._lock_expired
-                        renewer.register(receiver, message, timeout=60)
+                        renewer.register(receiver, message, max_lock_renewal_duration=10)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
-                        time.sleep(60)
+                        time.sleep(10)
+                        print("Finished first sleep", message.locked_until_utc)
+                        assert not message._lock_expired
+                        time.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
+                        sleep_until_expired(message)
+                        print("Finished second sleep", message.locked_until_utc, utc_now())
+                        assert message._lock_expired
+                        try:
+                            receiver.complete_message(message)
+                            raise AssertionError("Didn't raise MessageLockExpired")
+                        except MessageLockExpired as e:
+                            assert isinstance(e.inner_exception, AutoLockRenewTimeout)
+                    else:
+                        if message._lock_expired:
+                            print("Remaining messages", message.locked_until_utc, utc_now())
+                            assert message._lock_expired
+                            with pytest.raises(MessageLockExpired):
+                                receiver.complete_message(message)
+                        else:
+                            assert message.delivery_count >= 1
+                            print("Remaining messages", message.locked_until_utc, utc_now())
+                            messages.append(message)
+                            receiver.complete_message(message)
+            renewer.close()
+            assert len(messages) == 11
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
+    def test_queue_by_queue_client_conn_str_receive_handler_with_auto_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+    
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                # The 10 iterations is "important" because it gives time for the timed out message to be received again.
+                for i in range(10):
+                    message = ServiceBusMessage("{}".format(i))
+                    sender.send_messages(message)
+    
+            renewer = AutoLockRenewer(max_lock_renewal_duration=10)
+            messages = []
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                 max_wait_time=5, 
+                                                 receive_mode=ReceiveMode.PeekLock, 
+                                                 prefetch_count=10,
+                                                 auto_lock_renewer=renewer) as receiver:
+                for message in receiver:
+                    if not messages:
+                        messages.append(message)
+                        assert not message._lock_expired
+                        print("Registered lock renew thread", message.locked_until_utc, utc_now())
+                        time.sleep(10)
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message._lock_expired
                         time.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
@@ -1401,6 +1458,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver.complete_message(messages[0])
 
     def test_queue_mock_auto_lock_renew_callback(self):
+        # A warning to future devs: If the renew period override heuristic in registration
+        # ever changes, it may break this (since it adjusts renew period if it is not short enough)
+
         results = []
         errors = []
         def callback_mock(renewable, error):
@@ -1862,6 +1922,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 
                     raise Exception("Should not get here, should fail fast.")
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_queue_receiver_invalid_autolockrenew_mode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            with pytest.raises(ValueError):
+                with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                  receive_mode=ReceiveMode.ReceiveAndDelete,
+                                                  auto_lock_renewer=AutoLockRenewer()) as receiver:
+                
+                    raise Exception("Should not get here, should fail fast because ReceiveAndDelete messages cannot be autorenewed.")
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
