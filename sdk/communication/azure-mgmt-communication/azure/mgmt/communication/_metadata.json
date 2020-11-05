@@ -20,7 +20,7 @@
             },
             "subscription_id": {
                 "method_signature": "subscription_id,  # type: str",
-                "description": "Gets subscription ID which uniquely identifies the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -34,7 +34,7 @@
             },
             "subscription_id": {
                 "method_signature": "subscription_id,  # type: str",
-                "description": "Gets subscription ID which uniquely identifies the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
