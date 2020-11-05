@@ -107,6 +107,7 @@ class FormTrainingClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
             Note that if the training fails, the exception is raised, but a model with an
             "invalid" status is still created. You can delete this model by calling :func:`~delete_model()`
+
         .. versionadded:: v2.1-preview
             The *model_name* keyword argument
 
@@ -402,6 +403,9 @@ class FormTrainingClient(FormRecognizerClientBase):
             object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.CustomFormModel]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_create_composed_model* client method
 
         .. admonition:: Example:
 
