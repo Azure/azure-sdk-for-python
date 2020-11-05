@@ -15,11 +15,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration_async import ResourceMoverServiceAPIConfiguration
-from .operations_async import MoveCollectionsOperations
-from .operations_async import MoveResourcesOperations
-from .operations_async import UnresolvedDependenciesOperations
-from .operations_async import OperationsDiscoveryOperations
+from ._configuration import ResourceMoverServiceAPIConfiguration
+from .operations import MoveCollectionsOperations
+from .operations import MoveResourcesOperations
+from .operations import UnresolvedDependenciesOperations
+from .operations import OperationsDiscoveryOperations
 from .. import models
 
 
@@ -27,13 +27,13 @@ class ResourceMoverServiceAPI(object):
     """A first party Azure service orchestrating the move of Azure resources from one Azure region to another or between zones within a region.
 
     :ivar move_collections: MoveCollectionsOperations operations
-    :vartype move_collections: resource_mover_service_api.aio.operations_async.MoveCollectionsOperations
+    :vartype move_collections: resource_mover_service_api.aio.operations.MoveCollectionsOperations
     :ivar move_resources: MoveResourcesOperations operations
-    :vartype move_resources: resource_mover_service_api.aio.operations_async.MoveResourcesOperations
+    :vartype move_resources: resource_mover_service_api.aio.operations.MoveResourcesOperations
     :ivar unresolved_dependencies: UnresolvedDependenciesOperations operations
-    :vartype unresolved_dependencies: resource_mover_service_api.aio.operations_async.UnresolvedDependenciesOperations
+    :vartype unresolved_dependencies: resource_mover_service_api.aio.operations.UnresolvedDependenciesOperations
     :ivar operations_discovery: OperationsDiscoveryOperations operations
-    :vartype operations_discovery: resource_mover_service_api.aio.operations_async.OperationsDiscoveryOperations
+    :vartype operations_discovery: resource_mover_service_api.aio.operations.OperationsDiscoveryOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The Subscription ID.
