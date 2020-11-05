@@ -213,7 +213,8 @@ class FormRecognizerTest(AzureTestCase):
             for page, expected_page in zip(form_pages, page_result):
                 if hasattr(page, "pages"):  # this is necessary for how unlabeled forms are structured
                     page = page.pages[0]
-                self.assertTablesTransformCorrect(page.tables, expected_page.tables, read_result, **kwargs)
+                if expected_page.tables:
+                    self.assertTablesTransformCorrect(page.tables, expected_page.tables, read_result, **kwargs)
 
     def assertBoundingBoxTransformCorrect(self, box, expected):
         if box is None and expected is None:

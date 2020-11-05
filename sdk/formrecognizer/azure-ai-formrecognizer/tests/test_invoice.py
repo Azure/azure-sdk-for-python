@@ -248,7 +248,7 @@ class TestInvoice(FormRecognizerTest):
 
         self.assertInvoiceTransformCorrect(returned_model, document_result.fields, read_results)
 
-        self.assertFormPagesTransformCorrect(returned_model.pages, read_results)
+        self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
