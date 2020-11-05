@@ -48,7 +48,7 @@ class TestParseId(KeyVaultTestCase):
             "https://keyvault-name.vault.azure.net/keys/key-name/pending",
         )
 
-    def test_parse_deleted_certificate_id(self):
+    def test_parse_deleted_key_id(self):
         source_id = "https://keyvault-name.vault.azure.net/deletedkeys/deleted-key"
         parsed_key_id = parse_key_vault_key_id(source_id)
 
