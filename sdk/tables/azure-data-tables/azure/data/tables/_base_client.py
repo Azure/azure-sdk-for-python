@@ -28,7 +28,12 @@ except ImportError:
 
 import six
 from azure.core.configuration import Configuration
-from azure.core.exceptions import HttpResponseError, raise_with_traceback
+from azure.core.exceptions import (
+    HttpResponseError,
+    raise_with_traceback,
+    ClientAuthenticationError,
+    ResourceNotFoundError
+)
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     RequestsTransport,
@@ -287,29 +292,43 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             boundary="batch_{}".format(uuid4())
         )
 
-        error = None
-        parts = None
-        try:
-            pipeline_response = self._pipeline.run(
-                request, **kwargs
+        pipeline_response = self._pipeline.run(
+            request, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code == 403:
+            raise ClientAuthenticationError(
+                message="There was an error authenticating with the service",
+                response=response
             )
-            response = pipeline_response.http_response
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts()
-            transaction_result = BatchTransactionResult(reqs, parts, entities)
-            if raise_on_any_failure:
-                if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = BatchErrorException(
-                        message="There is a failure in the batch operation.",
-                        response=response, parts=parts
+        elif response.status_code == 404:
+            raise ResourceNotFoundError(
+                message="The resource could not be found",
+                response=response
+            )
+        elif response.status_code != 202:
+            raise BatchErrorException(
+                message="There is a failure in the batch operation.",
+                response=response, parts=None
+            )
+
+        parts = response.parts()
+        transaction_result = BatchTransactionResult(reqs, parts, entities)
+        if raise_on_any_failure:
+            if any(p for p in parts if not 200 <= p.status_code < 300):
+
+                if any(p for p in parts if p.status_code == 404):
+                    raise ResourceNotFoundError(
+                        message="The resource could not be found",
+                        response=response
                     )
-            if error is None:
-                return transaction_result
-        except HttpResponseError as error:
-            raise_with_traceback(BatchErrorException, response=response, parts=parts, error=error)
-        if error:
-            raise error
+
+                raise BatchErrorException(
+                    message="There is a failure in the batch operation.",
+                    response=response, parts=parts
+                )
+        return transaction_result
 
 
 class TransportWrapper(HttpTransport):
