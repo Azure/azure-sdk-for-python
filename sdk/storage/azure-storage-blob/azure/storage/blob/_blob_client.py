@@ -408,7 +408,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def upload_blob_from_url(
-            self, source_url,
+            self, source_url,   # type: str
             copy_source_blob_properties=True,   # type: Optional[bool]
             metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs):
