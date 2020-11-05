@@ -13462,17 +13462,17 @@ class ExecuteDataFlowActivityTypePropertiesCompute(Model):
 
     :param compute_type: Compute type of the cluster which will execute data
      flow job. Possible values include: 'General', 'MemoryOptimized',
-     'ComputeOptimized'
-    :type compute_type: str or
-     ~azure.mgmt.datafactory.models.DataFlowComputeType
+     'ComputeOptimized'. Type: string (or Expression with resultType string)
+    :type compute_type: object
     :param core_count: Core count of the cluster which will execute data flow
-     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272.
-    :type core_count: int
+     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272. Type: integer
+     (or Expression with resultType integer)
+    :type core_count: object
     """
 
     _attribute_map = {
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'compute_type': {'key': 'computeType', 'type': 'object'},
+        'core_count': {'key': 'coreCount', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
