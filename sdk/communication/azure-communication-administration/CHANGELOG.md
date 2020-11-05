@@ -3,8 +3,12 @@
 
 **Breaking Changes**
 
-- `PhoneNumberSearch` has been renamed to `PhoneNumberReservation`
-- `search_id` has been renamed to `reservation_id` in `PhoneNumberReservation`
+##### `PhoneNumberSearch` renamed to `PhoneNumberReservation`
+
+##### `PhoneNumberReservation`
+- `search_id` has been renamed to `reservation_id`
+
+##### `PhoneNumberAdministrationClient`
 - `get_search_by_id` has been renamed to `get_reservation_by_id`
 - `create_search` has been renamed to `begin_reserve_phone_numbers`
 -  `begin_reserve_phone_numbers` now takes either `options`, or `continuation_token` keywords as input
