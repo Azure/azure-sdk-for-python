@@ -156,8 +156,10 @@ class AsyncStorageAccountHostsMixin(object):
                 response=response, parts=None
             )
 
-        parts = response.parts()
-        parts = [p async for p in parts]
+        parts_iter = response.parts()
+        parts = []
+        async for p in parts_iter:
+            parts.append(p)
         transaction_result = BatchTransactionResult(reqs, parts, entities)
         if raise_on_any_failure:
             if any(p for p in parts if not 200 <= p.status_code < 300):
