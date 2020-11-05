@@ -522,6 +522,24 @@ class FileSystemTest(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_paths_using_file_sys_delegation_sas_async())
 
+    async def _test_file_system_sessions_closes_properly_async(self):
+        # Arrange
+        file_system_client = await self._create_file_system("fs")
+        async with file_system_client as fs_client:
+            async with fs_client.get_file_client("file1.txt") as f_client:
+                await f_client.create_file()
+            async with fs_client.get_file_client("file2.txt") as f_client:
+                await f_client.create_file()
+            async with fs_client.get_directory_client("file1") as f_client:
+                await f_client.create_directory()
+            async with fs_client.get_directory_client("file2") as f_client:
+                await f_client.create_directory()
+
+    @record
+    def test_file_system_sessions_closes_properly_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_file_system_sessions_closes_properly_async())
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
