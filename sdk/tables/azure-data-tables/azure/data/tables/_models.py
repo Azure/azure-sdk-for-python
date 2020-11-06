@@ -6,13 +6,14 @@
 from enum import Enum
 from azure.core.exceptions import HttpResponseError, AzureError
 from azure.core.paging import PageIterator
-from azure.data.tables._generated.models import TableServiceStats as GenTableServiceStats
 
+from ._generated.models import TableServiceStats as GenTableServiceStats
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import TableResponseProperties
 from ._deserialize import (
     _convert_to_entity,
     _return_context_and_deserialized
@@ -298,7 +299,7 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem(t, self._headers) for t in self._response.value]
+        props_list = [TableItem._from_generated(t, **self._headers) for t in self._response.value]
         return self._headers['x-ms-continuation-NextTableName'] or None, props_list
 
 
@@ -462,21 +463,21 @@ class TableItem(object):
     Represents an Azure TableItem. Returned by TableServiceClient.list_tables
     and TableServiceClient.query_tables.
 
-    :ivar str name: The name of the table.
+    :param str table_name: The name of the table.
     :ivar str api_version: The API version included in the service call
     :ivar str date: The date the service call was made
     """
 
-    def __init__(
-        self,
-        table, # type: str
-        headers=None # type: dict[str,str]
-    ):
-        # type: (...) -> None
-        self.table_name = table
-        self.api_version = headers.pop('version', None)
-        self.date = headers.pop('date', None) or headers.pop('Date', None)
+    def __init__(self, table_name, **kwargs):
+        # type: (str, **Any) -> None
+        self.table_name = table_name
+        self.api_version = kwargs.get('version')
+        self.date = kwargs.get('date') or kwargs.get('Date')
 
+    @classmethod
+    def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
+        # type: (TableResponseProperties, **Any) -> cls
+        return cls(generated.table_name, **kwargs)
 
 class TablePayloadFormat(object):
     '''
