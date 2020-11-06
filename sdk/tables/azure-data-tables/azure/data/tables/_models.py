@@ -13,7 +13,6 @@ from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import TableResponseProperties
 from ._deserialize import (
     _convert_to_entity,
     _return_context_and_deserialized
@@ -476,7 +475,7 @@ class TableItem(object):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):  # pylint:disable=W0613
-        # type: (TableResponseProperties, **Any) -> cls
+        # type: (obj, **Any) -> cls
         return cls(generated.table_name, **kwargs)
 
 class TablePayloadFormat(object):
