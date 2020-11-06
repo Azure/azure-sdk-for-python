@@ -70,7 +70,8 @@
         "virtual_machine_scale_set_vm_extensions": "VirtualMachineScaleSetVMExtensionsOperations",
         "virtual_machine_scale_set_vms": "VirtualMachineScaleSetVMsOperations",
         "log_analytics": "LogAnalyticsOperations",
-        "virtual_machine_run_commands": "VirtualMachineRunCommandsOperations"
+        "virtual_machine_run_commands": "VirtualMachineRunCommandsOperations",
+        "virtual_machine_scale_set_vm_run_commands": "VirtualMachineScaleSetVMRunCommandsOperations"
     },
     "operation_mixins": {
     },
