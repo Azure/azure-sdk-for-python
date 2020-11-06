@@ -41,7 +41,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -52,7 +52,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -72,7 +72,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -95,7 +95,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -119,7 +119,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -137,7 +137,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -155,7 +155,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -172,7 +172,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -202,7 +202,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -221,7 +221,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -242,7 +242,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": "",
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -255,7 +255,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": "xxxxxxxxxxxx",
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -268,7 +268,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -281,7 +281,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -297,7 +297,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -319,7 +319,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -347,7 +347,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -367,7 +367,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -387,7 +387,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -405,7 +405,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -425,7 +425,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -443,7 +443,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -461,7 +461,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -479,7 +479,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net",
         "default_language": "en"
@@ -498,7 +498,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -513,7 +513,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -531,7 +531,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_2_PREVIEW)
+        client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
@@ -551,7 +551,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -577,7 +577,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -604,7 +604,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -624,7 +624,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -640,7 +640,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -664,7 +664,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -677,7 +677,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -690,7 +690,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -702,7 +702,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -719,7 +719,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })
@@ -736,7 +736,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_2_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
     })

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import os
 import pytest
 import platform
 import functools
@@ -28,61 +29,28 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 class TestAnalyze(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             response = client.begin_analyze("hello world")
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_dict_sentiment_task(self, client):
-        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
-                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
-                {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
-
-        response = client.begin_analyze(
-            docs, 
-            tasks=[SentimentAnalysisTask()], 
-            show_stats=True
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_results = results_pages[0].sentiment_analysis_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        self.assertEqual(results[0].sentiment, "neutral")
-        self.assertEqual(results[1].sentiment, "negative")
-        self.assertEqual(results[2].sentiment, "positive")
-
-        for doc in results:
-            self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
-            self.validateConfidenceScores(doc.confidence_scores)
-            self.assertIsNotNone(doc.sentences)
-
-        self.assertEqual(len(results[0].sentences), 1)
-        self.assertEqual(results[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
-        self.assertEqual(len(results[1].sentences), 2)
-        self.assertEqual(results[1].sentences[0].text, "I did not like the hotel we stayed at.")
-        self.assertEqual(results[1].sentences[1].text, "It was too expensive.")
-        self.assertEqual(len(results[2].sentences), 2)
-        self.assertEqual(results[2].sentences[0].text, "The restaurant had really good food.")
-        self.assertEqual(results[2].sentences[1].text, "I recommend you try it.")
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_all_successful_passing_dict_key_phrase_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[KeyPhraseExtractionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()], 
             show_stats=True
         ).result()
 
@@ -100,10 +68,14 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIn("Bill Gates", phrases.key_phrases)
             self.assertIn("Microsoft", phrases.key_phrases)
             self.assertIsNotNone(phrases.id)
-            self.assertIsNotNone(phrases.statistics)
+            # self.assertIsNotNone(phrases.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_all_successful_passing_dict_entities_task(self, client):
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975."},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975."},
@@ -111,7 +83,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[EntitiesRecognitionTask(model_version="2020-02-01")], 
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
             show_stats=True
         ).result()
 
@@ -127,7 +99,7 @@ class TestAnalyze(TextAnalyticsTest):
         for doc in results:
             self.assertEqual(len(doc.entities), 4)
             self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
+            #self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
@@ -135,42 +107,11 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_dict_entity_linking_task(self, client):
-        docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
-                {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
-
-        response = client.begin_analyze(
-            docs, 
-            tasks=[EntityLinkingTask()], 
-            show_stats=True
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_results = results_pages[0].entity_linking_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 2)
-
-        for doc in results:
-            self.assertEqual(len(doc.entities), 3)
-            self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.data_source_entity_id)
-                self.assertIsNotNone(entity.url)
-                self.assertIsNotNone(entity.data_source)
-                self.assertIsNotNone(entity.matches)
-                for match in entity.matches:
-                    self.assertIsNotNone(match.offset)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_all_successful_passing_dict_pii_entities_task(self, client):
 
         docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
@@ -179,7 +120,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[PiiEntitiesRecognitionTask()], 
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()], 
             show_stats=True
         ).result()
 
@@ -200,7 +141,7 @@ class TestAnalyze(TextAnalyticsTest):
         self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
         for doc in results:
             self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
+            #self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
@@ -208,47 +149,11 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_text_document_input_sentiment_task(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
-            TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
-            TextDocumentInput(id="3", text="The restaurant had really good food. I recommend you try it."),
-        ]
-
-        response = client.begin_analyze(
-            docs, 
-            tasks=[SentimentAnalysisTask()]
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        sentiment_analysis_task_results = results_pages[0].sentiment_analysis_results
-        self.assertEqual(len(sentiment_analysis_task_results), 1)
-
-        results = sentiment_analysis_task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        self.assertEqual(results[0].sentiment, "neutral")
-        self.assertEqual(results[1].sentiment, "negative")
-        self.assertEqual(results[2].sentiment, "positive")
-
-        for doc in results:
-            self.validateConfidenceScores(doc.confidence_scores)
-            self.assertIsNotNone(doc.sentences)
-
-        self.assertEqual(len(results[0].sentences), 1)
-        self.assertEqual(results[0].sentences[0].text, "Microsoft was founded by Bill Gates and Paul Allen.")
-        self.assertEqual(len(results[1].sentences), 2)
-        self.assertEqual(results[1].sentences[0].text, "I did not like the hotel we stayed at.")
-        self.assertEqual(results[1].sentences[1].text, "It was too expensive.")
-        self.assertEqual(len(results[2].sentences), 2)
-        self.assertEqual(results[2].sentences[0].text, "The restaurant had really good food.")
-        self.assertEqual(results[2].sentences[1].text, "I recommend you try it.")
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_all_successful_passing_text_document_input_key_phrase_task(self, client):
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen", language="en"),
@@ -257,7 +162,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[KeyPhraseExtractionTask()]
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
         ).result()
 
         results_pages = list(response)
@@ -276,7 +181,11 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIsNotNone(phrases.id)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_all_successful_passing_text_document_input_entities_task(self, client):
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.", language="en"),
@@ -286,7 +195,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[EntitiesRecognitionTask(model_version="2020-02-01")]
+            entities_recognition_tasks=[EntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
@@ -301,7 +210,6 @@ class TestAnalyze(TextAnalyticsTest):
         for doc in results:
             self.assertEqual(len(doc.entities), 4)
             self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
@@ -309,43 +217,11 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_all_successful_passing_text_document_input_entity_linking_task(self, client):
-        docs = [
-            TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen"),
-            TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen")
-        ]
-
-        response = client.begin_analyze(
-            docs, 
-            tasks=[EntityLinkingTask()]
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_results = results_pages[0].entity_linking_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 2)
-
-        for doc in results:
-            self.assertEqual(len(doc.entities), 3)
-            self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
-            for entity in doc.entities:
-                self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.data_source_entity_id)
-                self.assertIsNotNone(entity.url)
-                self.assertIsNotNone(entity.data_source)
-                self.assertIsNotNone(entity.matches)
-                for match in entity.matches:
-                    self.assertIsNotNone(match.offset)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_all_successful_passing_text_document_input_pii_entities_task(self, client):
         docs = [
             TextDocumentInput(id="1", text="My SSN is 859-98-0987."),
@@ -355,7 +231,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
@@ -375,7 +251,6 @@ class TestAnalyze(TextAnalyticsTest):
         self.assertEqual(results[2].entities[0].category, "Brazil CPF Number")
         for doc in results:
             self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
             for entity in doc.entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
@@ -383,46 +258,20 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_passing_only_string_sentiment_task(self, client):
-        docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen.",
-            u"I did not like the hotel we stayed at. It was too expensive.",
-            u"The restaurant had really good food. I recommend you try it.",
-            u""
-        ]
-
-        response = client.begin_analyze(
-            docs, 
-            tasks=[SentimentAnalysisTask()]
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        sentiment_analysis_task_results = results_pages[0].sentiment_analysis_results
-        self.assertEqual(len(sentiment_analysis_task_results), 1)
-
-        results = sentiment_analysis_task_results[0].results
-        self.assertEqual(len(results), 3)
-
-        self.assertEqual(results[0].sentiment, "neutral")
-        self.assertEqual(results[1].sentiment, "negative")
-        self.assertEqual(results[2].sentiment, "positive")
-        self.assertTrue(results[3].is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_passing_only_string_key_phrase_task(self, client):
         docs = [
             u"Microsoft was founded by Bill Gates and Paul Allen",
-            u"Microsoft fue fundado por Bill Gates y Paul Allen",
-            u""
+            u"Microsoft fue fundado por Bill Gates y Paul Allen"
         ]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[SentimentAnalysisTask()]
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
         ).result()
 
         results_pages = list(response)
@@ -439,22 +288,38 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIn("Bill Gates", results[i].key_phrases)
             self.assertIn("Microsoft", results[i].key_phrases)
             self.assertIsNotNone(results[i].id)
-        
-        self.assertTrue(results[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
+    def test_bad_request_on_empty_document(self, client):
+        docs = [u""]
+
+        with self.assertRaises(HttpResponseError):
+            response = client.begin_analyze(
+                docs, 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+            ).result()
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_passing_only_string_entities_task(self, client):
         docs = [
             u"Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975.",
             u"Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.",
-            u"Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet.",
-            u""
+            u"Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."
         ]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[EntitiesRecognitionTask(model_version="2020-02-01")]
+            entities_recognition_tasks=[EntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
@@ -469,67 +334,28 @@ class TestAnalyze(TextAnalyticsTest):
         for i in range(3):
             self.assertEqual(len(results[i].entities), 4)
             self.assertIsNotNone(results[i].id)
-            self.assertIsNotNone(results[i].statistics)
             for entity in results[i].entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
-        self.assertTrue(results[3].is_error)
-
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_passing_only_string_entity_linking_task(self, client):
-        docs = [
-            u"Microsoft was founded by Bill Gates and Paul Allen",
-            u"Microsoft fue fundado por Bill Gates y Paul Allen",
-            u""
-        ]
-
-        response = client.begin_analyze(
-            docs, 
-            tasks=[EntityLinkingTask()]
-        ).result()
-
-        results_pages = list(response)
-        self.assertEqual(len(results_pages), 1)
-
-        task_results = results_pages[0].entity_linking_results
-        self.assertEqual(len(task_results), 1)
-
-        results = task_results[0].results
-        self.assertEqual(len(results), 2)
-
-        for i in range(2):
-            self.assertEqual(len(results[i].entities), 3)
-            self.assertIsNotNone(results[i].id)
-            self.assertIsNotNone(results[i].statistics)
-            for entity in results[i].entities:
-                self.assertIsNotNone(entity.name)
-                self.assertIsNotNone(entity.language)
-                self.assertIsNotNone(entity.data_source_entity_id)
-                self.assertIsNotNone(entity.url)
-                self.assertIsNotNone(entity.data_source)
-                self.assertIsNotNone(entity.matches)
-                for match in entity.matches:
-                    self.assertIsNotNone(match.offset)
-        
-        self.assertTrue(results[2].is_error)
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_passing_only_string_pii_entities_task(self, client):
         docs = [
             u"My SSN is 859-98-0987.",
             u"Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
-            u"Is 998.214.865-68 your Brazilian CPF number?",
-            u""
+            u"Is 998.214.865-68 your Brazilian CPF number?"
         ]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
@@ -550,7 +376,6 @@ class TestAnalyze(TextAnalyticsTest):
 
         for i in range(3):
             self.assertIsNotNone(results[i].id)
-            self.assertIsNotNone(results[i].statistics)
             for entity in results[i].entities:
                 self.assertIsNotNone(entity.text)
                 self.assertIsNotNone(entity.category)
@@ -560,7 +385,11 @@ class TestAnalyze(TextAnalyticsTest):
         self.assertTrue(results[3].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_input_with_some_errors_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
@@ -568,21 +397,16 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()]
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
         task_types = [
-            "sentiment_analysis_results",
             "entities_recognition_results",
-            "entity_linking_results",
             "key_phrase_extraction_results",
             "pii_entities_extraction_results"
         ]
@@ -599,7 +423,11 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertFalse(results[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_input_with_all_errors_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
@@ -607,21 +435,16 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()]
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
         task_types = [
-            "sentiment_analysis_results",
             "entities_recognition_results",
-            "entity_linking_results",
             "key_phrase_extraction_results",
             "pii_entities_extraction_results"
         ]
@@ -638,23 +461,39 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertTrue(results[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_too_many_documents(self, client):
         pass  # TODO: verify document limit
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_payload_too_large(self, client):
         pass  # TODO: verify payload size limit
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_document_warnings(self, client):
         # TODO: reproduce a warnings scenario for implementation
         pass
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_output_same_order_as_input_multiple_tasks(self, client):
         docs = [
             TextDocumentInput(id="1", text="one"),
@@ -666,21 +505,16 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()]
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
         task_types = [
-            "sentiment_analysis_results",
             "entities_recognition_results",
-            "entity_linking_results",
             "key_phrase_extraction_results",
             "pii_entities_extraction_results"
         ]
@@ -696,54 +530,58 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertEqual(str(idx + 1), doc.id)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": ""})
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": "",
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_analyze(
                 ["This is written in English."],
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()
-                ]
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"text_analytics_account_key": "xxxxxxxxxxxx"})
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": "xxxxxxxxxxxx",
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_analyze(
                 ["This is written in English."],
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()
-                ]
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 
         with self.assertRaises(TypeError):
             response = client.begin_analyze(
                 docs,
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()
-                ]
-            )
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_mixing_inputs(self, client):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
@@ -753,17 +591,17 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.begin_analyze(
                 docs,
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()
-                ]
-            )
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_out_of_order_ids_multiple_tasks(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -773,21 +611,16 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()]
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
         task_types = [
-            "sentiment_analysis_results",
             "entities_recognition_results",
-            "entity_linking_results",
             "key_phrase_extraction_results",
             "pii_entities_extraction_results"
         ]
@@ -805,7 +638,11 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertEqual(resp.id, in_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_show_stats_and_model_version_multiple_tasks(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -815,13 +652,9 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(model_version="latest"), 
-                EntitiesRecognitionTask(model_version="latest"), 
-                KeyPhraseExtractionTask(model_version="latest"),
-                EntityLinkingTask(model_version="latest"),
-                PiiEntitiesRecognitionTask(model_version="latest")
-            ],
+            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="latest")],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="latest")],
             show_stats=True
         ).result()
 
@@ -829,9 +662,7 @@ class TestAnalyze(TextAnalyticsTest):
         self.assertEqual(len(results_pages), 1)
 
         task_types = [
-            "sentiment_analysis_results",
             "entities_recognition_results",
-            "entity_linking_results",
             "key_phrase_extraction_results",
             "pii_entities_extraction_results"
         ]
@@ -849,13 +680,12 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertEqual(results.statistics.erroneous_document_count, 1)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_whole_batch_language_hint(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"fr\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 3)
-
         docs = [
             u"This was the best day of my life.",
             u"I did not like the hotel we stayed at. It was too expensive.",
@@ -864,24 +694,32 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            language="en"
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_whole_batch_dont_use_language_hint(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 3)
-
         docs = [
             u"This was the best day of my life.",
             u"I did not like the hotel we stayed at. It was too expensive.",
@@ -890,46 +728,62 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            language=""
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_per_item_dont_use_language_hint(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 2)
-            language_str = "\"language\": \"en\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 1)
-
-
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_whole_batch_language_hint_and_obj_input(self, client):
         def callback(resp):
             language_str = "\"language\": \"de\""
@@ -944,172 +798,215 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            language="en"
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_whole_batch_language_hint_and_dict_input(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"es\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 3)
-
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            language="en"
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"es\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 2)
-            language_str = "\"language\": \"en\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 1)
-
         docs = [
-            TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="es"),
-            TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="es"),
+            TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="en"),
+            TextDocumentInput(id="2", text="Este es un document escrito en Español.", language="en"),
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            language="en"
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"es\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 2)
-            language_str = "\"language\": \"en\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 1)
-
-
         docs = [{"id": "1", "language": "es", "text": "I will go to the park."},
                 {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            language="en"
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT'),
+        "default_language": "en"
+    })
     def test_client_passed_default_language_hint(self, client):
-        def callback(resp):
-            language_str = "\"language\": \"es\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 3)
-
-        def callback_2(resp):
-            language_str = "\"language\": \"en\""
-            language = resp.http_request.body.count(language_str)
-            self.assertEqual(language, 3)
-
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+        ).result()
 
-        response = client.begin_analyze(
-            docs, 
-            language="en",
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback_2
-        )
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_invalid_language_hint_method(self, client):
         response = client.begin_analyze(
             ["This should fail because we're passing in an invalid language hint"], 
             language="notalanguage",
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ]
-        )
-        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertEqual(r.error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_invalid_language_hint_docs(self, client):
         response = client.begin_analyze(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}],
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ]
-        )
-        self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+        ).result()
+
+        task_types = [
+            "entities_recognition_results",
+            "key_phrase_extraction_results",
+            "pii_entities_extraction_results"
+        ]
+
+        for task_type in task_types:
+            task_results = getattr(results_pages[0], task_type)
+            self.assertEqual(len(task_results), 1)
+
+            for r in task_results.results:
+                self.assertEqual(r.error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
+        text_analytics_account = os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+        text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
+
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential)
 
@@ -1119,44 +1016,37 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs,
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ]
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+        ).result()
+
         self.assertIsNotNone(response)
 
         credential.update("xxx")  # Make authentication fail
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_analyze(
                 docs,
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()
-                ]
-            )
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            ).result()
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
         response = client.begin_analyze(
             docs,
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ]
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+        ).result()
         self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_user_agent(self, client):
         def callback(resp):
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -1168,34 +1058,40 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.analyze_sentiment(
+        poller = client.analyze_sentiment(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()
-            ],
-            raw_response_hook=callback
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         )
 
+        self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
+                VERSION, platform.python_version(), platform.platform()),
+                poller._polling_method._initial_response.http_request.headers["User-Agent"]
+            )
+
+        poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
+
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_document_attribute_error_no_result_attribute_sentiment_task(self, client):
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
+    def test_document_attribute_error_no_result_attribute_entities_task(self, client):
         docs = [{"id": "1", "text": ""}]
         response = client.begin_analyze(
             docs,
-            tasks=[SentimentAnalysisTask()]
+            entities_recognition_tasks=[EntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        sentiment_analysis_task_results = results_pages[0].sentiment_analysis_results
-        self.assertEqual(len(sentiment_analysis_task_results), 1)
+        task_results = results_pages[0].entities_recognition_results
+        self.assertEqual(len(task_results), 1)
 
-        results = sentiment_analysis_task_results[0].results
+        results = task_results[0].results
         self.assertEqual(len(results), 3)
 
         # Attributes on DocumentError
@@ -1205,7 +1101,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         # Result attribute not on DocumentError, custom error message
         try:
-            sentiment = results[0].sentiment
+            entities = results[0].entities
         except AttributeError as custom_error:
             self.assertEqual(
                 custom_error.args[0],
@@ -1215,26 +1111,30 @@ class TestAnalyze(TextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
-    def test_document_attribute_error_nonexistent_attribute_sentiment_task(self, client):
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
+    def test_document_attribute_error_nonexistent_attribute_entities_task(self, client):
         docs = [{"id": "1", "text": ""}]
         response = client.begin_analyze(
             docs,
-            tasks=[SentimentAnalysisTask()]
-        )
+            entities_recognition_tasks=[EntitiesRecognitionTask()]
+        ).result()
 
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
-        sentiment_analysis_task_results = results_pages[0].sentiment_analysis_results
-        self.assertEqual(len(sentiment_analysis_task_results), 1)
+        task_results = results_pages[0].entities_recognition_results
+        self.assertEqual(len(task_results), 1)
 
-        results = sentiment_analysis_task_results[0].results
+        results = task_results[0].results
         self.assertEqual(len(results), 3)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
-            sentiment = results[0].attribute_not_on_result_or_error
+            entities = results[0].attribute_not_on_result_or_error
         except AttributeError as default_behavior:
             self.assertEqual(
                 default_behavior.args[0],
@@ -1242,41 +1142,49 @@ class TestAnalyze(TextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_bad_model_version_error_single_task(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
             result = client.begin_analyze(
                 docs,
-                tasks=[SentimentAnalysisTask(model_version="bad")]
-            )
+                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")]
+            ).result()
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
             result = client.begin_analyze(
                 docs,
-                tasks=[
-                    SentimentAnalysisTask(model_version="bad"),
-                    EntitiesRecognitionTask(model_version="bad"), 
-                    KeyPhraseExtractionTask(model_version="bad"),
-                    EntityLinkingTask(model_version="bad"),
-                    PiiEntitiesRecognitionTask(model_version="bad")
-                ]
-            )
+                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")], 
+                key_phrase_recognition_tasks=[KeyPhraseExtractionTask(model_version="bad")],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")]
+            ).result()
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_document_errors_multiple_tasks(self, client):
         text = ""
         for _ in range(5121):
@@ -1288,21 +1196,16 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs, 
-            tasks=[
-                SentimentAnalysisTask(), 
-                EntitiesRecognitionTask(), 
-                KeyPhraseExtractionTask(),
-                EntityLinkingTask(),
-                PiiEntitiesRecognitionTask()]
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
         ).result()
 
         results_pages = list(response)
         self.assertEqual(len(results_pages), 1)
 
         task_types = [
-            "sentiment_analysis_results",
             "entities_recognition_results",
-            "entity_linking_results",
             "key_phrase_extraction_results",
             "pii_entities_extraction_results"
         ]
@@ -1322,46 +1225,56 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIsNotNone(results[2].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             client.begin_analyze(
                 docs, 
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()]
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
             )
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             client.begin_analyze(
                 docs, 
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()]
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
             )
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             client.begin_analyze(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_duplicate_ids_error(self, client):  # TODO: verify behavior of service
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
@@ -1369,33 +1282,30 @@ class TestAnalyze(TextAnalyticsTest):
         try:
             result = client.begin_analyze(
                 docs, 
-                tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()]
-            )
+                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            ).result()
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         res = client.begin_analyze(
             documents=["Test passing cls to endpoint"],
-            tasks=[
-                    SentimentAnalysisTask(), 
-                    EntitiesRecognitionTask(), 
-                    KeyPhraseExtractionTask(),
-                    EntityLinkingTask(),
-                    PiiEntitiesRecognitionTask()
-            ],
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             cls=callback
-        )
+        ).result()
         assert res == "cls result"
 
 

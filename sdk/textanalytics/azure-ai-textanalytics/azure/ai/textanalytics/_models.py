@@ -11,7 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
-from ._generated.v3_2_preview_1 import models as _v3_2_preview_1_models
+from ._generated.v3_1_preview_3 import models as _v3_1_preview_3_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -1184,8 +1184,8 @@ class EntitiesRecognitionTask(DictMixin):
             .format(self.model_version, self.string_index_type)[:1024]
 
     def to_generated(self):
-        return _v3_2_preview_1_models.EntitiesTask(
-            parameters=_v3_2_preview_1_models.EntitiesTaskParameters(
+        return _v3_1_preview_3_models.EntitiesTask(
+            parameters=_v3_1_preview_3_models.EntitiesTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type
             )
@@ -1230,8 +1230,8 @@ class PiiEntitiesRecognitionTask(DictMixin):
             .format(self.model_version, self.string_index_type, self.domain)[:1024]
 
     def to_generated(self):
-        return _v3_2_preview_1_models.PiiTask(
-            parameters=_v3_2_preview_1_models.PiiTaskParameters(
+        return _v3_1_preview_3_models.PiiTask(
+            parameters=_v3_1_preview_3_models.PiiTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 domain=self.domain
@@ -1271,8 +1271,8 @@ class KeyPhraseExtractionTask(DictMixin):
             .format(self.model_version)[:1024]
 
     def to_generated(self):
-        return _v3_2_preview_1_models.KeyPhrasesTask(
-            parameters=_v3_2_preview_1_models.KeyPhrasesTaskParameters(
+        return _v3_1_preview_3_models.KeyPhrasesTask(
+            parameters=_v3_1_preview_3_models.KeyPhrasesTaskParameters(
                 model_version=self.model_version
             )
         )
@@ -1318,8 +1318,8 @@ class TextAnalysisResult(DictMixin):
         return "TextAnalysisResult(entities_recognition_results={}, pii_entities_recognition_results={}, \
             key_phrase_extraction_results={})" \
             .format(
-                repr(self.entities_extraction_results),
-                repr(self.pii_entities_extraction_results),
+                repr(self.entities_recognition_results),
+                repr(self.pii_entities_recognition_results),
                 repr(self.key_phrase_extraction_results)
             )[:1024]
 

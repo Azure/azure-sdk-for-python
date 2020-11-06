@@ -10,7 +10,7 @@ async def healthcare_extract_page_data_async(doc_id_order, obj, response_headers
     return health_job_state.next_link, healthcare_result(doc_id_order, health_job_state.results, response_headers)
 
 async def analyze_extract_page_data_async(response, obj, response_headers, analyze_job_state):
-    return analyze_job_state.next_link, analyze_result(response, obj, response_headers, analyze_job_state.tasks)
+    return analyze_job_state.next_link, [analyze_result(response, obj, response_headers, analyze_job_state.tasks)]
 
 
 async def lro_get_next_page_async(lro_status_callback, first_page, continuation_token):
@@ -39,7 +39,7 @@ def healthcare_paged_result(doc_id_order, health_status_callback, response, obj,
     )
 
 
-async def analyze_paged_result_async(analyze_status_callback, response, obj, response_headers):
+async def analyze_paged_result(analyze_status_callback, response, obj, response_headers):
     return await AsyncItemPaged(
         functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
         functools.partial(analyze_extract_page_data_async, response, obj, response_headers)

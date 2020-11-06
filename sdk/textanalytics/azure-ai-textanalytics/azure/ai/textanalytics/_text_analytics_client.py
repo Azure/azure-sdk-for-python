@@ -35,7 +35,7 @@ from ._models import (
     PiiEntitiesRecognitionTask,
     KeyPhraseExtractionTask,
 )
-from ._lro import TextAnalyticsOperationResourcePolling
+from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPoller
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -639,9 +639,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _analyze_result_callback(self, raw_response, _, headers):
+    def _analyze_result_callback(self, doc_id_order, raw_response, _, headers):
         analyze_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, raw_response)
-        return analyze_paged_result(self._client.analyze_status, raw_response, analyze_result, headers)
+        return analyze_paged_result(doc_id_order, self._client.analyze_status, raw_response, analyze_result, headers)
 
     @distributed_trace
     def begin_analyze(  # type: ignore
@@ -699,6 +699,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
+        doc_id_order = [doc.get("id") for doc in docs.documents]
+
         try:
             analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
                 entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks] if entities_recognition_tasks else [],
@@ -712,13 +714,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
             return self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", self._analyze_result_callback),
-                polling=LROBasePolling(timeout=polling_interval, **kwargs),
+                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order)),
+                polling=TextAnalyticsLROPoller(timeout=polling_interval, **kwargs),
                 **kwargs
             )
 
         except NameError:
-            raise NotImplementedError("Service method 'begin_analyze_text' is only available for API versions v3.1-preview.3 and up.")
+            raise NotImplementedError("Service method 'begin_analyze' is only available for API versions v3.1-preview.3 and up.")
         
         except HttpResponseError as error:
             process_http_response_error(error)

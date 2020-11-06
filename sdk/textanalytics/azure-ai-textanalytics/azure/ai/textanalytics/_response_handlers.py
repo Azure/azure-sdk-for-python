@@ -6,7 +6,7 @@
 
 import json
 import functools
-from urllib.parse import urlparse, parse_qsl
+from urllib.parse import urlparse, parse_qsl, urlencode
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -73,48 +73,58 @@ def order_results(response, combined):
 
 
 def order_lro_results(doc_id_order, combined):
+    """Order results in the order the user passed them in.
+    For long running operations, we need to explicitly pass in the
+    document ids since the initial request will no longer be available.
+
+    :param doc_id_order: A list of document IDs from the original request.
+    :param combined: A combined list of the results | errors
+    :return: In order list of results | errors (if any)
+    """
+
     mapping = {item.id: item for item in combined}
     ordered_response = [mapping[i] for i in doc_id_order]
     return ordered_response
 
 
 def prepare_result(func):
-    def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
-        if obj.errors:
-            combined = obj.documents + obj.errors
-            results = order_results(response, combined)
+    def choose_wrapper(*args, lro=False):
+        def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
+            if obj.errors:
+                combined = obj.documents + obj.errors
+                results = order_results(response, combined)
 
-        else:
-            results = obj.documents
-
-        for idx, item in enumerate(results):
-            if hasattr(item, "error"):
-                results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
             else:
-                results[idx] = func(item, results)
-        return results
+                results = obj.documents
 
-    return wrapper
+            for idx, item in enumerate(results):
+                if hasattr(item, "error"):
+                    results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
+                else:
+                    results[idx] = func(item, results)
+            return results
 
+        def lro_wrapper(doc_id_order, obj, response_headers):  # pylint: disable=unused-argument
+            if obj.errors:
+                combined = obj.documents + obj.errors
 
-def prepare_lro_result(func):
-    def wrapper(doc_id_order, obj, response_headers):  # pylint: disable=unused-argument
-        if obj.errors:
-            combined = obj.documents + obj.errors
-
-            results = order_lro_results(doc_id_order, combined)
-        else:
-            results = obj.documents
-
-        for idx, item in enumerate(results):
-            if hasattr(item, "error"):
-                results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
+                results = order_lro_results(doc_id_order, combined)
             else:
-                results[idx] = func(item, results)
-        return results
+                results = obj.documents
 
-    return wrapper
+            for idx, item in enumerate(results):
+                if hasattr(item, "error"):
+                    results[idx] = DocumentError(id=item.id, error=TextAnalyticsError._from_generated(item.error))  # pylint: disable=protected-access
+                else:
+                    results[idx] = func(item, results)
+            return results
 
+        if lro:
+            return lro_wrapper(*args)
+
+        return wrapper(*args)
+
+    return choose_wrapper
 
 
 @prepare_result
@@ -179,40 +189,40 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
     )
 
 
-@prepare_lro_result
+@prepare_result
 def healthcare_result(health_result, results):
     return AnalyzeHealthcareResultItem._from_generated(health_result)
 
 
-def analyze_result(response, obj, response_headers, tasks):
+def analyze_result(doc_id_order, obj, response_headers, tasks):
     return TextAnalysisResult(
         entities_recognition_results=[
             EntitiesRecognitionTaskResult(
                 name=t.name, 
-                results=[entities_result(response, result, response_headers) for result in t.results]
+                results=entities_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_tasks
-        ],
+        ] if tasks.entity_recognition_tasks else [],
         pii_entities_recognition_results=[
             PiiEntitiesRecognitionTaskResult(
                 name=t.name,
-                results=[pii_entities_result(response, result, response_headers) for result in t.results]
+                results=pii_entities_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_pii_tasks
-        ],
+        ] if tasks.entity_recognition_pii_tasks else [],
         key_phrase_extraction_results=[
             KeyPhraseExtractionTaskResult(
                 name=t.name,
-                results=[key_phrases_result(response, result, response_headers) for result in t.results]
+                results=key_phrases_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.key_phrase_extraction_tasks
-        ]
+        ] if tasks.key_phrase_extraction_tasks else []
     )
 
 
 def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job_state):
-    return health_job_state.next_link, healthcare_result(doc_id_order, health_job_state.results, response_headers)
+    return health_job_state.next_link, healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True)
 
 
-def analyze_extract_page_data(response, obj, response_headers, analyze_job_state):
-    return analyze_job_state.next_link, analyze_result(response, obj, response_headers, analyze_job_state.tasks)
+def analyze_extract_page_data(doc_id_order, obj, response_headers, analyze_job_state):
+    return analyze_job_state.next_link, [analyze_result(doc_id_order, obj, response_headers, analyze_job_state.tasks)]
 
 
 def lro_get_next_page(lro_status_callback, first_page, continuation_token):
@@ -230,7 +240,7 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token):
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
 
     return lro_status_callback(job_id, **query_params)
-    
+
 
 def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False):
     return AnalyzeHealthcareResult(
@@ -241,8 +251,8 @@ def healthcare_paged_result(doc_id_order, health_status_callback, response, obj,
     )
 
 
-def analyze_paged_result(analyze_status_callback, response, obj, response_headers):
+def analyze_paged_result(doc_id_order, analyze_status_callback, response, obj, response_headers):
     return ItemPaged(
         functools.partial(lro_get_next_page, analyze_status_callback, obj),
-        functools.partial(analyze_extract_page_data, response, obj, response_headers)
+        functools.partial(analyze_extract_page_data, doc_id_order, obj, response_headers)
     )
