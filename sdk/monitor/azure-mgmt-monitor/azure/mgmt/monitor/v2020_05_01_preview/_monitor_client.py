@@ -18,37 +18,40 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import MonitorClientConfiguration
-from .operations import ManagementGroupDiagnosticSettingsOperations
+from .operations import ScheduledQueryRulesOperations
 from . import models
 
 
 class MonitorClient(object):
     """Monitor Management Client.
 
-    :ivar management_group_diagnostic_settings: ManagementGroupDiagnosticSettingsOperations operations
-    :vartype management_group_diagnostic_settings: $(python-base-namespace).v2020_01_01_preview.operations.ManagementGroupDiagnosticSettingsOperations
+    :ivar scheduled_query_rules: ScheduledQueryRulesOperations operations
+    :vartype scheduled_query_rules: $(python-base-namespace).v2020_05_01_preview.operations.ScheduledQueryRulesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The Azure subscription Id.
+    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
         base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         if not base_url:
             base_url = 'https://management.azure.com'
-        self._config = MonitorClientConfiguration(credential, **kwargs)
+        self._config = MonitorClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.management_group_diagnostic_settings = ManagementGroupDiagnosticSettingsOperations(
+        self.scheduled_query_rules = ScheduledQueryRulesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
