@@ -9,6 +9,7 @@ from ._shared import parse_key_vault_id, KeyVaultResourceId
 def parse_key_vault_secret_id(source_id):
     # type: (str) -> KeyVaultResourceId
     """Parses a secret's full ID into a class with parsed contents as attributes.
+
     :param str source_id: the full original identifier of a secret
     :returns: Returns a parsed secret ID as a :class:`KeyVaultResourceId`
     :rtype: ~azure.keyvault.secrets.KeyVaultResourceId
