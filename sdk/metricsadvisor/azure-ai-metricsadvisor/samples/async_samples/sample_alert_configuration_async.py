@@ -51,7 +51,7 @@ async def sample_create_alert_config_async():
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
     async with client:
-        alert_config = await client.create_anomaly_alert_configuration(
+        alert_config = await client.create_alert_configuration(
             name="my alert config",
             description="alert config description",
             cross_metrics_operator="AND",

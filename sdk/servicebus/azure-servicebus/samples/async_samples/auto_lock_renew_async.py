@@ -42,7 +42,7 @@ async def renew_lock_on_message_received_from_non_sessionful_entity():
 
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
-                renewer.register(receiver, msg, timeout=100)
+                renewer.register(receiver, msg, max_lock_renewal_duration=100)
             print('Register messages into AutoLockRenewer done.')
 
             await asyncio.sleep(100)  # message handling for long period (E.g. application logic)
@@ -72,7 +72,7 @@ async def renew_lock_on_session_of_the_sessionful_entity():
             prefetch_count=10
         ) as receiver:
             # automatically renew the lock on the session for 100 seconds
-            renewer.register(receiver, receiver.session, timeout=100)
+            renewer.register(receiver, receiver.session, max_lock_renewal_duration=100)
             print('Register session into AutoLockRenewer.')
 
             received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
@@ -108,7 +108,10 @@ async def renew_lock_with_lock_renewal_failure_callback():
 
                 for msg in received_msgs:
                     # automatically renew the lock on each message for 120 seconds
-                    renewer.register(receiver, msg, timeout=90, on_lock_renew_failure=on_lock_renew_failure_callback)
+                    renewer.register(receiver,
+                                     msg,
+                                     max_lock_renewal_duration=90,
+                                     on_lock_renew_failure=on_lock_renew_failure_callback)
                 print('Register messages into AutoLockRenewer done.')
 
                 # Cause the messages and autorenewal to time out.

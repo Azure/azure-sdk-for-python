@@ -298,7 +298,7 @@ if __name__ == '__main__':
     print("\n---List anomaly alert configurations...")
     sample_list_alert_configs()
     print("\n---Query anomaly detection results...")
-    alerts = sample_list_alerts_for_alert_config(alert_config.id)
+    alerts = sample_list_alerts(alert_config.id)
     if len(alerts) > 0:
         print("\n---Query anomalies using alert id...")
         alert_id = alerts[0].id
