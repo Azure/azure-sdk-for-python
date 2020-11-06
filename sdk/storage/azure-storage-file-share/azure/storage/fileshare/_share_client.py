@@ -338,7 +338,7 @@ class ShareClient(StorageAccountHostsMixin):
         root_squash = kwargs.pop('root_squash', None)
         enabled_protocols = kwargs.pop('enabled_protocols', None)
         if root_squash and enabled_protocols != "NFS":
-            raise ValueError("The 'root_squash' keyword can only be used on SMB shares.")
+            raise ValueError("The 'root_squash' keyword can only be used on NFS shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
