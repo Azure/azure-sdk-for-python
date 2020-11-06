@@ -4,6 +4,10 @@
 ### Fixed
 - Correct typing for async paging methods
 
+### Added
+- Added method `parse_key_vault_secret_id` that parses out a full ID returned by Key Vault, so users can easily
+access the secret's `name`, `vault_url`, and `version`.
+
 ## 4.2.0 (2020-08-11)
 ### Fixed
 - Values of `x-ms-keyvault-region` and `x-ms-keyvault-service-version` headers
