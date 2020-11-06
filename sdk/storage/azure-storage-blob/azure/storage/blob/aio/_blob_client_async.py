@@ -140,7 +140,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     async def upload_blob_from_url(
             self, source_url,   # type: str
             copy_source_blob_properties=True,  # type: Optional[bool]
-            metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs):
         # type: (...) -> Dict[str, Any]
         """
@@ -161,9 +160,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
         :param bool copy_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
-        :param metadata:
-            Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -233,6 +229,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
         """
+        options = self._upload_blob_from_url_options(
+            source_url=self._encode_source_url(source_url),
+            **kwargs)
+        try:
+            return await self._client.blob.put_blob_from_url(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     @distributed_trace_async
     async def upload_blob(

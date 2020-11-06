@@ -406,11 +406,62 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Unsupported BlobType: {}".format(blob_type))
         return kwargs
 
+    def _upload_blob_from_url_options(self, source_url, copy_source_blob_properties, **kwargs):
+        # type: (...) -> Dict[str, Any]
+        headers = kwargs.pop('headers', {})
+        if 'source_lease' in kwargs:
+            source_lease = kwargs.pop('source_lease')
+            try:
+                headers['x-ms-source-lease-id'] = source_lease.id # type: str
+            except AttributeError:
+                headers['x-ms-source-lease-id'] = source_lease
+
+        tier = kwargs.pop('standard_blob_tier', None)
+
+        timeout = kwargs.pop('timeout', None)
+        dest_mod_conditions = get_modify_conditions(kwargs)
+        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
+        content_settings = kwargs.pop('content_settings', None)
+        if content_settings:
+            kwargs['blob_headers'] = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.scheme.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+        kwargs['cpk_info'] = cpk_info
+        kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
+
+        options = {
+            'copy_source_blob_properties': copy_source_blob_properties,
+            'copy_source': source_url,
+            'timeout': timeout,
+            'modified_access_conditions': dest_mod_conditions,
+            'blob_tags_string': blob_tags_string,
+            'headers': headers,
+            'cls': return_response_headers,
+        }
+        source_mod_conditions = get_source_conditions(kwargs)
+        dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
+        options['source_modified_access_conditions'] = source_mod_conditions
+        options['lease_access_conditions'] = dest_access_conditions
+        options['tier'] = tier.value if tier else None
+        options.update(kwargs)
+        return options
+
     @distributed_trace
     def upload_blob_from_url(
             self, source_url,   # type: str
             copy_source_blob_properties=True,   # type: Optional[bool]
-            metadata=None,  # type: Optional[Dict[str, str]]
             **kwargs):
         # type: (...) -> Dict[str, Any]
         """
@@ -431,9 +482,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
         :param bool copy_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
-        :param metadata:
-            Name-value pairs associated with the blob as metadata.
-        :type metadata: dict(str, str)
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
@@ -503,6 +551,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
         """
+        options = self._upload_blob_from_url_options(
+            source_url=self._encode_source_url(source_url),
+            copy_source_blob_properties=copy_source_blob_properties,
+            **kwargs)
+        try:
+            return self._client.blob.put_blob_from_url(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
