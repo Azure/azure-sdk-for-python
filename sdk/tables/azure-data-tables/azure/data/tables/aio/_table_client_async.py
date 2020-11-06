@@ -52,20 +52,20 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         # type: (...) -> None
         """Create TableClient from a Credential.
 
-                :param account_url:
-                    A url to an Azure Storage account.
-                :type account_url: str
-                :param table_name: The table name.
-                :type table_name: str
-                :param credential:
-                    The credentials with which to authenticate. This is optional if the
-                    account URL already has a SAS token, or the connection string already has shared
-                    access key values. The value can be a SAS token string, an account shared access
-                    key.
-                :type credential: Union[str,~azure.core.credentials.TokenCredential]
+        :param account_url:
+            A url to an Azure Storage account.
+        :type account_url: str
+        :param table_name: The table name.
+        :type table_name: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, an account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+        :type credential: Union[str,~azure.core.credentials.TokenCredential]
 
-              :returns: None
-              """
+        :returns: None
+        """
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(TableClient, self).__init__(
@@ -81,7 +81,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
-        """Create TableClient from a Connection String.
+        """Create TableClient from a Connection string.
 
         :param conn_str:
             A connection string to an Azure Storage or Cosmos account.
@@ -208,7 +208,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError:
+        :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
 
         .. admonition:: Example:
 
@@ -272,7 +272,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the table does not exist
 
         .. admonition:: Example:
 
@@ -309,7 +309,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type entity: Union[TableEntity, dict[str,str]]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceFoundError:
 
         .. admonition:: Example:
 
@@ -407,7 +407,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
+        :keyword Union[str,list(str)] select: Specify desired properties of an entity to return certain entities
         :return: Query of table entities
         :rtype: AsyncItemPaged[azure.data.tables.TableEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -446,7 +446,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword Union[str, list[str]] select: Specify desired properties of an entity to return certain entities
+        :keyword Union[str,list[str]] select: Specify desired properties of an entity to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: AsyncItemPaged[azure.data.tables.TableEntity]

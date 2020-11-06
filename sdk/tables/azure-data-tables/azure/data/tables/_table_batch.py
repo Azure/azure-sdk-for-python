@@ -84,6 +84,7 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
+        :return: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -427,7 +428,7 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :raises None:
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -547,7 +548,7 @@ class TableBatchOperations(object):
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :raises None:
+        :raises ValueError:
 
         .. admonition:: Example:
 

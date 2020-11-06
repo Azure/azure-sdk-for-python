@@ -60,7 +60,7 @@ def generate_account_sas(
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :keyword Union[str, SASProtocol] protocol:
+    :keyword Union[str,SASProtocol] protocol:
         Specifies the protocol permitted for a request made.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
@@ -120,7 +120,7 @@ def generate_table_sas(
            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
            restricts the request to those IP addresses.
        :keyword str policy_id: Access policy ID.
-       :keyword Union[str, SASProtocol] protocol:
+       :keyword Union[str,SASProtocol] protocol:
            Specifies the protocol permitted for a request made.
        :keyword str end_rk: End row key
        :keyword str end_pk: End partition key

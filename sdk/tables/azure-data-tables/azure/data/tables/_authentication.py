@@ -42,7 +42,7 @@ class AzureSigningError(ClientAuthenticationError):
 # pylint: disable=no-self-use
 class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
-    def __init__(self, account_name, account_key, is_emulated=False):
+    def __init__(self, account_name, account_key, is_emulated=False): # pylint: disable=super-init-not-called
         self.account_name = account_name
         self.account_key = account_key
         self.is_emulated = is_emulated

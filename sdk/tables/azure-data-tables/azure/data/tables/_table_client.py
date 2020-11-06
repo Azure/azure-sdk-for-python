@@ -200,7 +200,7 @@ class TableClient(TableClientBase):
 
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceExistsError:
+        :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
 
         .. admonition:: Example:
 
@@ -230,7 +230,7 @@ class TableClient(TableClientBase):
 
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the table does not exist
 
         .. admonition:: Example:
 
@@ -264,7 +264,7 @@ class TableClient(TableClientBase):
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the entity does not exist
 
         .. admonition:: Example:
 
@@ -303,7 +303,7 @@ class TableClient(TableClientBase):
         :type entity: Union[TableEntity, dict[str,str]]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceFoundError:
 
         .. admonition:: Example:
 
@@ -329,7 +329,7 @@ class TableClient(TableClientBase):
             _process_table_error(error)
 
     @distributed_trace
-    def update_entity(  # pylint:disable=R1710
+    def update_entity(
             self,
             entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
@@ -402,7 +402,7 @@ class TableClient(TableClientBase):
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
+        :keyword Union[str,list(str)] select: Specify desired properties of an entity to return certain entities
         :return: Query of table entities
         :rtype: ItemPaged[azure.data.tables.TableEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -441,7 +441,7 @@ class TableClient(TableClientBase):
 
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str, list[str]] select: Specify desired properties of an entity to return certain entities
+        :keyword Union[str,list[str]] select: Specify desired properties of an entity to return certain entities
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
         :rtype: ItemPaged[azure.data.tables.TableEntity]
@@ -492,6 +492,15 @@ class TableClient(TableClientBase):
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: ~azure.data.tables.TableEntity
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_table.py
+                :start-after: [START get_entity]
+                :end-before: [END get_entity]
+                :language: python
+                :dedent: 8
+                :caption: Get a single entity from a table
         """
         try:
             entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,

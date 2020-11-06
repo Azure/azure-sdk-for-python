@@ -125,11 +125,12 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
-                :keyword callable cls: A custom type or function that will be passed the direct response
-                :return: TableServiceStats, or the result of cls(response)
-                :rtype: ~azure.data.tables.models.TableServiceStats
-                :raises ~azure.core.exceptions.HttpResponseError:
-                """
+        :keyword callable cls: A custom type or function that will be passed the direct response
+
+        :return: Dictionary of service stats
+        :rtype: ~azure.data.tables.models.TableServiceStats
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         try:
             timeout = kwargs.pop('timeout', None)
             stats = await self._client.service.get_statistics(  # type: ignore
@@ -289,7 +290,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword Union[str,list(str)] select: Specify desired properties of a table to return certain tables
         :return: AsyncItemPaged
         :rtype: ~AsyncItemPaged[TableItem]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -329,8 +330,8 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :param filter: Specify a filter to return certain tables.
         :type filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
-        :keyword dict[str, str] parameters: Dictionary for formatting query with additional, user defined parameters
+        :keyword Union[str,list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword dict[str,str] parameters: Dictionary for formatting query with additional, user defined parameters
         :return: An ItemPaged of tables
         :rtype: ItemPaged[TableItem]
         :raises ~azure.core.exceptions.HttpResponseError:

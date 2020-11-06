@@ -79,6 +79,8 @@ class TableBatchOperations(object):
 
         :param entity: The properties for the table entity.
         :type entity: Union[TableEntity, dict[str,str]]
+        :return: None
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -182,6 +184,27 @@ class TableBatchOperations(object):
             **kwargs  # type: Any
     ):
         # (...) -> None
+
+        """Adds an update operation to the current batch.
+
+        :param entity: The properties for the table entity.
+        :type entity: Union[TableEntity, dict[str,str]]
+        :param mode: Merge or Replace entity
+        :type mode: ~azure.data.tables.UpdateMode
+        :keyword str etag: Etag of the entity
+        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :return: None
+        :raises ValueError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_batching_async.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Creating and adding an entity to a Table
+        """
         self._verify_partition_key(entity)
 
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
@@ -400,6 +423,8 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :return: None
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -519,6 +544,8 @@ class TableBatchOperations(object):
         :type entity: Union[TableEntity, dict[str,str]]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
+        :return: None
+        :raises ValueError:
 
         .. admonition:: Example:
 
