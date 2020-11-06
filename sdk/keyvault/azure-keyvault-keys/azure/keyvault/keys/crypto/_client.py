@@ -242,7 +242,7 @@ class CryptographyClient(KeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
             **kwargs
         )
-        return UnwrapResult(key_id=self._key_id.source_id, algorithm=algorithm, key=operation_result.result)
+        return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace
     def sign(self, algorithm, digest, **kwargs):
