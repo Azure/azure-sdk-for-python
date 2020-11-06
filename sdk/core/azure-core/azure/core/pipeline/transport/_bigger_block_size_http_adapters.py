@@ -24,38 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
-import socket
 import sys
 from requests.adapters import HTTPAdapter
-from requests.exceptions import (   # pylint: disable=W0622
-    ConnectionError,
-    ConnectTimeout,
-    ReadTimeout,
-    SSLError,
-    ProxyError,
-    RetryError,
-    InvalidURL
-)
-from urllib3.response import HTTPResponse
-from urllib3.util import Timeout as TimeoutSauce
-from urllib3.exceptions import (
-    ClosedPoolError,
-    ConnectTimeoutError,
-    HTTPError as _HTTPError,
-    MaxRetryError,
-    NewConnectionError,
-    ProxyError as _ProxyError,
-    ProtocolError,
-    ReadTimeoutError,
-    SSLError as _SSLError,
-    ResponseError,
-    LocationValueError,
-)
-
-DEFAULT_POOLBLOCK = False
-DEFAULT_POOLSIZE = 10
-DEFAULT_RETRIES = 0
-DEFAULT_POOL_TIMEOUT = None
 
 class BiggerBlockSizeHTTPAdapter(HTTPAdapter):
     def get_connection(self, url, proxies=None):
