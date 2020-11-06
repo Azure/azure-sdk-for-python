@@ -43,6 +43,15 @@ semantics with the sender or receiver lifetime.
 | `QueueClient.from_connection_string().get_receiver().peek()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().peek()`| `ServiceBusClient.from_connection_string().get_queue_receiver().peek_messages()`| [Get a receiver and peek messages](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_peek.py) |
 | `QueueClient.from_connection_string().get_deadletter_receiver()  and ServiceBusClient.from_connection_string().get_queue().get_deadletter_receiver()`| `ServiceBusClient.from_connection_string().get_queue_receiver(sub_queue=SubQueue.DeadLetter)`| [Get a deadletter receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py) |
 
+### Settling messages
+
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `message.complete()`| `receiver.complete_message(message)`| [Complete a message](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py) |
+| `message.abandon()`| `receiver.abandon_message(message)`| [Abandon a message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/sample_code_servicebus.py) |
+| `message.defer()`| `receiver.defer_message(message)`| [Defer a message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deferred_message_queue.py) |
+| `message.dead_letter()`| `receiver.dead_letter_message(message)`| [Dead letter a message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py) |
+
 ### Sending messages
 
 | In v0.50 | Equivalent in v7 | Sample |
@@ -57,13 +66,20 @@ semantics with the sender or receiver lifetime.
 | `queue_client.get_sender().schedule(schedule_time_utc, message1, message2)` | `sb_client.get_queue_sender().schedule_messages([message1, message2], schedule_time_utc)` | [Schedule messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/schedule_messages_and_cancellation.py) |
 | `queue_client.get_sender().cancel_scheduled_messages(sequence_number1, sequence_number2)`| `sb_client.get_queue_sender().cancel_scheduled_messages([sequence_number1, sequence_number2])` | [Cancel scheduled messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/schedule_messages_and_cancellation.py)|
 
+### Renewing lock on the received message
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `message.renew_lock()` | `receiver.renew_message_lock(message)` | [Renew lock on the message](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/sample_code_servicebus.py) |
+
 ### Working with sessions
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py) |
 | `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `receiver=sb_client.get_queue_receiver(session_id='foo')` <br> `AutoLockRenewer().register(receiver, receiver.session)`| [Access a session and ensure its lock is auto-renewed](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
-| `receiver.get_session_state()` | `receiver.session.get_state()` | [Perform session specific operations on a receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
+| `receiver.get_session_state()` | `receiver.session.get_state()` | [Set session state](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
+| `receiver.set_session_state()` | `receiver.session.set_state()` | [Get session state](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
+| `receiver.renew_lock()` | `receiver.session.renew_lock()` | [Renew lock on the session](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
 
 ### Working with UTC time
 | In v0.50 | Equivalent in v7 | Note |
