@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: "--batch_b3de0c4f-674e-4ecf-b4ce-bc10c8a242d5\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_6162604d-6df7-463a-9d72-dbf2ffb58293\r\n\r\n--changeset_6162604d-6df7-463a-9d72-dbf2ffb58293\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nPOST https://tablestestp5vjroapn77olh.table.core.windows.net/uttable1d970f0e\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
+      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
+      \ application/json;odata=minimalmetadata\r\nContent-Length: 576\r\nx-ms-date:\
+      \ Thu, 05 Nov 2020 21:12:42 GMT\r\nDate: Thu, 05 Nov 2020 21:12:42 GMT\r\nx-ms-client-request-id:\
+      \ a49ca6ff-1fab-11eb-a1a8-58961df361d1\r\n\r\n{\"PartitionKey\": \"001\", \"\
+      PartitionKey@odata.type\": \"Edm.String\", \"RowKey\": \"batch_negative_1\"\
+      , \"RowKey@odata.type\": \"Edm.String\", \"age\": 39, \"sex\": \"male\", \"\
+      sex@odata.type\": \"Edm.String\", \"married\": true, \"deceased\": false, \"\
+      ratio\": 3.1, \"evenratio\": 3.0, \"large\": 933311100, \"Birthday\": \"1973-10-04T00:00:00Z\"\
+      , \"Birthday@odata.type\": \"Edm.DateTime\", \"birthday\": \"1970-10-04T00:00:00Z\"\
+      , \"birthday@odata.type\": \"Edm.DateTime\", \"binary\": \"YmluYXJ5\", \"binary@odata.type\"\
+      : \"Edm.Binary\", \"other\": 20, \"clsid\": \"c9da6455-213d-42c9-9a79-3e9149a57833\"\
+      , \"clsid@odata.type\": \"Edm.Guid\"}\r\n--changeset_6162604d-6df7-463a-9d72-dbf2ffb58293--\r\
+      \n\r\n--batch_b3de0c4f-674e-4ecf-b4ce-bc10c8a242d5--\r\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1376'
+      Content-Type:
+      - multipart/mixed; boundary=batch_b3de0c4f-674e-4ecf-b4ce-bc10c8a242d5
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Thu, 05 Nov 2020 21:12:42 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 05 Nov 2020 21:12:42 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablesteststorname.table.core.windows.net/$batch
+  response:
+    body:
+      string: '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code>AuthenticationFailed</m:code><m:message
+        xml:lang="en-US">Server failed to authenticate the request. Make sure the
+        value of Authorization header is formed correctly including the signature.
+
+        RequestId:1bf4974c-7002-0058-06b8-b3e6ee000000
+
+        Time:2020-11-05T21:12:43.3528159Z</m:message></m:error>'
+    headers:
+      content-length:
+      - '419'
+      content-type:
+      - application/xml
+      date:
+      - Thu, 05 Nov 2020 21:12:42 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - AuthenticationFailed
+    status:
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
+version: 1

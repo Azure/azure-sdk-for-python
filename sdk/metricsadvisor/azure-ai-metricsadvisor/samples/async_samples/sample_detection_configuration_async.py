@@ -75,7 +75,7 @@ async def sample_create_detection_config_async():
     )
 
     async with client:
-        detection_config = await client.create_metric_anomaly_detection_configuration(
+        detection_config = await client.create_detection_configuration(
             name="my_detection_config",
             metric_id=metric_id,
             description="anomaly detection config for metric",
