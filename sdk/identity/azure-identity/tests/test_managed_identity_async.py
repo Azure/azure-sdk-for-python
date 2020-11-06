@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import time
 from unittest import mock
 
@@ -461,29 +462,49 @@ async def test_service_fabric():
 
 
 @pytest.mark.asyncio
-async def test_azure_arc():
-    """Azure Arc 2019-08-15"""
+async def test_azure_arc(tmpdir):
+    """Azure Arc 2019-11-01"""
 
     access_token = "****"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
+    secret_key = "XXXX"
 
-    async def send(request, **_):
-        assert request.url.startswith(identity_endpoint)
-        assert request.method == "GET"
-        assert request.query["api-version"] == "2019-08-15"
-        assert request.query["resource"] == scope
+    key_file = tmpdir.mkdir("key").join("key_file.key")
+    key_file.write(secret_key)
+    assert key_file.read() == secret_key
+    key_path = os.path.join(key_file.dirname, key_file.basename)
 
-        return mock_response(
-            json_payload={
-                "access_token": access_token,
-                "expires_on": str(expires_on),
-                "resource": scope,
-                "token_type": "Bearer",
-            }
-        )
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"api-version": "2019-11-01", "resource": scope},
+            ),
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true", "Authorization": "Basic {}".format(secret_key)},
+                required_params={"api-version": "2019-11-01", "resource": scope},
+            ),
+        ],
+        responses=[
+            # first response gives path to authentication key
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_path)}),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": expires_on,
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
 
     with mock.patch(
             "os.environ",
@@ -492,6 +513,6 @@ async def test_azure_arc():
                 EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint,
             },
     ):
-        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token.token == access_token
         assert token.expires_on == expires_on
