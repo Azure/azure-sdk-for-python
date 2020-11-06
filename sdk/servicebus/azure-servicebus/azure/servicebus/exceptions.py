@@ -122,6 +122,12 @@ def _handle_amqp_connection_error(logger, exception, handler):
         error = ServiceBusConnectionError(message, error=exception)
         error_need_raise, error_need_close_handler = True, False
 
+    # If there's connection issue happening in a sessionful receiver, we don't do retry.
+    # Because the user has to handle more potential exceptions SessionCannotBeLocked/ServiceTimeout/SessionLockLost.
+    try:
+        error_need_raise = error_need_raise or (handler.session is not None)
+    except AttributeError:
+        pass
     return error, error_need_close_handler, error_need_raise
 
 
