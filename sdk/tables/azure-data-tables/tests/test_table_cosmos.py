@@ -245,8 +245,10 @@ class StorageTableTest(TableTestCase):
         big_page = []
         for s in next(ts.list_tables(results_per_page=3).by_page()):
             small_page.append(s)
+            assert s.table_name.startswith(prefix)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
+            assert t.table_name.startswith(prefix)
 
         # Assert
         self.assertEqual(len(small_page), 3)

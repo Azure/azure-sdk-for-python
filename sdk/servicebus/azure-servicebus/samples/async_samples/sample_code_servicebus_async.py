@@ -230,7 +230,7 @@ async def example_send_and_receive_async():
     lock_renewal = AutoLockRenewer()
     async with servicebus_receiver:
         async for message in servicebus_receiver:
-            lock_renewal.register(message, timeout=60)
+            lock_renewal.register(servicebus_receiver, message, max_lock_renewal_duration=60)
             await process_message(message)
             await servicebus_receiver.complete_message(message)
     # [END auto_lock_renew_message_async]
@@ -295,7 +295,7 @@ async def example_session_ops_async():
         async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
-            lock_renewal.register(session, timeout=120)
+            lock_renewal.register(receiver, session, max_lock_renewal_duration=120)
             async for message in receiver:
                 await process_message(message)
                 await receiver.complete_message(message)

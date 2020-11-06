@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import cast, List, TYPE_CHECKING
+import six
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
@@ -223,11 +224,12 @@ class SearchClient(HeadersMixin):
             scoring_profile=scoring_profile,
             search_fields=search_fields,
             search_mode=search_mode,
-            select=select,
+            select=select if isinstance(select, six.string_types) else None,
             skip=skip,
             top=top
         )
-
+        if isinstance(select, list):
+            query.select(select)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         return AsyncSearchItemPaged(
             self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
@@ -298,10 +300,11 @@ class SearchClient(HeadersMixin):
             minimum_coverage=minimum_coverage,
             order_by=order_by,
             search_fields=search_fields,
-            select=select,
+            select=select if isinstance(select, six.string_types) else None,
             top=top
         )
-
+        if isinstance(select, list):
+            query.select(select)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = await self._client.documents.suggest_post(
             suggest_request=query.request, **kwargs

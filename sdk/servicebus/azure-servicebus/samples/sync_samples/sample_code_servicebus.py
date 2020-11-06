@@ -222,7 +222,7 @@ def example_send_and_receive_sync():
     with servicebus_receiver:
         for message in servicebus_receiver:
             # Auto renew message for 1 minute.
-            lock_renewal.register(message, timeout=60)
+            lock_renewal.register(servicebus_receiver, message, max_lock_renewal_duration=60)
             process_message(message)
             servicebus_receiver.complete_message(message)
     # [END auto_lock_renew_message_sync]
@@ -346,7 +346,7 @@ def example_session_ops_sync():
         with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
-            lock_renewal.register(receiver, session, timeout=120)
+            lock_renewal.register(receiver, session, max_lock_renewal_duration=120)
             for message in receiver:
                 process_message(message)
                 receiver.complete_message(message)

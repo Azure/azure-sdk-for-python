@@ -275,6 +275,15 @@ class MetricsAdvisorClient(object):
         :return: Pageable of MetricEnrichedSeriesData
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_enriched_series_data]
+                :end-before: [END list_metric_enriched_series_data]
+                :language: python
+                :dedent: 4
+                :caption: Query metric enriched series data.
         """
 
         series_list = [
@@ -487,6 +496,15 @@ class MetricsAdvisorClient(object):
         :return: Dimension values of anomalies.
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_dimension_values]
+                :end-before: [END list_dimension_values]
+                :language: python
+                :dedent: 4
+                :caption: Query dimension values.
         """
 
         skip = kwargs.pop('skip', None)
@@ -646,6 +664,15 @@ class MetricsAdvisorClient(object):
         :return: Dimension from certain metric.
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_dimension_values]
+                :end-before: [END list_metric_dimension_values]
+                :language: python
+                :dedent: 4
+                :caption: Query metric dimension values.
         """
 
         skip = kwargs.pop('skip', None)
@@ -683,6 +710,15 @@ class MetricsAdvisorClient(object):
         :return: Time series data from metric.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metrics_series_data]
+                :end-before: [END list_metrics_series_data]
+                :language: python
+                :dedent: 4
+                :caption: Query metrics series data.
         """
 
         converted_start_time = convert_datetime(start_time)
@@ -719,6 +755,15 @@ class MetricsAdvisorClient(object):
         :return: Series (dimension combinations) from metric.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_series_definitions]
+                :end-before: [END list_metric_series_definitions]
+                :language: python
+                :dedent: 4
+                :caption: Query metric series definitions.
         """
 
         skip = kwargs.pop('skip', None)
@@ -749,6 +794,15 @@ class MetricsAdvisorClient(object):
         :return: Anomaly detection status.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_enrichment_status]
+                :end-before: [END list_metric_enrichment_status]
+                :language: python
+                :dedent: 4
+                :caption: Query metric enrichment status.
         """
 
         skip = kwargs.pop('skip', None)
