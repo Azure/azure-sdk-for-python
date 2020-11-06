@@ -160,15 +160,16 @@ class TestInvoice(FormRecognizerTest):
         actual = raw_response.analyze_result.document_results[0].fields
         read_results = raw_response.analyze_result.read_results
         document_results = raw_response.analyze_result.document_results
+        page_results = raw_response.analyze_result.page_results
 
-        self.assertInvoiceTransformCorrect(invoice, actual, read_results)
+        self.assertFormFieldsTransformCorrect(invoice.fields, actual, read_results)
 
         # check page range
         self.assertEqual(invoice.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(invoice.page_range.last_page_number, document_results[0].page_range[1])
 
         # Check page metadata
-        self.assertFormPagesTransformCorrect(invoice.pages, read_results)
+        self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -197,15 +198,16 @@ class TestInvoice(FormRecognizerTest):
         actual = raw_response.analyze_result.document_results[0].fields
         read_results = raw_response.analyze_result.read_results
         document_results = raw_response.analyze_result.document_results
+        page_results = raw_response.analyze_result.page_results
 
-        self.assertInvoiceTransformCorrect(invoice, actual, read_results)
+        self.assertFormFieldsTransformCorrect(invoice.fields, actual, read_results)
 
         # check page range
         self.assertEqual(invoice.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(invoice.page_range.last_page_number, document_results[0].page_range[1])
 
         # Check page metadata
-        self.assertFormPagesTransformCorrect(invoice.pages, read_results)
+        self.assertFormPagesTransformCorrect(invoice.pages, read_results, page_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer()
@@ -240,13 +242,13 @@ class TestInvoice(FormRecognizerTest):
         self.assertEqual(1, returned_model.page_range.first_page_number)
         self.assertEqual(2, returned_model.page_range.last_page_number)
 
-
         self.assertEqual(1, len(document_results))
         document_result = document_results[0]
         self.assertEqual(1, document_result.page_range[0])  # checking first page number
         self.assertEqual(2, document_result.page_range[1])  # checking last page number
 
-        self.assertInvoiceTransformCorrect(returned_model, document_result.fields, read_results)
+        for invoice, document_result in zip(returned_models, document_results):
+            self.assertFormFieldsTransformCorrect(invoice.fields, document_result.fields, read_results)
 
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
 

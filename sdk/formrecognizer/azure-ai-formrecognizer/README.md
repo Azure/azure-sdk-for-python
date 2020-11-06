@@ -476,7 +476,7 @@ These code samples show common scenario operations with the Azure Form Recognize
 * Train a model with labels: [sample_train_model_with_labels.py][sample_train_model_with_labels]
 * Manage custom models: [sample_manage_custom_models.py][sample_manage_custom_models]
 * Copy a model between Form Recognizer resources: [sample_copy_model.py][sample_copy_model]
-* Create a composed model from a collection of models trained with labels: |[sample_create_composed_model.py][sample_create_composed_model]
+* Create a composed model from a collection of models trained with labels: [sample_create_composed_model.py][sample_create_composed_model]
 
 ### Async APIs
 This library also includes a complete async API supported on Python 3.5+. To use it, you must

@@ -196,6 +196,7 @@ class RecognizedForm(object):
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
         words, tables and page metadata.
+
     .. versionadded:: v2.1-preview
         The *form_type_confidence* and *model_id* properties
     """
@@ -370,6 +371,7 @@ class FormPage(object):
         logic should be built upon the actual line location instead of order.
     :ivar selection_marks: List of selection marks extracted from the page.
     :vartype selection_marks: list[~azure.ai.formrecognizer.FormSelectionMark]
+
     .. versionadded:: v2.1-preview
         *selection_marks* property
     """
@@ -415,6 +417,7 @@ class FormLine(FormElement):
     :ivar str kind: For FormLine, this is "line".
     :ivar appearance: Text appearance properties.
     :vartype appearance: ~azure.ai.formrecognizer.Appearance
+
     .. versionadded:: v2.1-preview
         *appearance* property
     """
@@ -549,6 +552,7 @@ class FormTable(object):
         that outlines the table. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
+
     .. versionadded:: v2.1-preview
         The *bounding_box* property.
     """
@@ -669,6 +673,7 @@ class CustomFormModel(object):
     :ivar str model_name: Optional user defined model name.
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+
     .. versionadded:: v2.1-preview
         The *model_name* and *properties* properties.
     """
@@ -747,6 +752,7 @@ class CustomFormSubmodel(object):
         is generated for each field.
     :vartype fields: dict[str, ~azure.ai.formrecognizer.CustomFormModelField]
     :ivar str form_type: Type of form this submodel recognizes.
+
     .. versionadded:: v2.1-preview
         The *model_id* property
     """
@@ -861,6 +867,7 @@ class TrainingDocumentInfo(object):
         List of any errors for document.
     :ivar str model_id:
         The model ID that used the document to train.
+
     .. versionadded:: v2.1-preview
         The *model_id* property
     """
@@ -947,6 +954,7 @@ class CustomFormModelInfo(object):
     :vartype model_name: str
     :ivar properties: Optional model properties.
     :vartype properties: ~azure.ai.formrecognizer.CustomFormModelProperties
+
     .. versionadded:: v2.1-preview
         The *model_name* and *properties* properties
     """

@@ -96,6 +96,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. versionadded:: v2.1-preview
             The *locale* keyword argument
 
@@ -156,6 +157,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. versionadded:: v2.1-preview
             The *locale* keyword argument
 
@@ -219,6 +221,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_business_cards* client method
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_recognize_business_cards.py
@@ -281,6 +286,10 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_business_cards_from_url* client method
+
         """
 
         include_field_elements = kwargs.pop("include_field_elements", False)
@@ -333,6 +342,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_invoices* client method
 
         .. admonition:: Example:
 
@@ -393,6 +405,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2.1-preview
+            The *begin_recognize_invoices_from_url* client method
         """
 
         include_field_elements = kwargs.pop("include_field_elements", False)
@@ -446,6 +461,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. versionadded:: v2.1-preview
             The *pages* and *language* keyword arguments
 
@@ -513,6 +529,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             object to return a list[:class:`~azure.ai.formrecognizer.FormPage`].
         :rtype: ~azure.core.polling.LROPoller[list[~azure.ai.formrecognizer.FormPage]]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. versionadded:: v2.1-preview
             The *pages* and *language* keyword arguments
         """

@@ -108,27 +108,11 @@ class TestReceiptFromUrl(FormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
 
         # check dict values
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
+        self.assertFormFieldsTransformCorrect(receipt.fields, actual, read_results)
 
         # check page range
         self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
-
-        # check receipt type
-        receipt_type = receipt.fields.get("ReceiptType")
-        self.assertEqual(receipt_type.confidence, actual["ReceiptType"].confidence)
-        self.assertEqual(receipt_type.value, actual["ReceiptType"].value_string)
-
-        # check receipt items
-        self.assertReceiptItemsTransformCorrect(receipt.fields["Items"].value, actual["Items"], read_results)
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
@@ -160,27 +144,11 @@ class TestReceiptFromUrl(FormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
 
         # check dict values
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.get("MerchantAddress"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.get("MerchantName"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.get("MerchantPhoneNumber"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.get("Subtotal"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Tax"), actual.get("Tax"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Tip"), actual.get("Tip"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("Total"), actual.get("Total"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.get("TransactionDate"), read_results)
-        self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.get("TransactionTime"), read_results)
+        self.assertFormFieldsTransformCorrect(receipt.fields, actual, read_results)
 
         # check page range
         self.assertEqual(receipt.page_range.first_page_number, document_results[0].page_range[0])
         self.assertEqual(receipt.page_range.last_page_number, document_results[0].page_range[1])
-
-        # check receipt type
-        receipt_type = receipt.fields.get("ReceiptType")
-        self.assertEqual(receipt_type.confidence, actual["ReceiptType"].confidence)
-        self.assertEqual(receipt_type.value, actual["ReceiptType"].value_string)
-
-        # check receipt items
-        self.assertReceiptItemsTransformCorrect(receipt.fields["Items"].value, actual["Items"], read_results)
 
         # Check page metadata
         self.assertFormPagesTransformCorrect(receipt.pages, read_results)
@@ -318,27 +286,11 @@ class TestReceiptFromUrl(FormRecognizerTest):
                 continue
 
             # check dict values
-            self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantAddress"), actual.fields.get("MerchantAddress"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantName"), actual.fields.get("MerchantName"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("MerchantPhoneNumber"), actual.fields.get("MerchantPhoneNumber"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("Subtotal"), actual.fields.get("Subtotal"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("Tax"), actual.fields.get("Tax"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("Tip"), actual.fields.get("Tip"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("Total"), actual.fields.get("Total"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionDate"), actual.fields.get("TransactionDate"), read_results)
-            self.assertFormFieldTransformCorrect(receipt.fields.get("TransactionTime"), actual.fields.get("TransactionTime"), read_results)
+            self.assertFormFieldsTransformCorrect(receipt.fields, actual.fields, read_results)
 
             # check page range
             self.assertEqual(receipt.page_range.first_page_number, actual.page_range[0])
             self.assertEqual(receipt.page_range.last_page_number, actual.page_range[1])
-
-            # check receipt type
-            receipt_type = receipt.fields.get("ReceiptType")
-            self.assertEqual(receipt_type.confidence, actual.fields["ReceiptType"].confidence)
-            self.assertEqual(receipt_type.value, actual.fields["ReceiptType"].value_string)
-
-            # check receipt items
-            self.assertReceiptItemsTransformCorrect(receipt.fields["Items"].value, actual.fields["Items"], read_results)
 
         # Check form pages
         self.assertFormPagesTransformCorrect(returned_model, read_results)
