@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -56,7 +55,8 @@ class WorkspacesOperations(object):
         :return: An iterator like instance of Workspace
         :rtype:
          ~azure.mgmt.synapse.models.WorkspacePaged[~azure.mgmt.synapse.models.Workspace]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -96,9 +96,7 @@ class WorkspacesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorContractException(self._deserialize, response)
 
             return response
 
@@ -482,7 +480,8 @@ class WorkspacesOperations(object):
         :return: An iterator like instance of Workspace
         :rtype:
          ~azure.mgmt.synapse.models.WorkspacePaged[~azure.mgmt.synapse.models.Workspace]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -521,9 +520,7 @@ class WorkspacesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorContractException(self._deserialize, response)
 
             return response
 

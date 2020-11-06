@@ -39,7 +39,7 @@ class IntegrationRuntimeMonitoringDataOperations(object):
 
         self.config = config
 
-    def get(
+    def list(
             self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
         """Get integration runtime monitoring data.
 
@@ -64,7 +64,7 @@ class IntegrationRuntimeMonitoringDataOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -105,4 +105,4 @@ class IntegrationRuntimeMonitoringDataOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/monitoringData'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/monitoringData'}
