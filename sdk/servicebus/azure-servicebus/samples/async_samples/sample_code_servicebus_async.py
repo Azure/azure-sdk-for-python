@@ -162,7 +162,7 @@ async def example_send_and_receive_async():
         message = ServiceBusMessage("Hello World")
         await servicebus_sender.send_messages(message)
     # [END send_async]
-        await servicebus_sender.send_messages(ServiceBusMessage("Hello World"))
+        await servicebus_sender.send_messages([ServiceBusMessage("Hello World")] * 5)
 
     # [START create_batch_async]
     async with servicebus_sender:
@@ -192,6 +192,36 @@ async def example_send_and_receive_async():
             await servicebus_receiver.complete_message(message)
     # [END receive_forever_async]
             break
+
+        # [START abandon_message_async]
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            await servicebus_receiver.abandon_message(message)
+        # [END abandon_message_async]
+
+        # [START complete_message_async]
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            await servicebus_receiver.complete_message(message)
+        # [END complete_message_async]
+
+        # [START defer_message_async]
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            await servicebus_receiver.defer_message(message)
+        # [END defer_message_async]
+
+        # [START dead_letter_message_async]
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            await servicebus_receiver.dead_letter_message(message)
+        # [END dead_letter_message_async]
+
+        # [START renew_message_lock_async]
+        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            await servicebus_receiver.renew_message_lock(message)
+        # [END renew_message_lock_async]
 
     # [START auto_lock_renew_message_async]
     from azure.servicebus.aio import AutoLockRenewer
@@ -230,6 +260,31 @@ async def example_receive_deferred_async():
     # [END receive_defer_async]
 
 
+async def example_receive_deadletter_async():
+    from azure.servicebus import SubQueue
+    servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
+    queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+
+    async with ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str) as servicebus_client:
+        async with servicebus_client.get_queue_sender(queue_name) as servicebus_sender:
+            await servicebus_sender.send_messages(ServiceBusMessage("Hello World"))
+        # [START receive_deadletter_async]
+        async with servicebus_client.get_queue_receiver(queue_name) as servicebus_receiver:
+            messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+            for message in messages:
+                await servicebus_receiver.dead_letter_message(
+                    message,
+                    reason='reason for dead lettering',
+                    error_description='description for dead lettering'
+                )
+
+        async with servicebus_client.get_queue_receiver(queue_name, sub_queue=SubQueue.DeadLetter) as servicebus_deadletter_receiver:
+            messages = await servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
+            for message in messages:
+                await servicebus_deadletter_receiver.complete_message(message)
+        # [END receive_deadletter_async]
+
+
 async def example_session_ops_async():
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_SESSION_QUEUE_NAME']
@@ -254,13 +309,13 @@ async def example_session_ops_async():
         # [START set_session_state_async]
         async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = await session.set_state("START")
+            await session.set_state("START")
         # [END set_session_state_async]
 
         # [START session_renew_lock_async]
         async with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = await session.renew_lock()
+            await session.renew_lock()
         # [END session_renew_lock_async]
 
         # [START auto_lock_renew_session_async]
@@ -298,4 +353,5 @@ if __name__ == "__main__":
     loop.run_until_complete(example_send_and_receive_async())
     loop.run_until_complete(example_receive_deferred_async())
     loop.run_until_complete(example_schedule_ops_async())
+    loop.run_until_complete(example_receive_deadletter_async())
     loop.run_until_complete(example_session_ops_async())

@@ -218,7 +218,7 @@ class ServiceBusClient(object):
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
-         receipt.  If the receiver is a session receiver, it will apply to the session instead.
+         receipt. If the receiver is a session receiver, it will apply to the session instead.
         :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
          performance but increase the chance that messages will expire while they are cached if they're not
@@ -324,7 +324,7 @@ class ServiceBusClient(object):
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
-         receipt.  If the receiver is a session receiver, it will apply to the session instead.
+         receipt. If the receiver is a session receiver, it will apply to the session instead.
         :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
          performance but increase the chance that messages will expire while they are cached if they're not

@@ -157,6 +157,7 @@ def example_send_and_receive_sync():
         message = ServiceBusMessage("Hello World")
         servicebus_sender.send_messages(message)
     # [END send_sync]
+        servicebus_sender.send_messages([ServiceBusMessage("Hello World")] * 5)
 
     # [START create_batch_sync]
     with servicebus_sender:
@@ -218,11 +219,35 @@ def example_send_and_receive_sync():
             print("Enqueued time: {}".format(message.enqueued_time_utc))
         # [END receive_complex_message]
 
-        # [START abandon_message]
+        # [START abandon_message_sync]
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             servicebus_receiver.abandon_message(message)
-        # [END abandon_message]
+        # [END abandon_message_sync]
+
+        # [START complete_message_sync]
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            servicebus_receiver.complete_message(message)
+        # [END complete_message_sync]
+
+        # [START defer_message_sync]
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            servicebus_receiver.defer_message(message)
+        # [END defer_message_sync]
+
+        # [START dead_letter_message_sync]
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            servicebus_receiver.dead_letter_message(message)
+        # [END dead_letter_message_sync]
+
+        # [START renew_message_lock_sync]
+        messages = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages:
+            servicebus_receiver.renew_message_lock(message)
+        # [END renew_message_lock_sync]
 
     # [START receive_forever]
     with servicebus_receiver:
@@ -257,6 +282,7 @@ def example_receive_deferred_sync():
 
 
 def example_receive_deadletter_sync():
+    from azure.servicebus import SubQueue
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
@@ -273,10 +299,10 @@ def example_receive_deadletter_sync():
                     error_description='description for dead lettering'
                 )
 
-        with servicebus_client.get_queue_deadletter_receiver(queue_name) as servicebus_deadletter_receiver:
+        with servicebus_client.get_queue_receiver(queue_name, sub_queue=SubQueue.DeadLetter) as servicebus_deadletter_receiver:
             messages = servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
             for message in messages:
-                servicebus_receiver.complete_message(message)
+                servicebus_deadletter_receiver.complete_message(message)
         # [END receive_deadletter_sync]
 
 
@@ -304,13 +330,13 @@ def example_session_ops_sync():
         # [START set_session_state_sync]
         with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = session.set_state("START")
+            session.set_state("START")
         # [END set_session_state_sync]
 
         # [START session_renew_lock_sync]
         with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
-            session_state = session.renew_lock()
+            session.renew_lock()
         # [END session_renew_lock_sync]
 
         # [START auto_lock_renew_session_sync]
@@ -346,4 +372,5 @@ def example_schedule_ops_sync():
 example_send_and_receive_sync()
 example_receive_deferred_sync()
 example_schedule_ops_sync()
+example_receive_deadletter_sync()
 example_session_ops_sync()

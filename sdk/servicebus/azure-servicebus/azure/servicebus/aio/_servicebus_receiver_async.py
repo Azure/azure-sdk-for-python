@@ -95,9 +95,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-    :keyword Optional[AutoLockRenewer] auto_lock_renewer: An AutoLockRenewer can be provided such that messages are
-     automatically registered on receipt.  If the receiver is a session receiver, it will apply to the session
-     instead.
+    :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An ~azure.servicebus.aio.AutoLockRenewer
+     can be provided such that messages are automatically registered on receipt. If the receiver is a session receiver,
+     it will apply to the session instead.
     :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
      performance but increase the chance that messages will expire while they are cached if they're not
@@ -648,6 +648,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START complete_message_async]
+                :end-before: [END complete_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Complete a received message.
+
         """
         await self._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
@@ -662,6 +672,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START abandon_message_async]
+                :end-before: [END abandon_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Abandon a received message.
+
         """
         await self._settle_message_with_retry(message, MESSAGE_ABANDON)
 
@@ -677,6 +697,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START defer_message_async]
+                :end-before: [END defer_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Defer a received message.
+
         """
         await self._settle_message_with_retry(message, MESSAGE_DEFER)
 
@@ -695,6 +725,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START dead_letter_message_async]
+                :end-before: [END dead_letter_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Dead letter a received message.
+
         """
         await self._settle_message_with_retry(
             message,
@@ -726,6 +766,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START renew_message_lock_async]
+                :end-before: [END renew_message_lock_async]
+                :language: python
+                :dedent: 4
+                :caption: Renew the lock on a received message.
+
         """
         try:
             if self.session:
