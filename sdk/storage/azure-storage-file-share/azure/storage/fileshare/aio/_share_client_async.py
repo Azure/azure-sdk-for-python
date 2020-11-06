@@ -188,7 +188,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword enabled_protocols: Protocols to enable on the share.
         :paramtype enabled_protocols: str or ~azure.storage.fileshare.EnabledProtocols
         :keyword root_squash: Root squash to set on the share.  Only valid for
-         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
