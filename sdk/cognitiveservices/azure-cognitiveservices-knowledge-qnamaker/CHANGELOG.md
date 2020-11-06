@@ -1,5 +1,11 @@
 # Release History
 
+## 0.3.0 (2020-11-09)
+
+**Features**
+
+- Support `5.0.0.preview.1` API version.
+
 ## 0.2.0 (2020-03-17)
 
 **Features**
