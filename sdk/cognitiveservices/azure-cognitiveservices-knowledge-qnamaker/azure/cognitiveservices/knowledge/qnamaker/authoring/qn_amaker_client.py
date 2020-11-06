@@ -26,7 +26,7 @@ class QnAMakerClientConfiguration(Configuration):
     attributes.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g., https://<
-     qnamaker-resource-name> .api.cognitiveservices.azure.com).
+     qnamaker-resource-name >.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -40,7 +40,7 @@ class QnAMakerClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/qnamaker/v4.0'
+        base_url = '{Endpoint}/qnamaker/v5.0-preview.1'
 
         super(QnAMakerClientConfiguration, self).__init__(base_url)
 
@@ -68,7 +68,7 @@ class QnAMakerClient(SDKClient):
     :vartype operations: azure.cognitiveservices.knowledge.qnamaker.authoring.operations.Operations
 
     :param endpoint: Supported Cognitive Services endpoint (e.g., https://<
-     qnamaker-resource-name> .api.cognitiveservices.azure.com).
+     qnamaker-resource-name >.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credentials: Subscription credentials which uniquely identify
      client subscription.
@@ -82,7 +82,7 @@ class QnAMakerClient(SDKClient):
         super(QnAMakerClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '4.0'
+        self.api_version = 'v5.0-preview.1'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

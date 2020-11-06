@@ -38,6 +38,12 @@ class OperationStateType(str, Enum):
     succeeded = "Succeeded"
 
 
+class StrictFiltersCompoundOperationType(str, Enum):
+
+    and_enum = "AND"
+    or_enum = "OR"
+
+
 class EnvironmentType(str, Enum):
 
     prod = "Prod"

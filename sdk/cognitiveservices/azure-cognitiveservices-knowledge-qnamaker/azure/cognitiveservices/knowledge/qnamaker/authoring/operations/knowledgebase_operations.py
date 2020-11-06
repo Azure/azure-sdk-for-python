@@ -416,15 +416,10 @@ class KnowledgebaseOperations(object):
          Possible values include: 'Prod', 'Test'
         :type environment: str or
          ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.EnvironmentType
-        :param source: The source property filter to apply. Sample value:
-         Editorial, smartLight%20FAQ.tsv .
+        :param source: The source property filter to apply.
         :type source: str
-        :param changed_since: changedSince property is used to return all QnAs
-         created or updated after a specific time duration. The user can filter
-         QnAs by seconds (s), minutes (m), hours (h) and days (d). The user may
-         use any integral value along with the suffix for time. For instance,
-         the value of 5m returns all QnA pairs updated or created in the last 5
-         minutes.
+        :param changed_since: The last changed status property filter to
+         apply.
         :type changed_since: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -478,3 +473,117 @@ class KnowledgebaseOperations(object):
 
         return deserialized
     download.metadata = {'url': '/knowledgebases/{kbId}/{environment}/qna'}
+
+    def generate_answer(
+            self, kb_id, generate_answer_payload, custom_headers=None, raw=False, **operation_config):
+        """GenerateAnswer call to query knowledgebase (QnA Maker Managed).
+
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
+        :param generate_answer_payload: Post body of the request.
+        :type generate_answer_payload:
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QueryDTO
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: QnASearchResultList or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnASearchResultList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.generate_answer.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(generate_answer_payload, 'QueryDTO')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('QnASearchResultList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    generate_answer.metadata = {'url': '/knowledgebases/{kbId}/generateAnswer'}
+
+    def train(
+            self, kb_id, feedback_records=None, custom_headers=None, raw=False, **operation_config):
+        """Train call to add suggestions to knowledgebase (QnAMaker Managed).
+
+        :param kb_id: Knowledgebase id.
+        :type kb_id: str
+        :param feedback_records: List of feedback records.
+        :type feedback_records:
+         list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.FeedbackRecordDTO]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
+        """
+        train_payload = models.FeedbackRecordsDTO(feedback_records=feedback_records)
+
+        # Construct URL
+        url = self.train.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'kbId': self._serialize.url("kb_id", kb_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(train_payload, 'FeedbackRecordsDTO')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    train.metadata = {'url': '/knowledgebases/{kbId}/train'}

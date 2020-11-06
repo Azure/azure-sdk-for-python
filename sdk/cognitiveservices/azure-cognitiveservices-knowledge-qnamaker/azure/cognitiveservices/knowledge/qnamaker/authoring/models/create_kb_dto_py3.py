@@ -42,12 +42,19 @@ class CreateKbDTO(Model):
      href="https://aka.ms/qnamaker-languages#languages-supported"
      target="_blank">here</a>.
     :type language: str
+    :param enable_multiple_languages: Set to true to enable creating KBs in
+     different languages for the same resource.
+    :type enable_multiple_languages: bool
+    :param default_answer: Default answer sent to user if no good match is
+     found in the KB.
+    :type default_answer: str
     """
 
     _validation = {
         'name': {'required': True, 'max_length': 100, 'min_length': 1},
         'default_answer_used_for_extraction': {'max_length': 300, 'min_length': 1},
         'language': {'max_length': 100, 'min_length': 1},
+        'default_answer': {'max_length': 300, 'min_length': 1},
     }
 
     _attribute_map = {
@@ -58,9 +65,11 @@ class CreateKbDTO(Model):
         'enable_hierarchical_extraction': {'key': 'enableHierarchicalExtraction', 'type': 'bool'},
         'default_answer_used_for_extraction': {'key': 'defaultAnswerUsedForExtraction', 'type': 'str'},
         'language': {'key': 'language', 'type': 'str'},
+        'enable_multiple_languages': {'key': 'enableMultipleLanguages', 'type': 'bool'},
+        'default_answer': {'key': 'defaultAnswer', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, qna_list=None, urls=None, files=None, enable_hierarchical_extraction: bool=None, default_answer_used_for_extraction: str=None, language: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, qna_list=None, urls=None, files=None, enable_hierarchical_extraction: bool=None, default_answer_used_for_extraction: str=None, language: str=None, enable_multiple_languages: bool=None, default_answer: str=None, **kwargs) -> None:
         super(CreateKbDTO, self).__init__(**kwargs)
         self.name = name
         self.qna_list = qna_list
@@ -69,3 +78,5 @@ class CreateKbDTO(Model):
         self.enable_hierarchical_extraction = enable_hierarchical_extraction
         self.default_answer_used_for_extraction = default_answer_used_for_extraction
         self.language = language
+        self.enable_multiple_languages = enable_multiple_languages
+        self.default_answer = default_answer
