@@ -207,6 +207,9 @@ def _add_entity_properties(source):
 
     properties = {}
 
+    # if the entity is one from the service, remove _metadata and proceed
+    source.pop("_metadata", None)
+
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
     for name, value in source.items():
@@ -226,8 +229,11 @@ def _add_entity_properties(source):
             mtype, value = conv(value.value)
         else:
             conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if conv is None or value is None:
-                conv = _to_entity_none  # something with this
+            if conv is None and value is not None:
+                raise TypeError(
+                    _ERROR_TYPE_NOT_SUPPORTED.format(type(value)))
+            if value is None:
+                conv = _to_entity_none
 
             mtype, value = conv(value)
 
