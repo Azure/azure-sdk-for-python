@@ -1,4 +1,35 @@
 # Release History
+## 1.0.0b3 (Unreleased) 
+
+**Breaking Changes**
+
+##### `PhoneNumberSearch` renamed to `PhoneNumberReservation`.
+
+##### `PhoneNumberReservation`
+- `search_id` has been renamed to `reservation_id`.
+
+##### `PhoneNumberAdministrationClient`
+- `get_search_by_id` has been renamed to `get_reservation_by_id`.
+- `create_search` has been renamed to `begin_reserve_phone_numbers`.
+-  `begin_reserve_phone_numbers` now takes either `options`, or `continuation_token` keywords as input.
+-  `begin_reserve_phone_numbers` now returns `LROPoller[PhoneNumberReservation]`.
+- `release_phone_numbers` has been renamed to `begin_release_phone_numbers`.
+-  `begin_release_phone_numbers` now takes either `phone_numbers`, or `continuation_token` keywords as input.
+-  `begin_release_phone_numbers` now returns `LROPoller[PhoneNumberRelease]`.
+- `purchase_search` has been renamed to `begin_purchase_reservation`.
+-  `begin_purchase_reservation` now takes either `reservation_id`, or `continuation_token` keywords as input.
+-  `begin_purchase_reservation` now returns `LROPoller[PurchaseReservationPolling]`.
+- `cancel_search` has been renamed to `cancel_reservation`.
+
+**New Features**
+
+##### Sync `PhoneNumberAdministrationClient`
+- Add long run operation polling method `ReservePhoneNumberPolling`,`PurchaseReservationPolling`,
+`ReleasePhoneNumberPolling`.
+
+##### Async `PhoneNumberAdministrationClient`
+- Add async long run operation polling method `ReservePhoneNumberPollingAsync`,`PurchaseReservationPollingAsync`,
+`ReleasePhoneNumberPollingAsync`.
 
 ## 1.0.0b2 (2020-10-06)
 - Added support for phone number administration.
