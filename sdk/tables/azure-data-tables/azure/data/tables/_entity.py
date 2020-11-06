@@ -84,7 +84,7 @@ class EntityProperty(object):
         """
         Represents an Azure Table. Returned by list_tables.
 
-        :param Union[str, EdmType] type: The type of the property.
+        :param EdmType type: The type of the property.
         :param Any value: The value of the property.
         """
         self.value = value

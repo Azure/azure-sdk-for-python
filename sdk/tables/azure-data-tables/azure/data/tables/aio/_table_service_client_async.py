@@ -54,9 +54,9 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token, or the connection string already has shared
-        access key values. The value can be a SAS token string, an account shared access
+        access key values. The value can be a SAS token string or an account shared access
         key.
-    :type credential: Union[str,~azure.core.credentials.TokenCredential]
+    :type credential: str
 
     .. admonition:: Example:
 
@@ -77,7 +77,7 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
 
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Union[str,TokenCredential]
+            credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -290,9 +290,10 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str,list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword select: Specify desired properties of a table to return certain tables
+        :paramtype select: str or list[str]
         :return: AsyncItemPaged
-        :rtype: ~AsyncItemPaged[TableItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -330,10 +331,11 @@ class TableServiceClient(AsyncStorageAccountHostsMixin, TableServiceClientBase):
         :param filter: Specify a filter to return certain tables.
         :type filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str,list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword select: Specify desired properties of a table to return certain tables
+        :paramtype select: str or list[str]
         :keyword dict[str,str] parameters: Dictionary for formatting query with additional, user defined parameters
         :return: An ItemPaged of tables
-        :rtype: ItemPaged[TableItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableItem]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

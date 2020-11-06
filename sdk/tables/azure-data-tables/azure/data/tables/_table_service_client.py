@@ -26,7 +26,7 @@ class TableServiceClient(TableServiceClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Union[str,TokenCredential]
+            credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -38,9 +38,9 @@ class TableServiceClient(TableServiceClientBase):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string or an account shared access
             key.
-        :type credential: Union[str,~azure.core.credentials.TokenCredential]
+        :type credential: str
         :returns: None
 
         .. admonition:: Example:
@@ -261,10 +261,11 @@ class TableServiceClient(TableServiceClientBase):
         :param filter: Specify a filter to return certain tables.
         :type filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str,list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword select: Specify desired properties of a table to return certain tables
+        :paramtype select: str or list[str]
         :keyword dict[str,str] parameters: Dictionary for formatting query with additional, user defined parameters
         :return: An ItemPaged of tables
-        :rtype: ItemPaged[TableItem]
+        :rtype: ~azure.core.paging.ItemPaged[TableItem]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -301,9 +302,10 @@ class TableServiceClient(TableServiceClientBase):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str,list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword select: Specify desired properties of a table to return certain tables
+        :paramtype select: str or list[str]
         :return: A query of tables
-        :rtype: ItemPaged[TableItem]
+        :rtype: ~azure.core.paging.ItemPaged[TableItem]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:

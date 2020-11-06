@@ -46,7 +46,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             account_url,  # type: str
             table_name,  # type: str
-            credential=None,  # type : Optional[Any]=None
+            credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -60,9 +60,9 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,~azure.core.credentials.TokenCredential]
+            access key values. The value can be a SAS token string or an account shared access
+            key.
+        :type credential: str
 
         :returns: None
         """
@@ -306,7 +306,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises ~azure.core.exceptions.ResourceFoundError:
@@ -407,9 +407,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword Union[str,list(str)] select: Specify desired properties of an entity to return certain entities
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :return: Query of table entities
-        :rtype: AsyncItemPaged[azure.data.tables.TableEntity]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -446,10 +447,11 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
-        :keyword Union[str,list[str]] select: Specify desired properties of an entity to return certain entities
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
-        :rtype: AsyncItemPaged[azure.data.tables.TableEntity]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -529,7 +531,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service

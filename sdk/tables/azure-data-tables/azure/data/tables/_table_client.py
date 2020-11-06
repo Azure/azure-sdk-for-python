@@ -43,7 +43,7 @@ class TableClient(TableClientBase):
     def __init__(
             self, account_url,  # type: str
             table_name,  # type: str
-            credential=None,  # type: Union[str,TokenCredential]
+            credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -57,9 +57,9 @@ class TableClient(TableClientBase):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,~azure.core.credentials.TokenCredential]
+            access key values. The value can be a SAS token string or an account shared access
+            key.
+        :type credential: str
 
         :returns: None
         """
@@ -300,7 +300,7 @@ class TableClient(TableClientBase):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
         :raises ~azure.core.exceptions.ResourceFoundError:
@@ -339,7 +339,7 @@ class TableClient(TableClientBase):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str partition_key: The partition key of the entity.
@@ -402,9 +402,10 @@ class TableClient(TableClientBase):
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str,list(str)] select: Specify desired properties of an entity to return certain entities
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :return: Query of table entities
-        :rtype: ItemPaged[azure.data.tables.TableEntity]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -436,15 +437,16 @@ class TableClient(TableClientBase):
             filter,  # type: str  # pylint: disable = W0622
             **kwargs
     ):
-        # type: (...) -> ItemPaged[azure.data.tables.TableEntity]
+        # type: (...) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str,list[str]] select: Specify desired properties of an entity to return certain entities
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
-        :rtype: ItemPaged[azure.data.tables.TableEntity]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -524,7 +526,7 @@ class TableClient(TableClientBase):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
