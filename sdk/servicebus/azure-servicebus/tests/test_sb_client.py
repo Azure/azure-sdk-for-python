@@ -135,13 +135,13 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
             # Now do the same but with direct connstr initialization.
             with pytest.raises(ServiceBusAuthenticationError):
-                with ServiceBusSender.from_connection_string(
+                with ServiceBusSender._from_connection_string(
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,
                 ) as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
-            with ServiceBusSender.from_connection_string(
+            with ServiceBusSender._from_connection_string(
                 servicebus_queue_authorization_rule_connection_string,
                 queue_name=servicebus_queue.name,
             ) as sender:

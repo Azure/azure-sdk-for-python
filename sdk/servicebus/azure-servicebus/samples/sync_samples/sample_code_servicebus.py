@@ -53,7 +53,7 @@ def example_create_servicebus_sender_sync():
     from azure.servicebus import ServiceBusSender
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_sender = ServiceBusSender.from_connection_string(
+    queue_sender = ServiceBusSender._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )
@@ -107,7 +107,7 @@ def example_create_servicebus_receiver_sync():
     from azure.servicebus import ServiceBusReceiver
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_receiver = ServiceBusReceiver.from_connection_string(
+    queue_receiver = ServiceBusReceiver._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )
@@ -222,7 +222,7 @@ def example_send_and_receive_sync():
     with servicebus_receiver:
         for message in servicebus_receiver:
             # Auto renew message for 1 minute.
-            lock_renewal.register(message, timeout=60)
+            lock_renewal.register(servicebus_receiver, message, max_lock_renewal_duration=60)
             process_message(message)
             servicebus_receiver.complete_message(message)
     # [END auto_lock_renew_message_sync]
@@ -244,7 +244,7 @@ def example_send_and_receive_sync():
             print("Sequence number: {}".format(message.sequence_number))
             print("Enqueued Sequence numger: {}".format(message.enqueued_sequence_number))
             print("Partition Key: {}".format(message.partition_key))
-            print("Properties: {}".format(message.properties))
+            print("Application Properties: {}".format(message.application_properties))
             print("Delivery count: {}".format(message.delivery_count))
             print("Message ID: {}".format(message.message_id))
             print("Locked until: {}".format(message.locked_until_utc))
@@ -346,7 +346,7 @@ def example_session_ops_sync():
         with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
-            lock_renewal.register(receiver, session, timeout=120)
+            lock_renewal.register(receiver, session, max_lock_renewal_duration=120)
             for message in receiver:
                 process_message(message)
                 receiver.complete_message(message)

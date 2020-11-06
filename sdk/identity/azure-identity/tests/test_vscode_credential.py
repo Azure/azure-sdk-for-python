@@ -21,6 +21,19 @@ except ImportError:  # python < 3.3
     import mock
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        VisualStudioCodeCredential(tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            VisualStudioCodeCredential(tenant_id=tenant)
+
+
 def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
@@ -56,7 +69,7 @@ def test_user_agent():
 def test_request_url(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     access_token = "***"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority  # "localhost" parses to netloc "", path "localhost"
@@ -80,7 +93,9 @@ def test_request_url(authority):
     # authority can be configured via environment variable
     with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         credential = VisualStudioCodeCredential(tenant_id=tenant_id, transport=mock.Mock(send=mock_send))
-        with mock.patch(VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token):
+        with mock.patch(
+            VisualStudioCodeCredential.__module__ + ".get_credentials", return_value=expected_refresh_token
+        ):
             credential.get_token("scope")
     assert token.token == access_token
 
@@ -142,6 +157,7 @@ def test_no_obtain_token_if_cached():
 @pytest.mark.skipif(not sys.platform.startswith("linux"), reason="This test only runs on Linux")
 def test_segfault():
     from azure.identity._internal.linux_vscode_adapter import _get_refresh_token
+
     _get_refresh_token("test", "test")
 
 

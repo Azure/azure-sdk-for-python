@@ -358,7 +358,8 @@ session_id = os.environ['SERVICE_BUS_SESSION_ID']
 renewer = AutoLockRenewer()
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(session_queue_name, session_id=session_id) as receiver:
-        renewer.register(receiver, receiver.session, timeout=300) # Timeout for how long to maintain the lock for, in seconds.
+        renewer.register(receiver, receiver.session, max_lock_renewal_duration=300) # Duration for how long to maintain the lock for, in seconds.
+
         for msg in receiver.receive_messages():
             # Do your application logic here
             receiver.complete_message(msg)
@@ -473,7 +474,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/azure-servicebus/7.0.0b7/
+[pypi]: https://pypi.org/project/azure-servicebus/#history
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
