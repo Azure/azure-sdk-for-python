@@ -60,7 +60,7 @@ class SearchClientTestAsync(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
-    async def test_get_search_simple_paged(self, api_key, endpoint, index_name, **kwargs):
+    async def test_get_search_simple_with_top(self, api_key, endpoint, index_name, **kwargs):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
         )
@@ -68,10 +68,10 @@ class SearchClientTestAsync(AzureMgmtTestCase):
             results = []
             async for x in await client.search(search_text="hotel", top=3):
                 results.append(x)
-            assert len(results) == 7
+            assert len(results) == 3
 
             results = []
-            async for x in await client.search(search_text="motel"):
+            async for x in await client.search(search_text="motel", top=3):
                 results.append(x)
             assert len(results) == 2
 
