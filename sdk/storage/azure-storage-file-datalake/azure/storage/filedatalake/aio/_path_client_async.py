@@ -481,6 +481,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
+        except StorageErrorException as error:
+            error.continuation_token = last_continuation_token
+            process_storage_error(error)
         except AzureError as error:
             error.continuation_token = last_continuation_token
             raise error

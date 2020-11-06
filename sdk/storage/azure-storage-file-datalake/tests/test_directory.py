@@ -318,9 +318,9 @@ class DirectoryTest(StorageTestCase):
         with self.assertRaises(AzureError) as acl_error:
             directory_client.set_access_control_recursive(acl=acl, batch_size=2, max_batches=2,
                                                           raw_response_hook=callback, retry_total=0)
-            self.assertIsNotNone(acl_error.continuation_token)
-            self.assertEqual(acl_error.message, "network problem")
-            self.assertIsInstance(acl_error.error, ServiceRequestError)
+        self.assertIsNotNone(acl_error.exception.continuation_token)
+        self.assertEqual(acl_error.exception.message, "network problem")
+        self.assertIsInstance(acl_error.exception, ServiceRequestError)
 
     @record
     def test_set_access_control_recursive_in_batches(self):

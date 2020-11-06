@@ -140,7 +140,8 @@ def process_storage_error(storage_error):
     for name, info in additional_data.items():
         error_message += "\n{}:{}".format(name, info)
 
-    error = raise_error(message=error_message, response=storage_error.response)
+    error = raise_error(message=error_message, response=storage_error.response,
+                        continuation_token=storage_error.continuation_token)
     error.error_code = error_code
     error.additional_info = additional_data
     raise error
