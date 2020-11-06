@@ -316,7 +316,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos does not suppor table access policy")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -332,7 +332,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos does not suppor table access policy")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -353,7 +353,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos does not suppor table access policy")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
@@ -376,7 +376,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos does not suppor table access policy")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
@@ -402,7 +402,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos does not suppor table access policy")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
@@ -431,7 +431,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos does not suppor table access policy")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
