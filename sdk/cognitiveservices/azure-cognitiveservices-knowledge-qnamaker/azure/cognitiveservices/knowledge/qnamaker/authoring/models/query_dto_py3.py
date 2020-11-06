@@ -22,29 +22,30 @@ class QueryDTO(Model):
     :type question: str
     :param top: Max number of answers to be returned for the question.
     :type top: int
-    :param user_id: Unique identifier for the user. Optional parameter for
-     telemetry. For more information, refer <a
-     href="http://aka.ms/qnamaker-analytics#user-traffic"
-     target="blank">Analytics and Telemetry</a>.
+    :param user_id: Unique identifier for the user.
     :type user_id: str
     :param is_test: Query against the test index.
     :type is_test: bool
-    :param score_threshold: Threshold for answers returned based on score.
+    :param score_threshold: Minimum threshold score for answers.
     :type score_threshold: float
     :param context: Context object with previous QnA's information.
     :type context:
-     ~azure.cognitiveservices.knowledge.qnamaker.runtime.models.QueryDTOContext
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QueryDTOContext
     :param ranker_type: Optional field. Set to 'QuestionOnly' for using a
      question only Ranker.
     :type ranker_type: str
-    :param strict_filters: Find only answers that contain these metadata.
+    :param strict_filters: Find QnAs that are associated with the given list
+     of metadata.
     :type strict_filters:
-     list[~azure.cognitiveservices.knowledge.qnamaker.runtime.models.MetadataDTO]
-    :param strict_filters_compound_operation_type: Optional field. Set to OR
-     for using OR as Operation for Strict Filters. Possible values include:
-     'AND', 'OR'
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
+    :param strict_filters_compound_operation_type: Optional field. Set to 'OR'
+     for using OR operation for strict filters. Possible values include: 'AND',
+     'OR'
     :type strict_filters_compound_operation_type: str or
-     ~azure.cognitiveservices.knowledge.qnamaker.runtime.models.StrictFiltersCompoundOperationType
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.StrictFiltersCompoundOperationType
+    :param answer_span_request: To configure Answer span prediction feature.
+    :type answer_span_request:
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QueryDTOAnswerSpanRequest
     """
 
     _attribute_map = {
@@ -58,17 +59,19 @@ class QueryDTO(Model):
         'ranker_type': {'key': 'rankerType', 'type': 'str'},
         'strict_filters': {'key': 'strictFilters', 'type': '[MetadataDTO]'},
         'strict_filters_compound_operation_type': {'key': 'strictFiltersCompoundOperationType', 'type': 'str'},
+        'answer_span_request': {'key': 'answerSpanRequest', 'type': 'QueryDTOAnswerSpanRequest'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, qna_id: str=None, question: str=None, top: int=None, user_id: str=None, is_test: bool=None, score_threshold: float=None, context=None, ranker_type: str=None, strict_filters=None, strict_filters_compound_operation_type=None, answer_span_request=None, **kwargs) -> None:
         super(QueryDTO, self).__init__(**kwargs)
-        self.qna_id = kwargs.get('qna_id', None)
-        self.question = kwargs.get('question', None)
-        self.top = kwargs.get('top', None)
-        self.user_id = kwargs.get('user_id', None)
-        self.is_test = kwargs.get('is_test', None)
-        self.score_threshold = kwargs.get('score_threshold', None)
-        self.context = kwargs.get('context', None)
-        self.ranker_type = kwargs.get('ranker_type', None)
-        self.strict_filters = kwargs.get('strict_filters', None)
-        self.strict_filters_compound_operation_type = kwargs.get('strict_filters_compound_operation_type', None)
+        self.qna_id = qna_id
+        self.question = question
+        self.top = top
+        self.user_id = user_id
+        self.is_test = is_test
+        self.score_threshold = score_threshold
+        self.context = context
+        self.ranker_type = ranker_type
+        self.strict_filters = strict_filters
+        self.strict_filters_compound_operation_type = strict_filters_compound_operation_type
+        self.answer_span_request = answer_span_request

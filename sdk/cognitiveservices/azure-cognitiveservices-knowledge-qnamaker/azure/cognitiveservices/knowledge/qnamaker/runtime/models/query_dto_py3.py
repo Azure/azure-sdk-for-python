@@ -22,7 +22,10 @@ class QueryDTO(Model):
     :type question: str
     :param top: Max number of answers to be returned for the question.
     :type top: int
-    :param user_id: Unique identifier for the user.
+    :param user_id: Unique identifier for the user. Optional parameter for
+     telemetry. For more information, refer <a
+     href="http://aka.ms/qnamaker-analytics#user-traffic"
+     target="blank">Analytics and Telemetry</a>.
     :type user_id: str
     :param is_test: Query against the test index.
     :type is_test: bool
@@ -37,6 +40,11 @@ class QueryDTO(Model):
     :param strict_filters: Find only answers that contain these metadata.
     :type strict_filters:
      list[~azure.cognitiveservices.knowledge.qnamaker.runtime.models.MetadataDTO]
+    :param strict_filters_compound_operation_type: Optional field. Set to OR
+     for using OR as Operation for Strict Filters. Possible values include:
+     'AND', 'OR'
+    :type strict_filters_compound_operation_type: str or
+     ~azure.cognitiveservices.knowledge.qnamaker.runtime.models.StrictFiltersCompoundOperationType
     """
 
     _attribute_map = {
@@ -49,9 +57,10 @@ class QueryDTO(Model):
         'context': {'key': 'context', 'type': 'QueryDTOContext'},
         'ranker_type': {'key': 'rankerType', 'type': 'str'},
         'strict_filters': {'key': 'strictFilters', 'type': '[MetadataDTO]'},
+        'strict_filters_compound_operation_type': {'key': 'strictFiltersCompoundOperationType', 'type': 'str'},
     }
 
-    def __init__(self, *, qna_id: str=None, question: str=None, top: int=None, user_id: str=None, is_test: bool=None, score_threshold: float=None, context=None, ranker_type: str=None, strict_filters=None, **kwargs) -> None:
+    def __init__(self, *, qna_id: str=None, question: str=None, top: int=None, user_id: str=None, is_test: bool=None, score_threshold: float=None, context=None, ranker_type: str=None, strict_filters=None, strict_filters_compound_operation_type=None, **kwargs) -> None:
         super(QueryDTO, self).__init__(**kwargs)
         self.qna_id = qna_id
         self.question = question
@@ -62,3 +71,4 @@ class QueryDTO(Model):
         self.context = context
         self.ranker_type = ranker_type
         self.strict_filters = strict_filters
+        self.strict_filters_compound_operation_type = strict_filters_compound_operation_type

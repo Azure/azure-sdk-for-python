@@ -47,6 +47,18 @@ try:
     from .alterations_dto_py3 import AlterationsDTO
     from .word_alterations_dto_py3 import WordAlterationsDTO
     from .endpoint_keys_dto_py3 import EndpointKeysDTO
+    from .query_dto_context_py3 import QueryDTOContext
+    from .query_dto_answer_span_request_py3 import QueryDTOAnswerSpanRequest
+    from .query_dto_py3 import QueryDTO
+    from .query_context_dto_py3 import QueryContextDTO
+    from .qn_asearch_result_context_py3 import QnASearchResultContext
+    from .qn_asearch_result_answer_span_py3 import QnASearchResultAnswerSpan
+    from .qn_asearch_result_py3 import QnASearchResult
+    from .qn_asearch_result_list_py3 import QnASearchResultList
+    from .feedback_record_dto_py3 import FeedbackRecordDTO
+    from .feedback_records_dto_py3 import FeedbackRecordsDTO
+    from .answer_span_request_dto_py3 import AnswerSpanRequestDTO
+    from .answer_span_response_dto_py3 import AnswerSpanResponseDTO
 except (SyntaxError, ImportError):
     from .update_kb_operation_dto_add import UpdateKbOperationDTOAdd
     from .update_kb_operation_dto_delete import UpdateKbOperationDTODelete
@@ -85,9 +97,22 @@ except (SyntaxError, ImportError):
     from .alterations_dto import AlterationsDTO
     from .word_alterations_dto import WordAlterationsDTO
     from .endpoint_keys_dto import EndpointKeysDTO
+    from .query_dto_context import QueryDTOContext
+    from .query_dto_answer_span_request import QueryDTOAnswerSpanRequest
+    from .query_dto import QueryDTO
+    from .query_context_dto import QueryContextDTO
+    from .qn_asearch_result_context import QnASearchResultContext
+    from .qn_asearch_result_answer_span import QnASearchResultAnswerSpan
+    from .qn_asearch_result import QnASearchResult
+    from .qn_asearch_result_list import QnASearchResultList
+    from .feedback_record_dto import FeedbackRecordDTO
+    from .feedback_records_dto import FeedbackRecordsDTO
+    from .answer_span_request_dto import AnswerSpanRequestDTO
+    from .answer_span_response_dto import AnswerSpanResponseDTO
 from .qn_amaker_client_enums import (
     ErrorCodeType,
     OperationStateType,
+    StrictFiltersCompoundOperationType,
     EnvironmentType,
 )
 
@@ -129,7 +154,20 @@ __all__ = [
     'AlterationsDTO',
     'WordAlterationsDTO',
     'EndpointKeysDTO',
+    'QueryDTOContext',
+    'QueryDTOAnswerSpanRequest',
+    'QueryDTO',
+    'QueryContextDTO',
+    'QnASearchResultContext',
+    'QnASearchResultAnswerSpan',
+    'QnASearchResult',
+    'QnASearchResultList',
+    'FeedbackRecordDTO',
+    'FeedbackRecordsDTO',
+    'AnswerSpanRequestDTO',
+    'AnswerSpanResponseDTO',
     'ErrorCodeType',
     'OperationStateType',
+    'StrictFiltersCompoundOperationType',
     'EnvironmentType',
 ]

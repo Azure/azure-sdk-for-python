@@ -22,29 +22,30 @@ class QueryDTO(Model):
     :type question: str
     :param top: Max number of answers to be returned for the question.
     :type top: int
-    :param user_id: Unique identifier for the user. Optional parameter for
-     telemetry. For more information, refer <a
-     href="http://aka.ms/qnamaker-analytics#user-traffic"
-     target="blank">Analytics and Telemetry</a>.
+    :param user_id: Unique identifier for the user.
     :type user_id: str
     :param is_test: Query against the test index.
     :type is_test: bool
-    :param score_threshold: Threshold for answers returned based on score.
+    :param score_threshold: Minimum threshold score for answers.
     :type score_threshold: float
     :param context: Context object with previous QnA's information.
     :type context:
-     ~azure.cognitiveservices.knowledge.qnamaker.runtime.models.QueryDTOContext
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QueryDTOContext
     :param ranker_type: Optional field. Set to 'QuestionOnly' for using a
      question only Ranker.
     :type ranker_type: str
-    :param strict_filters: Find only answers that contain these metadata.
+    :param strict_filters: Find QnAs that are associated with the given list
+     of metadata.
     :type strict_filters:
-     list[~azure.cognitiveservices.knowledge.qnamaker.runtime.models.MetadataDTO]
-    :param strict_filters_compound_operation_type: Optional field. Set to OR
-     for using OR as Operation for Strict Filters. Possible values include:
-     'AND', 'OR'
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
+    :param strict_filters_compound_operation_type: Optional field. Set to 'OR'
+     for using OR operation for strict filters. Possible values include: 'AND',
+     'OR'
     :type strict_filters_compound_operation_type: str or
-     ~azure.cognitiveservices.knowledge.qnamaker.runtime.models.StrictFiltersCompoundOperationType
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.StrictFiltersCompoundOperationType
+    :param answer_span_request: To configure Answer span prediction feature.
+    :type answer_span_request:
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QueryDTOAnswerSpanRequest
     """
 
     _attribute_map = {
@@ -58,6 +59,7 @@ class QueryDTO(Model):
         'ranker_type': {'key': 'rankerType', 'type': 'str'},
         'strict_filters': {'key': 'strictFilters', 'type': '[MetadataDTO]'},
         'strict_filters_compound_operation_type': {'key': 'strictFiltersCompoundOperationType', 'type': 'str'},
+        'answer_span_request': {'key': 'answerSpanRequest', 'type': 'QueryDTOAnswerSpanRequest'},
     }
 
     def __init__(self, **kwargs):
@@ -72,3 +74,4 @@ class QueryDTO(Model):
         self.ranker_type = kwargs.get('ranker_type', None)
         self.strict_filters = kwargs.get('strict_filters', None)
         self.strict_filters_compound_operation_type = kwargs.get('strict_filters_compound_operation_type', None)
+        self.answer_span_request = kwargs.get('answer_span_request', None)

@@ -49,6 +49,7 @@ except (SyntaxError, ImportError):
     from .feedback_records_dto import FeedbackRecordsDTO
 from .qn_amaker_runtime_client_enums import (
     ErrorCodeType,
+    StrictFiltersCompoundOperationType,
 )
 
 __all__ = [
@@ -71,4 +72,5 @@ __all__ = [
     'FeedbackRecordDTO',
     'FeedbackRecordsDTO',
     'ErrorCodeType',
+    'StrictFiltersCompoundOperationType',
 ]

@@ -28,3 +28,9 @@ class ErrorCodeType(str, Enum):
     service_error = "ServiceError"
     validation_failure = "ValidationFailure"
     extraction_failure = "ExtractionFailure"
+
+
+class StrictFiltersCompoundOperationType(str, Enum):
+
+    and_enum = "AND"
+    or_enum = "OR"

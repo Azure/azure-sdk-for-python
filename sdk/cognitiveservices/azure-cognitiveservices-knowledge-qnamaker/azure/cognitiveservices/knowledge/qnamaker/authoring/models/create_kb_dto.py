@@ -37,14 +37,24 @@ class CreateKbDTO(Model):
      a hierarchy. Required when EnableHierarchicalExtraction field is set to
      True.
     :type default_answer_used_for_extraction: str
-    :param language: Language of the knowledgebase.
+    :param language: Language of the knowledgebase. Please find the list of
+     supported languages <a
+     href="https://aka.ms/qnamaker-languages#languages-supported"
+     target="_blank">here</a>.
     :type language: str
+    :param enable_multiple_languages: Set to true to enable creating KBs in
+     different languages for the same resource.
+    :type enable_multiple_languages: bool
+    :param default_answer: Default answer sent to user if no good match is
+     found in the KB.
+    :type default_answer: str
     """
 
     _validation = {
         'name': {'required': True, 'max_length': 100, 'min_length': 1},
         'default_answer_used_for_extraction': {'max_length': 300, 'min_length': 1},
         'language': {'max_length': 100, 'min_length': 1},
+        'default_answer': {'max_length': 300, 'min_length': 1},
     }
 
     _attribute_map = {
@@ -55,6 +65,8 @@ class CreateKbDTO(Model):
         'enable_hierarchical_extraction': {'key': 'enableHierarchicalExtraction', 'type': 'bool'},
         'default_answer_used_for_extraction': {'key': 'defaultAnswerUsedForExtraction', 'type': 'str'},
         'language': {'key': 'language', 'type': 'str'},
+        'enable_multiple_languages': {'key': 'enableMultipleLanguages', 'type': 'bool'},
+        'default_answer': {'key': 'defaultAnswer', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -66,3 +78,5 @@ class CreateKbDTO(Model):
         self.enable_hierarchical_extraction = kwargs.get('enable_hierarchical_extraction', None)
         self.default_answer_used_for_extraction = kwargs.get('default_answer_used_for_extraction', None)
         self.language = kwargs.get('language', None)
+        self.enable_multiple_languages = kwargs.get('enable_multiple_languages', None)
+        self.default_answer = kwargs.get('default_answer', None)

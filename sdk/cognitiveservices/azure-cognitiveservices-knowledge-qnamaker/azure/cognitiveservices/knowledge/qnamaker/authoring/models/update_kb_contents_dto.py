@@ -24,12 +24,20 @@ class UpdateKbContentsDTO(Model):
     :param urls: List of existing URLs to be refreshed. The content will be
      extracted again and re-indexed.
     :type urls: list[str]
+    :param default_answer: Default answer sent to user if no good match is
+     found in the KB.
+    :type default_answer: str
     """
+
+    _validation = {
+        'default_answer': {'max_length': 300, 'min_length': 1},
+    }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'qna_list': {'key': 'qnaList', 'type': '[UpdateQnaDTO]'},
         'urls': {'key': 'urls', 'type': '[str]'},
+        'default_answer': {'key': 'defaultAnswer', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -37,3 +45,4 @@ class UpdateKbContentsDTO(Model):
         self.name = kwargs.get('name', None)
         self.qna_list = kwargs.get('qna_list', None)
         self.urls = kwargs.get('urls', None)
+        self.default_answer = kwargs.get('default_answer', None)

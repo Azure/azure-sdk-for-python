@@ -32,12 +32,15 @@ class QnADTO(Model):
     :param context: Context of a QnA
     :type context:
      ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTOContext
+    :param last_updated_timestamp: Timestamp when the QnA was last updated.
+    :type last_updated_timestamp: str
     """
 
     _validation = {
         'answer': {'required': True, 'max_length': 25000, 'min_length': 1},
         'source': {'max_length': 300},
         'questions': {'required': True},
+        'last_updated_timestamp': {'max_length': 300},
     }
 
     _attribute_map = {
@@ -47,6 +50,7 @@ class QnADTO(Model):
         'questions': {'key': 'questions', 'type': '[str]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataDTO]'},
         'context': {'key': 'context', 'type': 'QnADTOContext'},
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -57,3 +61,4 @@ class QnADTO(Model):
         self.questions = kwargs.get('questions', None)
         self.metadata = kwargs.get('metadata', None)
         self.context = kwargs.get('context', None)
+        self.last_updated_timestamp = kwargs.get('last_updated_timestamp', None)
