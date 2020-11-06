@@ -38,7 +38,7 @@ class BiggerBlockSizeHTTPAdapter(HTTPAdapter):
         :param proxies: (optional) A Requests-style dictionary of proxies used on this request.
         :rtype: urllib3.ConnectionPool
         """
-        conn = super().get_connection(url, proxies)
+        conn = super(BiggerBlockSizeHTTPAdapter, self).get_connection(url, proxies)
         system_version = tuple(sys.version_info)[:3]
         if system_version[:2] >= (3, 7):
             conn.conn_kw = {"blocksize": 32768}
