@@ -6,7 +6,6 @@ import functools
 import os
 from typing import TYPE_CHECKING
 
-from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
     DistributedTracingPolicy,
