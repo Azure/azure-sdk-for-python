@@ -121,7 +121,6 @@ class DigitalTwinsOperations:
         self,
         id: str,
         twin: object,
-        if_none_match: Optional[str] = "*",
         digital_twins_add_options: Optional["models.DigitalTwinsAddOptions"] = None,
         **kwargs
     ) -> Optional[object]:
@@ -145,8 +144,6 @@ class DigitalTwinsOperations:
         :type id: str
         :param twin: The digital twin instance being added. If provided, the $dtId property is ignored.
         :type twin: object
-        :param if_none_match: Only perform the operation if the entity does not already exist.
-        :type if_none_match: str
         :param digital_twins_add_options: Parameter group.
         :type digital_twins_add_options: ~azure.digitaltwins.core.models.DigitalTwinsAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -160,9 +157,11 @@ class DigitalTwinsOperations:
         
         _traceparent = None
         _tracestate = None
+        _if_none_match = None
         if digital_twins_add_options is not None:
             _traceparent = digital_twins_add_options.traceparent
             _tracestate = digital_twins_add_options.tracestate
+            _if_none_match = digital_twins_add_options.if_none_match
         api_version = "2020-10-31"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -183,8 +182,8 @@ class DigitalTwinsOperations:
             header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
         if _tracestate is not None:
             header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if _if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 
@@ -477,7 +476,6 @@ class DigitalTwinsOperations:
         id: str,
         relationship_id: str,
         relationship: object,
-        if_none_match: Optional[str] = "*",
         digital_twins_add_relationship_options: Optional["models.DigitalTwinsAddRelationshipOptions"] = None,
         **kwargs
     ) -> object:
@@ -509,8 +507,6 @@ class DigitalTwinsOperations:
         :type relationship_id: str
         :param relationship: The data for the relationship.
         :type relationship: object
-        :param if_none_match: Only perform the operation if the entity does not already exist.
-        :type if_none_match: str
         :param digital_twins_add_relationship_options: Parameter group.
         :type digital_twins_add_relationship_options: ~azure.digitaltwins.core.models.DigitalTwinsAddRelationshipOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -524,9 +520,11 @@ class DigitalTwinsOperations:
         
         _traceparent = None
         _tracestate = None
+        _if_none_match = None
         if digital_twins_add_relationship_options is not None:
             _traceparent = digital_twins_add_relationship_options.traceparent
             _tracestate = digital_twins_add_relationship_options.tracestate
+            _if_none_match = digital_twins_add_relationship_options.if_none_match
         api_version = "2020-10-31"
         content_type = kwargs.pop("content_type", "application/json")
 
@@ -548,8 +546,8 @@ class DigitalTwinsOperations:
             header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
         if _tracestate is not None:
             header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if _if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", _if_none_match, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
         header_parameters['Accept'] = 'application/json'
 

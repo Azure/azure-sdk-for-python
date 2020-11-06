@@ -27,7 +27,7 @@ async def main():
         async with receiver:
             async for msg in receiver:
                 print(str(msg))
-                await msg.complete()
+                await receiver.complete_message(msg)
     print("Receive is done.")
 
 loop = asyncio.get_event_loop()

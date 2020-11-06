@@ -41,13 +41,13 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
 
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
-                renewer.register(msg, timeout=100)
+                renewer.register(receiver, msg, max_lock_renewal_duration=100)
             print('Register messages into AutoLockRenewer done.')
 
             time.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
-                msg.complete() # Settling the message deregisters it from the AutoLockRenewer
+                receiver.complete_message(msg)  # Settling the message deregisters it from the AutoLockRenewer
             print('Complete messages.')
 
         renewer.close()
@@ -72,14 +72,14 @@ def renew_lock_on_session_of_the_sessionful_entity():
         ) as receiver:
 
             # automatically renew the lock on the session for 100 seconds
-            renewer.register(receiver.session, timeout=100)
+            renewer.register(receiver, receiver.session, max_lock_renewal_duration=100)
             print('Register session into AutoLockRenewer.')
 
             received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
             time.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
-                msg.complete()
+                receiver.complete_message(msg)
 
             print('Complete messages.')
 
@@ -111,7 +111,10 @@ def renew_lock_with_lock_renewal_failure_callback():
 
                 for msg in received_msgs:
                     # automatically renew the lock on each message for 120 seconds
-                    renewer.register(msg, timeout=90, on_lock_renew_failure=on_lock_renew_failure_callback)
+                    renewer.register(receiver,
+                                     msg,
+                                     max_lock_renewal_duration=90,
+                                     on_lock_renew_failure=on_lock_renew_failure_callback)
                 print('Register messages into AutoLockRenewer done.')
 
                 # Cause the messages and autorenewal to time out.
@@ -120,7 +123,7 @@ def renew_lock_with_lock_renewal_failure_callback():
 
                 try:
                     for msg in received_msgs:
-                        msg.complete()
+                        receiver.complete_message(msg)
                 except MessageLockExpired as e:
                     print('Messages cannot be settled if they have timed out. (This is expected)')
                 

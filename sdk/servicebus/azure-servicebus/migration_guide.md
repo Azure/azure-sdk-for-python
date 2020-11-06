@@ -18,15 +18,13 @@ In v7 we've simplified the API surface, making two distinct clients, rather than
 and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSender)
 * `ServiceBusReceiver` for receiving messages. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusReceiver)
 and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusReceiver)
-* `ServiceBusSessionReceiver` for receiving messages from a session. [Sync API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.html#azure.servicebus.ServiceBusSessionReceiver)
-and [Async API](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-servicebus/latest/azure.servicebus.aio.html#azure.servicebus.aio.ServiceBusSessionReceiver)
 
 As a user this will be largely transparent to you, as initialization will still occur primarily via the top level ServiceBusClient,
 the primary difference will be that rather than creating a queue_client, for instance, and then a sender off of that, you would simply
 create a servicebus queue sender off of your ServiceBusClient instance via the "get_queue_sender" method.
 
 It should also be noted that many of the helper methods that previously existed on the intermediary client (e.g. QueueClient and `peek()`) now
-exist on the receiver (in the case of `peek()`) or sender itself.  This is to better consolidate functionality and align messaging link lifetime
+exist on the receiver (in the case of `peek_messages()`) or sender itself.  This is to better consolidate functionality and align messaging link lifetime
 semantics with the sender or receiver lifetime.
 
 ### Client constructors
@@ -35,14 +33,14 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/sample_code_servicebus.py ) |
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py ) |
-| `QueueClient.from_connection_string(idle_timeout=None)` | `QueueClient.from_connection_string(max_wait_time=None)` | [providing a timeout](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) |
+| `QueueClient.from_connection_string(idle_timeout=None)` | `ServiceBusClient.from_connection_string.get_queue_receiver(max_wait_time=None)` | [providing a timeout](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) |
 
 ### Receiving messages
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `QueueClient.from_connection_string().get_receiver().fetch_next()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().fetch_next()`| `ServiceBusClient.from_connection_string().get_queue_receiver().receive_messages()`| [Get a receiver and receive a single batch of messages](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_queue.py) |
-| `QueueClient.from_connection_string().get_receiver().peek()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().peek()`| `ServiceBusClient.from_connection_string().get_queue_receiver().peek_messages()`| [Get a receiver and receive a single batch of messages](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_peek.py) |
+| `QueueClient.from_connection_string().get_receiver().peek()  and ServiceBusClient.from_connection_string().get_queue().get_receiver().peek()`| `ServiceBusClient.from_connection_string().get_queue_receiver().peek_messages()`| [Get a receiver and peek messages](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_peek.py) |
 | `QueueClient.from_connection_string().get_deadletter_receiver()  and ServiceBusClient.from_connection_string().get_queue().get_deadletter_receiver()`| `ServiceBusClient.from_connection_string().get_queue_receiver(sub_queue=SubQueue.DeadLetter)`| [Get a deadletter receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py) |
 
 ### Sending messages
@@ -64,7 +62,7 @@ semantics with the sender or receiver lifetime.
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py) |
-| `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `AutoLockRenewer().register(sb_client.get_queue_receiver(session_id='foo').session)`| [Access a session and ensure its lock is auto-renewed](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
+| `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `receiver=sb_client.get_queue_receiver(session_id='foo')` <br> `AutoLockRenewer().register(receiver, receiver.session)`| [Access a session and ensure its lock is auto-renewed](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
 | `receiver.get_session_state()` | `receiver.session.get_state()` | [Perform session specific operations on a receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
 
 ### Working with UTC time
@@ -83,6 +81,11 @@ semantics with the sender or receiver lifetime.
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `azure.servicebus.AutoLockRenew().shutdown()` | `azure.servicebus.AutoLockRenewer().close()` | [Close an auto-lock-renewer](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
+
+### Working with Message properties
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.Message.user_properties` | `azure.servicebus.ServiceBusMessage.application_properties` | Some message properties have been renamed, e.g. accessing the application specific properties of a message. |
 
 
 ## Migration samples
@@ -129,11 +132,11 @@ with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, receive_mo
         batch = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for message in batch:
             print("Message: {}".format(message))
-            message.complete()
+            receiver.complete_message(message)
 
         for message in receiver:
             print("Message: {}".format(message))
-            message.complete()
+            receiver.complete_message(message)
 ```
 
 

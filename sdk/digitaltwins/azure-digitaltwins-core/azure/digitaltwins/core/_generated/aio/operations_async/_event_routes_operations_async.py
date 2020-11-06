@@ -126,7 +126,7 @@ class EventRoutesOperations:
         id: str,
         event_routes_get_by_id_options: Optional["models.EventRoutesGetByIdOptions"] = None,
         **kwargs
-    ) -> "models.EventRoute":
+    ) -> "models.DigitalTwinsEventRoute":
         """Retrieves an event route.
         Status codes:
 
@@ -141,11 +141,11 @@ class EventRoutesOperations:
         :param event_routes_get_by_id_options: Parameter group.
         :type event_routes_get_by_id_options: ~azure.digitaltwins.core.models.EventRoutesGetByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EventRoute, or the result of cls(response)
-        :rtype: ~azure.digitaltwins.core.models.EventRoute
+        :return: DigitalTwinsEventRoute, or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EventRoute"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.DigitalTwinsEventRoute"]
         error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         
@@ -184,7 +184,7 @@ class EventRoutesOperations:
             error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('EventRoute', pipeline_response)
+        deserialized = self._deserialize('DigitalTwinsEventRoute', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -195,7 +195,7 @@ class EventRoutesOperations:
     async def add(
         self,
         id: str,
-        event_route: Optional["models.EventRoute"] = None,
+        event_route: Optional["models.DigitalTwinsEventRoute"] = None,
         event_routes_add_options: Optional["models.EventRoutesAddOptions"] = None,
         **kwargs
     ) -> None:
@@ -214,7 +214,7 @@ class EventRoutesOperations:
         :param id: The id for an event route. The id is unique within event routes and case sensitive.
         :type id: str
         :param event_route: The event route data.
-        :type event_route: ~azure.digitaltwins.core.models.EventRoute
+        :type event_route: ~azure.digitaltwins.core.models.DigitalTwinsEventRoute
         :param event_routes_add_options: Parameter group.
         :type event_routes_add_options: ~azure.digitaltwins.core.models.EventRoutesAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -255,7 +255,7 @@ class EventRoutesOperations:
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if event_route is not None:
-            body_content = self._serialize.body(event_route, 'EventRoute')
+            body_content = self._serialize.body(event_route, 'DigitalTwinsEventRoute')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content

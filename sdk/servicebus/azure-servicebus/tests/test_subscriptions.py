@@ -46,15 +46,29 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 message = ServiceBusMessage(b"Sample topic message")
                 sender.send_messages(message)
 
+            with pytest.raises(ValueError):
+                sb_client.get_subscription_receiver(
+                    topic_name=servicebus_topic.name,
+                    subscription_name=servicebus_subscription.name,
+                    max_wait_time=0
+                )
+
             with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
                     subscription_name=servicebus_subscription.name,
                     max_wait_time=5
             ) as receiver:
+
+                with pytest.raises(ValueError):
+                    receiver.receive_messages(max_wait_time=-1)
+
+                with pytest.raises(ValueError):
+                    receiver.get_streaming_message_iter(max_wait_time=0)
+
                 count = 0
                 for message in receiver:
                     count += 1
-                    message.complete()
+                    receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -86,7 +100,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     count += 1
-                    message.complete()
+                    receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.skip(reason="Pending management apis")
@@ -142,7 +156,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        message.dead_letter(reason="Testing reason", error_description="Testing description")
+                        receiver.dead_letter_message(message, reason="Testing reason", error_description="Testing description")
                     messages = receiver.receive_messages()
 
             assert count == 10
@@ -156,7 +170,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
-                    message.complete()
+                    receiver.complete_message(message)
                     count += 1
             assert count == 0
 
@@ -169,10 +183,10 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
             ) as dl_receiver:
                 count = 0
                 for message in dl_receiver:
-                    message.complete()
+                    dl_receiver.complete_message(message)
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10

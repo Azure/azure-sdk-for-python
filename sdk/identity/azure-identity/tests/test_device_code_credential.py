@@ -6,7 +6,8 @@ import datetime
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRequiredError, DeviceCodeCredential
+from azure.identity import DeviceCodeCredential
+from azure.identity._exceptions import AuthenticationRequiredError
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
 import pytest
@@ -24,6 +25,19 @@ try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
+
+
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        DeviceCodeCredential(tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            DeviceCodeCredential(tenant_id=tenant)
 
 
 def test_no_scopes():
@@ -77,7 +91,7 @@ def test_authenticate():
         tenant_id=tenant_id,
         _cache=TokenCache(),
     )
-    record = credential.authenticate(scopes=(scope,))
+    record = credential._authenticate(scopes=(scope,))
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
     assert record.tenant_id == home_tenant
@@ -94,7 +108,7 @@ def test_disable_automatic_authentication():
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
     credential = DeviceCodeCredential(
-        "client-id", disable_automatic_authentication=True, transport=transport, _cache=empty_cache
+        "client-id", _disable_automatic_authentication=True, transport=transport, _cache=empty_cache
     )
 
     with pytest.raises(AuthenticationRequiredError):

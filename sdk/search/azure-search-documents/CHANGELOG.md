@@ -5,6 +5,8 @@
 **Features**
 
 - Added `get_search_indexing_buffered_sender` support for `SearchClient`
+- Added `initial_batch_action_count` support for `SearchIndexingBufferedSender`
+- Added `max_retries` support for `SearchIndexingBufferedSender`
 
 ## 11.1.0b3 (2020-10-06)
 

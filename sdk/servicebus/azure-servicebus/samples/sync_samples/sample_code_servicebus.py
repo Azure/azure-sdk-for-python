@@ -53,7 +53,7 @@ def example_create_servicebus_sender_sync():
     from azure.servicebus import ServiceBusSender
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_sender = ServiceBusSender.from_connection_string(
+    queue_sender = ServiceBusSender._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )
@@ -107,7 +107,7 @@ def example_create_servicebus_receiver_sync():
     from azure.servicebus import ServiceBusReceiver
     servicebus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
-    queue_receiver = ServiceBusReceiver.from_connection_string(
+    queue_receiver = ServiceBusReceiver._from_connection_string(
         conn_str=servicebus_connection_str,
         queue_name=queue_name
     )
@@ -222,9 +222,9 @@ def example_send_and_receive_sync():
     with servicebus_receiver:
         for message in servicebus_receiver:
             # Auto renew message for 1 minute.
-            lock_renewal.register(message, timeout=60)
+            lock_renewal.register(servicebus_receiver, message, max_lock_renewal_duration=60)
             process_message(message)
-            message.complete()
+            servicebus_receiver.complete_message(message)
     # [END auto_lock_renew_message_sync]
             break
 
@@ -233,7 +233,7 @@ def example_send_and_receive_sync():
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
             print(str(message))
-            message.complete()
+            servicebus_receiver.complete_message(message)
     # [END receive_sync]
 
         # [START receive_complex_message]
@@ -244,7 +244,7 @@ def example_send_and_receive_sync():
             print("Sequence number: {}".format(message.sequence_number))
             print("Enqueued Sequence numger: {}".format(message.enqueued_sequence_number))
             print("Partition Key: {}".format(message.partition_key))
-            print("Properties: {}".format(message.properties))
+            print("Application Properties: {}".format(message.application_properties))
             print("Delivery count: {}".format(message.delivery_count))
             print("Message ID: {}".format(message.message_id))
             print("Locked until: {}".format(message.locked_until_utc))
@@ -255,15 +255,16 @@ def example_send_and_receive_sync():
         # [START abandon_message]
         messages = servicebus_receiver.receive_messages(max_wait_time=5)
         for message in messages:
-            message.abandon()
+            servicebus_receiver.abandon_message(message)
         # [END abandon_message]
 
     # [START receive_forever]
     with servicebus_receiver:
         for message in servicebus_receiver.get_streaming_message_iter():
             print(str(message))
-            message.complete()
+            servicebus_receiver.complete_message(message)
     # [END receive_forever]
+            break
 
 
 def example_receive_deferred_sync():
@@ -278,14 +279,14 @@ def example_receive_deferred_sync():
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(str(message))
-            message.defer()
+            servicebus_receiver.defer_message(message)
 
         received_deferred_msg = servicebus_receiver.receive_deferred_messages(
             sequence_numbers=deferred_sequenced_numbers
         )
 
         for msg in received_deferred_msg:
-            msg.complete()
+            servicebus_receiver.complete_message(msg)
     # [END receive_defer_sync]
 
 
@@ -300,12 +301,12 @@ def example_receive_deadletter_sync():
         with servicebus_client.get_queue_receiver(queue_name) as servicebus_receiver:
             messages = servicebus_receiver.receive_messages(max_wait_time=5)
             for message in messages:
-                message.dead_letter(reason='reason for dead lettering', description='description for dead lettering')
+                servicebus_receiver.dead_letter_message(message, reason='reason for dead lettering', description='description for dead lettering')
 
         with servicebus_client.get_queue_deadletter_receiver(queue_name) as servicebus_deadletter_receiver:
             messages = servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
             for message in messages:
-                message.complete()
+                servicebus_receiver.complete_message(message)
         # [END receive_deadletter_sync]
 
 
@@ -345,10 +346,10 @@ def example_session_ops_sync():
         with servicebus_client.get_queue_receiver(queue_name=queue_name, session_id=session_id) as receiver:
             session = receiver.session
             # Auto renew session lock for 2 minutes
-            lock_renewal.register(session, timeout=120)
+            lock_renewal.register(receiver, session, max_lock_renewal_duration=120)
             for message in receiver:
                 process_message(message)
-                message.complete()
+                receiver.complete_message(message)
         # [END auto_lock_renew_session_sync]
                 break
 

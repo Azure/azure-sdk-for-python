@@ -28,7 +28,10 @@ except ImportError:
 
 import six
 from azure.core.configuration import Configuration
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    ResourceNotFoundError
+)
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     RequestsTransport,
@@ -58,7 +61,6 @@ from ._policies import (
     StorageHosts,
     TablesRetryPolicy,
 )
-from ._error import _process_table_error
 from ._models import BatchErrorException
 from ._sdk_moniker import SDK_MONIKER
 
@@ -255,7 +257,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         ]
         return config, Pipeline(config.transport, policies=policies)
 
-    def _batch_send(
+    def _batch_send( # pylint: disable=inconsistent-return-statements
         self, entities, # type: List[TableEntity]
         *reqs,  # type: List[HttpRequest]
         **kwargs
@@ -292,21 +294,40 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             request, **kwargs
         )
         response = pipeline_response.http_response
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts()
-            transaction_result = BatchTransactionResult(reqs, parts, entities)
-            if raise_on_any_failure:
-                if any(p for p in parts if not 200 <= p.status_code < 300):
-                    error = BatchErrorException(
-                        message="There is a failure in the batch operation.",
-                        response=response, parts=parts
+
+        if response.status_code == 403:
+            raise ClientAuthenticationError(
+                message="There was an error authenticating with the service",
+                response=response
+            )
+        if response.status_code == 404:
+            raise ResourceNotFoundError(
+                message="The resource could not be found",
+                response=response
+            )
+        if response.status_code != 202:
+            raise BatchErrorException(
+                message="There is a failure in the batch operation.",
+                response=response, parts=None
+            )
+
+        parts = response.parts()
+        transaction_result = BatchTransactionResult(reqs, parts, entities)
+        if raise_on_any_failure:
+            if any(p for p in parts if not 200 <= p.status_code < 300):
+
+                if any(p for p in parts if p.status_code == 404):
+                    raise ResourceNotFoundError(
+                        message="The resource could not be found",
+                        response=response
                     )
-                    raise error
-            return transaction_result
-        except HttpResponseError as error:
-            _process_table_error(error)
+
+                raise BatchErrorException(
+                    message="There is a failure in the batch operation.",
+                    response=response, parts=parts
+                )
+        return transaction_result
+
 
 class TransportWrapper(HttpTransport):
     """Wrapper class that ensures that an inner client created

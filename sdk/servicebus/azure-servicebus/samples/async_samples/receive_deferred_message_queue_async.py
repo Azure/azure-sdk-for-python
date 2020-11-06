@@ -37,7 +37,7 @@ async def main():
             for msg in received_msgs:
                 print("Deferring msg: {}".format(str(msg)))
                 deferred_sequenced_numbers.append(msg.sequence_number)
-                await msg.defer()
+                await receiver.defer_message(msg)
 
             if deferred_sequenced_numbers:
                 received_deferred_msg = await receiver.receive_deferred_messages(
@@ -46,7 +46,7 @@ async def main():
 
                 for msg in received_deferred_msg:
                     print("Completing deferred msg: {}".format(str(msg)))
-                    await msg.complete()
+                    await receiver.complete_message(msg)
             else:
                 print("No messages received.")
 

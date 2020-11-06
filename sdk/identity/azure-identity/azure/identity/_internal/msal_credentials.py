@@ -5,11 +5,10 @@
 import abc
 
 import msal
-from azure.core.credentials import AccessToken
 
 from .msal_client import MsalClient
 from .persistent_cache import load_user_cache
-from .._internal import get_default_authority, normalize_authority
+from .._internal import get_default_authority, normalize_authority, validate_tenant_id
 
 try:
     ABC = abc.ABC
@@ -34,14 +33,15 @@ class MsalCredential(ABC):
         authority = kwargs.pop("authority", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
+        validate_tenant_id(self._tenant_id)
 
         self._client_credential = client_credential
         self._client_id = client_id
 
         self._cache = kwargs.pop("_cache", None)  # internal, for use in tests
         if not self._cache:
-            if kwargs.pop("enable_persistent_cache", False):
-                allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+            if kwargs.pop("_enable_persistent_cache", False):
+                allow_unencrypted = kwargs.pop("_allow_unencrypted_cache", False)
                 self._cache = load_user_cache(allow_unencrypted)
             else:
                 self._cache = msal.TokenCache()
