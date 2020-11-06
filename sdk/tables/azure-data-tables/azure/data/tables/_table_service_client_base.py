@@ -22,8 +22,8 @@ class TableServiceClientBase(StorageAccountHostsMixin):
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token, or the connection string already has shared
-        access key values. The value can be a SAS token string, an account shared access
-        key, or an instance of a TokenCredentials class from azure.identity.
+        access key values. The value can be a SAS token string or, an account shared access
+        key.
     :type credential: str
     :returns: None
     """

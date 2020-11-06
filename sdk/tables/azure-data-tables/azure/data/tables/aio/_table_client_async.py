@@ -403,7 +403,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[azure.data.tables.TableEntity]
+        # type: (...) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
@@ -442,7 +442,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             filter,  # type: str  # pylint: disable = W0622
             **kwargs
     ):
-        # type: (...) -> AsyncItemPaged[azure.data.tables.TableEntity]
+        # type: (...) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
 
         :param str filter: Specify a filter to return certain entities

@@ -398,7 +398,7 @@ class TableClient(TableClientBase):
             self,
             **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[azure.data.tables.TableEntity]
+        # type: (...) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
