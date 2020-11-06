@@ -2372,10 +2372,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _set_blob_tags_options(self, tags=None, **kwargs):
         # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
         tags = serialize_blob_tags(tags)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
 
         options = {
             'tags': tags,
+            'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers}
         options.update(kwargs)
@@ -2410,6 +2412,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -2423,11 +2429,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def _get_blob_tags_options(self, **kwargs):
         # type: (**Any) -> Dict[str, str]
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
 
         options = {
             'version_id': kwargs.pop('version_id', None),
             'snapshot': self.snapshot,
+            'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_headers_and_deserialized}
@@ -2446,6 +2454,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             value that, when present, specifies the version of the blob to add tags to.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
+        :keyword lease:
+            Required if the blob has an active lease. Value can be a BlobLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Key value pairs of blob tags.
