@@ -87,7 +87,8 @@ class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "failed"
     CANCELLED = "cancelled"
     CANCELLING = "cancelling"
-    PARTIALLYCOMPLETED = "partiallycompleted"
+    NOT_STARTED = "notStarted"
+    PARTIALLY_COMPLETED = "partiallyCompleted"
 
 class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 

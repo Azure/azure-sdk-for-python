@@ -152,7 +152,7 @@ class JobMetadata(msrest.serialization.Model):
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
     :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
+     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
@@ -205,7 +205,7 @@ class AnalyzeJobState(JobMetadata, TasksState, Pagination):
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
     :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
+     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     :param errors:
     :type errors: list[~azure.ai.textanalytics.v3_1_preview_3.models.TextAnalyticsError]
@@ -1040,10 +1040,12 @@ class HealthcareJobState(JobMetadata, Pagination):
     :param last_update_date_time: Required.
     :type last_update_date_time: ~datetime.datetime
     :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
+     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     :param results:
     :type results: ~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareResult
+    :param errors:
+    :type errors: list[~azure.ai.textanalytics.v3_1_preview_3.models.TextAnalyticsError]
     """
 
     _validation = {
@@ -1062,6 +1064,7 @@ class HealthcareJobState(JobMetadata, Pagination):
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
         'results': {'key': 'results', 'type': 'HealthcareResult'},
+        'errors': {'key': 'errors', 'type': '[TextAnalyticsError]'},
     }
 
     def __init__(
@@ -1071,6 +1074,7 @@ class HealthcareJobState(JobMetadata, Pagination):
         super(HealthcareJobState, self).__init__(**kwargs)
         self.next_link = kwargs.get('next_link', None)
         self.results = kwargs.get('results', None)
+        self.errors = kwargs.get('errors', None)
         self.created_date_time = kwargs['created_date_time']
         self.display_name = kwargs.get('display_name', None)
         self.expiration_date_time = kwargs.get('expiration_date_time', None)
@@ -1078,6 +1082,7 @@ class HealthcareJobState(JobMetadata, Pagination):
         self.last_update_date_time = kwargs['last_update_date_time']
         self.status = kwargs['status']
         self.results = kwargs.get('results', None)
+        self.errors = kwargs.get('errors', None)
 
 
 class HealthcareRelation(msrest.serialization.Model):
@@ -2070,7 +2075,7 @@ class TaskState(msrest.serialization.Model):
     :param name: Required.
     :type name: str
     :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
+     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
@@ -2108,7 +2113,7 @@ class TasksStateTasksEntityRecognitionPiiTasksItem(TaskState, Components15X8E9LS
     :param name: Required.
     :type name: str
     :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
+     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
@@ -2148,7 +2153,7 @@ class TasksStateTasksEntityRecognitionTasksItem(TaskState, Components15Gvwi3Sche
     :param name: Required.
     :type name: str
     :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
+     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
@@ -2188,7 +2193,7 @@ class TasksStateTasksKeyPhraseExtractionTasksItem(TaskState, Components1D9IzucSc
     :param name: Required.
     :type name: str
     :param status: Required.  Possible values include: "notstarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", "partiallycompleted".
+     "failed", "cancelled", "cancelling", "notStarted", "partiallyCompleted".
     :type status: str or ~azure.ai.textanalytics.v3_1_preview_3.models.State
     """
 
