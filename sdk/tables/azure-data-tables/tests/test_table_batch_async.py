@@ -18,7 +18,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
-    HttpResponseError
+    HttpResponseError,
+    ClientAuthenticationError
 )
 from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._models import BatchErrorException
@@ -688,7 +689,7 @@ class StorageTableBatchTest(TableTestCase):
         finally:
             await self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    # @pytest.mark.skip("This does not throw an error, but it should")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_batch_same_row_operations_fail(self, resource_group, location, storage_account, storage_account_key):
@@ -706,10 +707,11 @@ class StorageTableBatchTest(TableTestCase):
             batch.update_entity(entity)
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
+            batch.update_entity(entity)
 
             # Assert
-            with self.assertRaises(HttpResponseError):
-                batch.update_entity(entity, mode=UpdateMode.MERGE)
+            with pytest.raises(BatchErrorException):
+                await self.table.send_batch(batch)
         finally:
             await self._tear_down()
 
@@ -761,6 +763,69 @@ class StorageTableBatchTest(TableTestCase):
             # Assert
         finally:
             await self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_new_non_existent_table(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            tc = self.ts.get_table_client("doesntexist")
+
+            batch = tc.create_batch()
+            batch.create_entity(entity)
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = await tc.send_batch(batch)
+            # Assert
+        finally:
+            await self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_new_invalid_key(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        invalid_key = storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
+        key_list = list(storage_account_key)
+
+        key_list[-6:] = list("0000==")
+        invalid_key = ''.join(key_list)
+
+        self.ts = TableServiceClient(self.account_url(storage_account, "table"), invalid_key)
+        self.table_name = self.get_resource_name('uttable')
+        self.table = self.ts.get_table_client(self.table_name)
+
+        entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+        batch = self.table.create_batch()
+        batch.create_entity(entity)
+
+        with pytest.raises(ClientAuthenticationError):
+            resp = await self.table.send_batch(batch)
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_new_delete_nonexistent_entity(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            batch = self.table.create_batch()
+            batch.delete_entity(entity['PartitionKey'], entity['RowKey'])
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = await self.table.send_batch(batch)
+
+        finally:
+            await self._tear_down()
+
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

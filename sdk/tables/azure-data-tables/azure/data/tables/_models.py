@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from azure.core.exceptions import HttpResponseError, AzureError
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 
 from ._generated.models import TableServiceStats as GenTableServiceStats
@@ -517,7 +517,7 @@ class PartialBatchErrorException(HttpResponseError):
         super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
-class BatchErrorException(AzureError):
+class BatchErrorException(HttpResponseError):
     """There is a failure in batch operations.
 
     :param str message: The message of the exception.
@@ -525,9 +525,9 @@ class BatchErrorException(AzureError):
     :param list parts: A list of the parts in multipart response.
     """
 
-    def __init__(self, message, response, parts):
+    def __init__(self, message, response, parts, *args, **kwargs):
         self.parts = parts
-        super(BatchErrorException, self).__init__(message=message, response=response)
+        super(BatchErrorException, self).__init__(message=message, response=response, *args, **kwargs)
 
 
 class BatchTransactionResult(object):

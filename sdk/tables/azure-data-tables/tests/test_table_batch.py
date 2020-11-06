@@ -18,7 +18,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
-    HttpResponseError
+    HttpResponseError,
+    ClientAuthenticationError
 )
 from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode, BatchTransactionResult
 
@@ -764,6 +765,7 @@ class StorageTableBatchTest(TableTestCase):
                 '001', 'batch_negative_1')
             batch.update_entity(entity, mode=UpdateMode.MERGE)
             # Assert
+
             with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
 
@@ -834,6 +836,62 @@ class StorageTableBatchTest(TableTestCase):
                 batch.create_entity(entity2)
 
             # Assert
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_new_non_existent_table(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            tc = self.ts.get_table_client("doesntexist")
+
+            batch = tc.create_batch()
+            batch.create_entity(entity)
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = tc.send_batch(batch)
+            # Assert
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_new_invalid_key(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        invalid_key = storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
+        self.ts = TableServiceClient(self.account_url(storage_account, "table"), invalid_key)
+        self.table_name = self.get_resource_name('uttable')
+        self.table = self.ts.get_table_client(self.table_name)
+
+        entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+        batch = self.table.create_batch()
+        batch.create_entity(entity)
+
+        with pytest.raises(ClientAuthenticationError):
+            resp = self.table.send_batch(batch)
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_new_delete_nonexistent_entity(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            batch = self.table.create_batch()
+            batch.delete_entity(entity['PartitionKey'], entity['RowKey'])
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = self.table.send_batch(batch)
+
         finally:
             self._tear_down()
 
