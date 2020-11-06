@@ -11,12 +11,13 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class SqlPoolUsagesOperations(object):
-    """SqlPoolUsagesOperations operations.
+class WorkspaceManagedSqlServerUsagesOperations(object):
+    """WorkspaceManagedSqlServerUsagesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,28 +40,25 @@ class SqlPoolUsagesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Gets SQL pool usages.
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Get list of usages metric for the server.
 
-        Gets SQL pool usages.
+        Get list of server usages metric for workspace managed sql server.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlPoolUsage
+        :return: An iterator like instance of ServerUsage
         :rtype:
-         ~azure.mgmt.synapse.models.SqlPoolUsagePaged[~azure.mgmt.synapse.models.SqlPoolUsage]
-        :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         ~azure.mgmt.synapse.models.ServerUsagePaged[~azure.mgmt.synapse.models.ServerUsage]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -69,8 +67,7 @@ class SqlPoolUsagesOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-                    'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -102,7 +99,9 @@ class SqlPoolUsagesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorContractException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -110,7 +109,7 @@ class SqlPoolUsagesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SqlPoolUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ServerUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/usages'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlUsages'}
