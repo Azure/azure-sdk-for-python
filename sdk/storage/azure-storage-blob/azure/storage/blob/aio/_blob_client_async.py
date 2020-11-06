@@ -233,7 +233,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             source_url=self._encode_source_url(source_url),
             **kwargs)
         try:
-            return await self._client.blob.put_blob_from_url(**options)
+            return await self._client.block_blob.put_blob_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 

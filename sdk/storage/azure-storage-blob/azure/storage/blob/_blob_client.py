@@ -556,7 +556,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             copy_source_blob_properties=copy_source_blob_properties,
             **kwargs)
         try:
-            return self._client.blob.put_blob_from_url(**options)
+            return self._client.block_blob.put_blob_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
