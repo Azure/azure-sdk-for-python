@@ -4,14 +4,12 @@
 # ------------------------------------
 import functools
 import os
-import time
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
-    HeadersPolicy,
     HttpLoggingPolicy,
     HTTPPolicy,
     UserAgentPolicy,
@@ -49,7 +47,6 @@ class AzureArcCredential(GetTokenMixin):
         client_args = dict(
             kwargs,
             _identity_config=identity_config,
-            base_headers={"Metadata": "true"},
             policies=_get_policies(config),
             request_factory=functools.partial(_get_request, url),
         )
@@ -76,7 +73,6 @@ class AzureArcCredential(GetTokenMixin):
 def _get_policies(config, **kwargs):
     # type: (Configuration, **Any) -> List[PolicyType]
     return [
-        HeadersPolicy(**kwargs),
         UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
         config.proxy_policy,
         config.retry_policy,
@@ -111,23 +107,12 @@ def _get_secret_key(response):
             raise CredentialUnavailableError(message="Could not read file {} contents: {}".format(key_file, error))
 
 
-class ArcChallengeAuthPolicyBase(object):
-    """Sans I/O base for Azure Arc's challenge authentication policy"""
-
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        super(ArcChallengeAuthPolicyBase, self).__init__(**kwargs)
-
-
-class ArcChallengeAuthPolicy(ArcChallengeAuthPolicyBase, HTTPPolicy):
+class ArcChallengeAuthPolicy(HTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
-
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        super(ArcChallengeAuthPolicy, self).__init__(**kwargs)
 
     def send(self, request):
         # type: (PipelineRequest) -> HttpResponse
+        request.http_request.headers["Metadata"] = "true"
         response = self.next.send(request)
 
         if response.http_response.status_code == 401:

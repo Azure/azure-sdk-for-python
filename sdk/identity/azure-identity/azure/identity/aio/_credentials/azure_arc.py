@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
     DistributedTracingPolicy,
-    HeadersPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
@@ -20,7 +19,7 @@ from .._internal.managed_identity_client import AsyncManagedIdentityClient, _get
 from .._internal.get_token_mixin import GetTokenMixin
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
-from ..._credentials.azure_arc import ArcChallengeAuthPolicyBase, _get_request, _get_secret_key
+from ..._credentials.azure_arc import _get_request, _get_secret_key
 from ..._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -49,7 +48,6 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
         client_args = dict(
             kwargs,
             _identity_config=identity_config,
-            base_headers={"Metadata": "true"},
             policies=_get_policies(config),
             request_factory=functools.partial(_get_request, url),
         )
@@ -78,7 +76,6 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
 
 def _get_policies(config: "Configuration", **kwargs: "Any") -> "List[PolicyType]":
     return [
-        HeadersPolicy(**kwargs),
         UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
         config.proxy_policy,
         config.retry_policy,
@@ -89,13 +86,11 @@ def _get_policies(config: "Configuration", **kwargs: "Any") -> "List[PolicyType]
     ]
 
 
-class ArcChallengeAuthPolicy(ArcChallengeAuthPolicyBase, AsyncHTTPPolicy):
+class ArcChallengeAuthPolicy(AsyncHTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
 
-    def __init__(self, **kwargs: "Any") -> None:
-        super().__init__(**kwargs)
-
     async def send(self, request: "PipelineRequest") -> "AsyncHttpResponse":
+        request.http_request.headers["Metadata"] = "true"
         response = await self.next.send(request)
 
         if response.http_response.status_code == 401:
