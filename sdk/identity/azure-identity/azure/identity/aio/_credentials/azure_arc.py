@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
@@ -13,7 +13,6 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
-    SansIOHTTPPolicy,
 )
 
 from .._internal import AsyncContextManager
@@ -26,24 +25,36 @@ from ..._internal.user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List, Optional
+    from typing import Any, List, Optional, Union
     from azure.core.configuration import Configuration
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import PipelineRequest
+    from azure.core.pipeline.policies import SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpResponse
 
-PolicyType = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
+    PolicyType = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
 
 class AzureArcCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: "Any") -> None:
         super().__init__()
 
-        client_args = _get_client_args(**kwargs)
-        if client_args:
-            self._client = AsyncManagedIdentityClient(**client_args)
-        else:
+        url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
+        if not url:
+            # Azure Arc managed identity isn't available in this environment
             self._client = None
+
+        identity_config = kwargs.pop("_identity_config", None) or {}
+        config = _get_configuration()
+        client_args = dict(
+            kwargs,
+            _identity_config=identity_config,
+            base_headers={"Metadata": "true"},
+            policies=_get_policies(config),
+            request_factory=functools.partial(_get_request, url),
+        )
+
+        self._client = AsyncManagedIdentityClient(**client_args)
 
     async def get_token(  # pylint:disable=invalid-overridden-method
         self, *scopes: str, **kwargs: "Any"
@@ -65,7 +76,7 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
         return await self._client.request_token(*scopes, **kwargs)
 
 
-def _get_policies(config: Configuration, **kwargs: Any) -> List[PolicyType]:
+def _get_policies(config: "Configuration", **kwargs: "Any") -> "List[PolicyType]":
     return [
         HeadersPolicy(**kwargs),
         UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs),
@@ -76,25 +87,6 @@ def _get_policies(config: Configuration, **kwargs: Any) -> List[PolicyType]:
         DistributedTracingPolicy(**kwargs),
         HttpLoggingPolicy(**kwargs),
     ]
-
-
-def _get_client_args(**kwargs: Any) -> Optional[dict]:
-    identity_config = kwargs.pop("_identity_config", None) or {}
-
-    url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-    if not url:
-        # Azure Arc managed identity isn't available in this environment
-        return None
-
-    config = _get_configuration()
-
-    return dict(
-        kwargs,
-        _identity_config=identity_config,
-        base_headers={"Metadata": "true"},
-        policies=_get_policies(config),
-        request_factory=functools.partial(_get_request, url),
-    )
 
 
 class ArcChallengeAuthPolicy(ArcChallengeAuthPolicyBase, AsyncHTTPPolicy):

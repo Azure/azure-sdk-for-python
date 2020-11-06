@@ -39,11 +39,22 @@ class AzureArcCredential(GetTokenMixin):
         # type: (**Any) -> None
         super(AzureArcCredential, self).__init__()
 
-        client_args = _get_client_args(**kwargs)
-        if client_args:
-            self._client = ManagedIdentityClient(**client_args)
-        else:
+        url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
+        if not url:
+            # Azure Arc managed identity isn't available in this environment
             self._client = None
+
+        identity_config = kwargs.pop("_identity_config", None) or {}
+        config = _get_configuration()
+        client_args = dict(
+            kwargs,
+            _identity_config=identity_config,
+            base_headers={"Metadata": "true"},
+            policies=_get_policies(config),
+            request_factory=functools.partial(_get_request, url),
+        )
+
+        self._client = ManagedIdentityClient(**client_args)
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
@@ -74,26 +85,6 @@ def _get_policies(config, **kwargs):
         DistributedTracingPolicy(**kwargs),
         HttpLoggingPolicy(**kwargs),
     ]
-
-
-def _get_client_args(**kwargs):
-    # type: (**Any) -> Optional[dict]
-    identity_config = kwargs.pop("_identity_config", None) or {}
-
-    url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-    if not url:
-        # Azure Arc managed identity isn't available in this environment
-        return None
-
-    config = _get_configuration()
-
-    return dict(
-        kwargs,
-        _identity_config=identity_config,
-        base_headers={"Metadata": "true"},
-        policies=_get_policies(config),
-        request_factory=functools.partial(_get_request, url),
-    )
 
 
 def _get_request(url, scope, identity_config):
