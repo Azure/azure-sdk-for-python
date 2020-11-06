@@ -14,7 +14,7 @@ from setuptools import setup, find_packages
 
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "opentelemetry-exporter-azuremonitor"
+PACKAGE_NAME = "microsoft-opentelemetry-exporter-azuremonitor"
 PACKAGE_PPRINT_NAME = "Azure Monitor Opentelemetry Exporter"
 
 # a-b-c => a/b/c
@@ -54,7 +54,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/opentelemetry-exporter-azuremonitor',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor',
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
@@ -69,8 +69,9 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=[
         # Exclude packages that will be covered by PEP420 or nspkg
-        'opentelemetry',
-        'opentelemetry.exporter',
+        'microsoft',
+        'microsoft.opentelemetry',
+        'microsoft.opentelemetry.exporter',
         'tests',
     ]),
     install_requires=[
