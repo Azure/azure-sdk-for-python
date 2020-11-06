@@ -76,7 +76,6 @@ semantics with the sender or receiver lifetime.
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `queue_client.send(message, session='foo')  and queue_client.get_sender(session='foo').send(message)`| `sb_client.get_queue_sender().send_messages(Message('body', session_id='foo'))`| [Send a message to a session](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py) |
-| `AutoLockRenew().register(queue_client.get_receiver(session='foo'))`| `receiver=sb_client.get_queue_receiver(session_id='foo')` <br> `AutoLockRenewer().register(receiver, receiver.session)`| [Access a session and ensure its lock is auto-renewed](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
 | `receiver.get_session_state()` | `receiver.session.get_state()` | [Set session state](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
 | `receiver.set_session_state()` | `receiver.session.set_state()` | [Get session state](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
 | `receiver.renew_lock()` | `receiver.session.renew_lock()` | [Renew lock on the session](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_send_receive.py)
@@ -96,6 +95,8 @@ semantics with the sender or receiver lifetime.
 ### Working with AutoLockRenewer
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
+| `azure.servicebus.AutoLockRenew().register(message)` | `azure.servicebus.AutoLockRenewer().register(receiver, message)` | [Auto lock renew a message received from a non-sessonful entity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
+| `azure.servicebus.AutoLockRenew().register(session_receiver)` | `azure.servicebus.AutoLockRenewer().register(session_receiver, session_receiver.session)` | [Auto lock renew a session for sessionful receiver](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
 | `azure.servicebus.AutoLockRenew().shutdown()` | `azure.servicebus.AutoLockRenewer().close()` | [Close an auto-lock-renewer](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/auto_lock_renew.py) |
 
 ### Working with Message properties
