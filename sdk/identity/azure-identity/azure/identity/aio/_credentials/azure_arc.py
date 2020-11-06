@@ -42,7 +42,7 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
         if not url:
             # Azure Arc managed identity isn't available in this environment
             self._client = None
-
+            return
         identity_config = kwargs.pop("_identity_config", None) or {}
         config = _get_configuration()
         client_args = dict(
