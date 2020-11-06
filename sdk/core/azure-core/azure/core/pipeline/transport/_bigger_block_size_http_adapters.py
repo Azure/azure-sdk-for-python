@@ -27,6 +27,7 @@
 import sys
 from requests.adapters import HTTPAdapter
 
+
 class BiggerBlockSizeHTTPAdapter(HTTPAdapter):
     def get_connection(self, url, proxies=None):
         """Returns a urllib3 connection for the given URL. This should not be
