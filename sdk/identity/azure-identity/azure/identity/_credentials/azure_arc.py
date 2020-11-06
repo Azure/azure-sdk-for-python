@@ -57,14 +57,6 @@ class AzureArcCredential(GetTokenMixin):
 
     def get_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        if self._client._identity_config != {}:
-            raise ClientAuthenticationError(
-                message="User assigned identity is not supported by the Azure Arc Managed Identity Endpoint. To " \
-                        "authenticate with the system assigned identity omit the client id when constructing the" \
-                        " ManagedIdentityCredential, or if authenticating with the DefaultAzureCredential ensure" \
-                        " the AZURE_CLIENT_ID environment variable is not set."
-            )
-
         if not self._client:
             raise CredentialUnavailableError(
                 message="Azure Arc managed identity configuration not found in environment"
@@ -95,6 +87,14 @@ def _get_policies(config, **kwargs):
 
 def _get_request(url, scope, identity_config):
     # type: (str, str, dict) -> HttpRequest
+    if identity_config != {}:
+        raise ClientAuthenticationError(
+            message="User assigned identity is not supported by the Azure Arc Managed Identity Endpoint. To " \
+                    "authenticate with the system assigned identity omit the client id when constructing the" \
+                    " ManagedIdentityCredential, or if authenticating with the DefaultAzureCredential ensure" \
+                    " the AZURE_CLIENT_ID environment variable is not set."
+        )
+
     request = HttpRequest("GET", url)
     request.format_parameters(dict({"api-version": "2019-11-01", "resource": scope}, **identity_config))
     return request

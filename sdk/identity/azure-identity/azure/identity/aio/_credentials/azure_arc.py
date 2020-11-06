@@ -58,14 +58,6 @@ class AzureArcCredential(AsyncContextManager, GetTokenMixin):
     async def get_token(  # pylint:disable=invalid-overridden-method
         self, *scopes: str, **kwargs: "Any"
     ) -> "AccessToken":
-        if self._client._identity_config != {}:
-            raise ClientAuthenticationError(
-                message="User assigned identity is not supported by the Azure Arc Managed Identity Endpoint. To " \
-                        "authenticate with the system assigned identity omit the client id when constructing the" \
-                        " ManagedIdentityCredential, or if authenticating with the DefaultAzureCredential ensure" \
-                        " the AZURE_CLIENT_ID environment variable is not set."
-            )
-
         if not self._client:
             raise CredentialUnavailableError(
                 message="Service Fabric managed identity configuration not found in environment"
