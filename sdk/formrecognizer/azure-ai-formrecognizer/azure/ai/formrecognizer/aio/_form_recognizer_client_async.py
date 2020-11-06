@@ -115,7 +115,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             raise TypeError("Call begin_recognize_receipts_from_url() to analyze a receipt from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
-        if content_type is None:
+        if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(receipt)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
@@ -242,7 +242,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        if content_type is None:
+        if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(business_card)
 
         try:
@@ -361,7 +361,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        if content_type is None:
+        if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(invoice)
 
         try:
@@ -482,7 +482,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         if content_type == "application/json":
             raise TypeError("Call begin_recognize_content_from_url() to analyze a document from a URL.")
 
-        if content_type is None:
+        if content_type is None and kwargs.get("continuation_token", None) is None:
             content_type = get_content_type(form)
 
         # FIXME: part of this code will be removed once autorest can handle diff mixin
@@ -607,8 +607,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             raise TypeError("Call begin_recognize_custom_forms_from_url() to analyze a document from a URL.")
 
         include_field_elements = kwargs.pop("include_field_elements", False)
-
-        if content_type is None:
+        if content_type is None and continuation_token is None:
             content_type = get_content_type(form)
 
         def analyze_callback(raw_response, _, headers):  # pylint: disable=unused-argument
