@@ -20,7 +20,6 @@ import zipfile
 
 logging.getLogger().setLevel(logging.INFO)
 
-
 def get_package_details(setup_filename):
     mock_setup = textwrap.dedent(
         """\
