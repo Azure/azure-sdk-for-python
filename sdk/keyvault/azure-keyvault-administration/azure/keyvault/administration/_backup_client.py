@@ -25,18 +25,18 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-    def begin_full_backup(self, blob_storage_uri, sas_token, **kwargs):
+    def begin_full_backup(self, blob_storage_url, sas_token, **kwargs):
         # type: (str, str, **Any) -> LROPoller[BackupOperation]
         """Begin a full backup of the Key Vault.
 
-        :param str blob_storage_uri: URI of the blob storage resource in which the backup will be stored
+        :param str blob_storage_url: URI of the blob storage resource in which the backup will be stored
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :returns: An instance of an LROPoller. Call `result()` on the poller object to get a :class:`BackupOperation`.
         :rtype: ~azure.core.polling.LROPoller[BackupOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_uri, token=sas_token)
+        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
         return self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
@@ -46,17 +46,17 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def begin_full_restore(self, blob_storage_uri, sas_token, folder_name, **kwargs):
+    def begin_full_restore(self, blob_storage_url, sas_token, folder_name, **kwargs):
         # type: (str, str, str, **Any) -> LROPoller[RestoreOperation]
         """Restore a full backup of a Key Vault.
 
-        :param str blob_storage_uri: URI of the blob storage resource in which the backup is stored
+        :param str blob_storage_url: URI of the blob storage resource in which the backup is stored
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :param str folder_name: name of the blob container which contains the backup
         :rtype: ~azure.core.polling.LROPoller[RestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_uri, token=sas_token)
+        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
         restore_details = self._models.RestoreOperationParameters(
             sas_token_parameters=sas_parameter, folder_to_restore=folder_name,
         )
@@ -69,18 +69,18 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def begin_selective_restore(self, blob_storage_uri, sas_token, folder_name, key_name, **kwargs):
+    def begin_selective_restore(self, blob_storage_url, sas_token, folder_name, key_name, **kwargs):
         # type: (str, str, str, str, **Any) -> LROPoller[SelectiveKeyRestoreOperation]
         """Restore a single key from a full Key Vault backup.
 
-        :param str blob_storage_uri: URI of the blob storage resource in which the backup is stored
+        :param str blob_storage_url: URI of the blob storage resource in which the backup is stored
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :param str folder_name: name of the blob container which contains the backup
         :param str key_name: name of the key to restore from the backup
         :rtype: ~azure.core.polling.LROPoller[RestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_uri, token=sas_token)
+        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
         restore_details = self._models.SelectiveKeyRestoreOperationParameters(
             sas_token_parameters=sas_parameter, folder=folder_name,
         )
