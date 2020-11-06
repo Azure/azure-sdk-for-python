@@ -41,8 +41,3 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self._on_error = kwargs.pop('on_error', None)
         self._on_remove = kwargs.pop('on_remove', None)
         self._retry_counter = {}
-
-    @property
-    def batch_action_count(self):
-        # type: () -> int
-        return self._batch_action_count
