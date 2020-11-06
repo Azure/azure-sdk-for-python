@@ -7,6 +7,7 @@ import time
 from unittest import mock
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio import ManagedIdentityCredential
 from azure.identity._constants import Endpoints, EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
@@ -515,3 +516,19 @@ async def test_azure_arc(tmpdir):
         token = await ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token.token == access_token
         assert token.expires_on == expires_on
+
+
+@pytest.mark.asyncio
+async def test_azure_arc_client_id():
+    """Azure Arc doesn't support user-assigned managed identity"""
+    with mock.patch(
+            "os.environ",
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: "http://localhost:42/token",
+                EnvironmentVariables.IMDS_ENDPOINT: "http://localhost:42",
+            }
+    ):
+        credential = ManagedIdentityCredential(client_id="some-guid")
+
+    with pytest.raises(ClientAuthenticationError):
+        await credential.get_token("scope")
