@@ -96,7 +96,7 @@ async def test_identity_config_app_service():
         {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret},
         clear=True,
     ):
-        credential = MsiCredential(identity_config={param_name: param_value}, transport=transport)
+        credential = MsiCredential(_identity_config={param_name: param_value}, transport=transport)
         token = await credential.get_token(scope)
 
     assert token == expected_token
@@ -135,7 +135,7 @@ async def test_identity_config_cloud_shell():
     with mock.patch.dict(
         MsiCredential.__module__ + ".os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True
     ):
-        credential = MsiCredential(identity_config={param_name: param_value}, transport=transport)
+        credential = MsiCredential(_identity_config={param_name: param_value}, transport=transport)
         token = await credential.get_token(scope)
 
     assert token == expected_token

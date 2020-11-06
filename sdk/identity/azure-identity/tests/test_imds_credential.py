@@ -169,7 +169,7 @@ def test_identity_config():
         ],
     )
 
-    credential = ImdsCredential(identity_config={param_name: param_value}, transport=transport)
+    credential = ImdsCredential(_identity_config={param_name: param_value}, transport=transport)
     token = credential.get_token(scope)
 
     assert token == expected_token

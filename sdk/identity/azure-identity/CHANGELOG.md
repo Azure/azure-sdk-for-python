@@ -4,6 +4,21 @@
 ### Breaking Changes
 - Renamed optional `CertificateCredential` keyword argument `send_certificate`
   to `send_certificate_chain`
+- Removed application authentication APIs added in prior betas. These will be
+  reintroduced in 1.6.0b1. Passing the keyword arguments below
+  generally won't cause a runtime error, but the arguments have no effect.
+  - Removed `authenticate` method from `DeviceCodeCredential`,
+    `InteractiveBrowserCredential`, and `UsernamePasswordCredential`
+  - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
+    arguments from `CertificateCredential`, `ClientSecretCredential`,
+    `DeviceCodeCredential`, `InteractiveBrowserCredential`, and
+    `UsernamePasswordCredential`
+  - Removed `disable_automatic_authentication` keyword argument from
+    `DeviceCodeCredential` and `InteractiveBrowserCredential`
+  - Removed `allow_unencrypted_cache` keyword argument from
+    `SharedTokenCacheCredential`
+  - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
+- Removed `identity_config` keyword argument from `ManagedIdentityCredential`
 
 ### Changed
 - `DeviceCodeCredential` parameter `client_id` is now optional. When not
@@ -47,7 +62,7 @@
   ([#11346](https://github.com/Azure/azure-sdk-for-python/issues/11346))
 - `DefaultAzureCredential` allows specifying the client ID of a user-assigned
   managed identity via keyword argument `managed_identity_client_id`
-  ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991)) 
+  ([#12991](https://github.com/Azure/azure-sdk-for-python/issues/12991))
 - `CertificateCredential` supports Subject Name/Issuer authentication when
   created with `send_certificate=True`. The async `CertificateCredential`
   (`azure.identity.aio.CertificateCredential`) will support this in a
@@ -63,7 +78,7 @@
   ([#12696](https://github.com/Azure/azure-sdk-for-python/issues/12696))
 - `InteractiveBrowserCredential` keyword argument `redirect_uri` enables
   authentication with a user-specified application having a custom redirect URI
-  ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))  
+  ([#13344](https://github.com/Azure/azure-sdk-for-python/issues/13344))
 
 ### Breaking changes
 - Removed `authentication_record` keyword argument from the async
