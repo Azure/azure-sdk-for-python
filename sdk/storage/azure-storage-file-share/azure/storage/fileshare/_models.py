@@ -6,6 +6,8 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+from enum import Enum
+
 from azure.core.paging import PageIterator
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -332,6 +334,11 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
+    :ivar str enabled_protocols:
+        Indicates the protocol enabled on the share. This can be either SMB or NFS
+    ivar root_squash:
+        Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+    :vartype root_squash: ~azure.storage.fileshare.models.ShareRootSquash
     """
 
     def __init__(self, **kwargs):
@@ -351,6 +358,8 @@ class ShareProperties(DictMixin):
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
         self.lease = LeaseProperties(**kwargs)
+        self.enabled_protocols = kwargs.get('x-ms-enabled-protocols', None)
+        self.root_squash = kwargs.get('x-ms-root-squash', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -371,6 +380,9 @@ class ShareProperties(DictMixin):
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        props.enabled_protocols = generated.properties.enabled_protocols
+        props.root_squash = generated.properties.root_squash
+
         return props
 
 
@@ -704,6 +716,12 @@ class FileProperties(DictMixin):
         props.metadata = generated.properties.metadata
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         return props
+
+
+class EnabledProtocols(str, Enum):
+    """Enabled protocols on the share"""
+    smb = "SMB"
+    nfs = "NFS"
 
 
 class CopyProperties(DictMixin):

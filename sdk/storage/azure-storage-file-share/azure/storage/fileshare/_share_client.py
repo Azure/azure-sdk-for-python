@@ -314,6 +314,11 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword enabled_protocols: Protocols to enable on the share.
+        :paramtype enabled_protocols: str or ~azure.storage.fileshare.EnabledProtocols
+        :keyword root_squash: Root squash to set on the share.  Only valid for
+         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -330,6 +335,10 @@ class ShareClient(StorageAccountHostsMixin):
         quota = kwargs.pop('quota', None)
         access_tier = kwargs.pop('access_tier', None)
         timeout = kwargs.pop('timeout', None)
+        root_squash = kwargs.pop('root_squash', None)
+        enabled_protocols = kwargs.pop('enabled_protocols', None)
+        if root_squash and enabled_protocols != "NFS":
+            raise ValueError("The 'root_squash' keyword can only be used on SMB shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
@@ -339,6 +348,8 @@ class ShareClient(StorageAccountHostsMixin):
                 metadata=metadata,
                 quota=quota,
                 access_tier=access_tier,
+                root_squash=root_squash,
+                enabled_protocols=enabled_protocols,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -509,6 +520,9 @@ class ShareClient(StorageAccountHostsMixin):
             Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword root_squash: Root squash to set on the share.  Only valid for
+         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -524,6 +538,7 @@ class ShareClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         access_tier = kwargs.pop('access_tier', None)
         quota = kwargs.pop('quota', None)
+        root_squash = kwargs.pop('root_squash', None)
         if all(parameter is None for parameter in [access_tier, quota]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
@@ -531,6 +546,7 @@ class ShareClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 quota=quota,
                 access_tier=access_tier,
+                root_squash=root_squash,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
