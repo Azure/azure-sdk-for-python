@@ -424,7 +424,6 @@ async def test_imds_user_assigned_identity():
 @pytest.mark.asyncio
 async def test_service_fabric():
     """Service Fabric 2019-07-01-preview"""
-
     access_token = "****"
     expires_on = 42
     endpoint = "http://localhost:42/token"
@@ -464,8 +463,8 @@ async def test_service_fabric():
 @pytest.mark.asyncio
 async def test_azure_arc(tmpdir):
     """Azure Arc 2019-11-01"""
-
     access_token = "****"
+    api_version = "2019-11-01"
     expires_on = 42
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
@@ -483,13 +482,13 @@ async def test_azure_arc(tmpdir):
                 base_url=identity_endpoint,
                 method="GET",
                 required_headers={"Metadata": "true"},
-                required_params={"api-version": "2019-11-01", "resource": scope},
+                required_params={"api-version": api_version, "resource": scope},
             ),
             Request(
                 base_url=identity_endpoint,
                 method="GET",
                 required_headers={"Metadata": "true", "Authorization": "Basic {}".format(secret_key)},
-                required_params={"api-version": "2019-11-01", "resource": scope},
+                required_params={"api-version": api_version, "resource": scope},
             ),
         ],
         responses=[
