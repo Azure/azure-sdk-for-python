@@ -43,7 +43,7 @@ class TableClient(TableClientBase):
     def __init__(
             self, account_url,  # type: str
             table_name,  # type: str
-            credential=None,  # type: Union[str,TokenCredential]
+            credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -57,9 +57,9 @@ class TableClient(TableClientBase):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
-        :type credential: Union[str,TokenCredential]
+            access key values. The value can be a SAS token string or an account shared access
+            key.
+        :type credential: str
 
         :returns: None
         """
@@ -147,7 +147,7 @@ class TableClient(TableClientBase):
 
         :return: Dictionary of SignedIdentifiers
         :rtype: dict[str,AccessPolicy]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -172,7 +172,7 @@ class TableClient(TableClientBase):
         :type signed_identifiers: dict[str,AccessPolicy]
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
@@ -200,7 +200,7 @@ class TableClient(TableClientBase):
 
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
 
         .. admonition:: Example:
 
@@ -230,6 +230,7 @@ class TableClient(TableClientBase):
 
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the table does not exist
 
         .. admonition:: Example:
 
@@ -263,7 +264,7 @@ class TableClient(TableClientBase):
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the entity does not exist
 
         .. admonition:: Example:
 
@@ -299,10 +300,10 @@ class TableClient(TableClientBase):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceFoundError:
 
         .. admonition:: Example:
 
@@ -328,7 +329,7 @@ class TableClient(TableClientBase):
             _process_table_error(error)
 
     @distributed_trace
-    def update_entity(  # pylint:disable=R1710
+    def update_entity(
             self,
             entity,  # type: Union[TableEntity, Dict[str,str]]
             mode=UpdateMode.MERGE,  # type: UpdateMode
@@ -338,7 +339,7 @@ class TableClient(TableClientBase):
         """Update entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str partition_key: The partition key of the entity.
@@ -347,7 +348,7 @@ class TableClient(TableClientBase):
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -401,10 +402,11 @@ class TableClient(TableClientBase):
         """Lists entities in a table.
 
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :return: Query of table entities
-        :rtype: ItemPaged[TableEntity]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -440,11 +442,12 @@ class TableClient(TableClientBase):
 
         :param str filter: Specify a filter to return certain entities
         :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str, list[str]] select: Specify desired properties of an entity to return certain entities
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
-        :rtype: ItemPaged[TableEntity]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -482,16 +485,25 @@ class TableClient(TableClientBase):
             row_key,  # type: str
             **kwargs  # type: Any
     ):
-        # type: (...) -> Dict[str,str]
-        """Queries entities in a table.
+        # type: (...) -> TableEntity
+        """Get a single entity in a table.
 
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
         :return: Dictionary mapping operation metadata returned from the service
-        :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.data.tables.TableEntity
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_update_upsert_merge_table.py
+                :start-after: [START get_entity]
+                :end-before: [END get_entity]
+                :language: python
+                :dedent: 8
+                :caption: Get a single entity from a table
         """
         try:
             entity = self._client.table.query_entities_with_partition_and_row_key(table=self.table_name,
@@ -515,12 +527,12 @@ class TableClient(TableClientBase):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -565,11 +577,11 @@ class TableClient(TableClientBase):
         self,
         **kwargs # type: Dict[str, Any]
     ):
-        # type: (...) -> TableBatchOperations
+        # type: (...) -> azure.data.tables.TableBatchOperations
         """Create a Batching object from a Table Client
 
         :return: Object containing requests and responses
-        :rtype: TableBatchOperations
+        :rtype: ~azure.data.tables.TableBatchOperations
 
         .. admonition:: Example:
 
@@ -579,9 +591,7 @@ class TableClient(TableClientBase):
                 :language: python
                 :dedent: 8
                 :caption: Using batches to send multiple requests at once
-        return: Table batch operation for inserting new operations
-        rtype: ~azure.data.tables.TableBatchOperations
-        :raises: None
+        :raises None:
         """
         return TableBatchOperations(
             self._client,
@@ -594,15 +604,15 @@ class TableClient(TableClientBase):
         )
 
     def send_batch(
-        self, batch, # type: TableBatchOperations
+        self, batch, # type: azure.data.tables.BatchTransactionResult
         **kwargs # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> BatchTransactionResult
         """Commit a TableBatchOperations to send requests to the server
 
         :return: Object containing requests and responses
         :rtype: ~azure.data.tables.BatchTransactionResult
-        :raises: ~azure.data.tables.BatchErrorException
+        :raises ~azure.data.tables.BatchErrorException:
 
         .. admonition:: Example:
 

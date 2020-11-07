@@ -39,7 +39,7 @@ def generate_account_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: Union[str, AccountSasPermissions]
+    :type permission: str or AccountSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -47,21 +47,23 @@ def generate_account_sas(
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: Union[datetime,str]
-    :keyword Union[datetime,str] start:
+    :type expiry: datetime or str
+    :keyword start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
+    :paramtype start: datetime or str
     :keyword str ip_address_or_range:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
         or address range specified on the SAS token, the request is not authenticated.
         For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
         restricts the request to those IP addresses.
-    :keyword Union[str, SASProtocol] protocol:
+    :keyword protocol:
         Specifies the protocol permitted for a request made.
+    :paramtype protocol: str or SASProtocol
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -84,51 +86,54 @@ def generate_table_sas(
 ):  # type: (...) -> str
 
     """
-       Generates a shared access signature for the table service.
-       Use the returned signature with the sas_token parameter of TableService.
+    Generates a shared access signature for the table service.
+    Use the returned signature with the sas_token parameter of TableService.
 
 
-       :param account_key: Account key
-       :type account_key: str
-       :param account_name: Account name
-       :type account_name: str
-       :param table_name: Table name
-       :type table_name: str
-       :keyword TableSasPermissions permission:
-           The permissions associated with the shared access signature. The
-           user is restricted to operations allowed by the permissions.
-           Required unless an id is given referencing a stored access policy
-           which contains this field. This field must be omitted if it has been
-           specified in an associated stored access policy.
-       :keyword Union[datetime,str] expiry:
-           The time at which the shared access signature becomes invalid.
-           Required unless an id is given referencing a stored access policy
-           which contains this field. This field must be omitted if it has
-           been specified in an associated stored access policy. Azure will always
-           convert values to UTC. If a date is passed in without timezone info, it
-           is assumed to be UTC.
-       :keyword Union[datetime,str] start:
-           The time at which the shared access signature becomes valid. If
-           omitted, start time for this call is assumed to be the time when the
-           storage service receives the request. Azure will always convert values
-           to UTC. If a date is passed in without timezone info, it is assumed to
-           be UTC.
-       :keyword str ip_address_or_range:
-           Specifies an IP address or a range of IP addresses from which to accept requests.
-           If the IP address from which the request originates does not match the IP address
-           or address range specified on the SAS token, the request is not authenticated.
-           For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
-           restricts the request to those IP addresses.
-       :keyword str policy_id: Access policy ID.
-       :keyword Union[str, SASProtocol] protocol:
-           Specifies the protocol permitted for a request made.
-       :keyword str end_rk: End row key
-       :keyword str end_pk: End partition key
-       :keyword str start_rk: Starting row key
-       :keyword str start_pk: Starting partition key
-       :return: A Shared Access Signature (sas) token.
-       :rtype: str
-       """
+    :param account_key: Account key
+    :type account_key: str
+    :param account_name: Account name
+    :type account_name: str
+    :param table_name: Table name
+    :type table_name: str
+    :keyword TableSasPermissions permission:
+        The permissions associated with the shared access signature. The
+        user is restricted to operations allowed by the permissions.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has been
+        specified in an associated stored access policy.
+    :keyword expiry:
+        The time at which the shared access signature becomes invalid.
+        Required unless an id is given referencing a stored access policy
+        which contains this field. This field must be omitted if it has
+        been specified in an associated stored access policy. Azure will always
+        convert values to UTC. If a date is passed in without timezone info, it
+        is assumed to be UTC.
+    :paramtype expiry: datetime or str
+    :keyword start:
+        The time at which the shared access signature becomes valid. If
+        omitted, start time for this call is assumed to be the time when the
+        storage service receives the request. Azure will always convert values
+        to UTC. If a date is passed in without timezone info, it is assumed to
+        be UTC.
+    :paramtype start: datetime or str
+    :keyword str ip_address_or_range:
+        Specifies an IP address or a range of IP addresses from which to accept requests.
+        If the IP address from which the request originates does not match the IP address
+        or address range specified on the SAS token, the request is not authenticated.
+        For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
+        restricts the request to those IP addresses.
+    :keyword str policy_id: Access policy ID.
+    :keyword protocol:
+        Specifies the protocol permitted for a request made.
+    :paramtype protocol: str or SASProtocol
+    :keyword str end_rk: End row key
+    :keyword str end_pk: End partition key
+    :keyword str start_rk: Starting row key
+    :keyword str start_pk: Starting partition key
+    :return: A Shared Access Signature (sas) token.
+    :rtype: str
+    """
 
     sas = TableSharedAccessSignature(account_name, account_key)
     return sas.generate_table(
