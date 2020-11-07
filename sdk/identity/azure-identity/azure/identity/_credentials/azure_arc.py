@@ -89,10 +89,9 @@ def _get_request(url, scope, identity_config):
     # type: (str, str, dict) -> HttpRequest
     if identity_config:
         raise ClientAuthenticationError(
-            message="User assigned managed identities are not supported by Azure Arc. To authenticate with the " \
-                    "system assigned identity omit the client id when constructing the credential, and if " \
-                    "authenticating with DefaultAzureCredential ensure the AZURE_CLIENT_ID environment variable " \
-                    "is not set."
+            message="User assigned managed identities are not supported by Azure Arc. To authenticate with the system "
+            "assigned identity omit the client id when constructing the credential, and if authenticating with "
+            "DefaultAzureCredential ensure the AZURE_CLIENT_ID environment variable is not set."
         )
 
     request = HttpRequest("GET", url)
