@@ -304,6 +304,34 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_query_invalid_filter(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            base_entity = {
+                u"PartitionKey": u"pk",
+                u"RowKey": u"rk",
+                u"value": 1
+            }
+
+            for i in range(5):
+                base_entity[u"RowKey"] += str(i)
+                base_entity[u"value"] += i
+                self.table.create_entity(base_entity)
+            # Act
+            with pytest.raises(HttpResponseError):
+                resp = self.table.query_entities(filter="aaa bbb ccc")
+                for row in resp:
+                    _ = row
+
+            for row in resp:
+                print(row)
+
+        finally:
+            self._tear_down()
+
     # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
