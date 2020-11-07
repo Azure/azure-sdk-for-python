@@ -470,7 +470,6 @@ class TableClient(TableClientBase):
 
         command = functools.partial(
             self._client.table.query_entities,
-            # query_options=query_options,
             **kwargs)
         return ItemPaged(
             command, table=self.table_name,

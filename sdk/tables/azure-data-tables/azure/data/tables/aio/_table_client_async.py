@@ -475,10 +475,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
 
         command = functools.partial(
             self._client.table.query_entities,
-            query_options=query_options,
             **kwargs)
         return AsyncItemPaged(
             command, table=self.table_name,
+            results_per_page=query_options,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
