@@ -246,7 +246,7 @@ def serialize_iso(attr):
 
     :param Datetime attr: Object to be serialized.
     :rtype: str
-    :raises: ValueError if format invalid.
+    :raises ValueError: If format is invalid.
     """
     if not attr:
         return None

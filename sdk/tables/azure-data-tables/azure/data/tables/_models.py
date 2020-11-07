@@ -21,8 +21,9 @@ from ._error import _process_table_error
 
 class TableServiceStats(GenTableServiceStats):
     """Stats for the service
+
     :param geo_replication: Geo-Replication information for the Secondary Storage Service.
-    :type geo_replication: ~azure_table.models.GeoReplication
+    :type geo_replication: ~azure.data.tables.models.GeoReplication
     """
 
     def __init__(self, geo_replication=None, **kwargs):  # pylint:disable=W0231
