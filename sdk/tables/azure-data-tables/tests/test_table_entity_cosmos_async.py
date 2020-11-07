@@ -1465,6 +1465,31 @@ class StorageTableEntityTest(TableTestCase):
             if self.is_live:
                 sleep(SLEEP_DELAY)
 
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    async def test_query_invalid_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        await self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            base_entity = {
+                u"PartitionKey": u"pk",
+                u"RowKey": u"rk",
+                u"value": 1
+            }
+
+            for i in range(5):
+                base_entity[u"RowKey"] += str(i)
+                base_entity[u"value"] += i
+                await self.table.create_entity(base_entity)
+            # Act
+            with pytest.raises(HttpResponseError):
+                async for t in self.table.query_entities(filter="aaa bbb ccc"):
+                    _ = t
+        finally:
+            await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
+
     @pytest.mark.skip("returns ' sex' instead of deserializing into just 'sex'")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
