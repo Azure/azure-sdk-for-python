@@ -21,7 +21,6 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
             BodyReplacerProcessor(keys=["id", "token"]),
             URIIdentityReplacer()])
 
-    @pytest.mark.live_test_only
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @CommunicationServicePreparer(use_cache=True)
     def test_create_user(self, connection_string):
@@ -31,7 +30,6 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
 
         assert user.identifier is not None
 
-    @pytest.mark.live_test_only
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @CommunicationServicePreparer(use_cache=True)
     def test_issue_token(self, connection_string):
@@ -44,7 +42,6 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
     
-    @pytest.mark.live_test_only
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @CommunicationServicePreparer(use_cache=True)
     def test_revoke_tokens(self, connection_string):
@@ -58,7 +55,6 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         assert user.identifier is not None
         assert token_response.token is not None
     
-    @pytest.mark.live_test_only
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
     @CommunicationServicePreparer(use_cache=True)
     def test_delete_user(self, connection_string):
@@ -69,3 +65,8 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client.delete_user(user)
 
         assert user.identifier is not None
+
+
+if __name__ == "__main__":
+    import unittest
+    unittest.main()
