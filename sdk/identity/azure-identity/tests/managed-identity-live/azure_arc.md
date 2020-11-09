@@ -11,22 +11,23 @@
 
 > **Note:** You must be in your VM to install Azure Arc.
 
-1. Create an Azure Arc server resource on the [Azure Portal](https://portal.azure.com).
+1. Create an Azure Arc server resource on the [Azure Portal](https://portal.azure.com) (at the time of writing, the
+resource is named "Servers - Azure Arc").
 2. Choose to add an existing server using an interactive script.
 3. When creating the resource, fill in your desired subscription, resource group, and region for the VM. Choose the 
 operating system of your existing VM.
 4. No other configuration is necessary. You can go to the "Download and run script" tab and download the script shown.
 5. Once the script has been downloaded, run the script on your machine with administrator privileges.
-6. Installation should be complete. Restart your VM to complete your environment setup.
-7. After restarting, check your environment by searching for environment variables named `IDENTITY_ENDPOINT` and 
-`IMDS_ENDPOINT`. If they are not present, or don't resemble `http://localhost:40342/metadata/identity/oauth2/token` or 
-`http://localhost:40342` respectively, you may need to wait a short while or try restarting the VM again.
-8. If using a Linux VM, run the following commands (using your user name for `<user>`) to gain necessary privileges:
+6. If using a Linux VM, run the following commands (using your user name for `<user>`) to gain necessary privileges:
 ```
 sudo usermod -a -G himds <user>
 sudo setfacl -m "g:himds:r-x" /var/opt/azcmagent/tokens/
 sudo setfacl -m "g::r-x" /var/opt/azcmagent/tokens/
 ```
+7. Arc setup should now be complete. Restart your VM to finalize your environment setup.
+8. After restarting, check your environment by searching for environment variables named `IDENTITY_ENDPOINT` and 
+`IMDS_ENDPOINT`. If they are not present, or don't resemble `http://localhost:40342/metadata/identity/oauth2/token` and 
+`http://localhost:40342` respectively, you may need to wait a short while or try restarting the VM again.
 
 ## Run the azure-identity Tests on the Azure Arc VM
 
