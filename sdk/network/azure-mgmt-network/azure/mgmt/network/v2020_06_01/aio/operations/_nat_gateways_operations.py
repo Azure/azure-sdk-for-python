@@ -214,8 +214,8 @@ class NatGatewaysOperations:
         nat_gateway_name: str,
         parameters: "models.NatGateway",
         **kwargs
-    ) -> "models.NatGateway":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NatGateway"]
+    ) -> Optional["models.NatGateway"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.NatGateway"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -253,13 +253,11 @@ class NatGatewaysOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('NatGateway', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('NatGateway', pipeline_response)
-
-        if response.status_code == 202:
             deserialized = self._deserialize('NatGateway', pipeline_response)
 
         if cls:
