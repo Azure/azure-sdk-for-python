@@ -25,7 +25,7 @@ from ._generated.models import (
 from ._models import (
     ChatThreadMember,
     ChatMessage,
-    ReadReceipt
+    ChatMessageReadReceipt
 )
 
 from ._utils import _to_utc_datetime # pylint: disable=unused-import
@@ -184,11 +184,11 @@ class ChatThreadClient(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[ReadReceipt]
+        # type: (...) -> ItemPaged[ChatMessageReadReceipt]
         """Gets read receipts for a thread.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged[:class:`~azure.communication.chat.ReadReceipt`]
+        :return: ItemPaged[:class:`~azure.communication.chat.ChatMessageReadReceipt`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -203,7 +203,7 @@ class ChatThreadClient(object):
         """
         return self._client.list_chat_read_receipts(
             self._thread_id,
-            cls=lambda objs: [ReadReceipt._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            cls=lambda objs: [ChatMessageReadReceipt._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
     @distributed_trace

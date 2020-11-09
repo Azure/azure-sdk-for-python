@@ -349,7 +349,7 @@ chat_thread_client.send_read_receipt(message_id)
 
 `list_read_receipts` method retrieves read receipts for a thread.
 
-An iterator of `[ReadReceipt]` is the response returned from listing read receipts
+An iterator of `[ChatMessageReadReceipt]` is the response returned from listing read receipts
 
 ```python
 read_receipts = chat_thread_client.list_read_receipts()
