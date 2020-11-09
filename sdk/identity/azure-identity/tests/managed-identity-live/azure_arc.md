@@ -5,7 +5,7 @@
 1. A non-Azure Windows or Linux VM.
 2. Administrator privileges on the VM.
 3. An Azure Key Vault.
-4. Python 3.5+
+4. Python 2.7 and 3.5+
 
 ### Install Azure Arc on the VM
 
@@ -43,9 +43,8 @@ Install `requirements.txt`:
 ```
 pip install -r requirements.txt
 ```
-Run the managed identity tests:
+Run the managed identity tests, using the below command once with Python 2.7 and once with Python 3.5+:
 ```
-pytest test_managed_identity_live.py
-pytest test_managed_identity_live_async.py
+pytest -k managed_identity_live
 ```
-Expected output for each: `1 passed in <x>s`.
+Expected output for each: `passed` for all tests run.
