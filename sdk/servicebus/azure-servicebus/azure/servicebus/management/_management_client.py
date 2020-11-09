@@ -810,7 +810,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :type action: Optional[~azure.servicebus.management.SqlRuleAction]
-
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
@@ -851,8 +850,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that
          owns this rule.
-        :param ~azure.servicebus.management.RuleProperties rule: The rule that is returned from `get_rule`,
-        `create_rule`, or `list_rules` and has the updated properties.
+        :param rule: The rule that is returned from `get_rule`,
+         `create_rule`, or `list_rules` and has the updated properties.
+        :type rule: ~azure.servicebus.management.RuleProperties
+
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)

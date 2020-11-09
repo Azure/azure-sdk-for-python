@@ -58,6 +58,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     The two primary channels for message receipt are `receive()` to make a single request for messages,
     and `async for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
 
+    **Please use the `get_<queue/subscription>_receiver` method of ~azure.servicebus.aio.ServiceBusClient to create a
+    ServiceBusReceiver instance.**
+
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :vartype fully_qualified_namespace: str
@@ -92,9 +95,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-    :keyword Optional[AutoLockRenewer] auto_lock_renewer: An AutoLockRenewer can be provided such that messages are
-     automatically registered on receipt.  If the receiver is a session receiver, it will apply to the session
-     instead.
+    :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An ~azure.servicebus.aio.AutoLockRenewer
+     can be provided such that messages are automatically registered on receipt. If the receiver is a session receiver,
+     it will apply to the session instead.
     :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
      performance but increase the chance that messages will expire while they are cached if they're not
@@ -102,16 +105,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      The default value is 0, meaning messages will be received from the service and processed one at a time.
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-            :start-after: [START create_servicebus_receiver_async]
-            :end-before: [END create_servicebus_receiver_async]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the ServiceBusReceiver.
-
     """
     def __init__(
         self,
@@ -191,6 +184,70 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if self._auto_lock_renewer and not self._session:
             self._auto_lock_renewer.register(self, message)
         return message
+
+    @classmethod
+    def _from_connection_string(
+        cls,
+        conn_str: str,
+        **kwargs: Any
+    ) -> "ServiceBusReceiver":
+        """Create a ServiceBusReceiver from a connection string.
+
+        :param str conn_str: The connection string of a Service Bus.
+        :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
+         the client connects to.
+        :keyword str subscription_name: The path of specific Service Bus Subscription under the
+         specified Topic the client connects to.
+        :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
+         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
+         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
+         if the client fails to process the message.
+         The default mode is PeekLock.
+        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
+        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
+         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Service Bus service. Default is `TransportType.Amqp`.
+        :paramtype transport_type: ~azure.servicebus.TransportType
+        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
+         performance but increase the chance that messages will expire while they are cached if they're not
+         processed fast enough.
+         The default value is 0, meaning messages will be received from the service and processed one at a time.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
+         (if provided) within its request to the service.
+        :rtype: ~azure.servicebus.aio.ServiceBusReceiver
+
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START create_servicebus_receiver_from_conn_str_async]
+                :end-before: [END create_servicebus_receiver_from_conn_str_async]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusReceiver from connection string.
+
+        """
+        constructor_args = cls._convert_connection_string_to_kwargs(
+            conn_str,
+            **kwargs
+        )
+        if kwargs.get("queue_name") and kwargs.get("subscription_name"):
+            raise ValueError("Queue entity does not have subscription.")
+
+        if kwargs.get("topic_name") and not kwargs.get("subscription_name"):
+            raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
+        return cls(**constructor_args)
 
     def _create_handler(self, auth):
         self._handler = ReceiveClientAsync(
@@ -404,7 +461,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus.py
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
                 :start-after: [START receive_forever_async]
                 :end-before: [END receive_forever_async]
                 :language: python
@@ -414,70 +471,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
         return self._IterContextualWrapper(self, max_wait_time)
-
-    @classmethod
-    def _from_connection_string(
-        cls,
-        conn_str: str,
-        **kwargs: Any
-    ) -> "ServiceBusReceiver":
-        """Create a ServiceBusReceiver from a connection string.
-
-        :param str conn_str: The connection string of a Service Bus.
-        :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
-        :keyword str topic_name: The path of specific Service Bus Topic which contains the Subscription
-         the client connects to.
-        :keyword str subscription_name: The path of specific Service Bus Subscription under the
-         specified Topic the client connects to.
-        :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
-         will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
-         if the client fails to process the message.
-         The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
-        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword transport_type: The type of transport protocol that will be used for communicating with
-         the Service Bus service. Default is `TransportType.Amqp`.
-        :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
-         Additionally the following keys may also be present: `'username', 'password'`.
-        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
-         This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
-         processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
-        :rtype: ~azure.servicebus.aio.ServiceBusReceiver
-
-        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
-                :start-after: [START create_servicebus_receiver_from_conn_str_async]
-                :end-before: [END create_servicebus_receiver_from_conn_str_async]
-                :language: python
-                :dedent: 4
-                :caption: Create a new instance of the ServiceBusReceiver from connection string.
-
-        """
-        constructor_args = cls._convert_connection_string_to_kwargs(
-            conn_str,
-            **kwargs
-        )
-        if kwargs.get("queue_name") and kwargs.get("subscription_name"):
-            raise ValueError("Queue entity does not have subscription.")
-
-        if kwargs.get("topic_name") and not kwargs.get("subscription_name"):
-            raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
-        return cls(**constructor_args)
 
     async def receive_messages(
         self,
@@ -655,6 +648,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.SessionLockExpired if session lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START complete_message_async]
+                :end-before: [END complete_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Complete a received message.
+
         """
         await self._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
@@ -669,6 +672,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START abandon_message_async]
+                :end-before: [END abandon_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Abandon a received message.
+
         """
         await self._settle_message_with_retry(message, MESSAGE_ABANDON)
 
@@ -684,6 +697,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START defer_message_async]
+                :end-before: [END defer_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Defer a received message.
+
         """
         await self._settle_message_with_retry(message, MESSAGE_DEFER)
 
@@ -702,6 +725,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START dead_letter_message_async]
+                :end-before: [END dead_letter_message_async]
+                :language: python
+                :dedent: 4
+                :caption: Dead letter a received message.
+
         """
         await self._settle_message_with_retry(
             message,
@@ -733,6 +766,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :raises: TypeError if the message is sessionful.
         :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_code_servicebus_async.py
+                :start-after: [START renew_message_lock_async]
+                :end-before: [END renew_message_lock_async]
+                :language: python
+                :dedent: 4
+                :caption: Renew the lock on a received message.
+
         """
         try:
             if self.session:

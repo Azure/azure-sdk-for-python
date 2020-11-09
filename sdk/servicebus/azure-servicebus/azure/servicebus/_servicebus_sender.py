@@ -84,6 +84,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     """The ServiceBusSender class defines a high level interface for
     sending messages to the Azure Service Bus Queue or Topic.
 
+    **Please use the `get_<queue/topic>_sender` method of ~azure.servicebus.ServiceBusClient to create a
+    ServiceBusSender instance.**
+
     :ivar fully_qualified_namespace: The fully qualified host name for the Service Bus namespace.
      The namespace format is: `<yournamespace>.servicebus.windows.net`.
     :vartype fully_qualified_namespace: str
@@ -106,16 +109,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-            :start-after: [START create_servicebus_sender_sync]
-            :end-before: [END create_servicebus_sender_sync]
-            :language: python
-            :dedent: 4
-            :caption: Create a new instance of the ServiceBusSender.
-
     """
     def __init__(
         self,
@@ -148,6 +141,51 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._max_message_size_on_link = 0
         self._create_attribute()
         self._connection = kwargs.get("connection")
+
+    @classmethod
+    def _from_connection_string(
+        cls,
+        conn_str,
+        **kwargs
+    ):
+        # type: (str, Any) -> ServiceBusSender
+        """Create a ServiceBusSender from a connection string.
+
+        :param conn_str: The connection string of a Service Bus.
+        :type conn_str: str
+        :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
+         Only one of queue_name or topic_name can be provided.
+        :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
+         Only one of queue_name or topic_name can be provided.
+        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
+        :keyword transport_type: The type of transport protocol that will be used for communicating with
+         the Service Bus service. Default is `TransportType.Amqp`.
+        :paramtype transport_type: ~azure.servicebus.TransportType
+        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
+         Additionally the following keys may also be present: `'username', 'password'`.
+        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+
+        :rtype: ~azure.servicebus.ServiceBusSender
+
+        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
+                :start-after: [START create_servicebus_sender_from_conn_str_sync]
+                :end-before: [END create_servicebus_sender_from_conn_str_sync]
+                :language: python
+                :dedent: 4
+                :caption: Create a new instance of the ServiceBusSender from connection string.
+
+        """
+        constructor_args = cls._convert_connection_string_to_kwargs(
+            conn_str,
+            **kwargs
+        )
+        return cls(**constructor_args)
 
     def _create_handler(self, auth):
         # type: (AMQPAuth) -> None
@@ -196,6 +234,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # type: (Union[ServiceBusMessage, List[ServiceBusMessage]], datetime.datetime, Any) -> List[int]
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
+
         :param messages: The message or list of messages to schedule.
         :type messages: Union[~azure.servicebus.ServiceBusMessage, List[~azure.servicebus.ServiceBusMessage]]
         :param schedule_time_utc: The utc date and time to enqueue the messages.
@@ -266,51 +305,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             mgmt_handlers.default,
             timeout=timeout
         )
-
-    @classmethod
-    def _from_connection_string(
-        cls,
-        conn_str,
-        **kwargs
-    ):
-        # type: (str, Any) -> ServiceBusSender
-        """Create a ServiceBusSender from a connection string.
-
-        :param conn_str: The connection string of a Service Bus.
-        :type conn_str: str
-        :keyword str queue_name: The path of specific Service Bus Queue the client connects to.
-         Only one of queue_name or topic_name can be provided.
-        :keyword str topic_name: The path of specific Service Bus Topic the client connects to.
-         Only one of queue_name or topic_name can be provided.
-        :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword transport_type: The type of transport protocol that will be used for communicating with
-         the Service Bus service. Default is `TransportType.Amqp`.
-        :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
-         keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
-         Additionally the following keys may also be present: `'username', 'password'`.
-        :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-
-        :rtype: ~azure.servicebus.ServiceBusSender
-
-        :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START create_servicebus_sender_from_conn_str_sync]
-                :end-before: [END create_servicebus_sender_from_conn_str_sync]
-                :language: python
-                :dedent: 4
-                :caption: Create a new instance of the ServiceBusSender from connection string.
-
-        """
-        constructor_args = cls._convert_connection_string_to_kwargs(
-            conn_str,
-            **kwargs
-        )
-        return cls(**constructor_args)
 
     def send_messages(self, message, **kwargs):
         # type: (Union[ServiceBusMessage, ServiceBusMessageBatch, List[ServiceBusMessage]], Any) -> None

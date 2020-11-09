@@ -271,7 +271,6 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
 
         validate_extraction_missing_args(extraction_missing_args)
 
-
     @classmethod
     def _from_internal_entity(cls, name, internal_qd):
         # type: (str, InternalQueueDescription) -> QueueProperties
@@ -334,7 +333,7 @@ class QueueRuntimeProperties(object):
     def __init__(
         self,
     ):
-    # type: () -> None
+        # type: () -> None
         self._name = None # type: Optional[str]
         self._internal_qr = None  # type: Optional[InternalQueueDescription]
 
