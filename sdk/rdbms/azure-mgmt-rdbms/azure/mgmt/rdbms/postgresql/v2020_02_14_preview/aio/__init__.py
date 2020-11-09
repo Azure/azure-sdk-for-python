@@ -8,9 +8,3 @@
 
 from ._postgre_sql_management_client import PostgreSQLManagementClient
 __all__ = ['PostgreSQLManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
