@@ -73,6 +73,12 @@ class State(str, Enum):
     closed = "closed"  #: The issue was closed.
 
 
+class DataMaskingMode(str, Enum):
+
+    mask = "Mask"  #: Mask the value of an entity.
+    hide = "Hide"  #: Hide the presence of an entity.
+
+
 class SamplingType(str, Enum):
 
     fixed = "fixed"  #: Fixed-rate sampling.
@@ -95,6 +101,12 @@ class Verbosity(str, Enum):
     verbose = "verbose"  #: All the traces emitted by trace policies will be sent to the logger attached to this diagnostic instance.
     information = "information"  #: Traces with 'severity' set to 'information' and 'error' will be sent to the logger attached to this diagnostic instance.
     error = "error"  #: Only traces with 'severity' set to 'error' will be sent to the logger attached to this diagnostic instance.
+
+
+class OperationNameFormat(str, Enum):
+
+    name = "Name"  #: API_NAME;rev=API_REVISION - OPERATION_NAME
+    url = "Url"  #: HTTP_VERB URL
 
 
 class PolicyContentFormat(str, Enum):
@@ -157,6 +169,7 @@ class SkuType(str, Enum):
     premium = "Premium"  #: Premium SKU of Api Management.
     basic = "Basic"  #: Basic SKU of Api Management.
     consumption = "Consumption"  #: Consumption SKU of Api Management.
+    isolated = "Isolated"  #: Isolated SKU of Api Management.
 
 
 class ResourceSkuCapacityScaleType(str, Enum):
@@ -210,6 +223,7 @@ class KeyType(str, Enum):
 
 class AppType(str, Enum):
 
+    portal = "portal"  #: User create request was sent by legacy developer portal.
     developer_portal = "developerPortal"  #: User create request was sent by new developer portal.
 
 
@@ -248,6 +262,7 @@ class LoggerType(str, Enum):
 
     azure_event_hub = "azureEventHub"  #: Azure Event Hub as log destination.
     application_insights = "applicationInsights"  #: Azure Application Insights as log destination.
+    azure_monitor = "azureMonitor"  #: Azure Monitor
 
 
 class ConnectivityStatusType(str, Enum):

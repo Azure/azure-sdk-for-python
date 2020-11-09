@@ -24,7 +24,7 @@ class TagResourceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class TagResourceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-06-01-preview"
 
         self.config = config
 
@@ -46,27 +46,26 @@ class TagResourceOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: |   Field     |     Usage     |     Supported operators
-         |     Supported functions
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
          |</br>|-------------|-------------|-------------|-------------|</br>|
          aid | filter | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith | </br>| name | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| displayName |
+         startswith, endswith |</br>| name | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith |</br>| displayName |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| apiName | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| apiRevision |
+         endswith |</br>| apiName | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith |</br>| apiRevision |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| path | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| description |
+         endswith |</br>| path | filter | ge, le, eq, ne, gt, lt | substringof,
+         contains, startswith, endswith |</br>| description | filter | ge, le,
+         eq, ne, gt, lt | substringof, contains, startswith, endswith |</br>|
+         serviceUrl | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith |</br>| method | filter | ge, le, eq, ne, gt, lt
+         | substringof, contains, startswith, endswith |</br>| urlTemplate |
          filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith | </br>| serviceUrl | filter | ge, le, eq, ne, gt, lt |
-         substringof, contains, startswith, endswith | </br>| method | filter |
-         ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith |
-         </br>| urlTemplate | filter | ge, le, eq, ne, gt, lt | substringof,
-         contains, startswith, endswith | </br>| terms | filter | ge, le, eq,
-         ne, gt, lt | substringof, contains, startswith, endswith | </br>|
-         state | filter | eq |     | </br>| isCurrent | filter | eq |     |
-         </br>
+         endswith |</br>| terms | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith |</br>| state | filter |
+         eq |     |</br>| isCurrent | filter | eq |     |</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
