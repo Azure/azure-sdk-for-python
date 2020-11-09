@@ -11,30 +11,28 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 22:49:51 GMT
+      - Mon, 09 Nov 2020 20:26:28 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://sanitized.dev.communication.azure.net/identities?api-version=2020-07-20-preview2
   response:
     body: '{"id": "sanitized"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-generalAvailability, 2020-07-20-preview1, 2020-07-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Oct 2020 22:49:51 GMT
+      - Mon, 09 Nov 2020 20:26:28 GMT
       ms-cv:
-      - wtj0L1qLI0ubRsESoECgig.0
-      strict-transport-security:
-      - max-age=2592000
+      - Ws6Etj0DKUuCxLc3H+CAvA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 215ms
+      - 142ms
     status:
       code: 200
       message: OK
@@ -52,30 +50,28 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 01 Oct 2020 22:49:51 GMT
+      - Mon, 09 Nov 2020 20:26:28 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    uri: https://sanitized.dev.communication.azure.net/identities/sanitized/token?api-version=2020-07-20-preview2
   response:
-    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-10-02T22:49:51.1252198+00:00"}'
+    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-11-10T20:26:27.8159505+00:00"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-generalAvailability, 2020-07-20-preview1, 2020-07-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Oct 2020 22:49:51 GMT
+      - Mon, 09 Nov 2020 20:26:28 GMT
       ms-cv:
-      - 7s7gNyDwFUymnDHa5n8lIQ.0
-      strict-transport-security:
-      - max-age=2592000
+      - /VrMKMF+VEu/oodA9+rsqw.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 280ms
+      - 301ms
     status:
       code: 200
       message: OK
@@ -91,30 +87,28 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 22:49:52 GMT
+      - Mon, 09 Nov 2020 20:26:28 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://sanitized.dev.communication.azure.net/identities?api-version=2020-07-20-preview2
   response:
     body: '{"id": "sanitized"}'
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-generalAvailability, 2020-07-20-preview1, 2020-07-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Oct 2020 22:49:52 GMT
+      - Mon, 09 Nov 2020 20:26:28 GMT
       ms-cv:
-      - 3VdTCgYO+EOt9u7hM+BV8w.0
-      strict-transport-security:
-      - max-age=2592000
+      - h9aL7eBqjUaraFEtMrP/Jg.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 205ms
+      - 143ms
     status:
       code: 200
       message: OK
@@ -132,26 +126,26 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-chat/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-chat/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://sanitized.communication.azure.com/chat/threads?api-version=2020-09-21-preview2
+    uri: https://sanitized.dev.communication.azure.net/chat/threads?api-version=2020-09-21-preview2
   response:
     body: '{"multipleStatus": "sanitized"}'
     headers:
       api-supported-versions:
-      - 2020-09-21-preview2
+      - 2020-09-21-preview2, 2020-11-01-preview3
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Oct 2020 22:49:53 GMT
+      - Mon, 09 Nov 2020 20:26:29 GMT
       ms-cv:
-      - wypv63BPe0WfTda+GCYV6g.0
+      - nZhY6+W/9kqn378h2qF4dA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 395ms
+      - 623ms
     status:
       code: 207
       message: Multi-Status
@@ -169,9 +163,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-chat/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-chat/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://sanitized.communication.azure.com/chat/threads/sanitized/members?api-version=2020-09-21-preview2
+    uri: https://sanitized.dev.communication.azure.net/chat/threads/sanitized/members?api-version=2020-09-21-preview2
   response:
     body: '{"multipleStatus": "sanitized"}'
     headers:
@@ -180,15 +174,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 01 Oct 2020 22:49:52 GMT
+      - Mon, 09 Nov 2020 20:26:30 GMT
       ms-cv:
-      - iNdAaBP3HkS+dacBB0ODfw.0
+      - mvYqDEPBZE2+NYLftwIWjw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 137ms
+      - 454ms
     status:
       code: 207
       message: Multi-Status
@@ -204,9 +198,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-chat/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-chat/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://sanitized.communication.azure.com/chat/threads/sanitized/members/8%3Aacs%3A21751f5b-bf9e-438b-8c89-2c9e22c44fef_00000005-863d-2c05-e7a1-1c482200042b?api-version=2020-09-21-preview2
+    uri: https://sanitized.dev.communication.azure.net/chat/threads/sanitized/members/8%3Aacs%3A9b665d53-8164-4923-ad5d-5e983b07d2e7_00000006-4e91-e909-ea7c-5a3a0d000041?api-version=2020-09-21-preview2
   response:
     body:
       string: ''
@@ -214,13 +208,13 @@ interactions:
       api-supported-versions:
       - 2020-09-21-preview2
       date:
-      - Thu, 01 Oct 2020 22:49:53 GMT
+      - Mon, 09 Nov 2020 20:26:30 GMT
       ms-cv:
-      - GQNkp6M0eUed6/GheNUP6A.0
+      - z8lIC09070a65xLTUJJloQ.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 122ms
+      - 477ms
     status:
       code: 204
       message: No Content
@@ -236,27 +230,25 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 22:49:54 GMT
+      - Mon, 09 Nov 2020 20:26:31 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    uri: https://sanitized.dev.communication.azure.net/identities/sanitized?api-version=2020-07-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-generalAvailability, 2020-07-20-preview1, 2020-07-20-preview2
       date:
-      - Thu, 01 Oct 2020 22:49:55 GMT
+      - Mon, 09 Nov 2020 20:26:46 GMT
       ms-cv:
-      - NSBqXuo+2kWV6eM8FcYB/A.0
-      strict-transport-security:
-      - max-age=2592000
+      - Lm0x9YljFEqfn0kdOguVuw.0
       x-processing-time:
-      - 1115ms
+      - 16016ms
     status:
       code: 204
       message: No Content
@@ -272,27 +264,25 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 22:49:55 GMT
+      - Mon, 09 Nov 2020 20:26:47 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    uri: https://sanitized.dev.communication.azure.net/identities/sanitized?api-version=2020-07-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-07-20-preview1, 2020-07-20-preview2
+      - 2020-01-15-generalAvailability, 2020-07-20-preview1, 2020-07-20-preview2
       date:
-      - Thu, 01 Oct 2020 22:49:56 GMT
+      - Mon, 09 Nov 2020 20:27:02 GMT
       ms-cv:
-      - A776UjunjkuOw7VXtWrYOQ.0
-      strict-transport-security:
-      - max-age=2592000
+      - g/BVL0a3U023Xh087jveTg.0
       x-processing-time:
-      - 972ms
+      - 16470ms
     status:
       code: 204
       message: No Content
@@ -308,23 +298,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-chat/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-chat/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://sanitized.communication.azure.com/chat/threads/sanitized?api-version=2020-09-21-preview2
+    uri: https://sanitized.dev.communication.azure.net/chat/threads/sanitized?api-version=2020-09-21-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
-      - 2020-09-21-preview2
+      - 2020-09-21-preview2, 2020-11-01-preview3
       date:
-      - Thu, 01 Oct 2020 22:49:56 GMT
+      - Mon, 09 Nov 2020 20:27:03 GMT
       ms-cv:
-      - n4tV8nn3REWQlJR8qCkdAg.0
+      - TBNSV9maUkC2ztxAN7ug8Q.0
       strict-transport-security:
       - max-age=2592000
       x-processing-time:
-      - 59ms
+      - 318ms
     status:
       code: 204
       message: No Content
