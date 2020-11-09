@@ -234,7 +234,7 @@ class TestReceiptFromUrl(FormRecognizerTest):
         self.assertEqual(receipt.fields.get("MerchantName").value, 'Bilbo Baggins')
         self.assertEqual(receipt.fields.get("MerchantPhoneNumber").value, '+15555555555')
         self.assertEqual(receipt.fields.get("Subtotal").value, 300.0)
-        self.assertEqual(receipt.fields.get("Total").value, 100.0)
+        self.assertEqual(receipt.fields.get("Total").value, 430.0)
         self.assertEqual(receipt.page_range.first_page_number, 1)
         self.assertEqual(receipt.page_range.last_page_number, 1)
         self.assertFormPagesHasValues(receipt.pages)
