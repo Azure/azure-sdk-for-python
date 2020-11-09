@@ -260,14 +260,12 @@ class MgmtPostgreSQLTest(AzureMgmtTestCase):
         result = result.result()
 
         # ServerUpdate[patch]
-        from azure.mgmt.rdbms.postgresql.v2020_01_01.models import ServerPropertiesForCreate
         from azure.mgmt.rdbms.postgresql.v2020_01_01.models import ServerPropertiesForDefaultCreate
-        serverPropertiesForDefaultCreate = ServerPropertiesForDefaultCreate(administrator_login='cloudsa',
+        serverPropertiesForDefaultCreate = ServerPropertiesForDefaultCreate(ssl_enforcement="Enabled",
+                                                                            administrator_login='cloudsa',
                                                                             administrator_login_password='newpa$$w0rd')
-        server_properties_for_create = ServerPropertiesForCreate(ssl_enforcement="Enabled",
-                                                                 create_mode=serverPropertiesForDefaultCreate)
         from azure.mgmt.rdbms.postgresql.v2020_01_01.models import ServerForCreate
-        server_for_create = ServerForCreate(properties=server_properties_for_create, location=LOCATION_NAME)
+        server_for_create = ServerForCreate(properties=serverPropertiesForDefaultCreate, location=LOCATION_NAME)
         result = self.mgmt_client.servers.begin_update(resource_group.name, SERVER_NAME, server_for_create)
         result = result.result()
 
