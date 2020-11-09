@@ -7714,8 +7714,6 @@ class ExpressRouteConnection(SubResource):
     :type routing_weight: int
     :param enable_internet_security: Enable internet security.
     :type enable_internet_security: bool
-    :param express_route_gateway_bypass: Enable FastPath to vWan Firewall hub.
-    :type express_route_gateway_bypass: bool
     :param routing_configuration: The Routing Configuration indicating the
      associated and propagated route tables on this connection.
     :type routing_configuration:
@@ -7737,19 +7735,17 @@ class ExpressRouteConnection(SubResource):
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
-        'express_route_gateway_bypass': {'key': 'properties.expressRouteGatewayBypass', 'type': 'bool'},
         'routing_configuration': {'key': 'properties.routingConfiguration', 'type': 'RoutingConfiguration'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, express_route_circuit_peering, name: str, id: str=None, authorization_key: str=None, routing_weight: int=None, enable_internet_security: bool=None, express_route_gateway_bypass: bool=None, routing_configuration=None, **kwargs) -> None:
+    def __init__(self, *, express_route_circuit_peering, name: str, id: str=None, authorization_key: str=None, routing_weight: int=None, enable_internet_security: bool=None, routing_configuration=None, **kwargs) -> None:
         super(ExpressRouteConnection, self).__init__(id=id, **kwargs)
         self.provisioning_state = None
         self.express_route_circuit_peering = express_route_circuit_peering
         self.authorization_key = authorization_key
         self.routing_weight = routing_weight
         self.enable_internet_security = enable_internet_security
-        self.express_route_gateway_bypass = express_route_gateway_bypass
         self.routing_configuration = routing_configuration
         self.name = name
 
