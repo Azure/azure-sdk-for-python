@@ -7,16 +7,23 @@
 # --------------------------------------------------------------------------
 
 from ._linked_service_operations import LinkedServiceOperations
+from ._linked_services_operations import LinkedServicesOperations
 from ._dataset_operations import DatasetOperations
+from ._datasets_operations import DatasetsOperations
 from ._pipeline_operations import PipelineOperations
+from ._pipelines_operations import PipelinesOperations
 from ._pipeline_run_operations import PipelineRunOperations
 from ._trigger_operations import TriggerOperations
 from ._trigger_run_operations import TriggerRunOperations
 from ._data_flow_operations import DataFlowOperations
+from ._data_flows_operations import DataFlowsOperations
 from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
 from ._sql_script_operations import SqlScriptOperations
+from ._sql_scripts_operations import SqlScriptsOperations
 from ._spark_job_definition_operations import SparkJobDefinitionOperations
+from ._spark_job_definitions_operations import SparkJobDefinitionsOperations
 from ._notebook_operations import NotebookOperations
+from ._notebooks_operations import NotebooksOperations
 from ._workspace_operations import WorkspaceOperations
 from ._sql_pools_operations import SqlPoolsOperations
 from ._big_data_pools_operations import BigDataPoolsOperations
@@ -24,16 +31,23 @@ from ._integration_runtimes_operations import IntegrationRuntimesOperations
 
 __all__ = [
     'LinkedServiceOperations',
+    'LinkedServicesOperations',
     'DatasetOperations',
+    'DatasetsOperations',
     'PipelineOperations',
+    'PipelinesOperations',
     'PipelineRunOperations',
     'TriggerOperations',
     'TriggerRunOperations',
     'DataFlowOperations',
+    'DataFlowsOperations',
     'DataFlowDebugSessionOperations',
     'SqlScriptOperations',
+    'SqlScriptsOperations',
     'SparkJobDefinitionOperations',
+    'SparkJobDefinitionsOperations',
     'NotebookOperations',
+    'NotebooksOperations',
     'WorkspaceOperations',
     'SqlPoolsOperations',
     'BigDataPoolsOperations',

@@ -396,6 +396,7 @@ class NodeSize(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LARGE = "Large"
     X_LARGE = "XLarge"
     XX_LARGE = "XXLarge"
+    XXX_LARGE = "XXXLarge"
 
 class NodeSizeFamily(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The kind of nodes that the Big Data pool provides.
@@ -497,15 +498,6 @@ class PrestoAuthenticationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
 
     ANONYMOUS = "Anonymous"
     LDAP = "LDAP"
-
-class PrivateLinkServiceConnectionStateStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The private link service connection status.
-    """
-
-    APPROVED = "Approved"
-    PENDING = "Pending"
-    REJECTED = "Rejected"
-    DISCONNECTED = "Disconnected"
 
 class RecurrenceFrequency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Enumerates possible frequency option for the schedule trigger.

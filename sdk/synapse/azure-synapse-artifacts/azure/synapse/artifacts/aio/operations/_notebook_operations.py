@@ -187,7 +187,7 @@ class NotebookOperations:
     async def _create_or_update_notebook_initial(
         self,
         notebook_name: str,
-        properties: "models.Notebook",
+        notebook: "models.NotebookResource",
         if_match: Optional[str] = None,
         **kwargs
     ) -> Optional["models.NotebookResource"]:
@@ -196,8 +196,6 @@ class NotebookOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _notebook = models.NotebookResource(properties=properties)
         api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -222,7 +220,7 @@ class NotebookOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_notebook, 'NotebookResource')
+        body_content = self._serialize.body(notebook, 'NotebookResource')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -246,7 +244,7 @@ class NotebookOperations:
     async def begin_create_or_update_notebook(
         self,
         notebook_name: str,
-        properties: "models.Notebook",
+        notebook: "models.NotebookResource",
         if_match: Optional[str] = None,
         **kwargs
     ) -> AsyncLROPoller["models.NotebookResource"]:
@@ -254,8 +252,8 @@ class NotebookOperations:
 
         :param notebook_name: The notebook name.
         :type notebook_name: str
-        :param properties: Properties of Notebook.
-        :type properties: ~azure.synapse.artifacts.models.Notebook
+        :param notebook: Note book resource definition.
+        :type notebook: ~azure.synapse.artifacts.models.NotebookResource
         :param if_match: ETag of the Note book entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update.
         :type if_match: str
@@ -279,7 +277,7 @@ class NotebookOperations:
         if cont_token is None:
             raw_result = await self._create_or_update_notebook_initial(
                 notebook_name=notebook_name,
-                properties=properties,
+                notebook=notebook,
                 if_match=if_match,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -295,7 +293,12 @@ class NotebookOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'notebookName': self._serialize.url("notebook_name", notebook_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -455,7 +458,12 @@ class NotebookOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncLROBasePolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            'notebookName': self._serialize.url("notebook_name", notebook_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

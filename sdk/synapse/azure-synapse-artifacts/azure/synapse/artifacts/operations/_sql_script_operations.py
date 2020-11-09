@@ -119,7 +119,7 @@ class SqlScriptOperations(object):
     def create_or_update_sql_script(
         self,
         sql_script_name,  # type: str
-        properties,  # type: "models.SqlScript"
+        sql_script,  # type: "models.SqlScriptResource"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -128,8 +128,8 @@ class SqlScriptOperations(object):
 
         :param sql_script_name: The sql script name.
         :type sql_script_name: str
-        :param properties: Properties of sql script.
-        :type properties: ~azure.synapse.artifacts.models.SqlScript
+        :param sql_script: Sql Script resource definition.
+        :type sql_script: ~azure.synapse.artifacts.models.SqlScriptResource
         :param if_match: ETag of the SQL script entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update.
         :type if_match: str
@@ -143,8 +143,6 @@ class SqlScriptOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _sql_script = models.SqlScriptResource(properties=properties)
         api_version = "2019-06-01-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -169,7 +167,7 @@ class SqlScriptOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_sql_script, 'SqlScriptResource')
+        body_content = self._serialize.body(sql_script, 'SqlScriptResource')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
