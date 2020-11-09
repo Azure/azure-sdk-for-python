@@ -207,12 +207,12 @@ def _add_entity_properties(source):
 
     properties = {}
 
-    # if the entity is one from the service, remove _metadata and proceed
-    source.pop("_metadata", None)
+    to_send = dict(source) # shallow copy
+    to_send.pop("_metadata", None)
 
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
-    for name, value in source.items():
+    for name, value in to_send.items():
         mtype = ''
 
         if isinstance(value, Enum):
