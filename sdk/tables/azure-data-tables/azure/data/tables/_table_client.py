@@ -303,7 +303,7 @@ class TableClient(TableClientBase):
         :type entity: TableEntity or dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceFoundError:
+        :raises ~azure.core.exceptions.ResourceExistsError: If the entity already exists
 
         .. admonition:: Example:
 
