@@ -14,8 +14,6 @@ from devtools_testutils import AzureMgmtPreparer
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 from devtools_testutils import ResourceGroupPreparer
 
-from azure.mgmt.digitaltwins import AzureDigitalTwinsManagementClient
-
 
 FakeResource = namedtuple(
     'FakeResource',
@@ -81,6 +79,8 @@ class DigitalTwinsPreparer(AzureMgmtPreparer):
                     self.resource_moniker
                 )
             else:
+                # We have to import here due to a bug in the mgmt SDK
+                from azure.mgmt.digitaltwins import AzureDigitalTwinsManagementClient
                 self.client = self.create_mgmt_client(AzureDigitalTwinsManagementClient)
                 group = self._get_resource_group(**kwargs)
 
