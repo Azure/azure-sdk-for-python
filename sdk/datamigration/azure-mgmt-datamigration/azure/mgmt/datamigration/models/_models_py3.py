@@ -2998,6 +2998,9 @@ class DataMigrationService(TrackedResource):
      Microsoft.Network/virtualNetworks/subnets resource to which the service
      should be joined
     :type virtual_subnet_id: str
+    :param virtual_nic_id: The ID of the Microsoft.Network/networkInterfaces
+     resource which the service have
+    :type virtual_nic_id: str
     :param sku: Service SKU
     :type sku: ~azure.mgmt.datamigration.models.ServiceSku
     """
@@ -3022,16 +3025,18 @@ class DataMigrationService(TrackedResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'public_key': {'key': 'properties.publicKey', 'type': 'str'},
         'virtual_subnet_id': {'key': 'properties.virtualSubnetId', 'type': 'str'},
+        'virtual_nic_id': {'key': 'properties.virtualNicId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'ServiceSku'},
     }
 
-    def __init__(self, *, location: str, virtual_subnet_id: str, tags=None, etag: str=None, kind: str=None, public_key: str=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, location: str, virtual_subnet_id: str, tags=None, etag: str=None, kind: str=None, public_key: str=None, virtual_nic_id: str=None, sku=None, **kwargs) -> None:
         super(DataMigrationService, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.kind = kind
         self.provisioning_state = None
         self.public_key = public_key
         self.virtual_subnet_id = virtual_subnet_id
+        self.virtual_nic_id = virtual_nic_id
         self.sku = sku
 
 
