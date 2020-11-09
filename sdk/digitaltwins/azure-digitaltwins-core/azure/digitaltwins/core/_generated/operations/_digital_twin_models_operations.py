@@ -118,7 +118,7 @@ class DigitalTwinModelsOperations(object):
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize(self.models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('[DigitalTwinsModelData]', pipeline_response)
