@@ -1,7 +1,7 @@
 
 # Release History
 
-## 1.9.0 (unreleased)
+## 1.9.0 (2020-11-09)
 
 ### Features
 
