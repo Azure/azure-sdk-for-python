@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0(2020-11-09)
+
+**Breaking changes**
+
+  - Model DataExport no longer has parameter all_tables
+
 ## 1.0.0 (2020-08-31)
 
 **Features**
