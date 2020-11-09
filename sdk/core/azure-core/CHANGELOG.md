@@ -8,6 +8,10 @@
 - Add a `continuation_token` attribute to the base `AzureError` exception, and set this value for errors raised
   during paged or long-running operations.
 
+### Bug Fixes
+
+- Set retry_interval to 1 second instead of 1000 seconds (thanks **vbarbaresi** for contributing)  #14357
+
 
 ## 1.8.2 (2020-10-05)
 
