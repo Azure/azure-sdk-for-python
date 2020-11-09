@@ -29,6 +29,16 @@ sudo setfacl -m "g::r-x" /var/opt/azcmagent/tokens/
 `IMDS_ENDPOINT`. If they are not present, or don't resemble `http://localhost:40342/metadata/identity/oauth2/token` and 
 `http://localhost:40342` respectively, you may need to wait a short while or try restarting the VM again.
 
+## Give the Azure Arc VM access to the key vault
+
+For the tests to pass, the VM will need secret management permissions in your key vault. 
+
+1. Go to your key vault resource in the [Azure Portal](https://portal.azure.com).
+2. Go to the vault's "Access policies" page, and click "Add Access Policy". 
+3. Using the secret management template, select your Arc VM resource as the principal. 
+4. Click "Add".
+5. Don't forget to click "Save" at the top of the access policies page after the policy is added.
+
 ## Run the azure-identity Tests on the Azure Arc VM
 
 > **Note:** The following steps are specific to Python.
