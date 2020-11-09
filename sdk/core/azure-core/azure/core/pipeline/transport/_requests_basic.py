@@ -118,7 +118,7 @@ class StreamDownloadGenerator(object):
     def __next__(self):
         retry_active = True
         retry_total = 3
-        retry_interval = 1000
+        retry_interval = 1  # 1 second
         while retry_active:
             try:
                 chunk = next(self.iter_content_func)

@@ -217,7 +217,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     async def __anext__(self):
         retry_active = True
         retry_total = 3
-        retry_interval = 1000
+        retry_interval = 1  # 1 second
         while retry_active:
             try:
                 chunk = await self.response.internal_response.content.read(self.block_size)
