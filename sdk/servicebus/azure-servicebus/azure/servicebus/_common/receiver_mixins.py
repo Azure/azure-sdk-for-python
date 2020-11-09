@@ -89,6 +89,9 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _check_live(self):
         """check whether the receiver is alive"""
         # pylint: disable=protected-access
+        if self._shutdown.is_set():
+            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
+                             "create a new instance.")
         if self._session and self._session._lock_expired:  # pylint: disable=protected-access
             raise SessionLockExpired(error=self._session.auto_renew_error)
 

@@ -94,6 +94,7 @@ class BaseHandler:
         self._handler = None  # type: uamqp.AMQPClientAsync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
+        self._shutdown = asyncio.Event()
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
@@ -126,6 +127,10 @@ class BaseHandler:
     async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # type: (Callable, Optional[float], Any) -> Any
         # pylint: disable=protected-access
+        if self._shutdown.is_set():
+            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
+                             "create a new instance.")
+
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -273,3 +278,4 @@ class BaseHandler:
         :rtype: None
         """
         await self._close_handler()
+        self._shutdown.set()
