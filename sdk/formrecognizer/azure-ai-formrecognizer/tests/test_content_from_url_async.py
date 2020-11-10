@@ -302,3 +302,80 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             with pytest.raises(ValueError) as e:
                 await client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
             assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="german")
+    async def test_content_language_german(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="de")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="chinese_simplified")
+    async def test_content_language_chinese_simplified(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="zh-Hans")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="dutch")
+    async def test_content_language_dutch(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="nl")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="french")
+    async def test_content_language_french(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="fr")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="italian")
+    async def test_content_language_italian(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="it")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="portuguese")
+    async def test_content_language_portuguese(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="pt")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="spanish")
+    async def test_content_language_spanish(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="es")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
