@@ -2,6 +2,9 @@
 
 ## 7.0.0b9 (Unreleased)
 
+**BugFixes**
+
+* FQDNs and Connection strings are now supported even with strippable whitespace or protocol headers (e.g. 'sb://')
 
 ## 7.0.0b8 (2020-11-05)
 

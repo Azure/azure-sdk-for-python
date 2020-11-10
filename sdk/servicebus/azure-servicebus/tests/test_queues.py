@@ -1093,6 +1093,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             with pytest.raises(MessageSettleFailed):
                 receiver.complete_message(messages[0])
+
+            with pytest.raises(MessageSettleFailed):
+                receiver.receive_messages(max_wait_time=1)
     
 
     @pytest.mark.liveTest

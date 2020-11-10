@@ -81,7 +81,7 @@ class StressTestRunner:
                  should_complete_messages = True,
                  max_message_count = 1,
                  send_session_id = None,
-                 fail_on_exception = True):
+                 fail_on_exception = False):
         self.senders = senders
         self.receivers = receivers
         self.duration=duration
@@ -149,8 +149,7 @@ class StressTestRunner:
         def _do_interval_logging():
             if end_time > datetime.utcnow() and not self._should_stop:
                 self._state.populate_process_stats()
-                _logger.critical("{} RECURRENT STATUS:".format(description))
-                _logger.critical(self._state)
+                _logger.critical("{} RECURRENT STATUS: {}".format(description, self._state))
                 self._schedule_interval_logger(end_time, description, interval_seconds)
 
         t = threading.Timer(interval_seconds, _do_interval_logging)
