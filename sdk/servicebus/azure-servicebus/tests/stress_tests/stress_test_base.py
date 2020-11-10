@@ -81,7 +81,7 @@ class StressTestRunner:
                  should_complete_messages = True,
                  max_message_count = 1,
                  send_session_id = None,
-                 fail_on_exception = False):
+                 fail_on_exception = True):
         self.senders = senders
         self.receivers = receivers
         self.duration=duration
