@@ -666,10 +666,12 @@ class GlobalClientPreparer(AzureMgmtPreparer):
         client = self.create_form_client(**kwargs)
 
         if self.language:
-            container_sas_url = self.get_settings_value("FORM_RECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
-            form_name = "content_" + self.language + ".pdf"
-            blob_sas_url = self.get_blob_url(container_sas_url, "testingdata", form_name)
-
+            if self.is_live:
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
+                form_name = "content_" + self.language + ".pdf"
+                blob_sas_url = self.get_blob_url(container_sas_url, "testingdata", form_name)
+            else:
+                blob_sas_url = "blob_sas_url"
             return {
                 "client": client,
                 "language_form": blob_sas_url
