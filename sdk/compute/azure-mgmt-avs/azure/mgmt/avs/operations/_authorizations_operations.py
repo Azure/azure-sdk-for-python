@@ -27,7 +27,7 @@ class AuthorizationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-03-20".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-07-17-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class AuthorizationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-20"
+        self.api_version = "2020-07-17-preview"
 
         self.config = config
 
@@ -182,7 +182,9 @@ class AuthorizationsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, private_cloud_name, authorization_name, authorization, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, **operation_config):
+        authorization = None
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -209,7 +211,7 @@ class AuthorizationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(authorization, 'object')
+        body_content = self._serialize.body(authorization, 'ExpressRouteAuthorization')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -234,7 +236,7 @@ class AuthorizationsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, private_cloud_name, authorization_name, authorization, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, private_cloud_name, authorization_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an ExpressRoute Circuit Authorization in a private
         cloud.
 
@@ -246,8 +248,6 @@ class AuthorizationsOperations(object):
         :param authorization_name: Name of the ExpressRoute Circuit
          Authorization in the private cloud
         :type authorization_name: str
-        :param authorization: An ExpressRoute Circuit Authorization
-        :type authorization: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -266,7 +266,6 @@ class AuthorizationsOperations(object):
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             authorization_name=authorization_name,
-            authorization=authorization,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

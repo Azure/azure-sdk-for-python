@@ -19,6 +19,8 @@ from .operations import PrivateCloudsOperations
 from .operations import ClustersOperations
 from .operations import HcxEnterpriseSitesOperations
 from .operations import AuthorizationsOperations
+from .operations import GlobalReachConnectionsOperations
+from .operations import WorkloadNetworksOperations
 from . import models
 
 
@@ -40,6 +42,10 @@ class AVSClient(SDKClient):
     :vartype hcx_enterprise_sites: azure.mgmt.avs.operations.HcxEnterpriseSitesOperations
     :ivar authorizations: Authorizations operations
     :vartype authorizations: azure.mgmt.avs.operations.AuthorizationsOperations
+    :ivar global_reach_connections: GlobalReachConnections operations
+    :vartype global_reach_connections: azure.mgmt.avs.operations.GlobalReachConnectionsOperations
+    :ivar workload_networks: WorkloadNetworks operations
+    :vartype workload_networks: azure.mgmt.avs.operations.WorkloadNetworksOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -56,7 +62,7 @@ class AVSClient(SDKClient):
         super(AVSClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2020-03-20'
+        self.api_version = '2020-07-17-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -71,4 +77,8 @@ class AVSClient(SDKClient):
         self.hcx_enterprise_sites = HcxEnterpriseSitesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.authorizations = AuthorizationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.global_reach_connections = GlobalReachConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.workload_networks = WorkloadNetworksOperations(
             self._client, self.config, self._serialize, self._deserialize)

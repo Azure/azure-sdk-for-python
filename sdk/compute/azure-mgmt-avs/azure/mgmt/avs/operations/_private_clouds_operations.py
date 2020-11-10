@@ -27,7 +27,7 @@ class PrivateCloudsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2020-03-20".
+    :ivar api_version: The API version to use for this operation. Constant value: "2020-07-17-preview".
     """
 
     models = models
@@ -37,7 +37,7 @@ class PrivateCloudsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-03-20"
+        self.api_version = "2020-07-17-preview"
 
         self.config = config
 
