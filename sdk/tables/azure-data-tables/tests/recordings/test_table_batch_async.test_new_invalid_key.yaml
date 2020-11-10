@@ -1,38 +1,36 @@
 interactions:
 - request:
-    body: "--batch_84c24283-ea82-42d5-b175-4f189fe84b29\r\nContent-Type: multipart/mixed;\
-      \ boundary=changeset_a36040ec-1981-4fa5-9142-aacf0f6c3c1d\r\n\r\n--changeset_a36040ec-1981-4fa5-9142-aacf0f6c3c1d\r\
-      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
-      \ 0\r\n\r\nPOST https://tablestestp5vjroapn77olh.table.core.windows.net/uttable81a3118b\
-      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
-      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
-      \ application/json;odata=minimalmetadata\r\nContent-Length: 576\r\nx-ms-date:\
-      \ Thu, 05 Nov 2020 21:12:43 GMT\r\nDate: Thu, 05 Nov 2020 21:12:43 GMT\r\nx-ms-client-request-id:\
-      \ a5275fc7-1fab-11eb-91de-58961df361d1\r\n\r\n{\"PartitionKey\": \"001\", \"\
-      PartitionKey@odata.type\": \"Edm.String\", \"RowKey\": \"batch_negative_1\"\
-      , \"RowKey@odata.type\": \"Edm.String\", \"age\": 39, \"sex\": \"male\", \"\
-      sex@odata.type\": \"Edm.String\", \"married\": true, \"deceased\": false, \"\
-      ratio\": 3.1, \"evenratio\": 3.0, \"large\": 933311100, \"Birthday\": \"1973-10-04T00:00:00Z\"\
-      , \"Birthday@odata.type\": \"Edm.DateTime\", \"birthday\": \"1970-10-04T00:00:00Z\"\
-      , \"birthday@odata.type\": \"Edm.DateTime\", \"binary\": \"YmluYXJ5\", \"binary@odata.type\"\
-      : \"Edm.Binary\", \"other\": 20, \"clsid\": \"c9da6455-213d-42c9-9a79-3e9149a57833\"\
-      , \"clsid@odata.type\": \"Edm.Guid\"}\r\n--changeset_a36040ec-1981-4fa5-9142-aacf0f6c3c1d--\r\
-      \n\r\n--batch_84c24283-ea82-42d5-b175-4f189fe84b29--\r\n"
+    body: "--batch_2f12b324-a790-452a-bee1-8bb2edfe8bdf\r\nContent-Type: multipart/mixed;
+      boundary=changeset_31081b6b-6272-41fa-ba2f-0496a08c63e5\r\n\r\n--changeset_31081b6b-6272-41fa-ba2f-0496a08c63e5\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPOST
+      https://tablestestxjz4vq7ewcdgud.table.core.windows.net/uttable81a3118b HTTP/1.1\r\nPrefer:
+      return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nx-ms-version:
+      2019-02-02\r\nDataServiceVersion: 3.0\r\nAccept: application/json;odata=minimalmetadata\r\nContent-Length:
+      576\r\nx-ms-date: Sat, 07 Nov 2020 01:23:30 GMT\r\nDate: Sat, 07 Nov 2020 01:23:30
+      GMT\r\nx-ms-client-request-id: d7f2d758-2097-11eb-ab0b-58961df361d1\r\n\r\n{\"birthday\":
+      \"1970-10-04T00:00:00Z\", \"age\": 39, \"sex@odata.type\": \"Edm.String\", \"other\":
+      20, \"binary\": \"YmluYXJ5\", \"Birthday\": \"1973-10-04T00:00:00Z\", \"RowKey@odata.type\":
+      \"Edm.String\", \"binary@odata.type\": \"Edm.Binary\", \"RowKey\": \"batch_negative_1\",
+      \"married\": true, \"sex\": \"male\", \"clsid\": \"c9da6455-213d-42c9-9a79-3e9149a57833\",
+      \"Birthday@odata.type\": \"Edm.DateTime\", \"ratio\": 3.1, \"large\": 933311100,
+      \"clsid@odata.type\": \"Edm.Guid\", \"evenratio\": 3.0, \"PartitionKey\": \"001\",
+      \"deceased\": false, \"birthday@odata.type\": \"Edm.DateTime\", \"PartitionKey@odata.type\":
+      \"Edm.String\"}\r\n--changeset_31081b6b-6272-41fa-ba2f-0496a08c63e5--\r\n\r\n--batch_2f12b324-a790-452a-bee1-8bb2edfe8bdf--\r\n"
     headers:
       Content-Length:
       - '1376'
       Content-Type:
-      - multipart/mixed; boundary=batch_84c24283-ea82-42d5-b175-4f189fe84b29
+      - multipart/mixed; boundary=batch_2f12b324-a790-452a-bee1-8bb2edfe8bdf
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 05 Nov 2020 21:12:43 GMT
+      - Sat, 07 Nov 2020 01:23:30 GMT
       MaxDataServiceVersion:
       - 3.0;NetFx
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 05 Nov 2020 21:12:43 GMT
+      - Sat, 07 Nov 2020 01:23:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -43,18 +41,18 @@ interactions:
         xml:lang="en-US">Server failed to authenticate the request. Make sure the
         value of Authorization header is formed correctly including the signature.
 
-        RequestId:f457c1fd-2002-004b-21b8-b3d30f000000
+        RequestId:43c917a1-b002-0017-3da4-b431cc000000
 
-        Time:2020-11-05T21:12:44.2242912Z</m:message></m:error>'
+        Time:2020-11-07T01:23:30.9882393Z</m:message></m:error>'
     headers:
       content-length: '419'
       content-type: application/xml
-      date: Thu, 05 Nov 2020 21:12:44 GMT
+      date: Sat, 07 Nov 2020 01:23:30 GMT
       server: Microsoft-HTTPAPI/2.0
       x-ms-error-code: AuthenticationFailed
     status:
       code: 403
       message: Server failed to authenticate the request. Make sure the value of Authorization
         header is formed correctly including the signature.
-    url: https://tablestestp5vjroapn77olh.table.core.windows.net/$batch
+    url: https://tablestestxjz4vq7ewcdgud.table.core.windows.net/$batch
 version: 1
