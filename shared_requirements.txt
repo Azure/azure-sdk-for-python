@@ -147,7 +147,7 @@ avro<2.0.0,>=1.10.0
 #override azure-storage-file-share azure-core<2.0.0,>=1.9.0
 #override azure-storage-file-datalake azure-core<2.0.0,>=1.9.0
 #override azure-storage-file-datalake msrest>=0.6.10
-#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.6.0b1
+#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.6.0
 opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
