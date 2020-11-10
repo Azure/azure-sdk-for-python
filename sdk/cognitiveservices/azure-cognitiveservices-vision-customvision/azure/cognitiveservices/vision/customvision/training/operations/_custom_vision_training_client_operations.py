@@ -170,7 +170,7 @@ class CustomVisionTrainingClientOperationsMixin(object):
     get_projects.metadata = {'url': '/projects'}
 
     def create_project(
-            self, name, description=None, domain_id=None, classification_type=None, target_export_platforms=None, custom_headers=None, raw=False, **operation_config):
+            self, name, description=None, domain_id=None, classification_type=None, target_export_platforms=None, export_model_container_uri=None, notification_queue_uri=None, custom_headers=None, raw=False, **operation_config):
         """Create a project.
 
         :param name: Name of the project.
@@ -186,6 +186,14 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :param target_export_platforms: List of platforms the trained model is
          intending exporting to.
         :type target_export_platforms: list[str]
+        :param export_model_container_uri: The uri to the Azure Storage
+         container that will be used to store exported models.
+        :type export_model_container_uri: str
+        :param notification_queue_uri: The uri to the Azure Storage queue that
+         will be used to send project-related notifications. See <a
+         href="https://go.microsoft.com/fwlink/?linkid=2144149">Storage
+         notifications</a> documentation for setup and message format.
+        :type notification_queue_uri: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -198,6 +206,10 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :raises:
          :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
+        options = None
+        if export_model_container_uri is not None or notification_queue_uri is not None:
+            options = models.CreateProjectOptions(export_model_container_uri=export_model_container_uri, notification_queue_uri=notification_queue_uri)
+
         # Construct URL
         url = self.create_project.metadata['url']
         path_format_arguments = {
@@ -220,11 +232,18 @@ class CustomVisionTrainingClientOperationsMixin(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
 
+        # Construct body
+        if options is not None:
+            body_content = self._serialize.body(options, 'CreateProjectOptions')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -1035,8 +1054,8 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :param image_ids: The list of image ids to update. Limited to 64.
         :type image_ids: list[str]
         :param metadata: The metadata to be updated to the specified images.
-         Limited to 50 key-value pairs per image. The length of key is limited
-         to 256. The length of value is limited to 512.
+         Limited to 10 key-value pairs per image. The length of key is limited
+         to 128. The length of value is limited to 256.
         :type metadata: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2175,7 +2194,7 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :param iteration_id: The iteration id.
         :type iteration_id: str
         :param platform: The target platform. Possible values include:
-         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
+         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK', 'OpenVino'
         :type platform: str
         :param flavor: The flavor of the target platform. Possible values
          include: 'Linux', 'Windows', 'ONNX10', 'ONNX12', 'ARM',
@@ -3174,7 +3193,7 @@ class CustomVisionTrainingClientOperationsMixin(object):
     suggest_tags_and_regions.metadata = {'url': '/projects/{projectId}/tagsandregions/suggestions'}
 
     def train_project(
-            self, project_id, training_type=None, reserved_budget_in_hours=0, force_train=False, notification_email_address=None, selected_tags=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, training_type=None, reserved_budget_in_hours=0, force_train=False, notification_email_address=None, selected_tags=None, custom_base_model_info=None, custom_headers=None, raw=False, **operation_config):
         """Queues project for training.
 
         :param project_id: The project id.
@@ -3194,6 +3213,11 @@ class CustomVisionTrainingClientOperationsMixin(object):
         :param selected_tags: List of tags selected for this training session,
          other tags in the project will be ignored.
         :type selected_tags: list[str]
+        :param custom_base_model_info: Information of the previously trained
+         iteration which provides the base model for current iteration's
+         training.
+        :type custom_base_model_info:
+         ~azure.cognitiveservices.vision.customvision.training.models.CustomBaseModelInfo
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3207,8 +3231,8 @@ class CustomVisionTrainingClientOperationsMixin(object):
          :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         training_parameters = None
-        if selected_tags is not None:
-            training_parameters = models.TrainingParameters(selected_tags=selected_tags)
+        if selected_tags is not None or custom_base_model_info is not None:
+            training_parameters = models.TrainingParameters(selected_tags=selected_tags, custom_base_model_info=custom_base_model_info)
 
         # Construct URL
         url = self.train_project.metadata['url']

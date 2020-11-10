@@ -86,13 +86,22 @@ class StorageTableTest(TableTestCase):
         except ResourceNotFoundError:
             pass
 
+    def _delete_all_tables(self, ts):
+        tables = ts.list_tables()
+        for table in tables:
+            try:
+                ts.delete_table(table.table_name)
+            except ResourceNotFoundError:
+                pass
+
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
         # Act
         created = ts.create_table(table_name)
@@ -115,7 +124,8 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         # # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table_name = self._get_table_reference()
 
@@ -130,7 +140,8 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -147,8 +158,42 @@ class StorageTableTest(TableTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_query_tables_per_page(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
+        table_name = "mytable"
+
+        for i in range(5):
+            ts.create_table(table_name + str(i))
+
+        query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
+        table_count = 0
+        page_count = 0
+        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+
+            temp_count = 0
+            for table in table_page:
+                temp_count += 1
+            assert temp_count <= 2
+            page_count += 1
+            table_count += temp_count
+
+        assert page_count == 2
+        assert table_count == 3
+
+        for i in range(5):
+            ts.delete_table(table_name + str(i))
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_if_exists(self, resource_group, location, storage_account, storage_account_key):
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         t0 = ts.create_table(table_name)
@@ -162,7 +207,8 @@ class StorageTableTest(TableTestCase):
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_if_exists_new_table(self, resource_group, location, storage_account, storage_account_key):
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         t = ts.create_table_if_not_exists(table_name)
@@ -175,7 +221,8 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -188,7 +235,8 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -201,7 +249,8 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         t = self._create_table(ts)
 
         # Act
@@ -216,11 +265,15 @@ class StorageTableTest(TableTestCase):
         self.assertIsNotNone(tables[0])
         ts.delete_table(t.table_name)
 
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
+
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         t = self._create_table(ts)
 
         # Act
@@ -235,12 +288,18 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables), 1)
         ts.delete_table(t.table_name)
 
+        self._delete_all_tables(ts)
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
+
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         prefix = 'listtable'
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_list = []
         for i in range(0, 4):
             self._create_table(ts, prefix + str(i), table_list)
@@ -250,18 +309,26 @@ class StorageTableTest(TableTestCase):
         big_page = []
         for s in next(ts.list_tables(results_per_page=3).by_page()):
             small_page.append(s)
+            assert s.table_name.startswith(prefix)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
+            assert t.table_name.startswith(prefix)
 
         # Assert
         self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
 
+        self._delete_all_tables(ts)
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
+
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -282,11 +349,17 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables2), 2)
         self.assertNotEqual(tables1, tables2)
 
+        self._delete_all_tables(ts)
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
+
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_delete_table_with_existing_table(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = self._create_table(ts)
 
         # Act
@@ -302,7 +375,8 @@ class StorageTableTest(TableTestCase):
     def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, storage_account,
                                                                  storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -311,15 +385,17 @@ class StorageTableTest(TableTestCase):
 
         # Assert
 
-    @pytest.mark.skip("pending")
+    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
             pytest.skip("Cosmos URLs do notsupport unicode table names")
-        ts = TableServiceClient(url, storage_account_key)
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table_name = u'啊齄丂狛狜'
 
         # Act
@@ -336,7 +412,8 @@ class StorageTableTest(TableTestCase):
         url = self.account_url(storage_account, "table")
         if 'cosmos' in url:
             pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = self._create_table(ts)
         try:
             # Act
@@ -354,10 +431,12 @@ class StorageTableTest(TableTestCase):
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
                                                          storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = self._create_table(ts)
         try:
             # Act
@@ -376,10 +455,12 @@ class StorageTableTest(TableTestCase):
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
                                                         storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = self._create_table(ts)
         try:
             # Act
@@ -401,10 +482,12 @@ class StorageTableTest(TableTestCase):
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,
                                                    storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
 
@@ -427,10 +510,12 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = self._create_table(ts)
         try:
             # Act
@@ -451,10 +536,12 @@ class StorageTableTest(TableTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
             pytest.skip("Cosmos Tables does not yet support sas")
-        tsc = TableServiceClient(url, storage_account_key)
+
+        tsc = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = self._create_table(tsc)
         try:
             entity = {
@@ -476,11 +563,16 @@ class StorageTableTest(TableTestCase):
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
 
+            account_url = self.account_url(storage_account, "table")
+
+            service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
+
             # Act
-            service = TableServiceClient(
-                self.account_url(storage_account, "table"),
-                credential=token,
-            )
+            # service = TableServiceClient(
+            #     self.account_url(storage_account, "table"),
+            #     credential=token,
+            # )
+
             sas_table = service.get_table_client(table.table_name)
             entities = list(sas_table.list_entities())
 
@@ -496,7 +588,8 @@ class StorageTableTest(TableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_locale(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
         if os.name == "nt":

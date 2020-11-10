@@ -56,7 +56,9 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table_name = self._get_table_reference()
 
         # Act
@@ -71,7 +73,8 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_table_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -89,9 +92,40 @@ class TableTestAsync(AsyncTableTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_query_tables_per_page(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
+        table_name = "myasynctable"
+
+        for i in range(5):
+            await ts.create_table(table_name + str(i))
+
+        query_filter = "TableName eq 'myasynctable0' or TableName eq 'myasynctable1' or TableName eq 'myasynctable2'"
+        table_count = 0
+        page_count = 0
+        async for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+
+            temp_count = 0
+            async for table in table_page:
+                temp_count += 1
+            assert temp_count <= 2
+            page_count += 1
+            table_count += temp_count
+
+        assert page_count == 2
+        assert table_count == 3
+
+        for i in range(5):
+            await ts.delete_table(table_name + str(i))
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -104,7 +138,8 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_delete_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
@@ -118,7 +153,8 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_list_tables(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -140,7 +176,8 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -164,7 +201,8 @@ class TableTestAsync(AsyncTableTestCase):
     async def test_list_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         prefix = 'listtable'
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_list = []
         for i in range(0, 4):
             await self._create_table(ts, prefix + str(i), table_list)
@@ -186,7 +224,8 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_list_tables_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         prefix = 'listtable'
         table_names = []
         for i in range(0, 4):
@@ -221,7 +260,8 @@ class TableTestAsync(AsyncTableTestCase):
     async def test_delete_table_with_existing_table(self, resource_group, location, storage_account,
                                                     storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = await self._create_table(ts)
 
         # Act
@@ -239,7 +279,8 @@ class TableTestAsync(AsyncTableTestCase):
     async def test_delete_table_with_non_existing_table_fail_not_exist(self, resource_group, location, storage_account,
                                                                        storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table_name = self._get_table_reference()
 
         # Act
@@ -254,10 +295,12 @@ class TableTestAsync(AsyncTableTestCase):
     async def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account,
                                                      storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
             pytest.skip("Cosmos URLs do notsupport unicode table names")
-        ts = TableServiceClient(url, storage_account_key)
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table_name = u'啊齄丂狛狜'
 
         # Act
@@ -271,10 +314,12 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = await self._create_table(ts)
         try:
             # Act
@@ -292,10 +337,12 @@ class TableTestAsync(AsyncTableTestCase):
     async def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
                                                                storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
-        ts = TableServiceClient(url, storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
+            pytest.skip("Cosmos URLs do notsupport unicode table names")
+
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = await self._create_table(ts)
         try:
             # Act
@@ -393,10 +440,12 @@ class TableTestAsync(AsyncTableTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
 
         # Arrange
-        url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
+        account_url = self.account_url(storage_account, "table")
+        if 'cosmos' in account_url:
             pytest.skip("Cosmos Tables does not yet support sas")
-        tsc = TableServiceClient(url, storage_account_key)
+
+        tsc = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
         table = await self._create_table(tsc)
         try:
             entity = {
@@ -418,11 +467,15 @@ class TableTestAsync(AsyncTableTestCase):
                 start=datetime.utcnow() - timedelta(minutes=1),
             )
 
+            account_url = self.account_url(storage_account, "table")
+
+            service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
+
             # Act
-            service = TableServiceClient(
-                self.account_url(storage_account, "table"),
-                credential=token,
-            )
+            # service = TableServiceClient(
+            #     self.account_url(storage_account, "table"),
+            #     credential=token,
+            # )
             sas_table = service.get_table_client(table.table_name)
             entities = []
             async for e in sas_table.list_entities():
@@ -430,8 +483,8 @@ class TableTestAsync(AsyncTableTestCase):
 
             # Assert
             self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].text.value, 'hello')
-            self.assertEqual(entities[1].text.value, 'hello')
+            self.assertEqual(entities[0].text, u'hello')
+            self.assertEqual(entities[1].text, u'hello')
         finally:
             await self._delete_table(table=table, ts=tsc)
 
@@ -440,7 +493,8 @@ class TableTestAsync(AsyncTableTestCase):
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_locale(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        ts = TableServiceClient(self.account_url(storage_account, "table"), storage_account_key)
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = (self._get_table_reference())
         init_locale = locale.getlocale()
         if os.name == "nt":

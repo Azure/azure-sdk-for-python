@@ -69,12 +69,12 @@ class EntityProperty(object):
     """
     An entity property. Used to explicitly set :class:`~EdmType` when necessary.
 
-    Values which require explicit typing are GUID, INT32, and BINARY. Other EdmTypes
+    Values which require explicit typing are GUID, INT64, and BINARY. Other EdmTypes
     may be explicitly create as EntityProperty objects but need not be. For example,
     the below with both create STRING typed properties on the entity::
-        entity = Entity()
+        entity = TableEntity()
         entity.a = 'b'
-        entity.x = EntityProperty(EdmType.STRING, 'y')
+        entity.x = EntityProperty('y', EdmType.STRING)
     """
 
     def __init__(self,
@@ -84,7 +84,8 @@ class EntityProperty(object):
         """
         Represents an Azure Table. Returned by list_tables.
 
-        :param Union[str, EdmType] type: The type of the property.
+        :param type: The type of the property.
+        :type type: str or EdmType
         :param Any value: The value of the property.
         """
         self.value = value

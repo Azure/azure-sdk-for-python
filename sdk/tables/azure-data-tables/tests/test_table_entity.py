@@ -304,6 +304,31 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_query_invalid_filter(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            base_entity = {
+                u"PartitionKey": u"pk",
+                u"RowKey": u"rk",
+                u"value": 1
+            }
+
+            for i in range(5):
+                base_entity[u"RowKey"] += str(i)
+                base_entity[u"value"] += i
+                self.table.create_entity(base_entity)
+            # Act
+            with pytest.raises(HttpResponseError):
+                resp = self.table.query_entities(filter="aaa bbb ccc")
+                for row in resp:
+                    _ = row
+
+        finally:
+            self._tear_down()
+
     # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -476,7 +501,7 @@ class StorageTableEntityTest(TableTestCase):
             received_entity = self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
             assert received_entity['large'].value == dict64['large'].value
 
-            dict64['RowKey'] = 'negative'
+            dict64['RowKey'] = u'negative'
             dict64['large'] = EntityProperty(-(2 ** 50 + 1), EdmType.INT64)
             self.table.create_entity(entity=dict64)
 
@@ -1343,6 +1368,44 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
 
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_query_entities_each_page(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            base_entity = {
+                "PartitionKey": u"pk",
+                "RowKey": u"1",
+            }
+
+            for i in range(10):
+                if i > 5:
+                    base_entity['PartitionKey'] += str(i)
+                base_entity['RowKey'] += str(i)
+                base_entity['value'] = i
+                self.table.create_entity(base_entity)
+
+            query_filter = u"PartitionKey eq 'pk'"
+
+            entity_count = 0
+            page_count = 0
+            for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+
+                temp_count = 0
+                for ent in entity_page:
+                    temp_count += 1
+
+                assert temp_count <= 2
+                page_count += 1
+                entity_count += temp_count
+
+            assert entity_count == 6
+            assert page_count == 3
+
+        finally:
+            self._tear_down()
+
     # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -1441,10 +1504,13 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(storage_account, storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
+            entity2, _ = self._insert_random_entity(pk="foo" + entity.PartitionKey)
+            entity3, _ = self._insert_random_entity(pk="bar" + entity.PartitionKey)
 
             # Act
             entities = list(self.table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey),
+                results_per_page=1))
 
             # Assert
             self.assertEqual(len(entities), 1)

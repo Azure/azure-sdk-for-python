@@ -18,7 +18,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
-    HttpResponseError
+    HttpResponseError,
+    ClientAuthenticationError
 )
 from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode, BatchTransactionResult
 
@@ -115,24 +116,24 @@ class StorageTableClientTest(TableTestCase):
             'birthday': datetime(1991, 10, 4, tzinfo=tzutc())
         }
 
-    def _assert_default_entity(self, entity, headers=None):
+    def _assert_default_entity(self, entity):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        self.assertEqual(entity['age'].value, 39)
-        self.assertEqual(entity['sex'].value, u'male')
+        self.assertEqual(entity['age'], 39)
+        self.assertEqual(entity['sex'], 'male')
         self.assertEqual(entity['married'], True)
         self.assertEqual(entity['deceased'], False)
         self.assertFalse("optional" in entity)
         self.assertEqual(entity['ratio'], 3.1)
         self.assertEqual(entity['evenratio'], 3.0)
-        self.assertEqual(entity['large'].value, 933311100)
+        self.assertEqual(entity['large'], 933311100)
         self.assertEqual(entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc()))
         self.assertEqual(entity['binary'].value, b'binary')
-        self.assertIsInstance(entity['other'], EntityProperty)
-        self.assertEqual(entity['other'].type, EdmType.INT32)
-        self.assertEqual(entity['other'].value, 20)
+        # self.assertIsInstance(entity['other'], EntityProperty)
+        # self.assertEqual(entity['other'].type, EdmType.INT32)
+        self.assertEqual(entity['other'], 20)
         self.assertEqual(entity['clsid'], uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833'))
         self.assertTrue('_metadata' in entity)
 
@@ -140,11 +141,11 @@ class StorageTableClientTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        self.assertEqual(entity.age.value, 'abc')
-        self.assertEqual(entity.sex.value, 'female')
+        self.assertEqual(entity.age, 'abc')
+        self.assertEqual(entity.sex, 'female')
         self.assertFalse(hasattr(entity, "married"))
         self.assertFalse(hasattr(entity, "deceased"))
-        self.assertEqual(entity.sign.value, 'aquarius')
+        self.assertEqual(entity.sign, 'aquarius')
         self.assertFalse(hasattr(entity, "optional"))
         self.assertFalse(hasattr(entity, "ratio"))
         self.assertFalse(hasattr(entity, "evenratio"))
@@ -407,7 +408,7 @@ class StorageTableClientTest(TableTestCase):
             self.table.create_entity(entity)
 
             entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_delete')
-            self.assertEqual(3, entity.test3.value)
+            self.assertEqual(3, entity.test3)
 
             batch = self.table.create_batch()
             batch.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
@@ -616,7 +617,7 @@ class StorageTableClientTest(TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skip("This does not throw an error, but it should")
+    # @pytest.mark.skip("This does not throw an error, but it should")
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -635,10 +636,10 @@ class StorageTableClientTest(TableTestCase):
             batch.update_entity(entity)
             entity = self._create_random_entity_dict(
                 '001', 'batch_negative_1')
-
+            batch.update_entity(entity, mode=UpdateMode.MERGE)
             # Assert
-            with self.assertRaises(ValueError):
-                batch.update_entity(entity, mode='MERGE')
+            with pytest.raises(BatchErrorException):
+                self.table.send_batch(batch)
         finally:
             self._tear_down()
 
@@ -691,6 +692,69 @@ class StorageTableClientTest(TableTestCase):
             # Assert
         finally:
             self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_new_non_existent_table(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            tc = self.ts.get_table_client("doesntexist")
+
+            batch = tc.create_batch()
+            batch.create_entity(entity)
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = tc.send_batch(batch)
+            # Assert
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skip("Cannot fake cosmos credential")
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_new_invalid_key(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        invalid_key = cosmos_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
+        key_list = list(cosmos_account_key)
+
+        key_list[-6:] = list("0000==")
+        invalid_key = ''.join(key_list)
+
+        self.ts = TableServiceClient(self.account_url(cosmos_account, "table"), invalid_key)
+        self.table_name = self.get_resource_name('uttable')
+        self.table = self.ts.get_table_client(self.table_name)
+
+        entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+        batch = self.table.create_batch()
+        batch.create_entity(entity)
+
+        with pytest.raises(ClientAuthenticationError):
+            resp = self.table.send_batch(batch)
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_new_delete_nonexistent_entity(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            batch = self.table.create_batch()
+            batch.delete_entity(entity['PartitionKey'], entity['RowKey'])
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = self.table.send_batch(batch)
+
+        finally:
+            self._tear_down()
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

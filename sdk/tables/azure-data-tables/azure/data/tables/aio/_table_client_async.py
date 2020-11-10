@@ -24,9 +24,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
-from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
-from .._models import AccessPolicy, PartialBatchErrorException  # pylint:disable=unused-import
-from .._policies import StorageHeadersPolicy  # pylint:disable=unused-import
+from .._generated.models import SignedIdentifier, TableProperties
+from .._models import AccessPolicy, BatchTransactionResult
 from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
 from .._error import _process_table_error
@@ -47,26 +46,26 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             self,
             account_url,  # type: str
             table_name,  # type: str
-            credential=None,  # type : Optional[Any]=None
+            credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Create TableClient from a Credential.
 
-              :param account_url:
-                  A url to an Azure Storage account.
-              :type account_url: str
-              :param table_name: The table name.
-              :type table_name: str
-              :param credential:
-                  The credentials with which to authenticate. This is optional if the
-                  account URL already has a SAS token, or the connection string already has shared
-                  access key values. The value can be a SAS token string, an account shared access
-                  key.
-              :type credential: str
+        :param account_url:
+            A url to an Azure Storage account.
+        :type account_url: str
+        :param table_name: The table name.
+        :type table_name: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string or an account shared access
+            key.
+        :type credential: str
 
-              :returns: None
-              """
+        :returns: None
+        """
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(TableClient, self).__init__(
@@ -82,7 +81,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> TableClient
-        """Create TableClient from a Connection String.
+        """Create TableClient from a Connection string.
 
         :param conn_str:
             A connection string to an Azure Storage or Cosmos account.
@@ -153,9 +152,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """
         Retrieves details about any stored access policies specified on the table that may be
         used with Shared Access Signatures.
+
         :return: Dictionary of SignedIdentifiers
         :rtype: dict[str,~azure.data.tables.AccessPolicy]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -180,7 +180,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type signed_identifiers: dict[str,AccessPolicy]
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._validate_signed_identifiers(signed_identifiers)
         identifiers = []
@@ -205,9 +205,10 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ):
         # type: (...) -> Dict[str,str]
         """Creates a new table under the given account.
+
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceExistsError: If the table already exists
 
         .. admonition:: Example:
 
@@ -233,15 +234,17 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Creates a new table under the given account.
+        """Deletes the table under the current account.
+
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START delete_table]
-                :end-before: [END delete_table]
+                :start-after: [START delete_from_table_client]
+                :end-before: [END delete_from_table_client]
                 :language: python
                 :dedent: 8
                 :caption: Deleting a table from the TableClient object.
@@ -260,15 +263,16 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ):
         # type: (...) -> None
         """Deletes the specified entity in a table.
+
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
         :keyword str etag: Etag of the entity
-        :keyword  ~azure.core.MatchConditions match_condition: MatchCondition
+        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the table does not exist
 
         .. admonition:: Example:
 
@@ -300,11 +304,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ):
         # type: (...) -> Dict[str,str]
         """Insert entity in a table.
+
         :param entity: The properties for the table entity.
-        :type entity: dict[str, str]
-        :return: Dictionary of operation metadata returned from service
+        :type entity: TableEntity or dict[str,str]
+        :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceFoundError:
 
         .. admonition:: Example:
 
@@ -339,21 +344,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ):
         # type: (...) -> Dict[str,str]
         """Update entity in a table.
-        :param mode: Merge or Replace entity
-        :type mode: ~azure.data.tables.UpdateMode
+
         :param entity: The properties for the table entity.
         :type entity: dict[str, str]
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
-        :param etag: Etag of the entity
-        :type etag: str
-        :param match_condition: MatchCondition
-        :type match_condition: ~azure.core.MatchConditions
+        :param mode: Merge or Replace entity
+        :type mode: ~azure.data.tables.UpdateMode
+        :keyword str partition_key: The partition key of the entity.
+        :keyword str row_key: The row key of the entity.
+        :keyword str etag: Etag of the entity
+        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: Dictionary of operation metadata returned from service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -404,11 +406,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         # type: (...) -> AsyncItemPaged[TableEntity]
         """Lists entities in a table.
 
-        :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of an entity to return certain entities
+        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :return: Query of table entities
-        :rtype: AsyncItemPaged[TableEntity]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -422,14 +425,14 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
+        top = kwargs.pop('results_per_page', None)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
-
-        command = functools.partial(
-            self._client.table.query_entities,
-            **kwargs)
+        command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
-            command, results_per_page=query_options, table=self.table_name,
+            command,
+            table=self.table_name,
+            results_per_page=top,
+            select=user_select,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
@@ -443,12 +446,13 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """Lists entities in a table.
 
         :param str filter: Specify a filter to return certain entities
-        :keyword int results_per_page: Number of entities per page in return ItemPaged
-        :keyword Union[str, list[str]] select: Specify desired properties of an entity to return certain entities
+        :keyword int results_per_page: Number of entities per page in return AsyncItemPaged
+        :keyword select: Specify desired properties of an entity to return certain entities
+        :paramtype select: str or list[str]
         :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
         :return: Query of table entities
-        :rtype: ItemPaged[TableEntity]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -461,20 +465,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
-
+        top = kwargs.pop('results_per_page', None)
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
-                                     filter=filter)
-
-        command = functools.partial(
-            self._client.table.query_entities,
-            query_options=query_options,
-            **kwargs)
+        command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
-            command, table=self.table_name,
+            command,
+            table=self.table_name,
+            results_per_page=top,
+            filter=filter,
+            select=user_select,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
@@ -486,14 +488,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> TableEntity
-        """Queries entities in a table.
+        """Get a single entity in a table.
+
         :param partition_key: The partition key of the entity.
         :type partition_key: str
         :param row_key: The row key of the entity.
         :type row_key: str
-        :return: TableEntity mapping str to azure.data.tables.EntityProperty
+        :return: Dictionary mapping operation metadata returned from the service
         :rtype: ~azure.data.tables.TableEntity
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -523,15 +526,15 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str,str]
-
         """Update/Merge or Insert entity into table.
+
+        :param entity: The properties for the table entity.
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :param entity: The properties for the table entity.
-        :type entity: dict[str, str]
-        :return: Dictionary of operation metadata returned from service
+        :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -579,9 +582,8 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
     ) -> TableBatchOperations:
         """Create a Batching object from a Table Client
 
-        return: Table batch operation for inserting new operations
+        :return: Object containing requests and responses
         :rtype: ~azure.data.tables.TableBatchOperations
-        :raises: None
 
         .. admonition:: Example:
 
@@ -607,12 +609,12 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         self,
         batch: TableBatchOperations,
         **kwargs: Dict[Any, str]
-    ) -> None:
+    ) -> BatchTransactionResult:
         """Commit a TableBatchOperations to send requests to the server
 
-        return: Table batch operation for inserting new operations
+        :return: Object containing requests and responses
         :rtype: ~azure.data.tables.BatchTransactionResult
-        :raises: ~azure.data.tables.BatchErrorException
+        :raises ~azure.data.tables.BatchErrorException:
 
         .. admonition:: Example:
 
