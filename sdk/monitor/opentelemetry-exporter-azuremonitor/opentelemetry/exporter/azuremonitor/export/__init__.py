@@ -1,24 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import json
 import logging
 import typing
 from enum import Enum
-from urllib.parse import urlparse
-
-from opentelemetry.sdk.metrics.export import MetricsExportResult
-from opentelemetry.sdk.trace.export import SpanExportResult
-from opentelemetry.sdk.util import ns_to_iso_str
-from opentelemetry.trace import Span, SpanKind
-from opentelemetry.trace.status import StatusCanonicalCode
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import ProxyPolicy, RetryPolicy
-from opentelemetry.exporter.azuremonitor import utils
+
+from opentelemetry.sdk.metrics.export import MetricsExportResult
+from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
-from opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem, TrackResponse
+from opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
 from opentelemetry.exporter.azuremonitor.options import ExporterOptions
 from opentelemetry.exporter.azuremonitor.storage import LocalFileStorage
+
 
 logger = logging.getLogger(__name__)
 
@@ -125,28 +120,26 @@ class BaseExporter:
                     logger.info("Transmission succeeded: Item received: %s. Items accepted: %s",
                                 track_response.items_received, track_response.items_accepted)
                     return ExportResult.SUCCESS
-                else:
-                    resend_envelopes = []
-                    for error in track_response.errors:
-                        if self._is_retryable_code(error.statusCode):
-                            resend_envelopes.append(
-                                envelopes[error.index]
-                            )
-                        else:
-                            logger.error(
-                                "Data drop %s: %s %s.",
-                                error.statusCode,
-                                error.message,
-                                envelopes[error.index],
-                            )
-                    if resend_envelopes:
-                        self.storage.put(resend_envelopes)
+                resend_envelopes = []
+                for error in track_response.errors:
+                    if is_retryable_code(error.statusCode):
+                        resend_envelopes.append(
+                            envelopes[error.index]
+                        )
+                    else:
+                        logger.error(
+                            "Data drop %s: %s %s.",
+                            error.statusCode,
+                            error.message,
+                            envelopes[error.index],
+                        )
+                if resend_envelopes:
+                    self.storage.put(resend_envelopes)
 
             except HttpResponseError as response_error:
-                if self._is_retryable_code(response_error.status_code):
+                if is_retryable_code(response_error.status_code):
                     return ExportResult.FAILED_RETRYABLE
-                else:
-                    return ExportResult.FAILED_NOT_RETRYABLE
+                return ExportResult.FAILED_NOT_RETRYABLE
             except Exception as ex:
                 logger.warning(
                     "Retrying due to transient client side error %s.", ex
@@ -157,21 +150,19 @@ class BaseExporter:
         # No spans to export
         return ExportResult.SUCCESS
 
-    def _is_retryable_code(self, response_code: int) -> bool:
-        """
-        Determine if response is retryable
-        """
-        if response_code in (
-            206,  # Retriable
-            408,  # Timeout
-            429,  # Throttle, too Many Requests
-            439,  # Quota, too Many Requests over extended time
-            500,  # Internal Server Error
-            503,  # Service Unavailable
-        ):
-            return True
-        else:
-            return False
+
+def is_retryable_code(response_code: int) -> bool:
+    """
+    Determine if response is retryable
+    """
+    return bool(response_code in (
+        206,  # Retriable
+        408,  # Timeout
+        429,  # Throttle, too Many Requests
+        439,  # Quota, too Many Requests over extended time
+        500,  # Internal Server Error
+        503,  # Service Unavailable
+    ))
 
 
 def get_trace_export_result(result: ExportResult) -> SpanExportResult:

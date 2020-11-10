@@ -148,7 +148,6 @@ def parse_connection_string(connection_string) -> typing.Dict:
         # Convert keys to lower-case due to case type-insensitive checking
         result = {key.lower(): value for key, value in result.items()}
     except Exception:
-        # pylint: disable=raise-missing-from
         raise ValueError("Invalid connection string")
     # Validate authorization
     auth = result.get("authorization")
