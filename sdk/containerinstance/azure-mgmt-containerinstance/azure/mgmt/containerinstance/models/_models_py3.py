@@ -1251,6 +1251,8 @@ class LogAnalytics(Model):
      ~azure.mgmt.containerinstance.models.LogAnalyticsLogType
     :param metadata: Metadata for log analytics.
     :type metadata: dict[str, str]
+    :param workspace_resource_id: The workspace resource id for log analytics
+    :type workspace_resource_id: dict[str, str]
     """
 
     _validation = {
@@ -1263,14 +1265,16 @@ class LogAnalytics(Model):
         'workspace_key': {'key': 'workspaceKey', 'type': 'str'},
         'log_type': {'key': 'logType', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': '{str}'},
     }
 
-    def __init__(self, *, workspace_id: str, workspace_key: str, log_type=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, workspace_id: str, workspace_key: str, log_type=None, metadata=None, workspace_resource_id=None, **kwargs) -> None:
         super(LogAnalytics, self).__init__(**kwargs)
         self.workspace_id = workspace_id
         self.workspace_key = workspace_key
         self.log_type = log_type
         self.metadata = metadata
+        self.workspace_resource_id = workspace_resource_id
 
 
 class Logs(Model):
