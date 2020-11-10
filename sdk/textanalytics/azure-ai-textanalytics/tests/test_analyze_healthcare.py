@@ -30,7 +30,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
@@ -40,7 +40,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_all_successful_passing_dict(self, client):
         docs = [{"id": "1", "language": "en", "text": "Patient does not suffer from high blood pressure."},
@@ -58,7 +58,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_all_successful_passing_text_document_input(self, client):
         docs = [
@@ -80,7 +80,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_passing_only_string(self, client):
         docs = [
@@ -103,7 +103,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
@@ -119,7 +119,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_input_with_all_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
@@ -135,7 +135,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 1001))  # Maximum number of documents per request is 1000
@@ -150,7 +150,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_payload_too_large(self, client):
         large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
@@ -178,7 +178,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_document_warnings(self, client):
         # TODO: reproduce a warnings scenario for implementation
@@ -195,7 +195,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_output_same_order_as_input(self, client):
         docs = [
@@ -215,7 +215,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": "",
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -227,7 +227,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": "xxxxxxxxxxxx",
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -239,7 +239,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_bad_document_input(self, client):
         docs = "This is the wrong type"
@@ -251,7 +251,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_mixing_inputs(self, client):
         docs = [
@@ -266,7 +266,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -286,7 +286,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_show_stats_and_model_version(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -313,7 +313,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_whole_batch_language_hint(self, client):
         docs = [
@@ -331,7 +331,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_whole_batch_dont_use_language_hint(self, client):
         docs = [
@@ -349,7 +349,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_per_item_dont_use_language_hint(self, client):
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
@@ -365,7 +365,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_whole_batch_language_hint_and_obj_input(self, client):
         docs = [
@@ -383,7 +383,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_whole_batch_language_hint_and_dict_input(self, client):
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -399,7 +399,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         docs = [
@@ -415,7 +415,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
@@ -431,7 +431,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net",
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT'),
         "default_language": "en"
     })
     def test_client_passed_default_language_hint(self, client):
@@ -448,7 +448,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_invalid_language_hint_method(self, client):
         response = list(client.begin_analyze_healthcare(
@@ -460,7 +460,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_invalid_language_hint_docs(self, client):
         response = list(client.begin_analyze_healthcare(
@@ -470,7 +470,7 @@ class TestHealth(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics_account = "https://cognitiveusw2dev.azure-api.net"
+        text_analytics_account = os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
         text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
@@ -495,7 +495,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_user_agent(self, client):  # TODO: verify
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -514,7 +514,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
@@ -540,7 +540,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
@@ -559,7 +559,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -574,7 +574,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_document_errors(self, client):
         text = ""
@@ -597,7 +597,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
@@ -609,7 +609,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_missing_input_records_error(self, client):
         docs = []
@@ -621,7 +621,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
@@ -632,7 +632,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_duplicate_ids_error(self, client):
         # Duplicate Ids
@@ -648,7 +648,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
@@ -663,7 +663,7 @@ class TestHealth(TextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"

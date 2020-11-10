@@ -17,17 +17,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 722775d2-3337-4b67-8839-bce7a936639d
+      - d8165f96-f8d5-48ba-8b9a-89c5026bf131
       date:
-      - Sat, 31 Oct 2020 00:44:27 GMT
+      - Mon, 09 Nov 2020 20:50:42 GMT
       operation-location:
-      - https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/51d63caf-46f2-46a5-953e-dc8a4af1947f
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -35,7 +35,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '179'
+      - '284'
     status:
       code: 202
       message: Accepted
@@ -51,19 +51,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://cognitiveusw2dev.azure-api.net/text/analytics/v3.2-preview.1/entities/health/jobs/51d63caf-46f2-46a5-953e-dc8a4af1947f?showStats=True
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
   response:
     body:
-      string: '{"jobId":"51d63caf-46f2-46a5-953e-dc8a4af1947f","lastUpdateDateTime":"2020-10-31T00:44:30Z","createdDateTime":"2020-10-31T00:44:27Z","expirationDateTime":"2020-11-01T00:44:27Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","statistics":{"charactersCount":49,"transactionsCount":1},"entities":[{"offset":29,"length":4,"text":"high","category":"MeasurementValue","confidenceScore":0.93,"isNegated":false},{"offset":34,"length":14,"text":"blood
-        pressure","category":"ExaminationName","confidenceScore":0.91,"isNegated":true,"links":[{"dataSource":"UMLS","id":"C0005824"},{"dataSource":"AOD","id":"0000007392"},{"dataSource":"CCC","id":"K33.1"},{"dataSource":"CHV","id":"0000002009"},{"dataSource":"ICNP","id":"10031996"},{"dataSource":"LCH_NW","id":"sh85015011"},{"dataSource":"MDR","id":"10076581"},{"dataSource":"MEDCIN","id":"6045"},{"dataSource":"MSH","id":"D001795"},{"dataSource":"SNM","id":"P-Y107"},{"dataSource":"SNMI","id":"PA-00540"},{"dataSource":"SNOMEDCT_US","id":"46973005"}]}],"relations":[{"relationType":"ValueOfExamination","bidirectional":false,"source":"#/results/documents/0/entities/0","target":"#/results/documents/0/entities/1"}]},{"id":"2","statistics":{"charactersCount":46,"transactionsCount":1},"entities":[{"offset":11,"length":5,"text":"100mg","category":"Dosage","confidenceScore":1.0,"isNegated":false},{"offset":17,"length":9,"text":"ibuprofen","category":"MedicationName","confidenceScore":1.0,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0020740"},{"dataSource":"AOD","id":"0000019879"},{"dataSource":"ATC","id":"M01AE01"},{"dataSource":"CCPSS","id":"0046165"},{"dataSource":"CHV","id":"0000006519"},{"dataSource":"CSP","id":"2270-2077"},{"dataSource":"DRUGBANK","id":"DB01050"},{"dataSource":"GS","id":"1611"},{"dataSource":"LCH_NW","id":"sh97005926"},{"dataSource":"LNC","id":"LP16165-0"},{"dataSource":"MEDCIN","id":"40458"},{"dataSource":"MMSL","id":"d00015"},{"dataSource":"MSH","id":"D007052"},{"dataSource":"MTHSPL","id":"WK2XYI10QM"},{"dataSource":"NCI","id":"C561"},{"dataSource":"NCI_CTRP","id":"C561"},{"dataSource":"NCI_DCP","id":"00803"},{"dataSource":"NCI_DTP","id":"NSC0256857"},{"dataSource":"NCI_FDA","id":"WK2XYI10QM"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000613511"},{"dataSource":"NDDF","id":"002377"},{"dataSource":"PDQ","id":"CDR0000040475"},{"dataSource":"RCD","id":"x02MO"},{"dataSource":"RXNORM","id":"5640"},{"dataSource":"SNM","id":"E-7772"},{"dataSource":"SNMI","id":"C-603C0"},{"dataSource":"SNOMEDCT_US","id":"387207008"},{"dataSource":"USP","id":"m39860"},{"dataSource":"USPMG","id":"MTHU000060"},{"dataSource":"VANDF","id":"4017840"}]},{"offset":34,"length":11,"text":"twice
-        daily","category":"Frequency","confidenceScore":1.0,"isNegated":false}],"relations":[{"relationType":"DosageOfMedication","bidirectional":false,"source":"#/results/documents/1/entities/0","target":"#/results/documents/1/entities/1"},{"relationType":"FrequencyOfMedication","bidirectional":false,"source":"#/results/documents/1/entities/2","target":"#/results/documents/1/entities/1"}]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
     headers:
       apim-request-id:
-      - cd4bbf84-3fc7-40b7-906f-24bbc66eff7b
+      - 49545968-3b0c-4e3e-9862-648e31aac813
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 31 Oct 2020 00:44:58 GMT
+      - Mon, 09 Nov 2020 20:51:13 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -71,7 +69,587 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '56'
+      - '9'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - f6ca627d-1090-4ba7-b889-bbb8a0e7e12d
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:51:43 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '101'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 17bcfccd-d5ec-4a9e-ac65-4753fc6f3d92
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:52:13 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '15'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 124e3166-097d-4df5-a372-a8035aa5f0e7
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:52:44 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '144'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 05107825-ede9-4f8c-9965-6594f922af18
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:53:14 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '9'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - fb737b95-19bb-487b-9765-d9f963d88d95
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:53:45 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 01c9b6a9-3def-4e90-8e37-cdc12767cfd4
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:54:15 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '11'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - fde41e3e-425d-4b82-9085-eb3dc02950c9
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:54:44 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '11'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - ce38e47a-5145-4cb6-88ec-60849db3631d
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:55:15 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '9'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 458d54b8-e886-4bed-a496-732eb70b1167
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:55:45 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 12398b91-d45f-4b4d-9c0a-6876d22bbf43
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:56:16 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '112'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 549194c7-012e-4b75-a98c-3f6e5ec054ca
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:56:46 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '9'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 34dad88d-d66c-419d-971b-887a50cdce7e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:57:16 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '11'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 3526b280-cde6-41fe-925f-730b94f4bf0e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:57:46 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 7d816569-0659-4730-b70c-eab50ceb190f
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:58:16 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '151'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - 0d2a6fd8-e67a-4d34-aa1c-44ac4fc15f61
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:58:47 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '9'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:50:43Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"notStarted","errors":[]}'
+    headers:
+      apim-request-id:
+      - dcaa1f22-bace-4f79-a79a-b76e2b945363
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:59:17 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/d096b5b0-4405-466f-9784-30abdfcd7766?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d096b5b0-4405-466f-9784-30abdfcd7766","lastUpdateDateTime":"2020-11-09T20:59:35Z","createdDateTime":"2020-11-09T20:50:43Z","expirationDateTime":"2020-11-10T20:50:43Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":2,"validDocumentsCount":2,"erroneousDocumentsCount":0,"transactionsCount":2},"documents":[{"id":"1","statistics":{"charactersCount":49,"transactionsCount":1},"entities":[{"offset":29,"length":4,"text":"high","category":"MeasurementValue","confidenceScore":0.93,"isNegated":false},{"offset":34,"length":14,"text":"blood
+        pressure","category":"ExaminationName","confidenceScore":0.91,"isNegated":true,"links":[{"dataSource":"UMLS","id":"C0005824"},{"dataSource":"AOD","id":"0000007392"},{"dataSource":"CCC","id":"K33.1"},{"dataSource":"CHV","id":"0000002009"},{"dataSource":"ICNP","id":"10031996"},{"dataSource":"LCH_NW","id":"sh85015011"},{"dataSource":"MDR","id":"10076581"},{"dataSource":"MEDCIN","id":"6045"},{"dataSource":"MSH","id":"D001795"},{"dataSource":"SNM","id":"P-Y107"},{"dataSource":"SNMI","id":"PA-00540"},{"dataSource":"SNOMEDCT_US","id":"46973005"}]}],"relations":[{"relationType":"ValueOfExamination","bidirectional":false,"source":"#/results/documents/0/entities/0","target":"#/results/documents/0/entities/1"}],"warnings":[]},{"id":"2","statistics":{"charactersCount":46,"transactionsCount":1},"entities":[{"offset":11,"length":5,"text":"100mg","category":"Dosage","confidenceScore":1.0,"isNegated":false},{"offset":17,"length":9,"text":"ibuprofen","category":"MedicationName","confidenceScore":1.0,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0020740"},{"dataSource":"AOD","id":"0000019879"},{"dataSource":"ATC","id":"M01AE01"},{"dataSource":"CCPSS","id":"0046165"},{"dataSource":"CHV","id":"0000006519"},{"dataSource":"CSP","id":"2270-2077"},{"dataSource":"DRUGBANK","id":"DB01050"},{"dataSource":"GS","id":"1611"},{"dataSource":"LCH_NW","id":"sh97005926"},{"dataSource":"LNC","id":"LP16165-0"},{"dataSource":"MEDCIN","id":"40458"},{"dataSource":"MMSL","id":"d00015"},{"dataSource":"MSH","id":"D007052"},{"dataSource":"MTHSPL","id":"WK2XYI10QM"},{"dataSource":"NCI","id":"C561"},{"dataSource":"NCI_CTRP","id":"C561"},{"dataSource":"NCI_DCP","id":"00803"},{"dataSource":"NCI_DTP","id":"NSC0256857"},{"dataSource":"NCI_FDA","id":"WK2XYI10QM"},{"dataSource":"NCI_NCI-GLOSS","id":"CDR0000613511"},{"dataSource":"NDDF","id":"002377"},{"dataSource":"PDQ","id":"CDR0000040475"},{"dataSource":"RCD","id":"x02MO"},{"dataSource":"RXNORM","id":"5640"},{"dataSource":"SNM","id":"E-7772"},{"dataSource":"SNMI","id":"C-603C0"},{"dataSource":"SNOMEDCT_US","id":"387207008"},{"dataSource":"USP","id":"m39860"},{"dataSource":"USPMG","id":"MTHU000060"},{"dataSource":"VANDF","id":"4017840"}]},{"offset":34,"length":11,"text":"twice
+        daily","category":"Frequency","confidenceScore":1.0,"isNegated":false}],"relations":[{"relationType":"DosageOfMedication","bidirectional":false,"source":"#/results/documents/1/entities/0","target":"#/results/documents/1/entities/1"},{"relationType":"FrequencyOfMedication","bidirectional":false,"source":"#/results/documents/1/entities/2","target":"#/results/documents/1/entities/1"}],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - 81b66ce5-a21d-45d4-b3f4-0765b58b1b1b
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 20:59:47 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '62'
     status:
       code: 200
       message: OK
