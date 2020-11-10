@@ -162,6 +162,42 @@ class StorageTableTest(TableTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_query_tables_per_page(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        # account_url = self.account_url(cosmos_account, "table")
+        # ts = self.create_client_from_credential(TableServiceClient, cosmos_account_key, account_url=account_url)
+
+        ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
+
+        table_name = "mytable"
+
+        for i in range(5):
+            if i < 3:
+                ts.create_table(table_name + str(i))
+            else:
+                table_name = "table"
+                ts.create_table(table_name + str(i))
+
+        query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
+        table_count = 0
+        page_count = 0
+        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+
+            temp_count = 0
+            for table in table_page:
+                temp_count += 1
+            assert temp_count <= 2
+            page_count += 1
+            table_count += temp_count
+
+        assert page_count == 2
+        assert table_count == 3
+
+        if self.is_live:
+            sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_table_invalid_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)

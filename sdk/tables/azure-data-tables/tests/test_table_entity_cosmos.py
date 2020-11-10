@@ -1357,6 +1357,45 @@ class StorageTableEntityTest(TableTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_query_entities_each_page(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            base_entity = {
+                "PartitionKey": u"pk",
+                "RowKey": u"1",
+            }
+
+            for i in range(10):
+                if i > 5:
+                    base_entity['PartitionKey'] += str(i)
+                base_entity['RowKey'] += str(i)
+                base_entity['value'] = i
+                self.table.create_entity(base_entity)
+
+            query_filter = u"PartitionKey eq 'pk'"
+
+            entity_count = 0
+            page_count = 0
+            for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+
+                temp_count = 0
+                for ent in entity_page:
+                    temp_count += 1
+
+                assert temp_count <= 2
+                page_count += 1
+                entity_count += temp_count
+
+            assert entity_count == 6
+            assert page_count == 3
+
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_query_zero_entities(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         self._set_up(cosmos_account, cosmos_account_key)

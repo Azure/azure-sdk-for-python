@@ -92,6 +92,36 @@ class TableTestAsync(AsyncTableTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
+    async def test_query_tables_per_page(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
+        table_name = "myasynctable"
+
+        for i in range(5):
+            await ts.create_table(table_name + str(i))
+
+        query_filter = "TableName eq 'myasynctable0' or TableName eq 'myasynctable1' or TableName eq 'myasynctable2'"
+        table_count = 0
+        page_count = 0
+        async for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+
+            temp_count = 0
+            async for table in table_page:
+                temp_count += 1
+            assert temp_count <= 2
+            page_count += 1
+            table_count += temp_count
+
+        assert page_count == 2
+        assert table_count == 3
+
+        for i in range(5):
+            await ts.delete_table(table_name + str(i))
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_table_invalid_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")

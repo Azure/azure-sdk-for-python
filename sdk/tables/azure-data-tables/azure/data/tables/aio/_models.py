@@ -23,7 +23,12 @@ class TablePropertiesPaged(AsyncPageIterator):
     :vartype: str continuation_token: An opaque continuation token.
     """
 
-    def __init__(self, command, continuation_token=None, **kwargs):
+    def __init__(
+        self, command,
+        continuation_token=None,
+        results_per_page=None,
+        **kwargs
+    ):
         super(TablePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -32,6 +37,7 @@ class TablePropertiesPaged(AsyncPageIterator):
         )
         self._command = command
         self.next_table_name = None
+        self.results_per_page = results_per_page
         self._headers = None
         self.location_mode = None
 
@@ -39,6 +45,7 @@ class TablePropertiesPaged(AsyncPageIterator):
         try:
             return await self._command(
                 next_table_name=continuation_token or None,
+                query_options=self.results_per_page,
                 cls=kwargs.pop('cls', None) or _return_context_and_deserialized,
                 use_location=self.location_mode
             )
