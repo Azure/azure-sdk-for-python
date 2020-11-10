@@ -139,7 +139,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
     @distributed_trace_async
     async def upload_blob_from_url(
             self, source_url,   # type: str
-            copy_source_blob_properties=True,  # type: Optional[bool]
+            include_source_blob_properties=True,  # type: Optional[bool]
             **kwargs):
         # type: (...) -> Dict[str, Any]
         """
@@ -158,7 +158,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
-        :param bool copy_source_blob_properties:
+        :param bool include_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
@@ -231,6 +231,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
+            include_source_blob_properties=include_source_blob_properties,
             **kwargs)
         try:
             return await self._client.block_blob.put_blob_from_url(**options)

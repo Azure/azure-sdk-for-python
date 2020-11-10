@@ -406,7 +406,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Unsupported BlobType: {}".format(blob_type))
         return kwargs
 
-    def _upload_blob_from_url_options(self, source_url, copy_source_blob_properties, **kwargs):
+    def _upload_blob_from_url_options(self, source_url, include_source_blob_properties, **kwargs):
         # type: (...) -> Dict[str, Any]
         headers = kwargs.pop('headers', {})
         if 'source_lease' in kwargs:
@@ -442,7 +442,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
 
         options = {
-            'copy_source_blob_properties': copy_source_blob_properties,
+            'copy_source_blob_properties': include_source_blob_properties,
             'copy_source': source_url,
             'timeout': timeout,
             'modified_access_conditions': dest_mod_conditions,
@@ -461,7 +461,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     @distributed_trace
     def upload_blob_from_url(
             self, source_url,   # type: str
-            copy_source_blob_properties=True,   # type: Optional[bool]
+            include_source_blob_properties=True,   # type: Optional[bool]
             **kwargs):
         # type: (...) -> Dict[str, Any]
         """
@@ -480,7 +480,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
-        :param bool copy_source_blob_properties:
+        :param bool include_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
@@ -553,7 +553,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
-            copy_source_blob_properties=copy_source_blob_properties,
+            copy_source_blob_properties=include_source_blob_properties,
             **kwargs)
         try:
             return self._client.block_blob.put_blob_from_url(**options)
