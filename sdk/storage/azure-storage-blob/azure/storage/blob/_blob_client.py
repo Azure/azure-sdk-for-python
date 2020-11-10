@@ -442,6 +442,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
 
         options = {
+            'content_length': 0,
             'copy_source_blob_properties': include_source_blob_properties,
             'copy_source': source_url,
             'timeout': timeout,
