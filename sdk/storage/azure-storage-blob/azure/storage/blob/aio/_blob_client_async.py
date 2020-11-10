@@ -208,7 +208,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -324,7 +324,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -412,7 +412,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -522,7 +522,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -605,7 +605,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -653,7 +653,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -872,7 +872,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1022,7 +1022,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The destination match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1142,7 +1142,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1184,7 +1184,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Indicates the priority with which to rehydrate an archived blob
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1340,7 +1340,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1422,7 +1422,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1469,7 +1469,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1526,7 +1526,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             blob.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -1551,7 +1551,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             value that, when present, specifies the version of the blob to add tags to.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Key value pairs of blob tags.
@@ -1616,7 +1616,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1753,7 +1753,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1803,7 +1803,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1883,7 +1883,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -1996,7 +1996,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The destination match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -2076,7 +2076,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -2151,7 +2151,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
@@ -2239,7 +2239,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             The destination match condition to use upon the etag.
         :keyword str if_tags_match_condition:
             Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. "\"tagname\"='my tag'"
+            eg. `"tagname"='my tag'`
 
             .. versionadded:: 12.4.0
 
