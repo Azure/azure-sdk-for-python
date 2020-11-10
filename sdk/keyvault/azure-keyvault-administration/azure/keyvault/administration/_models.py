@@ -23,26 +23,26 @@ class KeyVaultRoleScope(str, Enum):
 class KeyVaultPermission(object):
     """Role definition permissions.
 
-    :ivar list[str] actions: allowed actions
-    :ivar list[str] not_actions: denied actions
-    :ivar list[str] data_actions: allowed data actions
-    :ivar list[str] not_data_actions: denied data actions
+    :ivar list[str] allowed_actions:
+    :ivar list[str] denied_actions:
+    :ivar list[str] allowed_data_actions:
+    :ivar list[str] denied_data_actions:
     """
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self.actions = kwargs.get("actions")
-        self.not_actions = kwargs.get("not_actions")
-        self.data_actions = kwargs.get("data_actions")
-        self.not_data_actions = kwargs.get("not_data_actions")
+        self.allowed_actions = kwargs.get("allowed_actions")
+        self.denied_actions = kwargs.get("denied_actions")
+        self.allowed_data_actions = kwargs.get("allowed_data_actions")
+        self.denied_data_actions = kwargs.get("denied_data_actions")
 
     @classmethod
     def _from_generated(cls, permissions):
         return cls(
-            actions=permissions.actions,
-            not_actions=permissions.not_actions,
-            data_actions=permissions.data_actions,
-            not_data_actions=permissions.not_data_actions,
+            allowed_actions=permissions.actions,
+            denied_actions=permissions.not_actions,
+            allowed_data_actions=permissions.data_actions,
+            denied_data_actions=permissions.not_data_actions,
         )
 
 
