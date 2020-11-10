@@ -208,7 +208,7 @@ class SingleSignOnConfigurationsOperations(object):
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param configuration_name:
+        :param configuration_name: Configuration name.
         :type configuration_name: str
         :param body:
         :type body: ~microsoft_datadog_client.models.DatadogSingleSignOnResource
@@ -280,7 +280,7 @@ class SingleSignOnConfigurationsOperations(object):
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param configuration_name:
+        :param configuration_name: Configuration name.
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatadogSingleSignOnResource, or the result of cls(response)

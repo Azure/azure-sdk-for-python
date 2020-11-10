@@ -51,6 +51,7 @@
         "credential_key_header_name": null
     },
     "operation_groups": {
+        "marketplace_agreements": "MarketplaceAgreementsOperations",
         "api_keys": "ApiKeysOperations",
         "hosts": "HostsOperations",
         "linked_resources": "LinkedResourcesOperations",

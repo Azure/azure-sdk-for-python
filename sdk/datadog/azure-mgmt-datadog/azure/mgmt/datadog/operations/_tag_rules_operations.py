@@ -142,7 +142,7 @@ class TagRulesOperations(object):
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param rule_set_name:
+        :param rule_set_name: Rule set name.
         :type rule_set_name: str
         :param body:
         :type body: ~microsoft_datadog_client.models.MonitoringTagRules
@@ -219,7 +219,7 @@ class TagRulesOperations(object):
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param rule_set_name:
+        :param rule_set_name: Rule set name.
         :type rule_set_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MonitoringTagRules, or the result of cls(response)
