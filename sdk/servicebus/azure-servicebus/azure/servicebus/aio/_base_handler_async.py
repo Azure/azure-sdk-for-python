@@ -73,7 +73,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class BaseHandler:
+class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
