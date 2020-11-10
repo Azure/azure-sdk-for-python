@@ -23,13 +23,9 @@
 
 **New Features**
 
-##### Sync `PhoneNumberAdministrationClient`
+##### `PhoneNumberAdministrationClient`
 - Add long run operation polling method `ReservePhoneNumberPolling`,`PurchaseReservationPolling`,
 `ReleasePhoneNumberPolling`.
-
-##### Async `PhoneNumberAdministrationClient`
-- Add async long run operation polling method `ReservePhoneNumberPollingAsync`,`PurchaseReservationPollingAsync`,
-`ReleasePhoneNumberPollingAsync`.
 
 ## 1.0.0b2 (2020-10-06)
 - Added support for phone number administration.
