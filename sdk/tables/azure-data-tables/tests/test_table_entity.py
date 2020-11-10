@@ -1507,10 +1507,13 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(storage_account, storage_account_key)
         try:
             entity, _ = self._insert_random_entity()
+            entity2, _ = self._insert_random_entity(pk="foo" + entity.PartitionKey)
+            entity3, _ = self._insert_random_entity(pk="bar" + entity.PartitionKey)
 
             # Act
             entities = list(self.table.query_entities(
-                filter="PartitionKey eq '{}'".format(entity.PartitionKey)))
+                filter="PartitionKey eq '{}'".format(entity.PartitionKey),
+                results_per_page=1))
 
             # Assert
             self.assertEqual(len(entities), 1)

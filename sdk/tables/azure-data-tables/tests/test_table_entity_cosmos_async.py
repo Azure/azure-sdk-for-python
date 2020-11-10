@@ -1489,6 +1489,8 @@ class StorageTableEntityTest(TableTestCase):
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity, _ = await self._insert_random_entity()
+            entity2, _ = await self._insert_random_entity(pk="foo" + entity.PartitionKey)
+            entity3, _ = await self._insert_random_entity(pk="bar" + entity.PartitionKey)
 
             # Act
             entities = []

@@ -13,7 +13,7 @@ from azure.core.pipeline import Pipeline
 from ._models import TableItem
 
 from ._generated import AzureTable
-from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
+from ._generated.models import TableProperties, TableServiceProperties
 from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
@@ -279,19 +279,17 @@ class TableServiceClient(TableServiceClientBase):
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
-
+        top = kwargs.pop('results_per_page', None)
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
-                                     filter=filter)
-        command = functools.partial(
-            self._client.table.query,
-            **kwargs)
+        command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command,
-            results_per_page=query_options,
+            results_per_page=top,
+            filter=filter,
+            select=user_select,
             page_iterator_class=TablePropertiesPaged
         )
 
@@ -322,15 +320,13 @@ class TableServiceClient(TableServiceClientBase):
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
+        top = kwargs.pop('results_per_page', None)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
-
-        command = functools.partial(
-            self._client.table.query,
-            **kwargs)
+        command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command,
-            results_per_page=query_options,
+            results_per_page=top,
+            select=user_select,
             page_iterator_class=TablePropertiesPaged
         )
 
