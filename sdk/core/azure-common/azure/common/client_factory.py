@@ -39,7 +39,7 @@ def _client_resource(client_class, cloud):
     if client_class.__name__ == 'GraphRbacManagementClient':
         return cloud.endpoints.active_directory_graph_resource_id, cloud.endpoints.active_directory_graph_resource_id
     if client_class.__name__ == 'ApplicationInsightsDataClient':
-        return "https://api.applicationinsights.io", "https://api.applicationinsights.io/v1"
+        return cloud.endpoints.app_insights_resource_id, cloud.endpoints.app_insights_resource_id+"/v1"
     if client_class.__name__ == 'KeyVaultClient':
         vault_host = cloud.suffixes.keyvault_dns[1:]
         vault_url = 'https://{}'.format(vault_host)
