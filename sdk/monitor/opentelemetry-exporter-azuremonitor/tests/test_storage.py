@@ -24,7 +24,8 @@ def setUpModule():
 
 # pylint: disable=invalid-name
 def tearDownModule():
-    shutil.rmtree(TEST_FOLDER)
+    if os.path.exists(TEST_FOLDER):
+        shutil.rmtree(TEST_FOLDER)
 
 
 def throw(exc_type, *args, **kwargs):
