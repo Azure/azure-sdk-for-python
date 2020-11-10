@@ -553,7 +553,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
-            copy_source_blob_properties=include_source_blob_properties,
+            include_source_blob_properties=include_source_blob_properties,
             **kwargs)
         try:
             return self._client.block_blob.put_blob_from_url(**options)
