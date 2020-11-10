@@ -615,9 +615,9 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
      ~azure.mgmt.compute.v2020_09_30.models.StorageAccountType
     :param source: Required.
     :type source: ~azure.mgmt.compute.v2020_09_30.models.UserArtifactSource
-    :param content_type: Optional. May be used to help process this file. The
-     type of file contained in the source, e.g. zip, json, etc.
-    :type content_type: str
+    :param manage_actions:
+    :type manage_actions:
+     ~azure.mgmt.compute.v2020_09_30.models.UserArtifactManage
     :param enable_health_check: Optional. Whether or not this application
      reports health.
     :type enable_health_check: bool
@@ -636,14 +636,14 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         'end_of_life_date': {'key': 'endOfLifeDate', 'type': 'iso-8601'},
         'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
         'source': {'key': 'source', 'type': 'UserArtifactSource'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        'manage_actions': {'key': 'manageActions', 'type': 'UserArtifactManage'},
         'enable_health_check': {'key': 'enableHealthCheck', 'type': 'bool'},
     }
 
-    def __init__(self, *, source, target_regions=None, replica_count: int=None, exclude_from_latest: bool=None, end_of_life_date=None, storage_account_type=None, content_type: str=None, enable_health_check: bool=None, **kwargs) -> None:
+    def __init__(self, *, source, target_regions=None, replica_count: int=None, exclude_from_latest: bool=None, end_of_life_date=None, storage_account_type=None, manage_actions=None, enable_health_check: bool=None, **kwargs) -> None:
         super(GalleryApplicationVersionPublishingProfile, self).__init__(target_regions=target_regions, replica_count=replica_count, exclude_from_latest=exclude_from_latest, end_of_life_date=end_of_life_date, storage_account_type=storage_account_type, **kwargs)
         self.source = source
-        self.content_type = content_type
+        self.manage_actions = manage_actions
         self.enable_health_check = enable_health_check
 
 
@@ -1971,29 +1971,65 @@ class TargetRegion(Model):
         self.encryption = encryption
 
 
+class UserArtifactManage(Model):
+    """UserArtifactManage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param install: Required. Required. The path and arguments to install the
+     gallery application. This is limited to 4096 characters.
+    :type install: str
+    :param remove: Required. Required. The path and arguments to remove the
+     gallery application. This is limited to 4096 characters.
+    :type remove: str
+    :param update: Optional. The path and arguments to update the gallery
+     application. If not present, then update operation will invoke remove
+     command on the previous version and install command on the current version
+     of the gallery application. This is limited to 4096 characters.
+    :type update: str
+    """
+
+    _validation = {
+        'install': {'required': True},
+        'remove': {'required': True},
+    }
+
+    _attribute_map = {
+        'install': {'key': 'install', 'type': 'str'},
+        'remove': {'key': 'remove', 'type': 'str'},
+        'update': {'key': 'update', 'type': 'str'},
+    }
+
+    def __init__(self, *, install: str, remove: str, update: str=None, **kwargs) -> None:
+        super(UserArtifactManage, self).__init__(**kwargs)
+        self.install = install
+        self.remove = remove
+        self.update = update
+
+
 class UserArtifactSource(Model):
     """The source image from which the Image Version is going to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param file_name: Required. Required. The fileName of the artifact.
-    :type file_name: str
     :param media_link: Required. Required. The mediaLink of the artifact, must
-     be a readable storage blob.
+     be a readable storage page blob.
     :type media_link: str
+    :param default_configuration_link: Optional. The defaultConfigurationLink
+     of the artifact, must be a readable storage page blob.
+    :type default_configuration_link: str
     """
 
     _validation = {
-        'file_name': {'required': True},
         'media_link': {'required': True},
     }
 
     _attribute_map = {
-        'file_name': {'key': 'fileName', 'type': 'str'},
         'media_link': {'key': 'mediaLink', 'type': 'str'},
+        'default_configuration_link': {'key': 'defaultConfigurationLink', 'type': 'str'},
     }
 
-    def __init__(self, *, file_name: str, media_link: str, **kwargs) -> None:
+    def __init__(self, *, media_link: str, default_configuration_link: str=None, **kwargs) -> None:
         super(UserArtifactSource, self).__init__(**kwargs)
-        self.file_name = file_name
         self.media_link = media_link
+        self.default_configuration_link = default_configuration_link
