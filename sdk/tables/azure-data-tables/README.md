@@ -324,7 +324,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 
 [azure_subscription]:https://azure.microsoft.com/free/
 [azure_storage_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
-[azure_cosmos_account]:https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal
+[azure_cosmos_account]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
 [pip_link]:https://pypi.org/project/pip/
 
 [azure_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
