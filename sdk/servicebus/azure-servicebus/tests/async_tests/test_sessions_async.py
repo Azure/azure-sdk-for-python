@@ -145,7 +145,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert receiver._running
                 assert len(messages) == 5
 
-            async with receiver:
                 async for message in receiver:
                     assert session_id == receiver.session.session_id
                     assert session_id == message.session_id
