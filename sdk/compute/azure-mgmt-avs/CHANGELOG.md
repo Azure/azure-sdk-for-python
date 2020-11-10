@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0 (2020-11-11)
+
+**Features**
+
+  - Model ManagementCluster has a new parameter provisioning_state
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model Operation has a new parameter is_data_action
+
+**Breaking changes**
+
+  - Operation ClustersOperations.create_or_update has a new signature
+  - Operation ClustersOperations.create_or_update has a new signature
+  
 ## 1.0.0rc1 (2020-07-03)
 
 **Features**
