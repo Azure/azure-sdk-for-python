@@ -327,10 +327,10 @@ class TableServiceClient(TableServiceClientBase):
 
         command = functools.partial(
             self._client.table.query,
-            query_options=query_options,
             **kwargs)
         return ItemPaged(
             command,
+            results_per_page=query_options,
             page_iterator_class=TablePropertiesPaged
         )
 

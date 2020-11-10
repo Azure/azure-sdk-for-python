@@ -93,6 +93,14 @@ class StorageTableTest(TableTestCase):
         except ResourceNotFoundError:
             pass
 
+    def _delete_all_tables(self, ts):
+        tables = ts.list_tables()
+        for table in tables:
+            try:
+                ts.delete_table(table.table_name)
+            except ResourceNotFoundError:
+                pass
+
 
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
@@ -164,19 +172,12 @@ class StorageTableTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_query_tables_per_page(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        # account_url = self.account_url(cosmos_account, "table")
-        # ts = self.create_client_from_credential(TableServiceClient, cosmos_account_key, account_url=account_url)
-
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
 
         table_name = "mytable"
 
         for i in range(5):
-            if i < 3:
-                ts.create_table(table_name + str(i))
-            else:
-                table_name = "table"
-                ts.create_table(table_name + str(i))
+            ts.create_table(table_name + str(i))
 
         query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
         table_count = 0
@@ -192,6 +193,8 @@ class StorageTableTest(TableTestCase):
 
         assert page_count == 2
         assert table_count == 3
+
+        self._delete_all_tables(ts)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -263,6 +266,8 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables), 1)
         ts.delete_table(table.table_name)
 
+        self._delete_all_tables(ts)
+
         if self.is_live:
             sleep(SLEEP_DELAY)
 
@@ -289,6 +294,8 @@ class StorageTableTest(TableTestCase):
         # Assert
         self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
+
+        self._delete_all_tables(ts)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -319,6 +326,8 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables1), 2)
         self.assertEqual(len(tables2), 2)
         self.assertNotEqual(tables1, tables2)
+
+        self._delete_all_tables(ts)
 
         if self.is_live:
             sleep(SLEEP_DELAY)
