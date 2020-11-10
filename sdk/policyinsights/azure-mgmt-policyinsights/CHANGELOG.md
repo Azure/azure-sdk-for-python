@@ -1,5 +1,18 @@
 # Release History
 
+## 0.6.0 (2020-11-11)
+
+**Features**
+
+  - Model PolicyState has a new parameter components
+  - Model QueryOptions has a new parameter skip_token
+  - Model PolicyEvent has a new parameter compliance_state
+  - Model PolicyEvent has a new parameter components
+
+**Breaking changes**
+
+  - Removed operation PolicyEventsOperations.get_metadata
+
 ## 0.5.0 (2020-03-20)
 
 **Features**
