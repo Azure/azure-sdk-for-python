@@ -30,7 +30,8 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     ) -> "AsyncLROPoller[BackupOperation]":
         """Begin a full backup of the Key Vault.
 
-        :param str blob_storage_url: URI of the blob storage resource in which the backup will be stored
+        :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
+            https://<account>.blob.core.windows.net/backup
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`BackupOperation`.
@@ -54,7 +55,10 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     ) -> "AsyncLROPoller[RestoreOperation]":
         """Restore a full backup of a Key Vault.
 
-        :param str blob_storage_url: URI of the blob storage resource in which the backup is stored
+        :param str blob_storage_url: URL for the blob storage resource, including the path to the blob holding the
+            backup. This would be the `blob_storage_url` of a :class:`BackupOperation` returned by
+            :func:`begin_full_backup` or :func:`get_backup_status`, for example
+            https://contoso.blob.core.windows.net/backup/mhsm-contoso-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :rtype: ~azure.core.polling.AsyncLROPoller[RestoreOperation]
         """
@@ -81,7 +85,10 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     ) -> "AsyncLROPoller[SelectiveKeyRestoreOperation]":
         """Restore a single key from a full Key Vault backup.
 
-        :param str blob_storage_url: URI of the blob storage resource in which the backup is stored
+        :param str blob_storage_url: URL for the blob storage resource, including the path to the blob holding the
+            backup. This would be the `blob_storage_url` of a :class:`BackupOperation` returned by
+            :func:`begin_full_backup` or :func:`get_backup_status`, for example
+            https://contoso.blob.core.windows.net/backup/mhsm-contoso-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :param str key_name: name of the key to restore from the backup
         :rtype: ~azure.core.polling.AsyncLROPoller[RestoreOperation]
