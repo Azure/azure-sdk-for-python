@@ -112,10 +112,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :rtype: BackupOperation
         """
         return self._client.full_backup_status(
-            vault_base_url=self._vault_url,
-            job_id=job_id,
-            cls=BackupOperation._wrap_generated,
-            **kwargs
+            vault_base_url=self._vault_url, job_id=job_id, cls=BackupOperation._wrap_generated, **kwargs
         )
 
     def get_restore_status(self, job_id, **kwargs):
@@ -128,8 +125,5 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :rtype: RestoreOperation
         """
         return self._client.restore_status(
-            vault_base_url=self.vault_url,
-            job_id=job_id,
-            cls=RestoreOperation._wrap_generated,
-            **kwargs
+            vault_base_url=self.vault_url, job_id=job_id, cls=RestoreOperation._wrap_generated, **kwargs
         )
