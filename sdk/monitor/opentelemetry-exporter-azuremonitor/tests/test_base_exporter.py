@@ -54,15 +54,16 @@ class TestBaseExporter(unittest.TestCase):
         cls._base = BaseExporter(storage_path=STORAGE_PATH)
 
     def setUp(self):
-        for filename in os.listdir(STORAGE_PATH):
-            file_path = os.path.join(STORAGE_PATH, filename)
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                elif os.path.isdir(file_path):
-                    shutil.rmtree(file_path)
-            except OSError as e:
-                print("Failed to delete %s. Reason: %s" % (file_path, e))
+        if os.path.exists(STORAGE_PATH):
+            for filename in os.listdir(STORAGE_PATH):
+                file_path = os.path.join(STORAGE_PATH, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except OSError as e:
+                    print("Failed to delete %s. Reason: %s" % (file_path, e))
         self._base.clear_telemetry_processors()
 
     def test_constructor(self):
