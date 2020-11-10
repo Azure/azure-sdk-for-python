@@ -64,3 +64,16 @@ class CapabilityPropertiesPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(CapabilityPropertiesPaged, self).__init__(*args, **kwargs)
+class DatabasePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Database <azure.mgmt.rdbms.postgresql_flexibleservers.models.Database>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Database]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatabasePaged, self).__init__(*args, **kwargs)
