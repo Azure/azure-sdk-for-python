@@ -81,6 +81,18 @@ class StorageBlockBlobTest(StorageTestCase):
     #--Test cases for block blobs --------------------------------------------
 
     @GlobalStorageAccountPreparer()
+    def test_upload_block_blob(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        blob_name = self._create_blob()
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copyblob.upload_blob("data")
+        copy = copyblob.upload_blob_from_url(sourceblob)
+
+    @GlobalStorageAccountPreparer()
     def test_put_block(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
