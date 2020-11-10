@@ -30,7 +30,7 @@ try:
     from ._models_py3 import PhoneNumberEntity
     from ._models_py3 import PhoneNumberRelease
     from ._models_py3 import PhoneNumberReleaseDetails
-    from ._models_py3 import PhoneNumberSearch
+    from ._models_py3 import PhoneNumberReservation
     from ._models_py3 import PhonePlan
     from ._models_py3 import PhonePlanGroup
     from ._models_py3 import PhonePlanGroups
@@ -66,7 +66,7 @@ except (SyntaxError, ImportError):
     from ._models import PhoneNumberEntity  # type: ignore
     from ._models import PhoneNumberRelease  # type: ignore
     from ._models import PhoneNumberReleaseDetails  # type: ignore
-    from ._models import PhoneNumberSearch  # type: ignore
+    from ._models import PhoneNumberReservation  # type: ignore
     from ._models import PhonePlan  # type: ignore
     from ._models import PhonePlanGroup  # type: ignore
     from ._models import PhonePlanGroups  # type: ignore
@@ -116,7 +116,7 @@ __all__ = [
     'PhoneNumberEntity',
     'PhoneNumberRelease',
     'PhoneNumberReleaseDetails',
-    'PhoneNumberSearch',
+    'PhoneNumberReservation',
     'PhonePlan',
     'PhonePlanGroup',
     'PhonePlanGroups',
