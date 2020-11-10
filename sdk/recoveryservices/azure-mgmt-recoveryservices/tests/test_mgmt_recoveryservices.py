@@ -72,20 +72,7 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
         self.assertIsNotNone(response)
         self.assertNotEqual(len(response), 0)
 
-        replication_usages = self.test_helper.list_replication_usages(vault_name)
+        # replication_usages = self.test_helper.list_replication_usages(vault_name)
 
-        self.assertIsNotNone(replication_usages)
-        self.assertEqual(len(replication_usages),0)
-
-
-
-
-
-
-
-
-
-
-
-
-
+        # self.assertIsNotNone(replication_usages)
+        # self.assertEqual(len(replication_usages),0)
