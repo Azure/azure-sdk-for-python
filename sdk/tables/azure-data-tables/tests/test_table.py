@@ -341,6 +341,14 @@ class StorageTableTest(TableTestCase):
             continuation_token=generator1.continuation_token)
         next(generator2)
 
+        tables1 = generator1._current_page
+        tables2 = generator2._current_page
+
+        # Assert
+        self.assertEqual(len(tables1), 2)
+        self.assertEqual(len(tables2), 2)
+        self.assertNotEqual(tables1, tables2)
+
         self._delete_all_tables(ts)
 
         if self.is_live:
