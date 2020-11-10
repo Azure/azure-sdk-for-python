@@ -314,10 +314,12 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword enabled_protocols: Protocols to enable on the share.
-        :paramtype enabled_protocols: str or ~azure.storage.fileshare.EnabledProtocols
-        :keyword root_squash: Root squash to set on the share.  Only valid for
-         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+        :keyword enabled_protocols:
+            Protocols to enable on the share.
+        :paramtype enabled_protocols: [str or ~azure.storage.fileshare.EnabledProtocols]
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -337,7 +339,13 @@ class ShareClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         root_squash = kwargs.pop('root_squash', None)
         enabled_protocols = kwargs.pop('enabled_protocols', None)
-        if root_squash and enabled_protocols != "NFS":
+        enabled_protocol = None
+        if enabled_protocols:
+            if len(enabled_protocols) > 1:
+                ValueError("Only one protocol at a time must be enabled.")
+            else:
+                enabled_protocol = enabled_protocols[0]
+        if root_squash and enabled_protocol != "NFS":
             raise ValueError("The 'root_squash' keyword can only be used on NFS shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
@@ -520,8 +528,9 @@ class ShareClient(StorageAccountHostsMixin):
             Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword root_squash: Root squash to set on the share.  Only valid for
-         NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
@@ -539,7 +548,7 @@ class ShareClient(StorageAccountHostsMixin):
         access_tier = kwargs.pop('access_tier', None)
         quota = kwargs.pop('quota', None)
         root_squash = kwargs.pop('root_squash', None)
-        if all(parameter is None for parameter in [access_tier, quota]):
+        if all(parameter is None for parameter in [access_tier, quota, root_squash]):
             raise ValueError("set_share_properties should be called with at least one parameter.")
         try:
             return self._client.share.set_properties( # type: ignore
