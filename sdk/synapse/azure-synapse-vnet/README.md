@@ -1,14 +1,16 @@
 # Microsoft Azure SDK for Python
 
-This is the Microsoft Azure Synapse Spark Client Library.
+This is the Microsoft Azure Synapse Vnet Client Library.
 This package has been tested with Python 2.7, 3.5, 3.6, 3.7 and 3.8.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 
 # Usage
 
-For code examples, see [Synapse Vnet](https://docs.microsoft.com/python/api/overview/azure/)
-on docs.microsoft.com.
+
+
+
+For code examples, see [Synapse Vnet](https://docs.microsoft.com/python/api/overview/azure/) on docs.microsoft.com.
 
 
 # Provide Feedback
@@ -18,4 +20,4 @@ If you encounter any bugs or have suggestions, please file an issue in the
 section of the project.
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-synapse-spark%2FREADME.png)
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-synapse-vnet%2FREADME.png)
