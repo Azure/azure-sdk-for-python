@@ -25,7 +25,6 @@ from ._generated.models import (
     # AccessPolicy,
     SignedIdentifier,
     TableProperties,
-    QueryOptions
 )
 from ._serialize import _get_match_headers, _add_entity_properties
 from ._base_client import parse_connection_str
@@ -420,14 +419,14 @@ class TableClient(TableClientBase):
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
+        top = kwargs.pop('results_per_page', None)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
-
-        command = functools.partial(
-            self._client.table.query_entities,
-            **kwargs)
+        command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
-            command, results_per_page=query_options, table=self.table_name,
+            command,
+            table=self.table_name,
+            results_per_page=top,
+            select=user_select,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
@@ -460,20 +459,18 @@ class TableClient(TableClientBase):
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
-
+        top = kwargs.pop('results_per_page', None)
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
-                                     filter=filter)
-
-        command = functools.partial(
-            self._client.table.query_entities,
-            query_options=query_options,
-            **kwargs)
+        command = functools.partial(self._client.table.query_entities, **kwargs)
         return ItemPaged(
-            command, table=self.table_name,
+            command,
+            table=self.table_name,
+            results_per_page=top,
+            filter=filter,
+            select=user_select,
             page_iterator_class=TableEntityPropertiesPaged
         )
 

@@ -1346,6 +1346,46 @@ class StorageTableEntityTest(TableTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    async def test_query_entities_each_page(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        await self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            base_entity = {
+                "PartitionKey": u"pk",
+                "RowKey": u"1",
+            }
+
+            for i in range(10):
+                if i > 5:
+                    base_entity['PartitionKey'] += str(i)
+                base_entity['RowKey'] += str(i)
+                base_entity['value'] = i
+                await self.table.create_entity(base_entity)
+
+            query_filter = u"PartitionKey eq 'pk'"
+
+            entity_count = 0
+            page_count = 0
+            async for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+
+                temp_count = 0
+                async for ent in entity_page:
+                    temp_count += 1
+
+                assert temp_count <= 2
+                page_count += 1
+                entity_count += temp_count
+
+            assert entity_count == 6
+            assert page_count == 3
+
+        finally:
+            await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_query_zero_entities(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         await self._set_up(cosmos_account, cosmos_account_key)
@@ -1449,6 +1489,8 @@ class StorageTableEntityTest(TableTestCase):
         await self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity, _ = await self._insert_random_entity()
+            entity2, _ = await self._insert_random_entity(pk="foo" + entity.PartitionKey)
+            entity3, _ = await self._insert_random_entity(pk="bar" + entity.PartitionKey)
 
             # Act
             entities = []
@@ -1460,6 +1502,31 @@ class StorageTableEntityTest(TableTestCase):
             self.assertEqual(len(entities), 1)
             self.assertEqual(entity.PartitionKey, entities[0].PartitionKey)
             self._assert_default_entity(entities[0])
+        finally:
+            await self._tear_down()
+            if self.is_live:
+                sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    async def test_query_invalid_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        await self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            base_entity = {
+                u"PartitionKey": u"pk",
+                u"RowKey": u"rk",
+                u"value": 1
+            }
+
+            for i in range(5):
+                base_entity[u"RowKey"] += str(i)
+                base_entity[u"value"] += i
+                await self.table.create_entity(base_entity)
+            # Act
+            with pytest.raises(HttpResponseError):
+                async for t in self.table.query_entities(filter="aaa bbb ccc"):
+                    _ = t
         finally:
             await self._tear_down()
             if self.is_live:
