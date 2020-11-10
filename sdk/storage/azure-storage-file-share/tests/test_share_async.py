@@ -24,12 +24,13 @@ from azure.storage.fileshare import (
     ShareSasPermissions,
     ShareAccessTier,
     generate_share_sas,
+    ShareRootSquash
 )
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
     ShareDirectoryClient,
     ShareFileClient,
-    ShareClient
+    ShareClient,
 )
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -85,10 +86,10 @@ class StorageShareTest(AsyncStorageTestCase):
         self.test_shares.append(share)
         return share
 
-    async def _create_share(self, prefix=TEST_SHARE_PREFIX):
+    async def _create_share(self, prefix=TEST_SHARE_PREFIX, **kwargs):
         share_client = self._get_share_reference(prefix)
         try:
-            await share_client.create_share()
+            await share_client.create_share(**kwargs)
         except:
             pass
         return share_client
@@ -533,6 +534,25 @@ class StorageShareTest(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_with_protocol(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+
+        # Act
+        share_client = self._get_share_reference("testshare2")
+        with self.assertRaises(ValueError):
+            await share_client.create_share(enabled_protocols=["SMB"], root_squash=ShareRootSquash.all_squash)
+        await share_client.create_share(enabled_protocols=["NFS"], root_squash=ShareRootSquash.root_squash)
+        props = await share_client.get_share_properties()
+        share_enabled_protocol = props.enabled_protocols
+        share_root_squash = props.root_squash
+
+        # Assert
+        self.assertEqual(share_enabled_protocol, "NFS")
+        self.assertEqual(share_root_squash, ShareRootSquash.root_squash)
+        await share_client.delete_share()
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_share_with_already_existing_share_fail_on_exist_async(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
         share = self._get_share_reference()
@@ -905,6 +925,28 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertEqual(share1_tier, "Hot")
         self.assertEqual(share2_quota, 2)
         self.assertEqual(share2_tier, "Cool")
+        await self._delete_shares()
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_set_share_properties_with_root_squash(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        share1 = await self._create_share("share1", enabled_protocols=["NFS"])
+        share2 = await self._create_share("share2", enabled_protocols=["NFS"])
+
+        await share1.set_share_properties(root_squash="NoRootSquash")
+
+        await share2.set_share_properties(root_squash=ShareRootSquash.root_squash)
+
+        # Act
+        props1 = await share1.get_share_properties()
+        share1_root_squash = props1.root_squash
+        props2 = await share2.get_share_properties()
+        share2_root_squash = props2.root_squash
+
+        # Assert
+        self.assertEqual(share1_root_squash, ShareRootSquash.no_root_squash)
+        self.assertEqual(share2_root_squash, ShareRootSquash.root_squash)
         await self._delete_shares()
 
     @GlobalResourceGroupPreparer()
