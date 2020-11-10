@@ -357,7 +357,7 @@ class ShareClient(StorageAccountHostsMixin):
                 quota=quota,
                 access_tier=access_tier,
                 root_squash=root_squash,
-                enabled_protocols=enabled_protocols,
+                enabled_protocols=enabled_protocol,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
