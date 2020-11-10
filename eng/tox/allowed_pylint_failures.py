@@ -45,6 +45,8 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-synapse-artifacts",
     "azure-synapse-spark",
     "azure-synapse-accesscontrol",
+    "azure-synapse-monitoring",
+    "azure-synapse-vnet",
     "azure-synapse-nspkg",
     "azure-ai-anomalydetector",
 ]
