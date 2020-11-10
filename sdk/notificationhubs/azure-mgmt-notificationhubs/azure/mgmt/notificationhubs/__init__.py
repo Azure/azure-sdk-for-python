@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .notification_hubs_management_client import NotificationHubsManagementClient
-from .version import VERSION
+from ._configuration import NotificationHubsManagementClientConfiguration
+from ._notification_hubs_management_client import NotificationHubsManagementClient
+__all__ = ['NotificationHubsManagementClient', 'NotificationHubsManagementClientConfiguration']
 
-__all__ = ['NotificationHubsManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
