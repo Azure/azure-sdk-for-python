@@ -326,9 +326,6 @@ class StorageTableEntityTest(TableTestCase):
                 for row in resp:
                     _ = row
 
-            for row in resp:
-                print(row)
-
         finally:
             self._tear_down()
 
