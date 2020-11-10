@@ -766,7 +766,12 @@ class VirtualMachinesOperations(object):
     ):
         # type: (...) -> LROPoller[None]
         """Converts virtual machine disks from blob-based to managed disks. Virtual machine must be stop-
-        deallocated before invoking this operation.
+        deallocated before invoking this operation. :code:`<br>`For Windows, please refer to `Convert a
+        virtual machine from unmanaged disks to managed disks. <https://docs.microsoft.com/en-
+        us/azure/virtual-machines/windows/convert-unmanaged-to-managed-disks>`_.:code:`<br>`For Linux,
+        please refer to `Convert a virtual machine from unmanaged disks to managed disks.
+        <https://docs.microsoft.com/en-us/azure/virtual-machines/linux/convert-unmanaged-to-managed-
+        disks>`_.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -1889,7 +1894,8 @@ class VirtualMachinesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
-        """The operation to perform maintenance on a virtual machine.
+        """Shuts down the virtual machine, moves it to an already updated node, and powers it back on
+        during the self-service phase of planned maintenance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

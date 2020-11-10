@@ -2039,7 +2039,7 @@ class VirtualMachineScaleSetsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Converts SinglePlacementGroup property to false for a existing virtual machine scale set.
+        """Converts SinglePlacementGroup property to true for a existing virtual machine scale set.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
