@@ -13,7 +13,7 @@ The `arm-templates` directory contains Azure resource templates for creating a S
 > **Note:** All Azure resources used in the sample should be in the same region & resource group. This includes a managed identity, Key Vault, Service Fabric cluster, Azure Container Registry, and storage account.
 
 - This sample requires access to an Azure subscription and required privileges to create resources.
-- [Powershell and the Az library are needed to run the deployments in the sample.](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps)
+- [Powershell and the Az library are needed to run the deployments in the sample.](https://docs.microsoft.com/powershell/azure/install-az-ps)
 - [Azure CLI is used to deploy some resources.](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 - Docker is needed to build and push the sample containerized service. Docker should be using Linux containers for building the application images that are provided.
 
