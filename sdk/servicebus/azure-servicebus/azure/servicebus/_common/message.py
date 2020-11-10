@@ -347,7 +347,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         The identifier is a free-form string and can reflect a GUID or an identifier derived from the
         application context.  If enabled, the duplicate detection (see
         `https://docs.microsoft.com/azure/service-bus-messaging/duplicate-detection`)
-         feature identifies and removes second and further submissions of messages with the same message id.
+        feature identifies and removes second and further submissions of messages with the same message id.
 
         :rtype: str
         """

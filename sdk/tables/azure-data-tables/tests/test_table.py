@@ -86,6 +86,14 @@ class StorageTableTest(TableTestCase):
         except ResourceNotFoundError:
             pass
 
+    def _delete_all_tables(self, ts):
+        tables = ts.list_tables()
+        for table in tables:
+            try:
+                ts.delete_table(table.table_name)
+            except ResourceNotFoundError:
+                pass
+
     # --Test cases for tables --------------------------------------------------
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -147,6 +155,39 @@ class StorageTableTest(TableTestCase):
         # Assert
         self.assertIsNotNone(created)
         ts.delete_table(table_name)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_query_tables_per_page(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        account_url = self.account_url(storage_account, "table")
+        ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
+        table_name = "mytable"
+
+        for i in range(5):
+            ts.create_table(table_name + str(i))
+
+        query_filter = "TableName eq 'mytable0' or TableName eq 'mytable1' or TableName eq 'mytable2'"
+        table_count = 0
+        page_count = 0
+        for table_page in ts.query_tables(filter=query_filter, results_per_page=2).by_page():
+
+            temp_count = 0
+            for table in table_page:
+                temp_count += 1
+            assert temp_count <= 2
+            page_count += 1
+            table_count += temp_count
+
+        assert page_count == 2
+        assert table_count == 3
+
+        for i in range(5):
+            ts.delete_table(table_name + str(i))
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -224,6 +265,9 @@ class StorageTableTest(TableTestCase):
         self.assertIsNotNone(tables[0])
         ts.delete_table(t.table_name)
 
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
+
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_filter(self, resource_group, location, storage_account, storage_account_key):
@@ -244,6 +288,11 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables), 1)
         ts.delete_table(t.table_name)
 
+        self._delete_all_tables(ts)
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
+
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_query_tables_with_num_results(self, resource_group, location, storage_account, storage_account_key):
@@ -260,12 +309,19 @@ class StorageTableTest(TableTestCase):
         big_page = []
         for s in next(ts.list_tables(results_per_page=3).by_page()):
             small_page.append(s)
+            assert s.table_name.startswith(prefix)
         for t in next(ts.list_tables().by_page()):
             big_page.append(t)
+            assert t.table_name.startswith(prefix)
 
         # Assert
         self.assertEqual(len(small_page), 3)
         self.assertGreaterEqual(len(big_page), 4)
+
+        self._delete_all_tables(ts)
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -292,6 +348,11 @@ class StorageTableTest(TableTestCase):
         self.assertEqual(len(tables1), 2)
         self.assertEqual(len(tables2), 2)
         self.assertNotEqual(tables1, tables2)
+
+        self._delete_all_tables(ts)
+
+        if self.is_live:
+            self.sleep(10) # wait for tables to be deleted before proceeding
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
