@@ -48,6 +48,8 @@ class TestHealth(TextAnalyticsTest):
 
         response = client.begin_analyze_healthcare(docs, show_stats=True).result()
 
+        self.assertIsNotNone(response.statistics)
+
         for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
@@ -72,7 +74,7 @@ class TestHealth(TextAnalyticsTest):
 
         for doc in response:
             self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
+            self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
             self.assertIsNotNone(doc.relations)
 
@@ -93,7 +95,7 @@ class TestHealth(TextAnalyticsTest):
 
         for i in range(2):
             self.assertIsNotNone(response[i].id)
-            self.assertIsNotNone(response[i].statistics)
+            self.assertIsNone(response[i].statistics)
             self.assertIsNotNone(response[i].entities)
             self.assertIsNotNone(response[i].relations)
 
@@ -189,7 +191,7 @@ class TestHealth(TextAnalyticsTest):
         result = client.begin_analyze_healthcare(docs).result()
         for doc in result:
             doc_warnings = doc.warnings
-            self.assertEqual(doc_warnings, None)  # Currently the service doesn't return any warnings at all even though it is expressed in the Swagger.
+            self.assertEqual(len(doc_warnings), 0)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -667,7 +669,10 @@ class TestHealth(TextAnalyticsTest):
     })
     def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 50)))] # default page size is 20
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+        # Service now only accepts 10 documents for a job, and since the current default server-side value
+        # for records per page is 20, pagination logic will never be activated.  This is intended to change
+        # in the future but for now this test actually won't hit the pagination logic now.
 
         result = client.begin_analyze_healthcare(docs, show_stats=True).result()
         response = list(result)

@@ -225,7 +225,7 @@ def analyze_extract_page_data(doc_id_order, obj, response_headers, analyze_job_s
     return analyze_job_state.next_link, [analyze_result(doc_id_order, obj, response_headers, analyze_job_state.tasks)]
 
 
-def lro_get_next_page(lro_status_callback, first_page, continuation_token):
+def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_stats=False, skip=None, top=None):
     if continuation_token is None:
         return first_page
 
@@ -238,6 +238,13 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token):
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
+    query_params["show_stats"] = show_stats
+
+    if isinstance(skip, int) and skip >= 0:
+        query_params["skip"] = skip
+
+    if isinstance(top, int) and top >= 0:
+        query_params["top"] = top
 
     return lro_status_callback(job_id, **query_params)
 
@@ -246,7 +253,7 @@ def healthcare_paged_result(doc_id_order, health_status_callback, response, obj,
     return AnalyzeHealthcareResult(
         obj.results.model_version,
         RequestStatistics._from_generated(obj.results.statistics) if show_stats else None,
-        functools.partial(lro_get_next_page, health_status_callback, obj),
+        functools.partial(lro_get_next_page, health_status_callback, obj, show_stats=show_stats),
         functools.partial(healthcare_extract_page_data, doc_id_order, obj, response_headers)
     )
 

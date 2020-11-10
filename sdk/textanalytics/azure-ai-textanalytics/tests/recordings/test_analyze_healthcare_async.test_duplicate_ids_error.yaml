@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "1", "text": "hello world", "language": "en"}, {"id":
+      "1", "text": "I did not like the hotel we stayed at.", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '150'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: '{"error":{"code":"InvalidRequest","message":"Invalid document in request.","innererror":{"code":"InvalidDocument","message":"Request
+        contains duplicated Ids. Make sure each document has a unique Id."}}}'
+    headers:
+      apim-request-id: b4f498e3-815d-4555-9c66-d0ca46e85ed3
+      content-type: application/json; charset=utf-8
+      date: Tue, 10 Nov 2020 02:00:59 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '3'
+    status:
+      code: 400
+      message: Bad Request
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+version: 1
