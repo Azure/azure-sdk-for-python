@@ -18,7 +18,8 @@ TEST_FOLDER = os.path.abspath(".test")
 
 # pylint: disable=invalid-name
 def setUpModule():
-    os.makedirs(TEST_FOLDER)
+    if not os.path.exists(TEST_FOLDER):
+        os.makedirs(TEST_FOLDER)
 
 
 # pylint: disable=invalid-name
