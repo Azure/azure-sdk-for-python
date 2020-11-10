@@ -1,7 +1,15 @@
 # Release History
 
-## 12.3.0b2 (Unreleased)
+## 12.3.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature enabling SMB Multichannel for the share service.
+- Preview feature `get_ranges` on ShareFileClient
 
+**New features**
+- Added `set_share_properties` which allows setting share tier. 
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 ## 12.3.0b1 (2020-10-02)
 **New features**

@@ -1,6 +1,11 @@
 # Release History
 
-## 12.1.4 (Unreleased)
+## 12.1.4 (2020-11-10)
+**New feature**
+- Added `receive_message` on QueueClient to support receiving one message from queue (#14844, #14762)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 
 ## 12.1.3 (2020-09-10)
