@@ -4,8 +4,9 @@ interactions:
       "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
       [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
-      "analysisInput": {"documents": [{"id": "0", "text": "This is written in English.",
-      "language": "en"}]}}'
+      "analysisInput": {"documents": [{"id": "1", "text": "", "language": "en"}, {"id":
+      "2", "text": "I did not like the hotel we stayed at. It was too expensive.",
+      "language": "english"}, {"id": "3", "text": "", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -14,7 +15,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '415'
+      - '539'
       Content-Type:
       - application/json
       User-Agent:
@@ -23,15 +24,24 @@ interactions:
     uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
-      string: '{"error":{"code":"401","message":"Access denied due to invalid subscription
-        key or wrong API endpoint. Make sure to provide a valid key for an active
-        subscription and use a correct regional API endpoint for your resource."}}'
+      string: '{"error":{"code":"InvalidArgument","message":"Value cannot be null.\nParameter
+        name: blobName"}}'
     headers:
-      content-length:
-      - '224'
+      apim-request-id:
+      - 36ec5a6a-8b35-48cf-90dd-44e60c584901
+      content-type:
+      - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 06:15:43 GMT
+      - Tue, 10 Nov 2020 06:19:57 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '15'
     status:
-      code: 401
-      message: PermissionDenied
+      code: 400
+      message: Bad Request
 version: 1

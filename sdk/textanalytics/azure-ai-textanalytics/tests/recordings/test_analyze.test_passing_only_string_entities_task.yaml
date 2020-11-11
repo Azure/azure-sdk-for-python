@@ -1,0 +1,223 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      [], "keyPhraseExtractionTasks": []}, "analysisInput": {"documents": [{"id":
+      "0", "text": "Microsoft was founded by Bill Gates and Paul Allen on April 4,
+      1975.", "language": "en"}, {"id": "1", "text": "Microsoft fue fundado por Bill
+      Gates y Paul Allen el 4 de abril de 1975.", "language": "en"}, {"id": "2", "text":
+      "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegr\u00fcndet.",
+      "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '568'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 64e70491-2b07-438c-96fb-89954fc1bcad
+      date:
+      - Tue, 10 Nov 2020 06:30:18 GMT
+      operation-location:
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '350'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000","lastUpdateDateTime":"2020-11-10T06:30:19Z","createdDateTime":"2020-11-10T06:30:18Z","expirationDateTime":"2020-11-11T06:30:18Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:30:19Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 4b06c991-e167-4108-8874-2154941e84b3
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:30:49 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '172'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000","lastUpdateDateTime":"2020-11-10T06:30:19Z","createdDateTime":"2020-11-10T06:30:18Z","expirationDateTime":"2020-11-11T06:30:18Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:30:19Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 8874fcbd-a0a7-4f8a-aa5c-9750f12a8538
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:31:19 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '200'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000","lastUpdateDateTime":"2020-11-10T06:30:19Z","createdDateTime":"2020-11-10T06:30:18Z","expirationDateTime":"2020-11-11T06:30:18Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:30:19Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 10c74874-6e7e-410c-ae17-0ae35548875b
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:31:49 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '169'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000","lastUpdateDateTime":"2020-11-10T06:30:19Z","createdDateTime":"2020-11-10T06:30:18Z","expirationDateTime":"2020-11-11T06:30:18Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:30:19Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - af7d48de-a9dc-4004-a31b-43610da21049
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:32:19 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '415'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"8980fe1d-9851-41ef-b757-8dc814f037ec_637405632000000000","lastUpdateDateTime":"2020-11-10T06:30:19Z","createdDateTime":"2020-11-10T06:30:18Z","expirationDateTime":"2020-11-11T06:30:18Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:30:19Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-10T06:30:19.098045Z","results":{"inTerminalState":true,"documents":[{"id":"0","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.81},{"text":"Bill
+        Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.83},{"text":"Paul
+        Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.87},{"text":"April
+        4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"1","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":53,"length":1,"confidenceScore":0.8},{"text":"1975","category":"DateTime","subcategory":"DateRange","offset":67,"length":4,"confidenceScore":0.8}],"warnings":[]},{"id":"2","entities":[{"text":"4","category":"Quantity","subcategory":"Number","offset":19,"length":1,"confidenceScore":0.8},{"text":"April
+        1975","category":"DateTime","subcategory":"DateRange","offset":22,"length":10,"confidenceScore":0.8},{"text":"von
+        Bill Gates","category":"Person","offset":33,"length":14,"confidenceScore":0.59},{"text":"Paul
+        Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.63}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}]}}'
+    headers:
+      apim-request-id:
+      - d8e5f2be-4541-4b9f-99d4-67de63dfb105
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:32:51 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '375'
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -27,11 +27,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - deb68072-3d57-45bf-b67a-63d586deb792
+      - 46b89854-cd1b-4bc0-9c4a-899f67f048d7
       date:
-      - Fri, 06 Nov 2020 05:12:13 GMT
+      - Tue, 10 Nov 2020 06:08:29 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/629f543a-31d8-4c0c-8f10-411eab83b08d_637402176000000000
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '410'
+      - '3146'
     status:
       code: 202
       message: Accepted
@@ -55,17 +55,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/629f543a-31d8-4c0c-8f10-411eab83b08d_637402176000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000
   response:
     body:
-      string: '{"jobId":"629f543a-31d8-4c0c-8f10-411eab83b08d_637402176000000000","lastUpdateDateTime":"2020-11-06T05:12:19Z","createdDateTime":"2020-11-06T05:12:13Z","expirationDateTime":"2020-11-08T05:12:13Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-06T05:12:19Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000","lastUpdateDateTime":"2020-11-10T06:08:30Z","createdDateTime":"2020-11-10T06:08:28Z","expirationDateTime":"2020-11-11T06:08:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:08:30Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - e532af41-0c27-47aa-92c9-e8d8be6380f2
+      - ca80f2dd-9705-4592-a812-c419ca647cc2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 Nov 2020 05:12:49 GMT
+      - Tue, 10 Nov 2020 06:09:00 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -73,7 +73,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '5130'
+      - '591'
     status:
       code: 200
       message: OK
@@ -89,17 +89,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/629f543a-31d8-4c0c-8f10-411eab83b08d_637402176000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000
   response:
     body:
-      string: '{"jobId":"629f543a-31d8-4c0c-8f10-411eab83b08d_637402176000000000","lastUpdateDateTime":"2020-11-06T05:12:19Z","createdDateTime":"2020-11-06T05:12:13Z","expirationDateTime":"2020-11-08T05:12:13Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-06T05:12:19Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000","lastUpdateDateTime":"2020-11-10T06:08:30Z","createdDateTime":"2020-11-10T06:08:28Z","expirationDateTime":"2020-11-11T06:08:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:08:30Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - bcf12d6d-9ec1-4d6e-8d19-df15e7a98044
+      - 99030fb2-0874-45bc-81dc-ef9f8ae70559
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 Nov 2020 05:13:19 GMT
+      - Tue, 10 Nov 2020 06:09:31 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -107,7 +107,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '114'
+      - '260'
     status:
       code: 200
       message: OK
@@ -123,27 +123,91 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/629f543a-31d8-4c0c-8f10-411eab83b08d_637402176000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000
   response:
     body:
-      string: '{"jobId":"629f543a-31d8-4c0c-8f10-411eab83b08d_637402176000000000","lastUpdateDateTime":"2020-11-06T05:12:19Z","createdDateTime":"2020-11-06T05:12:13Z","expirationDateTime":"2020-11-08T05:12:13Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-06T05:12:19Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-06T05:12:19.2685534Z","results":{"inTerminalState":true,"documents":[{"redactedText":"My
-        SSN is ***********.","id":"1","entities":[{"text":"859-98-0987","category":"U.S.
-        Social Security Number (SSN)","offset":10,"length":11,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Your
-        ABA number - ********* - is the first 9 digits in the lower left hand corner
-        of your personal check.","id":"2","entities":[{"text":"111000025","category":"Phone
+      string: '{"jobId":"a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000","lastUpdateDateTime":"2020-11-10T06:08:30Z","createdDateTime":"2020-11-10T06:08:28Z","expirationDateTime":"2020-11-11T06:08:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:08:30Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - e062b483-d6c6-45ab-830c-901cd436f865
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:10:01 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '209'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000","lastUpdateDateTime":"2020-11-10T06:08:30Z","createdDateTime":"2020-11-10T06:08:28Z","expirationDateTime":"2020-11-11T06:08:28Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:08:30Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - abea9195-5f59-4fe4-bc4d-8143c25572a1
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:10:31 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '225'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"a3c8b558-005b-4eaf-8df3-1b6d93e80763_637405632000000000","lastUpdateDateTime":"2020-11-10T06:08:30Z","createdDateTime":"2020-11-10T06:08:28Z","expirationDateTime":"2020-11-11T06:08:28Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:08:30Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-10T06:08:30.2490064Z","results":{"inTerminalState":true,"documents":[{"redactedText":"","id":"1","entities":[{"text":"859-98-0987","category":"U.S.
+        Social Security Number (SSN)","offset":10,"length":11,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"","id":"2","entities":[{"text":"111000025","category":"Phone
         Number","offset":18,"length":9,"confidenceScore":0.8},{"text":"111000025","category":"ABA
         Routing Number","offset":18,"length":9,"confidenceScore":0.75},{"text":"111000025","category":"New
         Zealand Social Welfare Number","offset":18,"length":9,"confidenceScore":0.65},{"text":"111000025","category":"Portugal
-        Tax Identification Number","offset":18,"length":9,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Is
-        ************** your Brazilian CPF number?","id":"3","entities":[{"text":"998.214.865-68","category":"Brazil
+        Tax Identification Number","offset":18,"length":9,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"","id":"3","entities":[{"text":"998.214.865-68","category":"Brazil
         CPF Number","offset":3,"length":14,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
       apim-request-id:
-      - 2d02455c-bcfd-4b13-826a-0a793aab6d71
+      - a29225cc-4d25-4678-a1f1-e9beff99db93
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 06 Nov 2020 05:13:49 GMT
+      - Tue, 10 Nov 2020 06:11:02 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -151,7 +215,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '273'
+      - '426'
     status:
       code: 200
       message: OK

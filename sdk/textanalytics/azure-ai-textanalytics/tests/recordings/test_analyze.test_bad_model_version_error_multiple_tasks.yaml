@@ -1,0 +1,85 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "bad", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "bad", "stringIndexType": "TextElements_v8"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "bad"}}]}, "analysisInput":
+      {"documents": [{"id": "1", "text": "I did not like the hotel we stayed at.",
+      "language": "english"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '422'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - f16166b8-a0de-4edd-80f9-c760e172ed99
+      date:
+      - Tue, 10 Nov 2020 17:42:01 GMT
+      operation-location:
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/3541e115-2f20-4318-965d-0a2ab54418c5_637405632000000000
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '443'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/3541e115-2f20-4318-965d-0a2ab54418c5_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"3541e115-2f20-4318-965d-0a2ab54418c5_637405632000000000","lastUpdateDateTime":"2020-11-10T17:42:03Z","createdDateTime":"2020-11-10T17:42:02Z","expirationDateTime":"2020-11-11T17:42:02Z","status":"failed","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T17:42:03Z"},"completed":0,"failed":3,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-10T17:42:03.0849203Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-10T17:42:03.0849203Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-10T17:42:03.0849203Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
+    headers:
+      apim-request-id:
+      - d0998a5f-2884-4d18-bb9a-73471db93121
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 17:42:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '161'
+    status:
+      code: 200
+      message: OK
+version: 1
