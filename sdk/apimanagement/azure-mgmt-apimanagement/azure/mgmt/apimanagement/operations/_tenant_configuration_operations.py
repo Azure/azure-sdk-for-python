@@ -27,7 +27,7 @@ class TenantConfigurationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01-preview".
     :ivar configuration_name: The identifier of the Git Configuration Operation. Constant value: "configuration".
     """
 
@@ -38,7 +38,7 @@ class TenantConfigurationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-06-01-preview"
         self.configuration_name = "configuration"
 
         self.config = config

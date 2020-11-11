@@ -24,7 +24,7 @@ class GatewayApiOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-12-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2020-06-01-preview".
     """
 
     models = models
@@ -34,12 +34,12 @@ class GatewayApiOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-12-01"
+        self.api_version = "2020-06-01-preview"
 
         self.config = config
 
     def list_by_service(
-            self, resource_group_name, service_name, gateway_id, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, gateway_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
         """Lists a collection of the APIs associated with a gateway.
 
         :param resource_group_name: The name of the resource group.
@@ -49,6 +49,12 @@ class GatewayApiOperations(object):
         :param gateway_id: Gateway entity identifier. Must be unique in the
          current API Management service instance. Must not have value 'managed'
         :type gateway_id: str
+        :param filter: |     Field     |     Usage     |     Supported
+         operators     |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith |</br>
+        :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
@@ -78,6 +84,8 @@ class GatewayApiOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
