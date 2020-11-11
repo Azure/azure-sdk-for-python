@@ -332,6 +332,10 @@ class MultiMetricCriteria(Model):
     :param dimensions: List of dimension conditions.
     :type dimensions:
      list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom
+     metric that isn't yet emitted, by causing the metric validation to be
+     skipped.
+    :type skip_metric_validation: bool
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
     """
@@ -350,6 +354,7 @@ class MultiMetricCriteria(Model):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
     }
 
@@ -365,6 +370,7 @@ class MultiMetricCriteria(Model):
         self.metric_namespace = kwargs.get('metric_namespace', None)
         self.time_aggregation = kwargs.get('time_aggregation', None)
         self.dimensions = kwargs.get('dimensions', None)
+        self.skip_metric_validation = kwargs.get('skip_metric_validation', None)
         self.criterion_type = None
 
 
@@ -387,6 +393,10 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :param dimensions: List of dimension conditions.
     :type dimensions:
      list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom
+     metric that isn't yet emitted, by causing the metric validation to be
+     skipped.
+    :type skip_metric_validation: bool
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
     :param operator: Required. The operator used to compare the metric value
@@ -427,6 +437,7 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
         'operator': {'key': 'operator', 'type': 'str'},
         'alert_sensitivity': {'key': 'alertSensitivity', 'type': 'str'},
@@ -1057,6 +1068,10 @@ class MetricCriteria(MultiMetricCriteria):
     :param dimensions: List of dimension conditions.
     :type dimensions:
      list[~azure.mgmt.monitor.v2018_03_01.models.MetricDimension]
+    :param skip_metric_validation: Allows creating an alert rule on a custom
+     metric that isn't yet emitted, by causing the metric validation to be
+     skipped.
+    :type skip_metric_validation: bool
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
     :param operator: Required. the criteria operator. Possible values include:
@@ -1084,6 +1099,7 @@ class MetricCriteria(MultiMetricCriteria):
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'skip_metric_validation': {'key': 'skipMetricValidation', 'type': 'bool'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
         'operator': {'key': 'operator', 'type': 'str'},
         'threshold': {'key': 'threshold', 'type': 'float'},
