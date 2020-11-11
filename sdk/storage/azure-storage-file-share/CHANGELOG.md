@@ -1,5 +1,8 @@
 # Release History
 
+## 12.3.1 (Unreleased)
+
+
 ## 12.3.0 (2020-11-10)
 **Stable release of preview features**
 - Preview feature enabling SMB Multichannel for the share service.
