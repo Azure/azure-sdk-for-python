@@ -9,11 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import UsageManagementClientConfiguration
-from ._usage_management_client import UsageManagementClient
-__all__ = ['UsageManagementClient', 'UsageManagementClientConfiguration']
+from ._usage_aggregates_operations import UsageAggregatesOperations
+from ._rate_card_operations import RateCardOperations
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'UsageAggregatesOperations',
+    'RateCardOperations',
+]

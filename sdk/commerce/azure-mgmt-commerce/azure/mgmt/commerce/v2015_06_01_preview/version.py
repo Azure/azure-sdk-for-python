@@ -9,10 +9,5 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+VERSION = "2015-06-01-preview"
 
-
-class AggregationGranularity(Enum):
-
-    daily = "Daily"
-    hourly = "Hourly"
