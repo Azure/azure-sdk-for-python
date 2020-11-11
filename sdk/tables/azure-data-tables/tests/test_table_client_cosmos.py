@@ -66,8 +66,6 @@ class StorageTableClientTest(TableTestCase):
                 account_url=self._account_url(cosmos_account),
                 credential=cosmos_account_key,
                 table_name='foo')
-            # service = client(
-            #     self.account_url(cosmos_account, url), credential=cosmos_account_key, table_name='foo')
 
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
@@ -80,13 +78,16 @@ class StorageTableClientTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string(self, resource_group, location, cosmos_account, cosmos_account_key):
 
-        for service_type in SERVICES.items():
+        for client, url in SERVICES.items():
             # Act
-            service = service_type[0].from_connection_string(
-                self.connection_string(cosmos_account, cosmos_account_key), table_name="test")
+            service = self.create_client_from_credential(
+                client,
+                account_url=self._account_url(cosmos_account),
+                credential=cosmos_account_key,
+                table_name="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -106,8 +107,8 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + suffix))
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertTrue(service.url.startswith('https://' + cosmos_account + suffix))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
         if self.is_live:
@@ -126,8 +127,8 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + suffix))
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertTrue(service.url.startswith('https://' + cosmos_account + suffix))
             self.assertEqual(service.credential, self.token_credential)
             self.assertFalse(hasattr(service.credential, 'account_key'))
             self.assertTrue(hasattr(service.credential, 'get_token'))
@@ -160,11 +161,11 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith(
-                'https://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
+                'https://{}.{}.core.chinacloudapi.cn'.format(cosmos_account, "cosmos")))
         if self.is_live:
             sleep(SLEEP_DELAY)
 
@@ -180,7 +181,7 @@ class StorageTableClientTest(TableTestCase):
                 url, credential=cosmos_account_key, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
             self.assertEqual(service.scheme, 'http')
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -215,7 +216,7 @@ class StorageTableClientTest(TableTestCase):
                 table_name='foo', connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
         if self.is_live:
@@ -226,14 +227,14 @@ class StorageTableClientTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_key(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};'.format(cosmos_account.name, cosmos_account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(cosmos_account, cosmos_account_key)
 
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -243,7 +244,7 @@ class StorageTableClientTest(TableTestCase):
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(cosmos_account.name, self.sas_token)
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(cosmos_account, self.sas_token)
 
         for service_type in SERVICES:
             # Act
@@ -251,8 +252,8 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + '.table.core.windows.net'))
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertTrue(service.url.startswith('https://' + cosmos_account + '.table.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
         if self.is_live:
@@ -263,7 +264,7 @@ class StorageTableClientTest(TableTestCase):
     def test_create_service_with_connection_string_cosmos(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
-            cosmos_account.name, cosmos_account_key)
+            cosmos_account, cosmos_account_key)
 
         for service_type in SERVICES:
             # Act
@@ -271,11 +272,11 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com'))
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertTrue(service.url.startswith('https://' + cosmos_account + '.table.cosmos.azure.com'))
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com'))
+            self.assertTrue(service._primary_endpoint.startswith('https://' + cosmos_account + '.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -287,7 +288,7 @@ class StorageTableClientTest(TableTestCase):
     def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            cosmos_account.name, cosmos_account_key)
+            cosmos_account, cosmos_account_key)
 
         for service_type in SERVICES.items():
             # Act
@@ -295,12 +296,12 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(
                 service._primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
+                    'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account, "cosmos")))
             self.assertEqual(service.scheme, 'http')
         if self.is_live:
             sleep(SLEEP_DELAY)
@@ -310,7 +311,7 @@ class StorageTableClientTest(TableTestCase):
     def test_create_service_with_connection_string_emulated(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(cosmos_account.name, cosmos_account_key)
+            conn_string = 'UseDevelopmentStorage=true;'.format(cosmos_account, cosmos_account_key)
 
             # Act
             with self.assertRaises(ValueError):
@@ -324,15 +325,15 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com;'.format(
-                cosmos_account.name, cosmos_account_key)
+                cosmos_account, cosmos_account_key)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
         if self.is_live:
@@ -344,15 +345,15 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;'.format(
-                cosmos_account.name, cosmos_account_key)
+                cosmos_account, cosmos_account_key)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
         if self.is_live:
@@ -364,7 +365,7 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;'.format(
-                cosmos_account.name, cosmos_account_key)
+                cosmos_account, cosmos_account_key)
 
             # Act
             service = service_type[0].from_connection_string(
@@ -372,8 +373,8 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
         if self.is_live:
@@ -385,7 +386,7 @@ class StorageTableClientTest(TableTestCase):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                cosmos_account.name, cosmos_account_key,
+                cosmos_account, cosmos_account_key,
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
@@ -402,7 +403,7 @@ class StorageTableClientTest(TableTestCase):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                cosmos_account.name,
+                cosmos_account,
                 cosmos_account_key,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
@@ -412,8 +413,8 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
         if self.is_live:
@@ -425,14 +426,14 @@ class StorageTableClientTest(TableTestCase):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
-                cosmos_account.name, cosmos_account_key, custom_account_url)
+                cosmos_account, cosmos_account_key, custom_account_url)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
+            self.assertEqual(service.account_name, cosmos_account)
+            self.assertEqual(service.credential.account_name, cosmos_account)
             self.assertEqual(service.credential.account_key, cosmos_account_key)
             self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
 
@@ -550,20 +551,20 @@ class StorageTableClientTest(TableTestCase):
         # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, cosmos_account.name)
+        self.assertEqual(service.account_name, cosmos_account)
 
     @pytest.mark.skip("cosmos differential")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_table_client_with_complete_url(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-        table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account.name)
+        table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account)
         service = TableClient(account_url=table_url, table_name='bar', credential=cosmos_account_key)
 
         # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, cosmos_account.name)
+        self.assertEqual(service.account_name, cosmos_account)
 
         if self.is_live:
             sleep(SLEEP_DELAY)

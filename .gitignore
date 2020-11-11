@@ -100,3 +100,6 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # temp path to to run regression test
 .tmp_code_path/
+
+# .env file with secrets
+.env
