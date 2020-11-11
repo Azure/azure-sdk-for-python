@@ -205,7 +205,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -247,7 +247,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -286,7 +286,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
         # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
 
@@ -308,7 +308,7 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
