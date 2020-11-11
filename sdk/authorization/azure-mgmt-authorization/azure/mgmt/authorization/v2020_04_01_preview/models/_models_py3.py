@@ -54,7 +54,7 @@ class RoleAssignment(Model):
      StringEqualsIgnoreCase 'foo_storage_container'
     :type condition: str
     :param condition_version: Version of the condition. Currently accepted
-     values are '1.0' or '2.0'
+     value is '2.0'
     :type condition_version: str
     """
 
@@ -116,9 +116,13 @@ class RoleAssignmentCreateParameters(Model):
     :type can_delegate: bool
     :param description: Description of role assignment
     :type description: str
-    :param condition: The conditions on the role assignment
+    :param condition: The conditions on the role assignment. This limits the
+     resources it can be assigned to. e.g.:
+     @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName]
+     StringEqualsIgnoreCase 'foo_storage_container'
     :type condition: str
-    :param condition_version: Version of the condition
+    :param condition_version: Version of the condition. Currently accepted
+     value is '2.0'
     :type condition_version: str
     """
 
