@@ -170,14 +170,14 @@ class Cluster(Resource):
     :type sku: ~azure.mgmt.avs.models.Sku
     :param cluster_size: The cluster size
     :type cluster_size: int
+    :param provisioning_state: The state of the cluster provisioning. Possible
+     values include: 'Succeeded', 'Failed', 'Cancelled', 'Deleting', 'Updating'
+    :type provisioning_state: str or
+     ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity
     :vartype cluster_id: int
     :ivar hosts: The hosts
     :vartype hosts: list[str]
-    :ivar provisioning_state: The state of the cluster provisioning. Possible
-     values include: 'Succeeded', 'Failed', 'Cancelled', 'Deleting', 'Updating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.avs.models.ClusterProvisioningState
     """
 
     _validation = {
@@ -187,7 +187,6 @@ class Cluster(Resource):
         'sku': {'required': True},
         'cluster_id': {'readonly': True},
         'hosts': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -196,18 +195,18 @@ class Cluster(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'cluster_id': {'key': 'properties.clusterId', 'type': 'int'},
         'hosts': {'key': 'properties.hosts', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Cluster, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
         self.cluster_size = kwargs.get('cluster_size', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
         self.cluster_id = None
         self.hosts = None
-        self.provisioning_state = None
 
 
 class ClusterUpdate(Model):
@@ -304,7 +303,11 @@ class ErrorAdditionalInfo(Model):
 
 
 class ErrorResponse(Model):
-    """The resource management error response.
+    """Error Response.
+
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -492,6 +495,30 @@ class IdentitySource(Model):
         self.password = kwargs.get('password', None)
 
 
+class LogSpecification(Model):
+    """Specifications of the Log for Azure Monitoring.
+
+    :param name: Name of the log
+    :type name: str
+    :param display_name: Localized friendly display name of the log
+    :type display_name: str
+    :param blob_duration: Blob duration of the log
+    :type blob_duration: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LogSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.blob_duration = kwargs.get('blob_duration', None)
+
+
 class ManagementCluster(ClusterUpdateProperties):
     """The properties of a default cluster.
 
@@ -500,6 +527,10 @@ class ManagementCluster(ClusterUpdateProperties):
 
     :param cluster_size: The cluster size
     :type cluster_size: int
+    :param provisioning_state: The state of the cluster provisioning. Possible
+     values include: 'Succeeded', 'Failed', 'Cancelled', 'Deleting', 'Updating'
+    :type provisioning_state: str or
+     ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity
     :vartype cluster_id: int
     :ivar hosts: The hosts
@@ -513,14 +544,104 @@ class ManagementCluster(ClusterUpdateProperties):
 
     _attribute_map = {
         'cluster_size': {'key': 'clusterSize', 'type': 'int'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'cluster_id': {'key': 'clusterId', 'type': 'int'},
         'hosts': {'key': 'hosts', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(ManagementCluster, self).__init__(**kwargs)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
         self.cluster_id = None
         self.hosts = None
+
+
+class MetricDimension(Model):
+    """Specifications of the Dimension of metrics.
+
+    :param name: Name of the dimension
+    :type name: str
+    :param display_name: Localized friendly display name of the dimension
+    :type display_name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MetricDimension, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+
+
+class MetricSpecification(Model):
+    """Specifications of the Metrics for Azure Monitoring.
+
+    :param name: Name of the metric
+    :type name: str
+    :param display_name: Localized friendly display name of the metric
+    :type display_name: str
+    :param display_description: Localized friendly description of the metric
+    :type display_description: str
+    :param unit: Unit that makes sense for the metric
+    :type unit: str
+    :param category: Name of the metric category that the metric belongs to. A
+     metric can only belong to a single category.
+    :type category: str
+    :param aggregation_type: Only provide one value for this field. Valid
+     values: Average, Minimum, Maximum, Total, Count.
+    :type aggregation_type: str
+    :param supported_aggregation_types: Supported aggregation types
+    :type supported_aggregation_types: list[str]
+    :param supported_time_grain_types: Supported time grain types
+    :type supported_time_grain_types: list[str]
+    :param fill_gap_with_zero: Optional. If set to true, then zero will be
+     returned for time duration where no metric is emitted/published.
+    :type fill_gap_with_zero: bool
+    :param dimensions: Dimensions of the metric
+    :type dimensions: list[~azure.mgmt.avs.models.MetricDimension]
+    :param enable_regional_mdm_account: Whether or not the service is using
+     regional MDM accounts.
+    :type enable_regional_mdm_account: str
+    :param source_mdm_account: The name of the MDM account.
+    :type source_mdm_account: str
+    :param source_mdm_namespace: The name of the MDM namespace.
+    :type source_mdm_namespace: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'str'},
+        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
+        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.display_description = kwargs.get('display_description', None)
+        self.unit = kwargs.get('unit', None)
+        self.category = kwargs.get('category', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.supported_aggregation_types = kwargs.get('supported_aggregation_types', None)
+        self.supported_time_grain_types = kwargs.get('supported_time_grain_types', None)
+        self.fill_gap_with_zero = kwargs.get('fill_gap_with_zero', None)
+        self.dimensions = kwargs.get('dimensions', None)
+        self.enable_regional_mdm_account = kwargs.get('enable_regional_mdm_account', None)
+        self.source_mdm_account = kwargs.get('source_mdm_account', None)
+        self.source_mdm_namespace = kwargs.get('source_mdm_namespace', None)
 
 
 class Operation(Model):
@@ -534,6 +655,13 @@ class Operation(Model):
     :ivar display: Contains the localized display information for this
      operation
     :vartype display: ~azure.mgmt.avs.models.OperationDisplay
+    :param is_data_action: Gets or sets a value indicating whether the
+     operation is a data action or not
+    :type is_data_action: bool
+    :param origin: Origin of the operation
+    :type origin: str
+    :param properties: Properties of the operation
+    :type properties: ~azure.mgmt.avs.models.OperationProperties
     """
 
     _validation = {
@@ -544,12 +672,18 @@ class Operation(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'OperationProperties'},
     }
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
         self.name = None
         self.display = None
+        self.is_data_action = kwargs.get('is_data_action', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)
 
 
 class OperationDisplay(Model):
@@ -589,6 +723,22 @@ class OperationDisplay(Model):
         self.resource = None
         self.operation = None
         self.description = None
+
+
+class OperationProperties(Model):
+    """Extra Operation properties.
+
+    :param service_specification: Service specifications of the operation
+    :type service_specification: ~azure.mgmt.avs.models.ServiceSpecification
+    """
+
+    _attribute_map = {
+        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OperationProperties, self).__init__(**kwargs)
+        self.service_specification = kwargs.get('service_specification', None)
 
 
 class TrackedResource(Resource):
@@ -805,6 +955,28 @@ class Quota(Model):
         super(Quota, self).__init__(**kwargs)
         self.hosts_remaining = None
         self.quota_enabled = None
+
+
+class ServiceSpecification(Model):
+    """Service specification payload.
+
+    :param log_specifications: Specifications of the Log for Azure Monitoring
+    :type log_specifications: list[~azure.mgmt.avs.models.LogSpecification]
+    :param metric_specifications: Specifications of the Metrics for Azure
+     Monitoring
+    :type metric_specifications:
+     list[~azure.mgmt.avs.models.MetricSpecification]
+    """
+
+    _attribute_map = {
+        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServiceSpecification, self).__init__(**kwargs)
+        self.log_specifications = kwargs.get('log_specifications', None)
+        self.metric_specifications = kwargs.get('metric_specifications', None)
 
 
 class Sku(Model):
