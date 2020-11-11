@@ -68,14 +68,14 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=[
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'microsoft',
-        'microsoft.opentelemetry',
-        'microsoft.opentelemetry.exporter',
         'tests',
+        'samples'
     ]),
+    python_requires=">=3.5.0",
     install_requires=[
         "azure-core<2.0.0,>=1.6.0",
         "msrest>=0.6.10",
+        "opentelemetry-api == 0.13b0",
+        "opentelemetry-sdk == 0.13b0"
     ],
 )
