@@ -4,10 +4,10 @@
 
 ## Instructions
 
-From `opentelemetry-exporter-azuremonitor/`:
+From `microsoft-opentelemetry-exporter-azuremonitor/`:
 
 ```
-rmdir ./opentelemetry/exporter/azuremonitor/_generated
+rmdir ./microsoft/opentelemetry/exporter/azuremonitor/_generated
 autorest ./swagger/README.md --python --v3
 ```
 
@@ -19,8 +19,8 @@ description: Opentelemetry Exporter for Azure Monitor
 generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
-output-folder: ../opentelemetry/exporter/azuremonitor/_generated
-source-code-folder-path: ./opentelemetry/exporter/azuremonitor/_generated
+output-folder: ../microsoft/opentelemetry/exporter/azuremonitor/_generated
+source-code-folder-path: ./microsoft/opentelemetry/exporter/azuremonitor/_generated
 input-file: 
     - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/applicationinsights/data-plane/Monitor.Exporters/preview/2020-09-15_Preview/swagger.json
 
