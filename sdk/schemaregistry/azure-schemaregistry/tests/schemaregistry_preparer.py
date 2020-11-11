@@ -59,9 +59,23 @@ class SchemaRegistryPreparer(AzureMgmtPreparer):
         # TODO: right now the endpoint/group is fixed, as there is no way to create/delete resources using api, in the future we should be able to dynamically create and remove resources
         if self.is_live:
             return {
-                SCHEMA_REGISTRY_ENDPOINT_PARAM: os.environ[SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME],
-                SCHEMA_REGISTRY_GROUP_PARAM: os.environ[SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME]
+                "SCHEMAREGISTRY_CLIENT_ID": os.environ["SCHEMAREGISTRY_CLIENT_ID"],
+                "SCHEMAREGISTRY_RESOURCE_MANAGER_URL": os.environ["SCHEMAREGISTRY_RESOURCE_MANAGER_URL"],
+                "SCHEMAREGISTRY_CLIENT_SECRET": os.environ["SCHEMAREGISTRY_CLIENT_SECRET"],
+                "schemaregistry_endpoint": os.environ["SCHEMAREGISTRY_ENDPOINT"],
+                "SCHEMAREGISTRY_RESOURCE_GROUP": os.environ["SCHEMAREGISTRY_RESOURCE_GROUP"],
+                "SCHEMAREGISTRY_TENANT_ID": os.environ["SCHEMAREGISTRY_TENANT_ID"],
+                "SCHEMAREGISTRY_LOCATION": os.environ["SCHEMAREGISTRY_LOCATION"],
+                "schemaregistry_group": os.environ["SCHEMAREGISTRY_GROUP"],
+                "SCHEMAREGISTRY_AZURE_AUTHORITY_HOST": os.environ["SCHEMAREGISTRY_AZURE_AUTHORITY_HOST"],
+                "SCHEMAREGISTRY_SUBSCRIPTION_ID": os.environ["SCHEMAREGISTRY_SUBSCRIPTION_ID"],
+                "SCHEMAREGISTRY_ENVIRONMENT": os.environ["SCHEMAREGISTRY_ENVIRONMENT"],
+                "SCHEMAREGISTRY_SERVICE_MANAGEMENT_URL": os.environ["SCHEMAREGISTRY_SERVICE_MANAGEMENT_URL"]
             }
+            # return {
+            #     SCHEMA_REGISTRY_ENDPOINT_PARAM: os.environ[SCHEMA_REGISTRY_ENDPOINT_ENV_KEY_NAME],
+            #     SCHEMA_REGISTRY_GROUP_PARAM: os.environ[SCHEMA_REGISTRY_GROUP_ENV_KEY_NAME]
+            # }
         else:
             return {
                 SCHEMA_REGISTRY_ENDPOINT_PARAM: "sr-playground.servicebus.windows.net",
