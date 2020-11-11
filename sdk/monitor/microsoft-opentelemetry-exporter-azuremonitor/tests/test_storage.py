@@ -26,7 +26,7 @@ def throw(exc_type, *args, **kwargs):
 class TestLocalFileBlob(unittest.TestCase):
     @classmethod
     def setup_class(cls):
-        os.makedirs(TEST_FOLDER)
+        os.makedirs(TEST_FOLDER, exist_ok=True)
 
     @classmethod
     def tearDownClass(cls):

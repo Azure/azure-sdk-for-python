@@ -38,7 +38,7 @@ def throw(exc_type, *args, **kwargs):
 class TestAzureSpanExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.makedirs(TEST_FOLDER)
+        os.makedirs(TEST_FOLDER, exist_ok=True)
         os.environ.clear()
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"

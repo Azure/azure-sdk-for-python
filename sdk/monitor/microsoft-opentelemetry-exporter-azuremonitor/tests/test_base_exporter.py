@@ -23,6 +23,7 @@ from microsoft.opentelemetry.exporter.azuremonitor._generated.models import Moni
 TEST_FOLDER = os.path.abspath(".test")
 STORAGE_PATH = os.path.join(TEST_FOLDER)
 
+
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
         raise exc_type(*args, **kwargs)
@@ -35,7 +36,7 @@ def throw(exc_type, *args, **kwargs):
 class TestBaseExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.makedirs(TEST_FOLDER)
+        os.makedirs(TEST_FOLDER, exist_ok=True)
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
