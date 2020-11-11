@@ -45,6 +45,7 @@ jobs:
         AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-multipage-sas-url)
         AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2: $(python-formrecognizer-test-storage-multipage-sas-url2)
         AZURE_FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-selection-mark-storage-sas-url)
+        AZURE_FORM_RECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-testing-data-sas-url)
         AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'

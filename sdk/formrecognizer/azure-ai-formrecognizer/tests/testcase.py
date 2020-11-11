@@ -569,6 +569,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
         self.selection_marks = kwargs.get("selection_marks", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
         self.copy = kwargs.get("copy", False)
+        self.language = kwargs.get("language", None)
 
     def _load_settings(self):
         try:
@@ -594,26 +595,26 @@ class GlobalClientPreparer(AzureMgmtPreparer):
                 raise
         return key_value
 
+    def get_blob_url(self, container_sas_url, container, file_name):
+        url = container_sas_url.split(container)
+        url[0] += container + "/" + file_name
+        blob_sas_url = url[0] + url[1]
+        self.test_class_instance.scrubber.register_name_pair(
+            blob_sas_url,
+            "blob_sas_url"
+        )
+        return blob_sas_url
+
     def get_training_parameters(self, client):
         if self.is_live:
             if self.multipage_test:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL")
-                url = container_sas_url.split("multipage-training-data")
-                url[0] += "multipage-training-data/multipage_invoice1.pdf"
-                blob_sas_url = url[0] + url[1]
-                self.test_class_instance.scrubber.register_name_pair(
-                    blob_sas_url,
-                    "blob_sas_url"
-                )
+                blob_sas_url = self.get_blob_url(container_sas_url, "multipage-training-data", "multipage_invoice1.pdf")
+
             elif self.multipage_test_2:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2")
-                url = container_sas_url.split("multipage-vendor-forms")
-                url[0] += "multipage-vendor-forms/multi1.pdf"
-                blob_sas_url = url[0] + url[1]
-                self.test_class_instance.scrubber.register_name_pair(
-                    blob_sas_url,
-                    "blob_sas_url"
-                )
+                blob_sas_url = self.get_blob_url(container_sas_url, "multipage-vendor-forms", "multi1.pdf")
+
             elif self.selection_marks:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL")
                 blob_sas_url = None
@@ -663,6 +664,18 @@ class GlobalClientPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         client = self.create_form_client(**kwargs)
+
+        if self.language:
+            if self.is_live:
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_TESTING_DATA_CONTAINER_SAS_URL")
+                form_name = "content_" + self.language + ".pdf"
+                blob_sas_url = self.get_blob_url(container_sas_url, "testingdata", form_name)
+            else:
+                blob_sas_url = "blob_sas_url"
+            return {
+                "client": client,
+                "language_form": blob_sas_url
+            }
 
         if not self.training:
             return {"client": client}
