@@ -258,7 +258,22 @@ class MessageContentTooLarge(ServiceBusMessageError, ValueError):
     """Message content is larger than the service bus frame size."""
 
 
-class MessageAlreadySettled(ServiceBusMessageError):
+class MessageSettleFailed(ServiceBusMessageError):
+    """Attempt to settle a message failed.
+
+    :param str action: The settlement operation, there are four types of settlement,
+     `complete/abandon/defer/dead_letter`.
+    :param error: The original exception if any.
+    :type error: Exception
+
+    """
+    def __init__(self, action, message=None, error=None):
+        # type: (str, Optional[str], Optional[Exception]) -> None
+        message = message or "Failed to {} message. Error: {}".format(action, error)
+        super(MessageSettleFailed, self).__init__(message, error=error)
+
+
+class MessageAlreadySettled(MessageSettleFailed):
     """Failed to settle the message.
 
     An attempt was made to complete an operation on a message that has already
@@ -273,23 +288,8 @@ class MessageAlreadySettled(ServiceBusMessageError):
 
     def __init__(self, action):
         # type: (str) -> None
-        message = "Unable to {} message as it has already been settled".format(action)
-        super(MessageAlreadySettled, self).__init__(message)
-
-
-class MessageSettleFailed(ServiceBusMessageError):
-    """Attempt to settle a message failed.
-
-    :param str action: The settlement operation, there are four types of settlement,
-     `complete/abandon/defer/dead_letter`.
-    :param error: The original exception if any.
-    :type error: Exception
-
-    """
-    def __init__(self, action, error):
-        # type: (str, Exception) -> None
-        message = "Failed to {} message. Error: {}".format(action, error)
-        super(MessageSettleFailed, self).__init__(message, error=error)
+        message = "Unable to {} message; The message has either been deleted or already settled".format(action)
+        super(MessageAlreadySettled, self).__init__(action, message=message)
 
 
 class MessageSendFailed(ServiceBusMessageError):

@@ -107,9 +107,15 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _check_message_alive(self, message, action):
         # pylint: disable=no-member, protected-access
         if message._is_peeked_message:
-            raise MessageSettleFailed(action, ServiceBusMessageError("Messages received by peek can not be settled."))
+            raise MessageSettleFailed(
+                action,
+                error=ServiceBusMessageError("Messages received by peek can not be settled.")
+            )
         if not self._running:
-            raise MessageSettleFailed(action, ServiceBusMessageError("Orphan message had no open connection."))
+            raise MessageSettleFailed(
+                action,
+                error=ServiceBusMessageError("Orphan message had no open connection.")
+            )
         if message._settled:
             raise MessageAlreadySettled(action)
         try:
