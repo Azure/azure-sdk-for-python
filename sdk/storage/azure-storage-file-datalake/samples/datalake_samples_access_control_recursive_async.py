@@ -22,6 +22,8 @@ import random
 import uuid
 import asyncio
 
+from azure.core.exceptions import AzureError
+
 from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
@@ -58,9 +60,19 @@ async def recursive_access_control_sample(filesystem_client):
         failed_entries.append(acl_changes.batch_failures)
 
     # illustrate the operation by using a small batch_size
-    acl_change_result = await directory_client.set_access_control_recursive(acl=acl,
-                                                                            progress_callback=progress_callback,
-                                                                            batch_size=5)
+    try:
+        acl_change_result = await directory_client.set_access_control_recursive(acl=acl,
+                                                                                progress_hook=progress_callback,
+                                                                                batch_size=5)
+    except AzureError as error:
+        # if the error has continuation_token, you can restart the operation using that continuation_token
+        if error.continuation_token:
+            acl_change_result = \
+                await directory_client.set_access_control_recursive(acl=acl,
+                                                                    continuation_token=error.continuation_token,
+                                                                    progress_hook=progress_callback,
+                                                                    batch_size=5)
+
     print("Summary: {} directories and {} files were updated successfully, {} failures were counted."
           .format(acl_change_result.counters.directories_successful, acl_change_result.counters.files_successful,
                   acl_change_result.counters.failure_count))
