@@ -68,11 +68,8 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=[
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'microsoft',
-        'microsoft.opentelemetry',
-        'microsoft.opentelemetry.exporter',
         'tests',
+        'samples'
     ]),
     python_requires=">=3.5.0",
     install_requires=[
