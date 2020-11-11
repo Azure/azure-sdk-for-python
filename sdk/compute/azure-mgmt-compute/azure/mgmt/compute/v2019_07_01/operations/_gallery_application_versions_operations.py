@@ -178,7 +178,15 @@ class GalleryApplicationVersionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryApplicationName': self._serialize.url("gallery_application_name", gallery_application_name, 'str'),
+            'galleryApplicationVersionName': self._serialize.url("gallery_application_version_name", gallery_application_version_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -316,7 +324,15 @@ class GalleryApplicationVersionsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryApplicationName': self._serialize.url("gallery_application_name", gallery_application_name, 'str'),
+            'galleryApplicationVersionName': self._serialize.url("gallery_application_version_name", gallery_application_version_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -510,7 +526,15 @@ class GalleryApplicationVersionsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryApplicationName': self._serialize.url("gallery_application_name", gallery_application_name, 'str'),
+            'galleryApplicationVersionName': self._serialize.url("gallery_application_version_name", gallery_application_version_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
