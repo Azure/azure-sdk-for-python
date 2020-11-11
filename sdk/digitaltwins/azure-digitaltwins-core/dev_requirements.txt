@@ -1,6 +1,6 @@
 -e ../../../tools/azure-devtools
 ../../core/azure-core
-../azure-mgmt-digitaltwins
+azure-mgmt-digitaltwins
 -e ../../identity/azure-identity
 -e ../../../tools/azure-sdk-tools
 aiohttp>=3.0; python_version >= '3.5'
