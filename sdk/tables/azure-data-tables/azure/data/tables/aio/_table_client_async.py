@@ -24,7 +24,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
 from .._generated.aio import AzureTable
-from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
+from .._generated.models import SignedIdentifier, TableProperties
 from .._models import AccessPolicy, BatchTransactionResult
 from .._serialize import serialize_iso
 from .._deserialize import _return_headers_and_deserialized
@@ -309,7 +309,7 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         :type entity: TableEntity or dict[str,str]
         :return: Dictionary mapping operation metadata returned from the service
         :rtype: dict[str,str]
-        :raises ~azure.core.exceptions.ResourceFoundError:
+        :raises ~azure.core.exceptions.ResourceExistsError: If the entity already exists
 
         .. admonition:: Example:
 
@@ -425,14 +425,14 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
+        top = kwargs.pop('results_per_page', None)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
-
-        command = functools.partial(
-            self._client.table.query_entities,
-            **kwargs)
+        command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
-            command, results_per_page=query_options, table=self.table_name,
+            command,
+            table=self.table_name,
+            results_per_page=top,
+            select=user_select,
             page_iterator_class=TableEntityPropertiesPaged
         )
 
@@ -465,20 +465,18 @@ class TableClient(AsyncStorageAccountHostsMixin, TableClientBase):
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable = W0622
-
+        top = kwargs.pop('results_per_page', None)
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
-                                     filter=filter)
-
-        command = functools.partial(
-            self._client.table.query_entities,
-            query_options=query_options,
-            **kwargs)
+        command = functools.partial(self._client.table.query_entities, **kwargs)
         return AsyncItemPaged(
-            command, table=self.table_name,
+            command,
+            table=self.table_name,
+            results_per_page=top,
+            filter=filter,
+            select=user_select,
             page_iterator_class=TableEntityPropertiesPaged
         )
 

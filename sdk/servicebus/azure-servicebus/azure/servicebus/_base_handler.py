@@ -5,6 +5,7 @@
 import logging
 import uuid
 import time
+import threading
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable
 
@@ -172,6 +173,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
+        self._shutdown = threading.Event()
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
@@ -229,6 +231,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # type: (Callable, Optional[float], Any) -> Any
         # pylint: disable=protected-access
+        if self._shutdown.is_set():
+            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
+                             "create a new instance.")
+
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -380,3 +386,4 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         self._close_handler()
+        self._shutdown.set()
