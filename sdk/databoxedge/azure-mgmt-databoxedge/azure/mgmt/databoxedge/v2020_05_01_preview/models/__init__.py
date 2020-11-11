@@ -60,7 +60,6 @@ try:
     from ._models_py3 import Sku
     from ._models_py3 import SKUCapability
     from ._models_py3 import SkuCost
-    from ._models_py3 import SKUCost
     from ._models_py3 import SkuInformation
     from ._models_py3 import SkuLocationInfo
     from ._models_py3 import SkuRestriction
@@ -128,7 +127,6 @@ except (SyntaxError, ImportError):
     from ._models import Sku
     from ._models import SKUCapability
     from ._models import SkuCost
-    from ._models import SKUCost
     from ._models import SkuInformation
     from ._models import SkuLocationInfo
     from ._models import SkuRestriction
@@ -259,7 +257,6 @@ __all__ = [
     'Sku',
     'SKUCapability',
     'SkuCost',
-    'SKUCost',
     'SkuInformation',
     'SkuLocationInfo',
     'SkuRestriction',
