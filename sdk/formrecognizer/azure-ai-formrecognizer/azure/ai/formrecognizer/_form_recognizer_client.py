@@ -65,9 +65,9 @@ class FormRecognizerClient(FormRecognizerClientBase):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _prebuilt_callback(self, raw_response, _, headers, **kwargs):  # pylint: disable=unused-argument
+    def _prebuilt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
-        return prepare_prebuilt_models(analyze_result, **kwargs)
+        return prepare_prebuilt_models(analyze_result)
 
     @distributed_trace
     def begin_recognize_receipts(self, receipt, **kwargs):
@@ -247,9 +247,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
                 file_stream=business_card,
                 content_type=content_type,
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", lambda pipeline_response, _, response_headers: self._prebuilt_callback(
-                    pipeline_response, _, response_headers, business_card=True
-                )),
+                cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
                 **kwargs
             )
@@ -298,9 +296,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             return self._client.begin_analyze_business_card_async(  # type: ignore
                 file_stream={"source": business_card_url},
                 include_text_details=include_field_elements,
-                cls=kwargs.pop("cls", lambda pipeline_response, _, response_headers: self._prebuilt_callback(
-                    pipeline_response, _, response_headers, business_card=True
-                )),
+                cls=kwargs.pop("cls", self._prebuilt_callback),
                 polling=True,
                 **kwargs
             )
