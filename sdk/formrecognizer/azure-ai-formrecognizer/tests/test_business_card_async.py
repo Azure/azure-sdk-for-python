@@ -154,7 +154,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -191,7 +191,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -230,7 +230,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
