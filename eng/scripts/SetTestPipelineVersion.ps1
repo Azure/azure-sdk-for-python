@@ -22,7 +22,7 @@ $semVarsSorted = [AzureEngSemanticVersion]::SortVersionStrings($semVars)
 LogDebug "Last Published Version $($semVarsSorted[0])"
 
 $newVersion = [AzureEngSemanticVersion]::ParsePythonVersionString($semVarsSorted[0])
-$newVersion.PrereleaseLabel = "beta"
+$newVersion.PrereleaseLabel = "b"
 $newVersion.PrereleaseNumber = $BuildNumber
 
 LogDebug "Version to publish [ $($newVersion.ToString()) ]"
