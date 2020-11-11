@@ -202,6 +202,10 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @partition_key.setter
     def partition_key(self, value):
         # type: (str) -> None
+        if value != self.session_id:
+            raise ValueError(
+                "partition_key:{} cannot be set to a different value than session_id:{}".format(value, self.session_id)
+            )
         self._set_message_annotations(_X_OPT_PARTITION_KEY, value)
 
     @property

@@ -2,6 +2,9 @@
 
 ## 7.0.0b9 (Unreleased)
 
+**Breaking Changes**
+
+* Setting `ServiceBusMessage.partition_key` to a value different than `session_id` on the message instance now raises `ValueError`.
 
 ## 7.0.0b8 (2020-11-05)
 

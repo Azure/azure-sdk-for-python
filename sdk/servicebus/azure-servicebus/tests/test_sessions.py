@@ -64,6 +64,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sender, receiver:
                 for i in range(3):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
+
+                    with pytest.raises(ValueError):
+                        message.partition_key = 'pkey'
+
                     message.session_id = session_id
                     message.application_properties = {'key': 'value'}
                     message.subject = 'label'
@@ -73,6 +77,10 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     message.reply_to_session_id = 'reply_to_session_id'
+
+                    with pytest.raises(ValueError):
+                        message.partition_key = 'pkey'
+
                     sender.send_messages(message)
 
                 with pytest.raises(ServiceBusConnectionError):
