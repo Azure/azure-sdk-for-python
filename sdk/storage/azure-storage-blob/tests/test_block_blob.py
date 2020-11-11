@@ -105,7 +105,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_upload_blob_from_url_with_standard_tier_specified(
             self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        self._setup(storage_account, storage_account_key, "tcontainer")
+        self._setup(storage_account, storage_account_key, container_name="tcontainer")
         blob = self._create_blob()
         self.bsc.get_blob_client(self.container_name, blob.blob_name)
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
@@ -128,7 +128,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_upload_blob_from_url_without_using_source_properties(
             self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        self._setup(storage_account, storage_account_key, "tcontainer")
+        self._setup(storage_account, storage_account_key, container_name="tcontainer")
         blob = self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
         self.bsc.get_blob_client(self.container_name, blob.blob_name)
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
