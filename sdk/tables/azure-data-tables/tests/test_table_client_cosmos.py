@@ -47,19 +47,30 @@ class StorageTableClientTest(TableTestCase):
             ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or
             ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url))
 
+    def _account_url(self, account_name):
+        return "https://{}.table.cosmos.azure.com".format(account_name)
+
     # --Direct Parameters Test Cases --------------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_key(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
-
+        print(resource_group)
+        print(location)
+        print(cosmos_account)
+        print(cosmos_account_key)
         for client, url in SERVICES.items():
             # Act
-            service = client(
-                self.account_url(cosmos_account, url), credential=cosmos_account_key, table_name='foo')
+            service = self.create_client_from_credential(
+                client,
+                account_url=self._account_url(cosmos_account),
+                credential=cosmos_account_key,
+                table_name='foo')
+            # service = client(
+            #     self.account_url(cosmos_account, url), credential=cosmos_account_key, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
 
         if self.is_live:
