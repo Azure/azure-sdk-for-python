@@ -548,7 +548,7 @@ class ManagedHsmSku(msrest.serialization.Model):
         **kwargs
     ):
         super(ManagedHsmSku, self).__init__(**kwargs)
-        self.family = kwargs['family']
+        self.family = kwargs.get('family', "B")
         self.name = kwargs['name']
 
 
@@ -1041,7 +1041,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         super(Sku, self).__init__(**kwargs)
-        self.family = kwargs['family']
+        self.family = kwargs.get('family', "A")
         self.name = kwargs['name']
 
 

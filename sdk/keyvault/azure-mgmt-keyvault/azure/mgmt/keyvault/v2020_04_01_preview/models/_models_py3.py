@@ -589,7 +589,7 @@ class ManagedHsmSku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        family: Union[str, "ManagedHsmSkuFamily"],
+        family: Union[str, "ManagedHsmSkuFamily"] = "B",
         name: Union[str, "ManagedHsmSkuName"],
         **kwargs
     ):
@@ -1127,7 +1127,7 @@ class Sku(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        family: Union[str, "SkuFamily"],
+        family: Union[str, "SkuFamily"] = "A",
         name: Union[str, "SkuName"],
         **kwargs
     ):
