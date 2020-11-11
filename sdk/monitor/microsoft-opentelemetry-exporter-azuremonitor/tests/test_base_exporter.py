@@ -11,14 +11,14 @@ import requests
 from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
 
-from opentelemetry.exporter.azuremonitor.export import (
+from microsoft.opentelemetry.exporter.azuremonitor.export import (
     BaseExporter,
     ExportResult,
     get_metrics_export_result,
     get_trace_export_result,
 )
-from opentelemetry.exporter.azuremonitor.options import ExporterOptions
-from opentelemetry.exporter.azuremonitor._generated.models import MonitorBase, TelemetryItem
+from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
+from microsoft.opentelemetry.exporter.azuremonitor._generated.models import MonitorBase, TelemetryItem
 
 TEST_FOLDER = os.path.abspath(".test")
 STORAGE_PATH = os.path.join(TEST_FOLDER)
@@ -26,14 +26,12 @@ STORAGE_PATH = os.path.join(TEST_FOLDER)
 
 # pylint: disable=invalid-name
 def setUpModule():
-    if not os.path.exists(TEST_FOLDER):
-        os.makedirs(TEST_FOLDER)
-
+    os.makedirs(TEST_FOLDER)
+        
 
 # pylint: disable=invalid-name
 def tearDownModule():
-    if os.path.exists(TEST_FOLDER):
-        shutil.rmtree(TEST_FOLDER, True)
+    shutil.rmtree(TEST_FOLDER, True)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -212,7 +210,7 @@ class TestBaseExporter(unittest.TestCase):
     #         [TelemetryItem(name="", time="")]))
     #     exporter.storage.put(envelopes_to_export)
     #     with mock.patch(
-    #         "opentelemetry.exporter.azuremonitor.storage.LocalFileBlob.lease"
+    #         "microsoft.opentelemetry.exporter.azuremonitor.storage.LocalFileBlob.lease"
     #     ) as lease:  # noqa: E501
     #         lease.return_value = False
     #         exporter._transmit_from_storage()

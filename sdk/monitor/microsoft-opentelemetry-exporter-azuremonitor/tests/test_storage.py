@@ -6,7 +6,7 @@ import shutil
 import unittest
 from unittest import mock
 
-from opentelemetry.exporter.azuremonitor.storage import (
+from microsoft.opentelemetry.exporter.azuremonitor.storage import (
     LocalFileBlob,
     LocalFileStorage,
     _now,
@@ -18,14 +18,12 @@ TEST_FOLDER = os.path.abspath(".test")
 
 # pylint: disable=invalid-name
 def setUpModule():
-    if not os.path.exists(TEST_FOLDER):
-        os.makedirs(TEST_FOLDER)
+    os.makedirs(TEST_FOLDER)
 
 
 # pylint: disable=invalid-name
 def tearDownModule():
-    if os.path.exists(TEST_FOLDER):
-        shutil.rmtree(TEST_FOLDER, True)
+    shutil.rmtree(TEST_FOLDER, True)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -85,7 +83,7 @@ class TestLocalFileStorage(unittest.TestCase):
         now = _now()
         with LocalFileStorage(os.path.join(TEST_FOLDER, "foo")) as stor:
             stor.put((1, 2, 3), lease_period=10)
-            with mock.patch("opentelemetry.exporter.azuremonitor.storage._now") as m:
+            with mock.patch("microsoft.opentelemetry.exporter.azuremonitor.storage._now") as m:
                 m.return_value = now - _seconds(30 * 24 * 60 * 60)
                 stor.put((1, 2, 3))
                 stor.put((1, 2, 3), lease_period=10)

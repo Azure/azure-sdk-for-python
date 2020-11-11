@@ -7,7 +7,7 @@ import logging
 import os
 import random
 
-from opentelemetry.exporter.azuremonitor.utils import PeriodicTask
+from microsoft.opentelemetry.exporter.azuremonitor.utils import PeriodicTask
 
 logger = logging.getLogger(__name__)
 

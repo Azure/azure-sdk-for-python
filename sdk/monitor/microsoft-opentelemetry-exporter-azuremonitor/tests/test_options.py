@@ -4,7 +4,7 @@
 import os
 import unittest
 
-from opentelemetry.exporter.azuremonitor.options import ExporterOptions
+from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
 
 
 # pylint: disable=too-many-public-methods

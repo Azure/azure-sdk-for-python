@@ -9,10 +9,10 @@ from azure.core.pipeline.policies import ProxyPolicy, RetryPolicy
 
 from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
-from opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
-from opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
-from opentelemetry.exporter.azuremonitor.options import ExporterOptions
-from opentelemetry.exporter.azuremonitor.storage import LocalFileStorage
+from microsoft.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
+from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
+from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
+from microsoft.opentelemetry.exporter.azuremonitor.storage import LocalFileStorage
 
 
 logger = logging.getLogger(__name__)

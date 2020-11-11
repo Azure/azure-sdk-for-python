@@ -14,12 +14,12 @@ from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCanonicalCode
 
-from opentelemetry.exporter.azuremonitor.export import ExportResult
-from opentelemetry.exporter.azuremonitor.export.trace import (
+from microsoft.opentelemetry.exporter.azuremonitor.export import ExportResult
+from microsoft.opentelemetry.exporter.azuremonitor.export.trace import (
     AzureMonitorSpanExporter,
     indicate_processed_by_metric_extractors,
 )
-from opentelemetry.exporter.azuremonitor.options import ExporterOptions
+from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
 
 TEST_FOLDER = os.path.abspath(".test")
 STORAGE_PATH = os.path.join(TEST_FOLDER)
@@ -27,14 +27,12 @@ STORAGE_PATH = os.path.join(TEST_FOLDER)
 
 # pylint: disable=invalid-name
 def setUpModule():
-    if not os.path.exists(TEST_FOLDER):
-        os.makedirs(TEST_FOLDER)
+    os.makedirs(TEST_FOLDER)
 
 
 # pylint: disable=invalid-name
 def tearDownModule():
-    if os.path.exists(TEST_FOLDER):
-        shutil.rmtree(TEST_FOLDER, True)
+    shutil.rmtree(TEST_FOLDER, True)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -105,7 +103,7 @@ class TestAzureSpanExporter(unittest.TestCase):
     def test_export_failure(self):
         exporter = self._exporter
         with mock.patch(
-            "opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
         ) as transmit:  # noqa: E501
             test_span = Span(
                 name="test",
@@ -135,7 +133,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.SUCCESS
             storage_mock = mock.Mock()
@@ -145,7 +143,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             self.assertEqual(storage_mock.call_count, 1)
             self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
 
-    @mock.patch("opentelemetry.exporter.azuremonitor.export.trace.logger")
+    @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace.logger")
     def test_export_exception(self, logger_mock):
         test_span = Span(
             name="test",
@@ -159,7 +157,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.end()
         exporter = self._exporter
         with mock.patch(
-            "opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit",
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit",
             throw(Exception),
         ):  # noqa: E501
             result = exporter.export([test_span])
@@ -179,7 +177,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
             result = exporter.export([test_span])

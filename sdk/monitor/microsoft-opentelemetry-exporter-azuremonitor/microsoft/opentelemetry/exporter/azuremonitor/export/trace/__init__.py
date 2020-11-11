@@ -10,14 +10,14 @@ from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
 from opentelemetry.trace.status import StatusCanonicalCode
 
-from opentelemetry.exporter.azuremonitor import utils
-from opentelemetry.exporter.azuremonitor._generated.models import (
+from microsoft.opentelemetry.exporter.azuremonitor import utils
+from microsoft.opentelemetry.exporter.azuremonitor._generated.models import (
     MonitorBase,
     RemoteDependencyData,
     RequestData,
     TelemetryItem
 )
-from opentelemetry.exporter.azuremonitor.export import (
+from microsoft.opentelemetry.exporter.azuremonitor.export import (
     BaseExporter,
     ExportResult,
     get_trace_export_result,

@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from opentelemetry.exporter.azuremonitor.export.trace import AzureMonitorSpanExporter
+from microsoft.opentelemetry.exporter.azuremonitor.export.trace import AzureMonitorSpanExporter
 from ._version import VERSION
 
 __all__ = ["AzureMonitorSpanExporter"]

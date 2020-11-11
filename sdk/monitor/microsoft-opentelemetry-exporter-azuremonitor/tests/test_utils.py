@@ -4,7 +4,7 @@
 import os
 import unittest
 
-from opentelemetry.exporter.azuremonitor import utils
+from microsoft.opentelemetry.exporter.azuremonitor import utils
 
 
 class TestUtils(unittest.TestCase):
