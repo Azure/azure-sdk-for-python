@@ -1,0 +1,196 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Mon, 09 Nov 2020 22:55:55 GMT
+    method: GET
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#listapplicationsummariesresponses\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"application_id\",\"versions\":[\r\n\
+        \        \"v1.0\"\r\n      ]\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+      request-id:
+      - 056e0d07-4ec7-4e81-8267-1c45886b86de
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+    method: GET
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications/application_id?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\"\
+        ,\"id\":\"application_id\",\"versions\":[\r\n    \"v1.0\"\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+      request-id:
+      - 79845402-40b5-43b1-be93-f38e1dd4c091
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"id": "python_task_with_app_package", "commandLine": "cmd /c \"echo hello
+      world\"", "applicationPackageReferences": [{"applicationId": "application_id",
+      "version": "v1.0"}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '174'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+    method: POST
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+      etag:
+      - '0x8D885029E282846'
+      last-modified:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+      location:
+      - https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package
+      request-id:
+      - 329bbb35-d64f-48e1-9bc1-9584e94f56aa
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+    method: GET
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#tasks/@Element\"\
+        ,\"id\":\"python_task_with_app_package\",\"url\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package\"\
+        ,\"eTag\":\"0x8D885029E282846\",\"creationTime\":\"2020-11-09T22:55:56.2785862Z\"\
+        ,\"lastModified\":\"2020-11-09T22:55:56.2785862Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-09T22:55:56.2785862Z\",\"commandLine\":\"\
+        cmd /c \\\"echo hello world\\\"\",\"applicationPackageReferences\":[\r\n \
+        \   {\r\n      \"applicationId\":\"application_id\",\"version\":\"v1.0\"\r\
+        \n    }\r\n  ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"scope\"\
+        :\"pool\",\"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"constraints\"\
+        :{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\"\
+        :\"P7D\",\"maxTaskRetryCount\":0\r\n  },\"requiredSlots\":1,\"executionInfo\"\
+        :{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+      etag:
+      - '0x8D885029E282846'
+      last-modified:
+      - Mon, 09 Nov 2020 22:55:56 GMT
+      request-id:
+      - 40c3f358-e297-4a51-ae26-89f5b9f13dd5
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

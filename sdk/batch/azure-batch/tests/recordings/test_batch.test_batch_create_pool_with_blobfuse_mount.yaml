@@ -19,14 +19,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:30:00 GMT
+      - Mon, 09 Nov 2020 23:10:34 GMT
     method: POST
-    uri: https://batch449c15bb.westcentralus.batch.azure.com/pools?api-version=2020-03-01.11.0
+    uri: https://batch449c15bb.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -36,15 +36,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:30:01 GMT
+      - Mon, 09 Nov 2020 23:10:35 GMT
       etag:
-      - '0x8D7CB8BE5E61051'
+      - '0x8D88504AA487E3A'
       last-modified:
-      - Wed, 18 Mar 2020 22:30:01 GMT
+      - Mon, 09 Nov 2020 23:10:35 GMT
       location:
       - https://batch449c15bb.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb
       request-id:
-      - ec0f3ff4-97f0-44e7-b906-ea959fff98a9
+      - 0b8c4bc9-6a77-4ada-987a-a882e61a3799
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -66,36 +66,46 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.3 (Windows-10-10.0.18362-SP0) msrest/0.6.11 msrest_azure/0.6.2
-        azure-batch/2020-03-01.11.0 Azure-SDK-For-Python
+      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 18 Mar 2020 22:30:01 GMT
+      - Mon, 09 Nov 2020 23:10:35 GMT
     method: GET
-    uri: https://batch449c15bb.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2020-03-01.11.0
+    uri: https://batch449c15bb.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch449c15bb.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch449c15bb.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8D7CB8BE5E61051\",\"lastModified\":\"2020-03-18T22:30:01.4167121Z\",\"creationTime\":\"2020-03-18T22:30:01.4167121Z\",\"state\":\"active\",\"stateTransitionTime\":\"2020-03-18T22:30:01.4167121Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2020-03-18T22:30:01.4167121Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
-        \   \"nodeFillType\":\"Pack\"\r\n  },\"virtualMachineConfiguration\":{\r\n
-        \   \"imageReference\":{\r\n      \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
-        \   },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\n
-        \     \"enableAutomaticUpdates\":true\r\n    }\r\n  },\"mountConfiguration\":[\r\n
-        \   {\r\n      \"azureBlobFileSystemConfiguration\":{\r\n        \"accountName\":\"test\",\"containerName\":\"https://test.blob.core.windows.net:443/test-container\",\"relativeMountPath\":\"foo\"\r\n
-        \     }\r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch449c15bb.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
+        ,\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch449c15bb.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb\"\
+        ,\"eTag\":\"0x8D88504AA487E3A\",\"lastModified\":\"2020-11-09T23:10:35.6166202Z\"\
+        ,\"creationTime\":\"2020-11-09T23:10:35.6166202Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-09T23:10:35.6166202Z\",\"allocationState\"\
+        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-09T23:10:35.6166202Z\"\
+        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
+        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
+        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
+        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Pack\"\r\n  },\"virtualMachineConfiguration\"\
+        :{\r\n    \"imageReference\":{\r\n      \"publisher\":\"MicrosoftWindowsServer\"\
+        ,\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\"\
+        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\"\
+        :{\r\n      \"enableAutomaticUpdates\":true\r\n    }\r\n  },\"mountConfiguration\"\
+        :[\r\n    {\r\n      \"azureBlobFileSystemConfiguration\":{\r\n        \"\
+        accountName\":\"test\",\"containerName\":\"https://test.blob.core.windows.net:443/test-container\"\
+        ,\"relativeMountPath\":\"foo\"\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 18 Mar 2020 22:30:01 GMT
+      - Mon, 09 Nov 2020 23:10:35 GMT
       etag:
-      - '0x8D7CB8BE5E61051'
+      - '0x8D88504AA487E3A'
       last-modified:
-      - Wed, 18 Mar 2020 22:30:01 GMT
+      - Mon, 09 Nov 2020 23:10:35 GMT
       request-id:
-      - 01df13d5-41d7-4e85-9c94-c051fe8b7a86
+      - 0ac0c1a9-6ad1-464a-9b08-8b69970356e2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

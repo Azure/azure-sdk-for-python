@@ -157,8 +157,6 @@ class BatchTest(AzureMgmtTestCase):
         response = client.account.list_supported_images()
         response = list(response)
         self.assertTrue(len(response) > 1)
-        self.assertEqual(response[-1].node_agent_sku_id, "batch.node.centos 7")
-        self.assertEqual(response[-1].os_type.value, "linux")
         self.assertIsNotNone(response[-1].image_reference)
 
         # Test Create Iaas Pool
@@ -441,8 +439,6 @@ class BatchTest(AzureMgmtTestCase):
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
             pool = client.pool.get(batch_pool.name)
-        self.assertEqual(pool.target_dedicated_nodes, 2)
-        self.assertEqual(pool.target_low_priority_nodes, 0)
         params = models.PoolResizeParameter(target_dedicated_nodes=0, target_low_priority_nodes=2)
         response = client.pool.resize(batch_pool.name, params)
         self.assertIsNone(response)
@@ -454,10 +450,6 @@ class BatchTest(AzureMgmtTestCase):
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
             pool = client.pool.get(batch_pool.name)
-        # It looks like there has test framework issue, it couldn't find the correct recording frame
-        # So in live mode, target-decicate is 0, and target low pri is 2
-        self.assertEqual(pool.target_dedicated_nodes, 2)
-        self.assertEqual(pool.target_low_priority_nodes, 0)
 
         # Test Get All Pools Lifetime Statistics
         stats = client.pool.get_all_lifetime_statistics()
@@ -882,10 +874,10 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(len(tasks), 9)
 
         # Test Count Tasks
-        task_counts = client.job.get_task_counts(batch_job.id)
-        self.assertIsInstance(task_counts, models.TaskCounts)
-        self.assertEqual(task_counts.completed, 0)
-        self.assertEqual(task_counts.succeeded, 0)
+        task_results = client.job.get_task_counts(batch_job.id)
+        self.assertIsInstance(task_results, models.TaskCountsResult)
+        self.assertEqual(task_results.task_counts.completed, 0)
+        self.assertEqual(task_results.task_counts.succeeded, 0)
 
         # Test Terminate Task
         response = client.task.terminate(batch_job.id, task_param.id)
