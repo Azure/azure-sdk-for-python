@@ -698,7 +698,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", False)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
-
+        
         doc_id_order = [doc.get("id") for doc in docs.documents]
 
         try:

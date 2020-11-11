@@ -8,6 +8,7 @@ import os
 import pytest
 import platform
 import functools
+import itertools
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -1305,6 +1306,33 @@ class TestAnalyze(TextAnalyticsTest):
             cls=callback
         ).result()
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
+    def test_multiple_pages_of_results_returned_successfully(self, client):
+        single_doc = "hello world"
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+
+        result = client.begin_analyze(
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+        ).result()
+        pages = list(result)
+
+        self.assertEqual(len(pages), 3) # default page size is 20
+
+        self.assertEqual(len(docs), len(response))
+        self.assertIsNotNone(result.statistics)
+
+        for (idx, doc) in enumerate(response):
+            self.assertEqual(docs[idx]["id"], doc.id)
+            self.assertIsNotNone(doc.statistics)
 
 
 

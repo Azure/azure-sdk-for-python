@@ -1,0 +1,78 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "0", "text": "hello world", "language":
+      "en"}, {"id": "1", "text": "hello world", "language": "en"}, {"id": "2", "text":
+      "hello world", "language": "en"}, {"id": "3", "text": "hello world", "language":
+      "en"}, {"id": "4", "text": "hello world", "language": "en"}, {"id": "5", "text":
+      "hello world", "language": "en"}, {"id": "6", "text": "hello world", "language":
+      "en"}, {"id": "7", "text": "hello world", "language": "en"}, {"id": "8", "text":
+      "hello world", "language": "en"}, {"id": "9", "text": "hello world", "language":
+      "en"}, {"id": "10", "text": "hello world", "language": "en"}, {"id": "11", "text":
+      "hello world", "language": "en"}, {"id": "12", "text": "hello world", "language":
+      "en"}, {"id": "13", "text": "hello world", "language": "en"}, {"id": "14", "text":
+      "hello world", "language": "en"}, {"id": "15", "text": "hello world", "language":
+      "en"}, {"id": "16", "text": "hello world", "language": "en"}, {"id": "17", "text":
+      "hello world", "language": "en"}, {"id": "18", "text": "hello world", "language":
+      "en"}, {"id": "19", "text": "hello world", "language": "en"}, {"id": "20", "text":
+      "hello world", "language": "en"}, {"id": "21", "text": "hello world", "language":
+      "en"}, {"id": "22", "text": "hello world", "language": "en"}, {"id": "23", "text":
+      "hello world", "language": "en"}, {"id": "24", "text": "hello world", "language":
+      "en"}, {"id": "25", "text": "hello world", "language": "en"}, {"id": "26", "text":
+      "hello world", "language": "en"}, {"id": "27", "text": "hello world", "language":
+      "en"}, {"id": "28", "text": "hello world", "language": "en"}, {"id": "29", "text":
+      "hello world", "language": "en"}, {"id": "30", "text": "hello world", "language":
+      "en"}, {"id": "31", "text": "hello world", "language": "en"}, {"id": "32", "text":
+      "hello world", "language": "en"}, {"id": "33", "text": "hello world", "language":
+      "en"}, {"id": "34", "text": "hello world", "language": "en"}, {"id": "35", "text":
+      "hello world", "language": "en"}, {"id": "36", "text": "hello world", "language":
+      "en"}, {"id": "37", "text": "hello world", "language": "en"}, {"id": "38", "text":
+      "hello world", "language": "en"}, {"id": "39", "text": "hello world", "language":
+      "en"}, {"id": "40", "text": "hello world", "language": "en"}, {"id": "41", "text":
+      "hello world", "language": "en"}, {"id": "42", "text": "hello world", "language":
+      "en"}, {"id": "43", "text": "hello world", "language": "en"}, {"id": "44", "text":
+      "hello world", "language": "en"}, {"id": "45", "text": "hello world", "language":
+      "en"}, {"id": "46", "text": "hello world", "language": "en"}, {"id": "47", "text":
+      "hello world", "language": "en"}, {"id": "48", "text": "hello world", "language":
+      "en"}, {"id": "49", "text": "hello world", "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3085'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: '{"error":{"code":"InvalidArgument","message":"Value cannot be null.\nParameter
+        name: blobName"}}'
+    headers:
+      apim-request-id:
+      - df6c4cdd-a5fa-432e-9f8d-4cf94fbc4f2a
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 11 Nov 2020 00:50:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '7'
+    status:
+      code: 400
+      message: Bad Request
+version: 1
