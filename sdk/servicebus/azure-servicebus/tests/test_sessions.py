@@ -179,17 +179,17 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 assert receiver._running
                 assert len(messages) == 5
 
-                with receiver:
-                    for message in receiver:
-                        assert session_id == receiver.session.session_id
-                        assert session_id == message.session_id
-                        messages.append(message)
-                        receiver.complete_message(message)
-                        if len(messages) >= 5:
-                            break
 
-                assert not receiver._running
-                assert len(messages) == 6
+                for message in receiver:
+                    assert session_id == receiver.session.session_id
+                    assert session_id == message.session_id
+                    messages.append(message)
+                    receiver.complete_message(message)
+                    if len(messages) >= 5:
+                        break
+
+            assert not receiver._running
+            assert len(messages) == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -203,7 +203,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                   session_id=NEXT_AVAILABLE_SESSION, 
                                                   max_wait_time=5) as session:
-                        session.open()
+                    session.open()
 
 
     @pytest.mark.liveTest
