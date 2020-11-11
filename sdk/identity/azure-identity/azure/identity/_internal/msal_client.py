@@ -109,10 +109,11 @@ class MsalClient(object):
 def _create_config(**kwargs):
     # type: (Any) -> Configuration
     config = Configuration(**kwargs)
-    config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-    config.retry_policy = RetryPolicy(**kwargs)
-    config.proxy_policy = ProxyPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
+    config.logging_policy = kwargs.get('logging_policy') or NetworkTraceLoggingPolicy(**kwargs)
+    config.http_logging_policy = kwargs.get('http_logging_policy') or HttpLoggingPolicy(**kwargs)
+    config.retry_policy = kwargs.get('retry_policy') or RetryPolicy(**kwargs)
+    config.proxy_policy = kwargs.get('proxy_policy') or ProxyPolicy(**kwargs)
+    config.user_agent_policy = kwargs.get('user_agent_policy') or UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
     return config
 
 
@@ -128,7 +129,7 @@ def _build_pipeline(config=None, policies=None, transport=None, **kwargs):
             config.retry_policy,
             config.logging_policy,
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            config.http_logging_policy,
         ]
 
     if not transport:
