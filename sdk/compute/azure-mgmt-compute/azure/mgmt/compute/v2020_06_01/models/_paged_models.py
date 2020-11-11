@@ -220,3 +220,16 @@ class RunCommandDocumentBasePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RunCommandDocumentBasePaged, self).__init__(*args, **kwargs)
+class VirtualMachineRunCommandPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`VirtualMachineRunCommand <azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[VirtualMachineRunCommand]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(VirtualMachineRunCommandPaged, self).__init__(*args, **kwargs)

@@ -79,7 +79,7 @@ class SharingUpdateOperationTypes(str, Enum):
     reset = "Reset"
 
 
-class Permissions(str, Enum):
+class SelectPermissions(str, Enum):
 
     permissions = "Permissions"
 

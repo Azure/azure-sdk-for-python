@@ -18,8 +18,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class GalleriesOperations(object):
-    """GalleriesOperations operations.
+class VirtualMachineScaleSetVMRunCommandsOperations(object):
+    """VirtualMachineScaleSetVMRunCommandsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -27,7 +27,7 @@ class GalleriesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2020-09-30".
+    :ivar api_version: Client Api Version. Constant value: "2020-06-01".
     """
 
     models = models
@@ -37,19 +37,21 @@ class GalleriesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-30"
+        self.api_version = "2020-06-01"
 
         self.config = config
 
 
     def _create_or_update_initial(
-            self, resource_group_name, gallery_name, gallery, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, run_command_name, run_command, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str')
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'runCommandName': self._serialize.url("run_command_name", run_command_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -69,13 +71,13 @@ class GalleriesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(gallery, 'Gallery')
+        body_content = self._serialize.body(run_command, 'VirtualMachineRunCommand')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -83,11 +85,9 @@ class GalleriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Gallery', response)
+            deserialized = self._deserialize('VirtualMachineRunCommand', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('Gallery', response)
-        if response.status_code == 202:
-            deserialized = self._deserialize('Gallery', response)
+            deserialized = self._deserialize('VirtualMachineRunCommand', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -96,42 +96,48 @@ class GalleriesOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, gallery_name, gallery, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a Shared Image Gallery.
+            self, resource_group_name, vm_scale_set_name, instance_id, run_command_name, run_command, custom_headers=None, raw=False, polling=True, **operation_config):
+        """The operation to create or update the VMSS VM run command.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the Shared Image Gallery. The allowed
-         characters are alphabets and numbers with dots and periods allowed in
-         the middle. The maximum length is 80 characters.
-        :type gallery_name: str
-        :param gallery: Parameters supplied to the create or update Shared
-         Image Gallery operation.
-        :type gallery: ~azure.mgmt.compute.v2020_09_30.models.Gallery
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance ID of the virtual machine.
+        :type instance_id: str
+        :param run_command_name: The name of the virtual machine run command.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Create Virtual Machine
+         RunCommand operation.
+        :type run_command:
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Gallery or
-         ClientRawResponse<Gallery> if raw==True
+        :return: An instance of LROPoller that returns
+         VirtualMachineRunCommand or
+         ClientRawResponse<VirtualMachineRunCommand> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_09_30.models.Gallery]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_09_30.models.Gallery]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
-            gallery_name=gallery_name,
-            gallery=gallery,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            run_command_name=run_command_name,
+            run_command=run_command,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Gallery', response)
+            deserialized = self._deserialize('VirtualMachineRunCommand', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -146,17 +152,19 @@ class GalleriesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualMachines/{instanceId}/runCommands/{runCommandName}'}
 
 
     def _update_initial(
-            self, resource_group_name, gallery_name, gallery, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, run_command_name, run_command, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str')
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'runCommandName': self._serialize.url("run_command_name", run_command_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -176,7 +184,7 @@ class GalleriesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(gallery, 'GalleryUpdate')
+        body_content = self._serialize.body(run_command, 'VirtualMachineRunCommandUpdate')
 
         # Construct and send request
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
@@ -190,7 +198,7 @@ class GalleriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Gallery', response)
+            deserialized = self._deserialize('VirtualMachineRunCommand', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -199,42 +207,48 @@ class GalleriesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, gallery_name, gallery, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Update a Shared Image Gallery.
+            self, resource_group_name, vm_scale_set_name, instance_id, run_command_name, run_command, custom_headers=None, raw=False, polling=True, **operation_config):
+        """The operation to update the VMSS VM run command.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the Shared Image Gallery. The allowed
-         characters are alphabets and numbers with dots and periods allowed in
-         the middle. The maximum length is 80 characters.
-        :type gallery_name: str
-        :param gallery: Parameters supplied to the update Shared Image Gallery
-         operation.
-        :type gallery: ~azure.mgmt.compute.v2020_09_30.models.GalleryUpdate
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance ID of the virtual machine.
+        :type instance_id: str
+        :param run_command_name: The name of the virtual machine run command.
+        :type run_command_name: str
+        :param run_command: Parameters supplied to the Update Virtual Machine
+         RunCommand operation.
+        :type run_command:
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Gallery or
-         ClientRawResponse<Gallery> if raw==True
+        :return: An instance of LROPoller that returns
+         VirtualMachineRunCommand or
+         ClientRawResponse<VirtualMachineRunCommand> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_09_30.models.Gallery]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_09_30.models.Gallery]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
-            gallery_name=gallery_name,
-            gallery=gallery,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            run_command_name=run_command_name,
+            run_command=run_command,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Gallery', response)
+            deserialized = self._deserialize('VirtualMachineRunCommand', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -249,84 +263,19 @@ class GalleriesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}'}
-
-    def get(
-            self, resource_group_name, gallery_name, select=None, custom_headers=None, raw=False, **operation_config):
-        """Retrieves information about a Shared Image Gallery.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param gallery_name: The name of the Shared Image Gallery.
-        :type gallery_name: str
-        :param select: The select expression to apply on the operation.
-         Possible values include: 'Permissions'
-        :type select: str or
-         ~azure.mgmt.compute.v2020_09_30.models.SelectPermissions
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: Gallery or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.compute.v2020_09_30.models.Gallery or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if select is not None:
-            query_parameters['$select'] = self._serialize.query("select", select, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('Gallery', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualMachines/{instanceId}/runCommands/{runCommandName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, gallery_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, vm_scale_set_name, instance_id, run_command_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str')
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'runCommandName': self._serialize.url("run_command_name", run_command_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -357,14 +306,17 @@ class GalleriesOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, gallery_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a Shared Image Gallery.
+            self, resource_group_name, vm_scale_set_name, instance_id, run_command_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """The operation to delete the VMSS VM run command.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param gallery_name: The name of the Shared Image Gallery to be
-         deleted.
-        :type gallery_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance ID of the virtual machine.
+        :type instance_id: str
+        :param run_command_name: The name of the virtual machine run command.
+        :type run_command_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -378,7 +330,9 @@ class GalleriesOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            gallery_name=gallery_name,
+            vm_scale_set_name=vm_scale_set_name,
+            instance_id=instance_id,
+            run_command_name=run_command_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -396,89 +350,101 @@ class GalleriesOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualMachines/{instanceId}/runCommands/{runCommandName}'}
 
-    def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """List galleries under a resource group.
+    def get(
+            self, resource_group_name, vm_scale_set_name, instance_id, run_command_name, expand=None, custom_headers=None, raw=False, **operation_config):
+        """The operation to get the VMSS VM run command.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance ID of the virtual machine.
+        :type instance_id: str
+        :param run_command_name: The name of the virtual machine run command.
+        :type run_command_name: str
+        :param expand: The expand expression to apply on the operation.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Gallery
+        :return: VirtualMachineRunCommand or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.compute.v2020_09_30.models.GalleryPaged[~azure.mgmt.compute.v2020_09_30.models.Gallery]
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_resource_group.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
+            'runCommandName': self._serialize.url("run_command_name", run_command_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        # Construct parameters
+        query_parameters = {}
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualMachineRunCommand', response)
 
-            response = self._client.send(request, stream=False, **operation_config)
-
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
-
-            return response
-
-        # Deserialize response
-        header_dict = None
         if raw:
-            header_dict = {}
-        deserialized = models.GalleryPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualMachines/{instanceId}/runCommands/{runCommandName}'}
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """List galleries under a subscription.
+            self, resource_group_name, vm_scale_set_name, instance_id, expand=None, custom_headers=None, raw=False, **operation_config):
+        """The operation to get all run commands of an instance in Virtual Machine
+        Scaleset.
 
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the VM scale set.
+        :type vm_scale_set_name: str
+        :param instance_id: The instance ID of the virtual machine.
+        :type instance_id: str
+        :param expand: The expand expression to apply on the operation.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Gallery
+        :return: An iterator like instance of VirtualMachineRunCommand
         :rtype:
-         ~azure.mgmt.compute.v2020_09_30.models.GalleryPaged[~azure.mgmt.compute.v2020_09_30.models.Gallery]
+         ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandPaged[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
@@ -486,12 +452,17 @@ class GalleriesOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+                    'instanceId': self._serialize.url("instance_id", instance_id, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -528,7 +499,7 @@ class GalleriesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.GalleryPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.VirtualMachineRunCommandPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Compute/galleries'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/virtualMachines/{instanceId}/runCommands'}
