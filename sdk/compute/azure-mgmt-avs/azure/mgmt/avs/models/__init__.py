@@ -21,13 +21,18 @@ try:
     from ._models_py3 import ExpressRouteAuthorization
     from ._models_py3 import HcxEnterpriseSite
     from ._models_py3 import IdentitySource
+    from ._models_py3 import LogSpecification
     from ._models_py3 import ManagementCluster
+    from ._models_py3 import MetricDimension
+    from ._models_py3 import MetricSpecification
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationProperties
     from ._models_py3 import PrivateCloud
     from ._models_py3 import PrivateCloudUpdate
     from ._models_py3 import Quota
     from ._models_py3 import Resource
+    from ._models_py3 import ServiceSpecification
     from ._models_py3 import Sku
     from ._models_py3 import TrackedResource
     from ._models_py3 import Trial
@@ -43,13 +48,18 @@ except (SyntaxError, ImportError):
     from ._models import ExpressRouteAuthorization
     from ._models import HcxEnterpriseSite
     from ._models import IdentitySource
+    from ._models import LogSpecification
     from ._models import ManagementCluster
+    from ._models import MetricDimension
+    from ._models import MetricSpecification
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import OperationProperties
     from ._models import PrivateCloud
     from ._models import PrivateCloudUpdate
     from ._models import Quota
     from ._models import Resource
+    from ._models import ServiceSpecification
     from ._models import Sku
     from ._models import TrackedResource
     from ._models import Trial
@@ -64,8 +74,8 @@ from ._avs_client_enums import (
     ExpressRouteAuthorizationProvisioningState,
     SslEnum,
     PrivateCloudProvisioningState,
-    InternetEnum,
     ClusterProvisioningState,
+    InternetEnum,
     HcxEnterpriseSiteStatus,
 )
 
@@ -81,13 +91,18 @@ __all__ = [
     'ExpressRouteAuthorization',
     'HcxEnterpriseSite',
     'IdentitySource',
+    'LogSpecification',
     'ManagementCluster',
+    'MetricDimension',
+    'MetricSpecification',
     'Operation',
     'OperationDisplay',
+    'OperationProperties',
     'PrivateCloud',
     'PrivateCloudUpdate',
     'Quota',
     'Resource',
+    'ServiceSpecification',
     'Sku',
     'TrackedResource',
     'Trial',
@@ -101,7 +116,7 @@ __all__ = [
     'ExpressRouteAuthorizationProvisioningState',
     'SslEnum',
     'PrivateCloudProvisioningState',
-    'InternetEnum',
     'ClusterProvisioningState',
+    'InternetEnum',
     'HcxEnterpriseSiteStatus',
 ]
