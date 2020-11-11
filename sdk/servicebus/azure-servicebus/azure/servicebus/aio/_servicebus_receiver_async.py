@@ -43,7 +43,7 @@ from .._common.constants import (
     SPAN_NAME_PEEK
 )
 from .._common import mgmt_handlers
-from .._common.utils import trace_link_message, _receive_trace_context_manager, utc_from_timestamp
+from .._common.utils import trace_link_message, receive_trace_context_manager, utc_from_timestamp
 from ._async_utils import create_authentication, get_running_loop
 
 if TYPE_CHECKING:
@@ -160,7 +160,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 original_timeout = self.receiver._handler._timeout
                 self.receiver._handler._timeout = self.max_wait_time * 1000
             try:
-                with _receive_trace_context_manager(self.receiver) as receive_span:
+                with receive_trace_context_manager(self.receiver) as receive_span:
                     message = await self.receiver._inner_anext()
                     trace_link_message(message, receive_span)
                     return message
@@ -182,7 +182,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 raise
 
     async def __anext__(self):
-        with _receive_trace_context_manager(self) as receive_span:
+        with receive_trace_context_manager(self) as receive_span:
             message = await self._inner_anext()
             trace_link_message(message, receive_span)
             return message
@@ -526,7 +526,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         self._check_live()
-        with _receive_trace_context_manager(self) as receive_span:
+        with receive_trace_context_manager(self) as receive_span:
             messages = await self._do_retryable_operation(
                 self._receive,
                 max_message_count=max_message_count,
@@ -589,7 +589,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                                     receive_mode=self._receive_mode,
                                     message_type=ServiceBusReceivedMessage,
                                     receiver=self)
-        with _receive_trace_context_manager(self, span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
             messages = await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
                 message,
@@ -645,7 +645,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         self._populate_message_properties(message)
 
-        with _receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK) as receive_span:
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK) as receive_span:
             handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
             messages = await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_PEEK_OPERATION,

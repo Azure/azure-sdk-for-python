@@ -16,7 +16,7 @@ from uamqp.authentication.common import AMQPAuth
 
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
-from ._common.utils import create_authentication, trace_link_message, _receive_trace_context_manager
+from ._common.utils import create_authentication, trace_link_message, receive_trace_context_manager
 from ._common.constants import (
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
@@ -162,7 +162,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 original_timeout = self._handler._timeout
                 self._handler._timeout = max_wait_time * 1000
             try:
-                with _receive_trace_context_manager(self) as receive_span:
+                with receive_trace_context_manager(self) as receive_span:
                     message = self._inner_next()
                     trace_link_message(message, receive_span)
                     yield message
@@ -184,7 +184,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def __next__(self):
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
-        with _receive_trace_context_manager(self) as receive_span:
+        with receive_trace_context_manager(self) as receive_span:
             message = self._inner_next()
             trace_link_message(message, receive_span)
             return message
@@ -528,7 +528,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         self._check_live()
-        with _receive_trace_context_manager(self) as receive_span:
+        with receive_trace_context_manager(self) as receive_span:
             messages = self._do_retryable_operation(
                 self._receive,
                 max_message_count=max_message_count,
@@ -585,7 +585,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         self._populate_message_properties(message)
 
         handler = functools.partial(mgmt_handlers.deferred_message_op, receive_mode=self._receive_mode, receiver=self)
-        with _receive_trace_context_manager(self, span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
             messages = self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
                 message,
@@ -642,7 +642,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         }
 
         self._populate_message_properties(message)
-        with _receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK) as receive_span:
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK) as receive_span:
             handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
             messages = self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_PEEK_OPERATION,
