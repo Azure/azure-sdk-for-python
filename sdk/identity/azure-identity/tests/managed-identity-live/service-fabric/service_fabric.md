@@ -51,6 +51,11 @@ az identity create -g $RESOURCE_GROUP -n AdminUser
 
 Make note of the identity's principal ID, to use in the next step. Also make note of its client ID for a later step.
 
+If you already have a managed identity named "AdminUser", you can get these IDs by running
+```
+az identity show -g $RESOURCE_GROUP -n AdminUser
+```
+
 ### Create a key vault, certificate, and secret
 
 Create your key vault:
