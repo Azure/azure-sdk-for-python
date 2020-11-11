@@ -18,12 +18,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import ApplicationClientConfiguration
+from .operations import ApplicationClientOperationsMixin
 from .operations import ApplicationsOperations
 from .operations import ApplicationDefinitionsOperations
 from . import models
 
 
-class ApplicationClient(object):
+class ApplicationClient(ApplicationClientOperationsMixin):
     """ARM applications.
 
     :ivar applications: ApplicationsOperations operations
@@ -53,7 +54,6 @@ class ApplicationClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.applications = ApplicationsOperations(

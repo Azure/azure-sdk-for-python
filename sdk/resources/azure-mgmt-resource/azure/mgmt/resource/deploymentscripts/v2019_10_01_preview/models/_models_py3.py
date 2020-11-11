@@ -863,7 +863,8 @@ class DeploymentScriptListResult(msrest.serialization.Model):
 class DeploymentScriptsError(msrest.serialization.Model):
     """Deployment scripts error response.
 
-    :param error: The resource management error response.
+    :param error: Common error response for all Azure Resource Manager APIs to return error details
+     for failed operations. (This also follows the OData error response format.).
     :type error: ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ErrorResponse
     """
 
@@ -987,7 +988,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1039,6 +1040,8 @@ class ManagedServiceIdentity(msrest.serialization.Model):
     :param type: Type of the managed identity. Possible values include: "UserAssigned".
     :type type: str or
      ~azure.mgmt.resource.deploymentscripts.v2019_10_01_preview.models.ManagedServiceIdentityType
+    :param tenant_id: ID of the Azure Active Directory.
+    :type tenant_id: str
     :param user_assigned_identities: The list of user-assigned managed identities associated with
      the resource. Key is the Azure resource Id of the managed identity.
     :type user_assigned_identities: dict[str,
@@ -1047,6 +1050,7 @@ class ManagedServiceIdentity(msrest.serialization.Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
     }
 
@@ -1054,11 +1058,13 @@ class ManagedServiceIdentity(msrest.serialization.Model):
         self,
         *,
         type: Optional[Union[str, "ManagedServiceIdentityType"]] = None,
+        tenant_id: Optional[str] = None,
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
         **kwargs
     ):
         super(ManagedServiceIdentity, self).__init__(**kwargs)
         self.type = type
+        self.tenant_id = tenant_id
         self.user_assigned_identities = user_assigned_identities
 
 

@@ -186,6 +186,7 @@ class TemplateSpecsOperations:
         self,
         resource_group_name: str,
         template_spec_name: str,
+        expand: Optional[Union[str, "models.TemplateSpecExpandKind"]] = None,
         **kwargs
     ) -> "models.TemplateSpec":
         """Gets a Template Spec with a given name.
@@ -194,6 +195,9 @@ class TemplateSpecsOperations:
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec.
         :type template_spec_name: str
+        :param expand: Allows for expansion of additional Template Spec details in the response.
+         Optional.
+        :type expand: str or ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemplateSpec, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpec
@@ -218,6 +222,8 @@ class TemplateSpecsOperations:
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
         query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
@@ -300,10 +306,14 @@ class TemplateSpecsOperations:
 
     def list_by_subscription(
         self,
+        expand: Optional[Union[str, "models.TemplateSpecExpandKind"]] = None,
         **kwargs
     ) -> AsyncIterable["models.TemplateSpecsListResult"]:
         """Lists all the Template Specs within the specified subscriptions.
 
+        :param expand: Allows for expansion of additional Template Spec details in the response.
+         Optional.
+        :type expand: str or ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TemplateSpecsListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsListResult]
@@ -331,6 +341,8 @@ class TemplateSpecsOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
@@ -368,12 +380,16 @@ class TemplateSpecsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
+        expand: Optional[Union[str, "models.TemplateSpecExpandKind"]] = None,
         **kwargs
     ) -> AsyncIterable["models.TemplateSpecsListResult"]:
         """Lists all the Template Specs within the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
+        :param expand: Allows for expansion of additional Template Spec details in the response.
+         Optional.
+        :type expand: str or ~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecExpandKind
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either TemplateSpecsListResult or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.templatespecs.v2019_06_01_preview.models.TemplateSpecsListResult]
@@ -402,6 +418,8 @@ class TemplateSpecsOperations:
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
                 request = self._client.get(url, query_parameters, header_parameters)
