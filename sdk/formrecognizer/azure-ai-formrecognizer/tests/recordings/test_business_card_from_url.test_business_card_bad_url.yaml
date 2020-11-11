@@ -13,29 +13,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false
   response:
     body:
       string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
-        "f56c6a4b-2290-447a-91df-073ce7a78158"}, "message": "Failed to download image
+        "ddbffcb6-415e-49cf-a3f8-07972360be6a"}, "message": "Failed to download image
         from input URL."}}'
     headers:
       apim-request-id:
-      - f56c6a4b-2290-447a-91df-073ce7a78158
+      - ddbffcb6-415e-49cf-a3f8-07972360be6a
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 21:58:48 GMT
+      - Wed, 11 Nov 2020 17:53:44 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3411'
+      - '3271'
     status:
       code: 400
       message: Bad Request

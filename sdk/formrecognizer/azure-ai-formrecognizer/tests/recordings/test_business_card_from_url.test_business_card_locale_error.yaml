@@ -13,29 +13,29 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false&locale=not%20a%20locale
   response:
     body:
       string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
-        "ba2ed876-f1ec-4c67-8547-417a58dc30b6"}, "message": "Locale unsupported. Supported
+        "f4bac299-8635-499f-9116-f11cf321cab1"}, "message": "Locale unsupported. Supported
         locales include en-AU, en-CA, en-GB, en-IN and en-US."}}'
     headers:
       apim-request-id:
-      - ba2ed876-f1ec-4c67-8547-417a58dc30b6
+      - f4bac299-8635-499f-9116-f11cf321cab1
       content-length:
       - '200'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Oct 2020 16:18:02 GMT
+      - Wed, 11 Nov 2020 17:54:04 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '585'
+      - '613'
     status:
       code: 400
       message: Bad Request
