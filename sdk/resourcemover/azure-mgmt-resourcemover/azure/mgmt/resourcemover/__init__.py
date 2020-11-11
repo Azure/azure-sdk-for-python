@@ -13,7 +13,7 @@ __version__ = VERSION
 __all__ = ['ResourceMoverServiceAPI']
 
 try:
-    from ._patch import patch_sdk
+    from ._patch import patch_sdk  # type: ignore
     patch_sdk()
 except ImportError:
     pass
