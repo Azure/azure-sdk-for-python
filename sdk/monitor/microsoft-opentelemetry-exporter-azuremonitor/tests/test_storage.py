@@ -15,17 +15,6 @@ from microsoft.opentelemetry.exporter.azuremonitor.storage import (
 
 TEST_FOLDER = os.path.abspath(".test")
 
-
-# pylint: disable=invalid-name
-def setUpModule():
-    os.makedirs(TEST_FOLDER)
-
-
-# pylint: disable=invalid-name
-def tearDownModule():
-    shutil.rmtree(TEST_FOLDER, True)
-
-
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
         raise exc_type(*args, **kwargs)
@@ -35,6 +24,14 @@ def throw(exc_type, *args, **kwargs):
 
 # pylint: disable=no-self-use
 class TestLocalFileBlob(unittest.TestCase):
+    @classmethod
+    def setup_class(cls):
+        os.makedirs(TEST_FOLDER)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEST_FOLDER, True)
+
     def test_delete(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "foobar"))
         blob.delete()
