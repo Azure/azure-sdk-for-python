@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class VaultPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Vault <azure.mgmt.keyvault.v2019_09_01.models.Vault>` object
+    A paging container for iterating over a list of :class:`Vault <azure.mgmt.keyvault.v2020_04_01_preview.models.Vault>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class VaultPaged(Paged):
         super(VaultPaged, self).__init__(*args, **kwargs)
 class DeletedVaultPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`DeletedVault <azure.mgmt.keyvault.v2019_09_01.models.DeletedVault>` object
+    A paging container for iterating over a list of :class:`DeletedVault <azure.mgmt.keyvault.v2020_04_01_preview.models.DeletedVault>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class DeletedVaultPaged(Paged):
         super(DeletedVaultPaged, self).__init__(*args, **kwargs)
 class ResourcePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Resource <azure.mgmt.keyvault.v2019_09_01.models.Resource>` object
+    A paging container for iterating over a list of :class:`Resource <azure.mgmt.keyvault.v2020_04_01_preview.models.Resource>` object
     """
 
     _attribute_map = {
@@ -53,7 +53,7 @@ class ResourcePaged(Paged):
         super(ResourcePaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.keyvault.v2019_09_01.models.Operation>` object
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.keyvault.v2020_04_01_preview.models.Operation>` object
     """
 
     _attribute_map = {
@@ -64,16 +64,16 @@ class OperationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(OperationPaged, self).__init__(*args, **kwargs)
-class KeyPaged(Paged):
+class ManagedHsmPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Key <azure.mgmt.keyvault.v2019_09_01.models.Key>` object
+    A paging container for iterating over a list of :class:`ManagedHsm <azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsm>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Key]'}
+        'current_page': {'key': 'value', 'type': '[ManagedHsm]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(KeyPaged, self).__init__(*args, **kwargs)
+        super(ManagedHsmPaged, self).__init__(*args, **kwargs)
