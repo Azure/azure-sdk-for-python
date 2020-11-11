@@ -33,7 +33,7 @@ def setUpModule():
 # pylint: disable=invalid-name
 def tearDownModule():
     if os.path.exists(TEST_FOLDER):
-        shutil.rmtree(TEST_FOLDER)
+        shutil.rmtree(TEST_FOLDER, True)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -61,7 +61,7 @@ class TestBaseExporter(unittest.TestCase):
                     if os.path.isfile(file_path) or os.path.islink(file_path):
                         os.unlink(file_path)
                     elif os.path.isdir(file_path):
-                        shutil.rmtree(file_path)
+                        shutil.rmtree(file_path, True)
                 except OSError as e:
                     print("Failed to delete %s. Reason: %s" % (file_path, e))
         self._base.clear_telemetry_processors()
@@ -416,5 +416,5 @@ class TestBaseExporter(unittest.TestCase):
 
 class MockResponse:
     def __init__(self, status_code, text):
-        self.status_code=status_code
-        self.text=text
+        self.status_code = status_code
+        self.text = text

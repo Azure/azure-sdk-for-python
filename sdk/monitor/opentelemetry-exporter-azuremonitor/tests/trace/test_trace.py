@@ -34,7 +34,7 @@ def setUpModule():
 # pylint: disable=invalid-name
 def tearDownModule():
     if os.path.exists(TEST_FOLDER):
-        shutil.rmtree(TEST_FOLDER)
+        shutil.rmtree(TEST_FOLDER, True)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -64,7 +64,7 @@ class TestAzureSpanExporter(unittest.TestCase):
                     if os.path.isfile(file_path) or os.path.islink(file_path):
                         os.unlink(file_path)
                     elif os.path.isdir(file_path):
-                        shutil.rmtree(file_path)
+                        shutil.rmtree(file_path, True)
                 except OSError as e:
                     print("Failed to delete %s. Reason: %s" % (file_path, e))
 
