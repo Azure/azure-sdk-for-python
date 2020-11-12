@@ -24,28 +24,20 @@
 #
 # --------------------------------------------------------------------------
 
-from .exceptions import HttpResponseError
+from .exceptions import (
+    HttpResponseError, ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError, map_error
+)
 
 class PagingMethodABC():
 
     # making requests
 
-    def get_initial_page(self):
-        """Gets the page from the first request to the service
-        """
-        raise NotImplementedError("This method needs to be implemented")
-
-    def get_next_link(self, continuation_token: str):
-        """Gets the next link to make a request against
-        """
-        raise NotImplementedError("This method needs to be implemented")
-
-    def get_next_request_parameters(self, continuation_token):
+    def get_next_request(self, continuation_token):
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_next(self, continuation_token: str):
+    def get_page(self, continuation_token: str):
         """Gets next page
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -84,66 +76,56 @@ class BasicPagingMethod(PagingMethodABC):
     as the next link
     """
 
-    def __init__(
-        self,
-        client,
-        deserialize_output,
-        initial_request=None,
-        initial_response=None,
-        cls=None,
-        path_format_arguments=None,
-        item_name="value",
-        continuation_token_location="next_link",
-        **kwargs
-    ):
-        self._client = client
-        self._deserialize_output = deserialize_output
-        self._initial_request = initial_request
-        self._cls = cls
-        self._path_format_arguments = path_format_arguments
-        self._initial_response = initial_response
-        self._item_name = item_name
-        self._continuation_token_location = continuation_token_location
+    def __init__(self):
+        self._client = None
+        self._deserialize_output = None
+        self._initial_request = None
+        self._initial_response = None
+        self._path_format_arguments = None
+        self._item_name = None
+        self._next_link_name = None
         self._did_a_call_already = False
 
-    def get_initial_page(self):
-        # TODO: allow stream calls as well
+    def initialize(self, client, deserialize_output, **kwargs):
+        self._client = client
+        self._deserialize_output = deserialize_output
+        self._initial_request = kwargs.pop("initial_request", None)
+        self._initial_response = kwargs.pop("initial_response", None)
+        if not self._initial_request and not self._initial_response:
+            raise ValueError(
+                "You must either supply the initial request the paging method must call, or provide the initial response"
+            )
         if self._initial_response:
             self._initial_request = self._initial_response.http_response.request
-            return self._initial_response
-        response = self._client._pipeline.run(self._initial_request, stream=False)
-        return response
+        self._path_format_arguments = kwargs.pop("path_format_arguments", {})
+        self._item_name = kwargs.pop("item_name", "value")
+        self._next_link_name = kwargs.pop("next_link_name", "next_link")
+        self._cls = kwargs.pop("_cls", None)
 
-    def get_next_link(self, continuation_token: str):
-        return continuation_token
-
-    def get_next_request_parameters(self, continuation_token):
-        query_parameters = self._initial_request.query
-        header_parameters = self._initial_request.headers
-        body_parameters = self._initial_request.body
-        return {
-            "params": query_parameters,
-            "headers": header_parameters,
-            "content": body_parameters
+        self._error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
+        self._error_map.update(kwargs.pop('error_map', {}))
 
-    def get_next(self, continuation_token):
+    def get_next_request(self, continuation_token: str):
+        next_link = continuation_token
+        next_link = self._client.format_url(next_link, **self._path_format_arguments)
+
+        self._initial_request.url = next_link
+        return self._initial_request
+
+    def get_page(self, continuation_token):
         if not self._did_a_call_already:
-            response = self.get_initial_page()
-            self._initial_response = response
+            request = self._initial_request
+            self._did_a_call_already = True
         else:
-            next_link = self.get_next_link(continuation_token)
-            if self._path_format_arguments:
-                next_link = self._client.format_url(next_link, **self._path_format_arguments)
-            request_params = self.get_next_request_parameters()
-            request = self._client.get(next_link, **request_params)
-            response = self._client._pipeline.run(request, stream=False)
+            request = self.get_next_request(continuation_token)
+        response = self._client._pipeline.run(request, stream=False)
 
-
-        self._did_a_call_already = True
-        code = response.http_response.status_code
-        if not (200 <= code <= 299):
-            raise HttpResponseError(response=response.http_response)
+        http_response = response.http_response
+        if not (200 <= http_response.status_code < 300):
+            map_error(status_code=http_response.status_code, response=http_response, error_map=self._error_map)
+            raise HttpResponseError(response=http_response)
 
         return response
 
@@ -163,13 +145,13 @@ class BasicPagingMethod(PagingMethodABC):
         return iter(list_of_elem)
 
     def get_continuation_token(self, pipeline_response, deserialized):
-        if not self._continuation_token_location:
+        if not self._next_link_name:
             return None
-        if not hasattr(deserialized, self._continuation_token_location):
+        if not hasattr(deserialized, self._next_link_name):
             raise ValueError(
-                "The response object does not have property '{}' to extract continuation token from".format(self._continuation_token_location)
+                "The response object does not have property '{}' to extract continuation token from".format(self._next_link_name)
             )
-        return getattr(deserialized, self._continuation_token_location)
+        return getattr(deserialized, self._next_link_name)
 
     def extract_data(self, pipeline_response):
         deserialized = self._deserialize_output(pipeline_response)
@@ -179,46 +161,34 @@ class BasicPagingMethod(PagingMethodABC):
         return continuation_token, list_of_elem
 
 
-class DifferenteNextOperationPagingMethod(BasicPagingMethod):
+class DifferentNextOperationPagingMethod(BasicPagingMethod):
     """Use this paging method if the swagger defines a different next operation
     """
 
-    def __init__(
-        self,
-        client,
-        deserialize_output,
-        prepare_next_request,
-        initial_request=None,
-        initial_response=None,
-        cls=None,
-        path_format_arguments=None,
-        item_name="value",
-        continuation_token_location="next_link",
-        **kwargs
-    ):
-        super(DifferenteNextOperationPagingMethod, self).__init__(
-            client=client,
-            deserialize_output=deserialize_output,
-            initial_request=initial_request,
-            initial_response=initial_response,
-            cls=cls,
-            path_format_arguments=path_format_arguments,
-            item_name=item_name,
-            continuation_token_location=continuation_token_location,
+    def __init__(self):
+        super(DifferentNextOperationPagingMethod, self).__init__()
+        self._prepare_next_request = None
+
+    def initialize(self, client, deserialize_output, prepare_next_request, **kwargs):
+        super(DifferentNextOperationPagingMethod, self).initialize(
+            client, deserialize_output, **kwargs
         )
         self._prepare_next_request = prepare_next_request
-        self._next_request = None
 
-    def get_next_link(self, continuation_token: str):
-        self._next_request = self._prepare_next_request(continuation_token)
-        return self._next_request.url
+    def get_next_request(self, continuation_token: str):
+        """Next request partial functions will either take in the token or not
+        (we're not able to pass in multiple tokens). in the generated code, we
+        make sure that the token input param is the first in the list, so all we
+        have to do is pass in the token to the next request partial function.
 
-    def get_next_request_parameters(self):
-        query_parameters = self._next_request.query or self._initial_request.query
-        header_parameters = self._next_request.headers or self._initial_request.headers
-        body_parameters =self._next_request.body or  self._initial_request.body
-        return {
-            "params": query_parameters,
-            "headers": header_parameters,
-            "content": body_parameters
-        }
+        However, next calls don't have to take the token, which is why we call
+        the next request in a try-catch error.
+        """
+        # different next operations either take in the token or not
+        # in generated code, we make sure the parameter that takes in the
+        # token is the first one, so all we have to do is pass in the token to the call
+        #
+        try:
+            return self._prepare_next_request(continuation_token)
+        except TypeError:
+            return self._prepare_next_request()

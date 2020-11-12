@@ -47,7 +47,7 @@ class _LegacyPagingMethod:
                 "You are using the legacy version of paging, but haven't provided both a get_next and extract_data. "
                 "Preferably switch to the new paging with PagingMethod, but if not, please pass in the missing callback."
             )
-        self.get_next = get_next
+        self.get_page = get_next
         self.extract_data = extract_data
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
@@ -57,6 +57,8 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
         paging_method=None,
+        *args,
+        **kwargs,
     ):
         """Return an iterator of pages.
         :param get_next: Callable that take the continuation token and return a HTTP response
@@ -73,6 +75,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
             self._paging_method = _LegacyPagingMethod(get_next, extract_data)
         else:
             self._paging_method = paging_method
+            self._paging_method.initialize(*args, **kwargs)
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
@@ -86,7 +89,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         if self._paging_method.finished(self.continuation_token):
             raise StopIteration("End of paging")
 
-        self._response = self._paging_method.get_next(self.continuation_token)
+        self._response = self._paging_method.get_page(self.continuation_token)
 
         self.continuation_token, self._current_page = self._paging_method.extract_data(self._response)
 

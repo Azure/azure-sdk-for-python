@@ -46,6 +46,8 @@ __all__ = [
     "AsyncItemPaged"
 ]
 
+from .paging import _LegacyPagingMethod
+
 class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:
         """Change an iterable into a fake async iterator.
@@ -70,11 +72,14 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         self,
         get_next: Callable[
             [Optional[str]], Awaitable[ResponseType]
-        ],
+        ] = None,
         extract_data: Callable[
             [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
-        ],
+        ] = None,
         continuation_token: Optional[str] = None,
+        paging_method=None,
+        *args,
+        **kwargs,
     ) -> None:
         """Return an async iterator of pages.
 
@@ -83,21 +88,27 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
         """
-        self._get_next = get_next
-        self._extract_data = extract_data
+        if get_next or extract_data:
+            if paging_method:
+                raise ValueError(
+                    "You can't pass in both a paging method and a callback for get_next or extract_data. "
+                    "We recomment you only pass in a paging method, since passing in callbacks is legacy."
+                )
+            self._paging_method = _LegacyPagingMethod(get_next, extract_data)
+        else:
+            self._paging_method = paging_method
+            self._paging_method.initialize(*args, **kwargs)
         self.continuation_token = continuation_token
-        self._did_a_call_already = False
-        self._response = None
-        self._current_page = None
+        self._response = None  # type: Optional[ResponseType]
+        self._current_page = None  # type: Optional[Iterable[ReturnType]]
 
     async def __anext__(self):
-        if self.continuation_token is None and self._did_a_call_already:
+        if self._paging_method.finished(self.continuation_token):
             raise StopAsyncIteration("End of paging")
 
-        self._response = await self._get_next(self.continuation_token)
-        self._did_a_call_already = True
+        self._response = await self._paging_method.get_page(self.continuation_token)
 
-        self.continuation_token, self._current_page = await self._extract_data(
+        self.continuation_token, self._current_page = self._paging_method.extract_data(
             self._response
         )
 
