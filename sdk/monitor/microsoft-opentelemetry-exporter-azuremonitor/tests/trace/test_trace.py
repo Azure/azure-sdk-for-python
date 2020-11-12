@@ -9,10 +9,10 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
-from opentelemetry.sdk.trace import Span
+from opentelemetry.sdk import trace
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.trace import Link, SpanContext, SpanKind
-from opentelemetry.trace.status import Status, StatusCanonicalCode
+from opentelemetry.trace.status import Status, StatusCode
 
 from microsoft.opentelemetry.exporter.azuremonitor.export import ExportResult
 from microsoft.opentelemetry.exporter.azuremonitor.export.trace import (
@@ -100,7 +100,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         with mock.patch(
             "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
         ) as transmit:  # noqa: E501
-            test_span = Span(
+            test_span = trace._Span(
                 name="test",
                 context=SpanContext(
                     trace_id=36873507687745823477771305566750195431,
@@ -117,7 +117,7 @@ class TestAzureSpanExporter(unittest.TestCase):
 
     def test_export_success(self):
         exporter = self._exporter
-        test_span = Span(
+        test_span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -140,7 +140,7 @@ class TestAzureSpanExporter(unittest.TestCase):
 
     @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace.logger")
     def test_export_exception(self, logger_mock):
-        test_span = Span(
+        test_span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -161,7 +161,7 @@ class TestAzureSpanExporter(unittest.TestCase):
 
     def test_export_not_retryable(self):
         exporter = self._exporter
-        test_span = Span(
+        test_span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -219,7 +219,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         end_time = start_time + 1001000000
 
         # SpanKind.CLIENT HTTP
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -242,7 +242,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.instrumentation_key,
                          "12345678-1234-5678-abcd-12345678abcd")
@@ -270,7 +270,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
 
         # SpanKind.CLIENT unknown type
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -286,7 +286,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -310,7 +310,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
 
         # SpanKind.CLIENT missing method
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -330,7 +330,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -360,7 +360,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
 
         # SpanKind.SERVER HTTP - 200 request
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -383,7 +383,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.SERVER,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -415,7 +415,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RequestData")
 
         # SpanKind.SERVER HTTP - Failed request
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -438,7 +438,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.SERVER,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -470,7 +470,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RequestData")
 
         # SpanKind.SERVER unknown type
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -493,7 +493,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.SERVER,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -515,7 +515,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RequestData")
 
         # SpanKind.INTERNAL
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -531,7 +531,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.INTERNAL,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -555,7 +555,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
 
         # Attributes
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -577,7 +577,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -598,7 +598,7 @@ class TestAzureSpanExporter(unittest.TestCase):
                 )
             )
         )
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -619,7 +619,7 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=links,
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
@@ -630,7 +630,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         self.assertEqual(json_dict["id"], "a6f5d48acb4d31da")
 
         # Status
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -651,14 +651,14 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.SERVER,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.response_code, "500")
         self.assertFalse(envelope.data.base_data.success)
 
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -679,14 +679,14 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.result_code, "500")
         self.assertFalse(envelope.data.base_data.success)
 
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -706,14 +706,14 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.SERVER,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.response_code, "0")
         self.assertTrue(envelope.data.base_data.success)
 
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -733,14 +733,14 @@ class TestAzureSpanExporter(unittest.TestCase):
             links=[],
             kind=SpanKind.CLIENT,
         )
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         span.start(start_time=start_time)
         span.end(end_time=end_time)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.result_code, "0")
         self.assertTrue(envelope.data.base_data.success)
 
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -762,12 +762,12 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.UNKNOWN)
+        span.status = Status(status_code=StatusCode.UNSET)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.response_code, "2")
+        self.assertEqual(envelope.data.base_data.response_code, "1")
         self.assertFalse(envelope.data.base_data.success)
 
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -789,13 +789,13 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.UNKNOWN)
+        span.status = Status(status_code=StatusCode.UNSET)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.result_code, "2")
         self.assertFalse(envelope.data.base_data.success)
 
         # Server route attribute
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -820,7 +820,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(
             envelope.data.base_data.properties["request.name"],
@@ -832,7 +832,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
 
         # Server method attribute missing
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -855,12 +855,12 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertIsNone(envelope.data.base_data.name)
 
         # Server route attribute missing
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -884,7 +884,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.name, "GET")
         self.assertEqual(
@@ -897,7 +897,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
 
         # Server route and path attribute missing
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -920,7 +920,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertIsNone(
             envelope.data.base_data.properties.get("request.name")
@@ -931,7 +931,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
 
         # Server http.url missing
-        span = Span(
+        span = trace._Span(
             name="test",
             context=SpanContext(
                 trace_id=36873507687745823477771305566750195431,
@@ -955,7 +955,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
-        span.status = Status(canonical_code=StatusCanonicalCode.OK)
+        span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertIsNone(envelope.data.base_data.url)
         self.assertIsNone(
