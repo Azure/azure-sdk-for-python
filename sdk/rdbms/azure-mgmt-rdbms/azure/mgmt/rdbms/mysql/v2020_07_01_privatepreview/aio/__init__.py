@@ -8,9 +8,3 @@
 
 from ._my_sql_management_client import MySQLManagementClient
 __all__ = ['MySQLManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
