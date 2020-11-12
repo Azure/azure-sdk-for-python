@@ -12,7 +12,7 @@ import unittest
 volumes = [TEST_VOL_1, TEST_VOL_2]
 
 # to skip tests use
-#raise unittest.SkipTest("Skipping Volume test")
+# raise unittest.SkipTest("Skipping Volume test")
 
 
 def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
@@ -151,7 +151,7 @@ def wait_for_succeeded(client):
             break
         time.sleep(1)
 
-
+@unittest.skip('skip this test')
 class NetAppAccountTestCase(AzureMgmtTestCase):
     def setUp(self):
         super(NetAppAccountTestCase, self).setUp()

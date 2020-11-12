@@ -1,7 +1,10 @@
 import time
 import json
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import (
+    AzureMgmtTestCase,
+    ResourceGroupPreparer,
+)
 from azure.mgmt.netapp.models import CapacityPool, CapacityPoolPatch
 from test_account import create_account, delete_account
 from setup import *
@@ -61,77 +64,93 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         super(NetAppAccountTestCase, self).setUp()
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
-    def test_create_delete_pool(self):
-        pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
+    @ResourceGroupPreparer(location=LOCATION)
+    def test_create_delete_pool(self, resource_group):
+        TIME=str(time.time()).replace('.','')[-7:-1]
+        TEST_ACC_NAME=TEST_ACC_1+TIME
+        pool = create_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1, LOCATION)
         self.assertEqual(pool.size, DEFAULT_SIZE)
-        self.assertEqual(pool.name, TEST_ACC_1 + '/' + TEST_POOL_1)
+        self.assertEqual(pool.name, TEST_ACC_NAME + '/' + TEST_POOL_1)
 
-        pool_list = self.client.pools.list(TEST_RG, TEST_ACC_1)
+        pool_list = self.client.pools.list(resource_group.name, TEST_ACC_NAME)
         self.assertEqual(len(list(pool_list)), 1)
 
-        self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        pool_list = self.client.pools.list(TEST_RG, TEST_ACC_1)
+        self.client.pools.delete(resource_group.name, TEST_ACC_NAME, TEST_POOL_1).wait()
+        pool_list = self.client.pools.list(resource_group.name, TEST_ACC_NAME)
         self.assertEqual(len(list(pool_list)), 0)
 
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        wait_for_no_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, resource_group.name, TEST_ACC_NAME, live=self.is_live)
 
-    def test_list_pools(self):
-        pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
-        pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_2, LOCATION, pool_only=True)
+    @ResourceGroupPreparer(location=LOCATION)
+    def test_list_pools(self, resource_group):
+        TIME=str(time.time()).replace('.','')[-7:-1]
+        TEST_ACC_NAME=TEST_ACC_1+TIME
+        pool = create_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1, LOCATION)
+        pool = create_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_2, LOCATION, pool_only=True)
 
-        pool_list = self.client.pools.list(TEST_RG, TEST_ACC_1)
+        pool_list = self.client.pools.list(resource_group.name, TEST_ACC_NAME)
         self.assertEqual(len(list(pool_list)), 2)
         idx = 0
         for pool in pool_list:
             self.assertEqual(pool.name, pools[idx])
             idx += 1
 
-        self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_2).wait()
+        self.client.pools.delete(resource_group.name, TEST_ACC_NAME, TEST_POOL_1).wait()
+        self.client.pools.delete(resource_group.name, TEST_ACC_NAME, TEST_POOL_2).wait()
         for pool in pools:
-            wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, pools[idx], live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+            wait_for_no_pool(self.client, resource_group.name, TEST_ACC_NAME, pools[idx], live=self.is_live)
+        delete_account(self.client, resource_group.name, TEST_ACC_NAME, live=self.is_live)
 
-    def test_get_pool_by_name(self):
-        pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
+    @ResourceGroupPreparer(location=LOCATION)
+    def test_get_pool_by_name(self, resource_group):
+        TIME=str(time.time()).replace('.','')[-7:-1]
+        TEST_ACC_NAME=TEST_ACC_1+TIME
+        pool = create_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1, LOCATION)
 
-        pool = self.client.pools.get(TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        self.assertEqual(pool.name, TEST_ACC_1 + '/' + TEST_POOL_1)
+        pool = self.client.pools.get(resource_group.name, TEST_ACC_NAME, TEST_POOL_1)
+        self.assertEqual(pool.name, TEST_ACC_NAME + '/' + TEST_POOL_1)
 
-        self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        self.client.pools.delete(resource_group.name, TEST_ACC_NAME, TEST_POOL_1).wait()
+        wait_for_no_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, resource_group.name, TEST_ACC_NAME, live=self.is_live)
 
-    def test_update_pool(self):
-        pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
+    @ResourceGroupPreparer(location=LOCATION)
+    def test_update_pool(self, resource_group):
+        TIME=str(time.time()).replace('.','')[-7:-1]
+        TEST_ACC_NAME=TEST_ACC_1+TIME
+        pool = create_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1)
         self.assertEqual(pool.service_level, "Premium")
 
         pool_body = CapacityPool(service_level="Standard", size=DEFAULT_SIZE, location=LOCATION)
         pool = self.client.pools.create_or_update(
             pool_body,
-            TEST_RG,
-            TEST_ACC_1,
+            resource_group.name,
+            TEST_ACC_NAME,
             TEST_POOL_1,
             {'location': LOCATION}
         ).result()
         self.assertEqual(pool.service_level, "Standard")
 
-        self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        self.client.pools.delete(resource_group.name, TEST_ACC_NAME, TEST_POOL_1).wait()
+        wait_for_no_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, resource_group.name, TEST_ACC_NAME, live=self.is_live)
 
-    def test_patch_pool(self):
-        create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
+    @unittest.skip('skip this test')
+    @ResourceGroupPreparer(location=LOCATION)
+    def test_patch_pool(self, resource_group):
+        TIME=str(time.time()).replace('.','')[-7:-1]
+        TEST_ACC_NAME=TEST_ACC_1+TIME
+        create_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1)
 
         tag = {'Tag2': 'Value1'}
         capacity_pool_patch = CapacityPoolPatch(qos_type="Manual", tags=tag)
 
-        pool = self.client.pools.update(capacity_pool_patch, TEST_RG, TEST_ACC_1, TEST_POOL_1).result()
+        pool = self.client.pools.update(capacity_pool_patch, resource_group.name, TEST_ACC_NAME, TEST_POOL_1).result()
         self.assertEqual(pool.qos_type, "Manual")
         self.assertTrue(pool.tags['Tag2'] == 'Value1')
 
-        self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
-        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
+        self.client.pools.delete(resource_group.name, TEST_ACC_NAME, TEST_POOL_1).wait()
+        wait_for_no_pool(self.client, resource_group.name, TEST_ACC_NAME, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, resource_group.name, TEST_ACC_NAME, live=self.is_live)
 
