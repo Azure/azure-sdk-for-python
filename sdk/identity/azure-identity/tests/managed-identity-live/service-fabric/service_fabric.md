@@ -198,7 +198,7 @@ This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on
 
 1. Remove each application from the cluster. In the Service Fabric Explorer, expand the Applications tab and sfmitestsystemType tab. Click on "fabric:/sfmitestsystem", and in the application page, use the "Actions" tab at the top right to delete the application.
 2. Now, remove the other application. Click on "fabric:/sfmitestuser" and use the "Actions" tab to delete the application.
-3. Re-build the docker images, targeting Python 3.5 with `--build-args`. In your command prompt, run:
+3. Re-build the docker images, targeting Python 3.5 with `--build-arg`. In your command prompt, run:
 ```
 docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestsystem ..
 docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestuser ..
