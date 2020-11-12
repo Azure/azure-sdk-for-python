@@ -15,7 +15,7 @@ from _shared.testcase import (
     ResponseReplacerProcessor
 )
 
-SKIP_PHONE_NUMBER_TESTS = True
+SKIP_PHONE_NUMBER_TESTS = False
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number infra for live tests not ready yet"
 
 class SMSClientTest(CommunicationTestCase):
