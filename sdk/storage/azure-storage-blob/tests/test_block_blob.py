@@ -7,6 +7,8 @@
 # --------------------------------------------------------------------------
 import os
 import unittest
+from datetime import datetime, timedelta
+
 import pytest
 import uuid
 
@@ -18,7 +20,7 @@ from azure.storage.blob import (
     BlobType,
     ContentSettings,
     BlobBlock,
-    StandardBlobTier
+    StandardBlobTier, generate_blob_sas, BlobSasPermissions
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
@@ -31,7 +33,7 @@ LARGE_BLOB_SIZE = 64 * 1024 + 5
 
 class StorageBlockBlobTest(StorageTestCase):
 
-    def _setup(self, storage_account, key):
+    def _setup(self, storage_account, key, container_name='utcontainer'):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
@@ -41,7 +43,7 @@ class StorageBlockBlobTest(StorageTestCase):
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024)
         self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name(container_name)
 
         if self.is_live:
             self.bsc.create_container(self.container_name)
@@ -57,10 +59,10 @@ class StorageBlockBlobTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _create_blob(self, tags=None):
+    def _create_blob(self, tags=None, data=b'', **kwargs):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(b'', tags=tags)
+        blob.upload_blob(data, tags=tags, **kwargs)
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -79,6 +81,71 @@ class StorageBlockBlobTest(StorageTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for block blobs --------------------------------------------
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_with_existing_blob(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        blob = self._create_blob(data=b"test data")
+        # Act
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
+
+        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob = new_blob_client.upload_blob_from_url(source_blob)
+        # Assert
+        self.assertIsNotNone(new_blob)
+        new_blob_content = new_blob_client.download_blob().readall()
+        self.assertEqual(new_blob_content, b'test data')
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_with_standard_tier_specified(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        blob = self._create_blob()
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
+
+        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Hot
+        new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
+
+        new_blob_properties = new_blob.get_blob_properties()
+
+        # Assert
+        self.assertEqual(new_blob_properties.blob_tier, blob_tier)
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_without_using_source_properties(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        blob = self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
+
+        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob.upload_blob_from_url(source_blob, include_source_blob_properties=False)
+
+        new_blob_properties = new_blob.get_blob_properties()
+        source_blob_properties = blob.get_blob_properties()
+
+        # Assert
+        self.assertNotEqual(new_blob_properties.blob_tier, source_blob_properties.blob_tier)
 
     @GlobalStorageAccountPreparer()
     def test_put_block(self, resource_group, location, storage_account, storage_account_key):

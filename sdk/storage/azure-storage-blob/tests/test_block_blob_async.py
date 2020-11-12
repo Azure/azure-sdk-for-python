@@ -52,7 +52,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageBlockBlobTestAsync(AsyncStorageTestCase):
     #--Helpers-----------------------------------------------------------------
-    async def _setup(self, storage_account, key):
+    async def _setup(self, storage_account, key, container_name='utcontainer'):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
@@ -63,7 +63,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             max_block_size=4 * 1024,
             transport=AiohttpTestTransport())
         self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name(container_name)
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
@@ -98,10 +98,10 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         )
         return BlobClient.from_blob_url(blob.url, credential=sas_token_for_special_chars).url
 
-    async def _create_blob(self, tags=None):
+    async def _create_blob(self, tags=None, data=b'', **kwargs):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        await blob.upload_blob(b'', tags=tags)
+        await blob.upload_blob(data, tags=tags, **kwargs)
         return blob
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -121,6 +121,75 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             return self.wrapped_file.read(count)
 
     #--Test cases for block blobs --------------------------------------------
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_url_with_existing_blob(
+            self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key, container_name="testcontainer")
+        blob = await self._create_blob(data=b"test data")
+        # Act
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
+
+        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob = await new_blob_client.upload_blob_from_url(source_blob)
+        # Assert
+        self.assertIsNotNone(new_blob)
+        downloaded_blob = await new_blob_client.download_blob()
+        new_blob_content = await downloaded_blob.readall()
+        self.assertEqual(new_blob_content, b'test data')
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_url_with_standard_tier_specified(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key, container_name="testcontainer")
+        blob = await self._create_blob()
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
+
+        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Hot
+        await new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
+
+        new_blob_properties = await new_blob.get_blob_properties()
+
+        # Assert
+        self.assertEqual(new_blob_properties.blob_tier, blob_tier)
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_url_without_using_source_properties(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        await self._setup(storage_account, storage_account_key, container_name="testcontainer")
+        blob = await self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
+
+        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        await new_blob.upload_blob_from_url(source_blob, include_source_blob_properties=False)
+
+        new_blob_properties = await new_blob.get_blob_properties()
+        source_blob_properties = await blob.get_blob_properties()
+
+        # Assert
+        self.assertNotEqual(new_blob_properties.blob_tier, source_blob_properties.blob_tier)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
