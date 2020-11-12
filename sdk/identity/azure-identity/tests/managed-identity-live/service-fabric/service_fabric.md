@@ -122,16 +122,16 @@ Your Service Fabric cluster will target each application by referencing a `.sfpk
 ```xml
 <ImageName>{ACR_NAME}.azurecr.io/sfmitestsystem</ImageName>
 ```
-3. Also in `sfmitestsystem/sfmitestsystemfrontPkg/ServiceManifest.xml`, replace `<VAULT_URL>` with your key vault's vault URI in
+3. Also in `sfmitestsystem/sfmitestsystemfrontPkg/ServiceManifest.xml`, replace `<KEY_VAULT_URL>` with your key vault's vault URI in
 ```xml
-<EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<VAULT_URL>"/>
+<EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<KEY_VAULT_URL>"/>
 ```
 4. Open the `sfmitestsystem` directory in File Explorer, select `sfmitestsystemfrontPkg` and `ApplicationManifest.xml`, and compress them into a zip file.
 5. Rename the zip file `sfmitestsystem.sfpkg`.
 6. Repeat steps 1 and 2 for `sfmitestuser`, replacing all instances of "system" in the instructions with "user".
-7. In `sfmitestuser/sfmitestuserfrontPkg/ServiceManifest.xml`, replace `<VAULT_URL>` with your key vault's vault URI and `<AdminUser client ID>` with the user-assigned managed identity's client ID in
+7. In `sfmitestuser/sfmitestuserfrontPkg/ServiceManifest.xml`, replace `<KEY_VAULT_URL>` with your key vault's vault URI and `<AdminUser client ID>` with the user-assigned managed identity's client ID in
 ```xml
-<EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<VAULT_URL>"/>
+<EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<KEY_VAULT_URL>"/>
 <EnvironmentVariable Name="AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID" Value="<AdminUser client ID>"/>
 ```
 8. Repeat steps 4 and 5 for `sfmitestuser`, replacing all instances of "system" in the instructions with "user".

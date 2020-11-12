@@ -15,7 +15,7 @@
       </ContainerHost>
     </EntryPoint>
     <EnvironmentVariables>
-      <EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<VAULT_URL>"/>
+      <EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<KEY_VAULT_URL>"/>
       <EnvironmentVariable Name="AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID" Value="<AdminUser client ID>"/>
     </EnvironmentVariables>
   </CodePackage>
