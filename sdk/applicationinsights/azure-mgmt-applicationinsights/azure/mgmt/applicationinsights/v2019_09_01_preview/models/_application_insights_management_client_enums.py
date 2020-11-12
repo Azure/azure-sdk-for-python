@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._queries_operations import QueriesOperations
-from ._operations import Operations
-from ._query_packs_operations import QueryPacksOperations
+from enum import Enum
 
-__all__ = [
-    'QueriesOperations',
-    'Operations',
-    'QueryPacksOperations',
-]
+
+class IdentityType(str, Enum):
+
+    user = "user"
+    application = "application"
+    managed_identity = "managedIdentity"
+    key = "key"

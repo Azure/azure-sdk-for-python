@@ -25,6 +25,19 @@ class LogAnalyticsQueryPackQueryPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(LogAnalyticsQueryPackQueryPaged, self).__init__(*args, **kwargs)
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.applicationinsights.v2019_09_01_preview.models.Operation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)
 class LogAnalyticsQueryPackPaged(Paged):
     """
     A paging container for iterating over a list of :class:`LogAnalyticsQueryPack <azure.mgmt.applicationinsights.v2019_09_01_preview.models.LogAnalyticsQueryPack>` object

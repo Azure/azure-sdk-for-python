@@ -105,7 +105,7 @@ class WorkbookTemplatesOperations(object):
         deserialized = models.WorkbookTemplatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooktemplates'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/workbooktemplates'}
 
     def get(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -168,7 +168,7 @@ class WorkbookTemplatesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}
 
     def delete(
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
@@ -222,7 +222,7 @@ class WorkbookTemplatesOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}
 
     def create_or_update(
             self, resource_group_name, resource_name, workbook_template_properties, custom_headers=None, raw=False, **operation_config):
@@ -295,7 +295,7 @@ class WorkbookTemplatesOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}
 
     def update(
             self, resource_group_name, resource_name, workbook_template_update_parameters=None, custom_headers=None, raw=False, **operation_config):
@@ -369,4 +369,4 @@ class WorkbookTemplatesOperations(object):
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroup/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/workbooktemplates/{resourceName}'}

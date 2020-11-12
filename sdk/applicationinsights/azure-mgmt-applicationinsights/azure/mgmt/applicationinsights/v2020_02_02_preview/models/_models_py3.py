@@ -135,6 +135,9 @@ class ApplicationInsightsComponent(ComponentsResource):
     :param workspace_resource_id: Required. ResourceId of the log analytics
      workspace which the data will be ingested to.
     :type workspace_resource_id: str
+    :ivar la_migration_date: The date which the component got migrated to LA,
+     in ISO 8601 format.
+    :vartype la_migration_date: datetime
     :ivar private_link_scoped_resources: List of linked private link scope
      resources.
     :vartype private_link_scoped_resources:
@@ -149,6 +152,12 @@ class ApplicationInsightsComponent(ComponentsResource):
      'Disabled'. Default value: "Enabled" .
     :type public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
+    :param ingestion_mode: Indicates the flow of the ingestion. Possible
+     values include: 'ApplicationInsights',
+     'ApplicationInsightsWithDiagnosticSettings', 'LogAnalytics'. Default
+     value: "LogAnalytics" .
+    :type ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.IngestionMode
     """
 
     _validation = {
@@ -168,6 +177,7 @@ class ApplicationInsightsComponent(ComponentsResource):
         'connection_string': {'readonly': True},
         'retention_in_days': {'readonly': True},
         'workspace_resource_id': {'required': True},
+        'la_migration_date': {'readonly': True},
         'private_link_scoped_resources': {'readonly': True},
     }
 
@@ -195,12 +205,14 @@ class ApplicationInsightsComponent(ComponentsResource):
         'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
         'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
         'workspace_resource_id': {'key': 'properties.WorkspaceResourceId', 'type': 'str'},
+        'la_migration_date': {'key': 'properties.LaMigrationDate', 'type': 'iso-8601'},
         'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
+        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, kind: str, workspace_resource_id: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, disable_ip_masking: bool=None, immediate_purge_data_on30_days: bool=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", **kwargs) -> None:
+    def __init__(self, *, location: str, kind: str, workspace_resource_id: str, tags=None, application_type="web", flow_type="Bluefield", request_source="rest", hockey_app_id: str=None, sampling_percentage: float=None, disable_ip_masking: bool=None, immediate_purge_data_on30_days: bool=None, public_network_access_for_ingestion="Enabled", public_network_access_for_query="Enabled", ingestion_mode="LogAnalytics", **kwargs) -> None:
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
@@ -220,9 +232,11 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.disable_ip_masking = disable_ip_masking
         self.immediate_purge_data_on30_days = immediate_purge_data_on30_days
         self.workspace_resource_id = workspace_resource_id
+        self.la_migration_date = None
         self.private_link_scoped_resources = None
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
+        self.ingestion_mode = ingestion_mode
 
 
 class CloudError(Model):

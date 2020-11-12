@@ -37,6 +37,7 @@ from ._application_insights_management_client_enums import (
     FlowType,
     RequestSource,
     PublicNetworkAccessType,
+    IngestionMode,
     PurgeState,
 )
 
@@ -56,5 +57,6 @@ __all__ = [
     'FlowType',
     'RequestSource',
     'PublicNetworkAccessType',
+    'IngestionMode',
     'PurgeState',
 ]
