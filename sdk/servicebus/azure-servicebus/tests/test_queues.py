@@ -74,8 +74,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             for i in range(5):
                 sender.send_messages(ServiceBusMessage("ServiceBusMessage {}".format(i)))
 
-        with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                          receive_mode=ReceiveMode.ReceiveAndDelete, 
+        with sb_client.get_queue_receiver(servicebus_queue.name,
+                                          receive_mode=ReceiveMode.ReceiveAndDelete,
                                           max_wait_time=10) as receiver:
             batch = receiver.receive_messages()
             count = len(batch)
@@ -107,7 +107,6 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             receiver.complete_message(message)
                             time.sleep(40)
 
-
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -117,18 +116,29 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                for i in range(10):
-                    message = ServiceBusMessage("Handler message no. {}".format(i))
-                    message.application_properties = {'key': 'value'}
-                    message.subject = 'label'
-                    message.content_type = 'application/text'
-                    message.correlation_id = 'cid'
-                    message.message_id = str(i)
-                    message.partition_key = 'pk'
-                    message.to = 'to'
-                    message.reply_to = 'reply_to'
-                    sender.send_messages(message)
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            for i in range(10):
+                message = ServiceBusMessage("Handler message no. {}".format(i))
+                message.application_properties = {'key': 'value'}
+                message.subject = 'label'
+                message.content_type = 'application/text'
+                message.correlation_id = 'cid'
+                message.message_id = str(i)
+                message.partition_key = 'pk'
+                message.to = 'to'
+                message.reply_to = 'reply_to'
+                sender.send_messages(message)
+            sender.close()
+
+            with pytest.raises(ValueError):
+                with sender:
+                    raise AssertionError("Should raise ValueError")
+            with pytest.raises(ValueError):
+                sender.send_messages(ServiceBusMessage('msg'))
+            with pytest.raises(ValueError):
+                sender.schedule_messages(ServiceBusMessage('msg'), utc_now())
+            with pytest.raises(ValueError):
+                sender.cancel_scheduled_messages([1, 2, 3])
 
             with pytest.raises(ValueError):
                 sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=0)
@@ -167,6 +177,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver.complete_message(message)
             receiver.close()
 
+            with pytest.raises(ValueError):
+                receiver.receive_messages()
+            with pytest.raises(ValueError):
+                with receiver:
+                    raise AssertionError("Should raise ValueError")
+            with pytest.raises(ValueError):
+                receiver.receive_deferred_messages([1, 2, 3])
+            with pytest.raises(ValueError):
+                receiver.peek_messages()
+
             assert count == 10
 
     @pytest.mark.liveTest
@@ -178,7 +198,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            with sender:
                 messages = []
                 for i in range(10):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
@@ -192,7 +213,18 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages.append(message)
                 sender.send_messages(messages)
 
-            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+            with pytest.raises(ValueError):
+                with sender:
+                    raise AssertionError("Should raise ValueError")
+            with pytest.raises(ValueError):
+                sender.send_messages(ServiceBusMessage('msg'))
+            with pytest.raises(ValueError):
+                sender.schedule_messages(ServiceBusMessage('msg'), utc_now())
+            with pytest.raises(ValueError):
+                sender.cancel_scheduled_messages([1, 2, 3])
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            with receiver:
                 count = 0
                 for message in receiver:
                     print_message(_logger, message)
@@ -210,8 +242,17 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert not message.reply_to_session_id
                     count += 1
                     receiver.complete_message(message)
-
                 assert count == 10
+
+            with pytest.raises(ValueError):
+                receiver.receive_messages()
+            with pytest.raises(ValueError):
+                with receiver:
+                    raise AssertionError("Should raise ValueError")
+            with pytest.raises(ValueError):
+                receiver.receive_deferred_messages([1, 2, 3])
+            with pytest.raises(ValueError):
+                receiver.peek_messages()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -291,16 +332,14 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert receiver._running
                 assert len(messages) == 5
 
-                with receiver:
-                    for message in receiver:
-                        messages.append(message)
-                        receiver.complete_message(message)
-                        if len(messages) >= 5:
-                            break
-                        
-                assert not receiver._running
-                assert len(messages) == 6
-    
+                for message in receiver:
+                    messages.append(message)
+                    receiver.complete_message(message)
+                    if len(messages) >= 5:
+                        break
+
+            assert not receiver._running
+            assert len(messages) == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

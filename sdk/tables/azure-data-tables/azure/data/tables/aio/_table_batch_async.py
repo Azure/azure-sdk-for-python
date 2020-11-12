@@ -78,7 +78,9 @@ class TableBatchOperations(object):
         """Insert entity in a table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
+        :return: None
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -104,7 +106,7 @@ class TableBatchOperations(object):
     def _batch_create_entity(
         self,
         table, # type: str
-        entity, # type: Union[Dict, TableEntity]
+        entity,  # type: Union[TableEntity, Dict[str,str]]
         timeout=None, # type: Optional[int]
         request_id_parameter=None, # type: Optional[str]
         response_preference="return-no-content", # type: Optional[Union[str, "models.ResponseFormat"]]
@@ -182,6 +184,27 @@ class TableBatchOperations(object):
             **kwargs  # type: Any
     ):
         # (...) -> None
+
+        """Adds an update operation to the current batch.
+
+        :param entity: The properties for the table entity.
+        :type entity: TableEntity or dict[str,str]
+        :param mode: Merge or Replace entity
+        :type mode: ~azure.data.tables.UpdateMode
+        :keyword str etag: Etag of the entity
+        :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :return: None
+        :raises ValueError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_batching_async.py
+                :start-after: [START batching]
+                :end-before: [END batching]
+                :language: python
+                :dedent: 8
+                :caption: Creating and adding an entity to a Table
+        """
         self._verify_partition_key(entity)
 
         if_match, _ = _get_match_headers(kwargs=dict(kwargs, etag=kwargs.pop('etag', None),
@@ -246,7 +269,7 @@ class TableBatchOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -334,7 +357,7 @@ class TableBatchOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -400,6 +423,8 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
+        :return: None
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -465,7 +490,7 @@ class TableBatchOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -516,9 +541,11 @@ class TableBatchOperations(object):
         """Update/Merge or Insert entity into table.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
+        :return: None
+        :raises ValueError:
 
         .. admonition:: Example:
 

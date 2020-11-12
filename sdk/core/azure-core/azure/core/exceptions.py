@@ -192,7 +192,7 @@ class AzureError(Exception):
     :paramtype error: Exception
 
     :ivar inner_exception: The exception passed with the 'error' kwarg
-    :type inner_exception: Exception
+    :vartype inner_exception: Exception
     :ivar exc_type: The exc_type from sys.exc_info()
     :ivar exc_value: The exc_value from sys.exc_info()
     :ivar exc_traceback: The exc_traceback from sys.exc_info()
@@ -247,11 +247,15 @@ class HttpResponseError(AzureError):
     :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
 
     :ivar reason: The HTTP response reason
-    :type reason: str
+    :vartype reason: str
     :ivar status_code: HttpResponse's status code
-    :type status_code: int
+    :vartype status_code: int
     :ivar response: The response that triggered the exception.
-    :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :vartype response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+    :ivar model: The request body/response body model
+    :vartype model: ~msrest.serialization.Model
+    :ivar error: The formatted error
+    :vartype error: ODataV4Format
     """
 
     def __init__(self, message=None, response=None, **kwargs):
