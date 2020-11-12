@@ -505,6 +505,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword str source_etag:
             The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
+        :keyword str if_tags_match_condition:
+            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
         :keyword ~datetime.datetime if_modified_since:
