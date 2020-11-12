@@ -13,8 +13,7 @@ The `arm-templates` directory contains Azure resource templates for creating a S
 > **Note:** All Azure resources used in the sample should be in the same region & resource group. This includes a managed identity, Key Vault, Service Fabric cluster, Azure Container Registry, and storage account.
 
 - This sample requires access to an Azure subscription and required privileges to create resources.
-- [Powershell and the Az library are needed to run the deployments in the sample.](https://docs.microsoft.com/powershell/azure/install-az-ps)
-- [Azure CLI is used to deploy some resources.](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
+- [Azure CLI is used to deploy resources and applications.](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 - Docker is needed to build and push the sample containerized service. Docker should be using Linux containers for building the application images that are provided.
 
 ### Clone this repository
@@ -36,7 +35,7 @@ You can skip to [Set Up and Deploy the Applications](#set-up-and-deploy-the-appl
 
 ### Create a resource group
 
-From a command prompt window, run
+From a command prompt window, run:
 ```
 az login
 az group create -n $RESOURCE_GROUP --location $LOCATION --subscription $SUBSCRIPTION_NAME
@@ -44,14 +43,12 @@ az group create -n $RESOURCE_GROUP --location $LOCATION --subscription $SUBSCRIP
 
 ### Create a user-assigned managed identity
 
-From your command prompt window, run
+From your command prompt window, run:
 ```
 az identity create -g $RESOURCE_GROUP -n AdminUser
 ```
 
-Make note of the identity's principal ID, to use in the next step. Also make note of its client ID for a later step.
-
-If you already have a managed identity named "AdminUser", you can get these IDs by running
+You will be prompted for this identity's principal, client, and object IDs in later steps. You can get these IDs by running:
 ```
 az identity show -g $RESOURCE_GROUP -n AdminUser
 ```
@@ -71,7 +68,7 @@ Finally, go to the "Access policies" blade for your vault. Under "Enable Access 
 
 ### Create an Azure Container Registry
 
-From your command prompt window, run
+From your command prompt window, run:
 ```
 az acr create -g $RESOURCE_GROUP -n $ACR_NAME --admin-enabled --sku basic
 ```
@@ -82,38 +79,20 @@ At the time of writing, Service Fabric clusters must be deployed using the Azure
 
 To use the provided template:
 
-1. Open `arm-templates/cluster.parameters.json` and complete the fields `clusterLocation`, `adminUserName`, `adminPassword`, `sourceVaultValue`, `certificateUrlValue`, and `certificateThumbprint`. Field descriptions will describe how they should be completed.
+1. Open `arm-templates/cluster.parameters.json` and complete the fields `clusterLocation`, `adminUserName`, `adminPassword`, `sourceVaultValue`, `certificateUrlValue`, and `certificateThumbprint`. The placeholder values will describe how they should be completed.
 2. In `arm-templates/cluster.parameters.json`, change all instances of `sfmi-test` to a unique name, like `<myusername>-sfmi-test`. Also, change the values of `applicationDiagnosticsStorageAccountName` and `supportLogStorageAccountName` to be similarly unique, but without hyphens. This will help ensure the deployment resource names do not conflict with the names of other public resources.
-3. Start the deployment by running from your Powershell window in the `arm-templates` directory:
-```powershell
-Connect-AzAccount
-Select-AzSubscription -Subscription $Subscription
-New-AzResourceGroupDeployment -TemplateParameterFile ".\cluster.parameters.json" -TemplateFile ".\cluster.template.json" -ResourceGroupName $ResourceGroupName
+3. Start the deployment by running the following command in your command prompt:
+```
+az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\cluster.template.json --parameters arm-templates\cluster.parameters.json
 ```
 
-This will begin deployment of a Service Fabric cluster, as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, storage account, and virtual network.
+This will begin deployment of a Service Fabric cluster as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, storage account, and virtual network.
 
 ## Set Up and Deploy the Applications
 
 ### Build and publish a Docker image for each application
 
 For this manual test, each application will use a Docker image to run managed identity tests. To make these images available to Service Fabric, you need to build and publish them by using the Dockerfiles in this sample.
-
-First, you'll need to update the applications to target the correct resources.
-
-1. Open `sfmitestsystem/Dockerfile`.
-2. Replace `<your vault URL>` with the vault URI of your key vault.
-```Dockerfile
-ENV AZURE_IDENTITY_TEST_VAULT_URL=<your vault URL>  # looks like https://<vault name>.vault.azure.net/
-```
-3. Open `sfmitestuser/Dockerfile`.
-4. Replace `<your vault URL>` with the vault URI of your key vault, and replace `<AdminUser client ID>` with the client ID of your managed identity.
-```Dockerfile
-ENV AZURE_IDENTITY_TEST_VAULT_URL=<your vault URL>  # looks like https://<vault name>.vault.azure.net/
-ENV AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID=<AdminUser client ID>  # found in the managed identity overview
-```
-
-Now, build the images and push them to Azure Container Registry.
 
 1. Ensure Docker is running and is using Linux containers.
 2. Authenticate to ACR:
@@ -122,8 +101,8 @@ az acr login -n $ACR_NAME
 ```
 3. Build the images:
 ```
-docker build --no-cache -t $ACR_NAME.azurecr.io/sfmitestsystem sfmitestsystem
-docker build --no-cache -t $ACR_NAME.azurecr.io/sfmitestuser sfmitestuser
+docker build --no-cache -t $ACR_NAME.azurecr.io/sfmitestsystem ..
+docker build --no-cache -t $ACR_NAME.azurecr.io/sfmitestuser ..
 ```
 4. Publish the images:
 ```
@@ -143,9 +122,19 @@ Your Service Fabric cluster will target each application by referencing a `.sfpk
 ```xml
 <ImageName>{ACR_NAME}.azurecr.io/sfmitestsystem</ImageName>
 ```
-3. Open the `sfmitestsystem` directory in File Explorer, select `sfmitestsystemfrontPkg` and `ApplicationManifest.xml`, and compress them into a zip file.
+3. Also in `sfmitestsystem/sfmitestsystemfrontPkg/ServiceManifest.xml`, replace `<VAULT_URL>` with your key vault's vault URI in
+```xml
+<EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<VAULT_URL>"/>
+```
+4. Open the `sfmitestsystem` directory in File Explorer, select `sfmitestsystemfrontPkg` and `ApplicationManifest.xml`, and compress them into a zip file.
 5. Rename the zip file `sfmitestsystem.sfpkg`.
-6. Repeat the above steps for `sfmitestuser`, replacing all instances of "system" in the instructions with "user".
+6. Repeat steps 1 and 2 for `sfmitestuser`, replacing all instances of "system" in the instructions with "user".
+7. In `sfmitestuser/sfmitestuserfrontPkg/ServiceManifest.xml`, replace `<VAULT_URL>` with your key vault's vault URI and `<AdminUser client ID>` with the user-assigned managed identity's client ID in
+```xml
+<EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<VAULT_URL>"/>
+<EnvironmentVariable Name="AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID" Value="<AdminUser client ID>"/>
+```
+8. Repeat steps 4 and 5 for `sfmitestuser`, replacing all instances of "system" in the instructions with "user".
 
 ### Upload the application packages to a storage account
 
@@ -163,10 +152,10 @@ To use the provided templates:
 
 1. Open `arm-templates/sfmitestsystem.parameters.json` and complete the fields `clusterName`, `clusterLocation`, and `applicationPackageUrl`. `clusterName` and `clusterLocation` should match the name and location of the cluster you deployed earlier in the walkthrough. `applicationPackageUrl` is the URL of the `.sfpkg` you uploaded to a storage account in the previous step. To find the URL, click on `sfmitestsystem.sfpkg` in the Portal to view its properties.
 2. Open `arm-templates/sfmitestuser.parameters.json` and complete the same fields, using the URL of `sfmitestuser.sfpkg` for `applicationPackageUrl`.
-3. Start the deployment by running from your Powershell window in the `arm-templates` directory:
-```powershell
-New-AzResourceGroupDeployment -TemplateParameterFile ".\sfmitestsystem.parameters.json" -TemplateFile ".\sfmitestsystem.template.json" -ResourceGroupName $ResourceGroupName
-New-AzResourceGroupDeployment -TemplateParameterFile ".\sfmitestuser.parameters.json" -TemplateFile ".\sfmitestuser.template.json" -ResourceGroupName $ResourceGroupName
+3. Start the deployment by running the following commands in your command prompt:
+```
+az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestsystem.template.json --parameters arm-templates\sfmitestsystem.parameters.json
+az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestuser.template.json --parameters arm-templates\sfmitestuser.parameters.json
 ```
 
 ### Give the applications access to your key vault
@@ -175,11 +164,22 @@ If the applications were accessed now, they would report an error. This is becau
 
 To grant them access:
 
-1. Go to your key vault in the [Azure Portal](https://azure.portal.com).
-2. Go to the "Access Policies" tab and click the "Add Access Policy" button. Select the secret management access template.
-3. Click "None selected" to select a principal. Search for the name of your cluster, and an `sfmitestsystem` entry should appear in the list -- select this principal to give `sfmitestsystem`'s system-assigned managed identity access to your vault.
-4. Click "Add" to add the access policy, and repeat steps 2 and 3. This time, search for the name of the user-assigned identity you created (`AdminUser`) for your principal. This will give `sfmitestuser`'s user-assigned managed identity access to your vault.
-5. Remember to click "Save" at the top of the access policies page to submit these changes.
+1. Get the object ID of `sfmitestsystem`'s system-assigned managed identity. In your command prompt, run:
+```
+az ad sp list --display-name $CLUSTER_NAME/applications/sfmitestsystem
+```
+2. Give the application secret list permissions by setting an access policy:
+```
+az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $SYSTEM_OBJECT_ID
+```
+3. Get the object ID of `sfmitestuser`'s user-assigned managed identity. In your command prompt, run:
+```
+az identity show -g $RESOURCE_GROUP -n AdminUser
+```
+4. Give the application secret list permissions by setting an access policy:
+```
+az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $USER_OBJECT_ID
+```
 
 ## Run the Tests
 
@@ -193,3 +193,24 @@ Verify in a browser:
 4. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
 5. When you find an application entry, click the +-sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
 6. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` shows `PASSED`.
+
+This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on Python 3.5, you'll need to re-build the Docker images and re-deploy the applications so they can target the new images.
+
+1. Remove each application from the cluster. In the Service Fabric Explorer, expand the Applications tab and sfmitestsystemType tab. Click on "fabric:/sfmitestsystem", and in the application page, use the "Actions" tab at the top right to delete the application.
+2. Now, remove the other application. Click on "fabric:/sfmitestuser" and use the "Actions" tab to delete the application.
+3. Re-build the docker images, targeting Python 3.5 with `--build-args`. In your command prompt, run:
+```
+docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestsystem ..
+docker build --no-cache --build-arg PYTHON_VERSION=3.5 -t $ACR_NAME.azurecr.io/sfmitestuser ..
+```
+4. Publish the new images to your ACR:
+```
+docker push $ACR_NAME.azurecr.io/sfmitestsystem
+docker push $ACR_NAME.azurecr.io/sfmitestuser
+```
+5. Re-deploy the applications:
+```
+az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestsystem.template.json --parameters arm-templates\sfmitestsystem.parameters.json
+az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\sfmitestuser.template.json --parameters arm-templates\sfmitestuser.parameters.json
+```
+6. Verify the test output again, as you did above. You should now also see that `test_managed_identity_live_async` shows `PASSED`.
