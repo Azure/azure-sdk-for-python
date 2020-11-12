@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "0", "text": "Microsoft was founded by
+      Bill Gates and Paul Allen", "language": "en"}, {"id": "1", "text": "Microsoft
+      fue fundado por Bill Gates y Paul Allen", "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '368'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - bf843278-ad24-4ee6-886b-34cd33f4ef6d
+      date:
+      - Tue, 10 Nov 2020 06:32:52 GMT
+      operation-location:
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8e3ee073-a7d1-4e0d-8889-dc3af7c13c18_637405632000000000
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '340'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/8e3ee073-a7d1-4e0d-8889-dc3af7c13c18_637405632000000000
+  response:
+    body:
+      string: '{"jobId":"8e3ee073-a7d1-4e0d-8889-dc3af7c13c18_637405632000000000","lastUpdateDateTime":"2020-11-10T06:32:53Z","createdDateTime":"2020-11-10T06:32:52Z","expirationDateTime":"2020-11-11T06:32:52Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:32:53Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-10T06:32:53.1281844Z","results":{"inTerminalState":true,"documents":[{"id":"0","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"warnings":[]},{"id":"1","keyPhrases":["Microsoft
+        fue fundado por Bill Gates y Paul Allen"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 2e578a25-b23e-4265-aa03-5e4ba66ab702
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 06:33:22 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '243'
+    status:
+      code: 200
+      message: OK
+version: 1

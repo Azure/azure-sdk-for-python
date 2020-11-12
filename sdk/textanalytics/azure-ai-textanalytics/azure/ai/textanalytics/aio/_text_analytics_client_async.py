@@ -39,7 +39,7 @@ from .._models import (
     DocumentError,
     RecognizePiiEntitiesResult,
 )
-from .._lro import TextAnalyticsOperationResourcePolling
+from .._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsAsyncLROPoller
 from .._helpers import _get_deserialize
 
 if TYPE_CHECKING:
@@ -538,7 +538,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(self._client.models(api_version="v3.2-preview.1").HealthcareJobState, raw_response)
+        healthcare_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").HealthcareJobState, raw_response)
         return healthcare_paged_result(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
 
     @distributed_trace_async
@@ -596,7 +596,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=AsyncLROBasePolling(
+                polling=TextAnalyticsAsyncLROPoller(
                     timeout=polling_interval, 
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

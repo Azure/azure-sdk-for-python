@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "0", "text": "hello world", "language": "en"}, {"id":
+      "1", "text": "hello world", "language": "en"}, {"id": "2", "text": "hello world",
+      "language": "en"}, {"id": "3", "text": "hello world", "language": "en"}, {"id":
+      "4", "text": "hello world", "language": "en"}, {"id": "5", "text": "hello world",
+      "language": "en"}, {"id": "6", "text": "hello world", "language": "en"}, {"id":
+      "7", "text": "hello world", "language": "en"}, {"id": "8", "text": "hello world",
+      "language": "en"}, {"id": "9", "text": "hello world", "language": "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '555'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - e0d98496-944f-4f10-b3a4-cb32ab1a2ada
+      date:
+      - Tue, 10 Nov 2020 05:40:42 GMT
+      operation-location:
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/eadc52b5-b9ab-41ac-b7fd-5e7ff1d60423
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '496'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/eadc52b5-b9ab-41ac-b7fd-5e7ff1d60423?showStats=True
+  response:
+    body:
+      string: '{"jobId":"eadc52b5-b9ab-41ac-b7fd-5e7ff1d60423","lastUpdateDateTime":"2020-11-10T05:40:44Z","createdDateTime":"2020-11-10T05:40:41Z","expirationDateTime":"2020-11-11T05:40:41Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":10,"validDocumentsCount":10,"erroneousDocumentsCount":0,"transactionsCount":10},"documents":[{"id":"0","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"2","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"3","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"4","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"5","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"6","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"7","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"8","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"9","statistics":{"charactersCount":11,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - 1f58e278-b6a4-445c-99be-001f8fa91bbb
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 10 Nov 2020 05:41:12 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '325'
+    status:
+      code: 200
+      message: OK
+version: 1

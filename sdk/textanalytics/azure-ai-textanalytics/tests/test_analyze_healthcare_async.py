@@ -43,7 +43,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
@@ -54,7 +54,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_all_successful_passing_dict(self, client):
         docs = [{"id": "1", "language": "en", "text": "Patient does not suffer from high blood pressure."},
@@ -64,7 +64,9 @@ class TestHealth(AsyncTextAnalyticsTest):
             poller = await client.begin_analyze_healthcare(docs, show_stats=True)
             response = await poller.result()
 
-        for doc in response:
+        self.assertIsNotNone(response.statistics)
+
+        async for doc in response:
             self.assertIsNotNone(doc.id)
             self.assertIsNotNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
@@ -74,7 +76,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_all_successful_passing_text_document_input(self, client):
         docs = [
@@ -87,9 +89,9 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         self.assertIsNone(response.statistics) # show_stats=False by default
 
-        for doc in response:
+        async for doc in response:
             self.assertIsNotNone(doc.id)
-            self.assertIsNotNone(doc.statistics)
+            self.assertIsNone(doc.statistics)
             self.assertIsNotNone(doc.entities)
             self.assertIsNotNone(doc.relations)
 
@@ -97,7 +99,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_passing_only_string(self, client):
         docs = [
@@ -107,11 +109,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list(await(await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await(await client.begin_analyze_healthcare(docs)).result()])
 
         for i in range(2):
             self.assertIsNotNone(response[i].id)
-            self.assertIsNotNone(response[i].statistics)
             self.assertIsNotNone(response[i].entities)
             self.assertIsNotNone(response[i].relations)
 
@@ -121,7 +122,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
@@ -129,7 +130,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
@@ -139,7 +140,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_input_with_all_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
@@ -147,7 +148,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "language": "en", "text": ""}]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
@@ -157,7 +158,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 1001))  # Maximum number of documents per request is 1000
@@ -174,7 +175,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_payload_too_large(self, client):
         large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
@@ -204,7 +205,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_document_warnings(self, client):
         # TODO: reproduce a warnings scenario for implementation
@@ -215,15 +216,15 @@ class TestHealth(AsyncTextAnalyticsTest):
         async with client:
             result = await (await client.begin_analyze_healthcare(docs)).result()
 
-        for doc in result:
+        async for doc in result:
             doc_warnings = doc.warnings
-            self.assertEqual(doc_warnings, None)  # Currently the service doesn't return any warnings at all even though it is expressed in the Swagger.
+            self.assertEqual(len(doc_warnings), 0)  # Currently the service doesn't return any warnings at all even though it is expressed in the Swagger.
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_output_same_order_as_input(self, client):
         docs = [
@@ -235,7 +236,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze_healthcare(docs)).result()
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         for idx, doc in enumerate(response):
             self.assertEqual(str(idx + 1), doc.id)
@@ -244,7 +245,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": "",
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -257,7 +258,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": "xxxxxxxxxxxx",
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -270,7 +271,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_bad_document_input(self, client):
         docs = "This is the wrong type"
@@ -283,7 +284,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_mixing_inputs(self, client):
         docs = [
@@ -299,7 +300,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -309,7 +310,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         expected_order = ["56", "0", "22", "19", "1"]
         actual_order = [x.id for x in response]
@@ -321,7 +322,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_show_stats_and_model_version(self, client):
         docs = [{"id": "56", "text": ":)"},
@@ -349,7 +350,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_whole_batch_language_hint(self, client):
         docs = [
@@ -359,7 +360,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs, language="en")).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -369,7 +370,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_whole_batch_dont_use_language_hint(self, client):
         docs = [
@@ -379,7 +380,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs, language="")).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="")).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -389,7 +390,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_per_item_dont_use_language_hint(self, client):
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
@@ -397,7 +398,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -407,7 +408,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_whole_batch_language_hint_and_obj_input(self, client):
         docs = [
@@ -417,7 +418,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs, language="en")).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -427,7 +428,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_whole_batch_language_hint_and_dict_input(self, client):
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -435,7 +436,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs, language="en")).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -445,7 +446,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         docs = [
@@ -454,7 +455,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs, language="en")).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -463,7 +464,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
@@ -471,7 +472,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs, language="en")).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -481,7 +482,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net",
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT'),
         "default_language": "en"
     })
     async def test_client_passed_default_language_hint(self, client):
@@ -490,7 +491,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -500,13 +501,13 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_invalid_language_hint_method(self, client):
         docs = ["This should fail because we're passing in an invalid language hint"]
 
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs, language="notalanguage")).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="notalanguage")).result()])
 
         print(response)
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
@@ -515,19 +516,19 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_invalid_language_hint_docs(self, client):
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics_account = "https://cognitiveusw2dev.azure-api.net"
+        text_analytics_account = os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
         text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
@@ -553,7 +554,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_user_agent(self, client):  # TODO: verify
         def callback(resp):
@@ -579,12 +580,12 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -606,12 +607,12 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
-            response = list(await (await client.begin_analyze_healthcare(docs)).result())
+            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -626,7 +627,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
@@ -642,7 +643,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_document_errors(self, client):
         text = ""
@@ -654,7 +655,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         async with client:
-            doc_errors = list(await (await client.begin_analyze_healthcare(docs)).result())
+            doc_errors = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
@@ -666,7 +667,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
@@ -679,7 +680,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_missing_input_records_error(self, client):
         docs = []
@@ -692,7 +693,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
@@ -704,7 +705,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
@@ -721,7 +722,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
@@ -738,11 +739,14 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://cognitiveusw2dev.azure-api.net"
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     async def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"
-        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 50)))] # default page size is 20
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+        # Service now only accepts 10 documents for a job, and since the current default server-side value
+        # for records per page is 20, pagination logic will never be activated.  This is intended to change
+        # in the future but for now this test actually won't hit the pagination logic now.
 
         async with client:
             poller = await client.begin_analyze_healthcare(docs, show_stats=True)

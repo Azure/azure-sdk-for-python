@@ -8,6 +8,7 @@ import os
 import pytest
 import platform
 import functools
+import itertools
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
@@ -283,11 +284,10 @@ class TestAnalyze(TextAnalyticsTest):
         results = key_phrase_task_results[0].results
         self.assertEqual(len(results), 2)
 
-        for i in range(2):
-            self.assertIn("Paul Allen", results[i].key_phrases)
-            self.assertIn("Bill Gates", results[i].key_phrases)
-            self.assertIn("Microsoft", results[i].key_phrases)
-            self.assertIsNotNone(results[i].id)
+        self.assertIn("Paul Allen", results[0].key_phrases)
+        self.assertIn("Bill Gates", results[0].key_phrases)
+        self.assertIn("Microsoft", results[0].key_phrases)
+        self.assertIsNotNone(results[0].id)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -331,14 +331,13 @@ class TestAnalyze(TextAnalyticsTest):
         results = task_results[0].results
         self.assertEqual(len(results), 3)
 
-        for i in range(3):
-            self.assertEqual(len(results[i].entities), 4)
-            self.assertIsNotNone(results[i].id)
-            for entity in results[i].entities:
-                self.assertIsNotNone(entity.text)
-                self.assertIsNotNone(entity.category)
-                self.assertIsNotNone(entity.offset)
-                self.assertIsNotNone(entity.confidence_score)
+        self.assertEqual(len(results[0].entities), 4)
+        self.assertIsNotNone(results[0].id)
+        for entity in results[0].entities:
+            self.assertIsNotNone(entity.text)
+            self.assertIsNotNone(entity.category)
+            self.assertIsNotNone(entity.offset)
+            self.assertIsNotNone(entity.confidence_score)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -408,7 +407,7 @@ class TestAnalyze(TextAnalyticsTest):
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
@@ -446,7 +445,7 @@ class TestAnalyze(TextAnalyticsTest):
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
@@ -516,7 +515,7 @@ class TestAnalyze(TextAnalyticsTest):
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
@@ -622,7 +621,7 @@ class TestAnalyze(TextAnalyticsTest):
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         in_order = ["56", "0", "22", "19", "1"]
@@ -664,7 +663,7 @@ class TestAnalyze(TextAnalyticsTest):
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
@@ -692,25 +691,26 @@ class TestAnalyze(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             language="en"
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
+            task_results = getattr(response[0], task_type)
             self.assertEqual(len(task_results), 1)
 
-            for r in task_results.results:
+            results = task_results[0].results
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -726,25 +726,26 @@ class TestAnalyze(TextAnalyticsTest):
             u"The restaurant was not as good as I hoped."
         ]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             language=""
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
+            task_results = getattr(response[0], task_type)
             self.assertEqual(len(task_results), 1)
 
-            for r in task_results.results:
+            results = task_results[0].results
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -758,24 +759,25 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
+            task_results = getattr(response[0], task_type)
             self.assertEqual(len(task_results), 1)
 
-            for r in task_results.results:
+            results = task_results[0].results
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -796,25 +798,26 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             language="en"
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
+            task_results = getattr(response[0], task_type)
             self.assertEqual(len(task_results), 1)
 
-            for r in task_results.results:
+            results = task_results[0].results
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -828,25 +831,26 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             language="en"
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
+            task_results = getattr(response[0], task_type)
             self.assertEqual(len(task_results), 1)
 
-            for r in task_results.results:
+            results = task_results[0].results
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -862,25 +866,26 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             language="en"
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
+            task_results = getattr(response[0], task_type)
             self.assertEqual(len(task_results), 1)
 
-            for r in task_results.results:
+            results = task_results[0].results
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -890,29 +895,30 @@ class TestAnalyze(TextAnalyticsTest):
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
-        docs = [{"id": "1", "language": "es", "text": "I will go to the park."},
-                {"id": "2", "language": "es", "text": "I did not like the hotel we stayed at."},
+        docs = [{"id": "1", "language": "en", "text": "I will go to the park."},
+                {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             language="en"
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
+            task_results = getattr(response[0], task_type)
             self.assertEqual(len(task_results), 1)
 
-            for r in task_results.results:
+            results = task_results[0].results
+            for r in results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -927,24 +933,25 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
+            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
+            self.assertEqual(len(tasks), 1)
+            self.assertEqual(len(tasks[0].results), 3)
 
-            for r in task_results.results:
+            for r in tasks[0].results:
                 self.assertFalse(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -954,26 +961,26 @@ class TestAnalyze(TextAnalyticsTest):
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_invalid_language_hint_method(self, client):
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             ["This should fail because we're passing in an invalid language hint"], 
             language="notalanguage",
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
+            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
+            self.assertEqual(len(tasks), 1)
 
-            for r in task_results.results:
-                self.assertEqual(r.error.code, 'UnsupportedLanguageCode')
+            for r in tasks[0].results:
+                self.assertTrue(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -982,25 +989,25 @@ class TestAnalyze(TextAnalyticsTest):
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_invalid_language_hint_docs(self, client):
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}],
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
-        ).result()
+        ).result())
 
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
-            task_results = getattr(results_pages[0], task_type)
-            self.assertEqual(len(task_results), 1)
+            tasks = getattr(response[0], task_type)  # only expecting a single page of results here
+            self.assertEqual(len(tasks), 1)
 
-            for r in task_results.results:
-                self.assertEqual(r.error.code, 'UnsupportedLanguageCode')
+            for r in tasks[0].results:
+                self.assertTrue(r.is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
@@ -1058,7 +1065,7 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        poller = client.analyze_sentiment(
+        poller = client.begin_analyze(
             docs, 
             entities_recognition_tasks=[EntitiesRecognitionTask()], 
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
@@ -1150,14 +1157,11 @@ class TestAnalyze(TextAnalyticsTest):
     def test_bad_model_version_error_single_task(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
-        try:
+        with self.assertRaises(HttpResponseError):
             result = client.begin_analyze(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")]
             ).result()
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "ModelVersionIncorrect")
-            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -1168,16 +1172,13 @@ class TestAnalyze(TextAnalyticsTest):
     def test_bad_model_version_error_multiple_tasks(self, client):  # TODO: verify behavior of service
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
-        try:
+        with self.assertRaises(HttpResponseError):
             result = client.begin_analyze(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")], 
-                key_phrase_recognition_tasks=[KeyPhraseExtractionTask(model_version="bad")],
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")]
             ).result()
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "ModelVersionIncorrect")
-            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -1207,7 +1208,7 @@ class TestAnalyze(TextAnalyticsTest):
         task_types = [
             "entities_recognition_results",
             "key_phrase_extraction_results",
-            "pii_entities_extraction_results"
+            "pii_entities_recognition_results"
         ]
 
         for task_type in task_types:
@@ -1279,16 +1280,14 @@ class TestAnalyze(TextAnalyticsTest):
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
-        try:
+
+        with self.assertRaises(HttpResponseError):
             result = client.begin_analyze(
                 docs, 
                 entities_recognition_tasks=[EntitiesRecognitionTask()], 
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
             ).result()
-        except HttpResponseError as err:
-            self.assertEqual(err.error.code, "InvalidDocument")
-            self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -1307,6 +1306,33 @@ class TestAnalyze(TextAnalyticsTest):
             cls=callback
         ).result()
         assert res == "cls result"
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
+    def test_multiple_pages_of_results_returned_successfully(self, client):
+        single_doc = "hello world"
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+
+        result = client.begin_analyze(
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+        ).result()
+        pages = list(result)
+
+        self.assertEqual(len(pages), 3) # default page size is 20
+
+        self.assertEqual(len(docs), len(response))
+        self.assertIsNotNone(result.statistics)
+
+        for (idx, doc) in enumerate(response):
+            self.assertEqual(docs[idx]["id"], doc.id)
+            self.assertIsNotNone(doc.statistics)
 
 
 
