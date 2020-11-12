@@ -2,3 +2,4 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../identity/azure-identity
 ../azure-schemaregistry
+python-dotenv

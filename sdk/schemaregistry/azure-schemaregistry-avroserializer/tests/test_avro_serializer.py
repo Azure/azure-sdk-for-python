@@ -29,8 +29,7 @@ from azure.schemaregistry.serializer.avroserializer._avro_serializer import Avro
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
-from schemaregistry_preparer import SchemaRegistryPreparer
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureTestCase, SchemaRegistryPowerShellPreparer
 
 
 class SchemaRegistryAvroSerializerTests(AzureTestCase):
@@ -73,7 +72,7 @@ class SchemaRegistryAvroSerializerTests(AzureTestCase):
         with pytest.raises(avro.io.AvroTypeException):
             raw_avro_object_serializer.serialize(dict_data_missing_required_field, schema)
 
-    @SchemaRegistryPreparer()
+    @SchemaRegistryPowerShellPreparer()
     def test_basic_sr_avro_serializer(self, schemaregistry_endpoint, schemaregistry_group, **kwargs):
         sr_client = self.create_basic_client(SchemaRegistryClient, endpoint=schemaregistry_endpoint)
         sr_avro_serializer = SchemaRegistryAvroSerializer(sr_client, schemaregistry_group)
