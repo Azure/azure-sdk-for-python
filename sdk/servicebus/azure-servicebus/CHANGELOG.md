@@ -3,7 +3,9 @@
 ## 7.0.0b9 (Unreleased)
 
 **Breaking Changes**
+
 * `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
+* `send_messages`, `schedule_messages`, `cancel_scheduled_messages` and `receive_deferred_messages` now performs a no-op rather than raising a `ValueError` if provided an empty list of messages or an empty batch.
 
 ## 7.0.0b8 (2020-11-05)
 

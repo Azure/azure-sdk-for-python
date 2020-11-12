@@ -204,6 +204,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         if isinstance(messages, ServiceBusMessage):
             request_body = self._build_schedule_request(schedule_time_utc, messages)
         else:
+            if len(messages) == 0:
+                return [] # No-op on empty list.
             request_body = self._build_schedule_request(schedule_time_utc, *messages)
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
@@ -240,6 +242,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             numbers = [types.AMQPLong(sequence_numbers)]
         else:
             numbers = [types.AMQPLong(s) for s in sequence_numbers]
+        if len(numbers) == 0:
+            return # no-op on empty list.
         request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -294,7 +298,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         except TypeError:  # Message was not a list or generator.
             pass
         if isinstance(message, ServiceBusMessageBatch) and len(message) == 0:  # pylint: disable=len-as-condition
-            raise ValueError("A ServiceBusMessageBatch or list of Message must have at least one Message")
+            return # Short circuit noop if an empty list or batch is provided.
         if not isinstance(message, ServiceBusMessageBatch) and not isinstance(message, ServiceBusMessage):
             raise TypeError(
                 "Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage>"
