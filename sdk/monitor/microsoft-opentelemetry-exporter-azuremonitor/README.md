@@ -1,4 +1,4 @@
-# Microsoft Opentelemetry Exporter for Azure Monitor client library for Python
+# Microsoft Opentelemetry exporter for Azure Monitor
 
 [![Gitter chat](https://img.shields.io/gitter/room/Microsoft/azure-monitor-python)](https://gitter.im/Azure/azure-sdk-for-python)
 
