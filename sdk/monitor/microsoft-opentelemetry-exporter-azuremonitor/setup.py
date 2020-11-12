@@ -75,7 +75,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.6.0",
         "msrest>=0.6.10",
-        "opentelemetry-api == 0.13b0",
-        "opentelemetry-sdk == 0.13b0"
+        "opentelemetry-api == 0.15b0",
+        "opentelemetry-sdk == 0.15b0"
     ],
 )
