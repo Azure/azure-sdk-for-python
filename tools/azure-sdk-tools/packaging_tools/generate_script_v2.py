@@ -5,6 +5,7 @@ import logging
 import os
 from pathlib import Path
 import re
+import runpy
 from subprocess import check_call
 import tempfile
 
@@ -13,6 +14,7 @@ from .swaggertosdk.SwaggerToSdkCore import (
 )
 from azure_devtools.ci_tools.git_tools import get_diff_file_list
 from .generate_sdk import generate
+from .change_log import main as change_log_main
 
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
@@ -66,9 +68,10 @@ def main(generate_input, generate_output):
         package_entry['readmeMd'] = data["relatedReadmeMdFiles"]
 
         # Changelog
+        md_output = change_log_main(f"{package_name}:pypi", f"{package_name}:latest")
         package_entry["changelog"] = {
-            "content": "Feature: something \n Breaking Changes: something\n",
-            "hasBreakingChange": True
+            "content": md_output,
+            "hasBreakingChange": "Breaking changes" in md_output
         },
         # Built package
         create_package(package_name)
