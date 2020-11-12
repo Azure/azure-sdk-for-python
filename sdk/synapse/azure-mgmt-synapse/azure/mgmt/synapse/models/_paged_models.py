@@ -51,6 +51,19 @@ class SqlPoolPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SqlPoolPaged, self).__init__(*args, **kwargs)
+class GeoBackupPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`GeoBackupPolicy <azure.mgmt.synapse.models.GeoBackupPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[GeoBackupPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(GeoBackupPolicyPaged, self).__init__(*args, **kwargs)
 class RestorePointPaged(Paged):
     """
     A paging container for iterating over a list of :class:`RestorePoint <azure.mgmt.synapse.models.RestorePoint>` object
@@ -77,6 +90,32 @@ class ReplicationLinkPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ReplicationLinkPaged, self).__init__(*args, **kwargs)
+class TransparentDataEncryptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`TransparentDataEncryption <azure.mgmt.synapse.models.TransparentDataEncryption>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TransparentDataEncryption]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TransparentDataEncryptionPaged, self).__init__(*args, **kwargs)
+class SqlPoolBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SqlPoolBlobAuditingPolicy <azure.mgmt.synapse.models.SqlPoolBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SqlPoolBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SqlPoolBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
 class SqlPoolOperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`SqlPoolOperation <azure.mgmt.synapse.models.SqlPoolOperation>` object
@@ -181,6 +220,71 @@ class VulnerabilityAssessmentScanRecordPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(VulnerabilityAssessmentScanRecordPaged, self).__init__(*args, **kwargs)
+class SqlPoolSecurityAlertPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SqlPoolSecurityAlertPolicy <azure.mgmt.synapse.models.SqlPoolSecurityAlertPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SqlPoolSecurityAlertPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SqlPoolSecurityAlertPolicyPaged, self).__init__(*args, **kwargs)
+class ExtendedSqlPoolBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExtendedSqlPoolBlobAuditingPolicy <azure.mgmt.synapse.models.ExtendedSqlPoolBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExtendedSqlPoolBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExtendedSqlPoolBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
+class DataMaskingRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DataMaskingRule <azure.mgmt.synapse.models.DataMaskingRule>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DataMaskingRule]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DataMaskingRulePaged, self).__init__(*args, **kwargs)
+class WorkloadGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadGroup <azure.mgmt.synapse.models.WorkloadGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadGroupPaged, self).__init__(*args, **kwargs)
+class WorkloadClassifierPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WorkloadClassifier <azure.mgmt.synapse.models.WorkloadClassifier>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WorkloadClassifier]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(WorkloadClassifierPaged, self).__init__(*args, **kwargs)
 class WorkspacePaged(Paged):
     """
     A paging container for iterating over a list of :class:`Workspace <azure.mgmt.synapse.models.Workspace>` object
@@ -194,6 +298,19 @@ class WorkspacePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(WorkspacePaged, self).__init__(*args, **kwargs)
+class RestorableDroppedSqlPoolPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RestorableDroppedSqlPool <azure.mgmt.synapse.models.RestorableDroppedSqlPool>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RestorableDroppedSqlPool]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RestorableDroppedSqlPoolPaged, self).__init__(*args, **kwargs)
 class IntegrationRuntimeResourcePaged(Paged):
     """
     A paging container for iterating over a list of :class:`IntegrationRuntimeResource <azure.mgmt.synapse.models.IntegrationRuntimeResource>` object
@@ -246,3 +363,120 @@ class PrivateLinkHubPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkHubPaged, self).__init__(*args, **kwargs)
+class PrivateEndpointConnectionForPrivateLinkHubPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`PrivateEndpointConnectionForPrivateLinkHub <azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHub>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnectionForPrivateLinkHub]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(PrivateEndpointConnectionForPrivateLinkHubPaged, self).__init__(*args, **kwargs)
+class ServerBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerBlobAuditingPolicy <azure.mgmt.synapse.models.ServerBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
+class ExtendedServerBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ExtendedServerBlobAuditingPolicy <azure.mgmt.synapse.models.ExtendedServerBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ExtendedServerBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ExtendedServerBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
+class ServerSecurityAlertPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerSecurityAlertPolicy <azure.mgmt.synapse.models.ServerSecurityAlertPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerSecurityAlertPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerSecurityAlertPolicyPaged, self).__init__(*args, **kwargs)
+class ServerVulnerabilityAssessmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerVulnerabilityAssessment <azure.mgmt.synapse.models.ServerVulnerabilityAssessment>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerVulnerabilityAssessment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerVulnerabilityAssessmentPaged, self).__init__(*args, **kwargs)
+class EncryptionProtectorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`EncryptionProtector <azure.mgmt.synapse.models.EncryptionProtector>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[EncryptionProtector]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(EncryptionProtectorPaged, self).__init__(*args, **kwargs)
+class ServerUsagePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerUsage <azure.mgmt.synapse.models.ServerUsage>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerUsage]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerUsagePaged, self).__init__(*args, **kwargs)
+class RecoverableSqlPoolPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RecoverableSqlPool <azure.mgmt.synapse.models.RecoverableSqlPool>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RecoverableSqlPool]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RecoverableSqlPoolPaged, self).__init__(*args, **kwargs)
+class KeyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Key <azure.mgmt.synapse.models.Key>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Key]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(KeyPaged, self).__init__(*args, **kwargs)

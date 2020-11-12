@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -61,7 +60,8 @@ class SqlPoolOperationResultsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         # Construct URL
         url = self.get_location_header_result.metadata['url']
@@ -92,13 +92,13 @@ class SqlPoolOperationResultsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 202]:
+            raise models.ErrorContractException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
+            deserialized = self._deserialize('object', response)
+        if response.status_code == 202:
             deserialized = self._deserialize('object', response)
 
         if raw:

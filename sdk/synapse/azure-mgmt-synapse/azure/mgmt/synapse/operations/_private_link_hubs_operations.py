@@ -11,7 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -54,7 +55,8 @@ class PrivateLinkHubsOperations(object):
         :return: An iterator like instance of PrivateLinkHub
         :rtype:
          ~azure.mgmt.synapse.models.PrivateLinkHubPaged[~azure.mgmt.synapse.models.PrivateLinkHub]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -94,9 +96,7 @@ class PrivateLinkHubsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorContractException(self._deserialize, response)
 
             return response
 
@@ -107,7 +107,7 @@ class PrivateLinkHubsOperations(object):
         deserialized = models.PrivateLinkHubPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHub'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs'}
 
     def get(
             self, resource_group_name, private_link_hub_name, custom_headers=None, raw=False, **operation_config):
@@ -116,7 +116,7 @@ class PrivateLinkHubsOperations(object):
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param private_link_hub_name: The name of the privateLinkHub
+        :param private_link_hub_name: Name of the privateLinkHub
         :type private_link_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -177,7 +177,7 @@ class PrivateLinkHubsOperations(object):
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param private_link_hub_name: The name of the privateLinkHub
+        :param private_link_hub_name: Name of the privateLinkHub
         :type private_link_hub_name: str
         :param tags: Resource tags
         :type tags: dict[str, str]
@@ -242,18 +242,17 @@ class PrivateLinkHubsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}'}
 
     def create_or_update(
-            self, resource_group_name, private_link_hub_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, private_link_hub_info, resource_group_name, private_link_hub_name, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a privateLinkHub.
 
+        :param private_link_hub_info: PrivateLinkHub create or update request
+         properties
+        :type private_link_hub_info: ~azure.mgmt.synapse.models.PrivateLinkHub
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param private_link_hub_name: The name of the privateLinkHub
+        :param private_link_hub_name: Name of the privateLinkHub
         :type private_link_hub_name: str
-        :param location: The geo-location where the resource lives
-        :type location: str
-        :param tags: Resource tags.
-        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -265,8 +264,6 @@ class PrivateLinkHubsOperations(object):
         :raises:
          :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
-        private_link_hub_info = models.PrivateLinkHub(tags=tags, location=location)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -314,25 +311,9 @@ class PrivateLinkHubsOperations(object):
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}'}
 
-    def delete(
-            self, resource_group_name, private_link_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a privateLinkHub.
 
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param private_link_hub_name: The name of the privateLinkHub
-        :type private_link_hub_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
-        """
+    def _delete_initial(
+            self, resource_group_name, private_link_hub_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -359,12 +340,54 @@ class PrivateLinkHubsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.ErrorContractException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def delete(
+            self, resource_group_name, private_link_hub_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes a privateLinkHub.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param private_link_hub_name: Name of the privateLinkHub
+        :type private_link_hub_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            private_link_hub_name=private_link_hub_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}'}
 
     def list(
@@ -379,7 +402,8 @@ class PrivateLinkHubsOperations(object):
         :return: An iterator like instance of PrivateLinkHub
         :rtype:
          ~azure.mgmt.synapse.models.PrivateLinkHubPaged[~azure.mgmt.synapse.models.PrivateLinkHub]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -418,9 +442,7 @@ class PrivateLinkHubsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorContractException(self._deserialize, response)
 
             return response
 
