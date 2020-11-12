@@ -28,7 +28,7 @@ class TextAnalyticsClientOperationsMixin(object):
         top: Optional[int] = 20,
         skip: Optional[int] = 0,
         **kwargs
-    ) -> "models.AnalyzeJobState":
+    ) -> "_models.AnalyzeJobState":
         """Get analysis status and results.
 
         Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are
@@ -65,7 +65,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def begin_analyze(
         self,
-        body: Optional["models.AnalyzeBatchInput"] = None,
+        body: Optional["_models.AnalyzeBatchInput"] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Submit analysis job.
@@ -132,9 +132,9 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def begin_health(
         self,
-        documents: List["models.MultiLanguageInput"],
+        documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Submit healthcare analysis job.
@@ -175,11 +175,11 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def entities_linking(
         self,
-        documents: List["models.MultiLanguageInput"],
+        documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> "models.EntityLinkingResult":
+    ) -> "_models.EntityLinkingResult":
         """Linked entities from a well-known knowledge base.
 
         The API returns a list of recognized entities with links to a well-known knowledge base. See
@@ -217,11 +217,11 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def entities_recognition_general(
         self,
-        documents: List["models.MultiLanguageInput"],
+        documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> "models.EntitiesResult":
+    ) -> "_models.EntitiesResult":
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document. For the list of supported
@@ -260,13 +260,13 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def entities_recognition_pii(
         self,
-        documents: List["models.MultiLanguageInput"],
+        documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         domain: Optional[str] = None,
-        string_index_type: Optional[Union[str, "models.StringIndexType"]] = "TextElements_v8",
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = "TextElements_v8",
         **kwargs
-    ) -> "models.PiiEntitiesResult":
+    ) -> "_models.PiiEntitiesResult":
         """Entities containing personal information.
 
         The API returns a list of entities with personal information (\"SSN\", \"Bank Account\" etc) in
@@ -315,7 +315,7 @@ class TextAnalyticsClientOperationsMixin(object):
         skip: Optional[int] = 0,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> "models.HealthcareJobState":
+    ) -> "_models.HealthcareJobState":
         """Get healthcare analysis job status and results.
 
         Get details of the healthcare prediction job specified by the jobId.
@@ -350,11 +350,11 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def key_phrases(
         self,
-        documents: List["models.MultiLanguageInput"],
+        documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> "models.KeyPhraseResult":
+    ) -> "_models.KeyPhraseResult":
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input text. See the :code:`<a
@@ -392,11 +392,11 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def languages(
         self,
-        documents: List["models.LanguageInput"],
+        documents: List["_models.LanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> "models.LanguageResult":
+    ) -> "_models.LanguageResult":
         """Detect Language.
 
         The API returns the detected language and a numeric score between 0 and 1. Scores close to 1
@@ -435,11 +435,11 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def sentiment(
         self,
-        documents: List["models.MultiLanguageInput"],
+        documents: List["_models.MultiLanguageInput"],
         model_version: Optional[str] = None,
         show_stats: Optional[bool] = None,
         **kwargs
-    ) -> "models.SentimentResponse":
+    ) -> "_models.SentimentResponse":
         """Sentiment.
 
         The API returns a sentiment prediction, as well as sentiment scores for each sentiment class

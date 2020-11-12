@@ -14,7 +14,7 @@ from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -27,7 +27,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def _analyze_initial(
         self,
-        body=None,  # type: Optional["models.AnalyzeBatchInput"]
+        body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -36,8 +36,8 @@ class TextAnalyticsClientOperationsMixin(object):
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         content_type = kwargs.pop("content_type", "application/json")
@@ -74,7 +74,6 @@ class TextAnalyticsClientOperationsMixin(object):
 
         response_headers = {}
         response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-        pipeline_response.http_response.headers['Operation-Location'] = "%s/jobs/%s" % (url, response.headers.get('Operation-Location').split("/")[-1])
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -83,7 +82,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def begin_analyze(
         self,
-        body=None,  # type: Optional["models.AnalyzeBatchInput"]
+        body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -151,7 +150,7 @@ class TextAnalyticsClientOperationsMixin(object):
         skip=0,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.AnalyzeJobState"
+        # type: (...) -> "_models.AnalyzeJobState"
         """Get analysis status and results.
 
         Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are
@@ -174,12 +173,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.AnalyzeJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.AnalyzeJobState"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeJobState"]
         error_map = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json, text/json"
@@ -229,7 +228,7 @@ class TextAnalyticsClientOperationsMixin(object):
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.HealthcareJobState"
+        # type: (...) -> "_models.HealthcareJobState"
         """Get healthcare analysis job status and results.
 
         Get details of the healthcare prediction job specified by the jobId.
@@ -250,12 +249,12 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.HealthcareJobState
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthcareJobState"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HealthcareJobState"]
         error_map = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json, text/json"
@@ -307,8 +306,8 @@ class TextAnalyticsClientOperationsMixin(object):
         error_map = {
             401: ClientAuthenticationError,
             409: ResourceExistsError,
-            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            404: lambda response: ResourceNotFoundError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
         accept = "application/json, text/json"
@@ -408,9 +407,9 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def _health_initial(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -419,12 +418,12 @@ class TextAnalyticsClientOperationsMixin(object):
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _input = models.MultiLanguageBatchInput(documents=documents)
+        _input = _models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -468,9 +467,9 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def begin_health(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -541,13 +540,13 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def entities_recognition_general(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EntitiesResult"
+        # type: (...) -> "_models.EntitiesResult"
         """Named Entity Recognition.
 
         The API returns a list of general named entities in a given document. For the list of supported
@@ -572,17 +571,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.EntitiesResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EntitiesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntitiesResult"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _input = models.MultiLanguageBatchInput(documents=documents)
+        _input = _models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -628,14 +627,14 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def entities_recognition_pii(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PiiResult"
+        # type: (...) -> "_models.PiiResult"
         """Entities containing personal information.
 
         The API returns a list of entities with personal information (\"SSN\", \"Bank Account\" etc) in
@@ -664,17 +663,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.PiiResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PiiResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PiiResult"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _input = models.MultiLanguageBatchInput(documents=documents)
+        _input = _models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -722,13 +721,13 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def entities_linking(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.EntityLinkingResult"
+        # type: (...) -> "_models.EntityLinkingResult"
         """Linked entities from a well-known knowledge base.
 
         The API returns a list of recognized entities with links to a well-known knowledge base. See
@@ -752,17 +751,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.EntityLinkingResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.EntityLinkingResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.EntityLinkingResult"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _input = models.MultiLanguageBatchInput(documents=documents)
+        _input = _models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -808,12 +807,12 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def key_phrases(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.KeyPhraseResult"
+        # type: (...) -> "_models.KeyPhraseResult"
         """Key Phrases.
 
         The API returns a list of strings denoting the key phrases in the input text. See the :code:`<a
@@ -833,17 +832,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.KeyPhraseResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.KeyPhraseResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.KeyPhraseResult"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _input = models.MultiLanguageBatchInput(documents=documents)
+        _input = _models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -887,12 +886,12 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def languages(
         self,
-        documents,  # type: List["models.LanguageInput"]
+        documents,  # type: List["_models.LanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LanguageResult"
+        # type: (...) -> "_models.LanguageResult"
         """Detect Language.
 
         The API returns the detected language and a numeric score between 0 and 1. Scores close to 1
@@ -913,17 +912,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.LanguageResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LanguageResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LanguageResult"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _input = models.LanguageBatchInput(documents=documents)
+        _input = _models.LanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 
@@ -967,14 +966,14 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def sentiment(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         opinion_mining=None,  # type: Optional[bool]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SentimentResponse"
+        # type: (...) -> "_models.SentimentResponse"
         """Sentiment.
 
         The API returns a detailed sentiment analysis for the input text. The analysis is done in
@@ -1001,17 +1000,17 @@ class TextAnalyticsClientOperationsMixin(object):
         :rtype: ~azure.ai.textanalytics.v3_1_preview_3.models.SentimentResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SentimentResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SentimentResponse"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(models.ErrorResponse, response)),
+            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
+            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.ErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _input = models.MultiLanguageBatchInput(documents=documents)
+        _input = _models.MultiLanguageBatchInput(documents=documents)
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json, text/json"
 

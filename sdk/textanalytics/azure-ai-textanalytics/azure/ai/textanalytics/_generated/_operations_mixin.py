@@ -69,7 +69,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def begin_analyze(
         self,
-        body=None,  # type: Optional["models.AnalyzeBatchInput"]
+        body=None,  # type: Optional["_models.AnalyzeBatchInput"]
         **kwargs  # type: Any
     ):
         """Submit analysis job.
@@ -136,9 +136,9 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def begin_health(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Submit healthcare analysis job.
@@ -179,7 +179,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def entities_linking(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
@@ -221,7 +221,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def entities_recognition_general(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
@@ -264,11 +264,11 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def entities_recognition_pii(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         domain=None,  # type: Optional[str]
-        string_index_type="TextElements_v8",  # type: Optional[Union[str, "models.StringIndexType"]]
+        string_index_type="TextElements_v8",  # type: Optional[Union[str, "_models.StringIndexType"]]
         **kwargs  # type: Any
     ):
         """Entities containing personal information.
@@ -354,7 +354,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def key_phrases(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
@@ -396,7 +396,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def languages(
         self,
-        documents,  # type: List["models.LanguageInput"]
+        documents,  # type: List["_models.LanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
@@ -439,7 +439,7 @@ class TextAnalyticsClientOperationsMixin(object):
 
     def sentiment(
         self,
-        documents,  # type: List["models.MultiLanguageInput"]
+        documents,  # type: List["_models.MultiLanguageInput"]
         model_version=None,  # type: Optional[str]
         show_stats=None,  # type: Optional[bool]
         **kwargs  # type: Any
