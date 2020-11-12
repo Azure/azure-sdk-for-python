@@ -136,7 +136,10 @@ class TestAzureSpanExporter(unittest.TestCase):
             exporter.export([test_span])
             self.assertEqual(len(exporter._telemetry_processors), 1)
             self.assertEqual(storage_mock.call_count, 1)
-            self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
+            try:
+                self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
+            except FileNotFoundError as ex:
+                pass
 
     @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace.logger")
     def test_export_exception(self, logger_mock):
