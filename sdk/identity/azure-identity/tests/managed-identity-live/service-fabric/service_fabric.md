@@ -6,7 +6,7 @@ The `sfmitestsystem` and `sfmitestuser` directories contain mock applications th
 
 > **Note:** The code run by the applications comes from the `Dockerfile` in each, so adapting this sample to another language can be done by editing the Docker image each application uses. No other configuration changes are necessary if using Linux containers. To use Windows containers, you would need to edit the cluster configuration to run on Windows virtual machines (an example of a Windows configuration can be found [here](https://github.com/Azure/azure-quickstart-templates/tree/master/service-fabric-secure-cluster-5-node-1-nodetype)).
 
-The `arm-templates` directory contains Azure resource templates for creating a Service Fabric cluster to host these applications as well as the application templates.
+The `arm-templates` directory contains Azure resource templates for creating these applications as well as a Service Fabric cluster to host them. The cluster template also deploys other resources that are necessary for running a cluster: a load balancer, public IP address, virtual machine scale set, virtual network, and two storage accounts.
 
 ### Environment requirements
 
@@ -57,14 +57,10 @@ az identity show -g $RESOURCE_GROUP -n AdminUser
 
 Create your key vault:
 ```
-az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard
+az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
 ```
 
 After creating the vault, create a self-signed certificate in it using the [Azure Portal](https://azure.portal.com/). You'll need to insert some of this certificate's properties into the cluster template later on.
-
-Next, create a secret in the key vault. It can have any name (e.g. "TestSecret") and any value (e.g. "TestValue"). This secret will just be accessed by the Service Fabric applications to verify that they can access a resource and read contents using their identities.
-
-Finally, go to the "Access policies" blade for your vault. Under "Enable Access to:", check the boxes for "Azure Virtual Machines for deployment" and "Azure Resource Manager for template deployment". Be sure to click "Save" at the top of the page. These policies are necessary for your cluster deployment and applications' functionality.
 
 ### Create an Azure Container Registry
 
@@ -86,7 +82,7 @@ To use the provided template:
 az deployment group create --resource-group $RESOURCE_GROUP --template-file arm-templates\cluster.template.json --parameters arm-templates\cluster.parameters.json
 ```
 
-This will begin deployment of a Service Fabric cluster as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, storage account, and virtual network.
+This will begin to deploy a Service Fabric cluster as well as other necessary resources: a load balancer, public IP address, virtual machine scale set, virtual network, and two storage accounts.
 
 ## Set Up and Deploy the Applications
 
@@ -138,7 +134,7 @@ Your Service Fabric cluster will target each application by referencing a `.sfpk
 
 ### Upload the application packages to a storage account
 
-If using an existing cluster, ensure your resource group has a storage account. If you deployed a cluster using the template provided, two storage accounts were actually created but only one needs to store the `.sfpkg` files for the applications (the one with the name corresponding to `applicationDiagnosticsStorageAccountName` in the template). 
+If using an existing cluster, ensure your resource group has a storage account connected to your cluster. If you deployed a cluster using the template provided, two storage accounts were created but only one needs to store the `.sfpkg` files for the applications (the one with the name corresponding to `applicationDiagnosticsStorageAccountName` in the template). 
 
 Go to your resource group in the [Azure Portal](https://azure.portal.com) and click on the storage account. Go to the "Containers" page and create a new container named "apps" -- be sure the set the public access level to Blob.
 
@@ -146,11 +142,11 @@ Open the apps container and upload the `.sfpkg` files you created earlier in the
 
 ### Deploy the applications
 
-This sample also provides templates for deploying Service Fabric applications with Powershell.
+This sample also provides templates for deploying Service Fabric applications with Azure CLI.
 
 To use the provided templates:
 
-1. Open `arm-templates/sfmitestsystem.parameters.json` and complete the fields `clusterName`, `clusterLocation`, and `applicationPackageUrl`. `clusterName` and `clusterLocation` should match the name and location of the cluster you deployed earlier in the walkthrough. `applicationPackageUrl` is the URL of the `.sfpkg` you uploaded to a storage account in the previous step. To find the URL, click on `sfmitestsystem.sfpkg` in the Portal to view its properties.
+1. Open `arm-templates/sfmitestsystem.parameters.json` and complete the fields `clusterName`, `clusterLocation`, and `applicationPackageUrl`. `clusterName` and `clusterLocation` should match the name and location of your Service Fabric cluster. `applicationPackageUrl` is the URL of the `.sfpkg` you uploaded to a storage account in the previous step. To find the URL, click on `sfmitestsystem.sfpkg` in the Portal to view its properties.
 2. Open `arm-templates/sfmitestuser.parameters.json` and complete the same fields, using the URL of `sfmitestuser.sfpkg` for `applicationPackageUrl`.
 3. Start the deployment by running the following commands in your command prompt:
 ```
@@ -187,12 +183,11 @@ Once running on your cluster, the applications should each perform the same task
 
 Verify in a browser:
 
-1. Navigate to `http://<cluster name>.<location>.cloudapp.azure.com:19080/Explorer` (e.g. `http://sfmi-test.westus2.cloudapp.azure.com:19080/Explorer`).
-2. Present the certificate you created in your key vault. You'll need to download the certificate from the [Azure Portal](https://portal.azure.com/) from your vault's Certificates page and [import it into your web browser](https://docs.digicert.com/manage-certificates/client-certificates-guide/manage-your-personal-id-certificate/windows-import-your-personal-id-certificate/google-chrome-import-your-personal-id/).
-3. In the Explorer, you should see the applications running under the Applications tab. Otherwise, you may need to double check your deployment process.
-4. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
-5. When you find an application entry, click the +-sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
-6. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` shows `PASSED`.
+1. [Connect to your cluster on Service Fabric Explorer.](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
+2. In the Explorer, you should see the applications running under the Applications tab. Otherwise, you may need to double check your deployment process.
+3. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
+4. When you find an application entry, click the "+" sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
+5. Go to the "Container Logs" tab to see the test output. The tests will re-run every so often, so you may have to watch the page for a short while to see the output. Verify that `test_managed_identity_live` shows `PASSED`.
 
 This shows that the `ManagedIdentityCredential` works for Python 2.7. To test on Python 3.5, you'll need to re-build the Docker images and re-deploy the applications so they can target the new images.
 
