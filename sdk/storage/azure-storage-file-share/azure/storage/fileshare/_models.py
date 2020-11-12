@@ -334,11 +334,11 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar str enabled_protocols:
-        Indicates the protocol enabled on the share. This can be either SMB or NFS
     ivar root_squash:
-        Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+        Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
     :vartype root_squash: ~azure.storage.fileshare.models.ShareRootSquash
+    :ivar str enabled_protocols:
+        Indicates the protocol enabled on the share. This can be either SMB or NFS.
     """
 
     def __init__(self, **kwargs):
@@ -720,8 +720,8 @@ class FileProperties(DictMixin):
 
 class EnabledProtocols(str, Enum):
     """Enabled protocols on the share"""
-    smb = "SMB"
-    nfs = "NFS"
+    SMB = "SMB"
+    NFS = "NFS"
 
 
 class CopyProperties(DictMixin):

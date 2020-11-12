@@ -316,7 +316,7 @@ class ShareClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :keyword enabled_protocols:
             Protocols to enable on the share.
-        :paramtype enabled_protocols: [str or ~azure.storage.fileshare.EnabledProtocols]
+        :paramtype enabled_protocols: List[str or ~azure.storage.fileshare.EnabledProtocols]
         :keyword root_squash:
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
