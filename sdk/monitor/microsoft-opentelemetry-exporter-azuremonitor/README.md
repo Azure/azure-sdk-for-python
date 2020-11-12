@@ -1,4 +1,6 @@
-# Microsoft Opentelemtry Exporter for Azure Monitor client library for Python
+# Microsoft Opentelemetry Exporter for Azure Monitor client library for Python
+
+[![Gitter chat](https://img.shields.io/gitter/room/Microsoft/azure-monitor-python)](https://gitter.im/Azure/azure-sdk-for-python)
 
 The Exporter for Azure Monitor allows you to export tracing data utilizing the OpenTelemetry Python Client and send telemetry data to Azure Monitor written in Python.
 
@@ -70,7 +72,8 @@ For more information about these resources, see [What is Azure Monitor?][product
 The following sections provide several code snippets covering some of the most common tasks, including:
 
 * [Export hello world trace data](#export-hello-world-trace)
-* [Batch Export Spans](#batch-export-span-processor)
+* [Modifying Traces](#modifying-traces)
+* [Instrumentation with requests library](#instrumentation-with-requests-library)
 
 
 ### Export Hello World Trace
@@ -101,7 +104,49 @@ with tracer.start_as_current_span("hello"):
     print("Hello, World!")
 ```
 
-### Batch Export Span Processor
+### Modifying Traces
+
+* You can pass a callback function to the exporter to process telemetry before it is exported.
+* Your callback function can return False if you do not want this envelope exported.
+* Your callback function must accept an envelope data type as its parameter.
+* You can see the schema for Azure Monitor data types in the envelopes here.
+* The AzureMonitorSpanExporter handles Data data types.
+
+```Python
+from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+
+# Callback function to add os_type: linux to span properties
+def callback_function(envelope):
+    envelope.data.baseData.properties['os_type'] = 'linux'
+    return True
+
+exporter = AzureMonitorSpanExporter(
+    connection_string='InstrumentationKey=<your-ikey-here>'
+)
+# This line will modify telemetry
+exporter.add_telemetry_processor(callback_function)
+
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+span_processor = BatchExportSpanProcessor(exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+with tracer.start_as_current_span('hello'):
+    print('Hello World!')
+```
+
+### Instrumentation with requests library
+
+OpenTelemetry also supports several instrumentations which allows to instrument with third party libraries.
+
+This example shows how to instrument with the requests_ library.
+
+* Create an Azure Monitor resource and get the instrumentation key, more information can be found here.
+* Install the requests integration package using pip install opentelemetry-ext-http-requests.
+* Specify your connection string in an environment variable `AZURE_MONITOR_CONNECTION_STRING`.
 
 ```Python
 import os
@@ -122,13 +167,16 @@ span_processor = BatchExportSpanProcessor(
     )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
+
+RequestsInstrumentor().instrument()
+
+# This request will be traced
+response = requests.get(url="https://azure.microsoft.com/")
 ```
 
 ## Troubleshooting
 
-### Logging
-
-- Enable by setting `logging_enable=True` when creating the client.
+This client raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#azure-core-library-exceptions).
 
 ## Next steps
 
@@ -158,14 +206,14 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/microsoft-opentelemetry-exporter-azuremonitor/latest/index.html
+[api_docs]: https://aka.ms/monitorexporterapidocs
 [product_docs]: https://docs.microsoft.com/azure/azure-monitor/overview
 [azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
 [cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project/microsoft-opentelemetry-exporter-azuremonitor/#history
+[pypi]: aka.ms/monitorexporterpypi
 [python]: https://www.python.org/downloads/
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
@@ -176,4 +224,4 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [client_reference]: https://opentelemetry-azure-monitor-python.readthedocs.io/en/latest/azure_monitor/export/export.trace.html#module-azure_monitor.export.trace
 [opentelemtry_spec]: https://opentelemetry.io/
 
-[sample_authenticate_client_connstr]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/samples/traces/trace.py#L18
+[sample_authenticate_client_connstr]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/samples/traces/sample_trace.py#L18
