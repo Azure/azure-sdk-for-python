@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
-from opentelemetry.trace.status import StatusCanonicalCode
+from opentelemetry.trace.status import StatusCode
 
 from microsoft.opentelemetry.exporter.azuremonitor import utils
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import (
@@ -80,9 +80,9 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
         data = RequestData(
             id="{:016x}".format(span.context.span_id),
             duration=utils.ns_to_duration(span.end_time - span.start_time),
-            response_code=str(span.status.canonical_code.value),
-            success=span.status.canonical_code
-            == StatusCanonicalCode.OK,  # Modify based off attributes or Status
+            response_code=str(span.status.status_code.value),
+            success=span.status.status_code
+            == StatusCode.OK,  # Modify based off attributes or Status
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
@@ -108,10 +108,10 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
         data = RemoteDependencyData(
             name=span.name,
             id="{:016x}".format(span.context.span_id),
-            result_code=str(span.status.canonical_code.value),
+            result_code=str(span.status.status_code.value),
             duration=utils.ns_to_duration(span.end_time - span.start_time),
-            success=span.status.canonical_code
-            == StatusCanonicalCode.OK,  # Modify based off attributes or Status
+            success=span.status.status_code
+            == StatusCode.OK,  # Modify based off attributes or Status
             properties={},
         )
         envelope.data = MonitorBase(
