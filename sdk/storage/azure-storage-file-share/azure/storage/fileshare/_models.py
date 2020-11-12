@@ -334,9 +334,8 @@ class ShareProperties(DictMixin):
     :ivar int remaining_retention_days:
         To indicate how many remaining days the deleted share will be kept.
         This is a service returned value, and the value will be set when list shared including deleted ones.
-    ivar root_squash:
+    ivar ~azure.storage.fileshare.models.ShareRootSquash root_squash:
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-    :type root_squash: ~azure.storage.fileshare.models.ShareRootSquash
     :ivar str enabled_protocols:
         Indicates the protocol enabled on the share. This can be either SMB or NFS.
     """
