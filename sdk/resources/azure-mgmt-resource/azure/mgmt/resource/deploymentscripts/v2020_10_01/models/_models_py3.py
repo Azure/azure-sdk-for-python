@@ -856,7 +856,8 @@ class DeploymentScriptListResult(msrest.serialization.Model):
 class DeploymentScriptsError(msrest.serialization.Model):
     """Deployment scripts error response.
 
-    :param error: The resource management error response.
+    :param error: Common error response for all Azure Resource Manager APIs to return error details
+     for failed operations. (This also follows the OData error response format.).
     :type error: ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.ErrorResponse
     """
 
@@ -980,7 +981,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 
 
 class ErrorResponse(msrest.serialization.Model):
-    """The resource management error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 

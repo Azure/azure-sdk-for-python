@@ -200,7 +200,13 @@ class ApplicationsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -325,7 +331,13 @@ class ApplicationsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'applicationName': self._serialize.url("application_name", application_name, 'str', max_length=64, min_length=3),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -343,7 +355,7 @@ class ApplicationsOperations(object):
         self,
         resource_group_name,  # type: str
         application_name,  # type: str
-        parameters=None,  # type: Optional["models.Application"]
+        parameters=None,  # type: Optional["models.ApplicationPatchable"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "models.Application"
@@ -355,7 +367,7 @@ class ApplicationsOperations(object):
         :param application_name: The name of the managed application.
         :type application_name: str
         :param parameters: Parameters supplied to update an existing managed application.
-        :type parameters: ~azure.mgmt.resource.managedapplications.models.Application
+        :type parameters: ~azure.mgmt.resource.managedapplications.models.ApplicationPatchable
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Application, or the result of cls(response)
         :rtype: ~azure.mgmt.resource.managedapplications.models.Application
@@ -390,7 +402,7 @@ class ApplicationsOperations(object):
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if parameters is not None:
-            body_content = self._serialize.body(parameters, 'Application')
+            body_content = self._serialize.body(parameters, 'ApplicationPatchable')
         else:
             body_content = None
         body_content_kwargs['content'] = body_content
@@ -698,7 +710,11 @@ class ApplicationsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -819,7 +835,11 @@ class ApplicationsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'applicationId': self._serialize.url("application_id", application_id, 'str', skip_quote=True),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

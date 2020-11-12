@@ -83,6 +83,15 @@ class DeploymentMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     INCREMENTAL = "Incremental"
     COMPLETE = "Complete"
 
+class ExpressionEvaluationOptionsScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The scope to be used for evaluation of parameters, variables and functions in a nested
+    template.
+    """
+
+    NOT_SPECIFIED = "NotSpecified"
+    OUTER = "Outer"
+    INNER = "Inner"
+
 class OnErrorDeploymentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The deployment on error behavior type. Possible values are LastSuccessful and
     SpecificDeployment.

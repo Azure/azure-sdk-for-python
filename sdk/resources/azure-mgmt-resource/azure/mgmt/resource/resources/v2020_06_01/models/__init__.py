@@ -32,6 +32,7 @@ try:
     from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
+    from ._models_py3 import ExpressionEvaluationOptions
     from ._models_py3 import GenericResource
     from ._models_py3 import GenericResourceExpanded
     from ._models_py3 import GenericResourceFilter
@@ -103,6 +104,7 @@ except (SyntaxError, ImportError):
     from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import ErrorResponse  # type: ignore
     from ._models import ExportTemplateRequest  # type: ignore
+    from ._models import ExpressionEvaluationOptions  # type: ignore
     from ._models import GenericResource  # type: ignore
     from ._models import GenericResourceExpanded  # type: ignore
     from ._models import GenericResourceFilter  # type: ignore
@@ -156,6 +158,7 @@ from ._resource_management_client_enums import (
     AliasType,
     ChangeType,
     DeploymentMode,
+    ExpressionEvaluationOptionsScopeType,
     OnErrorDeploymentType,
     PropertyChangeType,
     ProvisioningOperation,
@@ -191,6 +194,7 @@ __all__ = [
     'ErrorAdditionalInfo',
     'ErrorResponse',
     'ExportTemplateRequest',
+    'ExpressionEvaluationOptions',
     'GenericResource',
     'GenericResourceExpanded',
     'GenericResourceFilter',
@@ -242,6 +246,7 @@ __all__ = [
     'AliasType',
     'ChangeType',
     'DeploymentMode',
+    'ExpressionEvaluationOptionsScopeType',
     'OnErrorDeploymentType',
     'PropertyChangeType',
     'ProvisioningOperation',

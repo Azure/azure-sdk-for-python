@@ -40,3 +40,7 @@ class TemplateSpecArtifactKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     """
 
     TEMPLATE = "template"  #: The artifact represents an embedded Azure Resource Manager template.
+
+class TemplateSpecExpandKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+    VERSIONS = "versions"  #: Includes version information with the Template Spec.
