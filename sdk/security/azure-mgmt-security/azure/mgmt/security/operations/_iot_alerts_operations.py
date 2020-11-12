@@ -25,7 +25,6 @@ class IotAlertsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2019-08-01".
     """
 
     models = models
@@ -35,7 +34,6 @@ class IotAlertsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-08-01"
 
         self.config = config
 
@@ -72,6 +70,8 @@ class IotAlertsOperations(object):
          ~azure.mgmt.security.models.IotAlertPaged[~azure.mgmt.security.models.IotAlert]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2019-08-01"
+
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
@@ -85,7 +85,7 @@ class IotAlertsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
                 if min_start_time_utc is not None:
                     query_parameters['startTimeUtc>'] = self._serialize.query("min_start_time_utc", min_start_time_utc, 'str')
                 if max_start_time_utc is not None:
@@ -159,6 +159,8 @@ class IotAlertsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        api_version = "2019-08-01"
+
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -171,7 +173,7 @@ class IotAlertsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -202,3 +204,171 @@ class IotAlertsOperations(object):
 
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/iotAlerts/{iotAlertId}'}
+
+    def list1(
+            self, scope, min_start_time_utc=None, max_start_time_utc=None, alert_type=None, device_management_type=None, compromised_entity=None, limit=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
+        """List IoT alerts.
+
+        :param scope: Scope of the query: Subscription (i.e.
+         /subscriptions/{subscriptionId}) or IoT Hub (i.e.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Devices/iotHubs/{iotHubName})
+        :type scope: str
+        :param min_start_time_utc: Filter by minimum startTimeUtc (ISO 8601
+         format)
+        :type min_start_time_utc: str
+        :param max_start_time_utc: Filter by maximum startTimeUtc (ISO 8601
+         format)
+        :type max_start_time_utc: str
+        :param alert_type: Filter by alert type
+        :type alert_type: str
+        :param device_management_type: Get devices only from specific type,
+         Managed or Unmanaged. Possible values include: 'Managed', 'Unmanaged'
+        :type device_management_type: str or
+         ~azure.mgmt.security.models.ManagementState
+        :param compromised_entity: Filter by compromised device
+        :type compromised_entity: str
+        :param limit: Limit the number of items returned in a single page
+        :type limit: int
+        :param skip_token: Skip token used for pagination
+        :type skip_token: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of IotAlertModel
+        :rtype:
+         ~azure.mgmt.security.models.IotAlertModelPaged[~azure.mgmt.security.models.IotAlertModel]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2020-08-06-preview"
+
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list1.metadata['url']
+                path_format_arguments = {
+                    'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                if min_start_time_utc is not None:
+                    query_parameters['startTimeUtc>'] = self._serialize.query("min_start_time_utc", min_start_time_utc, 'str')
+                if max_start_time_utc is not None:
+                    query_parameters['startTimeUtc<'] = self._serialize.query("max_start_time_utc", max_start_time_utc, 'str')
+                if alert_type is not None:
+                    query_parameters['alertType'] = self._serialize.query("alert_type", alert_type, 'str')
+                if device_management_type is not None:
+                    query_parameters['deviceManagementType'] = self._serialize.query("device_management_type", device_management_type, 'str')
+                if compromised_entity is not None:
+                    query_parameters['compromisedEntity'] = self._serialize.query("compromised_entity", compromised_entity, 'str')
+                if limit is not None:
+                    query_parameters['$limit'] = self._serialize.query("limit", limit, 'int')
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.IotAlertModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list1.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotAlerts'}
+
+    def get1(
+            self, scope, iot_alert_id, custom_headers=None, raw=False, **operation_config):
+        """Get IoT alert.
+
+        :param scope: Scope of the query: Subscription (i.e.
+         /subscriptions/{subscriptionId}) or IoT Hub (i.e.
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Devices/iotHubs/{iotHubName})
+        :type scope: str
+        :param iot_alert_id: Id of the alert
+        :type iot_alert_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: IotAlertModel or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.IotAlertModel or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        api_version = "2020-08-06-preview"
+
+        # Construct URL
+        url = self.get1.metadata['url']
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'iotAlertId': self._serialize.url("iot_alert_id", iot_alert_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('IotAlertModel', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get1.metadata = {'url': '/{scope}/providers/Microsoft.Security/iotAlerts/{iotAlertId}'}

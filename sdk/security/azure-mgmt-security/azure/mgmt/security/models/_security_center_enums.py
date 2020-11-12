@@ -181,6 +181,8 @@ class EventSource(str, Enum):
     assessments = "Assessments"
     sub_assessments = "SubAssessments"
     alerts = "Alerts"
+    secure_scores = "SecureScores"
+    secure_score_controls = "SecureScoreControls"
 
 
 class PropertyType(str, Enum):
@@ -366,7 +368,7 @@ class AuthenticationProvisioningState(str, Enum):
 
     valid = "Valid"  #: Valid connector
     invalid = "Invalid"  #: Invalid connector
-    expired = "Expired"  #: the connection is expired
+    expired = "Expired"  #: the connection has expired
     incorrect_policy = "IncorrectPolicy"  #: Incorrect policy of the connector
 
 
@@ -376,6 +378,44 @@ class PermissionProperty(str, Enum):
     aws_security_audit = "AWS::SecurityAudit"  #: This permission grants access to read security configuration metadata.
     aws_amazon_ssm_automation_role = "AWS::AmazonSSMAutomationRole"  #: The permission provides for EC2 Automation service to execute activities defined within Automation documents.
     gcp_security_center_admin_viewer = "GCP::Security Center Admin Viewer"  #: This permission provides read only access to GCP Security Command Center.
+
+
+class ScanTriggerType(str, Enum):
+
+    on_demand = "OnDemand"  #: OnDemand
+    recurring = "Recurring"  #: Recurring
+
+
+class ScanState(str, Enum):
+
+    failed = "Failed"  #: Failed
+    failed_to_run = "FailedToRun"  #: FailedToRun
+    in_progress = "InProgress"  #: InProgress
+    passed = "Passed"  #: Passed
+
+
+class RuleStatus(str, Enum):
+
+    non_finding = "NonFinding"  #: NonFinding
+    finding = "Finding"  #: Finding
+    internal_error = "InternalError"  #: InternalError
+
+
+class RuleSeverity(str, Enum):
+
+    high = "High"  #: High
+    medium = "Medium"  #: Medium
+    low = "Low"  #: Low
+    informational = "Informational"  #: Informational
+    obsolete = "Obsolete"  #: Obsolete
+
+
+class RuleType(str, Enum):
+
+    binary = "Binary"  #: Binary
+    baseline_expected = "BaselineExpected"  #: BaselineExpected
+    positive_list = "PositiveList"  #: PositiveList
+    negative_list = "NegativeList"  #: NegativeList
 
 
 class VersionKind(str, Enum):
