@@ -336,7 +336,7 @@ class ShareProperties(DictMixin):
         This is a service returned value, and the value will be set when list shared including deleted ones.
     ivar root_squash:
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-    vartype root_squash: ~azure.storage.fileshare.models.ShareRootSquash
+    :vartype root_squash: ~azure.storage.fileshare.models.ShareRootSquash
     :ivar str enabled_protocols:
         Indicates the protocol enabled on the share. This can be either SMB or NFS.
     """
