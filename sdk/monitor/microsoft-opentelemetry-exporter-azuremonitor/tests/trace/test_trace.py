@@ -791,7 +791,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span.status = Status(status_code=StatusCode.UNSET)
         envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.result_code, "2")
+        self.assertEqual(envelope.data.base_data.result_code, "1")
         self.assertFalse(envelope.data.base_data.success)
 
         # Server route attribute
