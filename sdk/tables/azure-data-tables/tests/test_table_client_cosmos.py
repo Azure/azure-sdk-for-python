@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import unittest
 import pytest
 import platform
@@ -19,7 +20,12 @@ from _shared.testcase import (
 from azure.core.exceptions import HttpResponseError
 from _shared.cosmos_testcase import CachedCosmosAccountPreparer
 
-from devtools_testutils import CachedResourceGroupPreparer
+from devtools_testutils import CachedResourceGroupPreparer, PowerShellPreparer
+
+CosmosPSPreparer = functools.partial(
+    PowerShellPreparer, "tables",
+    tables_cosmos_account_name="fake_cosmos_account",
+    tables_primary_cosmos_account_key="fakecosmosaccountkey")
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -35,7 +41,7 @@ class StorageTableClientTest(TableTestCase):
     def setUp(self):
         super(StorageTableClientTest, self).setUp()
         self.sas_token = self.generate_sas_token()
-        self.token_credential = self.generate_oauth_token()
+        # self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
@@ -51,104 +57,103 @@ class StorageTableClientTest(TableTestCase):
         return "https://{}.table.cosmos.azure.com".format(account_name)
 
     # --Direct Parameters Test Cases --------------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_key(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_key(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        print(resource_group)
-        print(location)
-        print(cosmos_account)
-        print(cosmos_account_key)
         for client, url in SERVICES.items():
             # Act
             service = self.create_client_from_credential(
                 client,
-                account_url=self._account_url(cosmos_account),
-                credential=cosmos_account_key,
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=tables_primary_cosmos_account_key,
                 table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, tables_cosmos_account_name, tables_primary_cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
 
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_connection_string(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_connection_string(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
 
         for client, url in SERVICES.items():
             # Act
             service = self.create_client_from_credential(
                 client,
-                account_url=self._account_url(cosmos_account),
-                credential=cosmos_account_key,
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=tables_primary_cosmos_account_key,
                 table_name="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, tables_cosmos_account_name, tables_primary_cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_sas(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        url = self.account_url(cosmos_account, "cosmos")
-        suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
-            service = service_type(
-                self.account_url(cosmos_account, "cosmos"), credential=self.sas_token, table_name='foo')
+            service = self.create_client_from_credential(
+                service_type,
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=self.sas_token,
+                table_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account + suffix))
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertTrue(service.url.startswith('https://' + tables_cosmos_account_name + suffix))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_token(self, resource_group, location, cosmos_account, cosmos_account_key):
-        url = self.account_url(cosmos_account, "cosmos")
-        suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
+    @CosmosPSPreparer()
+    def test_create_service_with_token(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
-            service = service_type(url, credential=self.token_credential, table_name='foo')
+            service = self.create_client_from_credential(
+                service_type,
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=tables_primary_cosmos_account_key,
+                table_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account + suffix))
-            self.assertEqual(service.credential, self.token_credential)
-            self.assertFalse(hasattr(service.credential, 'account_key'))
-            self.assertTrue(hasattr(service.credential, 'get_token'))
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertTrue(service.url.startswith('https://' + tables_cosmos_account_name + suffix))
+            self.assertEqual(service.credential.account_key, tables_primary_cosmos_account_key)
+            self.assertTrue(hasattr(service.credential, 'account_key'))
+            self.assertFalse(hasattr(service.credential, 'get_token'))
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_token_and_http(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_token_and_http(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         for service_type in SERVICES:
             # Act
             with self.assertRaises(ValueError):
-                url = self.account_url(cosmos_account, "cosmos").replace('https', 'http')
-                service_type(url, credential=self.token_credential, table_name='foo')
+                url = self.account_url(tables_cosmos_account_name, "cosmos").replace('https', 'http')
+                service = self.create_client_from_credential(
+                    service_type,
+                    account_url=url,
+                    credential=tables_primary_cosmos_account_key,
+                    table_name="foo")
+                # service_type(url, credential=self.token_credential, table_name='foo')
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_china(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @pytest.mark.skip("Testing against a different cloud than the one created in powershell script")
+    @CosmosPSPreparer()
+    def test_create_service_china(self, cosmos_account, cosmos_account_key):
         # Arrange
         # TODO: Confirm regional cloud cosmos URLs
         for service_type in SERVICES.items():
@@ -169,26 +174,25 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_protocol(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_protocol(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-
-        for service_type in SERVICES.items():
+        url = self._account_url(tables_cosmos_account_name).replace('https', 'http')
+        suffix = '.table.cosmos.azure.com'
+        for service_type in SERVICES:
             # Act
-            url = self.account_url(cosmos_account, "cosmos").replace('https', 'http')
-            service = service_type[0](
-                url, credential=cosmos_account_key, table_name='foo')
+            service = self.create_client_from_credential(
+                service_type,
+                account_url=url,
+                credential=tables_primary_cosmos_account_key,
+                table_name="foo")
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, tables_cosmos_account_name, tables_primary_cosmos_account_key)
             self.assertEqual(service.scheme, 'http')
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_empty_key(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_empty_key(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         TABLE_SERVICES = [TableServiceClient, TableClient]
 
@@ -199,52 +203,49 @@ class StorageTableClientTest(TableTestCase):
 
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_socket_timeout(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_socket_timeout(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
-            default_service = service_type[0](
-                self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key, table_name='foo')
-            service = service_type[0](
-                self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key,
-                table_name='foo', connection_timeout=22)
+            default_service = self.create_client_from_credential(
+                service_type[0],
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=tables_primary_cosmos_account_key,
+                table_name="foo")
+            service = self.create_client_from_credential(
+                service_type[0],
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=tables_primary_cosmos_account_key,
+                table_name="foo", connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, tables_cosmos_account_name, tables_primary_cosmos_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
         if self.is_live:
             sleep(SLEEP_DELAY)
 
     # --Connection String Test Cases --------------------------------------------
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_connection_string_key(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_connection_string_key(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};'.format(cosmos_account, cosmos_account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, cosmos_account, cosmos_account_key)
+            self.validate_standard_account_endpoints(service, tables_cosmos_account_name, tables_primary_cosmos_account_key)
             self.assertEqual(service.scheme, 'https')
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Cosmos differential")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_connection_string_sas(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_connection_string_sas(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(cosmos_account, self.sas_token)
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(tables_cosmos_account_name, self.sas_token)
 
         for service_type in SERVICES:
             # Act
@@ -252,19 +253,16 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account + '.table.core.windows.net'))
+            assert tables_cosmos_account_name in service.url
+            self.assertTrue(service.url.startswith('https://' + tables_cosmos_account_name + '.table.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_connection_string_cosmos(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_connection_string_cosmos(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
-            cosmos_account, cosmos_account_key)
+            tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
         for service_type in SERVICES:
             # Act
@@ -272,20 +270,17 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account + '.table.cosmos.azure.com'))
-            self.assertEqual(service.credential.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://' + cosmos_account + '.table.cosmos.azure.com'))
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertTrue(service.url.startswith('https://' + tables_cosmos_account_name + '.table.cosmos.azure.com'))
+            self.assertEqual(service.credential.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_key, tables_primary_cosmos_account_key)
+            self.assertTrue(service._primary_endpoint.startswith('https://' + tables_cosmos_account_name + '.table.cosmos.azure.com'))
             self.assertEqual(service.scheme, 'https')
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
 
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, cosmos_account, cosmos_account_key):
+    def test_create_service_with_connection_string_endpoint_protocol(self, cosmos_account, cosmos_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
             cosmos_account, cosmos_account_key)
@@ -306,66 +301,56 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_connection_string_emulated(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_connection_string_emulated(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(cosmos_account, cosmos_account_key)
+            conn_string = 'UseDevelopmentStorage=true;'.format(tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
             # Act
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_connection_string_custom_domain(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_connection_string_custom_domain(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com;'.format(
-                cosmos_account, cosmos_account_key)
+                tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_key, tables_primary_cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_conn_str_custom_domain_trailing_slash(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_conn_str_custom_domain_trailing_slash(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;'.format(
-                cosmos_account, cosmos_account_key)
+                tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_key, tables_primary_cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_conn_str_custom_domain_sec_override(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_conn_str_custom_domain_sec_override(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;'.format(
-                cosmos_account, cosmos_account_key)
+                tables_cosmos_account_name, tables_primary_cosmos_account_key)
 
             # Act
             service = service_type[0].from_connection_string(
@@ -373,20 +358,17 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_key, tables_primary_cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_conn_str_fails_if_sec_without_primary(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_conn_str_fails_if_sec_without_primary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                cosmos_account, cosmos_account_key,
+                tables_cosmos_account_name, tables_primary_cosmos_account_key,
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
@@ -394,17 +376,14 @@ class StorageTableClientTest(TableTestCase):
             # Fails if primary excluded
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                cosmos_account,
-                cosmos_account_key,
+                tables_cosmos_account_name,
+                tables_primary_cosmos_account_key,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
@@ -413,35 +392,31 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_key, tables_primary_cosmos_account_key)
             self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
-        if self.is_live:
-            sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_service_with_custom_account_endpoint_path(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_service_with_custom_account_endpoint_path(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};'.format(
-                cosmos_account, cosmos_account_key, custom_account_url)
+                tables_cosmos_account_name, tables_primary_cosmos_account_key, custom_account_url)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertEqual(service.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_name, cosmos_account)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
+            self.assertEqual(service.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_name, tables_cosmos_account_name)
+            self.assertEqual(service.credential.account_key, tables_primary_cosmos_account_key)
             self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
 
         service = TableServiceClient(account_url=custom_account_url)
         self.assertEqual(service.account_name, None)
         self.assertEqual(service.credential, None)
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        # mine doesnt have a question mark at the end
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
@@ -458,13 +433,10 @@ class StorageTableClientTest(TableTestCase):
         self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
         self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_user_agent_default(self, resource_group, location, cosmos_account, cosmos_account_key):
+    def test_user_agent_default(self, cosmos_account, cosmos_account_key):
         service = TableServiceClient(self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key)
 
         def callback(response):
@@ -485,7 +457,7 @@ class StorageTableClientTest(TableTestCase):
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_user_agent_custom(self, resource_group, location, cosmos_account, cosmos_account_key):
+    def test_user_agent_custom(self, cosmos_account, cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
             self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key, user_agent=custom_app)
@@ -519,10 +491,12 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_user_agent_append(self, resource_group, location, cosmos_account, cosmos_account_key):
-        service = TableServiceClient(self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key)
+    @CosmosPSPreparer()
+    def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        service = self.create_client_from_credential(
+            TableServiceClient,
+            account_url=self._account_url(tables_cosmos_account_name),
+            credential=tables_primary_cosmos_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -540,34 +514,35 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("kierans theory")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_table_client_with_complete_table_url(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_table_client_with_complete_table_url(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        table_url = self.account_url(cosmos_account, "cosmos") + "/foo"
-        service = TableClient(table_url, table_name='bar', credential=cosmos_account_key)
+        table_url = self._account_url(tables_cosmos_account_name) + "/foo"
+        service = self.create_client_from_credential(
+            TableClient,
+            account_url=table_url,
+            credential=tables_primary_cosmos_account_key,
+            table_name="bar")
 
         # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, cosmos_account)
+        self.assertEqual(service.account_name, tables_cosmos_account_name)
 
-    @pytest.mark.skip("cosmos differential")
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_create_table_client_with_complete_url(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_create_table_client_with_complete_url(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        table_url = "https://{}.table.cosmos.azure.com:443/foo".format(cosmos_account)
-        service = TableClient(account_url=table_url, table_name='bar', credential=cosmos_account_key)
+        table_url = "https://{}.table.cosmos.azure.com:443/foo".format(tables_cosmos_account_name)
+        service = self.create_client_from_credential(
+            TableClient,
+            account_url=table_url,
+            credential=tables_primary_cosmos_account_key,
+            table_name="bar")
 
         # Assert
         self.assertEqual(service.scheme, 'https')
         self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, cosmos_account)
-
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+        self.assertEqual(service.account_name, tables_cosmos_account_name)
 
     def test_create_table_client_with_invalid_name(self):
         # Arrange
@@ -602,35 +577,34 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_closing_pipeline_client(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_closing_pipeline_client(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         for client, url in SERVICES.items():
             # Act
-            service = client(
-                self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key, table_name='table')
+            service = self.create_client_from_credential(
+                client,
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=tables_primary_cosmos_account_key,
+                table_name='table')
 
             # Assert
             with service:
                 assert hasattr(service, 'close')
                 service.close()
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
-
-    @CachedResourceGroupPreparer(name_prefix="tablestest")
-    @CachedCosmosAccountPreparer(name_prefix="tablestest")
-    def test_closing_pipeline_client_simple(self, resource_group, location, cosmos_account, cosmos_account_key):
+    @CosmosPSPreparer()
+    def test_closing_pipeline_client_simple(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         for client, url in SERVICES.items():
             # Act
-            service = client(
-                self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key, table_name='table')
-            service.close()
+            service = self.create_client_from_credential(
+                client,
+                account_url=self._account_url(tables_cosmos_account_name),
+                credential=tables_primary_cosmos_account_key,
+                table_name='table')
 
-        if self.is_live:
-            sleep(SLEEP_DELAY)
+            service.close()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

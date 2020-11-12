@@ -25,7 +25,6 @@ from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
-# from schemaregistry_preparer import SchemaRegistryPreparer
 from devtools_testutils import AzureTestCase, SchemaRegistryPowerShellPreparer
 
 class SchemaRegistryTests(AzureTestCase):
