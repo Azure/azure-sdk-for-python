@@ -2,7 +2,7 @@
 
 [![Gitter chat](https://img.shields.io/gitter/room/Microsoft/azure-monitor-python)](https://gitter.im/Azure/azure-sdk-for-python)
 
-The Exporter for Azure Monitor allows you to export tracing data utilizing the OpenTelemetry Python Client and send telemetry data to Azure Monitor written in Python.
+The exporter for Azure Monitor allows you to export tracing data utilizing the OpenTelemetry SDK and send telemetry data to Azure Monitor for applications written in Python.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/CHANGELOG.md)
 
