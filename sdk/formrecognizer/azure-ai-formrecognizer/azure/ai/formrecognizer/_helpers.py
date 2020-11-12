@@ -86,18 +86,6 @@ def adjust_text_angle(text_angle):
     return text_angle
 
 
-def adjust_page_number(value):
-    """Adjusts the page number on the business card field
-    `ContactNames` to be set to the page number value found on `FirstName`
-    """
-    for val in value.value_array:
-        if val.value_object.get("FirstName", None) and val.value_object.get("LastName", None):
-            if val.value_object["FirstName"].page == val.value_object["LastName"].page:
-                page_number = val.value_object["FirstName"].page
-                val.page = page_number
-    return value
-
-
 def get_authentication_policy(credential):
     authentication_policy = None
     if credential is None:

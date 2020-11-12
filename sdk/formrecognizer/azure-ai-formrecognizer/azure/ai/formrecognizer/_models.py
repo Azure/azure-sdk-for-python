@@ -11,7 +11,6 @@ from collections import namedtuple
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
-    adjust_page_number,
     get_element
 )
 
@@ -36,7 +35,7 @@ def resolve_element(element, read_result):
     raise ValueError("Failed to parse element reference.")
 
 
-def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too-many-return-statements
+def get_field_value(field, value, read_result):  # pylint: disable=too-many-return-statements
     if value is None:
         return value
     if value.type == "string":
@@ -52,16 +51,13 @@ def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too
     if value.type == "time":
         return value.value_time
     if value.type == "array":
-        # business cards pre-built model doesn't return a page number for the `ContactNames` field
-        if "business_card" in kwargs and field == "ContactNames":
-            value = adjust_page_number(value)
         return [
-            FormField._from_generated(field, value, read_result, **kwargs)
+            FormField._from_generated(field, value, read_result)
             for value in value.value_array
         ]
     if value.type == "object":
         return {
-            key: FormField._from_generated(key, value, read_result, **kwargs)
+            key: FormField._from_generated(key, value, read_result)
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
@@ -251,12 +247,12 @@ class FormField(object):
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
-    def _from_generated(cls, field, value, read_result, **kwargs):
+    def _from_generated(cls, field, value, read_result):
         return cls(
             value_type=adjust_value_type(value.type) if value else None,
             label_data=None,  # not returned with receipt/supervised
             value_data=FieldData._from_generated(value, read_result),
-            value=get_field_value(field, value, read_result, **kwargs),
+            value=get_field_value(field, value, read_result),
             name=field,
             confidence=adjust_confidence(value.confidence) if value else None,
         )
