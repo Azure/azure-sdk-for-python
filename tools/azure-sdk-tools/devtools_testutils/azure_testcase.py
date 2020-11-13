@@ -14,7 +14,6 @@ try:
 except ImportError:
     from inspect import getargspec as get_arg_spec
 
-from dotenv import load_dotenv, find_dotenv
 import pytest
 
 from azure_devtools.scenario_tests import (
@@ -94,11 +93,10 @@ class AzureTestCase(ReplayableTest):
                  recording_dir=None, recording_name=None,
                  recording_processors=None, replay_processors=None,
                  recording_patches=None, replay_patches=None,
-                 override_sys_vars=False,
                  **kwargs):
         self.working_folder = os.path.dirname(__file__)
         self.qualified_test_name = get_qualified_method_name(self, method_name)
-        self._fake_settings, self._real_settings = self._load_settings(override_sys_vars)
+        self._fake_settings, self._real_settings = self._load_settings()
         self.scrubber = GeneralNameReplacer()
         config_file = config_file or os.path.join(self.working_folder, TEST_SETTING_FILENAME)
         if not os.path.exists(config_file):
@@ -125,8 +123,7 @@ class AzureTestCase(ReplayableTest):
         else:
             return self._fake_settings
 
-    def _load_settings(self, override_sys_vars):
-        load_dotenv(find_dotenv(), override=override_sys_vars)
+    def _load_settings(self):
         try:
             from . import mgmt_settings_real as real_settings
             return fake_settings, real_settings
