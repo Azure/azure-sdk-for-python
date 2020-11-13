@@ -299,7 +299,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         else:
             numbers = [types.AMQPLong(s) for s in sequence_numbers]
         if len(numbers) == 0:
-            return # no-op on empty list.
+            return None # no-op on empty list.
         request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
