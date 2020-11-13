@@ -6,13 +6,13 @@ The exporter for Azure Monitor allows you to export tracing data utilizing the O
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/CHANGELOG.md)
 
-> **NOTE**: This is the preview for the next major version of the [`opentelemetry-azure-monitor-python`](https://github.com/microsoft/opentelemetry-azure-monitor-python).
+> **NOTE**: This is the preview for the next major version of [`opentelemetry-azure-monitor-python`](https://github.com/microsoft/opentelemetry-azure-monitor-python).
 
 ## Getting started
 
 ### Install the package
 
-Install the Microsoft Opentelemetry Exporter Azure Monitor client library for Python with [pip][pip]:
+Install the Microsoft Opentelemetry exporter for Azure Monitor with [pip][pip]:
 
 ```Bash
 pip install microsoft-opentelemetry-exporter-azuremonitor --pre
@@ -57,11 +57,11 @@ exporter = AzureMonitorSpanExporter(
 
 Some of the key concepts for the Azure monitor exporter include:
 
-* [Opentelemetry][opentelemtry_spec]: Opentelemetry is a tool to instrument, generate, collect, and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
+* [Opentelemetry][opentelemtry_spec]: Opentelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
 
-* [Trace][trace_concept]: Trace can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are defined as parent/child relationship.
+* [Trace][trace_concept]: Trace refers to distributed tracing. It can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are defined as parent/child relationship.
 
-* [AzureMonitorSpanExporter][client_reference]: This is the object a user should first initialize to connect the namespace to send trace data.
+* [AzureMonitorSpanExporter][client_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
 
 * [Exporter Options][exporter_options]: Options to configure Azure exporters. Includes connection_string, instrumentation_key, proxies, timeout etc.
 
@@ -71,9 +71,9 @@ For more information about these resources, see [What is Azure Monitor?][product
 
 The following sections provide several code snippets covering some of the most common tasks, including:
 
-* [Export hello world trace data](#export-hello-world-trace)
-* [Modifying Traces](#modifying-traces)
-* [Instrumentation with requests library](#instrumentation-with-requests-library)
+* [Exporting a custom span](#export-hello-world-trace)
+* [Modifying spans](#modifying-traces)
+* [Using an instrumentation to track a library](#instrumentation-with-requests-library)
 
 
 ### Export Hello World Trace
@@ -145,7 +145,7 @@ OpenTelemetry also supports several instrumentations which allows to instrument 
 This example shows how to instrument with the requests_ library.
 
 * Create an Azure Monitor resource and get the instrumentation key, more information can be found here.
-* Install the requests integration package using pip install opentelemetry-ext-http-requests.
+* Install the requests integration package using pip install opentelemetry-instrumentation-requests.
 * Specify your connection string in an environment variable `AZURE_MONITOR_CONNECTION_STRING`.
 
 ```Python
@@ -176,7 +176,7 @@ response = requests.get(url="https://azure.microsoft.com/")
 
 ## Troubleshooting
 
-This client raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#azure-core-library-exceptions).
+The exporter raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md#azure-core-library-exceptions).
 
 ## Next steps
 
