@@ -36,7 +36,7 @@ from ._file_client import ShareFileClient
 from ._lease import ShareLeaseClient
 
 if TYPE_CHECKING:
-    from ._models import ShareProperties, AccessPolicy
+    from ._models import ShareProperties, AccessPolicy, EnabledProtocols
 
 
 class ShareClient(StorageAccountHostsMixin):
@@ -315,8 +315,8 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword enabled_protocols:
-            Protocols to enable on the share.
-        :paramtype enabled_protocols: List[str or ~azure.storage.fileshare.EnabledProtocols]
+            Protocols to enable on the share. Only one protocol can be enabled on the share.
+        :paramtype enabled_protocols: str or ~azure.storage.fileshare.EnabledProtocols
         :keyword root_squash:
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
@@ -339,14 +339,10 @@ class ShareClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         root_squash = kwargs.pop('root_squash', None)
         enabled_protocols = kwargs.pop('enabled_protocols', None)
-        enabled_protocol = None
-        if enabled_protocols:
-            if len(enabled_protocols) > 1:
-                ValueError("Only one protocol at a time must be enabled.")
-            else:
-                enabled_protocol = enabled_protocols[0]
-        if root_squash and enabled_protocol != "NFS":
-            raise ValueError("The 'root_squash' keyword can only be used on NFS shares.")
+        if enabled_protocols not in ['NFS', 'SMB', EnabledProtocols.SMB, EnabledProtocols.NFS]:
+            raise ValueError("The enabled protocol must be set to either SMB or NFS.")
+        if root_squash and enabled_protocols not in ['NFS', EnabledProtocols.NFS]:
+            raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
@@ -357,7 +353,7 @@ class ShareClient(StorageAccountHostsMixin):
                 quota=quota,
                 access_tier=access_tier,
                 root_squash=root_squash,
-                enabled_protocols=enabled_protocol,
+                enabled_protocols=enabled_protocols,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
