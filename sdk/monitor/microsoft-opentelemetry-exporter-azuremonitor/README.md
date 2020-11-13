@@ -27,13 +27,8 @@ To use this package, you must have:
 
 ### Authenticate the client
 
-Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorSpanExporter` class. You will need an **instrumentation_key** or a **connection_string** to instantiate the object.
-The priority of which value takes on the instrumentation key is:
-* Key from explicitly passed in connection string
-* Key from explicitly passed in instrumentation key
-* Key from connection string in environment variable
-* Key from instrumentation key in environment variable
-Please find the samples linked below for demonstration as to how to authenticate via either approach.
+Interaction with Azure monitor exporter starts with an instance of the `AzureMonitorSpanExporter` class. You will need a **connection_string** to instantiate the object.
+Please find the samples linked below for demonstration as to how to authenticate using a connection string.
 
 #### [Create Exporter from connection string][sample_authenticate_client_connstr]
 
@@ -44,22 +39,21 @@ exporter = AzureMonitorSpanExporter(
 )
 ```
 
-#### Create Exporter using the instrumentation key:
-
-```Python
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
-exporter = AzureMonitorSpanExporter(
-    instrumentation_key = os.environ["AZURE_MONITOR_INSTRUMENTATION_KEY"]
-)
-```
-
 ## Key concepts
 
 Some of the key concepts for the Azure monitor exporter include:
 
 * [Opentelemetry][opentelemtry_spec]: Opentelemetry is a set of libraries used to collect and export telemetry data (metrics, logs, and traces) for analysis in order to understand your software's performance and behavior.
 
+* [Instrumentation][instrumentation_library]: The ability to call the opentelemetry API directly by any application is facilitated by instrumentaton. A library that enables OpenTelemetry observability for another library is called an Instrumentation Library.
+
 * [Trace][trace_concept]: Trace refers to distributed tracing. It can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are defined as parent/child relationship.
+
+* [Tracer Provider][tracer_provider]: Provides a `Tracer` for use by the given instrumentation library.
+
+* [Span Processor][span_processor]: A span processor allows hooks for SDK's `Span` start and end method invocations. Follow the link for more information.
+
+* [Sampling][sampler_ref]: Sampling is a mechanism to control the noise and overhead introduced by OpenTelemetry by reducing the number of samples of traces collected and sent to the backend.
 
 * [AzureMonitorSpanExporter][client_reference]: This is the class that is initialized to send tracing related telemetry to Azure Monitor.
 
@@ -85,15 +79,9 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
 
-# Callback function to add os_type: linux to span properties
-def callback_function(envelope):
-    envelope.data.base_data.properties["os_type"] = "linux"
-    return True
-
 exporter = AzureMonitorSpanExporter(
     connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
 )
-exporter.add_telemetry_processor(callback_function)
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
@@ -142,11 +130,9 @@ with tracer.start_as_current_span('hello'):
 
 OpenTelemetry also supports several instrumentations which allows to instrument with third party libraries.
 
-This example shows how to instrument with the requests_ library.
+This example shows how to instrument with the [requests](https://pypi.org/project/requests/) library.
 
-* Create an Azure Monitor resource and get the instrumentation key, more information can be found here.
 * Install the requests integration package using pip install opentelemetry-instrumentation-requests.
-* Specify your connection string in an environment variable `AZURE_MONITOR_CONNECTION_STRING`.
 
 ```Python
 import os
@@ -160,6 +146,8 @@ from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExport
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
+
+# This line causes your calls made with the requests library to be tracked.
 RequestsInstrumentor().instrument()
 span_processor = BatchExportSpanProcessor(
     AzureMonitorSpanExporter(
@@ -223,5 +211,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [trace_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#trace
 [client_reference]: https://opentelemetry-azure-monitor-python.readthedocs.io/en/latest/azure_monitor/export/export.trace.html#module-azure_monitor.export.trace
 [opentelemtry_spec]: https://opentelemetry.io/
+[instrumentation_library]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#instrumentation-libraries
+[tracer_provider]: https://opentelemetry-python.readthedocs.io/en/stable/api/trace.html?highlight=TracerProvider#opentelemetry.trace.TracerProvider
+[span_processor]: https://opentelemetry-python.readthedocs.io/en/stable/_modules/opentelemetry/sdk/trace.html?highlight=SpanProcessor#
+[sampler_ref]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/trace/sdk.md#sampling
 
 [sample_authenticate_client_connstr]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/samples/traces/sample_trace.py#L18
