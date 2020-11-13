@@ -108,7 +108,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
         self._response = await self._paging_method.get_page(self.continuation_token)
 
-        self.continuation_token, self._current_page = self._paging_method.extract_data(
+        self.continuation_token, self._current_page = await self._paging_method.extract_data(
             self._response
         )
 

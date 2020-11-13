@@ -47,8 +47,17 @@ class _LegacyPagingMethod:
                 "You are using the legacy version of paging, but haven't provided both a get_next and extract_data. "
                 "Preferably switch to the new paging with PagingMethod, but if not, please pass in the missing callback."
             )
-        self.get_page = get_next
+        self._get_page = get_next
         self.extract_data = extract_data
+        self._did_a_call_already = False
+
+    def finished(self, continuation_token):
+        return continuation_token is None and self._did_a_call_already
+
+    @property
+    def get_page(self):
+        self._did_a_call_already = True
+        return self._get_page
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(

@@ -39,6 +39,11 @@ class AsyncPagingMethodABC(PagingMethodABC):
         """
         raise NotImplementedError("This method needs to be implemented")
 
+    async def extract_data(self, pipeline_response):
+        """Return the continuation token and current list of elements to PageIterator
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
 
 class AsyncBasicPagingMethod(BasicPagingMethod):
     """This is the most common paging method. It uses the continuation token
@@ -60,6 +65,15 @@ class AsyncBasicPagingMethod(BasicPagingMethod):
             raise HttpResponseError(response=http_response)
 
         return response
+
+    async def extract_data(self, pipeline_response):
+        from .async_paging import AsyncList
+        
+        deserialized = self._deserialize_output(pipeline_response)
+        list_of_elem = self.get_list_elements(pipeline_response, deserialized)
+        list_of_elem = self.mutate_list(pipeline_response, list_of_elem)
+        continuation_token = self.get_continuation_token(pipeline_response, deserialized)
+        return continuation_token, AsyncList(list_of_elem)
 
 
 class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
