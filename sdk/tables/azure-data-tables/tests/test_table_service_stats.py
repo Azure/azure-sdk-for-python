@@ -73,8 +73,3 @@ class TableServiceStatsTest(TableTestCase):
 
         # Assert
         self._assert_stats_unavailable(stats)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

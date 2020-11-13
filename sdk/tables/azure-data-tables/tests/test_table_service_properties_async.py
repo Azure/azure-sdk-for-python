@@ -262,8 +262,3 @@ class TableServicePropertiesTest(TableTestCase):
         # Assert
         with self.assertRaises(HttpResponseError):
             await tsc.set_service_properties(None, None, minute_metrics)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

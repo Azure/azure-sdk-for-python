@@ -1892,8 +1892,3 @@ class StorageTableEntityTest(TableTestCase):
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

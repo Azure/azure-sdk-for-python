@@ -1896,8 +1896,3 @@ class StorageTableEntityTest(TableTestCase):
             self._assert_default_entity(entities[0])
         finally:
             self._tear_down()
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
