@@ -35,7 +35,7 @@ Please find the samples linked below for demonstration as to how to authenticate
 ```Python
 from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
 exporter = AzureMonitorSpanExporter(
-    connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 ```
 
@@ -80,7 +80,7 @@ from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
 
 exporter = AzureMonitorSpanExporter(
-    connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
 )
 
 trace.set_tracer_provider(TracerProvider())
@@ -151,7 +151,7 @@ tracer = trace.get_tracer(__name__)
 RequestsInstrumentor().instrument()
 span_processor = BatchExportSpanProcessor(
     AzureMonitorSpanExporter(
-        connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
+        connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING "]
     )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)

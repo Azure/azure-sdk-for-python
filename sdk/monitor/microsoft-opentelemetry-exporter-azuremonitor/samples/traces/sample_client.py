@@ -14,7 +14,7 @@ tracer = trace.get_tracer(__name__)
 RequestsInstrumentor().instrument()
 span_processor = BatchExportSpanProcessor(
     AzureMonitorSpanExporter(
-        connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
+        connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     )
 )
 trace.get_tracer_provider().add_span_processor(span_processor)

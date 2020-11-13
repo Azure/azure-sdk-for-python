@@ -15,7 +15,7 @@ def callback_function(envelope):
 
 
 exporter = AzureMonitorSpanExporter(
-    connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 exporter.add_telemetry_processor(callback_function)
 
