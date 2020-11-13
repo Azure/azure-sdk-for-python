@@ -1,10 +1,7 @@
 import json
 import time
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import (
-    AzureMgmtTestCase,
-    ResourceGroupPreparer,
-)
+from devtools_testutils import AzureMgmtTestCase
 import azure.mgmt.netapp.models
 from azure.mgmt.netapp.models import NetAppAccount, NetAppAccountPatch
 from setup import *
@@ -46,51 +43,47 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         super(NetAppAccountTestCase, self).setUp()
         self.client = self.create_mgmt_client(azure.mgmt.netapp.AzureNetAppFilesManagementClient)
 
-    @ResourceGroupPreparer(location=LOCATION)
-    def test_create_delete_account(self,resource_group):
-        account = create_account(self.client, resource_group.name, TEST_ACC_1)
+    def test_create_delete_account(self):
+        account = create_account(self.client, TEST_RG, TEST_ACC_1)
         self.assertEqual(account.name, TEST_ACC_1)
 
-        account_list = self.client.accounts.list(resource_group.name)
+        account_list = self.client.accounts.list(TEST_RG)
         self.assertEqual(len(list(account_list)), 1)
 
-        delete_account(self.client, resource_group.name, TEST_ACC_1)
-        account_list = self.client.accounts.list(resource_group.name)
+        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        account_list = self.client.accounts.list(TEST_RG)
         self.assertEqual(len(list(account_list)), 0)
 
-    @ResourceGroupPreparer(location=LOCATION)
-    def test_list_accounts(self,resource_group):
-        account = create_account(self.client, resource_group.name, TEST_ACC_1)
-        account = create_account(self.client, resource_group.name, TEST_ACC_2)
+    def test_list_accounts(self):
+        account = create_account(self.client, TEST_RG, TEST_ACC_1)
+        account = create_account(self.client, TEST_RG, TEST_ACC_2)
 
-        account_list = self.client.accounts.list(resource_group.name)
+        account_list = self.client.accounts.list(TEST_RG)
         self.assertEqual(len(list(account_list)), 2)
         idx = 0
         for account in account_list:
             self.assertEqual(account.name, accounts[idx])
             idx += 1
 
-        delete_account(self.client, resource_group.name, TEST_ACC_1)
-        delete_account(self.client, resource_group.name, TEST_ACC_2)
+        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        delete_account(self.client, TEST_RG, TEST_ACC_2)
 
-    @ResourceGroupPreparer(location=LOCATION)
-    def test_get_account_by_name(self,resource_group):
-        create_account(self.client, resource_group.name, TEST_ACC_1)
+    def test_get_account_by_name(self):
+        create_account(self.client, TEST_RG, TEST_ACC_1)
 
-        account = self.client.accounts.get(resource_group.name, TEST_ACC_1)
+        account = self.client.accounts.get(TEST_RG, TEST_ACC_1)
         self.assertEqual(account.name, TEST_ACC_1)
 
-        delete_account(self.client, resource_group.name, TEST_ACC_1)
+        delete_account(self.client, TEST_RG, TEST_ACC_1)
 
-    @ResourceGroupPreparer(location=LOCATION)
-    def test_patch_account(self,resource_group):
-        create_account(self.client, resource_group.name, TEST_ACC_1)
+    def test_patch_account(self):
+        create_account(self.client, TEST_RG, TEST_ACC_1)
 
         tag = {'Tag1': 'Value2'}
         netapp_account_patch = NetAppAccountPatch(tags=tag)
 
-        account = self.client.accounts.update(netapp_account_patch, resource_group.name, TEST_ACC_1).result()
+        account = self.client.accounts.update(netapp_account_patch, TEST_RG, TEST_ACC_1).result()
         self.assertTrue(account.tags['Tag1'] == 'Value2')
 
-        delete_account(self.client, resource_group.name, TEST_ACC_1)
+        delete_account(self.client, TEST_RG, TEST_ACC_1)
 
