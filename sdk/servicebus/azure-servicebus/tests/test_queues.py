@@ -2153,3 +2153,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             message = receiver.next()
             assert message.body is None
             receiver.complete_message(message)
+
+    def test_send_message_alternate_body_types(self, **kwargs):
+        with pytest.raises(TypeError):
+            message = ServiceBusMessage(body=[None, None])
+        with pytest.raises(TypeError):
+            message = ServiceBusMessage(body=['1', None])
+        with pytest.raises(TypeError):
+            message = ServiceBusMessage(body=[Exception()])
+        with pytest.raises(TypeError):
+            message = ServiceBusMessage(body={})
+        with pytest.raises(TypeError):
+            message = ServiceBusMessage(body=Exception())
