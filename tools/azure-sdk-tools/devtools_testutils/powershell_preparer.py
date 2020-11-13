@@ -33,7 +33,6 @@ class PowerShellPreparer(AzureMgmtPreparer):
         self.fake_values = {}
         self.real_values = {}
         self._set_secrets(**kwargs)
-        self._set_mgmt_settings_real_values()
 
     def _set_secrets(self, **kwargs):
         keys = kwargs.keys()
@@ -48,13 +47,15 @@ class PowerShellPreparer(AzureMgmtPreparer):
         self.needed_keys = needed_keys
 
     def _set_mgmt_settings_real_values(self):
-        os.environ["AZURE_TENANT_ID"] = os.environ["{}_TENANT_ID".format(self.directory.upper())]
-        os.environ["AZURE_CLIENT_ID"] = os.environ["{}_CLIENT_ID".format(self.directory.upper())]
-        os.environ["AZURE_CLIENT_SECRET"] = os.environ["{}_CLIENT_SECRET".format(self.directory.upper())]
+        if self.is_live:
+            os.environ["AZURE_TENANT_ID"] = os.environ["{}_TENANT_ID".format(self.directory.upper())]
+            os.environ["AZURE_CLIENT_ID"] = os.environ["{}_CLIENT_ID".format(self.directory.upper())]
+            os.environ["AZURE_CLIENT_SECRET"] = os.environ["{}_CLIENT_SECRET".format(self.directory.upper())]
 
     def create_resource(self, name, **kwargs):
 
         if self.is_live:
+            self._set_mgmt_settings_real_values()
             for key in self.needed_keys:
 
                 scrubbed_value = self.fake_values[key]
