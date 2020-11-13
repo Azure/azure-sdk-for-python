@@ -201,7 +201,7 @@ class SingleSignOnConfigurationsOperations:
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param configuration_name:
+        :param configuration_name: Configuration name.
         :type configuration_name: str
         :param body:
         :type body: ~microsoft_datadog_client.models.DatadogSingleSignOnResource
@@ -242,7 +242,14 @@ class SingleSignOnConfigurationsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'monitorName': self._serialize.url("monitor_name", monitor_name, 'str'),
+            'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -272,7 +279,7 @@ class SingleSignOnConfigurationsOperations:
         :type resource_group_name: str
         :param monitor_name: Monitor resource name.
         :type monitor_name: str
-        :param configuration_name:
+        :param configuration_name: Configuration name.
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatadogSingleSignOnResource, or the result of cls(response)
