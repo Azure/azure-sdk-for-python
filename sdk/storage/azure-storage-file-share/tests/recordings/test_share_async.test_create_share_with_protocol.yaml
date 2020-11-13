@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 10 Nov 2020 06:21:59 GMT
+      - Fri, 13 Nov 2020 22:18:04 GMT
       x-ms-enabled-protocols:
       - NFS
       x-ms-root-squash:
@@ -18,9 +18,9 @@ interactions:
     body:
       string: ''
     headers:
-      date: Tue, 10 Nov 2020 06:21:58 GMT
-      etag: '"0x8D88540EDC46AB1"'
-      last-modified: Tue, 10 Nov 2020 06:21:58 GMT
+      date: Fri, 13 Nov 2020 22:18:05 GMT
+      etag: '"0x8D88821FE5E635D"'
+      last-modified: Fri, 13 Nov 2020 22:18:05 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2020-04-08'
@@ -34,7 +34,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 10 Nov 2020 06:21:59 GMT
+      - Fri, 13 Nov 2020 22:18:04 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
@@ -43,9 +43,9 @@ interactions:
     body:
       string: ''
     headers:
-      date: Tue, 10 Nov 2020 06:21:58 GMT
-      etag: '"0x8D88540EDC46AB1"'
-      last-modified: Tue, 10 Nov 2020 06:21:58 GMT
+      date: Fri, 13 Nov 2020 22:18:05 GMT
+      etag: '"0x8D88821FE5E635D"'
+      last-modified: Fri, 13 Nov 2020 22:18:05 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-access-tier: Premium
@@ -53,7 +53,7 @@ interactions:
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
       x-ms-root-squash: RootSquash
-      x-ms-share-next-allowed-quota-downgrade-time: Tue, 10 Nov 2020 06:21:58 GMT
+      x-ms-share-next-allowed-quota-downgrade-time: Fri, 13 Nov 2020 22:18:05 GMT
       x-ms-share-provisioned-egress-mbps: '66'
       x-ms-share-provisioned-ingress-mbps: '44'
       x-ms-share-provisioned-iops: '500'
@@ -69,7 +69,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 10 Nov 2020 06:21:59 GMT
+      - Fri, 13 Nov 2020 22:18:04 GMT
       x-ms-version:
       - '2020-04-08'
     method: DELETE
@@ -78,7 +78,7 @@ interactions:
     body:
       string: ''
     headers:
-      date: Tue, 10 Nov 2020 06:21:58 GMT
+      date: Fri, 13 Nov 2020 22:18:05 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2020-04-08'

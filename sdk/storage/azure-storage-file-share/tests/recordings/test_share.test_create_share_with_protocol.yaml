@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       x-ms-enabled-protocols:
       - NFS
       x-ms-root-squash:
@@ -27,11 +27,11 @@ interactions:
       string: ''
     headers:
       date:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       etag:
-      - '"0x8D8853AAA3BE081"'
+      - '"0x8D888221607DB9F"'
       last-modified:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:45 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -53,7 +53,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 10 Nov 2020 05:37:09 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
@@ -63,11 +63,11 @@ interactions:
       string: ''
     headers:
       date:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       etag:
-      - '"0x8D8853AAA3BE081"'
+      - '"0x8D888221607DB9F"'
       last-modified:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:45 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -83,7 +83,7 @@ interactions:
       x-ms-root-squash:
       - RootSquash
       x-ms-share-next-allowed-quota-downgrade-time:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:45 GMT
       x-ms-share-provisioned-egress-mbps:
       - '66'
       x-ms-share-provisioned-ingress-mbps:
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 10 Nov 2020 05:37:09 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
@@ -119,11 +119,11 @@ interactions:
       string: ''
     headers:
       date:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       etag:
-      - '"0x8D8853AAA3BE081"'
+      - '"0x8D888221607DB9F"'
       last-modified:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:45 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -139,7 +139,7 @@ interactions:
       x-ms-root-squash:
       - RootSquash
       x-ms-share-next-allowed-quota-downgrade-time:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:45 GMT
       x-ms-share-provisioned-egress-mbps:
       - '66'
       x-ms-share-provisioned-ingress-mbps:
@@ -167,7 +167,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.3.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 10 Nov 2020 05:37:09 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       x-ms-version:
       - '2020-04-08'
     method: DELETE
@@ -177,7 +177,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Tue, 10 Nov 2020 05:37:08 GMT
+      - Fri, 13 Nov 2020 22:18:44 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

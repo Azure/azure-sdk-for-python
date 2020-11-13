@@ -869,8 +869,8 @@ class StorageShareTest(StorageTestCase):
     def test_list_shares_with_root_squash_and_protocols(
             self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        self._create_share(prefix="share1", protocols="NFS", root_squash=ShareRootSquash.no_root_squash)
-        self._create_share(prefix="share2", protocols=ShareProtocols.SMB)
+        self._create_share(prefix="testshare1", protocols="NFS", root_squash=ShareRootSquash.all_squash)
+        self._create_share(prefix="testshare2", protocols=ShareProtocols.SMB)
         # Act
         shares = list(self.fsc.list_shares())
         share1_props = shares[0]
@@ -879,7 +879,7 @@ class StorageShareTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(shares)
         self.assertGreaterEqual(len(shares), 2)
-        self.assertEqual(share1_props.root_squash, ShareRootSquash.no_root_squash)
+        self.assertEqual(share1_props.root_squash, ShareRootSquash.all_squash)
         self.assertEqual(share1_props.protocols, ["NFS"])
         self.assertEqual(share2_props.root_squash, None)
         self.assertEqual(share2_props.protocols, ["SMB"])
