@@ -10,6 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AuthenticationDetails
+    from ._models_py3 import AuthenticationDetailsValue
     from ._models_py3 import AzureEntityResource
     from ._models_py3 import ConnectedCluster
     from ._models_py3 import ConnectedClusterAADProfile
@@ -17,7 +19,8 @@ try:
     from ._models_py3 import ConnectedClusterPatch
     from ._models_py3 import CredentialResult
     from ._models_py3 import CredentialResults
-    from ._models_py3 import ErrorDetails
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
@@ -25,6 +28,8 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
+    from ._models import AuthenticationDetails
+    from ._models import AuthenticationDetailsValue
     from ._models import AzureEntityResource
     from ._models import ConnectedCluster
     from ._models import ConnectedClusterAADProfile
@@ -32,7 +37,8 @@ except (SyntaxError, ImportError):
     from ._models import ConnectedClusterPatch
     from ._models import CredentialResult
     from ._models import CredentialResults
-    from ._models import ErrorDetails
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Operation
     from ._models import OperationDisplay
@@ -47,6 +53,8 @@ from ._connected_kubernetes_client_enums import (
 )
 
 __all__ = [
+    'AuthenticationDetails',
+    'AuthenticationDetailsValue',
     'AzureEntityResource',
     'ConnectedCluster',
     'ConnectedClusterAADProfile',
@@ -54,7 +62,8 @@ __all__ = [
     'ConnectedClusterPatch',
     'CredentialResult',
     'CredentialResults',
-    'ErrorDetails',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
     'Operation',
     'OperationDisplay',

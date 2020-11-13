@@ -13,19 +13,69 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class Resource(Model):
-    """Resource.
+class AuthenticationDetails(Model):
+    """Authentication details of the user.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar authentication_method: Required. The mode of client authentication.
+     Default value: "Token" .
+    :vartype authentication_method: str
+    :param value: Required. Authentication token value.
+    :type value:
+     ~azure.mgmt.hybridkubernetes.models.AuthenticationDetailsValue
+    """
+
+    _validation = {
+        'authentication_method': {'required': True, 'constant': True},
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'AuthenticationDetailsValue'},
+    }
+
+    authentication_method = "Token"
+
+    def __init__(self, *, value, **kwargs) -> None:
+        super(AuthenticationDetails, self).__init__(**kwargs)
+        self.value = value
+
+
+class AuthenticationDetailsValue(Model):
+    """Authentication token value.
+
+    :param token: Authentication token.
+    :type token: str
+    """
+
+    _attribute_map = {
+        'token': {'key': 'token', 'type': 'str'},
+    }
+
+    def __init__(self, *, token: str=None, **kwargs) -> None:
+        super(AuthenticationDetailsValue, self).__init__(**kwargs)
+        self.token = token
+
+
+class Resource(Model):
+    """Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -49,19 +99,19 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -95,20 +145,21 @@ class CloudError(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """The resource model definition for an Azure Resource Manager tracked top
+    level resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -145,13 +196,13 @@ class ConnectedCluster(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -164,7 +215,7 @@ class ConnectedCluster(TrackedResource):
      certificate used by the agent to do the initial handshake to the backend
      services in Azure.
     :type agent_public_key_certificate: str
-    :param aad_profile: Required.
+    :param aad_profile: Required. AAD profile of the connected cluster.
     :type aad_profile:
      ~azure.mgmt.hybridkubernetes.models.ConnectedClusterAADProfile
     :ivar kubernetes_version: The Kubernetes version of the connected cluster
@@ -176,8 +227,9 @@ class ConnectedCluster(TrackedResource):
     :ivar agent_version: Version of the agent running on the connected cluster
      resource
     :vartype agent_version: str
-    :param provisioning_state: Possible values include: 'Succeeded', 'Failed',
-     'Canceled', 'Provisioning', 'Updating', 'Deleting', 'Accepted'
+    :param provisioning_state: Provisioning state of the connected cluster
+     resource. Possible values include: 'Succeeded', 'Failed', 'Canceled',
+     'Provisioning', 'Updating', 'Deleting', 'Accepted'
     :type provisioning_state: str or
      ~azure.mgmt.hybridkubernetes.models.ProvisioningState
     """
@@ -222,7 +274,7 @@ class ConnectedCluster(TrackedResource):
 
 
 class ConnectedClusterAADProfile(Model):
-    """ConnectedClusterAADProfile.
+    """AAD profile of the connected cluster.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -370,8 +422,36 @@ class CredentialResults(Model):
         self.kubeconfigs = None
 
 
-class ErrorDetails(Model):
-    """The error response details containing error code and error message.
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -380,33 +460,53 @@ class ErrorDetails(Model):
     :vartype code: str
     :ivar message: The error message.
     :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.hybridkubernetes.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.hybridkubernetes.models.ErrorAdditionalInfo]
     """
 
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ErrorDetails, self).__init__(**kwargs)
+        super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class ErrorResponse(Model):
-    """The error response that indicates why an operation has failed.
+    """Error response.
 
-    :param error:
-    :type error: ~azure.mgmt.hybridkubernetes.models.ErrorDetails
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
+
+    :param error: The error object.
+    :type error: ~azure.mgmt.hybridkubernetes.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetails'},
+        'error': {'key': 'error', 'type': 'ErrorDetail'},
     }
 
     def __init__(self, *, error=None, **kwargs) -> None:
@@ -484,19 +584,19 @@ class OperationDisplay(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """The resource model definition for an Azure Resource Manager proxy resource.
+    It will have everything other than required location and tags.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 

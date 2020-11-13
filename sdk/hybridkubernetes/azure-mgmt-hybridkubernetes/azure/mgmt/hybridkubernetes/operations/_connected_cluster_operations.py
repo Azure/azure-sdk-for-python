@@ -373,7 +373,7 @@ class ConnectedClusterOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}'}
 
     def list_cluster_user_credentials(
-            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, value, custom_headers=None, raw=False, **operation_config):
         """Gets cluster user credentials of a connected cluster.
 
         Gets cluster user credentials of the connected cluster with a specified
@@ -385,6 +385,9 @@ class ConnectedClusterOperations(object):
         :param cluster_name: The name of the Kubernetes cluster on which get
          is called.
         :type cluster_name: str
+        :param value: Authentication token value.
+        :type value:
+         ~azure.mgmt.hybridkubernetes.models.AuthenticationDetailsValue
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -396,6 +399,10 @@ class ConnectedClusterOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.hybridkubernetes.models.ErrorResponseException>`
         """
+        client_authentication_details = None
+        if value is not None:
+            client_authentication_details = models.AuthenticationDetails(value=value)
+
         # Construct URL
         url = self.list_cluster_user_credentials.metadata['url']
         path_format_arguments = {
@@ -412,6 +419,7 @@ class ConnectedClusterOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -419,8 +427,14 @@ class ConnectedClusterOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        if client_authentication_details is not None:
+            body_content = self._serialize.body(client_authentication_details, 'AuthenticationDetails')
+        else:
+            body_content = None
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
