@@ -316,9 +316,9 @@ class ShareClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword enabled_protocols:
+        :keyword protocols:
             Protocols to enable on the share. Only one protocol can be enabled on the share.
-        :paramtype enabled_protocols: str or ~azure.storage.fileshare.ShareProtocols
+        :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
         :keyword root_squash:
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
@@ -340,10 +340,10 @@ class ShareClient(StorageAccountHostsMixin):
         access_tier = kwargs.pop('access_tier', None)
         timeout = kwargs.pop('timeout', None)
         root_squash = kwargs.pop('root_squash', None)
-        enabled_protocols = kwargs.pop('enabled_protocols', None)
-        if enabled_protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
+        protocols = kwargs.pop('protocols', None)
+        if protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
             raise ValueError("The enabled protocol must be set to either SMB or NFS.")
-        if root_squash and enabled_protocols not in ['NFS', ShareProtocols.NFS]:
+        if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
             raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
@@ -355,7 +355,7 @@ class ShareClient(StorageAccountHostsMixin):
                 quota=quota,
                 access_tier=access_tier,
                 root_squash=root_squash,
-                enabled_protocols=enabled_protocols,
+                enabled_protocols=protocols,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
