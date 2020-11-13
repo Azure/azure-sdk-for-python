@@ -20,7 +20,7 @@ trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
 
 exporter = AzureMonitorSpanExporter(
-    connection_string = os.environ["AZURE_MONITOR_CONNECTION_STRING"]
+    connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 
 # SpanExporter receives the spans and send them to the target location.
