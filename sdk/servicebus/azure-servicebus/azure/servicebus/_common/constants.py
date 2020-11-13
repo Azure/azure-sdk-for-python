@@ -114,7 +114,7 @@ DEAD_LETTER_QUEUE_SUFFIX = '/$DeadLetterQueue'
 TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = '/$Transfer' + DEAD_LETTER_QUEUE_SUFFIX
 
 
-class ReceiveMode(Enum):
+class ServiceBusReceiveMode(Enum):
     PeekLock = constants.ReceiverSettleMode.PeekLock
     ReceiveAndDelete = constants.ReceiverSettleMode.ReceiveAndDelete
 

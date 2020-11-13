@@ -22,7 +22,7 @@ from ._common.constants import (
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
-    ReceiveMode,
+    ServiceBusReceiveMode,
     MGMT_REQUEST_DISPOSITION_STATUS,
     MGMT_REQUEST_LOCK_TOKENS,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
@@ -89,7 +89,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
      will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
      if the client fails to process the message.
      The default mode is PeekLock.
-    :paramtype receive_mode: ~azure.servicebus.ReceiveMode
+    :paramtype receive_mode: ~azure.servicebus.ServiceBusReceiveMode
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
@@ -210,7 +210,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
          will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
          if the client fails to process the message.
          The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
+        :paramtype receive_mode: ~azure.servicebus.ServiceBusReceiveMode
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -267,7 +267,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             auto_complete=False,
             encoding=self._config.encoding,
             receive_settle_mode=self._receive_mode.value,
-            send_settle_mode=SenderSettleMode.Settled if self._receive_mode == ReceiveMode.ReceiveAndDelete else None,
+            send_settle_mode=SenderSettleMode.Settled \
+                if self._receive_mode == ServiceBusReceiveMode.ReceiveAndDelete \
+                else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             keep_alive_interval=self._config.keep_alive,

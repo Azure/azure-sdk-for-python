@@ -7,7 +7,7 @@
 import uamqp
 from .message import ServiceBusReceivedMessage
 from ..exceptions import ServiceBusError, MessageLockExpired
-from .constants import ReceiveMode
+from .constants import ServiceBusReceiveMode
 
 
 def default(status_code, message, description):
@@ -62,7 +62,7 @@ def deferred_message_op(
         message,
         description,
         receiver,
-        receive_mode=ReceiveMode.PeekLock,
+        receive_mode=ServiceBusReceiveMode.PeekLock,
         message_type=ServiceBusReceivedMessage
 ):
     if status_code == 200:

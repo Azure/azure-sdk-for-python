@@ -15,7 +15,7 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    ReceiveMode,
+    ServiceBusReceiveMode,
     DEADLETTERNAME,
     RECEIVER_LINK_DEAD_LETTER_REASON,
     RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
@@ -46,10 +46,10 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
-        self._receive_mode = kwargs.get("receive_mode", ReceiveMode.PeekLock)
+        self._receive_mode = kwargs.get("receive_mode", ServiceBusReceiveMode.PeekLock)
         # While we try to leave failures to the service, in this case the errors lower down the stack are less clear.
-        if not isinstance(self._receive_mode, ReceiveMode):
-            raise TypeError("Parameter 'receive_mode' must be of type ReceiveMode")
+        if not isinstance(self._receive_mode, ServiceBusReceiveMode):
+            raise TypeError("Parameter 'receive_mode' must be of type ServiceBusReceiveMode")
 
         self._session_id = kwargs.get("session_id")
         self._error_policy = _ServiceBusErrorPolicy(
@@ -76,7 +76,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
         self._auto_lock_renewer = kwargs.get("auto_lock_renewer", None)
         if self._auto_lock_renewer \
-                and self._receive_mode == ReceiveMode.ReceiveAndDelete \
+                and self._receive_mode == ServiceBusReceiveMode.ReceiveAndDelete \
                 and self._session_id is None:
             raise ValueError("Messages received in ReceiveAndDelete receive mode cannot have their locks removed "
                              "as they have been deleted, providing an AutoLockRenewer in this mode is invalid.")
