@@ -357,9 +357,9 @@ class ShareProperties(DictMixin):
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
         self.lease = LeaseProperties(**kwargs)
-        self.protocols = kwargs.get('x-ms-enabled-protocols', None)
+        self.protocols = [protocol.strip() for protocol in kwargs.get('x-ms-enabled-protocols', None).split(',')]\
+            if kwargs.get('x-ms-enabled-protocols', None) else None
         self.root_squash = kwargs.get('x-ms-root-squash', None)
-
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
@@ -379,7 +379,8 @@ class ShareProperties(DictMixin):
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-        props.protocols = generated.properties.enabled_protocols
+        props.protocols = [protocol.strip() for protocol in generated.properties.enabled_protocols.split(',')]\
+            if generated.properties.enabled_protocols else None
         props.root_squash = generated.properties.root_squash
 
         return props
