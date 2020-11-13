@@ -341,7 +341,7 @@ class ShareClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         root_squash = kwargs.pop('root_squash', None)
         protocols = kwargs.pop('protocols', None)
-        if protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
+        if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
             raise ValueError("The enabled protocol must be set to either SMB or NFS.")
         if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
             raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
