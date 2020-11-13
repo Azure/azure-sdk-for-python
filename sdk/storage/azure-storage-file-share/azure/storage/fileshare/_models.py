@@ -336,7 +336,7 @@ class ShareProperties(DictMixin):
         This is a service returned value, and the value will be set when list shared including deleted ones.
     :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-    :ivar str enabled_protocols:
+    :ivar ~azure.storage.fileshare.models.ShareProtocols or str protocols:
         Indicates the protocol enabled on the share. This can be either SMB or NFS.
     """
 
@@ -357,7 +357,7 @@ class ShareProperties(DictMixin):
         self.provisioned_ingress_mbps = kwargs.get('x-ms-share-provisioned-ingress-mbps')
         self.provisioned_iops = kwargs.get('x-ms-share-provisioned-iops')
         self.lease = LeaseProperties(**kwargs)
-        self.enabled_protocols = kwargs.get('x-ms-enabled-protocols', None)
+        self.protocols = kwargs.get('x-ms-enabled-protocols', None)
         self.root_squash = kwargs.get('x-ms-root-squash', None)
 
     @classmethod
@@ -379,7 +379,7 @@ class ShareProperties(DictMixin):
         props.provisioned_ingress_mbps = generated.properties.provisioned_ingress_mbps
         props.provisioned_iops = generated.properties.provisioned_iops
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-        props.enabled_protocols = generated.properties.enabled_protocols
+        props.protocols = generated.properties.enabled_protocols
         props.root_squash = generated.properties.root_squash
 
         return props
@@ -717,7 +717,7 @@ class FileProperties(DictMixin):
         return props
 
 
-class EnabledProtocols(str, Enum):
+class ShareProtocols(str, Enum):
     """Enabled protocols on the share"""
     SMB = "SMB"
     NFS = "NFS"

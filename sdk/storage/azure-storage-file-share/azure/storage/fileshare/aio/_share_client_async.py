@@ -30,10 +30,10 @@ from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
 from ..aio._lease_async import ShareLeaseClient
-
+from .._models import ShareProtocols
 
 if TYPE_CHECKING:
-    from .._models import ShareProperties, AccessPolicy, EnabledProtocols
+    from .._models import ShareProperties, AccessPolicy
 
 
 class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
@@ -187,7 +187,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             The timeout parameter is expressed in seconds.
         :keyword enabled_protocols:
             Protocols to enable on the share. Only one protocol can be enabled on the share.
-        :paramtype enabled_protocols: str or ~azure.storage.fileshare.EnabledProtocols
+        :paramtype enabled_protocols: str or ~azure.storage.fileshare.ShareProtocols
         :keyword root_squash:
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
@@ -210,9 +210,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         timeout = kwargs.pop('timeout', None)
         root_squash = kwargs.pop('root_squash', None)
         enabled_protocols = kwargs.pop('enabled_protocols', None)
-        if enabled_protocols not in ['NFS', 'SMB', EnabledProtocols.SMB, EnabledProtocols.NFS]:
+        if enabled_protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
             raise ValueError("The enabled protocol must be set to either SMB or NFS.")
-        if root_squash and enabled_protocols not in ['NFS', EnabledProtocols.NFS]:
+        if root_squash and enabled_protocols not in ['NFS', ShareProtocols.NFS]:
             raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
