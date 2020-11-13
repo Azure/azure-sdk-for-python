@@ -24,7 +24,7 @@ from azure.storage.fileshare import (
     ShareSasPermissions,
     ShareAccessTier,
     generate_share_sas,
-    ShareRootSquash
+    ShareRootSquash, ShareProtocols
 )
 from azure.storage.fileshare.aio import (
     ShareServiceClient,
@@ -540,8 +540,8 @@ class StorageShareTest(AsyncStorageTestCase):
         # Act
         share_client = self._get_share_reference("testshare2")
         with self.assertRaises(ValueError):
-            await share_client.create_share(protocols=["SMB"], root_squash=ShareRootSquash.all_squash)
-        await share_client.create_share(protocols=["NFS"], root_squash=ShareRootSquash.root_squash)
+            await share_client.create_share(protocols="SMB", root_squash=ShareRootSquash.all_squash)
+        await share_client.create_share(protocols="NFS", root_squash=ShareRootSquash.root_squash)
         props = await share_client.get_share_properties()
         share_enabled_protocol = props.protocols
         share_root_squash = props.root_squash
@@ -931,8 +931,8 @@ class StorageShareTest(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_set_share_properties_with_root_squash(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        share1 = await self._create_share("share1", protocols=["NFS"])
-        share2 = await self._create_share("share2", protocols=["NFS"])
+        share1 = await self._create_share("share1", protocols=ShareProtocols.NFS)
+        share2 = await self._create_share("share2", protocols=ShareProtocols.NFS)
 
         await share1.set_share_properties(root_squash="NoRootSquash")
 

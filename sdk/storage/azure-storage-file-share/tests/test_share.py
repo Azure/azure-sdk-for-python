@@ -26,7 +26,7 @@ from azure.storage.fileshare import (
     ShareFileClient,
     ShareClient,
     generate_share_sas,
-    ShareRootSquash)
+    ShareRootSquash, ShareProtocols)
 
 from azure.storage.fileshare._generated.models import DeleteSnapshotsOptionType, ListSharesIncludeType
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
@@ -514,8 +514,8 @@ class StorageShareTest(StorageTestCase):
         # Act
         share_client = self._get_share_reference("testshare2")
         with self.assertRaises(ValueError):
-            share_client.create_share(protocols=["SMB"], root_squash=ShareRootSquash.all_squash)
-        share_client.create_share(protocols=["NFS"], root_squash=ShareRootSquash.root_squash)
+            share_client.create_share(protocols="SMB", root_squash=ShareRootSquash.all_squash)
+        share_client.create_share(protocols="NFS", root_squash=ShareRootSquash.root_squash)
         share_enabled_protocol = share_client.get_share_properties().protocols
         share_root_squash = share_client.get_share_properties().root_squash
 
@@ -849,8 +849,8 @@ class StorageShareTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_set_share_properties_with_root_squash(self, resource_group, location, storage_account, storage_account_key):
         self._setup(storage_account, storage_account_key)
-        share1 = self._create_share("share1", protocols=["NFS"])
-        share2 = self._create_share("share2", protocols=["NFS"])
+        share1 = self._create_share("share1", protocols=ShareProtocols.NFS)
+        share2 = self._create_share("share2", protocols=ShareProtocols.NFS)
 
         share1.set_share_properties(root_squash="NoRootSquash")
 
