@@ -17,8 +17,8 @@ try:
     from ._models_py3 import ClusterReportedProperties
     from ._models_py3 import ClusterUpdate
     from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorDetail
     from ._models_py3 import ErrorResponse, ErrorResponseException
-    from ._models_py3 import ErrorResponseError
     from ._models_py3 import OperationDetail
     from ._models_py3 import OperationDisplay
     from ._models_py3 import ProxyResource
@@ -32,8 +32,8 @@ except (SyntaxError, ImportError):
     from ._models import ClusterReportedProperties
     from ._models import ClusterUpdate
     from ._models import ErrorAdditionalInfo
+    from ._models import ErrorDetail
     from ._models import ErrorResponse, ErrorResponseException
-    from ._models import ErrorResponseError
     from ._models import OperationDetail
     from ._models import OperationDisplay
     from ._models import ProxyResource
@@ -53,8 +53,8 @@ __all__ = [
     'ClusterReportedProperties',
     'ClusterUpdate',
     'ErrorAdditionalInfo',
+    'ErrorDetail',
     'ErrorResponse', 'ErrorResponseException',
-    'ErrorResponseError',
     'OperationDetail',
     'OperationDisplay',
     'ProxyResource',
