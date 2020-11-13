@@ -49,14 +49,14 @@ class _LegacyPagingMethod:
             )
         self._get_page = get_next
         self.extract_data = extract_data
-        self._did_a_call_already = False
+        self.did_a_call_already = False
 
     def finished(self, continuation_token):
-        return continuation_token is None and self._did_a_call_already
+        return continuation_token is None and self.did_a_call_already
 
     @property
     def get_page(self):
-        self._did_a_call_already = True
+        self.did_a_call_already = True
         return self._get_page
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
@@ -75,6 +75,11 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
         """
+        self._initial_request = kwargs.pop("initial_request", None)
+        self._initial_response = kwargs.pop("initial_response", None)
+        if self._initial_response:
+            self._initial_request = self._initial_response.http_response.request
+
         if get_next or extract_data:
             if paging_method:
                 raise ValueError(
@@ -83,11 +88,17 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
                 )
             self._paging_method = _LegacyPagingMethod(get_next, extract_data)
         else:
+            if not self._initial_request and not self._initial_response:
+                raise ValueError(
+                    "You must either supply the initial request the paging method must call, or provide the initial response"
+                )
             self._paging_method = paging_method
             self._paging_method.initialize(*args, **kwargs)
+
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
+
 
     def __iter__(self):
         """Return 'self'."""
@@ -98,7 +109,11 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         if self._paging_method.finished(self.continuation_token):
             raise StopIteration("End of paging")
 
-        self._response = self._paging_method.get_page(self.continuation_token)
+        try:
+            self._response = self._paging_method.get_page(self.continuation_token, self._initial_request)
+        except TypeError:
+            # legacy doesn't support passing initial request into get_page
+            self._response = self._paging_method.get_page(self.continuation_token)
 
         self.continuation_token, self._current_page = self._paging_method.extract_data(self._response)
 

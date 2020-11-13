@@ -32,17 +32,17 @@ class PagingMethodABC():
 
     # making requests
 
-    def get_next_request(self, continuation_token):
+    def get_next_request(self, continuation_token, initial_request):
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_page(self, continuation_token: str):
+    def get_page(self, continuation_token: str, initial_request):
         """Gets next page
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def finished(self, continuation_token):
+    def finished(self, continuation_token, did_a_call):
         """When paging is finished
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -79,24 +79,15 @@ class BasicPagingMethod(PagingMethodABC):
     def __init__(self):
         self._client = None
         self._deserialize_output = None
-        self._initial_request = None
-        self._initial_response = None
         self._path_format_arguments = None
         self._item_name = None
         self._next_link_name = None
-        self._did_a_call_already = False
+        self.did_a_call_already = False
 
     def initialize(self, client, deserialize_output, **kwargs):
         self._client = client
         self._deserialize_output = deserialize_output
-        self._initial_request = kwargs.pop("initial_request", None)
-        self._initial_response = kwargs.pop("initial_response", None)
-        if not self._initial_request and not self._initial_response:
-            raise ValueError(
-                "You must either supply the initial request the paging method must call, or provide the initial response"
-            )
-        if self._initial_response:
-            self._initial_request = self._initial_response.http_response.request
+
         self._path_format_arguments = kwargs.pop("path_format_arguments", {})
         self._item_name = kwargs.pop("item_name", "value")
         self._next_link_name = kwargs.pop("next_link_name", "next_link")
@@ -107,19 +98,20 @@ class BasicPagingMethod(PagingMethodABC):
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
-    def get_next_request(self, continuation_token: str):
+    def get_next_request(self, continuation_token: str, initial_request):
         next_link = continuation_token
         next_link = self._client.format_url(next_link, **self._path_format_arguments)
+        request = initial_request
+        request.url = next_link
 
-        self._initial_request.url = next_link
-        return self._initial_request
+        return request
 
-    def get_page(self, continuation_token):
-        if not self._did_a_call_already:
-            request = self._initial_request
-            self._did_a_call_already = True
+    def get_page(self, continuation_token, initial_request):
+        if not self.did_a_call_already:
+            request = initial_request
+            self.did_a_call_already = True
         else:
-            request = self.get_next_request(continuation_token)
+            request = self.get_next_request(continuation_token, initial_request)
         response = self._client._pipeline.run(request, stream=False)
 
         http_response = response.http_response
@@ -130,7 +122,7 @@ class BasicPagingMethod(PagingMethodABC):
         return response
 
     def finished(self, continuation_token):
-        return continuation_token is None and self._did_a_call_already
+        return continuation_token is None and self.did_a_call_already
 
     def get_list_elements(self, pipeline_response, deserialized):
         if not hasattr(deserialized, self._item_name):
@@ -175,7 +167,7 @@ class DifferentNextOperationPagingMethod(BasicPagingMethod):
         )
         self._prepare_next_request = prepare_next_request
 
-    def get_next_request(self, continuation_token: str):
+    def get_next_request(self, continuation_token: str, initial_request):
         """Next request partial functions will either take in the token or not
         (we're not able to pass in multiple tokens). in the generated code, we
         make sure that the token input param is the first in the list, so all we

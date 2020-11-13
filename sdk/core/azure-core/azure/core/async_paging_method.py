@@ -34,7 +34,7 @@ class AsyncPagingMethodABC(PagingMethodABC):
 
     # making requests
 
-    async def get_page(self, continuation_token: str):
+    async def get_page(self, continuation_token: str, initial_request):
         """Gets next page
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -51,12 +51,12 @@ class AsyncBasicPagingMethod(BasicPagingMethod):
     """
 
 
-    async def get_page(self, continuation_token):
-        if not self._did_a_call_already:
-            request = self._initial_request
-            self._did_a_call_already = True
+    async def get_page(self, continuation_token, initial_request):
+        if not self.did_a_call_already:
+            request = initial_request
+            self.did_a_call_already = True
         else:
-            request = self.get_next_request(continuation_token)
+            request = self.get_next_request(continuation_token, initial_request)
         response = await self._client._pipeline.run(request, stream=False)
 
         http_response = response.http_response
@@ -68,7 +68,7 @@ class AsyncBasicPagingMethod(BasicPagingMethod):
 
     async def extract_data(self, pipeline_response):
         from .async_paging import AsyncList
-        
+
         deserialized = self._deserialize_output(pipeline_response)
         list_of_elem = self.get_list_elements(pipeline_response, deserialized)
         list_of_elem = self.mutate_list(pipeline_response, list_of_elem)
@@ -90,7 +90,7 @@ class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
         )
         self._prepare_next_request = prepare_next_request
 
-    def get_next_request(self, continuation_token: str):
+    def get_next_request(self, continuation_token: str, initial_request):
         """Next request partial functions will either take in the token or not
         (we're not able to pass in multiple tokens). in the generated code, we
         make sure that the token input param is the first in the list, so all we
