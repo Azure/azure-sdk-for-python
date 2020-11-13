@@ -125,7 +125,9 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
            * 2019-03-01: :mod:`v2019_03_01.models<azure.mgmt.eventhub.v2019_03_01.models>`
            * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.eventhub.v2019_06_01.models>`
            * 2019-10-17-preview: :mod:`v2019_10_17.models<azure.mgmt.eventhub.v2019_10_17.models>`
+           * 2019-11-01-preview: :mod:`v2019_11_01_preview.models<azure.mgmt.eventhub.v2019_11_01_preview.models>`
            * 2020-01-01-preview: :mod:`v2020_01_01_preview.models<azure.mgmt.eventhub.v2020_01_01_preview.models>`
+           * 2020-05-01-preview: :mod:`v2020_05_01_preview.models<azure.mgmt.eventhub.v2020_05_01_preview.models>`
         """
         if api_version == '2015-04-01':
             from .v2015_04_01 import models
@@ -181,8 +183,14 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2019-10-17-preview':
             from .v2019_10_17 import models
             return models
+        elif api_version == '2019-11-01-preview':
+            from .v2019_11_01_preview import models
+            return models
         elif api_version == '2020-01-01-preview':
             from .v2020_01_01_preview import models
+            return models
+        elif api_version == '2020-05-01-preview':
+            from .v2020_05_01_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -303,6 +311,32 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
             from .v2019_03_01.operations import BaselinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'baselines'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def data_collection_rule_associations(self):
+        """Instance depends on the API version:
+
+           * 2019-11-01-preview: :class:`DataCollectionRuleAssociationsOperations<azure.mgmt.eventhub.v2019_11_01_preview.operations.DataCollectionRuleAssociationsOperations>`
+        """
+        api_version = self._get_api_version('data_collection_rule_associations')
+        if api_version == '2019-11-01-preview':
+            from .v2019_11_01_preview.operations import DataCollectionRuleAssociationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'data_collection_rule_associations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def data_collection_rules(self):
+        """Instance depends on the API version:
+
+           * 2019-11-01-preview: :class:`DataCollectionRulesOperations<azure.mgmt.eventhub.v2019_11_01_preview.operations.DataCollectionRulesOperations>`
+        """
+        api_version = self._get_api_version('data_collection_rules')
+        if api_version == '2019-11-01-preview':
+            from .v2019_11_01_preview.operations import DataCollectionRulesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'data_collection_rules'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -572,10 +606,13 @@ class MonitorClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2018-04-16: :class:`ScheduledQueryRulesOperations<azure.mgmt.eventhub.v2018_04_16.operations.ScheduledQueryRulesOperations>`
+           * 2020-05-01-preview: :class:`ScheduledQueryRulesOperations<azure.mgmt.eventhub.v2020_05_01_preview.operations.ScheduledQueryRulesOperations>`
         """
         api_version = self._get_api_version('scheduled_query_rules')
         if api_version == '2018-04-16':
             from .v2018_04_16.operations import ScheduledQueryRulesOperations as OperationClass
+        elif api_version == '2020-05-01-preview':
+            from .v2020_05_01_preview.operations import ScheduledQueryRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'scheduled_query_rules'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -30,11 +30,11 @@ interactions:
       content-type:
       - text/plain; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:22:54 GMT
+      - Fri, 13 Nov 2020 10:22:44 GMT
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/e60f99d2-b390-401c-bb67-9a086cbef957?monitor=true&api-version=2019-04-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/68ffaa9c-9396-4c8d-9f9e-ad17e6989a4d?monitor=true&api-version=2019-04-01
       pragma:
       - no-cache
       server:
@@ -44,7 +44,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1194'
     status:
       code: 202
       message: Accepted
@@ -58,13 +58,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-storage/5.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/e60f99d2-b390-401c-bb67-9a086cbef957?monitor=true&api-version=2019-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Storage/locations/eastus/asyncoperations/68ffaa9c-9396-4c8d-9f9e-ad17e6989a4d?monitor=true&api-version=2019-04-01
   response:
     body:
-      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","name":"storageaccountx430e1025","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-09-16T03:22:55.1085297Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-09-16T03:22:55.1085297Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-09-16T03:22:55.0147927Z","primaryEndpoints":{"blob":"https://storageaccountx430e1025.blob.core.windows.net/","queue":"https://storageaccountx430e1025.queue.core.windows.net/","table":"https://storageaccountx430e1025.table.core.windows.net/","file":"https://storageaccountx430e1025.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
+      string: '{"sku":{"name":"Standard_LRS","tier":"Standard"},"kind":"Storage","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","name":"storageaccountx430e1025","type":"Microsoft.Storage/storageAccounts","location":"eastus","tags":{},"properties":{"networkAcls":{"bypass":"AzureServices","virtualNetworkRules":[],"ipRules":[],"defaultAction":"Allow"},"supportsHttpsTrafficOnly":true,"encryption":{"services":{"file":{"enabled":true,"lastEnabledTime":"2020-11-13T10:22:44.6126116Z"},"blob":{"enabled":true,"lastEnabledTime":"2020-11-13T10:22:44.6126116Z"}},"keySource":"Microsoft.Storage"},"provisioningState":"Succeeded","creationTime":"2020-11-13T10:22:44.5032380Z","primaryEndpoints":{"blob":"https://storageaccountx430e1025.blob.core.windows.net/","queue":"https://storageaccountx430e1025.queue.core.windows.net/","table":"https://storageaccountx430e1025.table.core.windows.net/","file":"https://storageaccountx430e1025.file.core.windows.net/"},"primaryLocation":"eastus","statusOfPrimary":"available"}}'
     headers:
       cache-control:
       - no-cache
@@ -73,7 +73,7 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 16 Sep 2020 03:23:12 GMT
+      - Fri, 13 Nov 2020 10:23:01 GMT
       expires:
       - '-1'
       pragma:
@@ -92,9 +92,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"location": "", "properties": {"storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025",
+    body: '{"location": "", "properties": {"storageAccountId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025",
       "locations": ["global"], "categories": ["Write", "Delete", "Action"], "retentionPolicy":
-      {"enabled": true, "days": 3}}}\'''''
+      {"enabled": true, "days": 3}}}'
     headers:
       Accept:
       - application/json
@@ -107,21 +107,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025?api-version=2016-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex2043430e1025?api-version=2016-03-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025","type":null,"name":"logprofilex430e1025","location":"","kind":null,"tags":null,"properties":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","serviceBusRuleId":null,"locations":["global"],"categories":["Write","Delete","Action"],"retentionPolicy":{"enabled":true,"days":3}},"identity":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex2043430e1025","type":null,"name":"logprofilex2043430e1025","location":"","kind":null,"tags":null,"properties":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","serviceBusRuleId":null,"locations":["global"],"categories":["Write","Delete","Action"],"retentionPolicy":{"enabled":true,"days":3}},"identity":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '595'
+      - '603'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:23:16 GMT
+      - Fri, 13 Nov 2020 10:23:08 GMT
       expires:
       - '-1'
       pragma:
@@ -137,7 +137,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -151,21 +151,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025?api-version=2016-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex2043430e1025?api-version=2016-03-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025","type":null,"name":"logprofilex430e1025","location":null,"kind":null,"tags":null,"properties":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","serviceBusRuleId":null,"locations":["global"],"categories":["Write","Delete","Action"],"retentionPolicy":{"enabled":true,"days":3}},"identity":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex2043430e1025","type":null,"name":"logprofilex2043430e1025","location":null,"kind":null,"tags":null,"properties":{"storageAccountId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Storage/storageAccounts/storageaccountx430e1025","serviceBusRuleId":null,"locations":["global"],"categories":["Write","Delete","Action"],"retentionPolicy":{"enabled":true,"days":3}},"identity":null}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '597'
+      - '605'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:23:46 GMT
+      - Fri, 13 Nov 2020 10:23:39 GMT
       expires:
       - '-1'
       pragma:
@@ -195,9 +195,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex430e1025?api-version=2016-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/microsoft.insights/logprofiles/logprofilex2043430e1025?api-version=2016-03-01
   response:
     body:
       string: ''
@@ -207,7 +207,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 03:23:47 GMT
+      - Fri, 13 Nov 2020 10:23:40 GMT
       expires:
       - '-1'
       pragma:

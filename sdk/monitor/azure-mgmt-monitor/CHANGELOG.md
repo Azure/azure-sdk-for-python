@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0 (2020-11-13)
+
+**Features**
+
+  - Added operation ScheduledQueryRulesOperations.list_by_resource_group
+  - Added operation ScheduledQueryRulesOperations.list_by_subscription
+  - Added operation group DataCollectionRulesOperations
+  - Added operation group DataCollectionRuleAssociationsOperations
+
+**Breaking changes**
+
+  - Model Resource no longer has parameter tags
+  - Model Resource no longer has parameter location
+  - Model ErrorResponse has a new signature
+  - Model Action has a new signature
+
 ## 1.0.1 (2020-09-18)
 
 **Bug fix**

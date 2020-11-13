@@ -14,7 +14,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -23,10 +23,10 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx\"\
-        ,\r\n  \"etag\": \"W/\\\"c8ff383c-3f95-4bc7-b5d9-458332db7a4f\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"70a021c9-a58e-48dd-80b6-a0f688b93566\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n \
-        \   \"resourceGuid\": \"d2c35ae1-0bfc-49b1-b026-f7148752aac7\",\r\n    \"\
+        \   \"resourceGuid\": \"7c576bcd-b5f5-460d-9fba-6f17a28bd734\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -35,7 +35,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/fa6ad004-dd99-4b06-8089-c6d58d8e7fca?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/bb31e426-fd48-42f1-8e71-9f7ff12569bc?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
@@ -43,7 +43,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:10 GMT
+      - Fri, 13 Nov 2020 09:54:03 GMT
       expires:
       - '-1'
       pragma:
@@ -56,9 +56,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2dcb5c94-41f9-4051-99ff-276dfa59bd36
+      - 8495a001-0637-4b70-836e-dc729f4fcfc2
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1195'
     status:
       code: 201
       message: Created
@@ -72,10 +72,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/fa6ad004-dd99-4b06-8089-c6d58d8e7fca?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/bb31e426-fd48-42f1-8e71-9f7ff12569bc?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -87,7 +87,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:16 GMT
+      - Fri, 13 Nov 2020 09:54:07 GMT
       expires:
       - '-1'
       pragma:
@@ -104,7 +104,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 0b1542a2-d22d-4f05-a406-3a9c7252ff9f
+      - 97928e63-16ab-42fd-b2a8-a3085fa535ef
     status:
       code: 200
       message: OK
@@ -118,17 +118,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"networkxx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx\"\
-        ,\r\n  \"etag\": \"W/\\\"115625bd-a3ae-4895-a523-a66ca0d618d7\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"b4808cbf-dae1-4979-956a-84f659a01761\\\"\",\r\n \
         \ \"type\": \"Microsoft.Network/virtualNetworks\",\r\n  \"location\": \"eastus\"\
         ,\r\n  \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n\
-        \    \"resourceGuid\": \"d2c35ae1-0bfc-49b1-b026-f7148752aac7\",\r\n    \"\
+        \    \"resourceGuid\": \"7c576bcd-b5f5-460d-9fba-6f17a28bd734\",\r\n    \"\
         addressSpace\": {\r\n      \"addressPrefixes\": [\r\n        \"10.0.0.0/16\"\
         \r\n      ]\r\n    },\r\n    \"subnets\": [],\r\n    \"virtualNetworkPeerings\"\
         : [],\r\n    \"enableDdosProtection\": false,\r\n    \"enableVmProtection\"\
@@ -141,9 +141,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:16 GMT
+      - Fri, 13 Nov 2020 09:54:08 GMT
       etag:
-      - W/"115625bd-a3ae-4895-a523-a66ca0d618d7"
+      - W/"b4808cbf-dae1-4979-956a-84f659a01761"
       expires:
       - '-1'
       pragma:
@@ -160,7 +160,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d843fe92-06e0-430a-850c-a48822befa5f
+      - d56834e6-9fe6-4899-972f-3eb90784b3a9
     status:
       code: 200
       message: OK
@@ -178,7 +178,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -187,14 +187,14 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
-        ,\r\n  \"etag\": \"W/\\\"b62d5877-784c-4917-9ea2-87b8cf908884\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"3607985b-c7d6-4132-92f6-39a9e4f84e06\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Updating\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/virtualNetworks/subnets\"\r\n}"
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/be8c9bc9-186d-414f-af83-07c8525463f4?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a8073dd5-335c-4f2a-885c-52f60b5c00b2?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
@@ -202,7 +202,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:17 GMT
+      - Fri, 13 Nov 2020 09:54:08 GMT
       expires:
       - '-1'
       pragma:
@@ -215,9 +215,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - 2fe2422e-944a-449a-9344-e1780bd2cc95
+      - f71de14d-12a5-4b78-8d70-24bccdcd2a32
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1194'
     status:
       code: 201
       message: Created
@@ -231,10 +231,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/be8c9bc9-186d-414f-af83-07c8525463f4?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/a8073dd5-335c-4f2a-885c-52f60b5c00b2?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -246,7 +246,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:22 GMT
+      - Fri, 13 Nov 2020 09:54:12 GMT
       expires:
       - '-1'
       pragma:
@@ -263,7 +263,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - e2fe370e-1a4c-43d9-b1fd-98ac76785cb4
+      - 910f4082-71b3-4d49-bc87-28bb4854c322
     status:
       code: 200
       message: OK
@@ -277,14 +277,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"subnetx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx\"\
-        ,\r\n  \"etag\": \"W/\\\"5d9fad09-91aa-47ee-90a6-8a0d7d475967\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"e721ef81-f35a-4796-8238-c971f06ac0dc\\\"\",\r\n \
         \ \"properties\": {\r\n    \"provisioningState\": \"Succeeded\",\r\n    \"\
         addressPrefix\": \"10.0.0.0/24\",\r\n    \"delegations\": [],\r\n    \"privateEndpointNetworkPolicies\"\
         : \"Enabled\",\r\n    \"privateLinkServiceNetworkPolicies\": \"Enabled\"\r\
@@ -297,9 +297,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:23 GMT
+      - Fri, 13 Nov 2020 09:54:13 GMT
       etag:
-      - W/"5d9fad09-91aa-47ee-90a6-8a0d7d475967"
+      - W/"e721ef81-f35a-4796-8238-c971f06ac0dc"
       expires:
       - '-1'
       pragma:
@@ -316,14 +316,14 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - b699a9ef-f80c-4ed1-9004-d858698aa386
+      - ad950bc9-11ce-4302-9262-d52468ae76ad
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"location": "eastus", "properties": {"ipConfigurations": [{"properties":
+    body: '{"location": "eastus", "properties": {"ipConfigurations": [{"properties":
       {"subnet": {"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/networkxx/subnets/subnetx"}},
-      "name": "MyIpConfig"}]}}\'''''
+      "name": "MyIpConfig"}]}}'
     headers:
       Accept:
       - application/json
@@ -336,7 +336,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -345,12 +345,12 @@ interactions:
   response:
     body:
       string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
-        ,\r\n  \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"fe18c148-76fd-4515-8ad2-3e0224f676c5\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
-        : \"Succeeded\",\r\n    \"resourceGuid\": \"85c192a0-55e4-4f1e-ac93-5e0f869d3042\"\
+        : \"Succeeded\",\r\n    \"resourceGuid\": \"aae5d711-fadd-4863-9068-9783bd158f7d\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
-        ,\r\n        \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"fe18c148-76fd-4515-8ad2-3e0224f676c5\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
@@ -358,7 +358,7 @@ interactions:
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
-        internalDomainNameSuffix\": \"2fnmhux2boyutmbg42kiouvkyh.bx.internal.cloudapp.net\"\
+        internalDomainNameSuffix\": \"zvvvo5hvwugunh30n2l0fc4xge.bx.internal.cloudapp.net\"\
         \r\n    },\r\n    \"enableAcceleratedNetworking\": false,\r\n    \"enableIPForwarding\"\
         : false,\r\n    \"hostedWorkloads\": [],\r\n    \"tapConfigurations\": []\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/networkInterfaces\"\r\n}"
@@ -366,7 +366,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0f332d83-0e98-4662-b2bd-41f69b6b6619?api-version=2019-09-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/5bce8089-da39-4854-88aa-54395c237f63?api-version=2019-09-01
       cache-control:
       - no-cache
       content-length:
@@ -374,7 +374,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:28 GMT
+      - Fri, 13 Nov 2020 09:54:20 GMT
       expires:
       - '-1'
       pragma:
@@ -387,9 +387,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - d046b277-6e12-44c5-87e7-e02b48a6bf50
+      - b47f6250-0c09-46ad-aa3d-c812812be12f
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1193'
     status:
       code: 201
       message: Created
@@ -403,10 +403,10 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/0f332d83-0e98-4662-b2bd-41f69b6b6619?api-version=2019-09-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus/operations/5bce8089-da39-4854-88aa-54395c237f63?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"status\": \"Succeeded\"\r\n}"
@@ -418,7 +418,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:24:59 GMT
+      - Fri, 13 Nov 2020 09:54:51 GMT
       expires:
       - '-1'
       pragma:
@@ -435,7 +435,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - e30d4874-db84-4309-a098-aeea11cbecdf
+      - 0f343f4a-7dc5-4c08-bbe5-c0488f5b03a8
     status:
       code: 200
       message: OK
@@ -449,19 +449,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-network/7.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx?api-version=2019-09-01
   response:
     body:
       string: "{\r\n  \"name\": \"interfacexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx\"\
-        ,\r\n  \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\",\r\n \
+        ,\r\n  \"etag\": \"W/\\\"fe18c148-76fd-4515-8ad2-3e0224f676c5\\\"\",\r\n \
         \ \"location\": \"eastus\",\r\n  \"properties\": {\r\n    \"provisioningState\"\
-        : \"Succeeded\",\r\n    \"resourceGuid\": \"85c192a0-55e4-4f1e-ac93-5e0f869d3042\"\
+        : \"Succeeded\",\r\n    \"resourceGuid\": \"aae5d711-fadd-4863-9068-9783bd158f7d\"\
         ,\r\n    \"ipConfigurations\": [\r\n      {\r\n        \"name\": \"MyIpConfig\"\
         ,\r\n        \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx/ipConfigurations/MyIpConfig\"\
-        ,\r\n        \"etag\": \"W/\\\"74e4251a-1c2e-4cb4-852b-e22d6bc29b51\\\"\"\
+        ,\r\n        \"etag\": \"W/\\\"fe18c148-76fd-4515-8ad2-3e0224f676c5\\\"\"\
         ,\r\n        \"type\": \"Microsoft.Network/networkInterfaces/ipConfigurations\"\
         ,\r\n        \"properties\": {\r\n          \"provisioningState\": \"Succeeded\"\
         ,\r\n          \"privateIPAddress\": \"10.0.0.4\",\r\n          \"privateIPAllocationMethod\"\
@@ -469,7 +469,7 @@ interactions:
         \r\n          },\r\n          \"primary\": true,\r\n          \"privateIPAddressVersion\"\
         : \"IPv4\"\r\n        }\r\n      }\r\n    ],\r\n    \"dnsSettings\": {\r\n\
         \      \"dnsServers\": [],\r\n      \"appliedDnsServers\": [],\r\n      \"\
-        internalDomainNameSuffix\": \"2fnmhux2boyutmbg42kiouvkyh.bx.internal.cloudapp.net\"\
+        internalDomainNameSuffix\": \"zvvvo5hvwugunh30n2l0fc4xge.bx.internal.cloudapp.net\"\
         \r\n    },\r\n    \"enableAcceleratedNetworking\": false,\r\n    \"enableIPForwarding\"\
         : false,\r\n    \"hostedWorkloads\": [],\r\n    \"tapConfigurations\": []\r\
         \n  },\r\n  \"type\": \"Microsoft.Network/networkInterfaces\"\r\n}"
@@ -481,9 +481,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:25:00 GMT
+      - Fri, 13 Nov 2020 09:54:51 GMT
       etag:
-      - W/"74e4251a-1c2e-4cb4-852b-e22d6bc29b51"
+      - W/"fe18c148-76fd-4515-8ad2-3e0224f676c5"
       expires:
       - '-1'
       pragma:
@@ -500,13 +500,13 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-arm-service-request-id:
-      - add0089e-ea1a-41cd-8d7b-4cc8568e451f
+      - 77906573-d5a3-4df0-8806-cdf77ce87ee9
     status:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"location": "eastus", "properties": {"hardwareProfile": {"vmSize":
-      "Standard_D2_v2"}, "storageProfile": {"imageReference": {"publisher": "MicrosoftWindowsServer",
+    body: '{"location": "eastus", "properties": {"hardwareProfile": {"vmSize": "Standard_D2_v2"},
+      "storageProfile": {"imageReference": {"publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer", "sku": "2016-Datacenter", "version": "latest"}, "osDisk":
       {"name": "myVMosdisk", "caching": "ReadWrite", "createOption": "FromImage",
       "managedDisk": {"storageAccountType": "Standard_LRS"}}, "dataDisks": [{"lun":
@@ -514,7 +514,7 @@ interactions:
       "Empty", "diskSizeGB": 1023}]}, "osProfile": {"computerName": "myVM", "adminUsername":
       "testuser", "adminPassword": "Aa1!zyx_", "windowsConfiguration": {"enableAutomaticUpdates":
       true}}, "networkProfile": {"networkInterfaces": [{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Network/networkInterfaces/interfacexx",
-      "properties": {"primary": true}}]}}}\'''''
+      "properties": {"primary": true}}]}}}'
     headers:
       Accept:
       - application/json
@@ -527,7 +527,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -537,12 +537,12 @@ interactions:
     body:
       string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
-        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"3f145f13-f7ad-43e0-a499-37a258b865a7\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"65b9a1be-8f05-467b-abe8-2cd293567244\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
         \    },\r\n    \"storageProfile\": {\r\n      \"imageReference\": {\r\n  \
         \      \"publisher\": \"MicrosoftWindowsServer\",\r\n        \"offer\": \"\
         WindowsServer\",\r\n        \"sku\": \"2016-Datacenter\",\r\n        \"version\"\
-        : \"latest\",\r\n        \"exactVersion\": \"14393.3930.2009041537\"\r\n \
+        : \"latest\",\r\n        \"exactVersion\": \"14393.4046.2010301518\"\r\n \
         \     },\r\n      \"osDisk\": {\r\n        \"osType\": \"Windows\",\r\n  \
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
@@ -568,7 +568,7 @@ interactions:
       azure-asyncnotification:
       - Enabled
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/c73e2ab5-5b68-4982-b65f-c81b8f1f6d46?api-version=2019-07-01
       cache-control:
       - no-cache
       content-length:
@@ -576,7 +576,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:25:09 GMT
+      - Fri, 13 Nov 2020 09:54:58 GMT
       expires:
       - '-1'
       pragma:
@@ -589,9 +589,9 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/PutVM3Min;239,Microsoft.Compute/PutVM30Min;1199
+      - Microsoft.Compute/PutVM3Min;742,Microsoft.Compute/PutVM30Min;3718
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1197'
     status:
       code: 201
       message: Created
@@ -605,14 +605,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/c73e2ab5-5b68-4982-b65f-c81b8f1f6d46?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-09-16T03:25:08.9656355+00:00\",\r\n  \"\
-        status\": \"InProgress\",\r\n  \"name\": \"81f9ee6f-1e7f-4970-9565-33f9978ca670\"\
+      string: "{\r\n  \"startTime\": \"2020-11-13T09:54:57.2458853+00:00\",\r\n  \"\
+        status\": \"InProgress\",\r\n  \"name\": \"c73e2ab5-5b68-4982-b65f-c81b8f1f6d46\"\
         \r\n}"
     headers:
       cache-control:
@@ -622,7 +622,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:25:22 GMT
+      - Fri, 13 Nov 2020 09:55:09 GMT
       expires:
       - '-1'
       pragma:
@@ -639,7 +639,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29993
+      - Microsoft.Compute/GetOperation3Min;14990,Microsoft.Compute/GetOperation30Min;29858
     status:
       code: 200
       message: OK
@@ -653,63 +653,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/c73e2ab5-5b68-4982-b65f-c81b8f1f6d46?api-version=2019-07-01
   response:
     body:
-      string: "{\r\n  \"startTime\": \"2020-09-16T03:25:08.9656355+00:00\",\r\n  \"\
-        status\": \"InProgress\",\r\n  \"name\": \"81f9ee6f-1e7f-4970-9565-33f9978ca670\"\
-        \r\n}"
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '134'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 16 Sep 2020 03:26:12 GMT
-      expires:
-      - '-1'
-      pragma:
-      - no-cache
-      server:
-      - Microsoft-HTTPAPI/2.0
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-content-type-options:
-      - nosniff
-      x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29991
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
-        msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/81f9ee6f-1e7f-4970-9565-33f9978ca670?api-version=2019-07-01
-  response:
-    body:
-      string: "{\r\n  \"startTime\": \"2020-09-16T03:25:08.9656355+00:00\",\r\n  \"\
-        endTime\": \"2020-09-16T03:26:25.0440116+00:00\",\r\n  \"status\": \"Succeeded\"\
-        ,\r\n  \"name\": \"81f9ee6f-1e7f-4970-9565-33f9978ca670\"\r\n}"
+      string: "{\r\n  \"startTime\": \"2020-11-13T09:54:57.2458853+00:00\",\r\n  \"\
+        endTime\": \"2020-11-13T09:55:50.4179171+00:00\",\r\n  \"status\": \"Succeeded\"\
+        ,\r\n  \"name\": \"c73e2ab5-5b68-4982-b65f-c81b8f1f6d46\"\r\n}"
     headers:
       cache-control:
       - no-cache
@@ -718,7 +670,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:26:42 GMT
+      - Fri, 13 Nov 2020 09:56:00 GMT
       expires:
       - '-1'
       pragma:
@@ -735,7 +687,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/GetOperation3Min;14994,Microsoft.Compute/GetOperation30Min;29989
+      - Microsoft.Compute/GetOperation3Min;14992,Microsoft.Compute/GetOperation30Min;29854
     status:
       code: 200
       message: OK
@@ -749,7 +701,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
+      - python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.10
         msrest_azure/0.6.2 azure-mgmt-compute/10.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name?api-version=2019-07-01
@@ -757,28 +709,28 @@ interactions:
     body:
       string: "{\r\n  \"name\": \"vm_name\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         ,\r\n  \"type\": \"Microsoft.Compute/virtualMachines\",\r\n  \"location\"\
-        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"3f145f13-f7ad-43e0-a499-37a258b865a7\"\
+        : \"eastus\",\r\n  \"properties\": {\r\n    \"vmId\": \"65b9a1be-8f05-467b-abe8-2cd293567244\"\
         ,\r\n    \"hardwareProfile\": {\r\n      \"vmSize\": \"Standard_D2_v2\"\r\n\
         \    },\r\n    \"storageProfile\": {\r\n      \"imageReference\": {\r\n  \
         \      \"publisher\": \"MicrosoftWindowsServer\",\r\n        \"offer\": \"\
         WindowsServer\",\r\n        \"sku\": \"2016-Datacenter\",\r\n        \"version\"\
-        : \"latest\",\r\n        \"exactVersion\": \"14393.3930.2009041537\"\r\n \
+        : \"latest\",\r\n        \"exactVersion\": \"14393.4046.2010301518\"\r\n \
         \     },\r\n      \"osDisk\": {\r\n        \"osType\": \"Windows\",\r\n  \
         \      \"name\": \"myVMosdisk\",\r\n        \"createOption\": \"FromImage\"\
         ,\r\n        \"caching\": \"ReadWrite\",\r\n        \"managedDisk\": {\r\n\
         \          \"storageAccountType\": \"Standard_LRS\",\r\n          \"id\":\
-        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/T3YSTF6ZWQW5NJU6RGJD6JDB43ZG4R5DPXWT423BKGVAFUJ5BHL4FFN2F67NJYLISNRT3LFORAE/providers/Microsoft.Compute/disks/myVMosdisk\"\
+        \ \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/myVMosdisk\"\
         \r\n        },\r\n        \"diskSizeGB\": 127\r\n      },\r\n      \"dataDisks\"\
-        : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"vm_name_disk2_7453cbbaab4a4fcf88f83430dcb7d429\"\
+        : [\r\n        {\r\n          \"lun\": 0,\r\n          \"name\": \"vm_name_disk2_115746c7f3a04c79a4329f3150575d6a\"\
         ,\r\n          \"createOption\": \"Empty\",\r\n          \"caching\": \"None\"\
         ,\r\n          \"managedDisk\": {\r\n            \"storageAccountType\": \"\
-        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/T3YSTF6ZWQW5NJU6RGJD6JDB43ZG4R5DPXWT423BKGVAFUJ5BHL4FFN2F67NJYLISNRT3LFORAE/providers/Microsoft.Compute/disks/vm_name_disk2_7453cbbaab4a4fcf88f83430dcb7d429\"\
+        Standard_LRS\",\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/vm_name_disk2_115746c7f3a04c79a4329f3150575d6a\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        },\r\n        {\r\n          \"lun\": 1,\r\n          \"\
-        name\": \"vm_name_disk3_dd107b82c8bd4708839b16a71e3e52a3\",\r\n          \"\
+        name\": \"vm_name_disk3_ffc83f296713413b80332ac1ae1092b1\",\r\n          \"\
         createOption\": \"Empty\",\r\n          \"caching\": \"None\",\r\n       \
         \   \"managedDisk\": {\r\n            \"storageAccountType\": \"Standard_LRS\"\
-        ,\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/T3YSTF6ZWQW5NJU6RGJD6JDB43ZG4R5DPXWT423BKGVAFUJ5BHL4FFN2F67NJYLISNRT3LFORAE/providers/Microsoft.Compute/disks/vm_name_disk3_dd107b82c8bd4708839b16a71e3e52a3\"\
+        ,\r\n            \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/vm_name_disk3_ffc83f296713413b80332ac1ae1092b1\"\
         \r\n          },\r\n          \"diskSizeGB\": 1023,\r\n          \"toBeDetached\"\
         : false\r\n        }\r\n      ]\r\n    },\r\n    \"osProfile\": {\r\n    \
         \  \"computerName\": \"myVM\",\r\n      \"adminUsername\": \"testuser\",\r\
@@ -797,7 +749,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:26:42 GMT
+      - Fri, 13 Nov 2020 09:56:00 GMT
       expires:
       - '-1'
       pragma:
@@ -814,7 +766,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-resource:
-      - Microsoft.Compute/LowCostGet3Min;3997,Microsoft.Compute/LowCostGet30Min;31997
+      - Microsoft.Compute/LowCostGet3Min;3996,Microsoft.Compute/LowCostGet30Min;31984
     status:
       code: 200
       message: OK
@@ -828,7 +780,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/providers/microsoft.insights/operations?api-version=2015-04-01
   response:
@@ -2060,7 +2012,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:26:45 GMT
+      - Fri, 13 Nov 2020 09:56:02 GMT
       expires:
       - '-1'
       pragma:
@@ -2079,8 +2031,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''{"location": "global", "properties": {"description": "This is the
-      description of the rule1", "severity": 3, "enabled": true, "scopes": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name"],
+    body: '{"location": "global", "properties": {"description": "This is the description
+      of the rule1", "severity": 3, "enabled": true, "scopes": ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name"],
       "evaluationFrequency": "PT1M", "windowSize": "PT15M", "targetResourceType":
       "Microsoft.Compute/virtualMachines", "targetResourceRegion": "southcentralus",
       "criteria": {"odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
@@ -2089,7 +2041,7 @@ interactions:
       "timeAggregation": "Average", "dimensions": [], "operator": "GreaterOrLessThan",
       "alertSensitivity": "Medium", "failingPeriods": {"numberOfEvaluationPeriods":
       4.0, "minFailingPeriodsToAlert": 4.0}}]}, "autoMitigate": false, "actions":
-      []}}\'''''
+      []}}'
     headers:
       Accept:
       - application/json
@@ -2102,42 +2054,40 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
     body:
-      string: "{\r\n  \"location\": \"global\",\r\n  \"type\": \"Microsoft.Insights/metricAlerts\"\
-        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
-        ,\r\n  \"properties\": {\r\n    \"description\": \"This is the description\
-        \ of the rule1\",\r\n    \"severity\": 3,\r\n    \"enabled\": true,\r\n  \
-        \  \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
+        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"type\": \"Microsoft.Insights/metricAlerts\"\
+        ,\r\n  \"location\": \"global\",\r\n  \"properties\": {\r\n    \"description\"\
+        : \"This is the description of the rule1\",\r\n    \"severity\": 3,\r\n  \
+        \  \"enabled\": true,\r\n    \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         \r\n    ],\r\n    \"evaluationFrequency\": \"PT1M\",\r\n    \"windowSize\"\
-        : \"PT15M\",\r\n    \"templateType\": 13,\r\n    \"templateSpecificParameters\"\
-        : {\r\n      \"direction\": \"UpAndDown\",\r\n      \"sensitivity\": \"Medium\"\
-        \r\n    },\r\n    \"criteria\": {\r\n      \"allOf\": [\r\n        {\r\n \
-        \         \"alertSensitivity\": \"Medium\",\r\n          \"failingPeriods\"\
+        : \"PT15M\",\r\n    \"criteria\": {\r\n      \"allOf\": [\r\n        {\r\n\
+        \          \"alertSensitivity\": \"Medium\",\r\n          \"failingPeriods\"\
         : {\r\n            \"numberOfEvaluationPeriods\": 4,\r\n            \"minFailingPeriodsToAlert\"\
         : 4\r\n          },\r\n          \"name\": \"High_CPU_80\",\r\n          \"\
         metricNamespace\": \"microsoft.compute/virtualmachines\",\r\n          \"\
-        metricName\": \"Percentage CPU\",\r\n          \"dimensions\": [],\r\n   \
-        \       \"operator\": \"GreaterOrLessThan\",\r\n          \"timeAggregation\"\
-        : \"Average\",\r\n          \"criterionType\": \"DynamicThresholdCriterion\"\
-        \r\n        }\r\n      ],\r\n      \"odata.type\": \"Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria\"\
-        \r\n    },\r\n    \"autoMitigate\": false,\r\n    \"targetResourceType\":\
-        \ \"Microsoft.Compute/virtualMachines\",\r\n    \"targetResourceRegion\":\
-        \ \"southcentralus\",\r\n    \"actions\": []\r\n  }\r\n}"
+        metricName\": \"Percentage CPU\",\r\n          \"operator\": \"GreaterOrLessThan\"\
+        ,\r\n          \"timeAggregation\": \"Average\",\r\n          \"criterionType\"\
+        : \"DynamicThresholdCriterion\"\r\n        }\r\n      ],\r\n      \"odata.type\"\
+        : \"Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria\"\r\n \
+        \   },\r\n    \"autoMitigate\": false,\r\n    \"targetResourceType\": \"Microsoft.Compute/virtualMachines\"\
+        ,\r\n    \"targetResourceRegion\": \"southcentralus\",\r\n    \"actions\"\
+        : []\r\n  }\r\n}"
     headers:
       api-supported-versions:
       - 1.0, 2.0, 2017-09-01-preview, 2018-03-01
       cache-control:
       - no-cache
       content-length:
-      - '1674'
+      - '1511'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:27:06 GMT
+      - Fri, 13 Nov 2020 09:56:16 GMT
       expires:
       - '-1'
       pragma:
@@ -2171,42 +2121,40 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
     body:
-      string: "{\r\n  \"location\": \"global\",\r\n  \"type\": \"Microsoft.Insights/metricAlerts\"\
-        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
-        ,\r\n  \"properties\": {\r\n    \"description\": \"This is the description\
-        \ of the rule1\",\r\n    \"severity\": 3,\r\n    \"enabled\": true,\r\n  \
-        \  \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
+      string: "{\r\n  \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
+        ,\r\n  \"name\": \"metricnamexx\",\r\n  \"type\": \"Microsoft.Insights/metricAlerts\"\
+        ,\r\n  \"location\": \"global\",\r\n  \"properties\": {\r\n    \"description\"\
+        : \"This is the description of the rule1\",\r\n    \"severity\": 3,\r\n  \
+        \  \"enabled\": true,\r\n    \"scopes\": [\r\n      \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name\"\
         \r\n    ],\r\n    \"evaluationFrequency\": \"PT1M\",\r\n    \"windowSize\"\
-        : \"PT15M\",\r\n    \"templateType\": 13,\r\n    \"templateSpecificParameters\"\
-        : {\r\n      \"direction\": \"UpAndDown\",\r\n      \"sensitivity\": \"Medium\"\
-        \r\n    },\r\n    \"criteria\": {\r\n      \"allOf\": [\r\n        {\r\n \
-        \         \"alertSensitivity\": \"Medium\",\r\n          \"failingPeriods\"\
+        : \"PT15M\",\r\n    \"criteria\": {\r\n      \"allOf\": [\r\n        {\r\n\
+        \          \"alertSensitivity\": \"Medium\",\r\n          \"failingPeriods\"\
         : {\r\n            \"numberOfEvaluationPeriods\": 4,\r\n            \"minFailingPeriodsToAlert\"\
         : 4\r\n          },\r\n          \"name\": \"High_CPU_80\",\r\n          \"\
         metricNamespace\": \"microsoft.compute/virtualmachines\",\r\n          \"\
-        metricName\": \"Percentage CPU\",\r\n          \"dimensions\": [],\r\n   \
-        \       \"operator\": \"GreaterOrLessThan\",\r\n          \"timeAggregation\"\
-        : \"Average\",\r\n          \"criterionType\": \"DynamicThresholdCriterion\"\
-        \r\n        }\r\n      ],\r\n      \"odata.type\": \"Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria\"\
-        \r\n    },\r\n    \"autoMitigate\": false,\r\n    \"targetResourceType\":\
-        \ \"Microsoft.Compute/virtualMachines\",\r\n    \"targetResourceRegion\":\
-        \ \"southcentralus\",\r\n    \"actions\": []\r\n  }\r\n}"
+        metricName\": \"Percentage CPU\",\r\n          \"operator\": \"GreaterOrLessThan\"\
+        ,\r\n          \"timeAggregation\": \"Average\",\r\n          \"criterionType\"\
+        : \"DynamicThresholdCriterion\"\r\n        }\r\n      ],\r\n      \"odata.type\"\
+        : \"Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria\"\r\n \
+        \   },\r\n    \"autoMitigate\": false,\r\n    \"targetResourceType\": \"Microsoft.Compute/virtualMachines\"\
+        ,\r\n    \"targetResourceRegion\": \"southcentralus\",\r\n    \"actions\"\
+        : []\r\n  }\r\n}"
     headers:
       api-supported-versions:
       - 1.0, 2.0, 2017-09-01-preview, 2018-03-01
       cache-control:
       - no-cache
       content-length:
-      - '1674'
+      - '1511'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:27:36 GMT
+      - Fri, 13 Nov 2020 09:56:47 GMT
       expires:
       - '-1'
       pragma:
@@ -2238,7 +2186,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status?api-version=2018-03-01
   response:
@@ -2246,7 +2194,7 @@ interactions:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw==\"\
         ,\r\n      \"name\": \"Y3VycmVudFN0YXR1cw==\",\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\"\
         ,\r\n      \"properties\": {\r\n        \"dimensions\": {},\r\n        \"\
-        status\": \"Unknown\",\r\n        \"timestamp\": \"2020-09-16T03:27:39.1123665Z\"\
+        status\": \"Unknown\",\r\n        \"timestamp\": \"2020-11-13T09:56:49.7267218Z\"\
         \r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       api-supported-versions:
@@ -2258,7 +2206,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:27:38 GMT
+      - Fri, 13 Nov 2020 09:56:49 GMT
       expires:
       - '-1'
       pragma:
@@ -2290,7 +2238,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx/status/Y3VycmVudFN0YXR1cw%3D%3D?api-version=2018-03-01
   response:
@@ -2298,7 +2246,7 @@ interactions:
       string: "{\r\n  \"value\": [\r\n    {\r\n      \"id\": \"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx\"\
         ,\r\n      \"name\": \"Y3VycmVudFN0YXR1cw==\",\r\n      \"type\": \"Microsoft.Insights/metricAlerts/status\"\
         ,\r\n      \"properties\": {\r\n        \"dimensions\": {},\r\n        \"\
-        status\": \"Healthy\",\r\n        \"timestamp\": \"2020-09-16T03:27:41.803534Z\"\
+        status\": \"Healthy\",\r\n        \"timestamp\": \"2020-11-13T09:56:51.6303943Z\"\
         \r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       api-supported-versions:
@@ -2306,11 +2254,11 @@ interactions:
       cache-control:
       - no-cache
       content-length:
-      - '488'
+      - '489'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:27:41 GMT
+      - Fri, 13 Nov 2020 09:56:51 GMT
       expires:
       - '-1'
       pragma:
@@ -2342,7 +2290,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default?api-version=2018-11-27-preview
   response:
@@ -2356,13 +2304,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Sep 2020 03:27:41 GMT
+      - Fri, 13 Nov 2020 09:56:51 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       server:
-      - ServiceMap-API-AAPRODSEA/1.1.1348.311
+      - ServiceMap-API-AAPRODSEA/1.1.1405.337
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000; includeSubDomains
@@ -2373,7 +2321,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-elapsed:
-      - '5'
+      - '20'
     status:
       code: 200
       message: OK
@@ -2387,16 +2335,18 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/microsoft.insights/metrics?api-version=2018-01-01
   response:
     body:
-      string: '{"cost":0,"timespan":"2020-09-16T02:27:42Z/2020-09-16T03:27:42Z","interval":"PT1M","value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/metrics/Percentage
+      string: '{"cost":0,"timespan":"2020-11-13T08:56:52Z/2020-11-13T09:56:52Z","interval":"PT1M","value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/virtualMachines/vm_name/providers/Microsoft.Insights/metrics/Percentage
         CPU","type":"Microsoft.Insights/metrics","name":{"value":"Percentage CPU","localizedValue":"Percentage
         CPU"},"displayDescription":"The percentage of allocated compute units that
-        are currently in use by the Virtual Machine(s)","unit":"Percent","timeseries":[{"metadatavalues":[],"data":[{"timeStamp":"2020-09-16T02:27:00Z"},{"timeStamp":"2020-09-16T02:28:00Z"},{"timeStamp":"2020-09-16T02:29:00Z"},{"timeStamp":"2020-09-16T02:30:00Z"},{"timeStamp":"2020-09-16T02:31:00Z"},{"timeStamp":"2020-09-16T02:32:00Z"},{"timeStamp":"2020-09-16T02:33:00Z"},{"timeStamp":"2020-09-16T02:34:00Z"},{"timeStamp":"2020-09-16T02:35:00Z"},{"timeStamp":"2020-09-16T02:36:00Z"},{"timeStamp":"2020-09-16T02:37:00Z"},{"timeStamp":"2020-09-16T02:38:00Z"},{"timeStamp":"2020-09-16T02:39:00Z"},{"timeStamp":"2020-09-16T02:40:00Z"},{"timeStamp":"2020-09-16T02:41:00Z"},{"timeStamp":"2020-09-16T02:42:00Z"},{"timeStamp":"2020-09-16T02:43:00Z"},{"timeStamp":"2020-09-16T02:44:00Z"},{"timeStamp":"2020-09-16T02:45:00Z"},{"timeStamp":"2020-09-16T02:46:00Z"},{"timeStamp":"2020-09-16T02:47:00Z"},{"timeStamp":"2020-09-16T02:48:00Z"},{"timeStamp":"2020-09-16T02:49:00Z"},{"timeStamp":"2020-09-16T02:50:00Z"},{"timeStamp":"2020-09-16T02:51:00Z"},{"timeStamp":"2020-09-16T02:52:00Z"},{"timeStamp":"2020-09-16T02:53:00Z"},{"timeStamp":"2020-09-16T02:54:00Z"},{"timeStamp":"2020-09-16T02:55:00Z"},{"timeStamp":"2020-09-16T02:56:00Z"},{"timeStamp":"2020-09-16T02:57:00Z"},{"timeStamp":"2020-09-16T02:58:00Z"},{"timeStamp":"2020-09-16T02:59:00Z"},{"timeStamp":"2020-09-16T03:00:00Z"},{"timeStamp":"2020-09-16T03:01:00Z"},{"timeStamp":"2020-09-16T03:02:00Z"},{"timeStamp":"2020-09-16T03:03:00Z"},{"timeStamp":"2020-09-16T03:04:00Z"},{"timeStamp":"2020-09-16T03:05:00Z"},{"timeStamp":"2020-09-16T03:06:00Z"},{"timeStamp":"2020-09-16T03:07:00Z"},{"timeStamp":"2020-09-16T03:08:00Z"},{"timeStamp":"2020-09-16T03:09:00Z"},{"timeStamp":"2020-09-16T03:10:00Z"},{"timeStamp":"2020-09-16T03:11:00Z"},{"timeStamp":"2020-09-16T03:12:00Z"},{"timeStamp":"2020-09-16T03:13:00Z"},{"timeStamp":"2020-09-16T03:14:00Z"},{"timeStamp":"2020-09-16T03:15:00Z"},{"timeStamp":"2020-09-16T03:16:00Z"},{"timeStamp":"2020-09-16T03:17:00Z"},{"timeStamp":"2020-09-16T03:18:00Z"},{"timeStamp":"2020-09-16T03:19:00Z"},{"timeStamp":"2020-09-16T03:20:00Z"},{"timeStamp":"2020-09-16T03:21:00Z"},{"timeStamp":"2020-09-16T03:22:00Z"},{"timeStamp":"2020-09-16T03:23:00Z"},{"timeStamp":"2020-09-16T03:24:00Z"},{"timeStamp":"2020-09-16T03:25:00Z"},{"timeStamp":"2020-09-16T03:26:00Z"}]}],"errorCode":"Success"}],"namespace":"Microsoft.Compute/virtualMachines","resourceregion":"eastus"}'
+        are currently in use by the Virtual Machine(s)","unit":"Percent","timeseries":[{"metadatavalues":[],"data":[{"timeStamp":"2020-11-13T08:56:00Z"},{"timeStamp":"2020-11-13T08:57:00Z"},{"timeStamp":"2020-11-13T08:58:00Z"},{"timeStamp":"2020-11-13T08:59:00Z"},{"timeStamp":"2020-11-13T09:00:00Z"},{"timeStamp":"2020-11-13T09:01:00Z"},{"timeStamp":"2020-11-13T09:02:00Z"},{"timeStamp":"2020-11-13T09:03:00Z"},{"timeStamp":"2020-11-13T09:04:00Z"},{"timeStamp":"2020-11-13T09:05:00Z"},{"timeStamp":"2020-11-13T09:06:00Z"},{"timeStamp":"2020-11-13T09:07:00Z"},{"timeStamp":"2020-11-13T09:08:00Z"},{"timeStamp":"2020-11-13T09:09:00Z"},{"timeStamp":"2020-11-13T09:10:00Z"},{"timeStamp":"2020-11-13T09:11:00Z"},{"timeStamp":"2020-11-13T09:12:00Z"},{"timeStamp":"2020-11-13T09:13:00Z"},{"timeStamp":"2020-11-13T09:14:00Z"},{"timeStamp":"2020-11-13T09:15:00Z"},{"timeStamp":"2020-11-13T09:16:00Z"},{"timeStamp":"2020-11-13T09:17:00Z"},{"timeStamp":"2020-11-13T09:18:00Z"},{"timeStamp":"2020-11-13T09:19:00Z"},{"timeStamp":"2020-11-13T09:20:00Z"},{"timeStamp":"2020-11-13T09:21:00Z"},{"timeStamp":"2020-11-13T09:22:00Z"},{"timeStamp":"2020-11-13T09:23:00Z"},{"timeStamp":"2020-11-13T09:24:00Z"},{"timeStamp":"2020-11-13T09:25:00Z"},{"timeStamp":"2020-11-13T09:26:00Z"},{"timeStamp":"2020-11-13T09:27:00Z"},{"timeStamp":"2020-11-13T09:28:00Z"},{"timeStamp":"2020-11-13T09:29:00Z"},{"timeStamp":"2020-11-13T09:30:00Z"},{"timeStamp":"2020-11-13T09:31:00Z"},{"timeStamp":"2020-11-13T09:32:00Z"},{"timeStamp":"2020-11-13T09:33:00Z"},{"timeStamp":"2020-11-13T09:34:00Z"},{"timeStamp":"2020-11-13T09:35:00Z"},{"timeStamp":"2020-11-13T09:36:00Z"},{"timeStamp":"2020-11-13T09:37:00Z"},{"timeStamp":"2020-11-13T09:38:00Z"},{"timeStamp":"2020-11-13T09:39:00Z"},{"timeStamp":"2020-11-13T09:40:00Z"},{"timeStamp":"2020-11-13T09:41:00Z"},{"timeStamp":"2020-11-13T09:42:00Z"},{"timeStamp":"2020-11-13T09:43:00Z"},{"timeStamp":"2020-11-13T09:44:00Z"},{"timeStamp":"2020-11-13T09:45:00Z"},{"timeStamp":"2020-11-13T09:46:00Z"},{"timeStamp":"2020-11-13T09:47:00Z"},{"timeStamp":"2020-11-13T09:48:00Z"},{"timeStamp":"2020-11-13T09:49:00Z"},{"timeStamp":"2020-11-13T09:50:00Z"},{"timeStamp":"2020-11-13T09:51:00Z"},{"timeStamp":"2020-11-13T09:52:00Z"},{"timeStamp":"2020-11-13T09:53:00Z"},{"timeStamp":"2020-11-13T09:54:00Z"},{"timeStamp":"2020-11-13T09:55:00Z"}]}],"errorCode":"Success"}],"namespace":"Microsoft.Compute/virtualMachines","resourceregion":"eastus"}'
     headers:
+      access-control-expose-headers:
+      - Request-Context
       cache-control:
       - no-cache
       content-length:
@@ -2404,7 +2354,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 16 Sep 2020 03:27:41 GMT
+      - Fri, 13 Nov 2020 09:56:52 GMT
+      request-context:
+      - appId=cid-v1:b021da79-5252-4375-9df5-2e17c1dcd822
       server:
       - Microsoft-IIS/10.0
       strict-transport-security:
@@ -2434,7 +2386,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azure-mgmt-eventhub/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-azure-mgmt-eventhub/2.0.0 Python/3.6.9 (Linux-4.19.76-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Insights/metricAlerts/metricnamexx?api-version=2018-03-01
   response:
@@ -2448,7 +2400,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Sep 2020 03:27:47 GMT
+      - Fri, 13 Nov 2020 09:56:58 GMT
       expires:
       - '-1'
       pragma:
@@ -2462,7 +2414,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14999'
+      - '14998'
       x-powered-by:
       - ASP.NET
     status:
