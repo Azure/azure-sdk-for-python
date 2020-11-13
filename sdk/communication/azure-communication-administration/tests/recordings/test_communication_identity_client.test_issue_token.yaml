@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 10 Oct 2020 02:14:59 GMT
+      - Tue, 27 Oct 2020 19:38:11 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communication28c71533.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://communicationk453hklaelp.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
     body: '{"id": "sanitized"}'
     headers:
@@ -26,15 +26,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 10 Oct 2020 02:14:59 GMT
+      - Tue, 27 Oct 2020 19:38:11 GMT
       ms-cv:
-      - Pww8CtkKzUeaJne5eGvDBA.0
+      - ubcdMU2Bk0aDuEpT+Wgitg.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 33ms
+      - 18ms
     status:
       code: 200
       message: OK
@@ -52,30 +52,30 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 10 Oct 2020 02:14:59 GMT
+      - Tue, 27 Oct 2020 19:38:11 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communication28c71533.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    uri: https://communicationk453hklaelp.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
   response:
-    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-10-11T02:14:58.7723626+00:00"}'
+    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-10-28T19:38:10.9160451+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview1, 2020-07-20-preview2
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 10 Oct 2020 02:14:59 GMT
+      - Tue, 27 Oct 2020 19:38:11 GMT
       ms-cv:
-      - F0sn/mygTU+RwCNm6UCPGg.0
+      - eD+1kQTuikWnfWgc8xKMKw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 89ms
+      - 29ms
     status:
       code: 200
       message: OK

@@ -162,11 +162,14 @@ class DigitalTwinsAddOptions(msrest.serialization.Model):
     :param tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
     :type tracestate: str
+    :param if_none_match: Only perform the operation if the entity does not already exist.
+    :type if_none_match: str
     """
 
     _attribute_map = {
         'traceparent': {'key': 'traceparent', 'type': 'str'},
         'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
     }
 
     def __init__(
@@ -174,11 +177,13 @@ class DigitalTwinsAddOptions(msrest.serialization.Model):
         *,
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         **kwargs
     ):
         super(DigitalTwinsAddOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
+        self.if_none_match = if_none_match
 
 
 class DigitalTwinsAddRelationshipOptions(msrest.serialization.Model):
@@ -189,11 +194,14 @@ class DigitalTwinsAddRelationshipOptions(msrest.serialization.Model):
     :param tracestate: Provides vendor-specific trace identification information and is a companion
      to traceparent.
     :type tracestate: str
+    :param if_none_match: Only perform the operation if the entity does not already exist.
+    :type if_none_match: str
     """
 
     _attribute_map = {
         'traceparent': {'key': 'traceparent', 'type': 'str'},
         'tracestate': {'key': 'tracestate', 'type': 'str'},
+        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
     }
 
     def __init__(
@@ -201,11 +209,13 @@ class DigitalTwinsAddRelationshipOptions(msrest.serialization.Model):
         *,
         traceparent: Optional[str] = None,
         tracestate: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         **kwargs
     ):
         super(DigitalTwinsAddRelationshipOptions, self).__init__(**kwargs)
         self.traceparent = traceparent
         self.tracestate = tracestate
+        self.if_none_match = if_none_match
 
 
 class DigitalTwinsDeleteOptions(msrest.serialization.Model):
@@ -272,6 +282,47 @@ class DigitalTwinsDeleteRelationshipOptions(msrest.serialization.Model):
         self.traceparent = traceparent
         self.tracestate = tracestate
         self.if_match = if_match
+
+
+class DigitalTwinsEventRoute(msrest.serialization.Model):
+    """A route which directs notification and telemetry events to an endpoint. Endpoints are a destination outside of Azure Digital Twins such as an EventHub.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The id of the event route.
+    :vartype id: str
+    :param endpoint_name: Required. The name of the endpoint this event route is bound to.
+    :type endpoint_name: str
+    :param filter: Required. An expression which describes the events which are routed to the
+     endpoint.
+    :type filter: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'endpoint_name': {'required': True},
+        'filter': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'endpoint_name': {'key': 'endpointName', 'type': 'str'},
+        'filter': {'key': 'filter', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        endpoint_name: str,
+        filter: str,
+        **kwargs
+    ):
+        super(DigitalTwinsEventRoute, self).__init__(**kwargs)
+        self.id = None
+        self.endpoint_name = endpoint_name
+        self.filter = filter
 
 
 class DigitalTwinsGetByIdOptions(msrest.serialization.Model):
@@ -680,65 +731,24 @@ class ErrorResponse(msrest.serialization.Model):
         self.error = error
 
 
-class EventRoute(msrest.serialization.Model):
-    """A route which directs notification and telemetry events to an endpoint. Endpoints are a destination outside of Azure Digital Twins such as an EventHub.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The id of the event route.
-    :vartype id: str
-    :param endpoint_name: Required. The name of the endpoint this event route is bound to.
-    :type endpoint_name: str
-    :param filter: Required. An expression which describes the events which are routed to the
-     endpoint.
-    :type filter: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'endpoint_name': {'required': True},
-        'filter': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'endpoint_name': {'key': 'endpointName', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        endpoint_name: str,
-        filter: str,
-        **kwargs
-    ):
-        super(EventRoute, self).__init__(**kwargs)
-        self.id = None
-        self.endpoint_name = endpoint_name
-        self.filter = filter
-
-
 class EventRouteCollection(msrest.serialization.Model):
     """A collection of EventRoute objects.
 
     :param value: The EventRoute objects.
-    :type value: list[~azure.digitaltwins.core.models.EventRoute]
+    :type value: list[~azure.digitaltwins.core.models.DigitalTwinsEventRoute]
     :param next_link: A URI to retrieve the next page of results.
     :type next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EventRoute]'},
+        'value': {'key': 'value', 'type': '[DigitalTwinsEventRoute]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["EventRoute"]] = None,
+        value: Optional[List["DigitalTwinsEventRoute"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):

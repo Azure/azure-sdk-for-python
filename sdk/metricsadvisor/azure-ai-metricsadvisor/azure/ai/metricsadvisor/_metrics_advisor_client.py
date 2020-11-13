@@ -6,7 +6,7 @@
 
 # pylint: disable=protected-access
 
-from typing import List, Union, Dict, Any, cast, TYPE_CHECKING
+from typing import List, Union, Dict, Any, cast, TYPE_CHECKING, overload
 
 from azure.core.tracing.decorator import distributed_trace
 from ._metrics_advisor_key_credential import MetricsAdvisorKeyCredential
@@ -163,7 +163,7 @@ class MetricsAdvisorClient(object):
             **kwargs))
 
     @distributed_trace
-    def list_feedbacks(self, metric_id, **kwargs):
+    def list_feedback(self, metric_id, **kwargs):
         # type: (str, Any) -> ItemPaged[Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
 
         """List feedback on the given metric.
@@ -175,8 +175,8 @@ class MetricsAdvisorClient(object):
         :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
                 "ChangePoint", "Period", "Comment".
         :paramtype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-        :keyword Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :keyword Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
                 "FeedbackCreatedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
@@ -270,11 +270,20 @@ class MetricsAdvisorClient(object):
         :param str detection_configuration_id: anomaly alerting configuration unique id.
         :param series: List of dimensions specified for series.
         :type series: ~azure.ai.metricsadvisor.models.SeriesIdentity or list[dict[str, str]]
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :return: Pageable of MetricEnrichedSeriesData
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_enriched_series_data]
+                :end-before: [END list_metric_enriched_series_data]
+                :language: python
+                :dedent: 4
+                :caption: Query metric enriched series data.
         """
 
         series_list = [
@@ -299,7 +308,7 @@ class MetricsAdvisorClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_alerts_for_alert_configuration(
+    def list_alerts(
         self, alert_configuration_id,  # type: str
         start_time,  # type: datetime.datetime
         end_time,  # type: datetime.datetime
@@ -312,8 +321,8 @@ class MetricsAdvisorClient(object):
 
         :param alert_configuration_id: anomaly alert configuration unique id.
         :type alert_configuration_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time.
-        :param Union[str, ~datetime.datetime] end_time: end time.
+        :param Union[str, datetime.datetime] start_time: start time.
+        :param Union[str, datetime.datetime] end_time: end time.
         :param time_mode: time mode. Possible values include: "AnomalyTime", "CreatedTime",
                 "ModifiedTime".
         :type time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
@@ -324,9 +333,9 @@ class MetricsAdvisorClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
-                :start-after: [START list_alerts_for_alert_config]
-                :end-before: [END list_alerts_for_alert_config]
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START list_alerts]
+                :end-before: [END list_alerts]
                 :language: python
                 :dedent: 4
                 :caption: Query anomaly detection results.
@@ -349,30 +358,8 @@ class MetricsAdvisorClient(object):
             cls=kwargs.pop("cls", lambda alerts: [AnomalyAlert._from_generated(alert) for alert in alerts]),
             **kwargs)
 
-    @distributed_trace
-    def list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
+    def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
-
-        """Query anomalies under a specific alert.
-
-        :param alert_configuration_id: anomaly alert configuration unique id.
-        :type alert_configuration_id: str
-        :param alert_id: alert id.
-        :type alert_id: str
-        :keyword int skip:
-        :return: Anomalies under a specific alert.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_anomaly_alert_configuration.py
-                :start-after: [START list_anomalies_for_alert]
-                :end-before: [END list_anomalies_for_alert]
-                :language: python
-                :dedent: 4
-                :caption: Query anomalies using alert id.
-        """
 
         skip = kwargs.pop('skip', None)
 
@@ -383,23 +370,8 @@ class MetricsAdvisorClient(object):
             cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs)
 
-    @distributed_trace
-    def list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, datetime.datetime, datetime.datetime, Any) -> ItemPaged[DataPointAnomaly]
-
-        """Query anomalies under anomaly detection configuration.
-
-        :param detection_configuration_id: anomaly detection configuration unique id.
-        :type detection_configuration_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
-        :keyword int skip:
-        :keyword filter:
-        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
-        :return: Anomalies under anomaly detection configuration.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
 
         skip = kwargs.pop('skip', None)
         filter_condition = kwargs.pop('filter', None)
@@ -418,8 +390,92 @@ class MetricsAdvisorClient(object):
             cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
             **kwargs)
 
+    @overload
+    def list_anomalies(
+            self, alert_configuration_id,   # type: str
+            alert_id,   # type: str
+            **kwargs    # type: Any
+    ):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
+        """Query anomalies under a specific alert.
+
+        :param alert_configuration_id: anomaly alert configuration unique id.
+        :type alert_configuration_id: str
+        :param alert_id: alert id.
+        :type alert_id: str
+        :keyword int skip:
+        :return: Anomalies under a specific alert.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_alert_configuration.py
+                :start-after: [START list_anomalies_for_alert]
+                :end-before: [END list_anomalies_for_alert]
+                :language: python
+                :dedent: 4
+                :caption: Query anomalies using alert id.
+        """
+
+    @overload
+    def list_anomalies(
+            self, detection_configuration_id,   # type: str
+            start_time,     # type: Union[str, datetime.datetime]
+            end_time,       # type: Union[str, datetime.datetime]
+            **kwargs        # type: Any
+    ):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
+        """Query anomalies under a detection configuration.
+
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
+        :return: Anomalies under anomaly detection configuration.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
-    def list_dimension_values_for_detection_configuration(
+    def list_anomalies(self, **kwargs):
+        # type: (Any) -> ItemPaged[DataPointAnomaly]
+        """Query anomalies under a specific alert or detection configuration.
+
+        :keyword str alert_configuration_id: anomaly alert configuration unique id.
+        :keyword str alert_id: alert id.
+        :keyword str detection_configuration_id: anomaly detection configuration unique id.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
+        :return: Anomalies under a specific alert or detection configuration.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        alert_configuration_id = kwargs.get('alert_configuration_id', None)
+        alert_id = kwargs.get('alert_id', None)
+        detection_configuration_id = kwargs.get('detection_configuration_id', None)
+        start_time = kwargs.get('start_time', None)
+        end_time = kwargs.get('end_time', None)
+        if detection_configuration_id:
+            if alert_configuration_id or alert_id:
+                raise TypeError(
+                    'Specify either "detection_configuration_id" or "alert_configuration_id" and "alert_id"'
+                )
+            if not start_time or not end_time:
+                raise TypeError('"start_time" and "end_time" are required')
+            return self._list_anomalies_for_detection_configuration(**kwargs)
+        if not alert_configuration_id or not alert_id:
+            raise TypeError('"alert_configuration_id" and "alert_id" are required')
+        return self._list_anomalies_for_alert(**kwargs)
+
+    @distributed_trace
+    def list_dimension_values(
             self, detection_configuration_id,
             dimension_name,
             start_time,
@@ -433,14 +489,22 @@ class MetricsAdvisorClient(object):
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
         :param str dimension_name: dimension to query.
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
-        :keyword str dimension_name: The dimension name to query.
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         :return: Dimension values of anomalies.
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_dimension_values]
+                :end-before: [END list_dimension_values]
+                :language: python
+                :dedent: 4
+                :caption: Query dimension values.
         """
 
         skip = kwargs.pop('skip', None)
@@ -460,10 +524,44 @@ class MetricsAdvisorClient(object):
             body=anomaly_dimension_query,
             **kwargs)
 
-    @distributed_trace
-    def list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
+    def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
         # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
 
+        skip = kwargs.pop('skip', None)
+
+        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
+            configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
+            **kwargs)
+
+    def _list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
+        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
+
+        filter_condition = kwargs.pop('filter', None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+
+        detection_incident_result_query = DetectionIncidentResultQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            filter=filter_condition,
+        )
+
+        return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
+            configuration_id=detection_configuration_id,
+            body=detection_incident_result_query,
+            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
+            **kwargs)
+
+    @overload
+    def list_incidents(
+            self, alert_configuration_id,   # type: str
+            alert_id,   # type: str
+            **kwargs    # type: Any
+    ):
+        # type: (...) -> ItemPaged[AnomalyIncident]
         """Query incidents under a specific alert.
 
         :param alert_configuration_id: anomaly alerting configuration unique id.
@@ -485,25 +583,20 @@ class MetricsAdvisorClient(object):
                 :caption: Query incidents for alert.
         """
 
-        skip = kwargs.pop('skip', None)
-
-        return self._client.get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
-            configuration_id=alert_configuration_id,
-            alert_id=alert_id,
-            skip=skip,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
-            **kwargs)
-
-    @distributed_trace
-    def list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
-        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
-
-        """Query incidents under a specific alert.
+    @overload
+    def list_incidents(
+            self, detection_configuration_id,   # type: str
+            start_time,     # type: Union[str, datetime.datetime]
+            end_time,       # type: Union[str, datetime.datetime]
+            **kwargs        # type: Any
+    ):
+        # type: (...) -> ItemPaged[AnomalyIncident]
+        """Query incidents under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         :return: AnomalyIncidents under a specific alert.
@@ -520,21 +613,40 @@ class MetricsAdvisorClient(object):
                 :caption: Query incidents for detection configuration.
         """
 
-        filter_condition = kwargs.pop('filter', None)
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+    @distributed_trace
+    def list_incidents(self, **kwargs):
+        # type: (Any) -> ItemPaged[AnomalyIncident]
 
-        detection_incident_result_query = DetectionIncidentResultQuery(
-            start_time=converted_start_time,
-            end_time=converted_end_time,
-            filter=filter_condition,
-        )
+        """Query incidents under a specific alert or detection configuration.
 
-        return self._client.get_incidents_by_anomaly_detection_configuration(  # type: ignore
-            configuration_id=detection_configuration_id,
-            body=detection_incident_result_query,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
-            **kwargs)
+        :keyword str alert_configuration_id: anomaly alerting configuration unique id.
+        :keyword str alert_id: alert id.
+        :keyword str detection_configuration_id: anomaly detection configuration unique id.
+        :keyword Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :keyword Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
+        :keyword int skip:
+        :keyword filter:
+        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
+        :return: AnomalyIncidents under a specific alert or detection configuration.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        alert_configuration_id = kwargs.get('alert_configuration_id', None)
+        alert_id = kwargs.get('alert_id', None)
+        detection_configuration_id = kwargs.get('detection_configuration_id', None)
+        start_time = kwargs.get('start_time', None)
+        end_time = kwargs.get('end_time', None)
+        if detection_configuration_id:
+            if alert_configuration_id or alert_id:
+                raise TypeError(
+                    'Specify either "detection_configuration_id" or "alert_configuration_id" and "alert_id"'
+                )
+            if not start_time or not end_time:
+                raise TypeError('"start_time" and "end_time" are required')
+            return self._list_incidents_for_detection_configuration(**kwargs)
+        if not alert_configuration_id or not alert_id:
+            raise TypeError('"alert_configuration_id" and "alert_id" are required')
+        return self._list_incidents_for_alert(**kwargs)
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
@@ -552,6 +664,15 @@ class MetricsAdvisorClient(object):
         :return: Dimension from certain metric.
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_dimension_values]
+                :end-before: [END list_metric_dimension_values]
+                :language: python
+                :dedent: 4
+                :caption: Query metric dimension values.
         """
 
         skip = kwargs.pop('skip', None)
@@ -582,13 +703,22 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: metric unique id.
         :type metric_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :param series_to_filter: query specific series.
         :type series_to_filter: list[dict[str, str]]
         :return: Time series data from metric.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metrics_series_data]
+                :end-before: [END list_metrics_series_data]
+                :language: python
+                :dedent: 4
+                :caption: Query metrics series data.
         """
 
         converted_start_time = convert_datetime(start_time)
@@ -616,15 +746,24 @@ class MetricsAdvisorClient(object):
         :type metric_id: str
         :param active_since: Required. query series ingested after this time, the format should be
          yyyy-MM-ddTHH:mm:ssZ.
-        :type active_since: ~datetime.datetime
+        :type active_since: datetime.datetime
         :keyword int skip:
-        :keyword ~datetime.datetime active_since: query series ingested after this time, the format should be
+        :keyword datetime.datetime active_since: query series ingested after this time, the format should be
                  yyyy-MM-ddTHH:mm:ssZ.
         :keyword dimension_filter: filter specfic dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         :return: Series (dimension combinations) from metric.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_series_definitions]
+                :end-before: [END list_metric_series_definitions]
+                :language: python
+                :dedent: 4
+                :caption: Query metric series definitions.
         """
 
         skip = kwargs.pop('skip', None)
@@ -649,12 +788,21 @@ class MetricsAdvisorClient(object):
 
         :param metric_id: filter feedbacks by metric id.
         :type metric_id: str
-        :param Union[str, ~datetime.datetime] start_time: start time filter under chosen time mode.
-        :param Union[str, ~datetime.datetime] end_time: end time filter under chosen time mode.
+        :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
+        :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :return: Anomaly detection status.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_queries.py
+                :start-after: [START list_metric_enrichment_status]
+                :end-before: [END list_metric_enrichment_status]
+                :language: python
+                :dedent: 4
+                :caption: Query metric enrichment status.
         """
 
         skip = kwargs.pop('skip', None)

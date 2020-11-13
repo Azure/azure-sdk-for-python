@@ -34,6 +34,7 @@ import pytest
 
 from azure.core import AsyncPipelineClient
 from azure.core.polling import *
+from azure.core.exceptions import ServiceResponseError
 from msrest.serialization import Model
 
 
@@ -197,3 +198,23 @@ async def test_broken_poller(client):
     with pytest.raises(ValueError) as excinfo:
         await poller.result()
     assert "Something bad happened" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_async_poller_error_continuation(client):
+
+    class NoPollingError(PollingTwoSteps):
+        async def run(self):
+            raise ServiceResponseError("Something bad happened")
+
+    initial_response = "Initial response"
+    def deserialization_callback(response):
+        return "Treated: "+response
+
+    method = NoPollingError()
+    poller = AsyncLROPoller(client, initial_response, deserialization_callback, method)
+
+    with pytest.raises(ServiceResponseError) as excinfo:
+        await poller.result()
+    assert "Something bad happened" in str(excinfo.value)
+    assert excinfo.value.continuation_token == "Initial response"

@@ -12,7 +12,8 @@ from azure.data.tables._version import VERSION
 from devtools_testutils import (
     ResourceGroupPreparer,
     CachedResourceGroupPreparer,
-    CachedStorageAccountPreparer
+    CachedStorageAccountPreparer,
+    AzureTestCase
 )
 from _shared.testcase import TableTestCase
 
@@ -233,7 +234,6 @@ class StorageTableClientTest(TableTestCase):
             assert service.credential.account_name ==  storage_account.name
             assert service.credential.account_key ==  storage_account_key
             assert service._primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com')
-            # assert service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.table.cosmos.azure.com')
             assert service.scheme ==  'https'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -477,6 +477,7 @@ class StorageTableClientTest(TableTestCase):
         assert service.table_name ==  'bar'
         assert service.account_name ==  storage_account.name
 
+    @AzureTestCase.await_prepared_test
     async def test_create_table_client_with_invalid_name_async(self):
         # Arrange
         table_url = "https://{}.table.core.windows.net:443/foo".format("storage_account_name")
@@ -488,6 +489,7 @@ class StorageTableClientTest(TableTestCase):
 
         assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
 
+    @AzureTestCase.await_prepared_test
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 

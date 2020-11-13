@@ -159,94 +159,76 @@ class StorageTableEntityTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        assert entity['age'].value ==  39
-        assert entity['sex'].value ==  'male'
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
         assert entity['married'] ==  True
         assert entity['deceased'] ==  False
         assert not "optional" in entity
         assert not "aquarius" in entity
         assert entity['ratio'] ==  3.1
         assert entity['evenratio'] ==  3.0
-        assert entity['large'].value ==  933311100
-        assert entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'], datetime(1973, 10, 4 ==  tzinfo=tzutc())
+        assert entity['birthday'], datetime(1970, 10, 4 ==  tzinfo=tzutc())
         assert entity['binary'].value ==  b'binary'
-        assert isinstance(entity['other'],  EntityProperty)
-        assert entity['other'].type ==  EdmType.INT32
-        assert entity['other'].value ==  20
+        assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        # assert 'metadata' in entity.odata
-        # assert entity.metadata['timestamp'] is not None
-        # assert isinstance(entity.metadata['timestamp'],  datetime)
-        # if headers:
-        #    assert "etag" in headers
 
     def _assert_default_entity_json_full_metadata(self, entity, headers=None):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        assert entity['age'].value ==  39
-        assert entity['sex'].value ==  'male'
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
         assert entity['married'] ==  True
         assert entity['deceased'] ==  False
         assert not "optional" in entity
         assert not "aquarius" in entity
         assert entity['ratio'] ==  3.1
         assert entity['evenratio'] ==  3.0
-        assert entity['large'].value ==  933311100
-        assert entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'], datetime(1973, 10, 4 ==  tzinfo=tzutc())
+        assert entity['birthday'], datetime(1970, 10, 4 ==  tzinfo=tzutc())
         assert entity['binary'].value ==  b'binary'
-        assert isinstance(entity['other'],  EntityProperty)
-        assert entity['other'].type ==  EdmType.INT32
-        assert entity['other'].value ==  20
+        assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
-        # assert 'metadata' in entity.odata
-        # assert 'id' in entity.odata
-        # assert 'type' in entity.odata
-        # assert 'etag' in entity.odata
-        # assert 'editLink' in entity.odata
 
     def _assert_default_entity_json_no_metadata(self, entity, headers=None):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        assert entity['age'].value ==  39
-        assert entity['sex'].value ==  'male'
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
         assert entity['married'] ==  True
         assert entity['deceased'] ==  False
         assert not "optional" in entity
         assert not "aquarius" in entity
         assert entity['ratio'] ==  3.1
         assert entity['evenratio'] ==  3.0
-        assert entity['large'].value ==  933311100
-        assert entity['Birthday'].value.startswith('1973-10-04T00:00:00')
-        assert entity['birthday'].value.startswith('1970-10-04T00:00:00')
-        assert entity['Birthday'].value.endswith('00Z')
-        assert entity['birthday'].value.endswith('00Z')
-        assert entity['binary'].value ==  b64encode(b'binary').decode('utf-8')
-        assert isinstance(entity['other'],  EntityProperty)
-        assert entity['other'].type ==  EdmType.INT32
-        assert entity['other'].value ==  20
-        assert entity['clsid'].value ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
-        # assert entity.odata is None
-        # assert entity.Timestamp is not None
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'].startswith('1973-10-04T00:00:00')
+        assert entity['birthday'].startswith('1970-10-04T00:00:00')
+        assert entity['Birthday'].endswith('00Z')
+        assert entity['birthday'].endswith('00Z')
+        assert entity['binary'] ==  b64encode(b'binary').decode('utf-8')
+        assert entity['other'] ==  20
+        assert entity['clsid'] ==  'c9da6455-213d-42c9-9a79-3e9149a57833'
 
     def _assert_updated_entity(self, entity):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        assert entity.age.value ==  'abc'
-        assert entity.sex.value ==  'female'
+        assert entity.age ==  'abc'
+        assert entity.sex ==  'female'
         assert not hasattr(entity, "married")
         assert not hasattr(entity, "deceased")
-        assert entity.sign.value ==  'aquarius'
+        assert entity.sign ==  'aquarius'
         assert not hasattr(entity, "optional")
         assert not hasattr(entity, "ratio")
         assert not hasattr(entity, "evenratio")
         assert not hasattr(entity, "large")
         assert not hasattr(entity, "Birthday")
-        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity.birthday, datetime(1991, 10, 4 ==  tzinfo=tzutc())
         assert not hasattr(entity, "other")
         assert not hasattr(entity, "clsid")
 
@@ -308,14 +290,39 @@ class StorageTableEntityTest(TableTestCase):
             entity = self._insert_random_entity()
 
             # Act
-            # resp = self.table.create_item(entity)
             resp = self.table.query_entities(filter="married eq @my_param", parameters={'my_param': 'True'})
 
-            # Assert  --- Does this mean insert returns nothing?
             assert resp is not None
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_query_invalid_filter(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            base_entity = {
+                u"PartitionKey": u"pk",
+                u"RowKey": u"rk",
+                u"value": 1
+            }
+
+            for i in range(5):
+                base_entity[u"RowKey"] += str(i)
+                base_entity[u"value"] += i
+                self.table.create_entity(base_entity)
+            # Act
+            with pytest.raises(HttpResponseError):
+                resp = self.table.query_entities(filter="aaa bbb ccc")
+                for row in resp:
+                    _ = row
+
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -469,6 +476,34 @@ class StorageTableEntityTest(TableTestCase):
             dict64['large'] = EntityProperty(-(2 ** 63 + 1), EdmType.INT64)
             with pytest.raises(TypeError):
                 self.table.create_entity(entity=dict64)
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_insert_entity_with_large_int_success(self, resource_group, location, cosmos_account,
+                                                         cosmos_account_key):
+        # Arrange
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            # Act
+            dict64 = self._create_random_base_entity_dict()
+            dict64['large'] = EntityProperty(2 ** 50, EdmType.INT64)
+
+            # Assert
+            self.table.create_entity(entity=dict64)
+
+            received_entity = self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
+            assert received_entity['large'].value == dict64['large'].value
+
+            dict64['RowKey'] = u'negative'
+            dict64['large'] = EntityProperty(-(2 ** 50 + 1), EdmType.INT64)
+            self.table.create_entity(entity=dict64)
+
+            received_entity = self.table.get_entity(dict64['PartitionKey'], dict64['RowKey'])
+            assert received_entity['large'].value == dict64['large'].value
+
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
@@ -1111,8 +1146,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0].Description.value ==  u'ꀕ'
-            assert entities[1].Description.value ==  u'ꀕ'
+            assert entities[0].Description ==  u'ꀕ'
+            assert entities[1].Description ==  u'ꀕ'
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
@@ -1137,8 +1172,8 @@ class StorageTableEntityTest(TableTestCase):
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0][u'啊齄丂狛狜'].value ==  u'ꀕ'
-            assert entities[1][u'啊齄丂狛狜'].value ==  u'hello'
+            assert entities[0][u'啊齄丂狛狜'] ==  u'ꀕ'
+            assert entities[1][u'啊齄丂狛狜'] ==  u'hello'
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
@@ -1212,15 +1247,15 @@ class StorageTableEntityTest(TableTestCase):
             # Assert
             assert resp is not None
             assert resp.EmptyByte.value ==  b''
-            assert resp.EmptyUnicode.value ==  u''
+            assert resp.EmptyUnicode ==  u''
             assert resp.SpacesOnlyByte.value ==  b'   '
-            assert resp.SpacesOnlyUnicode.value ==  u'   '
+            assert resp.SpacesOnlyUnicode ==  u'   '
             assert resp.SpacesBeforeByte.value ==  b'   Text'
-            assert resp.SpacesBeforeUnicode.value ==  u'   Text'
+            assert resp.SpacesBeforeUnicode ==  u'   Text'
             assert resp.SpacesAfterByte.value ==  b'Text   '
-            assert resp.SpacesAfterUnicode.value ==  u'Text   '
+            assert resp.SpacesAfterUnicode ==  u'Text   '
             assert resp.SpacesBeforeAndAfterByte.value ==  b'   Text   '
-            assert resp.SpacesBeforeAndAfterUnicode.value ==  u'   Text   '
+            assert resp.SpacesBeforeAndAfterUnicode ==  u'   Text   '
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
@@ -1306,6 +1341,45 @@ class StorageTableEntityTest(TableTestCase):
             assert len(entities) ==  2
             for entity in entities:
                 self._assert_default_entity(entity)
+        finally:
+            self._tear_down()
+            self.sleep(SLEEP_DELAY)
+
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedCosmosAccountPreparer(name_prefix="tablestest")
+    def test_query_entities_each_page(self, resource_group, location, cosmos_account, cosmos_account_key):
+        # Arrange
+        self._set_up(cosmos_account, cosmos_account_key)
+        try:
+            base_entity = {
+                "PartitionKey": u"pk",
+                "RowKey": u"1",
+            }
+
+            for i in range(10):
+                if i > 5:
+                    base_entity['PartitionKey'] += str(i)
+                base_entity['RowKey'] += str(i)
+                base_entity['value'] = i
+                self.table.create_entity(base_entity)
+
+            query_filter = u"PartitionKey eq 'pk'"
+
+            entity_count = 0
+            page_count = 0
+            for entity_page in self.table.query_entities(filter=query_filter, results_per_page=2).by_page():
+
+                temp_count = 0
+                for ent in entity_page:
+                    temp_count += 1
+
+                assert temp_count <= 2
+                page_count += 1
+                entity_count += temp_count
+
+            assert entity_count == 6
+            assert page_count == 3
+
         finally:
             self._tear_down()
             self.sleep(SLEEP_DELAY)
@@ -1406,6 +1480,8 @@ class StorageTableEntityTest(TableTestCase):
         self._set_up(cosmos_account, cosmos_account_key)
         try:
             entity, _ = self._insert_random_entity()
+            entity2, _ = self._insert_random_entity(pk="foo" + entity.PartitionKey)
+            entity3, _ = self._insert_random_entity(pk="bar" + entity.PartitionKey)
 
             # Act
             entities = list(self.table.query_entities(

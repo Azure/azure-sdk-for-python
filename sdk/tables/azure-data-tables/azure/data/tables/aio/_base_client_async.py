@@ -12,7 +12,10 @@ import logging
 from uuid import uuid4
 
 from azure.core.pipeline import AsyncPipeline
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ClientAuthenticationError
+)
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -32,7 +35,6 @@ from .._policies import (
     StorageHeadersPolicy
 )
 from ._policies_async import AsyncStorageResponseHook
-from .._error import _process_table_error
 from .._models import BatchErrorException, BatchTransactionResult
 
 if TYPE_CHECKING:
@@ -138,24 +140,41 @@ class AsyncStorageAccountHostsMixin(object):
         )
         response = pipeline_response.http_response
 
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts() # Return an AsyncIterator
-            parts_list = []
-            async for part in parts:
-                parts_list.append(part)
-            transaction_result = BatchTransactionResult(reqs, parts_list, entities)
-            if raise_on_any_failure:
-                if any(p for p in parts_list if not 200 <= p.status_code < 300):
-                    error = BatchErrorException(
-                        message="There is a partial failure in the batch operation.",
-                        response=response, parts=parts_list
+        if response.status_code == 403:
+            raise ClientAuthenticationError(
+                message="There was an error authenticating with the service",
+                response=response
+            )
+        if response.status_code == 404:
+            raise ResourceNotFoundError(
+                message="The resource could not be found",
+                response=response
+            )
+        if response.status_code != 202:
+            raise BatchErrorException(
+                message="There is a failure in the batch operation.",
+                response=response, parts=None
+            )
+
+        parts_iter = response.parts()
+        parts = []
+        async for p in parts_iter:
+            parts.append(p)
+        transaction_result = BatchTransactionResult(reqs, parts, entities)
+        if raise_on_any_failure:
+            if any(p for p in parts if not 200 <= p.status_code < 300):
+
+                if any(p for p in parts if p.status_code == 404):
+                    raise ResourceNotFoundError(
+                        message="The resource could not be found",
+                        response=response
                     )
-                    raise error
-            return transaction_result
-        except HttpResponseError as error:
-            _process_table_error(error)
+
+                raise BatchErrorException(
+                    message="There is a failure in the batch operation.",
+                    response=response, parts=parts
+                )
+        return transaction_result
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

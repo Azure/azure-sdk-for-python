@@ -77,22 +77,7 @@ if TYPE_CHECKING:
         IncidentResult,
         RootCause,
     )
-
-    DataFeedSourceUnion = Union[
-        "AzureApplicationInsightsDataFeed",
-        "AzureBlobDataFeed",
-        "AzureCosmosDBDataFeed",
-        "AzureDataExplorerDataFeed",
-        "AzureTableDataFeed",
-        "HttpRequestDataFeed",
-        "InfluxDBDataFeed",
-        "MySqlDataFeed",
-        "PostgreSqlDataFeed",
-        "SQLServerDataFeed",
-        "MongoDBDataFeed",
-        "AzureDataLakeStorageGen2DataFeed",
-        "ElasticsearchDataFeed"
-    ]
+    from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
 
 class MetricAnomalyAlertScopeType(str, Enum):

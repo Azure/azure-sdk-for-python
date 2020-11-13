@@ -49,14 +49,14 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Verify sdist'
-    condition: ne(variables['Skip.VerifySdist'],'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
-    condition: ne(variables['Skip.VerifyWhl'],'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
      arguments: '"${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
@@ -74,7 +74,7 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
   - task: DownloadPipelineArtifact@0
-    condition: ne(variables['Skip.ApiStubGen'],'true')
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     inputs:
       artifactName: 'artifacts'
       targetPath: $(Build.ArtifactStagingDirectory)

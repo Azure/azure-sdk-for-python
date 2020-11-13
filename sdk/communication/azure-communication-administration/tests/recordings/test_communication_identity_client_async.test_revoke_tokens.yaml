@@ -5,27 +5,27 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Sat, 10 Oct 2020 02:20:20 GMT
+      - Tue, 27 Oct 2020 19:40:11 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicatione17a1886.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://communicationgt4kvhqws6u.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
     body: '{"id": "sanitized"}'
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
       content-type: application/json; charset=utf-8
-      date: Sat, 10 Oct 2020 02:20:20 GMT
-      ms-cv: yhOUupFgTkyv/edU+U0rNw.0
+      date: Tue, 27 Oct 2020 19:40:10 GMT
+      ms-cv: PHFLRfQtWEq3H0xrsvDwaQ.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 16ms
+      x-processing-time: 19ms
     status:
       code: 200
       message: OK
-    url: https://communicatione17a1886.communication.azure.com/identities?api-version=2020-07-20-preview2
+    url: https://communicationgt4kvhqws6u.communication.azure.com/identities?api-version=2020-07-20-preview2
 - request:
     body: '{"scopes": ["chat"]}'
     headers:
@@ -36,27 +36,27 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sat, 10 Oct 2020 02:20:21 GMT
+      - Tue, 27 Oct 2020 19:40:11 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communicatione17a1886.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    uri: https://communicationgt4kvhqws6u.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
   response:
-    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-10-11T02:20:20.2897544+00:00"}'
+    body: '{"id": "sanitized", "token": "sanitized", "expiresOn": "2020-10-28T19:40:10.4821721+00:00"}'
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
       content-type: application/json; charset=utf-8
-      date: Sat, 10 Oct 2020 02:20:20 GMT
-      ms-cv: DNfxv8Fauk2weDU7PqlXAQ.0
+      date: Tue, 27 Oct 2020 19:40:10 GMT
+      ms-cv: ZWTXa77fvkycQ5/PZ0ZzLw.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
-      x-processing-time: 25ms
+      x-processing-time: 42ms
     status:
       code: 200
       message: OK
-    url: https://communicatione17a1886.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
+    url: https://communicationgt4kvhqws6u.communication.azure.com/identities/sanitized/token?api-version=2020-07-20-preview2
 - request:
     body: '{}'
     headers:
@@ -65,24 +65,24 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Sat, 10 Oct 2020 02:20:21 GMT
+      - Tue, 27 Oct 2020 19:40:11 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://communicatione17a1886.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    uri: https://communicationgt4kvhqws6u.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview1, 2020-07-20-preview2
-      date: Sat, 10 Oct 2020 02:20:20 GMT
-      ms-cv: WER6t+c/C02eVHc63q7wLw.0
+      date: Tue, 27 Oct 2020 19:40:11 GMT
+      ms-cv: WnRQ2R3q/EWKtv7vdGrZwQ.0
       strict-transport-security: max-age=2592000
       x-processing-time: 10ms
     status:
       code: 204
       message: No Content
-    url: https://communicatione17a1886.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
+    url: https://communicationgt4kvhqws6u.communication.azure.com/identities/sanitized?api-version=2020-07-20-preview2
 version: 1

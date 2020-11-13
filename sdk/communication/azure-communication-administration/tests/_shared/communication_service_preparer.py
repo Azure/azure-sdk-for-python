@@ -20,6 +20,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
             name_prefix="communication",
             resource_group_parameter_name=RESOURCE_GROUP_PARAM,
             disable_recording=True,
+            use_cache=False,
             playback_fake_resource=None,
             client_kwargs=None,
     ):
@@ -34,6 +35,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
         self.random_name_enabled = True
         self.service_name = "TEST-SERVICE-NAME"
         self.mgmt_client = None
+        self.set_cache(use_cache)
 
     def _get_resource_group(self, **kwargs):
         try:

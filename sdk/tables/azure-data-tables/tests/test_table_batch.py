@@ -18,7 +18,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
-    HttpResponseError
+    HttpResponseError,
+    ClientAuthenticationError
 )
 from azure.data.tables import EdmType, TableEntity, EntityProperty, UpdateMode, BatchTransactionResult
 
@@ -127,20 +128,18 @@ class StorageTableBatchTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the default entity.
         '''
-        assert entity['age'].value ==  39
-        assert entity['sex'].value ==  u'male'
+        assert entity['age'] ==  39
+        assert entity['sex'] ==  'male'
         assert entity['married'] ==  True
         assert entity['deceased'] ==  False
         assert not "optional" in entity
         assert entity['ratio'] ==  3.1
         assert entity['evenratio'] ==  3.0
-        assert entity['large'].value ==  933311100
-        assert entity['Birthday'], datetime(1973, 10, 4, tzinfo=tzutc())
-        assert entity['birthday'], datetime(1970, 10, 4, tzinfo=tzutc())
+        assert entity['large'] ==  933311100
+        assert entity['Birthday'], datetime(1973, 10, 4 ==  tzinfo=tzutc())
+        assert entity['birthday'], datetime(1970, 10, 4 ==  tzinfo=tzutc())
         assert entity['binary'].value ==  b'binary'
-        assert isinstance(entity['other'],  EntityProperty)
-        assert entity['other'].type ==  EdmType.INT32
-        assert entity['other'].value ==  20
+        assert entity['other'] ==  20
         assert entity['clsid'] ==  uuid.UUID('c9da6455-213d-42c9-9a79-3e9149a57833')
         assert '_metadata' in entity
 
@@ -148,17 +147,17 @@ class StorageTableBatchTest(TableTestCase):
         '''
         Asserts that the entity passed in matches the updated entity.
         '''
-        assert entity.age.value ==  'abc'
-        assert entity.sex.value ==  'female'
+        assert entity.age ==  'abc'
+        assert entity.sex ==  'female'
         assert not hasattr(entity, "married")
         assert not hasattr(entity, "deceased")
-        assert entity.sign.value ==  'aquarius'
+        assert entity.sign ==  'aquarius'
         assert not hasattr(entity, "optional")
         assert not hasattr(entity, "ratio")
         assert not hasattr(entity, "evenratio")
         assert not hasattr(entity, "large")
         assert not hasattr(entity, "Birthday")
-        assert entity.birthday, datetime(1991, 10, 4, tzinfo=tzutc())
+        assert entity.birthday, datetime(1991, 10, 4 ==  tzinfo=tzutc())
         assert not hasattr(entity, "other")
         assert not hasattr(entity, "clsid")
         assert entity['_metadata']['etag'] is not None
@@ -220,11 +219,14 @@ class StorageTableBatchTest(TableTestCase):
             self._assert_valid_batch_transaction(transaction_result, 1)
             sent_entity = transaction_result.get_entity(entity.RowKey)
             assert sent_entity is not None
+
             e = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
+
             assert e.test ==  entity.test.value
-            assert e.test2.value ==  entity.test2
-            assert e.test3.value ==  entity.test3
-            assert e.test4.value ==  entity.test4.value
+            assert e.test2 ==  entity.test2
+            assert e.test3 ==  entity.test3
+            assert e.test4 ==  entity.test4.value
+
             assert sent_entity['test'] ==  entity.test.value
             assert sent_entity['test2'] ==  entity.test2
             assert sent_entity['test3'] ==  entity.test3
@@ -265,7 +267,7 @@ class StorageTableBatchTest(TableTestCase):
             result = self.table.get_entity(row_key=entity.RowKey, partition_key=entity.PartitionKey)
             assert result.PartitionKey ==  u'001'
             assert result.RowKey ==  u'batch_insert'
-            assert result.test3.value ==  5
+            assert result.test3 ==  5
         finally:
             self._tear_down()
 
@@ -288,7 +290,7 @@ class StorageTableBatchTest(TableTestCase):
             self.table.create_entity(entity)
 
             entity = self.table.get_entity(u'001', u'batch_update')
-            assert 3 ==  entity.test3.value
+            assert 3 ==  entity.test3
             entity.test2 = u'value1'
 
             batch = self.table.create_batch()
@@ -298,8 +300,10 @@ class StorageTableBatchTest(TableTestCase):
             # Assert
             self._assert_valid_batch_transaction(transaction_result, 1)
             assert transaction_result.get_entity(entity.RowKey) is not None
+
             result = self.table.get_entity('001', 'batch_update')
-            assert 'value1' ==  result.test2.value
+
+            assert 'value1' ==  result.test2
             assert entity.PartitionKey ==  u'001'
             assert entity.RowKey ==  u'batch_update'
         finally:
@@ -339,8 +343,8 @@ class StorageTableBatchTest(TableTestCase):
             assert transaction_result.get_entity(entity.RowKey) is not None
 
             resp_entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_merge')
-            assert entity.test2 ==  resp_entity.test2.value
-            assert 1234567890 ==  resp_entity.test4.value
+            assert entity.test2 ==  resp_entity.test2
+            assert 1234567890 ==  resp_entity.test4
             assert entity.PartitionKey ==  resp_entity.PartitionKey
             assert entity.RowKey ==  resp_entity.RowKey
         finally:
@@ -397,7 +401,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
 
             # Assert
@@ -441,7 +445,7 @@ class StorageTableBatchTest(TableTestCase):
                 match_condition=MatchConditions.IfNotModified
             )
 
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
 
             # Assert
@@ -477,8 +481,8 @@ class StorageTableBatchTest(TableTestCase):
 
             entity = self.table.get_entity('001', 'batch_insert_replace')
             assert entity is not None
-            assert 'value' ==  entity.test2.value
-            assert 1234567890 ==  entity.test4.value
+            assert 'value' ==  entity.test2
+            assert 1234567890 ==  entity.test4
         finally:
             self._tear_down()
 
@@ -509,8 +513,8 @@ class StorageTableBatchTest(TableTestCase):
 
             entity = self.table.get_entity('001', 'batch_insert_merge')
             assert entity is not None
-            assert 'value' ==  entity.test2.value
-            assert 1234567890 ==  entity.test4.value
+            assert 'value' ==  entity.test2
+            assert 1234567890 ==  entity.test4
         finally:
             self._tear_down()
 
@@ -533,7 +537,7 @@ class StorageTableBatchTest(TableTestCase):
             self.table.create_entity(entity)
 
             entity = self.table.get_entity(partition_key=u'001', row_key=u'batch_delete')
-            assert 3 ==  entity.test3.value
+            assert 3 ==  entity.test3
 
             batch = self.table.create_batch()
             batch.delete_entity(partition_key=entity.PartitionKey, row_key=entity.RowKey)
@@ -579,7 +583,7 @@ class StorageTableBatchTest(TableTestCase):
 
             # Assert
             assert entities is not None
-            assert 100 ==  len(entities)
+            assert transaction_count ==  len(entities)
             e = self.table.get_entity('batch_inserts', '1')
         finally:
             self._tear_down()
@@ -731,7 +735,7 @@ class StorageTableBatchTest(TableTestCase):
             batch.create_entity(entity)
 
             self.table.send_batch(batch)
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 resp = table2.send_batch(batch)
 
             entities = list(self.table.query_entities("PartitionKey eq '003'"))
@@ -759,7 +763,8 @@ class StorageTableBatchTest(TableTestCase):
                 '001', 'batch_negative_1')
             batch.update_entity(entity, mode=UpdateMode.MERGE)
             # Assert
-            with pytest.raises(HttpResponseError):
+
+            with pytest.raises(BatchErrorException):
                 self.table.send_batch(batch)
 
         finally:
@@ -800,7 +805,7 @@ class StorageTableBatchTest(TableTestCase):
             self.table.create_entity(entity)
 
             # Act
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(BatchErrorException):
                 batch = self.table.create_batch()
                 for i in range(0, 101):
                     entity = TableEntity()
@@ -829,6 +834,62 @@ class StorageTableBatchTest(TableTestCase):
                 batch.create_entity(entity2)
 
             # Assert
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_new_non_existent_table(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            tc = self.ts.get_table_client("doesntexist")
+
+            batch = tc.create_batch()
+            batch.create_entity(entity)
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = tc.send_batch(batch)
+            # Assert
+        finally:
+            self._tear_down()
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_new_invalid_key(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        invalid_key = storage_account_key[0:-6] + "==" # cut off a bit from the end to invalidate
+        self.ts = TableServiceClient(self.account_url(storage_account, "table"), invalid_key)
+        self.table_name = self.get_resource_name('uttable')
+        self.table = self.ts.get_table_client(self.table_name)
+
+        entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+        batch = self.table.create_batch()
+        batch.create_entity(entity)
+
+        with pytest.raises(ClientAuthenticationError):
+            resp = self.table.send_batch(batch)
+
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
+    @CachedResourceGroupPreparer(name_prefix="tablestest")
+    @CachedStorageAccountPreparer(name_prefix="tablestest")
+    def test_new_delete_nonexistent_entity(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._set_up(storage_account, storage_account_key)
+        try:
+            entity = self._create_random_entity_dict('001', 'batch_negative_1')
+
+            batch = self.table.create_batch()
+            batch.delete_entity(entity['PartitionKey'], entity['RowKey'])
+
+            with pytest.raises(ResourceNotFoundError):
+                resp = self.table.send_batch(batch)
+
         finally:
             self._tear_down()
 

@@ -124,9 +124,6 @@ from azure.ai.metricsadvisor.models import (
         DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
-        DataFeedMissingDataPointFillSettings,
-        DataFeedGranularity,
-        DataFeed
     )
 
 service_endpoint = os.getenv("ENDPOINT")
@@ -140,13 +137,13 @@ client = MetricsAdvisorAdministrationClient(
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-data_feed = DataFeed(
+data_feed = client.create_data_feed(
     name="My data feed",
     source=SQLServerDataFeed(
         connection_string=sql_server_connection_string,
         query=query,
     ),
-    granularity=DataFeedGranularity("Daily"),
+    granularity="Daily",
     schema=DataFeedSchema(
         metrics=[
             DataFeedMetric(name="cost", display_name="Cost"),
@@ -158,9 +155,7 @@ data_feed = DataFeed(
         ],
         timestamp_column="Timestamp"
     ),
-    ingestion_settings=DataFeedIngestionSettings(
-        ingestion_begin_time=datetime.datetime(2019, 10, 1)
-    ),
+    ingestion_settings=datetime.datetime(2019, 10, 1),
     options=DataFeedOptions(
         data_feed_description="cost/revenue data feed",
         rollup_settings=DataFeedRollupSettings(
@@ -175,9 +170,7 @@ data_feed = DataFeed(
     )
 )
 
-my_sql_data_feed = client.create_data_feed(data_feed)
-
-return my_sql_data_feed
+return data_feed
 ```
 
 ### Check ingestion status
@@ -220,7 +213,6 @@ from azure.ai.metricsadvisor.models import (
     SmartDetectionCondition,
     SuppressCondition,
     MetricDetectionCondition,
-    AnomalyDetectionConfiguration
 )
 
 service_endpoint = os.getenv("ENDPOINT")
@@ -260,7 +252,7 @@ smart_detection_condition = SmartDetectionCondition(
     )
 )
 
-anomaly_detection_config = AnomalyDetectionConfiguration(
+detection_config = client.create_detection_configuration(
     name="my_detection_config",
     metric_id=metric_id,
     description="anomaly detection config for metric",
@@ -271,9 +263,6 @@ anomaly_detection_config = AnomalyDetectionConfiguration(
         smart_detection_condition=smart_detection_condition
     )
 )
-
-detection_config = client.create_metric_anomaly_detection_configuration(anomaly_detection_config)
-
 return detection_config
 ```
 
@@ -291,7 +280,6 @@ from azure.ai.metricsadvisor.models import (
     SeverityCondition,
     MetricBoundaryCondition,
     MetricAnomalyAlertSnoozeCondition,
-    AnomalyAlertConfiguration
 )
 service_endpoint = os.getenv("ENDPOINT")
 subscription_key = os.getenv("SUBSCRIPTION_KEY")
@@ -304,7 +292,7 @@ client = MetricsAdvisorAdministrationClient(
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-anomaly_alert_configuration = AnomalyAlertConfiguration(
+alert_config = client.create_alert_configuration(
     name="my alert config",
     description="alert config description",
     cross_metrics_operator="AND",
@@ -347,8 +335,6 @@ anomaly_alert_configuration = AnomalyAlertConfiguration(
     hook_ids=[hook_id]
 )
 
-alert_config = client.create_anomaly_alert_configuration(anomaly_alert_configuration)
-
 return alert_config
 ```
 
@@ -370,7 +356,7 @@ client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-results = client.list_alerts_for_alert_configuration(
+results = client.list_alerts(
     alert_configuration_id=alert_config_id,
     start_time=datetime.datetime(2020, 1, 1),
     end_time=datetime.datetime(2020, 9, 9),
@@ -380,7 +366,7 @@ for result in results:
     print("Alert id: {}".format(result.id))
     print("Create on: {}".format(result.created_on))
 
-results = client.list_anomalies_for_alert(
+results = client.list_anomalies(
     alert_configuration_id=alert_config_id,
     alert_id=alert_id,
 )
@@ -407,7 +393,7 @@ client = MetricsAdvisorClient(service_endpoint,
     MetricsAdvisorKeyCredential(subscription_key, api_key)
 )
 
-results = client.list_incidents_for_detection_configuration(
+results = client.list_incidents(
             detection_configuration_id=anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 9, 9),
@@ -468,7 +454,7 @@ hook = client.create_hook(
         name="email hook",
         description="my email hook",
         emails_to_alert=["alertme@alertme.com"],
-        external_link="https://adwiki.azurewebsites.net/articles/howto/alerts/create-hooks.html"
+        external_link="https://docs.microsoft.com/en-us/azure/cognitive-services/metrics-advisor/how-tos/alerts"
     )
 )
 ```

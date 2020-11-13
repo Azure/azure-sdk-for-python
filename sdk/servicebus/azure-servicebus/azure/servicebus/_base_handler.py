@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import collections
 import logging
 import uuid
 import time
+import threading
 from datetime import timedelta
 from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable
 
@@ -39,7 +39,6 @@ from ._common.constants import (
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-_AccessToken = collections.namedtuple("AccessToken", "token expires_on")
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -95,7 +94,7 @@ def _parse_conn_str(conn_str):
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> _AccessToken
+    # type: (str, str, str, Optional[timedelta]) -> AccessToken
     """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
@@ -109,7 +108,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     encoded_key = key.encode("utf-8")
 
     token = utils.create_sas_token(encoded_policy, encoded_key, encoded_uri, expiry)
-    return _AccessToken(token=token, expires_on=abs_expiry)
+    return AccessToken(token=token, expires_on=abs_expiry)
 
 
 class ServiceBusSASTokenCredential(object):
@@ -149,7 +148,7 @@ class ServiceBusSharedKeyCredential(object):
         self.token_type = TOKEN_TYPE_SASTOKEN
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -177,6 +176,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._handler = None  # type: uamqp.AMQPClient
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
+        self._shutdown = threading.Event()
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
@@ -234,6 +234,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # type: (Callable, Optional[float], Any) -> Any
         # pylint: disable=protected-access
+        if self._shutdown.is_set():
+            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
+                             "create a new instance.")
+
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -349,7 +353,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", inner_exception=exp)
+                raise OperationTimeoutError("Management operation timed out.", error=exp)
             raise
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
@@ -385,3 +389,4 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         self._close_handler()
+        self._shutdown.set()

@@ -75,7 +75,7 @@ This table shows the relationship between SDK versions and supported API version
 |SDK version|Supported API version of service
 |-|-
 |5.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 3.0
-|5.1.0b1 - Latest release (beta)| 3.0, 3.1-preview
+|5.1.0b2 - Latest release (beta)| 3.0, 3.1-preview
 
 
 ### Authenticate the client

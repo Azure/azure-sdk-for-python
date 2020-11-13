@@ -24,15 +24,15 @@ from base_testcase import TestMetricsAdvisorClientBase
 
 class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     def test_list_anomalies_for_detection_configuration(self):
-        results = list(self.client.list_anomalies_for_detection_configuration(
+        results = list(self.client.list_anomalies(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 10, 21),
         ))
         assert len(results) > 0
 
-    def test_list_dimension_values_for_detection_configuration(self):
-        results = list(self.client.list_dimension_values_for_detection_configuration(
+    def test_list_dimension_values(self):
+        results = list(self.client.list_dimension_values(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             dimension_name=self.dimension_name,
             start_time=datetime.datetime(2020, 1, 1),
@@ -41,7 +41,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         assert len(results) > 0
 
     def test_list_incidents_for_detection_configuration(self):
-        results = list(self.client.list_incidents_for_detection_configuration(
+        results = list(self.client.list_incidents(
             detection_configuration_id=self.anomaly_detection_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 10, 21),
@@ -80,8 +80,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    def test_list_alerts_for_alert_configuration(self):
-        results = list(self.client.list_alerts_for_alert_configuration(
+    def test_list_alerts(self):
+        results = list(self.client.list_alerts(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             start_time=datetime.datetime(2020, 1, 1),
             end_time=datetime.datetime(2020, 10, 21),
@@ -140,8 +140,8 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                                          value=2)
         self.client.add_feedback(period_feedback)
 
-    def test_list_feedbacks(self):
-        results = list(self.client.list_feedbacks(metric_id=self.metric_id))
+    def test_list_feedback(self):
+        results = list(self.client.list_feedback(metric_id=self.metric_id))
         assert len(results) > 0
 
     def test_get_feedback(self):
@@ -149,14 +149,14 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         assert result
 
     def test_list_anomalies_for_alert(self):
-        result = list(self.client.list_anomalies_for_alert(
+        result = list(self.client.list_anomalies(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             alert_id=self.alert_id,
         ))
         assert len(result) > 0
 
     def test_list_incidents_for_alert(self):
-        results = list(self.client.list_incidents_for_alert(
+        results = list(self.client.list_incidents(
             alert_configuration_id=self.anomaly_alert_configuration_id,
             alert_id=self.alert_id,
         ))

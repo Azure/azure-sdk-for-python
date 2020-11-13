@@ -1,0 +1,106 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable55891a7c"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Sat, 07 Nov 2020 01:36:57 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sat, 07 Nov 2020 01:36:57 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable55891a7c","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Sat, 07 Nov 2020 01:36:59 GMT
+      etag: W/"datetime'2020-11-07T01%3A36%3A59.1439879Z'"
+      location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable55891a7c')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/Tables
+- request:
+    body: "--batch_bf08cbea-bf23-4f96-aeca-e7ad03da9172\r\nContent-Type: multipart/mixed;
+      boundary=changeset_62eeb0c6-92f4-4515-9824-6d94c77051b4\r\n\r\n--changeset_62eeb0c6-92f4-4515-9824-6d94c77051b4\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nDELETE
+      https://tablestestussw52mubjcwms.table.cosmos.azure.com/uttable55891a7c(PartitionKey='001',RowKey='batch_negative_1')
+      HTTP/1.1\r\nIf-Match: *\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nAccept:
+      application/json;odata=minimalmetadata\r\nx-ms-date: Sat, 07 Nov 2020 01:36:58
+      GMT\r\nDate: Sat, 07 Nov 2020 01:36:58 GMT\r\nx-ms-client-request-id: b9fa47cc-2099-11eb-a566-58961df361d1\r\n\r\n\r\n--changeset_62eeb0c6-92f4-4515-9824-6d94c77051b4--\r\n\r\n--batch_bf08cbea-bf23-4f96-aeca-e7ad03da9172--\r\n"
+    headers:
+      Content-Length:
+      - '764'
+      Content-Type:
+      - multipart/mixed; boundary=batch_bf08cbea-bf23-4f96-aeca-e7ad03da9172
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Sat, 07 Nov 2020 01:36:58 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sat, 07 Nov 2020 01:36:58 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/$batch
+  response:
+    body:
+      string: "--batchresponse_dd9d888f-9687-4a0f-bb06-7ccb6f0cb6e8\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_70ce24d4-39f8-442a-937e-cbd06af1b2ed\r\n\r\n--changesetresponse_70ce24d4-39f8-442a-937e-cbd06af1b2ed\nContent-Type:
+        application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 404 Not Found\r\nContent-Type:
+        application/json;odata=fullmetadata\r\n\r\n{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\":\"en-us\",\"value\":\"0:The
+        specified resource does not exist.\\n\\nRequestID:b9fb0b0a-2099-11eb-8762-58961df361d1\\n\"}}}\r\n--changesetresponse_70ce24d4-39f8-442a-937e-cbd06af1b2ed--\n--batchresponse_dd9d888f-9687-4a0f-bb06-7ccb6f0cb6e8--\r\n"
+    headers:
+      content-type: multipart/mixed; boundary=batchresponse_dd9d888f-9687-4a0f-bb06-7ccb6f0cb6e8
+      date: Sat, 07 Nov 2020 01:36:59 GMT
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 202
+      message: Accepted
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/$batch
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Sat, 07 Nov 2020 01:36:58 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Sat, 07 Nov 2020 01:36:58 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable55891a7c')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Sat, 07 Nov 2020 01:36:59 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/Tables('uttable55891a7c')
+version: 1

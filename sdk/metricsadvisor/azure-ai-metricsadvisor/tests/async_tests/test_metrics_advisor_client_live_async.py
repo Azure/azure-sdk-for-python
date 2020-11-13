@@ -25,7 +25,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_list_anomalies_for_detection_configuration(self):
         async with self.client:
-            results = self.client.list_anomalies_for_detection_configuration(
+            results = self.client.list_anomalies(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 10, 21),
@@ -36,9 +36,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             assert len(tolist) > 0
 
     @AzureTestCase.await_prepared_test
-    async def test_list_dimension_values_for_detection_configuration(self):
+    async def test_list_dimension_values(self):
         async with self.client:
-            results = self.client.list_dimension_values_for_detection_configuration(
+            results = self.client.list_dimension_values(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
                 dimension_name=self.dimension_name,
                 start_time=datetime.datetime(2020, 1, 1),
@@ -52,7 +52,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_list_incidents_for_detection_configuration(self):
         async with self.client:
-            results = self.client.list_incidents_for_detection_configuration(
+            results = self.client.list_incidents(
                 detection_configuration_id=self.anomaly_detection_configuration_id,
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 10, 21),
@@ -115,9 +115,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             assert len(tolist) > 0
 
     @AzureTestCase.await_prepared_test
-    async def test_list_alerts_for_alert_configuration(self):
+    async def test_list_alerts(self):
         async with self.client:
-            results = self.client.list_alerts_for_alert_configuration(
+            results = self.client.list_alerts(
                 alert_configuration_id=self.anomaly_alert_configuration_id,
                 start_time=datetime.datetime(2020, 1, 1),
                 end_time=datetime.datetime(2020, 10, 21),
@@ -198,9 +198,9 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
             await self.client.add_feedback(period_feedback)
 
     @AzureTestCase.await_prepared_test
-    async def test_list_feedbacks(self):
+    async def test_list_feedback(self):
         async with self.client:
-            results = self.client.list_feedbacks(metric_id=self.metric_id)
+            results = self.client.list_feedback(metric_id=self.metric_id)
             tolist = []
             async for result in results:
                 tolist.append(result)
@@ -215,7 +215,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_list_anomalies_for_alert(self):
         async with self.client:
-            results = self.client.list_anomalies_for_alert(
+            results = self.client.list_anomalies(
                 alert_configuration_id=self.anomaly_alert_configuration_id,
                 alert_id=self.alert_id,
             )
@@ -227,7 +227,7 @@ class TestMetricsAdvisorClientAsync(TestMetricsAdvisorClientBaseAsync):
     @AzureTestCase.await_prepared_test
     async def test_list_incidents_for_alert(self):
         async with self.client:
-            results = self.client.list_incidents_for_alert(
+            results = self.client.list_incidents(
                 alert_configuration_id=self.anomaly_alert_configuration_id,
                 alert_id=self.alert_id,
             )

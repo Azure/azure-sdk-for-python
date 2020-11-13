@@ -20,3 +20,23 @@ clear-output-folder: true
 v3: true
 python: true
 ```
+
+### Rename searchId to reservationId
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions.PhoneNumberSearch.properties.searchId
+    transform: >
+      $["x-ms-client-name"] = "reservationId";
+```
+
+### Rename PhoneNumberSearch to PhoneNumberReservation
+```yaml
+custom-types-subpackage: models
+custom-types: PhoneNumberReservation
+required-fields-as-ctor-args: true
+directive:
+  - rename-model:
+      from: PhoneNumberSearch
+      to: PhoneNumberReservation
+```
