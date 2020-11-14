@@ -12,13 +12,14 @@ from azure.communication.administration import (
     CreateSearchOptions
 )
 from phone_number_helper import PhoneNumberUriReplacer
-from _shared.asynctestcase  import (
-    AsyncCommunicationTestCase
-)
+from phone_number_testcase_async import AsyncPhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
 import os
 
-class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
+SKIP_PHONE_NUMBER_TESTS = True
+PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
+
+class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
 
     def setUp(self):
         super(PhoneNumberAdministrationClientTestAsync, self).setUp()
@@ -39,10 +40,10 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             self.phone_plan_group_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_GROUP_ID')
             self.phone_plan_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID')
             self.phone_plan_id_area_codes = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONE_PLAN_ID_AREA_CODES')
-            self.area_code_for_search = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_SEARCH')
-            self.search_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID')
-            self.search_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID_TO_PURCHASE')
-            self.search_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_SEARCH_ID_TO_CANCEL')
+            self.area_code_for_reservation = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_AREA_CODE_FOR_RESERVATION')
+            self.reservation_id = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID')
+            self.reservation_id_to_purchase = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID_TO_PURCHASE')
+            self.reservation_id_to_cancel = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_RESERVATION_ID_TO_CANCEL')
             self.phonenumber_to_configure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_CONFIGURE')
             self.phonenumber_to_get_config = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_GET_CONFIG')
             self.phonenumber_to_unconfigure = os.getenv('AZURE_COMMUNICATION_SERVICE_PHONENUMBERS_PHONENUMBER_TO_UNCONFIGURE')
@@ -63,20 +64,20 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
                 "phone_plan_id_area_codes"
             )
             self.scrubber.register_name_pair(
-                self.area_code_for_search,
-                "area_code_for_search"
+                self.area_code_for_reservation,
+                "area_code_for_reservation"
             )
             self.scrubber.register_name_pair(
-                self.search_id,
-                "search_id"
+                self.reservation_id,
+                "reservation_id"
             )
             self.scrubber.register_name_pair(
-                self.search_id_to_purchase,
-                "search_id_to_purchase"
+                self.reservation_id_to_purchase,
+                "reservation_id_to_purchase"
             )
             self.scrubber.register_name_pair(
-                self.search_id_to_cancel,
-                "search_id_to_cancel"
+                self.reservation_id_to_cancel,
+                "reservation_id_to_cancel"
             )
             self.scrubber.register_name_pair(
                 self.phonenumber_to_configure,
@@ -113,10 +114,10 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             self.phone_plan_group_id = "phone_plan_group_id"
             self.phone_plan_id = "phone_plan_id"
             self.phone_plan_id_area_codes = "phone_plan_id_area_codes"
-            self.area_code_for_search = "area_code_for_search"
-            self.search_id = "search_id"
-            self.search_id_to_purchase = "search_id_to_purchase"
-            self.search_id_to_cancel = "search_id_to_cancel"
+            self.area_code_for_reservation = "area_code_for_reservation"
+            self.reservation_id = "reservation_id"
+            self.reservation_id_to_purchase = "reservation_id_to_purchase"
+            self.reservation_id_to_cancel = "reservation_id_to_cancel"
             self.phonenumber_to_configure = "phonenumber_to_configure"
             self.phonenumber_to_get_config = "phonenumber_to_get_config"
             self.phonenumber_to_unconfigure = "phonenumber_to_unconfigure"
@@ -125,8 +126,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             self.capabilities_id = "capabilities_id"
             self.release_id = "release_id"
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_all_phone_numbers(self):
         async with self._phone_number_administration_client:
             pages = self._phone_number_administration_client.list_all_phone_numbers()
@@ -136,8 +138,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
                 items.append(item)
         assert len(items) > 0
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_all_area_codes(self):
         async with self._phone_number_administration_client:
             area_codes = await self._phone_number_administration_client.get_all_area_codes(
@@ -147,8 +150,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
         assert area_codes.primary_area_codes
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_capabilities_update(self):
         async with self._phone_number_administration_client:
             capability_response = await self._phone_number_administration_client.get_capabilities_update(
@@ -156,8 +160,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
         assert capability_response.capabilities_update_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_update_capabilities(self):
         update = NumberUpdateCapabilities(add=iter(["InboundCalling"]))
 
@@ -171,8 +176,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
         assert capability_response.capabilities_update_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_all_supported_countries(self):
         async with self._phone_number_administration_client:
             countries = self._phone_number_administration_client.list_all_supported_countries()
@@ -182,8 +188,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
         self.assertGreater(len(items), 0)
         assert items[0].localized_name
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_number_configuration(self):
         async with self._phone_number_administration_client:
             phone_number_response = await self._phone_number_administration_client.get_number_configuration(
@@ -191,8 +198,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
         assert phone_number_response.pstn_configuration
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_configure_number(self):
         pstnConfig = PstnConfiguration(
             callback_url="https://callbackurl",
@@ -205,8 +213,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
         assert not configure_number_response
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_phone_plan_groups(self):
         async with self._phone_number_administration_client:
             phone_plan_group_response = self._phone_number_administration_client.list_phone_plan_groups(
@@ -219,8 +228,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
         assert len(items) > 0
         assert items[0].phone_plan_group_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_phone_plans(self):
         async with self._phone_number_administration_client:
             phone_plan_response = self._phone_number_administration_client.list_phone_plans(
@@ -234,8 +244,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
         assert len(items) > 0
         assert items[0].phone_plan_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_phone_plan_location_options(self):
         async with self._phone_number_administration_client:
             location_options_response = await self._phone_number_administration_client.get_phone_plan_location_options(
@@ -245,8 +256,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
         assert location_options_response.location_options.label_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_get_release_by_id(self):
         async with self._phone_number_administration_client:
             phone_number_release_response = await self._phone_number_administration_client.get_release_by_id(
@@ -254,8 +266,9 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
             )
         assert phone_number_release_response.release_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_list_all_releases(self):
         async with self._phone_number_administration_client:
             releases_response = self._phone_number_administration_client.list_all_releases()
@@ -266,54 +279,62 @@ class PhoneNumberAdministrationClientTestAsync(AsyncCommunicationTestCase):
         self.assertGreater(len(items), 0)
         assert items[0].id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_release_phone_numbers(self):
         async with self._phone_number_administration_client:
-            releases_response = await self._phone_number_administration_client.release_phone_numbers(
-                [self.phonenumber_to_release]
+            poller = await self._phone_number_administration_client.begin_release_phone_numbers(
+                phone_numbers=[self.phonenumber_to_release]
             )
-            assert releases_response.release_id
+            result = await poller.result()
+        assert result
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    async def test_get_search_by_id(self):
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    async def test_get_reservation_by_id(self):
         async with self._phone_number_administration_client:
-            phone_number_search_response = await self._phone_number_administration_client.get_search_by_id(
-                search_id=self.search_id
+            phone_number_reservation_response = await self._phone_number_administration_client.get_reservation_by_id(
+                reservation_id=self.reservation_id
             )
-        assert phone_number_search_response.search_id
+        assert phone_number_reservation_response.reservation_id
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_create_search(self):
         searchOptions = CreateSearchOptions(
-            area_code=self.area_code_for_search,
-            description="testsearch20200014",
-            display_name="testsearch20200014",
+            area_code=self.area_code_for_reservation,
+            description="testreservation20200014",
+            display_name="testreservation20200014",
             phone_plan_ids=[self.phone_plan_id],
             quantity=1
         )
         async with self._phone_number_administration_client:
-            search_response = await self._phone_number_administration_client.create_search(
-                body=searchOptions
+            poller = await self._phone_number_administration_client.begin_reserve_phone_numbers(
+                options=searchOptions
             )
-        assert search_response.search_id
+            result = await poller.result()
+        assert result
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    async def test_cancel_search(self):
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    async def test_cancel_reservation(self):
         async with self._phone_number_administration_client:
-            cancel_search_response = await self._phone_number_administration_client.cancel_search(
-                search_id=self.search_id_to_cancel
+            cancel_reservation_response = await self._phone_number_administration_client.cancel_reservation(
+                reservation_id=self.reservation_id_to_cancel
             )
-        assert not cancel_search_response
+        assert not cancel_reservation_response
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    async def test_purchase_search(self):
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    async def test_purchase_reservation(self):
         async with self._phone_number_administration_client:
-            purchase_search_response = await self._phone_number_administration_client.purchase_search(
-                search_id=self.search_id_to_purchase
+            poller = await self._phone_number_administration_client.begin_purchase_reservation(
+                reservation_id=self.reservation_id_to_purchase
             )
-        assert not purchase_search_response
+            result = await poller.result()
+        assert result

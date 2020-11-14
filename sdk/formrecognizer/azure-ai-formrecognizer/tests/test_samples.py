@@ -82,6 +82,8 @@ class TestSamples(FormRecognizerTest):
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
     def test_sample_recognize_content(self, resource_group, location, form_recognizer_account, form_recognizer_account_key):
+        if sys.version_info < (3, 5):
+            pytest.skip("py2.7 is unable to print the checkbox character found on the line")
         _test_file('sample_recognize_content.py', form_recognizer_account, form_recognizer_account_key)
 
     @pytest.mark.live_test_only
@@ -158,3 +160,21 @@ class TestSamples(FormRecognizerTest):
                    form_recognizer_account,
                    form_recognizer_account_key
                    )
+
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_recognize_business_cards(
+            self, resource_group, location, form_recognizer_account, form_recognizer_account_key
+    ):
+        _test_file('sample_recognize_business_cards.py', form_recognizer_account, form_recognizer_account_key)
+
+    @pytest.mark.live_test_only
+    @GlobalFormRecognizerAccountPreparer()
+    def test_sample_create_composed_model(
+            self, resource_group, location, form_recognizer_account, form_recognizer_account_key
+    ):
+        os.environ["PURCHASE_ORDER_OFFICE_SUPPLIES_SAS_URL"] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
+        os.environ["PURCHASE_ORDER_OFFICE_EQUIPMENT_SAS_URL"] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
+        os.environ["PURCHASE_ORDER_OFFICE_FURNITURE_SAS_URL"] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
+        os.environ["PURCHASE_ORDER_OFFICE_CLEANING_SUPPLIES_SAS_URL"] = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
+        _test_file('sample_create_composed_model.py', form_recognizer_account, form_recognizer_account_key)

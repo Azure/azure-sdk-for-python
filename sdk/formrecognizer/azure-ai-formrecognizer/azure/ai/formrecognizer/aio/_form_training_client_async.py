@@ -11,6 +11,7 @@ from typing import (
     Any,
     Dict,
     Union,
+    List,
     TYPE_CHECKING,
 )
 from azure.core.polling import AsyncLROPoller
@@ -97,6 +98,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         :keyword bool include_subfolders: A flag to indicate if subfolders within the set of prefix folders
             will also need to be included when searching for content to be preprocessed. Not supported if
             training with labels.
+        :keyword str model_name: An optional, user-defined name to associate with your model.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -106,6 +108,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         :raises ~azure.core.exceptions.HttpResponseError:
             Note that if the training fails, the exception is raised, but a model with an
             "invalid" status is still created. You can delete this model by calling :func:`~delete_model()`
+        .. versionadded:: v2.1-preview
+            The *model_name* keyword argument
 
         .. admonition:: Example:
 
@@ -119,13 +123,16 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         def callback_v2_0(raw_response):
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model)
+            return CustomFormModel._from_generated(model, api_version=self.api_version)
 
         def callback_v2_1(raw_response, _, headers):  # pylint: disable=unused-argument
             model = self._deserialize(self._generated_models.Model, raw_response)
-            return CustomFormModel._from_generated(model)
+            return CustomFormModel._from_generated(model, api_version=self.api_version)
 
         cls = kwargs.pop("cls", None)
+        model_name = kwargs.pop("model_name", None)
+        if model_name and self.api_version == "2.0":
+            raise ValueError("'model_name' is only available for API version V2_1_PREVIEW and up")
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
 
@@ -176,6 +183,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     prefix=kwargs.pop("prefix", ""),
                     include_sub_folders=kwargs.pop("include_subfolders", False),
                 ),
+                model_name=model_name
             ),
             cls=deserialization_callback,
             continuation_token=continuation_token,
@@ -227,7 +235,8 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                 :caption: List model information for each model on the account.
         """
         return self._client.list_custom_models(  # type: ignore
-            cls=kwargs.pop("cls", lambda objs: [CustomFormModelInfo._from_generated(x) for x in objs]),
+            cls=kwargs.pop("cls", lambda objs:
+            [CustomFormModelInfo._from_generated(x, api_version=self.api_version) for x in objs]),
             **kwargs
         )
 
@@ -278,7 +287,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
         response = await self._client.get_custom_model(
             model_id=model_id, include_keys=True, **kwargs
         )
-        return CustomFormModel._from_generated(response)
+        return CustomFormModel._from_generated(response, api_version=self.api_version)
 
     @distributed_trace_async
     async def get_copy_authorization(
@@ -362,7 +371,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
 
         def _copy_callback(raw_response, _, headers):  # pylint: disable=unused-argument
             copy_result = self._deserialize(self._generated_models.CopyOperationResult, raw_response)
-            return CustomFormModelInfo._from_generated(copy_result, target["modelId"])
+            return CustomFormModelInfo._from_generated(copy_result, target["modelId"], api_version=self.api_version)
 
         return await self._client.begin_copy_custom_model(  # type: ignore
             model_id=model_id,
@@ -384,6 +393,55 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
             continuation_token=continuation_token,
             **kwargs
         )
+
+    @distributed_trace_async
+    async def begin_create_composed_model(
+        self,
+        model_ids: List[str],
+        **kwargs: Any
+    ) -> AsyncLROPoller[CustomFormModel]:
+        """Creates a composed model from a collection of existing trained models with labels.
+
+        :param list[str] model_ids: List of model IDs to use in the composed model.
+        :keyword str model_name: An optional, user-defined name to associate with your model.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if
+            no Retry-After header is present.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.CustomFormModel`.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.CustomFormModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_create_composed_model_async.py
+                :start-after: [START begin_create_composed_model_async]
+                :end-before: [END begin_create_composed_model_async]
+                :language: python
+                :dedent: 8
+                :caption: Create a composed model
+        """
+
+        def _compose_callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            model = self._deserialize(self._generated_models.Model, raw_response)
+            return CustomFormModel._from_generated_composed(model)
+
+        model_name = kwargs.pop("model_name", None)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        try:
+            return await self._client.begin_compose_custom_models_async(  # type: ignore
+                {"model_ids": model_ids, "model_name": model_name},
+                cls=kwargs.pop("cls", _compose_callback),
+                polling=AsyncLROBasePolling(timeout=polling_interval, lro_algorithms=[TrainingPolling()], **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+        except ValueError:
+            raise ValueError(
+                "Method 'begin_create_composed_model' is only available for API version V2_1_PREVIEW and up"
+            )
 
     def get_form_recognizer_client(self, **kwargs: Any) -> FormRecognizerClient:
         """Get an instance of a FormRecognizerClient from FormTrainingClient.

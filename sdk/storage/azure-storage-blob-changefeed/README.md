@@ -36,9 +36,9 @@ az storage account create -n my-storage-account-name -g my-resource-group
 ```
 
 To enable changefeed you can use:
-[Azure Portal](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=azure-portal#enable-and-disable-the-change-feed)
+[Azure Portal](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=azure-portal#enable-and-disable-the-change-feed),
 [Azure PowerShell](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=azure-powershell#enable-and-disable-the-change-feed)
-or [Template](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=template#enable-and-disable-the-change-feed)
+or [Template](https://docs.microsoft.com/azure/storage/blobs/storage-blob-change-feed?tabs=template#enable-and-disable-the-change-feed).
 
 ### Authenticate the client
 
@@ -62,7 +62,7 @@ Once you have your account URL and credentials ready, you can create the ChangeF
 ```python
 from azure.storage.blob.changefeed import ChangeFeedClient
 
-service = ChangeFeedClient(account_url="https://<my-storage-account-name>.dfs.core.windows.net/", credential=credential)
+service = ChangeFeedClient(account_url="https://<my-storage-account-name>.blob.core.windows.net/", credential=credential)
 ```
 
 ## Key concepts
@@ -97,7 +97,7 @@ List all events within a time range.
 from datetime import datetime
 from azure.storage.blob.changefeed import ChangeFeedClient
 
-cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
+cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
 start_time = datetime(2020, 1, 6)
 end_time = datetime(2020, 3, 4)
@@ -114,7 +114,7 @@ List all events.
 ```python
 from azure.storage.blob.changefeed import ChangeFeedClient
 
-cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
+cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
 change_feed = cf_client.list_changes()
 
@@ -129,7 +129,7 @@ List events by page.
 ```python
 from azure.storage.blob.changefeed import ChangeFeedClient
 
-cf_client = ChangeFeedClient("http://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
+cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format("YOUR_ACCOUNT_NAME"),
                              credential="Your_ACCOUNT_KEY")
 
 change_feed = cf_client.list_changes().by_page()

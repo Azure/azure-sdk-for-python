@@ -13,7 +13,7 @@ from azure.core.pipeline import Pipeline
 from ._models import TableItem
 
 from ._generated import AzureTable
-from ._generated.models import TableProperties, TableServiceProperties, QueryOptions
+from ._generated.models import TableProperties, TableServiceProperties
 from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize
 from ._base_client import parse_connection_str, TransportWrapper
 from ._models import LocationMode
@@ -26,7 +26,7 @@ class TableServiceClient(TableServiceClientBase):
     """ :ivar str account_name: Name of the storage account (Cosmos or Azure)"""
     def __init__(
             self, account_url,  # type: str
-            credential=None,  # type: Union[str,TokenCredential]
+            credential=None,  # type: str
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -38,7 +38,7 @@ class TableServiceClient(TableServiceClientBase):
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string, an account shared access
+            access key values. The value can be a SAS token string or an account shared access
             key.
         :type credential: str
         :returns: None
@@ -68,7 +68,7 @@ class TableServiceClient(TableServiceClientBase):
             cls, conn_str,  # type: str
             **kwargs  # type: Any
     ):  # type: (...) -> TableServiceClient
-        """Create TableServiceClient from a Connection String.
+        """Create TableServiceClient from a connection string.
 
         :param conn_str:
             A connection string to an Azure Storage or Cosmos account.
@@ -95,9 +95,10 @@ class TableServiceClient(TableServiceClientBase):
         """Retrieves statistics related to replication for the Table service. It is only available on the secondary
         location endpoint when read-access geo-redundant replication is enabled for the account.
 
-        :return: Dictionary of Service Stats
-        :rtype:dict[str, object]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Dictionary of service stats
+        :rtype: ~azure.data.tables.models.TableServiceStats
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         try:
             timeout = kwargs.pop('timeout', None)
@@ -115,7 +116,7 @@ class TableServiceClient(TableServiceClientBase):
 
         :return: Dictionary of service properties
         :rtype:dict[str, Any]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -147,7 +148,7 @@ class TableServiceClient(TableServiceClientBase):
        :type cors: ~azure.data.tables.CorsRule
        :return: None
        :rtype: None
-       :raises: ~azure.core.exceptions.HttpResponseError
+       :raises ~azure.core.exceptions.HttpResponseError:
        """
         props = TableServiceProperties(
             logging=analytics_logging,
@@ -173,7 +174,7 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.ResourceExistsError:
 
         .. admonition:: Example:
 
@@ -203,7 +204,7 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -234,6 +235,7 @@ class TableServiceClient(TableServiceClientBase):
         :type table_name: str
         :return: None
         :rtype: None
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         .. admonition:: Example:
 
@@ -255,14 +257,16 @@ class TableServiceClient(TableServiceClientBase):
     ):
         # type: (...) -> ItemPaged[TableItem]
         """Queries tables under the given account.
-        :param filter: Specify a filter to return certain tables
+
+        :param filter: Specify a filter to return certain tables.
         :type filter: str
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
-        :keyword dict parameters: Dictionary for formatting query with additional, user defined parameters
-        :return: A query of tables
-        :rtype: ItemPaged[TableItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword select: Specify desired properties of a table to return certain tables
+        :paramtype select: str or list[str]
+        :keyword dict[str,str] parameters: Dictionary for formatting query with additional, user defined parameters
+        :return: An ItemPaged of tables
+        :rtype: ~azure.core.paging.ItemPaged[TableItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -275,17 +279,17 @@ class TableServiceClient(TableServiceClientBase):
         """
         parameters = kwargs.pop('parameters', None)
         filter = self._parameter_filter_substitution(parameters, filter)  # pylint: disable=W0622
-
+        top = kwargs.pop('results_per_page', None)
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select,
-                                     filter=filter)
-        command = functools.partial(self._client.table.query, query_options=query_options,
-                                    **kwargs)
+        command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command,
+            results_per_page=top,
+            filter=filter,
+            select=user_select,
             page_iterator_class=TablePropertiesPaged
         )
 
@@ -298,10 +302,11 @@ class TableServiceClient(TableServiceClientBase):
         """Queries tables under the given account.
 
         :keyword int results_per_page: Number of tables per page in return ItemPaged
-        :keyword Union[str, list(str)] select: Specify desired properties of a table to return certain tables
+        :keyword select: Specify desired properties of a table to return certain tables
+        :paramtype select: str or list[str]
         :return: A query of tables
-        :rtype: ItemPaged[TableItem]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.paging.ItemPaged[TableItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -315,15 +320,13 @@ class TableServiceClient(TableServiceClientBase):
         user_select = kwargs.pop('select', None)
         if user_select and not isinstance(user_select, str):
             user_select = ", ".join(user_select)
+        top = kwargs.pop('results_per_page', None)
 
-        query_options = QueryOptions(top=kwargs.pop('results_per_page', None), select=user_select)
-
-        command = functools.partial(
-            self._client.table.query,
-            query_options=query_options,
-            **kwargs)
+        command = functools.partial(self._client.table.query, **kwargs)
         return ItemPaged(
             command,
+            results_per_page=top,
+            select=user_select,
             page_iterator_class=TablePropertiesPaged
         )
 

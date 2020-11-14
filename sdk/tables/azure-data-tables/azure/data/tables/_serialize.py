@@ -117,11 +117,7 @@ def _to_entity_guid(value):
 
 
 def _to_entity_int32(value):
-    # TODO: What the heck? below
-    if sys.version_info < (3,):
-        value = int(value)
-    else:
-        value = int(value)
+    value = int(value)
     if value >= 2 ** 31 or value < -(2 ** 31):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT32))
     return None, value
@@ -211,9 +207,12 @@ def _add_entity_properties(source):
 
     properties = {}
 
+    to_send = dict(source) # shallow copy
+    to_send.pop("_metadata", None)
+
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
-    for name, value in source.items():
+    for name, value in to_send.items():
         mtype = ''
 
         if isinstance(value, Enum):
@@ -230,8 +229,11 @@ def _add_entity_properties(source):
             mtype, value = conv(value.value)
         else:
             conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if conv is None or value is None:
-                conv = _to_entity_none  # something with this
+            if conv is None and value is not None:
+                raise TypeError(
+                    _ERROR_TYPE_NOT_SUPPORTED.format(type(value)))
+            if value is None:
+                conv = _to_entity_none
 
             mtype, value = conv(value)
 
@@ -250,7 +252,7 @@ def serialize_iso(attr):
 
     :param Datetime attr: Object to be serialized.
     :rtype: str
-    :raises: ValueError if format invalid.
+    :raises ValueError: If format is invalid.
     """
     if not attr:
         return None

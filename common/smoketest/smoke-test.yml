@@ -21,6 +21,12 @@ jobs:
           OSVmImage: ubuntu-18.04
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
+        Python_38_Linux (AzureCloud Canary):
+          PythonVersion: '3.8'
+          OSVmImage: ubuntu-18.04
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+          ArmTemplateParameters: $(azureCloudArmParameters)
+          Location: 'eastus2euap'
         Python_37_Windows (AzureCloud):
           PythonVersion: '3.7'
           OSVmImage: windows-2019

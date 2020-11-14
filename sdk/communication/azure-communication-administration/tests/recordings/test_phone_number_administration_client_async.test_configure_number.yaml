@@ -1,16 +1,16 @@
 interactions:
 - request:
     body: 'b''{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
-      "ApplicationId", "azurePstnTargetId": "AzurePstnTargetId"}, "phoneNumber": "+1area_code_for_search4866306"}'''
+      "ApplicationId"}, "phoneNumber": "+1area_code_for_reservation7840394"}'''
     headers:
       Content-Length:
-      - '168'
+      - '126'
       Content-Type:
       - application/json
       Date:
-      - Mon, 28 Sep 2020 23:36:20 GMT
+      - Tue, 27 Oct 2020 17:30:48 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -20,11 +20,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 28 Sep 2020 23:36:22 GMT
-      ms-cv: DaWW0P2dX0uW3zxujdXNZQ.0
-      x-processing-time: 2855ms
+      date: Tue, 27 Oct 2020 17:30:48 GMT
+      ms-cv: BN+yf7hn4UeOE4N3Xhnhhg.0
+      x-processing-time: 274ms
     status:
-      code: 202
-      message: Accepted
+      code: 200
+      message: OK
     url: https://sanitized.communication.azure.com/administration/phonenumbers/numberconfiguration/configure?api-version=2020-07-20-preview1
 version: 1

@@ -16,7 +16,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from .._response_handlers import (
-    prepare_receipt,
+    prepare_prebuilt_models,
     prepare_content_result,
     prepare_form_result
 )
@@ -61,9 +61,9 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             :caption: Creating the FormRecognizerClient with a token credential.
     """
 
-    def _receipt_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
+    def _prebuilt_callback(self, raw_response, _, headers, **kwargs):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)
-        return prepare_receipt(analyze_result)
+        return prepare_prebuilt_models(analyze_result, **kwargs)
 
     @distributed_trace_async
     async def begin_recognize_receipts(
@@ -71,7 +71,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             receipt: Union[bytes, IO[bytes]],
             **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given US sales receipt.
+        """Extract field text and semantic values from a given sales receipt.
         The input document must be of one of the supported content types - 'application/pdf',
         'image/jpeg', 'image/png' or 'image/tiff'.
 
@@ -79,7 +79,6 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         https://aka.ms/formrecognizer/receiptfields
 
         :param receipt: JPEG, PNG, PDF and TIFF type file stream or bytes.
-            Currently only supports US sales receipts.
         :type receipt: bytes or IO[bytes]
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
@@ -90,8 +89,8 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
-            en-US, en-AU, en-CA, en-GB, and en-IN.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
@@ -106,7 +105,7 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 :end-before: [END recognize_receipts_async]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields.
+                :caption: Recognize sales receipt fields.
         """
         locale = kwargs.pop("locale", None)
         content_type = kwargs.pop("content_type", None)
@@ -117,14 +116,19 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
         if content_type is None:
             content_type = get_content_type(receipt)
 
-        if self.api_version == "2.1-preview.1" and locale:
-            kwargs.update({"locale": locale})
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if locale:
+            if self.api_version == "2.1-preview.1":
+                kwargs.update({"locale": locale})
+            else:
+                raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream=receipt,
             content_type=content_type,
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
+            cls=kwargs.pop("cls", self._prebuilt_callback),
             polling=True,
             **kwargs
         )
@@ -135,22 +139,21 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
             receipt_url: str,
             **kwargs: Any
     ) -> AsyncLROPoller[List[RecognizedForm]]:
-        """Extract field text and semantic values from a given US sales receipt.
+        """Extract field text and semantic values from a given sales receipt.
         The input document must be the location (URL) of the receipt to be analyzed.
 
         See fields found on a receipt here:
         https://aka.ms/formrecognizer/receiptfields
 
         :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
-            of one of the supported formats: JPEG, PNG, PDF and TIFF. Currently only supports
-            US sales receipts.
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
         :keyword bool include_field_elements:
             Whether or not to include field elements such as lines and words in addition to form fields.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword str locale: Locale of the receipt. Defaults to en-US. Supported locales include:
-            en-US, en-AU, en-CA, en-GB, and en-IN.
+        :keyword str locale: Locale of the receipt. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
         :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
@@ -165,22 +168,131 @@ class FormRecognizerClient(FormRecognizerClientBaseAsync):
                 :end-before: [END recognize_receipts_from_url_async]
                 :language: python
                 :dedent: 8
-                :caption: Recognize US sales receipt fields from a URL.
+                :caption: Recognize sales receipt fields from a URL.
         """
         locale = kwargs.pop("locale", None)
 
         include_field_elements = kwargs.pop("include_field_elements", False)
 
-        if self.api_version == "2.1-preview.1" and locale:
-            kwargs.update({"locale": locale})
+        # FIXME: part of this code will be removed once autorest can handle diff mixin
+        # signatures across API versions
+        if locale:
+            if self.api_version == "2.1-preview.1":
+                kwargs.update({"locale": locale})
+            else:
+                raise ValueError("'locale' is only available for API version V2_1_PREVIEW and up")
 
         return await self._client.begin_analyze_receipt_async(  # type: ignore
             file_stream={"source": receipt_url},
             include_text_details=include_field_elements,
-            cls=kwargs.pop("cls", self._receipt_callback),
+            cls=kwargs.pop("cls", self._prebuilt_callback),
             polling=True,
             **kwargs
         )
+
+    @distributed_trace_async
+    async def begin_recognize_business_cards(
+            self,
+            business_card: Union[bytes, IO[bytes]],
+            **kwargs: Any
+    ) -> AsyncLROPoller[List[RecognizedForm]]:
+        """Extract field text and semantic values from a given business card.
+        The input document must be of one of the supported content types - 'application/pdf',
+        'image/jpeg', 'image/png' or 'image/tiff'.
+
+        See fields found on a business card here:
+        https://aka.ms/formrecognizer/businesscardfields
+
+        :param business_card: JPEG, PNG, PDF and TIFF type file stream or bytes.
+        :type business_card: bytes or IO[bytes]
+        :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
+        :keyword bool include_field_elements:
+            Whether or not to include field elements such as lines and words in addition to form fields.
+        :keyword content_type: Media type of the body sent to the API. Content-type is
+            auto-detected, but can be overridden by passing this keyword argument. For options,
+            see :class:`~azure.ai.formrecognizer.FormContentType`.
+        :paramtype content_type: str or ~azure.ai.formrecognizer.FormContentType
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        content_type = kwargs.pop("content_type", None)
+        if content_type == "application/json":
+            raise TypeError("Call begin_recognize_business_cards_from_url() to analyze a business card from a URL.")
+
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        if content_type is None:
+            content_type = get_content_type(business_card)
+
+        try:
+            return await self._client.begin_analyze_business_card_async(  # type: ignore
+                file_stream=business_card,
+                content_type=content_type,
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", lambda pipeline_response, _, response_headers: self._prebuilt_callback(
+                    pipeline_response, _, response_headers, business_card=True
+                )),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_business_card_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_business_cards' is only available for API version V2_1_PREVIEW and up"
+                )
+            raise e
+
+    @distributed_trace_async
+    async def begin_recognize_business_cards_from_url(
+            self,
+            business_card_url: str,
+            **kwargs: Any
+    ) -> AsyncLROPoller[List[RecognizedForm]]:
+        """Extract field text and semantic values from a given business card.
+        The input document must be the location (URL) of the card to be analyzed.
+
+        See fields found on a business card here:
+        https://aka.ms/formrecognizer/businesscardfields
+
+        :param str business_card_url: The URL of the business card to analyze. The input must be a valid, encoded URL
+            of one of the supported formats: JPEG, PNG, PDF and TIFF.
+        :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
+            and en-IN.
+        :keyword bool include_field_elements:
+            Whether or not to include field elements such as lines and words in addition to form fields.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.formrecognizer.RecognizedForm`].
+        :rtype: ~azure.core.polling.AsyncLROPoller[list[~azure.ai.formrecognizer.RecognizedForm]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        include_field_elements = kwargs.pop("include_field_elements", False)
+
+        try:
+            return await self._client.begin_analyze_business_card_async(  # type: ignore
+                file_stream={"source": business_card_url},
+                include_text_details=include_field_elements,
+                cls=kwargs.pop("cls", lambda pipeline_response, _, response_headers: self._prebuilt_callback(
+                    pipeline_response, _, response_headers, business_card=True
+                )),
+                polling=True,
+                **kwargs
+            )
+        except ValueError as e:
+            if "begin_analyze_business_card_async" in str(e):
+                raise ValueError(
+                    "Method 'begin_recognize_business_cards_from_url' is only available for "
+                    "API version V2_1_PREVIEW and up"
+                )
+            raise e
 
     def _content_callback(self, raw_response, _, headers):  # pylint: disable=unused-argument
         analyze_result = self._deserialize(self._generated_models.AnalyzeOperationResult, raw_response)

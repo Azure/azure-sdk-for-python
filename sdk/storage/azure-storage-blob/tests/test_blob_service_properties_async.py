@@ -123,6 +123,13 @@ class ServicePropertiesTestAsync(AsyncStorageTestCase):
     # --Test cases per service ---------------------------------------
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_empty_set_service_properties_exception(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
+        with self.assertRaises(ValueError):
+            await bsc.set_service_properties()
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_blob_service_properties(self, resource_group, location, storage_account, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key, transport=AiohttpTestTransport())
 

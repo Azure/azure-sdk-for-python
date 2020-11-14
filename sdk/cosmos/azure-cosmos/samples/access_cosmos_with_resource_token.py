@@ -144,7 +144,7 @@ def run_sample():
 
         permission = create_permission_if_not_exists(user, permission_definition)
         token = {}
-        token[container.id] = permission.properties["_token"]
+        token[container.container_link] = permission.properties["_token"]
 
         # Use token to connect to database
         token_client = cosmos_client.CosmosClient(HOST, token)
@@ -180,7 +180,7 @@ def run_sample():
         }
         permission = create_permission_if_not_exists(user_2, permission_definition)
         read_token = {}
-        read_token[container.id] = permission.properties["_token"]
+        read_token[container.container_link] = permission.properties["_token"]
 
         # Use token to connect to database
         token_client = cosmos_client.CosmosClient(HOST, read_token)
@@ -212,7 +212,7 @@ def run_sample():
         permission = create_permission_if_not_exists(user_2, permission_definition)
 
         item_token = {}
-        item_token[container.id] = permission.properties["_token"]
+        item_token[container.container_link] = permission.properties["_token"]
 
         # Use token to connect to database
         token_client = cosmos_client.CosmosClient(HOST, item_token)

@@ -9,41 +9,41 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import ContainerRegistryManagementClientConfiguration
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
+class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
+    """ContainerRegistryManagementClient.
 
-class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
-    """ContainerRegistryManagementClient
-
-    This ready contains multiple API versions, to help you deal with all Azure clouds
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
-    By default, uses latest API version available on public Azure.
-    For production, you should stick a particular api-version and/or profile.
-    The profile sets a mapping between the operation group and an API version.
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :ivar config: Configuration for client.
-    :vartype config: ContainerRegistryManagementClientConfiguration
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: The Microsoft Azure subscription ID.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2019-05-01'
@@ -58,11 +58,20 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, base_url)
+    def __init__(
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = ContainerRegistryManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ContainerRegistryManagementClient, self).__init__(
-            credentials,
-            self.config,
             api_version=api_version,
             profile=profile
         )
@@ -112,7 +121,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def agent_pools(self):
@@ -127,8 +136,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import AgentPoolsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'agent_pools'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def build_steps(self):
@@ -140,8 +149,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2018-02-01-preview':
             from .v2018_02_01_preview.operations import BuildStepsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'build_steps'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def build_tasks(self):
@@ -153,8 +162,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2018-02-01-preview':
             from .v2018_02_01_preview.operations import BuildTasksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'build_tasks'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def builds(self):
@@ -166,8 +175,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2018-02-01-preview':
             from .v2018_02_01_preview.operations import BuildsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'builds'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def export_pipelines(self):
@@ -179,8 +188,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import ExportPipelinesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'export_pipelines'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def import_pipelines(self):
@@ -192,8 +201,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import ImportPipelinesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'import_pipelines'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def operations(self):
@@ -229,8 +238,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import Operations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def pipeline_runs(self):
@@ -242,8 +251,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import PipelineRunsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'pipeline_runs'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def private_endpoint_connections(self):
@@ -255,8 +264,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         if api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def registries(self):
@@ -292,8 +301,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import RegistriesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'registries'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def replications(self):
@@ -326,8 +335,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import ReplicationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'replications'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def runs(self):
@@ -351,8 +360,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import RunsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'runs'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def scope_maps(self):
@@ -370,8 +379,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import ScopeMapsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'scope_maps'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def task_runs(self):
@@ -386,8 +395,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import TaskRunsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'task_runs'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def tasks(self):
@@ -411,8 +420,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import TasksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'tasks'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def tokens(self):
@@ -430,8 +439,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import TokensOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'tokens'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def webhooks(self):
@@ -464,5 +473,13 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2019-12-01-preview':
             from .v2019_12_01_preview.operations import WebhooksOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'webhooks'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

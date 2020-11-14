@@ -36,6 +36,8 @@ from typing import (
 )
 from .paging import _LegacyPagingMethod
 
+from .exceptions import AzureError
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -114,12 +116,16 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     async def __anext__(self):
         if self._paging_method.finished(self.continuation_token):
             raise StopAsyncIteration("End of paging")
-
         try:
-            self._response = await self._paging_method.get_page(self.continuation_token, self._initial_request)
-        except TypeError:
-            # legacy doesn't support passing initial request into get_page
-            self._response = await self._paging_method.get_page(self.continuation_token)
+            try:
+                self._response = await self._paging_method.get_page(self.continuation_token, self._initial_request)
+            except TypeError:
+                # legacy doesn't support passing initial request into get_page
+                self._response = await self._paging_method.get_page(self.continuation_token)
+        except AzureError as error:
+            if not error.continuation_token:
+                error.continuation_token = self.continuation_token
+            raise
 
         self.continuation_token, self._current_page = await self._paging_method.extract_data(
             self._response

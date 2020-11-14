@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"phoneNumber": "+1area_code_for_search4864953"}'''
+    body: 'b''{"phoneNumber": "+1area_code_for_reservation7840394"}'''
     headers:
       Accept:
       - application/json
@@ -13,27 +13,27 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Mon, 28 Sep 2020 20:52:33 GMT
+      - Tue, 27 Oct 2020 17:27:32 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/administration/phonenumbers/numberconfiguration?api-version=2020-07-20-preview1
   response:
     body: '{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
-      "ApplicationId", "azurePstnTargetId": "AzurePstnTargetId"}}'
+      "ApplicationId"}}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Sep 2020 20:52:32 GMT
+      - Tue, 27 Oct 2020 17:27:32 GMT
       ms-cv:
-      - ISrlnWt250eHg9H0U7B6gA.0
+      - UCdn5KAu5UKL59qQRXz4QQ.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 436ms
+      - 300ms
     status:
       code: 200
       message: OK

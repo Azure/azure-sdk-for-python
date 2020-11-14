@@ -6,7 +6,7 @@ jobs:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
       # This is a specific request from the formrecognizer service team
-      # their claim is that the full matrix ends up stress-testing their service. 
+      # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.
       ${{ if contains(variables['Build.DefinitionName'], 'prod') }}:
         Matrix:
@@ -44,6 +44,7 @@ jobs:
         AZURE_FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-sas-url)
         AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-storage-multipage-sas-url)
         AZURE_FORM_RECOGNIZER_MULTIPAGE_STORAGE_CONTAINER_SAS_URL_2: $(python-formrecognizer-test-storage-multipage-sas-url2)
+        AZURE_FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL: $(python-formrecognizer-test-selection-mark-storage-sas-url)
         AZURE_FORM_RECOGNIZER_AAD_ENDPOINT: $(python-formrecognizer-test-aad-endpoint)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'

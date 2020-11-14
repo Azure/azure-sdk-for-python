@@ -6,10 +6,11 @@ from binascii import hexlify
 from typing import TYPE_CHECKING
 
 from cryptography import x509
-from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import six
 
+from .._internal import validate_tenant_id
 from .._internal.client_credential_base import ClientCredentialBase
 
 if TYPE_CHECKING:
@@ -29,16 +30,14 @@ class CertificateCredential(ClientCredentialBase):
     :keyword password: The certificate's password. If a unicode string, it will be encoded as UTF-8. If the certificate
           requires a different encoding, pass appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword bool send_certificate: if True, the credential will send public certificate material with token requests.
-          This is required to use Subject Name/Issuer (SNI) authentication. Defaults to False.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
-          False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
+    :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
+          header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults
+          to False.
     """
 
     def __init__(self, tenant_id, client_id, certificate_path, **kwargs):
         # type: (str, str, str, **Any) -> None
+        validate_tenant_id(tenant_id)
         if not certificate_path:
             raise ValueError(
                 "'certificate_path' must be the path to a PEM file containing an x509 certificate and its private key"
@@ -54,10 +53,11 @@ class CertificateCredential(ClientCredentialBase):
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
         fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
 
-        # TODO: msal doesn't formally support passwords (but soon will); the below depends on an implementation detail
-        private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
-        client_credential = {"private_key": private_key, "thumbprint": hexlify(fingerprint).decode("utf-8")}
-        if kwargs.pop("send_certificate", False):
+        client_credential = {"private_key": pem_bytes, "thumbprint": hexlify(fingerprint).decode("utf-8")}
+        if password:
+            client_credential["passphrase"] = password
+
+        if kwargs.pop("send_certificate_chain", False):
             try:
                 # the JWT needs the whole chain but load_pem_x509_certificate deserializes only the signing cert
                 chain = extract_cert_chain(pem_bytes)

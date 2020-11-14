@@ -15,7 +15,6 @@ from devtools_testutils import (
     CachedResourceGroupPreparer,
 )
 from _shared.testcase import (
-    GlobalStorageAccountPreparer,
     TableTestCase,
     RERUNS_DELAY,
     SLEEP_DELAY

@@ -205,7 +205,7 @@ class ShareOperations:
         :type timeout: int
         :param delete_snapshots: Specifies the option include to delete the
          base share and all of its snapshots. Possible values include:
-         'include'
+         'include', 'include-leased'
         :type delete_snapshots: str or
          ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
         :param lease_access_conditions: Additional parameters for the

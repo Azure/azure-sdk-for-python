@@ -5,7 +5,7 @@
 from typing import TYPE_CHECKING
 
 from ... import CredentialUnavailableError
-from ..._constants import AZURE_CLI_CLIENT_ID
+from ..._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from ..._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
@@ -29,8 +29,6 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-        is unavailable. Defaults to False.
     """
 
     async def __aenter__(self):
@@ -83,4 +81,4 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
     def _get_auth_client(self, **kwargs: "Any") -> "AadClientBase":
-        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)

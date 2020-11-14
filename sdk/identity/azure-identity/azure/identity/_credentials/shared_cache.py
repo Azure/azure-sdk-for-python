@@ -10,8 +10,8 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._constants import AZURE_CLI_CLIENT_ID
-from .._internal import AadClient
+from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
+from .._internal import AadClient, validate_tenant_id
 from .._internal.decorators import log_get_token, wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
@@ -24,7 +24,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
-    from .. import AuthenticationRecord
+    from .._auth_record import AuthenticationRecord
     from .._internal import AadClientBase
 
 
@@ -40,19 +40,16 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
-    :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
-        :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
-        is unavailable. Defaults to False.
     """
 
     def __init__(self, username=None, **kwargs):
         # type: (Optional[str], **Any) -> None
 
-        self._auth_record = kwargs.pop("authentication_record", None)  # type: Optional[AuthenticationRecord]
+        self._auth_record = kwargs.pop("_authentication_record", None)  # type: Optional[AuthenticationRecord]
         if self._auth_record:
             # authenticate in the tenant that produced the record unless "tenant_id" specifies another
             self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
+            validate_tenant_id(self._tenant_id)
             self._cache = kwargs.pop("_cache", None)
             self._app = None
             self._client_kwargs = kwargs
@@ -103,7 +100,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase):
 
     def _get_auth_client(self, **kwargs):
         # type: (**Any) -> AadClientBase
-        return AadClient(client_id=AZURE_CLI_CLIENT_ID, **kwargs)
+        return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)
 
     def _initialize(self):
         if self._initialized:

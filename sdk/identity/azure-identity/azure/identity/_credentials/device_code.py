@@ -7,6 +7,7 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 
+from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import InteractiveCredential, wrap_exceptions
 
 try:
@@ -27,9 +28,10 @@ class DeviceCodeCredential(InteractiveCredential):
     authenticates successfully, the credential receives an access token.
 
     For more information about the device code flow, see Azure Active Directory documentation:
-    https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-device-code
+    https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code
 
-    :param str client_id: the application's ID
+    :param str client_id: client ID of the application users will authenticate to. When not specified users will
+          authenticate to an Azure development application.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -46,17 +48,10 @@ class DeviceCodeCredential(InteractiveCredential):
             - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
           If this argument isn't provided, the credential will print instructions to stdout.
     :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
-    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
-    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
-          :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
-    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
-         other user credentials. Defaults to False.
-    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
-          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
-    def __init__(self, client_id, **kwargs):
-        # type: (str, **Any) -> None
+    def __init__(self, client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs):
+        # type: (Optional[str], **Any) -> None
         self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
         self._prompt_callback = kwargs.pop("prompt_callback", None)
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)

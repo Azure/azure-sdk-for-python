@@ -12,7 +12,6 @@ from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from _shared.testcase import (
-    GlobalStorageAccountPreparer,
     TableTestCase,
     RERUNS_DELAY,
     SLEEP_DELAY
@@ -558,7 +557,6 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("kierans theory")
     def test_create_table_client_with_invalid_name(self):
         # Arrange
         table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")

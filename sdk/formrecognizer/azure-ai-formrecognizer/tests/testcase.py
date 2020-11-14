@@ -81,14 +81,21 @@ class FormRecognizerTest(AzureTestCase):
         # URL samples
         self.receipt_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-allinone.jpg"
         self.receipt_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+        self.business_card_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.jpg"
+        self.business_card_url_png = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"
+        self.business_card_multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-multipage.pdf"
         self.invoice_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.pdf"
         self.form_url_jpg = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Form_1.jpg"
         self.multipage_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipage_invoice1.pdf"
         self.multipage_table_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/multipagelayout.pdf"
+        self.selection_mark_url_pdf = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/selection_mark_form.pdf"
 
         # file stream samples
         self.receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
         self.receipt_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png"))
+        self.business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
+        self.business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
+        self.business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
         self.invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
         self.invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
         self.form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
@@ -97,6 +104,7 @@ class FormRecognizerTest(AzureTestCase):
         self.unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
         self.multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
         self.multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
+        self.selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
 
     def get_oauth_endpoint(self):
         return self.get_settings_value("FORM_RECOGNIZER_AAD_ENDPOINT")
@@ -157,7 +165,7 @@ class FormRecognizerTest(AzureTestCase):
                     for a in actual.train_result.fields:
                         self.assertEqual(model.submodels[0].fields[a.field_name].name, a.field_name)
                         self.assertEqual(model.submodels[0].fields[a.field_name].accuracy, a.accuracy)
-                    self.assertEqual(model.submodels[0].form_type, "form-"+model.model_id)
+                    self.assertEqual(model.submodels[0].form_type, "custom:"+model.model_id)
                     self.assertEqual(model.submodels[0].accuracy, actual.train_result.average_model_accuracy)
 
     def assertFormPagesTransformCorrect(self, pages, actual_read, page_result=None, **kwargs):
@@ -184,6 +192,10 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertEqual(wp.text, wa.text)
                     self.assertEqual(wp.confidence, wa.confidence if wa.confidence is not None else 1.0)
                     self.assertBoundingBoxTransformCorrect(wp.bounding_box, wa.bounding_box)
+
+            for p, a in zip(page.selection_marks or [], actual_page.selection_marks or []):
+                self.assertEqual(p.kind, "selectionMark")
+                self.assertBoundingBoxTransformCorrect(p.bounding_box, a.bounding_box)
 
         if page_result:
             for page, actual_page in zip(pages, page_result):
@@ -222,7 +234,7 @@ class FormRecognizerTest(AzureTestCase):
         b = form_fields
         for label, a in actual_fields.items():
             self.assertEqual(label, b[label].name)
-            self.assertEqual(a.confidence, b[label].confidence if a.confidence is not None else 1.0)
+            self.assertEqual(a.confidence if a.confidence is not None else 1.0, b[label].confidence)
             self.assertBoundingBoxTransformCorrect(b[label].value_data.bounding_box, a.bounding_box)
             self.assertEqual(a.text, b[label].value_data.text)
             field_type = a.type
@@ -268,23 +280,26 @@ class FormRecognizerTest(AzureTestCase):
                     read_results
                 )
 
-    def assertFormFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
-        if actual_field is None:
-            return
+    def _assertFormFieldTransformCorrectHelper(self, receipt_field, actual_field, read_results=None):
         field_type = actual_field.type
         self.assertEqual(adjust_value_type(field_type), receipt_field.value_type)
         if field_type == "string":
             self.assertEqual(receipt_field.value, actual_field.value_string)
-        if field_type == "number":
+        elif field_type == "number":
             self.assertEqual(receipt_field.value, actual_field.value_number)
-        if field_type == "integer":
+        elif field_type == "integer":
             self.assertEqual(receipt_field.value, actual_field.value_integer)
-        if field_type == "date":
+        elif field_type == "date":
             self.assertEqual(receipt_field.value, actual_field.value_date)
-        if field_type == "phoneNumber":
+        elif field_type == "phoneNumber":
             self.assertEqual(receipt_field.value, actual_field.value_phone_number)
-        if field_type == "time":
+        elif field_type == "time":
             self.assertEqual(receipt_field.value, actual_field.value_time)
+        elif field_type == "object":
+            self.assertLabeledFormFieldDictTransformCorrect(receipt_field.value, actual_field.value_object)
+        else:
+            raise ValueError('field type {} not valid'.format(field_type))
+
 
         self.assertBoundingBoxTransformCorrect(receipt_field.value_data.bounding_box, actual_field.bounding_box)
         self.assertEqual(receipt_field.value_data.text, actual_field.text)
@@ -296,6 +311,17 @@ class FormRecognizerTest(AzureTestCase):
                 read_results
             )
 
+    def assertFormFieldTransformCorrect(self, receipt_field, actual_field, read_results=None):
+        if actual_field is None:
+            return
+        field_type = actual_field.type
+        if field_type == "array":
+            for i in range(len(actual_field.value_array)):
+                self._assertFormFieldTransformCorrectHelper(receipt_field.value[i], actual_field.value_array[i], read_results)
+        else:
+            self._assertFormFieldTransformCorrectHelper(receipt_field, actual_field, read_results)
+
+
     def assertReceiptItemsTransformCorrect(self, items, actual_items, read_results=None):
         actual = actual_items.value_array
 
@@ -304,6 +330,18 @@ class FormRecognizerTest(AzureTestCase):
             self.assertFormFieldTransformCorrect(r.value.get("Quantity"), a.value_object.get("Quantity"), read_results)
             self.assertFormFieldTransformCorrect(r.value.get("TotalPrice"), a.value_object.get("TotalPrice"), read_results)
             self.assertFormFieldTransformCorrect(r.value.get("Price"), a.value_object.get("Price"), read_results)
+
+    def assertBusinessCardTransformCorrect(self, business_card, actual, read_results=None):
+        self.assertFormFieldTransformCorrect(business_card.fields.get("ContactNames"), actual.get("ContactNames"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("JobTitles"), actual.get("JobTitles"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Departments"), actual.get("Departments"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Emails"), actual.get("Emails"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Websites"), actual.get("Websites"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("MobilePhones"), actual.get("MobilePhones"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("OtherPhones"), actual.get("OtherPhones"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Faxes"), actual.get("Faxes"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("Addresses"), actual.get("Addresses"), read_results)
+        self.assertFormFieldTransformCorrect(business_card.fields.get("CompanyNames"), actual.get("CompanyNames"), read_results)
 
     def assertTablesTransformCorrect(self, layout, actual_layout, read_results=None, **kwargs):
         for table, actual_table in zip(layout, actual_layout):
@@ -390,6 +428,14 @@ class FormRecognizerTest(AzureTestCase):
                         self.assertBoundingBoxHasPoints(cell.bounding_box)
                         self.assertFieldElementsHasValues(cell.field_elements, page.page_number)
 
+            if page.selection_marks:
+                for selection_mark in page.selection_marks:
+                    self.assertIsNone(selection_mark.text)
+                    self.assertEqual(selection_mark.page_number, page.page_number)
+                    self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
+                    self.assertIsNotNone(selection_mark.confidence)
+                    self.assertTrue(selection_mark.state in ["selected", "unselected"])
+
     def assertFormWordHasValues(self, word, page_number):
         self.assertEqual(word.kind, "word")
         self.assertIsNotNone(word.confidence)
@@ -402,6 +448,66 @@ class FormRecognizerTest(AzureTestCase):
             return
         for word in elements:
             self.assertFormWordHasValues(word, page_number)
+
+    def assertComposedModelHasValues(self, composed, model_1, model_2):
+        self.assertIsNotNone(composed.model_id)
+        self.assertIsNone(composed.errors)
+        self.assertTrue(composed.properties.is_composed_model)
+        self.assertIsNotNone(composed.status)
+        self.assertIsNotNone(composed.training_started_on)
+        self.assertIsNotNone(composed.training_completed_on)
+
+        all_training_documents = model_1.training_documents + model_2.training_documents
+        for doc, composed_doc in zip(all_training_documents, composed.training_documents):
+            self.assertEqual(doc.name, composed_doc.name)
+            self.assertEqual(doc.status, composed_doc.status)
+            self.assertEqual(doc.page_count, composed_doc.page_count)
+            self.assertEqual(doc.errors, composed_doc.errors)
+
+        for model in model_1.submodels:
+            composed_model = composed.submodels[0]
+            if model.model_id != composed_model.model_id:  # order not guaranteed from service
+                composed_model = composed.submodels[1]
+            if model_1.model_name is None:
+                self.assertEqual(model.form_type, composed_model.form_type)
+            self.assertEqual(model.accuracy, composed_model.accuracy)
+            self.assertEqual(model.model_id, composed_model.model_id)
+            for field, value in model.fields.items():
+                self.assertEqual(value.name, composed_model.fields[field].name)
+                self.assertEqual(value.accuracy, composed_model.fields[field].accuracy)
+
+        for model in model_2.submodels:
+            composed_model = composed.submodels[1]
+            if model.model_id != composed_model.model_id:  # order not guaranteed from service
+                composed_model = composed.submodels[0]
+            if model_2.model_name is None:
+                self.assertEqual(model.form_type, composed_model.form_type)
+            self.assertEqual(model.accuracy, composed_model.accuracy)
+            self.assertEqual(model.model_id, composed_model.model_id)
+            for field, value in model.fields.items():
+                self.assertEqual(value.name, composed_model.fields[field].name)
+                self.assertEqual(value.accuracy, composed_model.fields[field].accuracy)
+
+    def assertUnlabeledRecognizedFormHasValues(self, form, model):
+        self.assertIsNone(form.form_type_confidence)
+        self.assertEqual(form.model_id, model.model_id)
+        self.assertFormPagesHasValues(form.pages)
+        for label, field in form.fields.items():
+            self.assertIsNotNone(field.confidence)
+            self.assertIsNotNone(field.name)
+            self.assertIsNotNone(field.value)
+            self.assertIsNotNone(field.value_data.text)
+            self.assertIsNotNone(field.label_data.text)
+
+    def assertLabeledRecognizedFormHasValues(self, form, model):
+        self.assertEqual(form.form_type_confidence, 1.0)
+        self.assertEqual(form.model_id, model.model_id)
+        self.assertFormPagesHasValues(form.pages)
+        for label, field in form.fields.items():
+            self.assertIsNotNone(field.confidence)
+            self.assertIsNotNone(field.name)
+            self.assertIsNotNone(field.value_data.text)
+            self.assertIsNotNone(field.value_data.bounding_box)
 
 
 class GlobalResourceGroupPreparer(AzureMgmtPreparer):
@@ -458,6 +564,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
         self.training = kwargs.get("training", False)
         self.multipage_test = kwargs.get("multipage", False)
         self.multipage_test_2 = kwargs.get("multipage2", False)
+        self.selection_marks = kwargs.get("selection_marks", False)
         self.need_blob_sas_url = kwargs.get("blob_sas_url", False)
         self.copy = kwargs.get("copy", False)
 
@@ -505,6 +612,9 @@ class GlobalClientPreparer(AzureMgmtPreparer):
                     blob_sas_url,
                     "blob_sas_url"
                 )
+            elif self.selection_marks:
+                container_sas_url = self.get_settings_value("FORM_RECOGNIZER_SELECTION_MARK_STORAGE_CONTAINER_SAS_URL")
+                blob_sas_url = None
             else:
                 container_sas_url = self.get_settings_value("FORM_RECOGNIZER_STORAGE_CONTAINER_SAS_URL")
                 blob_sas_url = None

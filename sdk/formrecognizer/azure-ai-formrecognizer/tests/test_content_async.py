@@ -12,7 +12,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_content_result
 from azure.ai.formrecognizer.aio import FormRecognizerClient
-from azure.ai.formrecognizer import FormContentType
+from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from testcase import GlobalFormRecognizerAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
@@ -341,3 +341,31 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_selection_marks(self, client):
+        with open(self.selection_form_pdf, "rb") as fd:
+            myform = fd.read()
+
+        async with client:
+            poller = await client.begin_recognize_content(myform)
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    async def test_content_selection_marks_v2(self, client):
+        with open(self.selection_form_pdf, "rb") as fd:
+            myform = fd.read()
+
+        async with client:
+            poller = await client.begin_recognize_content(myform)
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)

@@ -23,13 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import logging
 from collections.abc import Awaitable
 from typing import Callable, Any, Tuple, Generic, TypeVar, Generator
 
+from ..exceptions import AzureError
 from ._poller import NoPolling as _NoPolling
 
 
 PollingReturnType = TypeVar("PollingReturnType")
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AsyncPollingMethod(Generic[PollingReturnType]):
@@ -177,7 +181,16 @@ class AsyncLROPoller(Generic[PollingReturnType], Awaitable):
 
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
-        await self._polling_method.run()
+        try:
+            await self._polling_method.run()
+        except AzureError as error:
+            if not error.continuation_token:
+                try:
+                    error.continuation_token = self.continuation_token()
+                except Exception as err:  # pylint: disable=broad-except
+                    _LOGGER.warning("Unable to retrieve continuation token: %s", err)
+                    error.continuation_token = None
+            raise
         self._done = True
 
     def done(self) -> bool:

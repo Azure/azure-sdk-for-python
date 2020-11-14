@@ -36,7 +36,24 @@ except ImportError:  # python < 3.3
 CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
 CERT_PASSWORD = "password"
-BOTH_CERTS = ((CERT_PATH, None), (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD))
+BOTH_CERTS = (
+    (CERT_PATH, None),
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD),  # credential should accept passwords as str or bytes
+    (CERT_WITH_PASSWORD_PATH, CERT_PASSWORD.encode("utf-8")),
+)
+
+
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        CertificateCredential(tenant, "client-id", CERT_PATH)
+
+    invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            CertificateCredential(tenant, "client-id", CERT_PATH)
 
 
 def test_no_scopes():
@@ -78,7 +95,7 @@ def test_user_agent():
 def test_authority(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
-    tenant_id = "expected_tenant"
+    tenant_id = "expected-tenant"
     parsed_authority = urlparse(authority)
     expected_netloc = parsed_authority.netloc or authority
     expected_authority = "https://{}/{}".format(expected_netloc, tenant_id)
@@ -109,8 +126,8 @@ def test_authority(authority):
 
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
-@pytest.mark.parametrize("send_certificate", (True, False))
-def test_request_body(cert_path, cert_password, send_certificate):
+@pytest.mark.parametrize("send_certificate_chain", (True, False))
+def test_request_body(cert_path, cert_password, send_certificate_chain):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -125,7 +142,7 @@ def test_request_body(cert_path, cert_password, send_certificate):
         assert request.body["scope"] == expected_scope
 
         with open(cert_path, "rb") as cert_file:
-            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate)
+            validate_jwt(request, client_id, cert_file.read(), expect_x5c=send_certificate_chain)
 
         return mock_response(json_payload=build_aad_response(access_token=access_token))
 
@@ -136,7 +153,7 @@ def test_request_body(cert_path, cert_password, send_certificate):
         password=cert_password,
         transport=Mock(send=mock_send),
         authority=authority,
-        send_certificate=send_certificate,
+        send_certificate_chain=send_certificate_chain,
     )
     token = cred.get_token(expected_scope)
     assert token.token == access_token
@@ -180,7 +197,7 @@ def validate_jwt(request, client_id, pem_bytes, expect_x5c=False):
 
 @pytest.mark.parametrize("cert_path,cert_password", BOTH_CERTS)
 def test_enable_persistent_cache(cert_path, cert_password):
-    """the credential should use the persistent cache only when given enable_persistent_cache=True"""
+    """the credential should use the persistent cache only when given _enable_persistent_cache=True"""
 
     persistent_cache = "azure.identity._internal.persistent_cache"
     required_arguments = ("tenant-id", "client-id", cert_path)
@@ -191,20 +208,20 @@ def test_enable_persistent_cache(cert_path, cert_password):
         CertificateCredential(*required_arguments, password=cert_password)
 
         # allowing an unencrypted cache doesn't count as opting in to the persistent cache
-        CertificateCredential(*required_arguments, password=cert_password, allow_unencrypted_cache=True)
+        CertificateCredential(*required_arguments, password=cert_password, _allow_unencrypted_cache=True)
 
     # keyword argument opts in to persistent cache
     with patch(persistent_cache + ".msal_extensions") as mock_extensions:
-        CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
+        CertificateCredential(*required_arguments, password=cert_password, _enable_persistent_cache=True)
     assert mock_extensions.PersistedTokenCache.call_count == 1
 
     # opting in on an unsupported platform raises an exception
     with patch(persistent_cache + ".sys.platform", "commodore64"):
         with pytest.raises(NotImplementedError):
-            CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
+            CertificateCredential(*required_arguments, password=cert_password, _enable_persistent_cache=True)
         with pytest.raises(NotImplementedError):
             CertificateCredential(
-                *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
+                *required_arguments, password=cert_password, _enable_persistent_cache=True, _allow_unencrypted_cache=True
             )
 
 
@@ -221,7 +238,7 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
 
     # the credential should prefer an encrypted cache even when the user allows an unencrypted one
     CertificateCredential(
-        *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
+        *required_arguments, password=cert_password, _enable_persistent_cache=True, _allow_unencrypted_cache=True
     )
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.LibsecretPersistence)
     mock_extensions.PersistedTokenCache.reset_mock()
@@ -231,10 +248,10 @@ def test_persistent_cache_linux(mock_extensions, cert_path, cert_password):
 
     # encryption unavailable, no opt in to unencrypted cache -> credential should raise
     with pytest.raises(ValueError):
-        CertificateCredential(*required_arguments, password=cert_password, enable_persistent_cache=True)
+        CertificateCredential(*required_arguments, password=cert_password, _enable_persistent_cache=True)
 
     CertificateCredential(
-        *required_arguments, password=cert_password, enable_persistent_cache=True, allow_unencrypted_cache=True
+        *required_arguments, password=cert_password, _enable_persistent_cache=True, _allow_unencrypted_cache=True
     )
     assert mock_extensions.PersistedTokenCache.called_with(mock_extensions.FilePersistence)
 
@@ -256,11 +273,11 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
     with patch("azure.identity._internal.persistent_cache._load_persistent_cache") as mock_cache_loader:
         mock_cache_loader.return_value = Mock(wraps=cache)
         credential_a = CertificateCredential(
-            "tenant", "client-a", cert_path, password=cert_password, enable_persistent_cache=True, transport=transport_a
+            "tenant", "client-a", cert_path, password=cert_password, _enable_persistent_cache=True, transport=transport_a
         )
         assert mock_cache_loader.call_count == 1, "credential should load the persistent cache"
         credential_b = CertificateCredential(
-            "tenant", "client-b", cert_path, password=cert_password, enable_persistent_cache=True, transport=transport_b
+            "tenant", "client-b", cert_path, password=cert_password, _enable_persistent_cache=True, transport=transport_b
         )
         assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
 

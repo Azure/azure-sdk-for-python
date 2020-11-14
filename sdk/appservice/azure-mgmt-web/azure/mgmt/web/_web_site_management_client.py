@@ -9,41 +9,41 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import WebSiteManagementClientConfiguration
 from ._operations_mixin import WebSiteManagementClientOperationsMixin
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
+class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiClientMixin, _SDKClient):
+    """WebSite Management Client.
 
-class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiClientMixin, SDKClient):
-    """WebSite Management Client
-
-    This ready contains multiple API versions, to help you deal with all Azure clouds
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
-    By default, uses latest API version available on public Azure.
-    For production, you should stick a particular api-version and/or profile.
-    The profile sets a mapping between the operation group and an API version.
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :ivar config: Configuration for client.
-    :vartype config: WebSiteManagementClientConfiguration
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param subscription_id: Your Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = '2019-08-01'
@@ -57,11 +57,20 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         _PROFILE_TAG + " latest"
     )
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
-        self.config = WebSiteManagementClientConfiguration(credentials, subscription_id, base_url)
+    def __init__(
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = WebSiteManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(WebSiteManagementClient, self).__init__(
-            credentials,
-            self.config,
             api_version=api_version,
             profile=profile
         )
@@ -107,7 +116,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01 import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        raise ValueError("API version {} is not available".format(api_version))
 
     @property
     def app_service_certificate_orders(self):
@@ -125,8 +134,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import AppServiceCertificateOrdersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'app_service_certificate_orders'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def app_service_environments(self):
@@ -144,8 +153,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import AppServiceEnvironmentsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'app_service_environments'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def app_service_plans(self):
@@ -163,8 +172,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import AppServicePlansOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'app_service_plans'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def billing_meters(self):
@@ -176,8 +185,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         if api_version == '2016-03-01':
             from .v2016_03_01.operations import BillingMetersOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'billing_meters'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def certificate_registration_provider(self):
@@ -195,8 +204,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import CertificateRegistrationProviderOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'certificate_registration_provider'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def certificates(self):
@@ -217,8 +226,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import CertificatesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'certificates'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def deleted_web_apps(self):
@@ -236,8 +245,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DeletedWebAppsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'deleted_web_apps'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def diagnostics(self):
@@ -255,8 +264,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DiagnosticsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'diagnostics'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def domain_registration_provider(self):
@@ -274,8 +283,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DomainRegistrationProviderOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'domain_registration_provider'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def domains(self):
@@ -293,8 +302,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import DomainsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'domains'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def provider(self):
@@ -312,8 +321,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import ProviderOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'provider'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def recommendations(self):
@@ -331,8 +340,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import RecommendationsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'recommendations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def resource_health_metadata(self):
@@ -350,8 +359,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import ResourceHealthMetadataOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'resource_health_metadata'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def static_sites(self):
@@ -363,8 +372,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         if api_version == '2019-08-01':
             from .v2019_08_01.operations import StaticSitesOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'static_sites'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def top_level_domains(self):
@@ -382,8 +391,8 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import TopLevelDomainsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'top_level_domains'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def web_apps(self):
@@ -401,5 +410,13 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
         elif api_version == '2019-08-01':
             from .v2019_08_01.operations import WebAppsOperations as OperationClass
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+            raise ValueError("API version {} does not have operation group 'web_apps'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)

@@ -16,7 +16,7 @@ from azure.core.exceptions import HttpResponseError
 
 from azure.data.tables import TableServiceClient
 
-from _shared.testcase import GlobalStorageAccountPreparer, TableTestCase
+from _shared.testcase import TableTestCase
 
 from devtools_testutils import CachedResourceGroupPreparer, CachedStorageAccountPreparer
 

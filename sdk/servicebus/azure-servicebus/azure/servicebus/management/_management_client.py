@@ -27,8 +27,7 @@ from ._utils import extract_data_template, get_next_template, deserialize_rule_k
 from ._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 
 from .._common.constants import JWT_TOKEN_SCOPE
-from .._common.utils import parse_conn_str
-from .._base_handler import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
+from .._base_handler import _parse_conn_str, ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
 from ._generated._service_bus_management_client import ServiceBusManagementClient as ServiceBusManagementClientImpl
@@ -133,7 +132,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str conn_str: The connection string of the Service Bus Namespace.
         :rtype: ~azure.servicebus.management.ServiceBusAdministrationClient
         """
-        endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = parse_conn_str(conn_str)
+        endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry = _parse_conn_str(conn_str)
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
@@ -170,12 +169,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         runtime_properties = QueueRuntimeProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return runtime_properties
 
-    def create_queue(self, name, **kwargs):
+    def create_queue(self, queue_name, **kwargs):
         # type: (str, Any) -> QueueProperties
         """Create a queue.
 
-        :param name: Name of the queue.
-        :type name: str
+        :param queue_name: Name of the queue.
+        :type queue_name: str
         :keyword authorization_rules: Authorization rules for resource.
         :type authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
@@ -229,7 +228,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         queue = QueueProperties(
-            name,
+            queue_name,
             authorization_rules=kwargs.pop("authorization_rules", None),
             auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
             dead_lettering_on_message_expiration=kwargs.pop("dead_lettering_on_message_expiration", None),
@@ -260,12 +259,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 self._impl.entity.put(
-                    name,  # type: ignore
+                    queue_name,  # type: ignore
                     request_body, api_version=constants.API_VERSION, **kwargs)
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
-        result = QueueProperties._from_internal_entity(name, entry.content.queue_description)
+        result = QueueProperties._from_internal_entity(queue_name, entry.content.queue_description)
         return result
 
     def update_queue(self, queue, **kwargs):
@@ -306,7 +305,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         # type: (str, Any) -> None
         """Delete a queue.
 
-        :param str queue: The name of the queue or
+        :param str queue_name: The name of the queue or
          a `QueueProperties` with name.
         :rtype: None
         """
@@ -389,12 +388,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         topic_description = TopicRuntimeProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return topic_description
 
-    def create_topic(self, name, **kwargs):
+    def create_topic(self, topic_name, **kwargs):
         # type: (str, Any) -> TopicProperties
         """Create a topic.
 
-        :param name: Name of the topic.
-        :type name: str
+        :param topic_name: Name of the topic.
+        :type topic_name: str
         :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
          Bus. This is the default value used when TimeToLive is not set on a message itself.
@@ -435,7 +434,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.TopicProperties
         """
         topic = TopicProperties(
-            name,
+            topic_name,
             default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
             max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
             requires_duplicate_detection=kwargs.pop("requires_duplicate_detection", None),
@@ -463,11 +462,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 self._impl.entity.put(
-                    name,  # type: ignore
+                    topic_name,  # type: ignore
                     request_body, api_version=constants.API_VERSION, **kwargs)
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
-        result = TopicProperties._from_internal_entity(name, entry.content.topic_description)
+        result = TopicProperties._from_internal_entity(topic_name, entry.content.topic_description)
         return result
 
     def update_topic(self, topic, **kwargs):
@@ -594,14 +593,14 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry.title, entry.content.subscription_description)
         return subscription
 
-    def create_subscription(self, topic_name, name, **kwargs):
+    def create_subscription(self, topic_name, subscription_name, **kwargs):
         # type: (str, str, Any) -> SubscriptionProperties
         """Create a topic subscription.
 
         :param str topic_name: The topic that will own the
          to-be-created subscription.
-        :param name: Name of the subscription.
-        :type name: str
+        :param subscription_name: Name of the subscription.
+        :type subscription_name: str
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
          minutes; the default value is 1 minute.
@@ -642,7 +641,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_entity_name_type(topic_name, display_name='topic_name')
 
         subscription = SubscriptionProperties(
-            name,
+            subscription_name,
             lock_duration=kwargs.pop("lock_duration", None),
             requires_session=kwargs.pop("requires_session", None),
             default_message_time_to_live=kwargs.pop("default_message_time_to_live", None),
@@ -671,13 +670,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 ElementTree,
                 self._impl.subscription.put(
                     topic_name,
-                    name,  # type: ignore
+                    subscription_name,  # type: ignore
                     request_body, api_version=constants.API_VERSION, **kwargs)
             )
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
         result = SubscriptionProperties._from_internal_entity(
-            name, entry.content.subscription_description)
+            subscription_name, entry.content.subscription_description)
         return result
 
     def update_subscription(self, topic_name, subscription, **kwargs):
@@ -796,7 +795,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         deserialize_rule_key_values(entry_ele, rule_description)  # to remove after #3535 is released.
         return rule_description
 
-    def create_rule(self, topic_name, subscription_name, name, **kwargs):
+    def create_rule(self, topic_name, subscription_name, rule_name, **kwargs):
         # type: (str, str, str, Any) -> RuleProperties
         """Create a rule for a topic subscription.
 
@@ -804,20 +803,19 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          to-be-created subscription rule.
         :param str subscription_name: The subscription that
          will own the to-be-created rule.
-        :param name: Name of the rule.
-        :type name: str
+        :param rule_name: Name of the rule.
+        :type rule_name: str
         :keyword filter: The filter of the rule.
         :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
         :type action: Optional[~azure.servicebus.management.SqlRuleAction]
-
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         rule = RuleProperties(
-            name,
+            rule_name,
             filter=kwargs.pop("filter", None),
             action=kwargs.pop("action", None),
             created_at_utc=None
@@ -835,10 +833,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = self._impl.rule.put(
                 topic_name,
                 subscription_name,  # type: ignore
-                name,
+                rule_name,
                 request_body, api_version=constants.API_VERSION, **kwargs)
         entry = RuleDescriptionEntry.deserialize(entry_ele)
-        result = RuleProperties._from_internal_entity(name, entry.content.rule_description)
+        result = RuleProperties._from_internal_entity(rule_name, entry.content.rule_description)
         deserialize_rule_key_values(entry_ele, result)  # to remove after #3535 is released.
         return result
 
@@ -852,8 +850,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that
          owns this rule.
-        :param ~azure.servicebus.management.RuleProperties rule: The rule that is returned from `get_rule`,
-        `create_rule`, or `list_rules` and has the updated properties.
+        :param rule: The rule that is returned from `get_rule`,
+         `create_rule`, or `list_rules` and has the updated properties.
+        :type rule: ~azure.servicebus.management.RuleProperties
+
         :rtype: None
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)

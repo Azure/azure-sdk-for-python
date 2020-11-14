@@ -4,11 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import json
+from typing import TYPE_CHECKING
 import logging
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 _LOGGER = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineRequest
 
 class CloudEventDistributedTracingPolicy(SansIOHTTPPolicy):
     """CloudEventDistributedTracingPolicy is a policy which adds distributed tracing informatiom

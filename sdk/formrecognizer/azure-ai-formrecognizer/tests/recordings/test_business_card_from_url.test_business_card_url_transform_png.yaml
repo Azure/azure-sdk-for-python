@@ -1,0 +1,188 @@
+interactions:
+- request:
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/business_cards/business-card-english.png"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '184'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyze?includeTextDetails=true
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 63dc1ece-b5cd-4416-8a73-45b987b3fb7c
+      content-length:
+      - '0'
+      date:
+      - Tue, 06 Oct 2020 21:58:52 GMT
+      operation-location:
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyzeResults/63dc1ece-b5cd-4416-8a73-45b987b3fb7c
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '561'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyzeResults/63dc1ece-b5cd-4416-8a73-45b987b3fb7c
+  response:
+    body:
+      string: '{"status": "succeeded", "createdDateTime": "2020-10-06T21:58:52Z",
+        "lastUpdatedDateTime": "2020-10-06T21:58:56Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": -17.1052, "width": 4032, "height":
+        3024, "unit": "pixel", "lines": [{"text": "Dr. Avery Smith", "boundingBox":
+        [418, 1156, 1608, 874, 1636, 994, 445, 1264], "words": [{"text": "Dr.", "boundingBox":
+        [422, 1166, 664, 1105, 694, 1214, 452, 1264], "confidence": 0.946}, {"text":
+        "Avery", "boundingBox": [703, 1096, 1135, 989, 1166, 1108, 733, 1206], "confidence":
+        0.958}, {"text": "Smith", "boundingBox": [1187, 976, 1586, 879, 1619, 998,
+        1218, 1096], "confidence": 0.959}]}, {"text": "Senior Researcher", "boundingBox":
+        [448, 1310, 1314, 1099, 1334, 1180, 465, 1389], "words": [{"text": "Senior",
+        "boundingBox": [456, 1308, 777, 1232, 795, 1313, 472, 1388], "confidence":
+        0.959}, {"text": "Researcher", "boundingBox": [798, 1227, 1313, 1100, 1332,
+        1179, 816, 1308], "confidence": 0.949}]}, {"text": "Cloud & Al Department",
+        "boundingBox": [474, 1407, 1593, 1129, 1615, 1216, 494, 1489], "words": [{"text":
+        "Cloud", "boundingBox": [483, 1410, 759, 1340, 778, 1424, 501, 1488], "confidence":
+        0.958}, {"text": "&", "boundingBox": [800, 1329, 851, 1316, 871, 1402, 819,
+        1414], "confidence": 0.89}, {"text": "Al", "boundingBox": [907, 1302, 1014,
+        1275, 1035, 1362, 927, 1388], "confidence": 0.756}, {"text": "Department",
+        "boundingBox": [1030, 1271, 1590, 1130, 1613, 1216, 1050, 1358], "confidence":
+        0.959}]}, {"text": "avery.smith@contoso.com", "boundingBox": [2101, 932, 2938,
+        689, 2957, 755, 2119, 996], "words": [{"text": "avery.smith@contoso.com",
+        "boundingBox": [2108, 934, 2918, 696, 2936, 763, 2126, 995], "confidence":
+        0.844}]}, {"text": "https://www.contoso.com/", "boundingBox": [2118, 1002,
+        2994, 754, 3015, 826, 2139, 1076], "words": [{"text": "https://www.contoso.com/",
+        "boundingBox": [2121, 1002, 2992, 755, 3014, 826, 2143, 1076], "confidence":
+        0.859}]}, {"text": "mob: +44 (0) 7911 123456", "boundingBox": [2240, 1093,
+        3073, 835, 3096, 912, 2262, 1167], "words": [{"text": "mob:", "boundingBox":
+        [2240, 1097, 2421, 1042, 2446, 1113, 2265, 1167], "confidence": 0.958}, {"text":
+        "+44", "boundingBox": [2435, 1037, 2552, 1001, 2577, 1074, 2460, 1109], "confidence":
+        0.958}, {"text": "(0)", "boundingBox": [2566, 997, 2660, 968, 2685, 1041,
+        2591, 1069], "confidence": 0.877}, {"text": "7911", "boundingBox": [2674,
+        963, 2833, 913, 2858, 988, 2699, 1036], "confidence": 0.91}, {"text": "123456",
+        "boundingBox": [2848, 908, 3074, 835, 3097, 913, 2872, 983], "confidence":
+        0.955}]}, {"text": "tel: +44 (0) 20 9876 5432", "boundingBox": [2343, 1154,
+        3138, 908, 3162, 983, 2365, 1227], "words": [{"text": "tel:", "boundingBox":
+        [2344, 1160, 2461, 1123, 2483, 1192, 2365, 1227], "confidence": 0.958}, {"text":
+        "+44", "boundingBox": [2474, 1118, 2594, 1080, 2617, 1152, 2496, 1188], "confidence":
+        0.958}, {"text": "(0)", "boundingBox": [2607, 1076, 2700, 1047, 2724, 1120,
+        2630, 1148], "confidence": 0.885}, {"text": "20", "boundingBox": [2713, 1043,
+        2797, 1016, 2822, 1090, 2737, 1116], "confidence": 0.958}, {"text": "9876",
+        "boundingBox": [2810, 1012, 2965, 963, 2992, 1038, 2835, 1086], "confidence":
+        0.958}, {"text": "5432", "boundingBox": [2978, 958, 3135, 909, 3163, 984,
+        3005, 1034], "confidence": 0.955}]}, {"text": "fax: +44 (0) 20 6789 2345",
+        "boundingBox": [2374, 1235, 3194, 977, 3219, 1056, 2398, 1311], "words": [{"text":
+        "fax:", "boundingBox": [2377, 1237, 2513, 1196, 2537, 1270, 2401, 1311], "confidence":
+        0.959}, {"text": "+44", "boundingBox": [2527, 1192, 2649, 1155, 2673, 1229,
+        2552, 1266], "confidence": 0.958}, {"text": "(0)", "boundingBox": [2663, 1150,
+        2755, 1121, 2780, 1196, 2688, 1224], "confidence": 0.851}, {"text": "20",
+        "boundingBox": [2769, 1117, 2852, 1090, 2877, 1166, 2794, 1192], "confidence":
+        0.958}, {"text": "6789", "boundingBox": [2866, 1086, 3020, 1036, 3045, 1113,
+        2891, 1161], "confidence": 0.917}, {"text": "2345", "boundingBox": [3035,
+        1031, 3191, 979, 3216, 1057, 3060, 1108], "confidence": 0.946}]}, {"text":
+        "Contoso", "boundingBox": [1145, 1908, 2303, 1548, 2366, 1732, 1205, 2105],
+        "words": [{"text": "Contoso", "boundingBox": [1152, 1916, 2293, 1551, 2357,
+        1733, 1219, 2105], "confidence": 0.959}]}, {"text": "2 Kingdom Street", "boundingBox":
+        [1227, 2139, 2027, 1869, 2059, 1961, 1260, 2236], "words": [{"text": "2",
+        "boundingBox": [1230, 2138, 1295, 2116, 1333, 2213, 1269, 2236], "confidence":
+        0.89}, {"text": "Kingdom", "boundingBox": [1315, 2109, 1711, 1974, 1747, 2068,
+        1353, 2207], "confidence": 0.959}, {"text": "Street", "boundingBox": [1756,
+        1959, 2026, 1869, 2059, 1957, 1792, 2052], "confidence": 0.959}]}, {"text":
+        "Paddington, London, W2 6BD", "boundingBox": [1271, 2260, 2578, 1797, 2613,
+        1898, 1306, 2359], "words": [{"text": "Paddington,", "boundingBox": [1275,
+        2260, 1855, 2052, 1889, 2158, 1308, 2359], "confidence": 0.939}, {"text":
+        "London,", "boundingBox": [1874, 2045, 2229, 1920, 2265, 2023, 1909, 2151],
+        "confidence": 0.958}, {"text": "W2", "boundingBox": [2249, 1913, 2391, 1863,
+        2426, 1963, 2284, 2016], "confidence": 0.939}, {"text": "6BD", "boundingBox":
+        [2410, 1856, 2575, 1798, 2611, 1894, 2446, 1956], "confidence": 0.909}]}]}],
+        "documentResults": [{"docType": "prebuilt:businesscard", "pageRange": [1,
+        1], "fields": {"ContactNames": {"type": "array", "valueArray": [{"type": "object",
+        "valueObject": {"FirstName": {"type": "string", "valueString": "Avery", "text":
+        "Avery", "boundingBox": [703, 1096, 1135, 989, 1166, 1108, 733, 1206], "page":
+        1, "elements": ["#/readResults/0/lines/0/words/1"]}, "LastName": {"type":
+        "string", "valueString": "Smith", "text": "Smith", "boundingBox": [1187, 976,
+        1586, 879, 1619, 998, 1218, 1096], "page": 1, "elements": ["#/readResults/0/lines/0/words/2"]}},
+        "text": "Dr. Avery Smith", "boundingBox": [419.5, 1155.5, 1590.5, 877.9, 1619.7,
+        1000.8, 448.6, 1278.3], "confidence": 0.794, "elements": ["#/readResults/0/lines/0/words/0",
+        "#/readResults/0/lines/0/words/1", "#/readResults/0/lines/0/words/2"]}]},
+        "JobTitles": {"type": "array", "valueArray": [{"type": "string", "valueString":
+        "Senior Researcher", "text": "Senior Researcher", "boundingBox": [451.8, 1301.9,
+        1313.5, 1099.9, 1333.8, 1186.7, 472.2, 1388.7], "page": 1, "confidence": 0.99,
+        "elements": ["#/readResults/0/lines/1/words/0", "#/readResults/0/lines/1/words/1"]}]},
+        "Departments": {"type": "array", "valueArray": [{"type": "string", "valueString":
+        "Cloud & Al Department", "text": "Cloud & Al Department", "boundingBox": [479.5,
+        1399.5, 1592, 1129.5, 1614.4, 1221.6, 501.9, 1491.6], "page": 1, "confidence":
+        0.99, "elements": ["#/readResults/0/lines/2/words/0", "#/readResults/0/lines/2/words/1",
+        "#/readResults/0/lines/2/words/2", "#/readResults/0/lines/2/words/3"]}]},
+        "Emails": {"type": "array", "valueArray": [{"type": "string", "valueString":
+        "avery.smith@contoso.com", "text": "avery.smith@contoso.com", "boundingBox":
+        [2108, 934, 2918, 696, 2936, 763, 2126, 995], "page": 1, "confidence": 0.99,
+        "elements": ["#/readResults/0/lines/3/words/0"]}]}, "Websites": {"type": "array",
+        "valueArray": [{"type": "string", "valueString": "https://www.contoso.com/",
+        "text": "https://www.contoso.com/", "boundingBox": [2121, 1002, 2992, 755,
+        3014, 826, 2143, 1076], "page": 1, "confidence": 0.995, "elements": ["#/readResults/0/lines/4/words/0"]}]},
+        "MobilePhones": {"type": "array", "valueArray": [{"type": "phoneNumber", "text":
+        "+44 (0) 7911 123456", "boundingBox": [2432.7, 1029.6, 3074, 835, 3098.5,
+        915.8, 2457.3, 1110.3], "page": 1, "confidence": 0.99, "elements": ["#/readResults/0/lines/5/words/1",
+        "#/readResults/0/lines/5/words/2", "#/readResults/0/lines/5/words/3", "#/readResults/0/lines/5/words/4"]}]},
+        "OtherPhones": {"type": "array", "valueArray": [{"type": "phoneNumber", "text":
+        "+44 (0) 20 9876 5432", "boundingBox": [2473, 1114.8, 3139.3, 907.7, 3163.2,
+        984.8, 2497, 1191.9], "page": 1, "confidence": 0.989, "elements": ["#/readResults/0/lines/6/words/1",
+        "#/readResults/0/lines/6/words/2", "#/readResults/0/lines/6/words/3", "#/readResults/0/lines/6/words/4",
+        "#/readResults/0/lines/6/words/5"]}]}, "Faxes": {"type": "array", "valueArray":
+        [{"type": "phoneNumber", "text": "+44 (0) 20 6789 2345", "boundingBox": [2526.5,
+        1190.4, 3191.2, 978.9, 3216.5, 1058.4, 2551.8, 1269.9], "page": 1, "confidence":
+        0.99, "elements": ["#/readResults/0/lines/7/words/1", "#/readResults/0/lines/7/words/2",
+        "#/readResults/0/lines/7/words/3", "#/readResults/0/lines/7/words/4", "#/readResults/0/lines/7/words/5"]}]},
+        "Addresses": {"type": "array", "valueArray": [{"type": "string", "valueString":
+        "2 Kingdom Street Paddington, London, W2 6BD", "text": "2 Kingdom Street Paddington,
+        London, W2 6BD", "boundingBox": [1230, 2138, 2535, 1678.3, 2614, 1902.6, 1309,
+        2362.4], "page": 1, "confidence": 0.977, "elements": ["#/readResults/0/lines/9/words/0",
+        "#/readResults/0/lines/9/words/1", "#/readResults/0/lines/9/words/2", "#/readResults/0/lines/10/words/0",
+        "#/readResults/0/lines/10/words/1", "#/readResults/0/lines/10/words/2", "#/readResults/0/lines/10/words/3"]}]},
+        "CompanyNames": {"type": "array", "valueArray": [{"type": "string", "valueString":
+        "Contoso", "text": "Contoso", "boundingBox": [1152, 1916, 2293, 1551, 2357,
+        1733, 1219, 2105], "page": 1, "confidence": 0.068, "elements": ["#/readResults/0/lines/8/words/0"]}]}}}]}}'
+    headers:
+      apim-request-id:
+      - 2fb51355-5d77-4f58-937a-6843bd7ca25c
+      content-length:
+      - '8377'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 06 Oct 2020 21:58:57 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '17'
+    status:
+      code: 200
+      message: OK
+version: 1

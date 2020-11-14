@@ -9,7 +9,7 @@ from azure.storage.blob.aio import BlobClient
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
 from .._models import DirectoryProperties, AccessControlChangeResult, AccessControlChangeFailure, \
-    AccessControlChangeCounters, AccessControlChanges, DataLakeAclChangeFailedError
+    AccessControlChangeCounters, AccessControlChanges
 from .._generated.aio import DataLakeStorageClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 from .._generated.models import StorageErrorException
@@ -292,7 +292,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
-        :keyword str continuation:
+        :keyword str continuation_token:
             Optional continuation token that can be used to resume previously stopped operation.
         :keyword int batch_size:
             Optional. If data set size exceeds batch size then operation will be split into multiple
@@ -314,6 +314,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
         """
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
@@ -339,7 +341,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
-        :keyword str continuation:
+        :keyword str continuation_token:
             Optional continuation token that can be used to resume previously stopped operation.
         :keyword int batch_size:
             Optional. If data set size exceeds batch size then operation will be split into multiple
@@ -362,6 +364,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
         """
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
@@ -388,7 +392,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
-        :keyword str continuation:
+        :keyword str continuation_token:
             Optional continuation token that can be used to resume previously stopped operation.
         :keyword int batch_size:
             Optional. If data set size exceeds batch size then operation will be split into multiple
@@ -410,6 +414,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :~azure.storage.filedatalake.AccessControlChangeResult`
+        :raises ~azure.core.exceptions.AzureError:
+            User can restart the operation using continuation_token field of AzureError if the token is available.
         """
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
@@ -475,8 +481,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                 failure_count=total_failure_count),
                 continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
+        except StorageErrorException as error:
+            error.continuation_token = last_continuation_token
+            process_storage_error(error)
         except AzureError as error:
-            raise DataLakeAclChangeFailedError(error, error.message, last_continuation_token)
+            error.continuation_token = last_continuation_token
+            raise error
 
     async def _rename_path(self, rename_source,
                            **kwargs):

@@ -1,0 +1,54 @@
+interactions:
+- request:
+    body: '{"location": "eastus", "properties": {"hostNames": ["ServerCert"], "password":
+      "SWsSsd__233$Sdsds#%Sd!"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '105'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azure-mgmt-web/0.46.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Web/certificates/myname?api-version=2019-08-01
+  response:
+    body:
+      string: '{"Code":"NotFound","Message":"Cannot find Certificate with name myname.","Target":null,"Details":[{"Message":"Cannot
+        find Certificate with name myname."},{"Code":"NotFound"},{"ErrorEntity":{"ExtendedCode":"51004","MessageTemplate":"Cannot
+        find {0} with name {1}.","Parameters":["Certificate","myname"],"Code":"NotFound","Message":"Cannot
+        find Certificate with name myname."}}],"Innererror":null}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '395'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 10 Sep 2020 06:38:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 404
+      message: Not Found
+version: 1

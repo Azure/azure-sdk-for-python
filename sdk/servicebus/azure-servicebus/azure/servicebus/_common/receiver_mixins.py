@@ -4,19 +4,33 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
+import functools
+from typing import Optional, Callable
+
 from uamqp import Source
-from .message import ReceivedMessage
+from .message import ServiceBusReceivedMessage
 from .constants import (
-    NEXT_AVAILABLE,
+    NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    ReceiveMode
+    ReceiveMode,
+    DEADLETTERNAME,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+    MESSAGE_COMPLETE,
+    MESSAGE_DEAD_LETTER,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
-    SessionLockExpired
+    ServiceBusMessageError,
+    MessageAlreadySettled,
+    MessageLockExpired,
+    SessionLockExpired,
+    MessageSettleFailed
 )
 from .utils import utc_from_timestamp, utc_now
 
@@ -37,9 +51,12 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         if not isinstance(self._receive_mode, ReceiveMode):
             raise TypeError("Parameter 'receive_mode' must be of type ReceiveMode")
 
+        self._session_id = kwargs.get("session_id")
         self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total
+            max_retries=self._config.retry_total,
+            is_session=bool(self._session_id)
         )
+
         self._name = "SBReceiver-{}".format(uuid.uuid4())
         self._last_received_sequenced_number = None
         self._message_iter = None
@@ -52,56 +69,100 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         # In large max_message_count case, like 5000, the pull receive would always return hundreds of messages limited
         # by the perf and time.
         self._further_pull_receive_timeout_ms = 200
-        self._max_wait_time = kwargs.get("max_wait_time", None)
+        max_wait_time = kwargs.get("max_wait_time", None)
+        if max_wait_time is not None and max_wait_time <= 0:
+            raise ValueError("The max_wait_time must be greater than 0.")
+        self._max_wait_time = max_wait_time
 
-    def _build_message(self, received, message_type=ReceivedMessage):
+        self._auto_lock_renewer = kwargs.get("auto_lock_renewer", None)
+        if self._auto_lock_renewer \
+                and self._receive_mode == ReceiveMode.ReceiveAndDelete \
+                and self._session_id is None:
+            raise ValueError("Messages received in ReceiveAndDelete receive mode cannot have their locks removed "
+                             "as they have been deleted, providing an AutoLockRenewer in this mode is invalid.")
+
+    def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(message=received, receive_mode=self._receive_mode, receiver=self)
         self._last_received_sequenced_number = message.sequence_number
         return message
 
     def _check_live(self):
         """check whether the receiver is alive"""
+        # pylint: disable=protected-access
+        if self._shutdown.is_set():
+            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
+                             "create a new instance.")
+        if self._session and self._session._lock_expired:  # pylint: disable=protected-access
+            raise SessionLockExpired(error=self._session.auto_renew_error)
 
     def _get_source(self):
+        # pylint: disable=protected-access
+        if self._session:
+            source = Source(self._entity_uri)
+            session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
+            source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
+            return source
         return self._entity_uri
 
+    def _check_message_alive(self, message, action):
+        # pylint: disable=no-member, protected-access
+        if message._is_peeked_message:
+            raise MessageSettleFailed(action, ServiceBusMessageError("Messages received by peek can not be settled."))
+        if not self._running:
+            raise MessageSettleFailed(action, ServiceBusMessageError("Orphan message had no open connection."))
+        if message._settled:
+            raise MessageAlreadySettled(action)
+        try:
+            if message._lock_expired:
+                raise MessageLockExpired(error=message.auto_renew_error)
+        except TypeError:
+            pass
+        try:
+            if self.session._lock_expired:
+                raise SessionLockExpired(error=self.session.auto_renew_error)
+        except AttributeError:
+            pass
+
+    def _settle_message_via_receiver_link(
+        self,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None
+    ):
+        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> Callable
+        # pylint: disable=no-self-use
+        if settle_operation == MESSAGE_COMPLETE:
+            return functools.partial(message.message.accept)
+        if settle_operation == MESSAGE_ABANDON:
+            return functools.partial(message.message.modify, True, False)
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            return functools.partial(
+                message.message.reject,
+                condition=DEADLETTERNAME,
+                description=dead_letter_error_description,
+                info={
+                    RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description
+                }
+            )
+        if settle_operation == MESSAGE_DEFER:
+            return functools.partial(message.message.modify, True, True)
+        raise ValueError("Unsupported settle operation type: {}".format(settle_operation))
+
     def _on_attach(self, source, target, properties, error):
-        pass
-
-    def _populate_message_properties(self, message):
-        pass
-
-
-class SessionReceiverMixin(ReceiverMixin):
-    def _get_source(self):
-        source = Source(self._entity_uri)
-        session_filter = None if self._session_id == NEXT_AVAILABLE else self._session_id
-        source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
-        return source
-
-    def _on_attach(self, source, target, properties, error):  # pylint: disable=unused-argument
-        # pylint: disable=protected-access
-        if str(source) == self._entity_uri:
+        # pylint: disable=protected-access, unused-argument
+        if self._session and str(source) == self._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
             self._session._session_start = utc_now()
             expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
             if expiry_in_seconds:
-                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH)/10000000
+                expiry_in_seconds = (expiry_in_seconds - DATETIMEOFFSET_EPOCH) / 10000000
                 self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
             session_filter = source.get_filter(name=SESSION_FILTER)
             self._session_id = session_filter.decode(self._config.encoding)
             self._session._session_id = self._session_id
 
-    def _check_live(self):
-        if self._session and self._session._lock_expired:  # pylint: disable=protected-access
-            raise SessionLockExpired(inner_exception=self._session.auto_renew_error)
-
-    def _populate_session_attributes(self, **kwargs):
-        self._session_id = kwargs.get("session_id") or NEXT_AVAILABLE
-        self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total,
-            is_session=bool(self._session_id)
-        )
-
     def _populate_message_properties(self, message):
-        message[MGMT_REQUEST_SESSION_ID] = self._session_id
+        if self._session:
+            message[MGMT_REQUEST_SESSION_ID] = self._session_id
