@@ -68,6 +68,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -80,7 +81,7 @@ setup(
         'tests.common'
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.6.0",
+        "azure-core<2.0.0,>=1.9.0",
         "msrest>=0.6.10",
         "cryptography>=2.1.4"
     ],

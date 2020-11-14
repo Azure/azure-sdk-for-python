@@ -1,7 +1,15 @@
 # Release History
 
-## 12.3.0b2 (Unreleased)
+## 12.3.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature enabling SMB Multichannel for the share service.
+- Preview feature `get_ranges` on ShareFileClient
 
+**New features**
+- Added `set_share_properties` which allows setting share tier. 
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 ## 12.3.0b1 (2020-10-02)
 **New features**
@@ -187,7 +195,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `FileClient`: The client handles operations for a particular file. This includes creating or deleting that file, as well as upload and download data and managing properties.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account, share, directory or file).
-    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-file-share).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/storage.html#azure-storage-file-share).
 - The copy file operation now returns a polling object that can be used to check the status of the operation, as well as abort the operation.
 - The `close_handles` operation now return a polling object that can be used to check the status of the operation.
 - Download operations now return a streaming object that can download data in multiple ways:

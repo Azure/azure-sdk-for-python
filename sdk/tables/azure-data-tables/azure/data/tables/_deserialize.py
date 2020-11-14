@@ -212,6 +212,21 @@ def _extract_etag(response):
     return None
 
 
+def _extract_continuation_token(continuation_token):
+    """Extract list entity continuation headers from token.
+
+    :param dict(str,str) continuation_token: The listing continuation token.
+    :returns: The next partition key and next row key in a tuple
+    :rtype: (str,str)
+    """
+    if not continuation_token:
+        return None, None
+    try:
+        return continuation_token.get("PartitionKey"), continuation_token.get("RowKey")
+    except AttributeError:
+        raise ValueError("Invalid continuation token format.")
+
+
 def _normalize_headers(headers):
     normalized = {}
     for key, value in headers.items():

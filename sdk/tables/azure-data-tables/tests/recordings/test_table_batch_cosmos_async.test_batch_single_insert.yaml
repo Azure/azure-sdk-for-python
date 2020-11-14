@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 26 Oct 2020 22:23:58 GMT
+      - Sat, 07 Nov 2020 01:35:22 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 26 Oct 2020 22:23:58 GMT
+      - Sat, 07 Nov 2020 01:35:22 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -25,69 +25,64 @@ interactions:
       string: '{"TableName":"uttable5f17161d","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Mon, 26 Oct 2020 22:23:55 GMT
-      etag: W/"datetime'2020-10-26T22%3A23%3A55.2380935Z'"
+      date: Sat, 07 Nov 2020 01:35:24 GMT
+      etag: W/"datetime'2020-11-07T01%3A35%3A24.2992647Z'"
       location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable5f17161d')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://tablestest6slpbij4mcunun.table.cosmos.azure.com/Tables
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/Tables
 - request:
-    body: "--batch_7f4f7953-bf5e-4ab0-9733-4466aea1f918\r\nContent-Type: multipart/mixed;\
-      \ boundary=changeset_8e22cbfe-1358-41a9-baab-91dd7bfbe4dd\r\n\r\n--changeset_8e22cbfe-1358-41a9-baab-91dd7bfbe4dd\r\
-      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
-      \ 0\r\n\r\nPOST https://tablestest6slpbij4mcunun.table.cosmos.azure.com/uttable5f17161d\
-      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nPrefer:\
-      \ return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nAccept:\
-      \ application/json;odata=minimalmetadata\r\nContent-Length: 293\r\nx-ms-date:\
-      \ Mon, 26 Oct 2020 22:23:59 GMT\r\nDate: Mon, 26 Oct 2020 22:23:59 GMT\r\nx-ms-client-request-id:\
-      \ f1ced0b9-17d9-11eb-a525-58961df361d1\r\n\r\n{\"PartitionKey\": \"001\", \"\
-      PartitionKey@odata.type\": \"Edm.String\", \"RowKey\": \"batch_insert\", \"\
-      RowKey@odata.type\": \"Edm.String\", \"test\": true, \"test2\": \"value\", \"\
-      test2@odata.type\": \"Edm.String\", \"test3\": 3, \"test4\": 1234567890, \"\
-      test5\": \"2020-10-26T22:23:59Z\", \"test5@odata.type\": \"Edm.DateTime\"}\r\
-      \n--changeset_8e22cbfe-1358-41a9-baab-91dd7bfbe4dd--\r\n\r\n--batch_7f4f7953-bf5e-4ab0-9733-4466aea1f918--\r\
-      \n"
+    body: "--batch_410cacb6-aaae-4fe7-a7d2-e6ef74a329b8\r\nContent-Type: multipart/mixed;
+      boundary=changeset_e0959863-ec0d-4f6c-a09e-9f0134282b2f\r\n\r\n--changeset_e0959863-ec0d-4f6c-a09e-9f0134282b2f\r\nContent-Type:
+      application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID: 0\r\n\r\nPOST
+      https://tablestestussw52mubjcwms.table.cosmos.azure.com/uttable5f17161d HTTP/1.1\r\nPrefer:
+      return-no-content\r\nContent-Type: application/json;odata=nometadata\r\nx-ms-version:
+      2019-02-02\r\nDataServiceVersion: 3.0\r\nAccept: application/json;odata=minimalmetadata\r\nContent-Length:
+      293\r\nx-ms-date: Sat, 07 Nov 2020 01:35:23 GMT\r\nDate: Sat, 07 Nov 2020 01:35:23
+      GMT\r\nx-ms-client-request-id: 817692ae-2099-11eb-a4ce-58961df361d1\r\n\r\n{\"test5@odata.type\":
+      \"Edm.DateTime\", \"test5\": \"2020-11-07T01:35:23Z\", \"test3\": 3, \"PartitionKey\":
+      \"001\", \"test\": true, \"RowKey\": \"batch_insert\", \"test4\": 1234567890,
+      \"RowKey@odata.type\": \"Edm.String\", \"test2@odata.type\": \"Edm.String\",
+      \"test2\": \"value\", \"PartitionKey@odata.type\": \"Edm.String\"}\r\n--changeset_e0959863-ec0d-4f6c-a09e-9f0134282b2f--\r\n\r\n--batch_410cacb6-aaae-4fe7-a7d2-e6ef74a329b8--\r\n"
     headers:
       Content-Length:
       - '1093'
       Content-Type:
-      - multipart/mixed; boundary=batch_7f4f7953-bf5e-4ab0-9733-4466aea1f918
+      - multipart/mixed; boundary=batch_410cacb6-aaae-4fe7-a7d2-e6ef74a329b8
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 26 Oct 2020 22:23:59 GMT
+      - Sat, 07 Nov 2020 01:35:23 GMT
       MaxDataServiceVersion:
       - 3.0;NetFx
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 26 Oct 2020 22:23:59 GMT
+      - Sat, 07 Nov 2020 01:35:23 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://tablestestcosmosname.table.cosmos.azure.com/$batch
   response:
     body:
-      string: "--batchresponse_ddacf1a8-bf93-4820-be4a-ec1a8218ecd0\nContent-Type:\
-        \ multipart/mixed; boundary=changesetresponse_033f8961-f0b9-4383-96b3-d3ca87066975\r\
-        \n\r\n--changesetresponse_033f8961-f0b9-4383-96b3-d3ca87066975\nContent-Type:\
-        \ application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 204 No Content\r\
-        \nETag: W/\"datetime'2020-10-26T22%3A23%3A55.7267463Z'\"\r\nPreference-Applied:\
-        \ return-no-content\r\nLocation: https://tablestest6slpbij4mcunun.table.cosmos.azure.com/uttable5f17161d(PartitionKey='001',RowKey='batch_insert')\r\
-        \nContent-ID: 1\r\n\r\n\r\n--changesetresponse_033f8961-f0b9-4383-96b3-d3ca87066975--\n\
-        --batchresponse_ddacf1a8-bf93-4820-be4a-ec1a8218ecd0--\r\n"
+      string: "--batchresponse_11f598d8-158a-420b-b9e6-b621d2ddd3e2\nContent-Type:
+        multipart/mixed; boundary=changesetresponse_a447d931-4991-45f6-874c-e6abf52856fc\r\n\r\n--changesetresponse_a447d931-4991-45f6-874c-e6abf52856fc\nContent-Type:
+        application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 204 No Content\r\nETag:
+        W/\"datetime'2020-11-07T01%3A35%3A24.8133127Z'\"\r\nPreference-Applied: return-no-content\r\nLocation:
+        https://tablestestussw52mubjcwms.table.cosmos.azure.com/uttable5f17161d(PartitionKey='001',RowKey='batch_insert')\r\nContent-ID:
+        1\r\n\r\n\r\n--changesetresponse_a447d931-4991-45f6-874c-e6abf52856fc--\n--batchresponse_11f598d8-158a-420b-b9e6-b621d2ddd3e2--\r\n"
     headers:
-      content-type: multipart/mixed; boundary=batchresponse_ddacf1a8-bf93-4820-be4a-ec1a8218ecd0
-      date: Mon, 26 Oct 2020 22:23:55 GMT
+      content-type: multipart/mixed; boundary=batchresponse_11f598d8-158a-420b-b9e6-b621d2ddd3e2
+      date: Sat, 07 Nov 2020 01:35:24 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 202
       message: Accepted
-    url: https://tablestest6slpbij4mcunun.table.cosmos.azure.com/$batch
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/$batch
 - request:
     body: null
     headers:
@@ -96,39 +91,39 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 26 Oct 2020 22:23:59 GMT
+      - Sat, 07 Nov 2020 01:35:24 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 26 Oct 2020 22:23:59 GMT
+      - Sat, 07 Nov 2020 01:35:24 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable5f17161d(PartitionKey='001',RowKey='batch_insert')
   response:
     body:
-      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable5f17161d/$metadata#uttable5f17161d/@Element","odata.etag":"W/\"datetime''2020-10-26T22%3A23%3A55.7267463Z''\"","PartitionKey":"001","RowKey":"batch_insert","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-10-26T22:23:59.0000000Z","Timestamp":"2020-10-26T22:23:55.7267463Z"}'
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable5f17161d/$metadata#uttable5f17161d/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A35%3A24.8133127Z''\"","test5@odata.type":"Edm.DateTime","test5":"2020-11-07T01:35:23.0000000Z","test3":3,"PartitionKey":"001","test":true,"RowKey":"batch_insert","test4":1234567890,"test2":"value","Timestamp":"2020-11-07T01:35:24.8133127Z"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Mon, 26 Oct 2020 22:23:55 GMT
-      etag: W/"datetime'2020-10-26T22%3A23%3A55.7267463Z'"
+      date: Sat, 07 Nov 2020 01:35:24 GMT
+      etag: W/"datetime'2020-11-07T01%3A35%3A24.8133127Z'"
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 200
       message: Ok
-    url: https://tablestest6slpbij4mcunun.table.cosmos.azure.com/uttable5f17161d(PartitionKey='001',RowKey='batch_insert')
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/uttable5f17161d(PartitionKey='001',RowKey='batch_insert')
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Mon, 26 Oct 2020 22:23:59 GMT
+      - Sat, 07 Nov 2020 01:35:24 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 26 Oct 2020 22:23:59 GMT
+      - Sat, 07 Nov 2020 01:35:24 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -138,10 +133,10 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Mon, 26 Oct 2020 22:23:55 GMT
+      date: Sat, 07 Nov 2020 01:35:24 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://tablestest6slpbij4mcunun.table.cosmos.azure.com/Tables('uttable5f17161d')
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/Tables('uttable5f17161d')
 version: 1
