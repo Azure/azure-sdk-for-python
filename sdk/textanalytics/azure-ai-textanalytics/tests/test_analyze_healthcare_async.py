@@ -27,11 +27,6 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
-V3_1_PREVIEW_client_kwargs = {
-    "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
-    "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-    "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-}
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
