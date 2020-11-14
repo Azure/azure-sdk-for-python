@@ -1,6 +1,0 @@
-include *.md
-include opentelemetry/__init__.py
-include opentelemetry/exporter/__init__.py
-include LICENSE.txt
-recursive-include tests *.py
-recursive-include samples *.py *.md
