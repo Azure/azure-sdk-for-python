@@ -23,7 +23,7 @@ from .._common.constants import (
     ASSOCIATEDLINKPROPERTYNAME,
     CONTAINER_PREFIX, MANAGEMENT_PATH_SUFFIX)
 from ..exceptions import (
-    ServiceBusError,
+    SessionLockExpired,
     OperationTimeoutError,
     _create_servicebus_exception
 )
@@ -124,13 +124,21 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         return error
 
-    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
+    def _check_live(self):
+        """check whether the handler is alive"""
         # pylint: disable=protected-access
         if self._shutdown.is_set():
             raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
                              "create a new instance.")
+        try:
+            if self._session and self._session._lock_expired:  # pylint: disable=protected-access
+                # TODO: this would be useful in a session error case
+                raise SessionLockExpired(error=self._session.auto_renew_error)
+        except AttributeError:
+            pass
 
+    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0

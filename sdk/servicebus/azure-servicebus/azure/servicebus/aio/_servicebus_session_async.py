@@ -58,7 +58,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -89,7 +89,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -126,17 +126,17 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         expiry = await self._receiver._mgmt_request_response_with_retry(  # pylint: disable=protected-access
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
-            mgmt_handlers.default,
+            mgmt_handlers.session_lock_renew_op,
             timeout=timeout
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0
-        self._locked_until_utc = utc_from_timestamp(expiry_timestamp) # type: datetime.datetime
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
 
         return self._locked_until_utc

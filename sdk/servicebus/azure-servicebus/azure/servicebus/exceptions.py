@@ -9,7 +9,7 @@ from typing import Optional
 from uamqp import errors, constants
 from azure.core.exceptions import AzureError
 
-from ._common.constants import SESSION_LOCK_LOST, SESSION_LOCK_TIMEOUT
+from ._common.constants import ERROR_CODE_SESSION_LOCK_LOST, ERROR_CODE_TIMEOUT
 
 
 _NO_RETRY_ERRORS = (
@@ -33,6 +33,7 @@ _NO_RETRY_ERRORS = (
     constants.ErrorCodes.SessionHandleInUse,
     constants.ErrorCodes.SessionErrantLink,
     constants.ErrorCodes.SessionWindowViolation,
+    ERROR_CODE_SESSION_LOCK_LOST,
     b"com.microsoft:argument-out-of-range",
     b"com.microsoft:entity-disabled",
     b"com.microsoft:auth-failed",
@@ -41,8 +42,8 @@ _NO_RETRY_ERRORS = (
 
 
 _AMQP_SESSION_ERROR_CONDITIONS = (
-    SESSION_LOCK_LOST,
-    SESSION_LOCK_TIMEOUT
+    ERROR_CODE_SESSION_LOCK_LOST,
+    ERROR_CODE_TIMEOUT
 )
 
 
@@ -94,13 +95,13 @@ def _handle_amqp_connection_error(logger, exception, handler):
     if isinstance(exception, errors.LinkDetach) and exception.condition in _AMQP_SESSION_ERROR_CONDITIONS:
         # In session lock lost or no active session case, we don't retry, close the handler and raise the error
         error_need_raise = True
-        if exception.condition == SESSION_LOCK_LOST:
+        if exception.condition == ERROR_CODE_SESSION_LOCK_LOST:
             try:
                 session_id = handler._session_id  # pylint: disable=protected-access
             except AttributeError:
                 session_id = None
             error = SessionLockExpired("Connection detached - lock on Session {} lost.".format(session_id))
-        elif exception.condition == SESSION_LOCK_TIMEOUT:
+        elif exception.condition == ERROR_CODE_TIMEOUT:
             error = NoActiveSession("Queue has no active session to receive from.")
     elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
         # In other link detach and connection case, should retry
@@ -166,6 +167,7 @@ def _create_servicebus_exception(logger, exception, handler, **kwargs):  # pylin
     # transform amqp exceptions into servicebus exceptions
     error_need_close_handler = True
     error_need_raise = False
+    error = exception
     if isinstance(exception, _AMQP_CONNECTION_ERRORS):
         error, error_need_close_handler, error_need_raise = \
             _handle_amqp_connection_error(logger, exception, handler)
@@ -179,6 +181,8 @@ def _create_servicebus_exception(logger, exception, handler, **kwargs):  # pylin
         logger.info("Unexpected error occurred (%r). Shutting down.", exception)
         if kwargs.get("settle_operation"):
             error = MessageSettleFailed(kwargs.get("settle_operation"), error=exception)
+        elif isinstance(exception, (MessageLockExpired, SessionLockExpired)):
+            error_need_raise = True
         elif not isinstance(exception, ServiceBusError):
             error = ServiceBusError("Handler failed: {}.".format(exception), error=exception)
         else:
@@ -288,7 +292,7 @@ class MessageAlreadySettled(MessageSettleFailed):
 
     def __init__(self, action):
         # type: (str) -> None
-        message = "Unable to {} message; The message has either been deleted or already settled".format(action)
+        message = "Unable to {} message; The message has either been deleted or already settled.".format(action)
         super(MessageAlreadySettled, self).__init__(action, message=message)
 
 
@@ -330,6 +334,34 @@ class SessionLockExpired(ServiceBusError):
         # type: (Optional[str], Optional[Exception]) -> None
         message = message or "Session lock expired"
         super(SessionLockExpired, self).__init__(message, error=error)
+
+
+class MessageEntityNotFoundError(ServiceBusError):
+    """"""
+
+
+class MessageNotFoundError(ServiceBusError):
+    """"""
+
+
+class MessageEntityDisabledError(ServiceBusError):
+    """"""
+
+
+class QuotaExceededError(ServiceBusError):
+    """"""
+
+
+class ServiceBusyError(ServiceBusError):
+    """"""
+
+
+class ServiceBusCommunicationError(ServiceBusError):
+    """"""
+
+
+class SessionCannotBeLockedError(ServiceBusError):
+    """"""
 
 
 class AutoLockRenewFailed(ServiceBusError):

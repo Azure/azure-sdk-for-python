@@ -37,10 +37,6 @@ class BaseSession(object):
         self._locked_until_utc = None  # type: Optional[datetime.datetime]
         self.auto_renew_error = None
 
-    def _check_live(self):
-        if self._lock_expired:
-            raise SessionLockExpired(error=self.auto_renew_error)
-
     @property
     def _lock_expired(self):
         # type: () -> bool
@@ -110,7 +106,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -142,7 +138,7 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -181,14 +177,14 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
-        self._check_live()
+        self._receiver._check_live()  # pylint: disable=protected-access
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         expiry = self._receiver._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEW_SESSION_LOCK_OPERATION,
             {MGMT_REQUEST_SESSION_ID: self._session_id},
-            mgmt_handlers.default,
+            mgmt_handlers.session_lock_renew_op,
             timeout=timeout
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION]/1000.0  # type: ignore

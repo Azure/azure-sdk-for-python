@@ -338,6 +338,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
+        self._check_live()
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, settle_operation)
@@ -418,7 +419,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
-            mgmt_handlers.lock_renew_op,
+            mgmt_handlers.message_lock_renew_op,
             timeout=timeout
         )
 
@@ -509,11 +510,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Receive messages from ServiceBus.
 
         """
+        self._check_live()
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
-        self._check_live()
         messages = await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
@@ -615,10 +616,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
-        if int(max_message_count) < 1:
-            raise ValueError("count must be 1 or greater.")
-        if int(sequence_number) < 1:
-            raise ValueError("start_from must be 1 or greater.")
+        if int(max_message_count) < 0:
+            raise ValueError("max_message_count must be 1 or greater.")
 
         await self._open()
 
@@ -777,9 +776,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Renew the lock on a received message.
 
         """
+        self._check_live()
         try:
             if self.session:
-                raise TypeError("Session messages cannot be renewed. Please renew the session lock instead.")
+                raise TypeError(
+                    "Renewing message lock is an invalid operation when working with sessions."
+                    "Please renew the session lock instead."
+                )
         except AttributeError:
             pass
 

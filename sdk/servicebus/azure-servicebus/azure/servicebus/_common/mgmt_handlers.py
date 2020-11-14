@@ -6,25 +6,43 @@
 
 import uamqp
 from .message import ServiceBusReceivedMessage
-from ..exceptions import ServiceBusError, MessageLockExpired
-from .constants import ReceiveMode
+from ..exceptions import ServiceBusError, MessageLockExpired, SessionLockExpired
+from .constants import (
+    ReceiveMode,
+    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
+    ERROR_CODE_SESSION_LOCK_LOST,
+    ERROR_CODE_MESSAGE_LOCK_LOST
+)
 
 
 def default(status_code, message, description):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()
     raise ServiceBusError(
-        "Management request returned status code: {}. Description: {}, Data: {}".format(
+        "Service request returned status code: {}. Condition: {}, Description: {}".format(
+            status_code, condition, description))
+
+
+def session_lock_renew_op(status_code, message, description):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
+    if status_code == 200:
+        return message.get_data()
+    if condition == ERROR_CODE_SESSION_LOCK_LOST or status_code == 410:
+        raise SessionLockExpired(message=description)
+    raise ServiceBusError(
+        "Session lock renew request returned status code: {}. Description: {}, Data: {}".format(
             status_code, description, message.get_data()))
 
 
-def lock_renew_op(status_code, message, description):
+def message_lock_renew_op(status_code, message, description):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()
-    if status_code == 410:
+    if condition == ERROR_CODE_MESSAGE_LOCK_LOST or status_code == 410:
         raise MessageLockExpired(message=description)
     raise ServiceBusError(
-        "Management request returned status code: {}. Description: {}, Data: {}".format(
+        "Message Lock renew request returned status code: {}. Description: {}, Data: {}".format(
             status_code, description, message.get_data()))
 
 

@@ -25,6 +25,7 @@ from .exceptions import (
     ServiceBusError,
     ServiceBusAuthenticationError,
     OperationTimeoutError,
+    SessionLockExpired,
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
@@ -194,8 +195,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
             raise ServiceBusAuthenticationError(
-                "Entity names do not match, the entity name in connection string is {};"
-                " the entity name in parameter is {}.".format(entity_in_conn_str, entity_in_kwargs)
+                "The queue or topic name provided: {} which does not match the EntityPath in"
+                " the connection string passed to the ServiceBusClient constructor: {}.".format(
+                    entity_in_conn_str, entity_in_kwargs
+                )
             )
 
         kwargs["fully_qualified_namespace"] = host
@@ -231,13 +234,22 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         return error
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
+    def _check_live(self):
+        """check whether the handler is alive"""
         # pylint: disable=protected-access
         if self._shutdown.is_set():
             raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
                              "create a new instance.")
+        try:
+            if self._session and self._session._lock_expired:  # pylint: disable=protected-access
+                # TODO: this would be useful in a session error case
+                raise SessionLockExpired(error=self._session.auto_renew_error)
+        except AttributeError:
+            pass
 
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
+        # pylint: disable=protected-access
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0

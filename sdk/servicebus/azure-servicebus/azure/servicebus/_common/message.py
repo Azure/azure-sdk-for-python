@@ -161,6 +161,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @session_id.setter
     def session_id(self, value):
         # type: (str) -> None
+        if value and len(value) > 128:
+            raise ValueError("session_id cannot be longer than 128 characters.")
+
         self._amqp_properties.group_id = value
 
     @property
@@ -202,7 +205,10 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @partition_key.setter
     def partition_key(self, value):
         # type: (str) -> None
-        if value != self.session_id:
+        if value and len(value) > 128:
+            raise ValueError("partition_key cannot be longer than 128 characters.")
+
+        if value and value != self.session_id:
             raise ValueError(
                 "partition_key:{} cannot be set to a different value than session_id:{}".format(value, self.session_id)
             )
@@ -294,9 +300,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.content_type
 
     @content_type.setter
-    def content_type(self, val):
+    def content_type(self, value):
         # type: (str) -> None
-        self._amqp_properties.content_type = val
+        self._amqp_properties.content_type = value
 
     @property
     def correlation_id(self):
@@ -318,9 +324,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, val):
+    def correlation_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.correlation_id = val
+        self._amqp_properties.correlation_id = value
 
     @property
     def subject(self):
@@ -338,9 +344,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.subject
 
     @subject.setter
-    def subject(self, val):
+    def subject(self, value):
         # type: (str) -> None
-        self._amqp_properties.subject = val
+        self._amqp_properties.subject = value
 
     @property
     def message_id(self):
@@ -361,9 +367,12 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.message_id
 
     @message_id.setter
-    def message_id(self, val):
+    def message_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.message_id = val
+        if value and len(value) > 128:
+            raise ValueError("message_id cannot be longer than 128 characters.")
+
+        self._amqp_properties.message_id = value
 
     @property
     def reply_to(self):
@@ -386,9 +395,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.reply_to
 
     @reply_to.setter
-    def reply_to(self, val):
+    def reply_to(self, value):
         # type: (str) -> None
-        self._amqp_properties.reply_to = val
+        self._amqp_properties.reply_to = value
 
     @property
     def reply_to_session_id(self):
@@ -410,9 +419,12 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.reply_to_group_id
 
     @reply_to_session_id.setter
-    def reply_to_session_id(self, val):
+    def reply_to_session_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.reply_to_group_id = val
+        if value and len(value) > 128:
+            raise ValueError("reply_to_session_id cannot be longer than 128 characters.")
+
+        self._amqp_properties.reply_to_group_id = value
 
     @property
     def to(self):
@@ -433,9 +445,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.to
 
     @to.setter
-    def to(self, val):
+    def to(self, value):
         # type: (str) -> None
-        self._amqp_properties.to = val
+        self._amqp_properties.to = value
 
 
 class ServiceBusMessageBatch(object):
