@@ -1,13 +1,12 @@
 interactions:
 - request:
     body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
-      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      "bad", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
       [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
       "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
       "analysisInput": {"documents": [{"id": "56", "text": ":)", "language": "en"},
-      {"id": "0", "text": ":(", "language": "en"}, {"id": "22", "text": "", "language":
-      "en"}, {"id": "19", "text": ":P", "language": "en"}, {"id": "1", "text": ":D",
-      "language": "en"}]}}'
+      {"id": "0", "text": ":(", "language": "en"}, {"id": "19", "text": ":P", "language":
+      "en"}, {"id": "1", "text": ":D", "language": "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -16,7 +15,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '571'
+      - '524'
       Content-Type:
       - application/json
       User-Agent:
@@ -25,15 +24,14 @@ interactions:
     uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
-      string: '{"error":{"code":"InvalidArgument","message":"Value cannot be null.\nParameter
-        name: blobName"}}'
+      string: ''
     headers:
       apim-request-id:
-      - c155badd-355c-4b59-a0e5-757db0e16cc0
-      content-type:
-      - application/json; charset=utf-8
+      - c5e2515c-4e62-4e7d-9ac0-235dbf6ef92e
       date:
-      - Tue, 10 Nov 2020 06:25:08 GMT
+      - Fri, 13 Nov 2020 20:57:15 GMT
+      operation-location:
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -41,8 +39,218 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '25'
+      - '365'
     status:
-      code: 400
-      message: Bad Request
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000","lastUpdateDateTime":"2020-11-13T20:57:16Z","createdDateTime":"2020-11-13T20:57:15Z","expirationDateTime":"2020-11-14T20:57:15Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:57:16Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"56","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"0","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"19","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 0ccf1425-6add-4309-99bd-c30a3ff729ab
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:57:45 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '289'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000","lastUpdateDateTime":"2020-11-13T20:57:16Z","createdDateTime":"2020-11-13T20:57:15Z","expirationDateTime":"2020-11-14T20:57:15Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:57:16Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"56","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"0","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"19","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id:
+      - ab315f6a-52a4-487b-8ff7-25ae9c3c5319
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:58:16 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '339'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000","lastUpdateDateTime":"2020-11-13T20:57:16Z","createdDateTime":"2020-11-13T20:57:15Z","expirationDateTime":"2020-11-14T20:57:15Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:57:16Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"56","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"0","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"19","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 08b38db0-e42f-47c3-a04f-aa97a8ecd525
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:58:47 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '267'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000","lastUpdateDateTime":"2020-11-13T20:57:16Z","createdDateTime":"2020-11-13T20:57:15Z","expirationDateTime":"2020-11-14T20:57:15Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:57:16Z"},"completed":1,"failed":1,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"56","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"0","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"19","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id:
+      - fdf02564-f3ce-4423-a729-8b6744cdf29b
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:59:16 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '336'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"f3718ea0-7cb8-454f-8371-3fadaa7859ac_637408224000000000","lastUpdateDateTime":"2020-11-13T20:57:16Z","createdDateTime":"2020-11-13T20:57:15Z","expirationDateTime":"2020-11-14T20:57:15Z","status":"partiallySucceeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:57:16Z"},"completed":2,"failed":1,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"56","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"0","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"19","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}},{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        task parameter value bad is not supported for model-version parameter for
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[{"redactedText":":)","id":"56","entities":[],"warnings":[]},{"redactedText":":(","id":"0","entities":[],"warnings":[]},{"redactedText":":P","id":"19","entities":[],"warnings":[]},{"redactedText":":D","id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:57:16.1794935Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id:
+      - 88013490-6fd9-47c1-ae17-7a7ed550bfb4
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:59:48 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '475'
+    status:
+      code: 200
+      message: OK
 version: 1

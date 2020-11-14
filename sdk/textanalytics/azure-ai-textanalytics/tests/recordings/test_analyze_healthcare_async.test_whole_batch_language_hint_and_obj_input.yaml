@@ -19,13 +19,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 89d25ac5-1947-424e-a8b7-c252eedc02fe
-      date: Tue, 10 Nov 2020 02:10:16 GMT
-      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/72499677-0637-45f8-93b7-db3a31fb2da8
+      apim-request-id: 53c6628f-db47-45cf-9a7a-18cc44bc9ad1
+      date: Sat, 14 Nov 2020 01:03:27 GMT
+      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/366c2e9b-b552-450c-ba09-1973ea396115
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '116'
+      x-envoy-upstream-service-time: '114'
     status:
       code: 202
       message: Accepted
@@ -36,20 +36,20 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/72499677-0637-45f8-93b7-db3a31fb2da8
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/366c2e9b-b552-450c-ba09-1973ea396115
   response:
     body:
-      string: '{"jobId":"72499677-0637-45f8-93b7-db3a31fb2da8","lastUpdateDateTime":"2020-11-10T02:10:20Z","createdDateTime":"2020-11-10T02:10:15Z","expirationDateTime":"2020-11-11T02:10:15Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[{"offset":17,"length":3,"text":"cat","category":"TreatmentName","confidenceScore":0.74,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0280589"},{"dataSource":"CHV","id":"0000027342"},{"dataSource":"NCI","id":"C10277"},{"dataSource":"PDQ","id":"CDR0000040974"}]},{"offset":28,"length":12,"text":"veterinarian","category":"HealthcareProfession","confidenceScore":0.99,"isNegated":false}],"relations":[],"warnings":[]},{"id":"4","entities":[],"relations":[],"warnings":[]},{"id":"3","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"366c2e9b-b552-450c-ba09-1973ea396115","lastUpdateDateTime":"2020-11-14T01:03:31Z","createdDateTime":"2020-11-14T01:03:28Z","expirationDateTime":"2020-11-15T01:03:28Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[{"offset":17,"length":3,"text":"cat","category":"TreatmentName","confidenceScore":0.74,"isNegated":false,"links":[{"dataSource":"UMLS","id":"C0280589"},{"dataSource":"CHV","id":"0000027342"},{"dataSource":"NCI","id":"C10277"},{"dataSource":"PDQ","id":"CDR0000040974"}]},{"offset":28,"length":12,"text":"veterinarian","category":"HealthcareProfession","confidenceScore":0.99,"isNegated":false}],"relations":[],"warnings":[]},{"id":"4","entities":[],"relations":[],"warnings":[]},{"id":"3","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
     headers:
-      apim-request-id: 6007a60e-e16c-46da-9cfa-ad3e0fd14b8d
+      apim-request-id: d281a96a-41c1-48ac-8124-54a3a1f22299
       content-type: application/json; charset=utf-8
-      date: Tue, 10 Nov 2020 02:10:46 GMT
+      date: Sat, 14 Nov 2020 01:03:58 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '97'
+      x-envoy-upstream-service-time: '125'
     status:
       code: 200
       message: OK
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/72499677-0637-45f8-93b7-db3a31fb2da8
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/366c2e9b-b552-450c-ba09-1973ea396115
 version: 1

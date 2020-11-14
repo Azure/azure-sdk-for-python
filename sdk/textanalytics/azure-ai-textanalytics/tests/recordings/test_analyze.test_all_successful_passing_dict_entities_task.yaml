@@ -28,11 +28,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 1ee43e3b-24b9-49ec-aaf8-4ad49d103192
+      - 0622dea5-71ee-41b7-a78d-5d0ee8978956
       date:
-      - Tue, 10 Nov 2020 06:05:40 GMT
+      - Fri, 13 Nov 2020 20:35:56 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/6758a8db-30a6-43a0-8c26-fe328a95c44f_637408224000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4070'
+      - '292'
     status:
       code: 202
       message: Accepted
@@ -56,17 +56,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/6758a8db-30a6-43a0-8c26-fe328a95c44f_637408224000000000
   response:
     body:
-      string: '{"jobId":"3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000","lastUpdateDateTime":"2020-11-10T06:05:41Z","createdDateTime":"2020-11-10T06:05:38Z","expirationDateTime":"2020-11-11T06:05:38Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:05:41Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"6758a8db-30a6-43a0-8c26-fe328a95c44f_637408224000000000","lastUpdateDateTime":"2020-11-13T20:35:58Z","createdDateTime":"2020-11-13T20:35:57Z","expirationDateTime":"2020-11-14T20:35:57Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:35:58Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 3fa1b92a-e30d-4b1e-9c81-c0d88d515e96
+      - d163fd96-3669-4bfd-897e-c3d96ce3490a
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 06:06:13 GMT
+      - Fri, 13 Nov 2020 20:36:28 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -74,7 +74,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '2833'
+      - '159'
     status:
       code: 200
       message: OK
@@ -90,17 +90,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/6758a8db-30a6-43a0-8c26-fe328a95c44f_637408224000000000
   response:
     body:
-      string: '{"jobId":"3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000","lastUpdateDateTime":"2020-11-10T06:05:41Z","createdDateTime":"2020-11-10T06:05:38Z","expirationDateTime":"2020-11-11T06:05:38Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:05:41Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"6758a8db-30a6-43a0-8c26-fe328a95c44f_637408224000000000","lastUpdateDateTime":"2020-11-13T20:35:58Z","createdDateTime":"2020-11-13T20:35:57Z","expirationDateTime":"2020-11-14T20:35:57Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:35:58Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 129e73a6-0643-42f0-b5db-963bc242ac67
+      - 73870f67-26a6-45ea-94cb-39473ef08d0c
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 06:06:46 GMT
+      - Fri, 13 Nov 2020 20:36:58 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -108,7 +108,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3050'
+      - '164'
     status:
       code: 200
       message: OK
@@ -124,44 +124,10 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/6758a8db-30a6-43a0-8c26-fe328a95c44f_637408224000000000
   response:
     body:
-      string: '{"jobId":"3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000","lastUpdateDateTime":"2020-11-10T06:05:41Z","createdDateTime":"2020-11-10T06:05:38Z","expirationDateTime":"2020-11-11T06:05:38Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:05:41Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
-    headers:
-      apim-request-id:
-      - 771b9165-f0c3-40c2-8fc2-634bdcb4710e
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 10 Nov 2020 06:07:19 GMT
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains; preload
-      transfer-encoding:
-      - chunked
-      x-content-type-options:
-      - nosniff
-      x-envoy-upstream-service-time:
-      - '3078'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000
-  response:
-    body:
-      string: '{"jobId":"3b9b04c9-48fe-4ab0-abb3-db274daed4b5_637405632000000000","lastUpdateDateTime":"2020-11-10T06:05:41Z","createdDateTime":"2020-11-10T06:05:38Z","expirationDateTime":"2020-11-11T06:05:38Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T06:05:41Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-10T06:05:41.7907078Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.8},{"text":"Bill
+      string: '{"jobId":"6758a8db-30a6-43a0-8c26-fe328a95c44f_637408224000000000","lastUpdateDateTime":"2020-11-13T20:35:58Z","createdDateTime":"2020-11-13T20:35:57Z","expirationDateTime":"2020-11-14T20:35:57Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:35:58Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:35:58.5676999Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.8},{"text":"Bill
         Gates","category":"Person","offset":25,"length":10,"confidenceScore":0.83},{"text":"Paul
         Allen","category":"Person","offset":40,"length":10,"confidenceScore":0.87},{"text":"April
         4, 1975","category":"DateTime","subcategory":"Date","offset":54,"length":13,"confidenceScore":0.8}],"warnings":[]},{"id":"2","entities":[{"text":"Microsoft","category":"Organization","offset":0,"length":9,"confidenceScore":0.89},{"text":"Bill
@@ -173,11 +139,11 @@ interactions:
         Allen","category":"Person","offset":52,"length":10,"confidenceScore":0.98}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}]}}'
     headers:
       apim-request-id:
-      - 158d552c-1176-44f2-a0e6-bc1fdf743a5c
+      - a60c69b8-a7a3-4e61-b26f-146ef07ab966
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 06:07:52 GMT
+      - Fri, 13 Nov 2020 20:37:29 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -185,7 +151,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '3328'
+      - '428'
     status:
       code: 200
       message: OK

@@ -27,9 +27,9 @@ from ._response_handlers import (
     language_result,
     pii_entities_result,
     healthcare_paged_result,
-    analyze_paged_result
-)
-from ._helpers import _get_deserialize
+    analyze_paged_result,
+    _get_deserialize
+) 
 from ._models import (
     EntitiesRecognitionTask,
     PiiEntitiesRecognitionTask,
@@ -425,9 +425,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_recognize_healthcare_entities.py
-                :start-after: [START recognize_healthcare_entities]
-                :end-before: [END recognize_healthcare_entities]
+            .. literalinclude:: ../samples/sample_analyze_healthcare.py
+                :start-after: [START analyze_healthcare]
+                :end-before: [END recognize_healthcare]
                 :language: python
                 :dedent: 8
                 :caption: Recognize healthcare entities in a batch of documents.
@@ -448,7 +448,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=LROBasePolling(
+                polling=TextAnalyticsLROPoller(
                     timeout=polling_interval, 
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
@@ -457,6 +457,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
+        
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_health'" in str(error):
+                raise ValueError(
+                    "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview and up"
+                )
+            raise error
         
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -481,7 +488,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         job_id = urlparse(operation_location).path.split("/")[-1]
 
         try:
-            return self._client.begin_cancel_health_job(job_id)
+            return self._client.begin_cancel_health_job(job_id, polling=TextAnalyticsLROPoller())
 
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -639,9 +646,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _analyze_result_callback(self, doc_id_order, raw_response, _, headers):
+    def _analyze_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
         analyze_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, raw_response)
-        return analyze_paged_result(doc_id_order, self._client.analyze_status, raw_response, analyze_result, headers)
+        return analyze_paged_result(doc_id_order, self._client.analyze_status, raw_response, analyze_result, headers, show_stats=show_stats)
 
     @distributed_trace
     def begin_analyze(  # type: ignore
@@ -683,9 +690,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze_text.py
-                :start-after: [START analyze_text]
-                :end-before: [END analyze_text]
+            .. literalinclude:: ../samples/sample_analyze.py
+                :start-after: [START analyze]
+                :end-before: [END analyze]
                 :language: python
                 :dedent: 8
                 :caption: Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
@@ -714,13 +721,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
             return self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order)),
+                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=TextAnalyticsLROPoller(timeout=polling_interval, **kwargs),
                 **kwargs
             )
 
-        except NameError:
-            raise NotImplementedError("Service method 'begin_analyze' is only available for API versions v3.1-preview.3 and up.")
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
+                raise ValueError(
+                    "'begin_analyze' endpoint is only available for API version v3.1-preview and up"
+                )
+            raise error
         
         except HttpResponseError as error:
             process_http_response_error(error)

@@ -21,23 +21,7 @@ interactions:
       "hello world", "language": "en"}, {"id": "21", "text": "hello world", "language":
       "en"}, {"id": "22", "text": "hello world", "language": "en"}, {"id": "23", "text":
       "hello world", "language": "en"}, {"id": "24", "text": "hello world", "language":
-      "en"}, {"id": "25", "text": "hello world", "language": "en"}, {"id": "26", "text":
-      "hello world", "language": "en"}, {"id": "27", "text": "hello world", "language":
-      "en"}, {"id": "28", "text": "hello world", "language": "en"}, {"id": "29", "text":
-      "hello world", "language": "en"}, {"id": "30", "text": "hello world", "language":
-      "en"}, {"id": "31", "text": "hello world", "language": "en"}, {"id": "32", "text":
-      "hello world", "language": "en"}, {"id": "33", "text": "hello world", "language":
-      "en"}, {"id": "34", "text": "hello world", "language": "en"}, {"id": "35", "text":
-      "hello world", "language": "en"}, {"id": "36", "text": "hello world", "language":
-      "en"}, {"id": "37", "text": "hello world", "language": "en"}, {"id": "38", "text":
-      "hello world", "language": "en"}, {"id": "39", "text": "hello world", "language":
-      "en"}, {"id": "40", "text": "hello world", "language": "en"}, {"id": "41", "text":
-      "hello world", "language": "en"}, {"id": "42", "text": "hello world", "language":
-      "en"}, {"id": "43", "text": "hello world", "language": "en"}, {"id": "44", "text":
-      "hello world", "language": "en"}, {"id": "45", "text": "hello world", "language":
-      "en"}, {"id": "46", "text": "hello world", "language": "en"}, {"id": "47", "text":
-      "hello world", "language": "en"}, {"id": "48", "text": "hello world", "language":
-      "en"}, {"id": "49", "text": "hello world", "language": "en"}]}}'
+      "en"}]}}'
     headers:
       Accept:
       - application/json, text/json
@@ -46,7 +30,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3085'
+      - '1710'
       Content-Type:
       - application/json
       User-Agent:
@@ -55,15 +39,14 @@ interactions:
     uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
-      string: '{"error":{"code":"InvalidArgument","message":"Value cannot be null.\nParameter
-        name: blobName"}}'
+      string: ''
     headers:
       apim-request-id:
-      - df6c4cdd-a5fa-432e-9f8d-4cf94fbc4f2a
-      content-type:
-      - application/json; charset=utf-8
+      - 65e31c18-09dc-45ea-9eeb-37f72217ea3f
       date:
-      - Wed, 11 Nov 2020 00:50:30 GMT
+      - Fri, 13 Nov 2020 20:55:40 GMT
+      operation-location:
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -71,8 +54,157 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '7'
+      - '305'
     status:
-      code: 400
-      message: Bad Request
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000","lastUpdateDateTime":"2020-11-13T20:55:42Z","createdDateTime":"2020-11-13T20:55:40Z","expirationDateTime":"2020-11-14T20:55:40Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:55:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"id":"0","keyPhrases":["world"],"warnings":[]},{"id":"1","keyPhrases":["world"],"warnings":[]},{"id":"2","keyPhrases":["world"],"warnings":[]},{"id":"3","keyPhrases":["world"],"warnings":[]},{"id":"4","keyPhrases":["world"],"warnings":[]},{"id":"5","keyPhrases":["world"],"warnings":[]},{"id":"6","keyPhrases":["world"],"warnings":[]},{"id":"7","keyPhrases":["world"],"warnings":[]},{"id":"8","keyPhrases":["world"],"warnings":[]},{"id":"9","keyPhrases":["world"],"warnings":[]},{"id":"10","keyPhrases":["world"],"warnings":[]},{"id":"11","keyPhrases":["world"],"warnings":[]},{"id":"12","keyPhrases":["world"],"warnings":[]},{"id":"13","keyPhrases":["world"],"warnings":[]},{"id":"14","keyPhrases":["world"],"warnings":[]},{"id":"15","keyPhrases":["world"],"warnings":[]},{"id":"16","keyPhrases":["world"],"warnings":[]},{"id":"17","keyPhrases":["world"],"warnings":[]},{"id":"18","keyPhrases":["world"],"warnings":[]},{"id":"19","keyPhrases":["world"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01","@nextLink":"http://svc--textanalyticsdispatcher.text-analytics.svc.cluster.local/text/analytics/v3.1-preview.3/jobs/00e61766-a6b5-496f-9167-e9a460249ba9?$skip=20&$top=5"}}]},"nextLink":"https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000?$skip=20&$top=20"}'
+    headers:
+      apim-request-id:
+      - b3c9a8c7-6028-470a-b1fe-292b00dd0410
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:56:11 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '507'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000","lastUpdateDateTime":"2020-11-13T20:55:42Z","createdDateTime":"2020-11-13T20:55:40Z","expirationDateTime":"2020-11-14T20:55:40Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:55:42Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"id":"0","keyPhrases":["world"],"warnings":[]},{"id":"1","keyPhrases":["world"],"warnings":[]},{"id":"2","keyPhrases":["world"],"warnings":[]},{"id":"3","keyPhrases":["world"],"warnings":[]},{"id":"4","keyPhrases":["world"],"warnings":[]},{"id":"5","keyPhrases":["world"],"warnings":[]},{"id":"6","keyPhrases":["world"],"warnings":[]},{"id":"7","keyPhrases":["world"],"warnings":[]},{"id":"8","keyPhrases":["world"],"warnings":[]},{"id":"9","keyPhrases":["world"],"warnings":[]},{"id":"10","keyPhrases":["world"],"warnings":[]},{"id":"11","keyPhrases":["world"],"warnings":[]},{"id":"12","keyPhrases":["world"],"warnings":[]},{"id":"13","keyPhrases":["world"],"warnings":[]},{"id":"14","keyPhrases":["world"],"warnings":[]},{"id":"15","keyPhrases":["world"],"warnings":[]},{"id":"16","keyPhrases":["world"],"warnings":[]},{"id":"17","keyPhrases":["world"],"warnings":[]},{"id":"18","keyPhrases":["world"],"warnings":[]},{"id":"19","keyPhrases":["world"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01","@nextLink":"http://svc--textanalyticsdispatcher.text-analytics.svc.cluster.local/text/analytics/v3.1-preview.3/jobs/00e61766-a6b5-496f-9167-e9a460249ba9?$skip=20&$top=5"}}]},"nextLink":"https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000?$skip=20&$top=20"}'
+    headers:
+      apim-request-id:
+      - a2d74701-bda0-4db7-87bd-def68ec5beb3
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:56:41 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '524'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000
+  response:
+    body:
+      string: '{"jobId":"57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000","lastUpdateDateTime":"2020-11-13T20:55:42Z","createdDateTime":"2020-11-13T20:55:40Z","expirationDateTime":"2020-11-14T20:55:40Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:55:42Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"id":"0","entities":[],"warnings":[]},{"id":"1","entities":[],"warnings":[]},{"id":"2","entities":[],"warnings":[]},{"id":"3","entities":[],"warnings":[]},{"id":"4","entities":[],"warnings":[]},{"id":"5","entities":[],"warnings":[]},{"id":"6","entities":[],"warnings":[]},{"id":"7","entities":[],"warnings":[]},{"id":"8","entities":[],"warnings":[]},{"id":"9","entities":[],"warnings":[]},{"id":"10","entities":[],"warnings":[]},{"id":"11","entities":[],"warnings":[]},{"id":"12","entities":[],"warnings":[]},{"id":"13","entities":[],"warnings":[]},{"id":"14","entities":[],"warnings":[]},{"id":"15","entities":[],"warnings":[]},{"id":"16","entities":[],"warnings":[]},{"id":"17","entities":[],"warnings":[]},{"id":"18","entities":[],"warnings":[]},{"id":"19","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01","@nextLink":"http://svc--textanalyticsdispatcher.text-analytics.svc.cluster.local/text/analytics/v3.1-preview.3/jobs/72e5490a-a0c9-4f86-811e-38dd1b6795f7?$skip=20&$top=5"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"redactedText":"hello
+        world","id":"0","entities":[],"warnings":[]},{"redactedText":"hello world","id":"1","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"2","entities":[],"warnings":[]},{"redactedText":"hello world","id":"3","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"4","entities":[],"warnings":[]},{"redactedText":"hello world","id":"5","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"6","entities":[],"warnings":[]},{"redactedText":"hello world","id":"7","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"8","entities":[],"warnings":[]},{"redactedText":"hello world","id":"9","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"10","entities":[],"warnings":[]},{"redactedText":"hello world","id":"11","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"12","entities":[],"warnings":[]},{"redactedText":"hello world","id":"13","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"14","entities":[],"warnings":[]},{"redactedText":"hello world","id":"15","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"16","entities":[],"warnings":[]},{"redactedText":"hello world","id":"17","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"18","entities":[],"warnings":[]},{"redactedText":"hello world","id":"19","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01","@nextLink":"http://svc--textanalyticsdispatcher.text-analytics.svc.cluster.local/text/analytics/v3.1-preview.3/jobs/0affd92f-3530-4d0b-8629-a37582db79af?$skip=20&$top=5"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"id":"0","keyPhrases":["world"],"warnings":[]},{"id":"1","keyPhrases":["world"],"warnings":[]},{"id":"2","keyPhrases":["world"],"warnings":[]},{"id":"3","keyPhrases":["world"],"warnings":[]},{"id":"4","keyPhrases":["world"],"warnings":[]},{"id":"5","keyPhrases":["world"],"warnings":[]},{"id":"6","keyPhrases":["world"],"warnings":[]},{"id":"7","keyPhrases":["world"],"warnings":[]},{"id":"8","keyPhrases":["world"],"warnings":[]},{"id":"9","keyPhrases":["world"],"warnings":[]},{"id":"10","keyPhrases":["world"],"warnings":[]},{"id":"11","keyPhrases":["world"],"warnings":[]},{"id":"12","keyPhrases":["world"],"warnings":[]},{"id":"13","keyPhrases":["world"],"warnings":[]},{"id":"14","keyPhrases":["world"],"warnings":[]},{"id":"15","keyPhrases":["world"],"warnings":[]},{"id":"16","keyPhrases":["world"],"warnings":[]},{"id":"17","keyPhrases":["world"],"warnings":[]},{"id":"18","keyPhrases":["world"],"warnings":[]},{"id":"19","keyPhrases":["world"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01","@nextLink":"http://svc--textanalyticsdispatcher.text-analytics.svc.cluster.local/text/analytics/v3.1-preview.3/jobs/00e61766-a6b5-496f-9167-e9a460249ba9?$skip=20&$top=5"}}]},"nextLink":"https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000?$skip=20&$top=20"}'
+    headers:
+      apim-request-id:
+      - 206f80e7-3b6a-4ef3-aabb-69f1deb7f55f
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:57:12 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '1080'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000?showStats=true&$top=20&$skip=20
+  response:
+    body:
+      string: '{"jobId":"57c75c72-a735-4a5c-b181-fb883d503eb5_637408224000000000","lastUpdateDateTime":"2020-11-13T20:55:42Z","createdDateTime":"2020-11-13T20:55:40Z","expirationDateTime":"2020-11-14T20:55:40Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:55:42Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"id":"20","entities":[],"warnings":[]},{"id":"21","entities":[],"warnings":[]},{"id":"22","entities":[],"warnings":[]},{"id":"23","entities":[],"warnings":[]},{"id":"24","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"redactedText":"hello
+        world","id":"20","entities":[],"warnings":[]},{"redactedText":"hello world","id":"21","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"22","entities":[],"warnings":[]},{"redactedText":"hello world","id":"23","entities":[],"warnings":[]},{"redactedText":"hello
+        world","id":"24","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T20:55:42.4302942Z","results":{"inTerminalState":true,"documents":[{"id":"20","keyPhrases":["world"],"warnings":[]},{"id":"21","keyPhrases":["world"],"warnings":[]},{"id":"22","keyPhrases":["world"],"warnings":[]},{"id":"23","keyPhrases":["world"],"warnings":[]},{"id":"24","keyPhrases":["world"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id:
+      - f82fdfb2-453c-4fed-ab7e-da5395f92fe8
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 20:57:13 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '488'
+    status:
+      code: 200
+      message: OK
 version: 1

@@ -1,17 +1,35 @@
-from azure.core.paging import ItemPaged
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+from azure.core.paging import ItemPaged, PageIterator
 from azure.core.async_paging import AsyncItemPaged
 
-class AnalyzeHealthcareResult(ItemPaged):
-    def __init__(self, model_version, statistics, *args, **kwargs):
-        super(AnalyzeHealthcareResult, self).__init__(*args, **kwargs)
 
-        self.model_version = model_version
-        self.statistics = statistics
+class AnalyzeHealthcareResult(ItemPaged):
+    def __init__(self, *args, **kwargs):
+        self.model_version = kwargs.pop('model_version')
+        self.statistics = kwargs.pop('statistics')
+        super(AnalyzeHealthcareResult, self).__init__(*args, **kwargs)
 
 
 class AnalyzeHealthcareResultAsync(AsyncItemPaged):
-    def __init__(self, model_version, statistics, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        self.model_version = kwargs.pop('model_version')
+        self.statistics = kwargs.pop('statistics')
         super(AnalyzeHealthcareResultAsync, self).__init__(*args, **kwargs)
 
-        self.model_version = model_version
-        self.statistics = statistics
+
+class AnalyzeResult(ItemPaged):
+    def __init__(self, *args, **kwargs):
+        self.statistics = kwargs.pop('statistics')
+        super(AnalyzeResult, self).__init__(*args, **kwargs)
+
+
+class AnalyzeResultAsync(AsyncItemPaged):
+    def __init__(self, *args, **kwargs):
+        self.statistics = kwargs.pop('statistics')
+        super(AnalyzeResultAsync, self).__init__(*args, **kwargs)
+

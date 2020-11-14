@@ -22,11 +22,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 21875966-7423-4358-bf09-daf6ef363219
+      - 0a325d22-9a13-47cd-9da5-6b600cc6e90f
       date:
-      - Tue, 10 Nov 2020 01:27:43 GMT
+      - Sat, 14 Nov 2020 00:33:51 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/f0ad09b1-bb2f-4665-bced-f4694164c853
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/c9ddfdc7-0388-4d63-b933-6d63a0b8131f
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '69'
+      - '80'
     status:
       code: 202
       message: Accepted
@@ -50,19 +50,19 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/f0ad09b1-bb2f-4665-bced-f4694164c853
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/c9ddfdc7-0388-4d63-b933-6d63a0b8131f
   response:
     body:
-      string: '{"jobId":"f0ad09b1-bb2f-4665-bced-f4694164c853","lastUpdateDateTime":"2020-11-10T01:27:53Z","createdDateTime":"2020-11-10T01:27:44Z","expirationDateTime":"2020-11-11T01:27:44Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"c9ddfdc7-0388-4d63-b933-6d63a0b8131f","lastUpdateDateTime":"2020-11-14T00:33:51Z","createdDateTime":"2020-11-14T00:33:51Z","expirationDateTime":"2020-11-15T00:33:51Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"0","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}}],"modelVersion":"2020-09-03"}}'
     headers:
       apim-request-id:
-      - 28e26cfa-032b-4ea9-9e3e-10eac2fec3b9
+      - df128fea-6ae6-4fe1-ae97-c053453f50a4
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 01:28:14 GMT
+      - Sat, 14 Nov 2020 00:34:20 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -70,7 +70,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '54'
+      - '55'
     status:
       code: 200
       message: OK

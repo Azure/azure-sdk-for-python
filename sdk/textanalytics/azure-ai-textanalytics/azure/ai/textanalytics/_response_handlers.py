@@ -5,6 +5,7 @@
 # ------------------------------------
 
 import json
+import asyncio
 import functools
 from urllib.parse import urlparse, parse_qsl, urlencode
 from azure.core.exceptions import (
@@ -39,7 +40,7 @@ from ._models import (
     KeyPhraseExtractionTaskResult,
     RequestStatistics
 )
-from ._paging import AnalyzeHealthcareResult
+from ._paging import AnalyzeHealthcareResult, AnalyzeResult
 
 class CSODataV4Format(ODataV4Format):
 
@@ -82,8 +83,8 @@ def order_lro_results(doc_id_order, combined):
     :return: In order list of results | errors (if any)
     """
 
-    mapping = {item.id: item for item in combined}
-    ordered_response = [mapping[i] for i in doc_id_order]
+    mapping = [(item.id, item) for item in combined]
+    ordered_response = [i[1] for i in sorted(mapping, key=lambda m: doc_id_order.index(m[0]))]
     return ordered_response
 
 
@@ -225,7 +226,7 @@ def analyze_extract_page_data(doc_id_order, obj, response_headers, analyze_job_s
     return analyze_job_state.next_link, [analyze_result(doc_id_order, obj, response_headers, analyze_job_state.tasks)]
 
 
-def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_stats=False, skip=None, top=None):
+def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_stats=False):
     if continuation_token is None:
         return first_page
 
@@ -240,26 +241,25 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
     query_params = dict(parse_qsl(parsed_url.query.replace("$", "")))
     query_params["show_stats"] = show_stats
 
-    if isinstance(skip, int) and skip >= 0:
-        query_params["skip"] = skip
-
-    if isinstance(top, int) and top >= 0:
-        query_params["top"] = top
-
     return lro_status_callback(job_id, **query_params)
 
 
 def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False):
     return AnalyzeHealthcareResult(
-        obj.results.model_version,
-        RequestStatistics._from_generated(obj.results.statistics) if show_stats else None,
         functools.partial(lro_get_next_page, health_status_callback, obj, show_stats=show_stats),
-        functools.partial(healthcare_extract_page_data, doc_id_order, obj, response_headers)
+        functools.partial(healthcare_extract_page_data, doc_id_order, obj, response_headers),
+        model_version=obj.results.model_version,
+        statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None
     )
 
-
-def analyze_paged_result(doc_id_order, analyze_status_callback, response, obj, response_headers):
-    return ItemPaged(
-        functools.partial(lro_get_next_page, analyze_status_callback, obj),
-        functools.partial(analyze_extract_page_data, doc_id_order, obj, response_headers)
+def analyze_paged_result(doc_id_order, analyze_status_callback, response, obj, response_headers, show_stats=False):
+    return AnalyzeResult(
+        functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
+        functools.partial(analyze_extract_page_data, doc_id_order, obj, response_headers),
+        statistics=RequestStatistics._from_generated(obj.statistics) if show_stats and obj.statistics is not None else None
     )
+
+def _get_deserialize():
+    from ._generated.v3_1_preview_3 import TextAnalyticsClient
+    return TextAnalyticsClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
+

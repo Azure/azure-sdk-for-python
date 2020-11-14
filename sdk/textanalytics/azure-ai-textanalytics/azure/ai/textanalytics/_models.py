@@ -387,7 +387,7 @@ class HealthcareEntity(DictMixin):
         :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
             entity.
         :ivar links: A collection of entity references in known data sources.
-        vartype links: list[~azure.ai.textanalytics.HealthcareEntityLink]
+        :vartype links: list[~azure.ai.textanalytics.HealthcareEntityLink]
     """
 
     def __init__(self, **kwargs):
@@ -432,10 +432,10 @@ class HealthcareRelation(DictMixin):
     :ivar bool is_bidirectional: Boolean value indicating that the relationship between the two entities is
         bidirectional.  If true the relation between the entities is bidirectional, otherwise directionality
         is source to target.
-    ivar source: A reference to an extracted Healthcare entity representing the source of the relation.
-    vartype source: ~azure.ai.textanalytics.HealthcareEntity
-    ivar target: A reference to an extracted Healthcare entity representing the target of the relation.
-    vartype target: ~azure.ai.textanalytics.HealthcareEntity
+    :ivar source: A reference to an extracted Healthcare entity representing the source of the relation.
+    :vartype source: ~azure.ai.textanalytics.HealthcareEntity
+    :ivar target: A reference to an extracted Healthcare entity representing the target of the relation.
+    :vartype target: ~azure.ai.textanalytics.HealthcareEntity
     """
 
     def __init__(self, **kwargs):
@@ -1340,7 +1340,7 @@ class RequestStatistics(DictMixin):
             transactions_count=request_statistics.transactions_count
         )
 
-    def __repr__(self, **kwargs):  # TODO: why is this never called?
+    def __repr__(self, **kwargs):
         return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, \
             transactions_count={}".format(
                 self.documents_count,

@@ -25,7 +25,8 @@ from .._response_handlers import (
     key_phrases_result,
     sentiment_result,
     language_result,
-    pii_entities_result
+    pii_entities_result,
+    _get_deserialize
 )
 from .._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
@@ -40,7 +41,6 @@ from .._models import (
     RecognizePiiEntitiesResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsAsyncLROPoller
-from .._helpers import _get_deserialize
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -573,9 +573,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_health.py
-                :start-after: [START health]
-                :end-before: [END health]
+            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_async.py
+                :start-after: [START analyze_healthcare_async]
+                :end-before: [END analyze_healthcare_async]
                 :language: python
                 :dedent: 8
                 :caption: Analyze healthcare entities in a batch of documents.
@@ -606,10 +606,17 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs
             )
         
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_health'" in str(error):
+                raise ValueError(
+                    "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview and up"
+                )
+            raise error
+        
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    async def begin_cancel_health_operation(
+    async def begin_cancel_analyze_healthcare(
         self,
         poller,  # type: AsyncLROPoller[None]
         **kwargs
@@ -629,14 +636,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         job_id = urlparse(operation_location).path.split("/")[-1]
 
         try:
-            return await self._client.begin_cancel_health_job(job_id)
+            return await self._client.begin_cancel_health_job(job_id, polling=TextAnalyticsAsyncLROPoller())
 
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def _analyze_result_callback(self, raw_response, _, headers):
-        analyze_result = self._deserialize(self._client.models().AnalyzeJobState, raw_response)
-        return analyze_paged_result(self._client.analyze_status, raw_response, analyze_result, headers)
+    def _analyze_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
+        analyze_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, raw_response)
+        return analyze_paged_result(doc_id_order, self._client.analyze_status, raw_response, analyze_result, headers, show_stats=show_stats)
 
     @distributed_trace_async
     async def begin_analyze(  # type: ignore
@@ -680,9 +687,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze_text.py
-                :start-after: [START analyze_text]
-                :end-before: [END analyze_text]
+            .. literalinclude:: ../samples/async_samples/sample_analyze_async.py
+                :start-after: [START analyze_async]
+                :end-before: [END analyze_async]
                 :language: python
                 :dedent: 8
                 :caption: Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
@@ -696,12 +703,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
+        doc_id_order = [doc.get("id") for doc in docs.documents]
+
         try:
             analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
-                entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks],
-                entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks],
-                key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks]
-                # TODO: add custom task types later
+                entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks] if entities_recognition_tasks else [],
+                entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks] if pii_entities_recognition_tasks else [],
+                key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks] if key_phrase_extraction_tasks else []
             )
             analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
                 display_name=display_name,
@@ -710,13 +718,22 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             )
             return await self._client.begin_analyze(
                 body=analyze_body,
-                cls=kwargs.pop("cls", self._analyze_result_callback),
-                polling=AsyncLROBasePolling(timeout=polling_interval, **kwargs),
+                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
+                polling=TextAnalyticsAsyncLROPoller(
+                    timeout=polling_interval, 
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
                 **kwargs
             )
 
-        except NameError:
-            raise NotImplementedError("Service method 'begin_analyze_text' is only available for API versions v3.2-preview.1 and up.")
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
+                raise ValueError(
+                    "'begin_analyze' endpoint is only available for API version v3.1-preview and up"
+                )
+            raise error
         
         except HttpResponseError as error:
             process_http_response_error(error)

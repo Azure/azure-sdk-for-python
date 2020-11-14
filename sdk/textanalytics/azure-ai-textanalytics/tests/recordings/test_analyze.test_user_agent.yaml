@@ -28,11 +28,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - e605d50f-1aa5-4f61-830f-66d19a2a74b9
+      - dee2c904-a4c1-4a65-9f43-d4437af79879
       date:
-      - Tue, 10 Nov 2020 21:38:44 GMT
+      - Fri, 13 Nov 2020 21:15:48 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -40,7 +40,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '316'
+      - '285'
     status:
       code: 202
       message: Accepted
@@ -56,18 +56,18 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000
   response:
     body:
-      string: '{"jobId":"7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000","lastUpdateDateTime":"2020-11-10T21:38:45Z","createdDateTime":"2020-11-10T21:38:43Z","expirationDateTime":"2020-11-11T21:38:43Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T21:38:45Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000","lastUpdateDateTime":"2020-11-13T21:15:49Z","createdDateTime":"2020-11-13T21:15:48Z","expirationDateTime":"2020-11-14T21:15:48Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:15:49Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
       apim-request-id:
-      - 637d123f-eb5b-4baf-b562-8f8087b10828
+      - 6dfc4bd1-f146-4d4b-9168-25d5066424ca
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 21:39:14 GMT
+      - Fri, 13 Nov 2020 21:16:18 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -75,7 +75,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '398'
+      - '374'
     status:
       code: 200
       message: OK
@@ -91,18 +91,18 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000
   response:
     body:
-      string: '{"jobId":"7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000","lastUpdateDateTime":"2020-11-10T21:38:45Z","createdDateTime":"2020-11-10T21:38:43Z","expirationDateTime":"2020-11-11T21:38:43Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T21:38:45Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000","lastUpdateDateTime":"2020-11-13T21:15:49Z","createdDateTime":"2020-11-13T21:15:48Z","expirationDateTime":"2020-11-14T21:15:48Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:15:49Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
       apim-request-id:
-      - 8a416c89-1a6f-48e8-a778-2014c49e8102
+      - 76ceef04-c89d-4620-9461-88ade00a6e26
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 21:39:45 GMT
+      - Fri, 13 Nov 2020 21:16:50 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -110,7 +110,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '365'
+      - '375'
     status:
       code: 200
       message: OK
@@ -126,18 +126,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000
   response:
     body:
-      string: '{"jobId":"7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000","lastUpdateDateTime":"2020-11-10T21:38:45Z","createdDateTime":"2020-11-10T21:38:43Z","expirationDateTime":"2020-11-11T21:38:43Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T21:38:45Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000","lastUpdateDateTime":"2020-11-13T21:15:49Z","createdDateTime":"2020-11-13T21:15:48Z","expirationDateTime":"2020-11-14T21:15:48Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:15:49Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"redactedText":"I
+        will go to the park.","id":"1","entities":[],"warnings":[]},{"redactedText":"I
+        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]},{"redactedText":"The
+        restaurant had really good food.","id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
       apim-request-id:
-      - 8b08077c-d9f4-4db1-9559-f746f4e73027
+      - 8b277960-7961-498f-bb4e-5d3028464603
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 21:40:15 GMT
+      - Fri, 13 Nov 2020 21:17:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -145,7 +148,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '256'
+      - '574'
     status:
       code: 200
       message: OK
@@ -161,18 +164,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000
   response:
     body:
-      string: '{"jobId":"7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000","lastUpdateDateTime":"2020-11-10T21:38:45Z","createdDateTime":"2020-11-10T21:38:43Z","expirationDateTime":"2020-11-11T21:38:43Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T21:38:45Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000","lastUpdateDateTime":"2020-11-13T21:15:49Z","createdDateTime":"2020-11-13T21:15:48Z","expirationDateTime":"2020-11-14T21:15:48Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:15:49Z"},"completed":2,"failed":0,"inProgress":1,"total":3,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"redactedText":"I
+        will go to the park.","id":"1","entities":[],"warnings":[]},{"redactedText":"I
+        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]},{"redactedText":"The
+        restaurant had really good food.","id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
       apim-request-id:
-      - bfa2ff79-76f2-458d-b3c2-9a2ace6fe2e3
+      - dce6aa2b-c62f-4550-bc04-3807046a5d8e
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 21:40:46 GMT
+      - Fri, 13 Nov 2020 21:17:51 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -180,7 +186,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '316'
+      - '429'
     status:
       code: 200
       message: OK
@@ -196,18 +202,21 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000
   response:
     body:
-      string: '{"jobId":"7cadfb5a-44a0-4ab9-879c-b5f941f4c2c1_637405632000000000","lastUpdateDateTime":"2020-11-10T21:38:45Z","createdDateTime":"2020-11-10T21:38:43Z","expirationDateTime":"2020-11-11T21:38:43Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-10T21:38:45Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"redactedText":"","id":"1","entities":[],"warnings":[]},{"redactedText":"","id":"2","entities":[],"warnings":[]},{"redactedText":"","id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-10T21:38:45.0904527Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
+      string: '{"jobId":"e3181f08-1089-4115-98fd-4164c3f65078_637408224000000000","lastUpdateDateTime":"2020-11-13T21:15:49Z","createdDateTime":"2020-11-13T21:15:48Z","expirationDateTime":"2020-11-14T21:15:48Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:15:49Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"id":"1","entities":[{"text":"park","category":"Location","offset":17,"length":4,"confidenceScore":0.83}],"warnings":[]},{"id":"2","entities":[{"text":"hotel","category":"Location","offset":19,"length":5,"confidenceScore":0.76}],"warnings":[]},{"id":"3","entities":[{"text":"restaurant","category":"Location","subcategory":"Structural","offset":4,"length":10,"confidenceScore":0.7}],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"redactedText":"I
+        will go to the park.","id":"1","entities":[],"warnings":[]},{"redactedText":"I
+        did not like the hotel we stayed at.","id":"2","entities":[],"warnings":[]},{"redactedText":"The
+        restaurant had really good food.","id":"3","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T21:15:49.6152426Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["park"],"warnings":[]},{"id":"2","keyPhrases":["hotel"],"warnings":[]},{"id":"3","keyPhrases":["restaurant","good
         food"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
       apim-request-id:
-      - f3300d82-a1f9-45a6-92e8-e7441614479f
+      - 4127a04f-7914-4fad-bda1-e7a57bf719a9
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 21:41:17 GMT
+      - Fri, 13 Nov 2020 21:18:22 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -215,7 +224,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '361'
+      - '585'
     status:
       code: 200
       message: OK

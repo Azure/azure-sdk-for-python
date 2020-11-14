@@ -16,13 +16,13 @@ interactions:
     body:
       string: ''
     headers:
-      apim-request-id: 462b41ec-51b1-4ba1-911a-907a241ea432
-      date: Tue, 10 Nov 2020 01:59:22 GMT
-      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/be5ab1cc-b678-4303-8d65-9974eb1d4b53
+      apim-request-id: 9f9c54ae-ea09-4c90-8d1a-3158106ffacb
+      date: Sat, 14 Nov 2020 00:51:41 GMT
+      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/0e2e748d-f3c0-43d4-b634-cce7279b4714
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '74'
+      x-envoy-upstream-service-time: '91'
     status:
       code: 202
       message: Accepted
@@ -33,22 +33,22 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/be5ab1cc-b678-4303-8d65-9974eb1d4b53
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/0e2e748d-f3c0-43d4-b634-cce7279b4714
   response:
     body:
-      string: '{"jobId":"be5ab1cc-b678-4303-8d65-9974eb1d4b53","lastUpdateDateTime":"2020-11-10T01:59:25Z","createdDateTime":"2020-11-10T01:59:23Z","expirationDateTime":"2020-11-11T01:59:23Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"0e2e748d-f3c0-43d4-b634-cce7279b4714","lastUpdateDateTime":"2020-11-14T00:51:42Z","createdDateTime":"2020-11-14T00:51:42Z","expirationDateTime":"2020-11-15T00:51:42Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-09-03"}}'
     headers:
-      apim-request-id: b56dde62-abaa-470f-9198-f7f3ab460541
+      apim-request-id: 332a6eeb-0420-4454-9207-fcfdafd2f825
       content-type: application/json; charset=utf-8
-      date: Tue, 10 Nov 2020 01:59:53 GMT
+      date: Sat, 14 Nov 2020 00:52:13 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '56'
+      x-envoy-upstream-service-time: '139'
     status:
       code: 200
       message: OK
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/be5ab1cc-b678-4303-8d65-9974eb1d4b53
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/0e2e748d-f3c0-43d4-b634-cce7279b4714
 version: 1

@@ -1,0 +1,156 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [{"parameters":
+      {"model-version": "latest", "stringIndexType": "TextElements_v8"}}], "keyPhraseExtractionTasks":
+      []}, "analysisInput": {"documents": [{"id": "1", "text": "My SSN is 859-98-0987.",
+      "language": "en"}, {"id": "2", "text": "Your ABA number - 111000025 - is the
+      first 9 digits in the lower left hand corner of your personal check.", "language":
+      "en"}, {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?", "language":
+      "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '521'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 1bd03055-e0b0-43b5-a62e-770433b9dd78
+      date: Fri, 13 Nov 2020 21:39:10 GMT
+      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '210'
+    status:
+      code: 202
+      message: Accepted
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000","lastUpdateDateTime":"2020-11-13T21:39:10Z","createdDateTime":"2020-11-13T21:39:09Z","expirationDateTime":"2020-11-14T21:39:09Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:39:10Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id: 27a2c85b-e55b-477d-ab1e-0465f267cb45
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 21:39:40 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '169'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000","lastUpdateDateTime":"2020-11-13T21:39:10Z","createdDateTime":"2020-11-13T21:39:09Z","expirationDateTime":"2020-11-14T21:39:09Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:39:10Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id: e270aa5d-4b78-403c-b548-54a49a787b93
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 21:40:11 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '105'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000","lastUpdateDateTime":"2020-11-13T21:39:10Z","createdDateTime":"2020-11-13T21:39:09Z","expirationDateTime":"2020-11-14T21:39:09Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:39:10Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id: fd618dbf-30be-4cee-978f-2b4a78b66fc5
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 21:40:42 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '228'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000","lastUpdateDateTime":"2020-11-13T21:39:10Z","createdDateTime":"2020-11-13T21:39:09Z","expirationDateTime":"2020-11-14T21:39:09Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:39:10Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id: c9623fb3-0a95-4f8b-a8a8-e0fb95e0019d
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 21:41:13 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '115'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000","lastUpdateDateTime":"2020-11-13T21:39:10Z","createdDateTime":"2020-11-13T21:39:09Z","expirationDateTime":"2020-11-14T21:39:09Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:39:10Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T21:39:10.4620315Z","results":{"inTerminalState":true,"documents":[{"redactedText":"My
+        SSN is ***********.","id":"1","entities":[{"text":"859-98-0987","category":"U.S.
+        Social Security Number (SSN)","offset":10,"length":11,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Your
+        ABA number - ********* - is the first 9 digits in the lower left hand corner
+        of your personal check.","id":"2","entities":[{"text":"111000025","category":"Phone
+        Number","offset":18,"length":9,"confidenceScore":0.8},{"text":"111000025","category":"ABA
+        Routing Number","offset":18,"length":9,"confidenceScore":0.75},{"text":"111000025","category":"New
+        Zealand Social Welfare Number","offset":18,"length":9,"confidenceScore":0.65},{"text":"111000025","category":"Portugal
+        Tax Identification Number","offset":18,"length":9,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Is
+        ************** your Brazilian CPF number?","id":"3","entities":[{"text":"998.214.865-68","category":"Brazil
+        CPF Number","offset":3,"length":14,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: f3fb01c7-46f0-4aa0-8b1b-0df8f60ccde3
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 21:41:45 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '358'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/d31bba45-2abc-4a50-a265-96f3d0a618e4_637408224000000000?showStats=True
+version: 1

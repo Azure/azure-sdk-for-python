@@ -24,6 +24,12 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
+V3_1_PREVIEW_client_kwargs = {
+    "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+    "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+    "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+}
+
 class TestHealth(TextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -140,13 +146,12 @@ class TestHealth(TextAnalyticsTest):
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_too_many_documents(self, client):
-        docs = list(itertools.repeat("input document", 1001))  # Maximum number of documents per request is 1000
+        docs = list(itertools.repeat("input document", 11))  # Maximum number of documents per request is 10
 
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_analyze_healthcare(docs)
+
         assert excinfo.value.status_code == 400
-        assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "Batch request contains too many records" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -172,9 +177,7 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_analyze_healthcare(docs)
-        assert excinfo.value.status_code == 413  # this will eventually be changed to 400 in the service
-        assert excinfo.value.error.code == "InvalidDocumentBatch"
-        assert "Request Payload sent is too large to be processed. Limit request size to: 524288" in str(excinfo.value)
+        assert excinfo.value.status_code == 413 
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -228,7 +231,7 @@ class TestHealth(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
-        "text_analytics_account_key": "xxxxxxxxxxxx",
+        "text_analytics_account_key": "xxxx",
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     def test_bad_credentials(self, client):
@@ -310,6 +313,10 @@ class TestHealth(TextAnalyticsTest):
         self.assertEqual(response.statistics.transactions_count, 4)
         self.assertEqual(response.statistics.valid_documents_count, 4)
         self.assertEqual(response.statistics.erroneous_documents_count, 1)
+
+        for doc in response:
+            if not doc.is_error:
+                self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -683,5 +690,53 @@ class TestHealth(TextAnalyticsTest):
         for (idx, doc) in enumerate(response):
             self.assertEqual(docs[idx]["id"], doc.id)
             self.assertIsNotNone(doc.statistics)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
+    def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
+        single_doc = "hello world"
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 9)))]
+        docs.append({"id": "9", "text": ""})
+        # Service now only accepts 10 documents for a job, and since the current default server-side value
+        # for records per page is 20, pagination logic will never be activated.  This is intended to change
+        # in the future but for now this test actually won't hit the pagination logic now.
+
+        result = client.begin_analyze_healthcare(docs, show_stats=True).result()
+        response = list(result)
+
+        self.assertEqual(len(docs), len(response))
+        self.assertIsNotNone(result.statistics)
+
+        for (idx, doc) in enumerate(response):
+            self.assertEqual(docs[idx]["id"], doc.id)
+
+            if doc.id == "9":
+                self.assertTrue(doc.is_error)
+            
+            else:
+                self.assertFalse(doc.is_error)
+                self.assertIsNotNone(doc.statistics)
+
+    @GlobalTextAnalyticsAccountPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
+    })
+    def test_cancellation(self, client):
+        single_doc = "hello world"
+        docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
+
+        poller = client.begin_analyze_healthcare(docs)
+        cancellation_result = client.begin_cancel_analyze_healthcare(poller).result()
+
+        self.assertIsNone(cancellation_result)
+
+        poller.wait()
+
 
 

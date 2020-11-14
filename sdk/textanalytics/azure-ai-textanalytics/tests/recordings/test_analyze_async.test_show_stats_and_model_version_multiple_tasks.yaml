@@ -1,0 +1,102 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "56", "text": ":)", "language": "en"},
+      {"id": "0", "text": ":(", "language": "en"}, {"id": "19", "text": ":P", "language":
+      "en"}, {"id": "1", "text": ":D", "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '527'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 8ce7ee57-c65d-4597-81c2-ddca42a76eca
+      date: Fri, 13 Nov 2020 22:21:37 GMT
+      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '31'
+    status:
+      code: 202
+      message: Accepted
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000","lastUpdateDateTime":"2020-11-13T22:21:38Z","createdDateTime":"2020-11-13T22:21:37Z","expirationDateTime":"2020-11-14T22:21:37Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T22:21:38Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T22:21:38.3949134Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 23ea2fa9-811d-481a-b410-77a0dcbb81f5
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 22:22:08 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '176'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000","lastUpdateDateTime":"2020-11-13T22:21:38Z","createdDateTime":"2020-11-13T22:21:37Z","expirationDateTime":"2020-11-14T22:21:37Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T22:21:38Z"},"completed":1,"failed":0,"inProgress":2,"total":3,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T22:21:38.3949134Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 81ff240a-d9b1-4822-aadd-1a2934370184
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 22:22:39 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '191'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000?showStats=True
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000","lastUpdateDateTime":"2020-11-13T22:21:38Z","createdDateTime":"2020-11-13T22:21:37Z","expirationDateTime":"2020-11-14T22:21:37Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T22:21:38Z"},"completed":3,"failed":0,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T22:21:38.3949134Z","results":{"inTerminalState":true,"documents":[{"id":"56","entities":[],"warnings":[]},{"id":"0","entities":[],"warnings":[]},{"id":"19","entities":[],"warnings":[]},{"id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-04-01"}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T22:21:38.3949134Z","results":{"inTerminalState":true,"documents":[{"redactedText":":)","id":"56","entities":[],"warnings":[]},{"redactedText":":(","id":"0","entities":[],"warnings":[]},{"redactedText":":P","id":"19","entities":[],"warnings":[]},{"redactedText":":D","id":"1","entities":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T22:21:38.3949134Z","results":{"inTerminalState":true,"documents":[{"id":"56","keyPhrases":[],"warnings":[]},{"id":"0","keyPhrases":[],"warnings":[]},{"id":"19","keyPhrases":[],"warnings":[]},{"id":"1","keyPhrases":[],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: 8b860509-59e4-42a9-936b-72c78fa7c7e8
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 22:23:10 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '619'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/536c9a92-48f6-4f86-bbbe-ca84ad2acab5_637408224000000000?showStats=True
+version: 1

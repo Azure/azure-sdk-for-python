@@ -1,16 +1,26 @@
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
+import asyncio
 import functools
 from urllib.parse import urlparse, parse_qsl
+from azure.core.paging import ItemPaged
 from azure.core.async_paging import AsyncItemPaged
 
 from ._models import RequestStatistics
-from ._paging import AnalyzeHealthcareResultAsync
+from ._paging import AnalyzeHealthcareResultAsync, AnalyzeResultAsync
 from ._response_handlers import healthcare_result, analyze_result
+
 
 async def healthcare_extract_page_data_async(doc_id_order, obj, response_headers, health_job_state):
     return health_job_state.next_link, healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True)
 
-async def analyze_extract_page_data_async(response, obj, response_headers, analyze_job_state):
-    return analyze_job_state.next_link, [analyze_result(response, obj, response_headers, analyze_job_state.tasks)]
+
+async def analyze_extract_page_data_async(doc_id_order, obj, response_headers, analyze_job_state):
+    return analyze_job_state.next_link, [analyze_result(doc_id_order, obj, response_headers, analyze_job_state.tasks)]
 
 
 async def lro_get_next_page_async(lro_status_callback, first_page, continuation_token, show_stats=False):
@@ -33,15 +43,16 @@ async def lro_get_next_page_async(lro_status_callback, first_page, continuation_
 
 def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False):
     return AnalyzeHealthcareResultAsync(
-        obj.results.model_version,
-        RequestStatistics._from_generated(obj.results.statistics) if show_stats else None,
         functools.partial(lro_get_next_page_async, health_status_callback, obj, show_stats=show_stats),
-        functools.partial(healthcare_extract_page_data_async, doc_id_order, obj, response_headers)
+        functools.partial(healthcare_extract_page_data_async, doc_id_order, obj, response_headers),
+        model_version=obj.results.model_version,
+        statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None
     )
 
 
-async def analyze_paged_result(analyze_status_callback, response, obj, response_headers):
-    return await AsyncItemPaged(
+def analyze_paged_result(doc_id_order, analyze_status_callback, response, obj, response_headers, show_stats=False):
+    return AnalyzeResultAsync(
         functools.partial(lro_get_next_page_async, analyze_status_callback, obj),
-        functools.partial(analyze_extract_page_data_async, response, obj, response_headers)
+        functools.partial(analyze_extract_page_data_async, doc_id_order, obj, response_headers),
+        statistics=RequestStatistics._from_generated(obj.statistics) if show_stats and obj.statistics is not None else None
     )

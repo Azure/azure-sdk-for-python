@@ -22,11 +22,11 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 4761f1ce-fca5-4236-8047-8a1fcfb2557f
+      - a2758e55-2839-40dd-8bb7-3d517cb386d4
       date:
-      - Tue, 10 Nov 2020 01:25:34 GMT
+      - Sat, 14 Nov 2020 00:31:44 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/30d84e70-8b50-45a3-ac0a-70906c874687
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/6780683f-729c-4078-8c5e-9249dfd551c3
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -34,7 +34,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '93'
+      - '105'
     status:
       code: 202
       message: Accepted
@@ -50,17 +50,17 @@ interactions:
       User-Agent:
       - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/30d84e70-8b50-45a3-ac0a-70906c874687
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/6780683f-729c-4078-8c5e-9249dfd551c3
   response:
     body:
-      string: '{"jobId":"30d84e70-8b50-45a3-ac0a-70906c874687","lastUpdateDateTime":"2020-11-10T01:25:38Z","createdDateTime":"2020-11-10T01:25:34Z","expirationDateTime":"2020-11-11T01:25:34Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"6780683f-729c-4078-8c5e-9249dfd551c3","lastUpdateDateTime":"2020-11-14T00:31:46Z","createdDateTime":"2020-11-14T00:31:44Z","expirationDateTime":"2020-11-15T00:31:44Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"1","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
     headers:
       apim-request-id:
-      - 9d033e8f-f25c-4b28-a8ad-c94134b3f593
+      - e004493b-5e52-416c-aa6a-bc064717dd35
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 10 Nov 2020 01:26:04 GMT
+      - Sat, 14 Nov 2020 00:32:14 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -68,7 +68,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '50'
+      - '43'
     status:
       code: 200
       message: OK
