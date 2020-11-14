@@ -27,15 +27,41 @@
 from .exceptions import (
     HttpResponseError, ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError, map_error
 )
-from .paging import _LegacyPagingMethod
-from .paging_method import PagingMethodABC, BasicPagingMethod, DifferentNextOperationPagingMethod
 
-class AsyncPagingMethodABC(PagingMethodABC):
+class AsyncPagingMethodABC:
 
     # making requests
 
+    def get_next_request(self, continuation_token, initial_request):
+        """Gets parameters to make next request
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
     async def get_page(self, continuation_token: str, initial_request):
         """Gets next page
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def finished(self, continuation_token):
+        """When paging is finished
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+
+    # extracting data from response
+
+    def get_list_elements(self, pipeline_response, deserialized):
+        """Extract the list elements from the current page to return to users
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def mutate_list(self, pipeline_response, list_of_elem):
+        """Mutate list of elements in current page, i.e. if users passed in a cls calback
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    def get_continuation_token(self, pipeline_response, deserialized):
+        """Get the continuation token from the current page
         """
         raise NotImplementedError("This method needs to be implemented")
 
@@ -45,11 +71,42 @@ class AsyncPagingMethodABC(PagingMethodABC):
         raise NotImplementedError("This method needs to be implemented")
 
 
-class AsyncBasicPagingMethod(BasicPagingMethod):
+class AsyncBasicPagingMethod(AsyncPagingMethodABC):
     """This is the most common paging method. It uses the continuation token
     as the next link
     """
+    def __init__(self):
+        self._client = None
+        self._deserialize_output = None
+        self._path_format_arguments = None
+        self._item_name = None
+        self._next_link_name = None
+        self.did_a_call_already = False
+        self._cls = None
+        self._error_map = None
 
+    def initialize(self, client, deserialize_output, next_link_name, **kwargs):  # pylint: disable=arguments-differ
+        self._client = client
+        self._deserialize_output = deserialize_output
+        self._next_link_name = next_link_name
+
+        self._path_format_arguments = kwargs.pop("path_format_arguments", {})
+        self._item_name = kwargs.pop("item_name", "value")
+        self._next_link_name = kwargs.pop("next_link_name", "next_link")
+        self._cls = kwargs.pop("_cls", None)
+
+        self._error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        self._error_map.update(kwargs.pop('error_map', {}))
+
+    def get_next_request(self, continuation_token: str, initial_request):
+        next_link = continuation_token
+        next_link = self._client.format_url(next_link, **self._path_format_arguments)
+        request = initial_request
+        request.url = next_link
+
+        return request
 
     async def get_page(self, continuation_token, initial_request):
         if not self.did_a_call_already:
@@ -57,14 +114,41 @@ class AsyncBasicPagingMethod(BasicPagingMethod):
             self.did_a_call_already = True
         else:
             request = self.get_next_request(continuation_token, initial_request)
-        response = await self._client._pipeline.run(request, stream=False)
+        response = await self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
 
         http_response = response.http_response
-        if not (200 <= http_response.status_code < 300):
+        if not 200 <= http_response.status_code < 300:
             map_error(status_code=http_response.status_code, response=http_response, error_map=self._error_map)
             raise HttpResponseError(response=http_response)
 
         return response
+
+    def finished(self, continuation_token):
+        return continuation_token is None and self.did_a_call_already
+
+    def get_list_elements(self, pipeline_response, deserialized):
+        if not hasattr(deserialized, self._item_name):
+            raise ValueError(
+                "The response object does not have property '{}' to extract element list from".format(self._item_name)
+            )
+        return getattr(deserialized, self._item_name)
+
+    def mutate_list(self, pipeline_response, list_of_elem):
+        if self._cls:
+            list_of_elem = self._cls(list_of_elem)
+        return iter(list_of_elem)
+
+    def get_continuation_token(self, pipeline_response, deserialized):
+        if not self._next_link_name:
+            return None
+        if not hasattr(deserialized, self._next_link_name):
+            raise ValueError(
+                "The response object does not have property '{}' to extract continuation token from".format(
+                    self._next_link_name
+                )
+            )
+        return getattr(deserialized, self._next_link_name)
+
 
     async def extract_data(self, pipeline_response):
         from .async_paging import AsyncList
@@ -84,7 +168,7 @@ class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
         super(AsyncDifferentNextOperationPagingMethod, self).__init__()
         self._prepare_next_request = None
 
-    def initialize(self, client, deserialize_output, prepare_next_request, **kwargs):
+    def initialize(self, client, deserialize_output, prepare_next_request, **kwargs):  # pylint: disable=arguments-differ
         super(AsyncDifferentNextOperationPagingMethod, self).initialize(
             client, deserialize_output, **kwargs
         )

@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import abc
 import itertools
 from typing import (  # pylint: disable=unused-import
     Callable,
@@ -44,12 +43,17 @@ class _LegacyPagingMethod:
     def __init__(self, get_next, extract_data):
         if not (get_next and extract_data):
             raise ValueError(
-                "You are using the legacy version of paging, but haven't provided both a get_next and extract_data. "
-                "Preferably switch to the new paging with PagingMethod, but if not, please pass in the missing callback."
+                "You are using the legacy version of paging, but haven't provided both a get_next "
+                "and extract_data. Preferably switch to the new paging with PagingMethod, but if "
+                "not, please pass in the missing callback."
             )
         self._get_page = get_next
         self.extract_data = extract_data
         self.did_a_call_already = False
+
+    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+        # to pass mypy
+        pass
 
     def finished(self, continuation_token):
         return continuation_token is None and self.did_a_call_already
@@ -62,11 +66,11 @@ class _LegacyPagingMethod:
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
         self,
+        *args,
         get_next=None,  # type: Callable[[Optional[str]], ResponseType]
         extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
         paging_method=None,
-        *args,
         **kwargs,
     ):
         """Return an iterator of pages.
@@ -90,7 +94,8 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         else:
             if not self._initial_request and not self._initial_response:
                 raise ValueError(
-                    "You must either supply the initial request the paging method must call, or provide the initial response"
+                    "You must either supply the initial request the paging method must call, or provide "
+                    "the initial response"
                 )
             self._paging_method = paging_method
             self._paging_method.initialize(*args, **kwargs)

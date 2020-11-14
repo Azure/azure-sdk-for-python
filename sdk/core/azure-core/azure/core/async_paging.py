@@ -34,6 +34,7 @@ from typing import (
     Optional,
     Awaitable,
 )
+from .paging import _LegacyPagingMethod
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,8 +46,6 @@ __all__ = [
     "AsyncPageIterator",
     "AsyncItemPaged"
 ]
-
-from .paging import _LegacyPagingMethod
 
 class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:
@@ -70,15 +69,15 @@ class AsyncList(AsyncIterator[ReturnType]):
 class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
-        get_next: Callable[
+        *args,
+        get_next: Optional[Callable[
             [Optional[str]], Awaitable[ResponseType]
-        ] = None,
-        extract_data: Callable[
+        ]] = None,
+        extract_data: Optional[Callable[
             [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
-        ] = None,
+        ]] = None,
         continuation_token: Optional[str] = None,
         paging_method=None,
-        *args,
         **kwargs,
     ) -> None:
         """Return an async iterator of pages.
@@ -103,7 +102,8 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         else:
             if not self._initial_request and not self._initial_response:
                 raise ValueError(
-                    "You must either supply the initial request the paging method must call, or provide the initial response"
+                    "You must either supply the initial request the paging method must call, or provide "
+                    "the initial response"
                 )
             self._paging_method = paging_method
             self._paging_method.initialize(*args, **kwargs)

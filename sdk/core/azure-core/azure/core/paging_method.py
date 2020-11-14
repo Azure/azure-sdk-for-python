@@ -32,6 +32,11 @@ class PagingMethodABC():
 
     # making requests
 
+    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+        """Gets parameters to make next request
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
     def get_next_request(self, continuation_token, initial_request):
         """Gets parameters to make next request
         """
@@ -42,7 +47,7 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def finished(self, continuation_token, did_a_call):
+    def finished(self, continuation_token):
         """When paging is finished
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -83,10 +88,13 @@ class BasicPagingMethod(PagingMethodABC):
         self._item_name = None
         self._next_link_name = None
         self.did_a_call_already = False
+        self._cls = None
+        self._error_map = None
 
-    def initialize(self, client, deserialize_output, **kwargs):
+    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
         self._client = client
         self._deserialize_output = deserialize_output
+        self._next_link_name = next_link_name
 
         self._path_format_arguments = kwargs.pop("path_format_arguments", {})
         self._item_name = kwargs.pop("item_name", "value")
@@ -112,10 +120,10 @@ class BasicPagingMethod(PagingMethodABC):
             self.did_a_call_already = True
         else:
             request = self.get_next_request(continuation_token, initial_request)
-        response = self._client._pipeline.run(request, stream=False)
+        response = self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
 
         http_response = response.http_response
-        if not (200 <= http_response.status_code < 300):
+        if not 200 <= http_response.status_code < 300:
             map_error(status_code=http_response.status_code, response=http_response, error_map=self._error_map)
             raise HttpResponseError(response=http_response)
 
@@ -141,7 +149,9 @@ class BasicPagingMethod(PagingMethodABC):
             return None
         if not hasattr(deserialized, self._next_link_name):
             raise ValueError(
-                "The response object does not have property '{}' to extract continuation token from".format(self._next_link_name)
+                "The response object does not have property '{}' to extract continuation token from".format(
+                    self._next_link_name
+                )
             )
         return getattr(deserialized, self._next_link_name)
 
@@ -161,9 +171,9 @@ class DifferentNextOperationPagingMethod(BasicPagingMethod):
         super(DifferentNextOperationPagingMethod, self).__init__()
         self._prepare_next_request = None
 
-    def initialize(self, client, deserialize_output, prepare_next_request, **kwargs):
+    def initialize(self, client, deserialize_output, next_link_name, prepare_next_request, **kwargs):  # pylint: disable=arguments-differ
         super(DifferentNextOperationPagingMethod, self).initialize(
-            client, deserialize_output, **kwargs
+            client, deserialize_output, next_link_name, **kwargs
         )
         self._prepare_next_request = prepare_next_request
 
