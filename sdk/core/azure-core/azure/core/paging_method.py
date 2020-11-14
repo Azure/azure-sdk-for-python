@@ -23,31 +23,43 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING
+
 
 from .exceptions import (
     HttpResponseError, ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError, map_error
 )
+
+if TYPE_CHECKING:
+    from typing import Any, Callable, Iterable, Tuple
+    from .paging import ResponseType, ReturnType
+    from ._pipeline_client import PipelineClient
+    from .pipeline.transport import HttpRequest, HttpResponse
 
 class PagingMethodABC():
 
     # making requests
 
     def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+        # type: (PipelineClient, Callable, str, Any) -> None
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_next_request(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpRequest
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_page(self, continuation_token: str, initial_request):
+    def get_page(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpResponse
         """Gets next page
         """
         raise NotImplementedError("This method needs to be implemented")
 
     def finished(self, continuation_token):
+        # type: (Any) -> bool
         """When paging is finished
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -56,21 +68,25 @@ class PagingMethodABC():
     # extracting data from response
 
     def get_list_elements(self, pipeline_response, deserialized):
+        # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
         """Extract the list elements from the current page to return to users
         """
         raise NotImplementedError("This method needs to be implemented")
 
     def mutate_list(self, pipeline_response, list_of_elem):
+        # type: (HttpResponse, Iterable[ReturnType]) -> Iterable[ReturnType]
         """Mutate list of elements in current page, i.e. if users passed in a cls calback
         """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self, pipeline_response, deserialized):
+        # type: (HttpResponse, ResponseType) -> Any
         """Get the continuation token from the current page
         """
         raise NotImplementedError("This method needs to be implemented")
 
     def extract_data(self, pipeline_response):
+        # type: (HttpResponse) -> Tuple[Any, Iterable[ReturnType]]
         """Return the continuation token and current list of elements to PageIterator
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -92,6 +108,7 @@ class BasicPagingMethod(PagingMethodABC):
         self._error_map = None
 
     def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+        # type: (PipelineClient, Callable, str, Any) -> None
         self._client = client
         self._deserialize_output = deserialize_output
         self._next_link_name = next_link_name
@@ -106,7 +123,8 @@ class BasicPagingMethod(PagingMethodABC):
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
-    def get_next_request(self, continuation_token: str, initial_request):
+    def get_next_request(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpRequest
         next_link = continuation_token
         next_link = self._client.format_url(next_link, **self._path_format_arguments)
         request = initial_request
@@ -115,6 +133,7 @@ class BasicPagingMethod(PagingMethodABC):
         return request
 
     def get_page(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpResponse
         if not self.did_a_call_already:
             request = initial_request
             self.did_a_call_already = True
@@ -130,9 +149,11 @@ class BasicPagingMethod(PagingMethodABC):
         return response
 
     def finished(self, continuation_token):
+        # type: (Any) -> bool
         return continuation_token is None and self.did_a_call_already
 
     def get_list_elements(self, pipeline_response, deserialized):
+        # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
         if not hasattr(deserialized, self._item_name):
             raise ValueError(
                 "The response object does not have property '{}' to extract element list from".format(self._item_name)
@@ -140,11 +161,13 @@ class BasicPagingMethod(PagingMethodABC):
         return getattr(deserialized, self._item_name)
 
     def mutate_list(self, pipeline_response, list_of_elem):
+        # type: (HttpResponse, Iterable[ReturnType]) -> Iterable[ReturnType]
         if self._cls:
             list_of_elem = self._cls(list_of_elem)
         return iter(list_of_elem)
 
     def get_continuation_token(self, pipeline_response, deserialized):
+        # type: (HttpResponse, ResponseType) -> Any
         if not self._next_link_name:
             return None
         if not hasattr(deserialized, self._next_link_name):
@@ -156,8 +179,9 @@ class BasicPagingMethod(PagingMethodABC):
         return getattr(deserialized, self._next_link_name)
 
     def extract_data(self, pipeline_response):
+        # type: (HttpResponse) -> Tuple[Any, Iterable[ReturnType]]
         deserialized = self._deserialize_output(pipeline_response)
-        list_of_elem = self.get_list_elements(pipeline_response, deserialized)
+        list_of_elem = self.get_list_elements(pipeline_response, deserialized)  # type: Iterable[ReturnType]
         list_of_elem = self.mutate_list(pipeline_response, list_of_elem)
         continuation_token = self.get_continuation_token(pipeline_response, deserialized)
         return continuation_token, list_of_elem
@@ -171,15 +195,21 @@ class DifferentNextOperationPagingMethod(BasicPagingMethod):
         super(DifferentNextOperationPagingMethod, self).__init__()
         self._prepare_next_request = None
 
-    def initialize(self, client, deserialize_output, next_link_name, prepare_next_request, **kwargs):  # pylint: disable=arguments-differ
+    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+        # type: (PipelineClient, Callable, str, Any) -> None
         super(DifferentNextOperationPagingMethod, self).initialize(
             client, deserialize_output, next_link_name, **kwargs
         )
-        self._prepare_next_request = prepare_next_request
+        self._prepare_next_request = kwargs.pop("prepare_next_request", None)
+        if not self._prepare_next_request:
+            raise ValueError(
+                "Must pass in prepare_next_request callback to use this paging method"
+            )
 
-    def get_next_request(self, continuation_token: str, initial_request):
+    def get_next_request(self, continuation_token, initial_request):
+        # type: (Any, HttpRequest) -> HttpRequest
         """Next request partial functions will either take in the token or not
-        (we're not able to pass in multiple tokens). in the generated code, we
+        (we're not able to pass in multiple tokens). In the generated code, we
         make sure that the token input param is the first in the list, so all we
         have to do is pass in the token to the next request partial function.
 

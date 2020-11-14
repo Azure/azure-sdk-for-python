@@ -50,8 +50,8 @@ class _LegacyPagingMethod:
                 "and extract_data. Preferably switch to the new paging with PagingMethod, but if "
                 "not, please pass in the missing callback."
             )
-        self._get_page = get_next
-        self.extract_data = extract_data
+        self._get_page = get_next  # type: Callable[[Optional[str]], ResponseType]
+        self.extract_data = extract_data  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         self.did_a_call_already = False
 
     def initialize(self, client, deserialize_output, next_link_name, **kwargs):

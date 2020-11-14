@@ -23,6 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Any, Callable, Iterable, Tuple
+from .paging import ResponseType, ReturnType
+from ._pipeline_client import PipelineClient
+from .pipeline.transport import HttpRequest, HttpResponse
 
 from .exceptions import (
     HttpResponseError, ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -31,18 +35,28 @@ from .exceptions import (
 class AsyncPagingMethodABC:
 
     # making requests
-
-    def get_next_request(self, continuation_token, initial_request):
+    def initialize(
+        self,
+        client: PipelineClient,
+        deserialize_output: Callable,
+        next_link_name: str,
+        **kwargs
+    ) -> None:
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    async def get_page(self, continuation_token: str, initial_request):
+    def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:
+        """Gets parameters to make next request
+        """
+        raise NotImplementedError("This method needs to be implemented")
+
+    async def get_page(self, continuation_token: Any, initial_request: HttpRequest) -> HttpResponse:
         """Gets next page
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def finished(self, continuation_token):
+    def finished(self, continuation_token: Any) -> bool:
         """When paging is finished
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -50,22 +64,28 @@ class AsyncPagingMethodABC:
 
     # extracting data from response
 
-    def get_list_elements(self, pipeline_response, deserialized):
+    def get_list_elements(
+        self, pipeline_response: HttpResponse, deserialized: ResponseType
+    )  -> Iterable[ReturnType]:
         """Extract the list elements from the current page to return to users
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def mutate_list(self, pipeline_response, list_of_elem):
+    def mutate_list(
+        self, pipeline_response: HttpResponse, list_of_elem: Iterable[ReturnType]
+    ) -> Iterable[ReturnType]:
         """Mutate list of elements in current page, i.e. if users passed in a cls calback
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_continuation_token(self, pipeline_response, deserialized):
+    def get_continuation_token(
+        self, pipeline_response: HttpResponse, deserialized: ResponseType
+    ) -> Any:
         """Get the continuation token from the current page
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    async def extract_data(self, pipeline_response):
+    async def extract_data(self, pipeline_response: HttpResponse):
         """Return the continuation token and current list of elements to PageIterator
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -85,7 +105,13 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         self._cls = None
         self._error_map = None
 
-    def initialize(self, client, deserialize_output, next_link_name, **kwargs):  # pylint: disable=arguments-differ
+    def initialize(
+        self,
+        client: PipelineClient,
+        deserialize_output: Callable,
+        next_link_name: str,
+        **kwargs
+    ) -> None:
         self._client = client
         self._deserialize_output = deserialize_output
         self._next_link_name = next_link_name
@@ -100,7 +126,7 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
-    def get_next_request(self, continuation_token: str, initial_request):
+    def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:
         next_link = continuation_token
         next_link = self._client.format_url(next_link, **self._path_format_arguments)
         request = initial_request
@@ -108,7 +134,7 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
 
         return request
 
-    async def get_page(self, continuation_token, initial_request):
+    async def get_page(self, continuation_token: Any, initial_request: HttpRequest) -> HttpResponse:
         if not self.did_a_call_already:
             request = initial_request
             self.did_a_call_already = True
@@ -123,22 +149,28 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
 
         return response
 
-    def finished(self, continuation_token):
+    def finished(self, continuation_token: Any) -> bool:
         return continuation_token is None and self.did_a_call_already
 
-    def get_list_elements(self, pipeline_response, deserialized):
+    def get_list_elements(
+        self, pipeline_response: HttpResponse, deserialized: ResponseType
+    )  -> Iterable[ReturnType]:
         if not hasattr(deserialized, self._item_name):
             raise ValueError(
                 "The response object does not have property '{}' to extract element list from".format(self._item_name)
             )
         return getattr(deserialized, self._item_name)
 
-    def mutate_list(self, pipeline_response, list_of_elem):
+    def mutate_list(
+        self, pipeline_response: HttpResponse, list_of_elem: Iterable[ReturnType]
+    ) -> Iterable[ReturnType]:
         if self._cls:
             list_of_elem = self._cls(list_of_elem)
         return iter(list_of_elem)
 
-    def get_continuation_token(self, pipeline_response, deserialized):
+    def get_continuation_token(
+        self, pipeline_response: HttpResponse, deserialized: ResponseType
+    ) -> Any:
         if not self._next_link_name:
             return None
         if not hasattr(deserialized, self._next_link_name):
@@ -150,11 +182,11 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         return getattr(deserialized, self._next_link_name)
 
 
-    async def extract_data(self, pipeline_response):
+    async def extract_data(self, pipeline_response: HttpResponse):
         from .async_paging import AsyncList
 
         deserialized = self._deserialize_output(pipeline_response)
-        list_of_elem = self.get_list_elements(pipeline_response, deserialized)
+        list_of_elem = self.get_list_elements(pipeline_response, deserialized)  # type: Iterable[Any]
         list_of_elem = self.mutate_list(pipeline_response, list_of_elem)
         continuation_token = self.get_continuation_token(pipeline_response, deserialized)
         return continuation_token, AsyncList(list_of_elem)
@@ -168,13 +200,23 @@ class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
         super(AsyncDifferentNextOperationPagingMethod, self).__init__()
         self._prepare_next_request = None
 
-    def initialize(self, client, deserialize_output, prepare_next_request, **kwargs):  # pylint: disable=arguments-differ
+    def initialize(
+        self,
+        client: PipelineClient,
+        deserialize_output: Callable,
+        next_link_name: str,
+        **kwargs
+    ) -> None:
         super(AsyncDifferentNextOperationPagingMethod, self).initialize(
             client, deserialize_output, **kwargs
         )
-        self._prepare_next_request = prepare_next_request
+        self._prepare_next_request = kwargs.pop("prepare_next_request", None)
+        if not self._prepare_next_request:
+            raise ValueError(
+                "Must pass in prepare_next_request callback to use this paging method"
+            )
 
-    def get_next_request(self, continuation_token: str, initial_request):
+    def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:
         """Next request partial functions will either take in the token or not
         (we're not able to pass in multiple tokens). in the generated code, we
         make sure that the token input param is the first in the list, so all we
