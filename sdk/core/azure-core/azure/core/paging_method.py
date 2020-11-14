@@ -115,7 +115,6 @@ class BasicPagingMethod(PagingMethodABC):
 
         self._path_format_arguments = kwargs.pop("path_format_arguments", {})
         self._item_name = kwargs.pop("item_name", "value")
-        self._next_link_name = kwargs.pop("next_link_name", "next_link")
         self._cls = kwargs.pop("_cls", None)
 
         self._error_map = {

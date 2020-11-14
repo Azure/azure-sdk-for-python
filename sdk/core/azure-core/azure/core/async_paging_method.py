@@ -118,7 +118,6 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
 
         self._path_format_arguments = kwargs.pop("path_format_arguments", {})
         self._item_name = kwargs.pop("item_name", "value")
-        self._next_link_name = kwargs.pop("next_link_name", "next_link")
         self._cls = kwargs.pop("_cls", None)
 
         self._error_map = {
@@ -208,7 +207,7 @@ class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
         **kwargs
     ) -> None:
         super(AsyncDifferentNextOperationPagingMethod, self).initialize(
-            client, deserialize_output, **kwargs
+            client, deserialize_output, next_link_name, **kwargs
         )
         self._prepare_next_request = kwargs.pop("prepare_next_request", None)
         if not self._prepare_next_request:
