@@ -4,17 +4,15 @@ Setup for a Service Fabric cluster and two apps, used for testing managed identi
 
 The `sfmitestsystem` and `sfmitestuser` directories contain mock applications that use Azure.Identity's `ServiceFabricCredential` to request and verify Key Vault access tokens. The former application uses a system-assigned managed identity to do so, and the latter application uses a user-assigned managed identity.
 
-> **Note:** The code run by the applications comes from the `Dockerfile` in each, so adapting this sample to another language can be done by editing the Docker image each application uses. No other configuration changes are necessary if using Linux containers. To use Windows containers, you would need to edit the cluster configuration to run on Windows virtual machines (an example of a Windows configuration can be found [here](https://github.com/Azure/azure-quickstart-templates/tree/master/service-fabric-secure-cluster-5-node-1-nodetype)).
-
 The `arm-templates` directory contains Azure resource templates for creating these applications as well as a Service Fabric cluster to host them. The cluster template also deploys other resources that are necessary for running a cluster: a load balancer, public IP address, virtual machine scale set, virtual network, and two storage accounts.
 
 ### Environment requirements
 
-> **Note:** All Azure resources used in the sample should be in the same region & resource group. This includes a managed identity, Key Vault, Service Fabric cluster, Azure Container Registry, and storage account.
+> **Note:** All Azure resources used in the sample should be in the same region & resource group.
 
 - This sample requires access to an Azure subscription and required privileges to create resources.
 - [Azure CLI is used to deploy resources and applications.](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
-- Docker is needed to build and push the sample containerized service. Docker should be using Linux containers for building the application images that are provided.
+- Docker is needed to build and push the sample containerized services. Docker should be using Linux containers for building the application images that are provided.
 
 ### Clone this repository
 
@@ -48,7 +46,7 @@ From your command prompt window, run:
 az identity create -g $RESOURCE_GROUP -n AdminUser
 ```
 
-You will be prompted for this identity's principal, client, and object IDs in later steps. You can get these IDs by running:
+You will be prompted for this identity's principal ID and client ID in later steps. You can get these IDs by running:
 ```
 az identity show -g $RESOURCE_GROUP -n AdminUser
 ```
@@ -60,7 +58,7 @@ Create your key vault:
 az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
 ```
 
-After creating the vault, create a self-signed certificate in it using the [Azure Portal](https://azure.portal.com/). You'll need to insert some of this certificate's properties into the cluster template later on.
+After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://azure.portal.com/). You'll need to insert some of this certificate's properties into the cluster template later on.
 
 ### Create an Azure Container Registry
 
@@ -88,7 +86,7 @@ This will begin to deploy a Service Fabric cluster as well as other necessary re
 
 ### Build and publish a Docker image for each application
 
-For this manual test, each application will use a Docker image to run managed identity tests. To make these images available to Service Fabric, you need to build and publish them by using the Dockerfiles in this sample.
+For this manual test, each application will use a Docker image to run managed identity tests. To make these images available to Service Fabric, you need to publish them to a container registry.
 
 1. Ensure Docker is running and is using Linux containers.
 2. Authenticate to ACR:
@@ -108,9 +106,9 @@ docker push $ACR_NAME.azurecr.io/sfmitestuser
 
 ### Package each application
 
-Your Service Fabric cluster will target each application by referencing a `.sfpkg` in a storage account you will create in the next section. First, you need to target your application images and create the package files.
+Your Service Fabric cluster will target each application by referencing a `.sfpkg` in a storage account. First, you need to target your application images and create the package files.
 
-1. In `sfmitestsystem/ApplicationManifest.xml`, fill in the values for your Azure Container Registry name and password in
+1. In `sfmitestsystem/ApplicationManifest.xml` and `sfmitestuser/ApplicationManifest.xml`, fill in the values for your Azure Container Registry name and password in
 ```xml
 <RepositoryCredentials AccountName="<ACR_NAME>" Password="<found in Access keys page of registry in Portal>" PasswordEncrypted="false"/>
 ```
@@ -124,13 +122,17 @@ Your Service Fabric cluster will target each application by referencing a `.sfpk
 ```
 4. Open the `sfmitestsystem` directory in File Explorer, select `sfmitestsystemfrontPkg` and `ApplicationManifest.xml`, and compress them into a zip file.
 5. Rename the zip file `sfmitestsystem.sfpkg`.
-6. Repeat steps 1 and 2 for `sfmitestuser`, replacing all instances of "system" in the instructions with "user".
-7. In `sfmitestuser/sfmitestuserfrontPkg/ServiceManifest.xml`, replace `<KEY_VAULT_URL>` with your key vault's vault URI and `<AdminUser client ID>` with the user-assigned managed identity's client ID in
+6. In `sfmitestuser/sfmitestuserfrontPkg/ServiceManifest.xml`, replace `{ACR_NAME}` with your Azure Container Registry name in
+```xml
+<ImageName>{ACR_NAME}.azurecr.io/sfmitestuser</ImageName>
+```
+7. Also in `sfmitestuser/sfmitestuserfrontPkg/ServiceManifest.xml`, replace `<KEY_VAULT_URL>` with your key vault's vault URI and `<AdminUser client ID>` with the user-assigned managed identity's client ID in
 ```xml
 <EnvironmentVariable Name="AZURE_IDENTITY_TEST_VAULT_URL" Value="<KEY_VAULT_URL>"/>
 <EnvironmentVariable Name="AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID" Value="<AdminUser client ID>"/>
 ```
-8. Repeat steps 4 and 5 for `sfmitestuser`, replacing all instances of "system" in the instructions with "user".
+8. Open the `sfmitestuser` directory in File Explorer, select `sfmitestuserfrontPkg` and `ApplicationManifest.xml`, and compress them into a zip file.
+9. Rename the zip file `sfmitestuser.sfpkg`.
 
 ### Upload the application packages to a storage account
 
@@ -160,30 +162,30 @@ If the applications were accessed now, they would report an error. This is becau
 
 To grant them access:
 
-1. Get the object ID of `sfmitestsystem`'s system-assigned managed identity. In your command prompt, run:
+1. Get the object ID (`objectId`) of `sfmitestsystem`'s system-assigned managed identity. In your command prompt, run:
 ```
 az ad sp list --display-name $CLUSTER_NAME/applications/sfmitestsystem
 ```
 2. Give the application secret list permissions by setting an access policy:
 ```
-az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $SYSTEM_OBJECT_ID
+az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $OBJECT_ID
 ```
-3. Get the object ID of `sfmitestuser`'s user-assigned managed identity. In your command prompt, run:
+3. Get the principal ID (`principalId`) of `sfmitestuser`'s user-assigned managed identity. In your command prompt, run:
 ```
 az identity show -g $RESOURCE_GROUP -n AdminUser
 ```
 4. Give the application secret list permissions by setting an access policy:
 ```
-az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $USER_OBJECT_ID
+az keyvault set-policy -n $KEY_VAULT_NAME --secret-permissions list --object-id $PRINCIPAL_ID
 ```
 
 ## Run the Tests
 
-Once running on your cluster, the applications should each perform the same task: using a `ManagedIdentityCredential` to view the properties of your key vault's secret. One uses a system-assigned managed identity to do so, while the other uses a user-assigned managed identity. To verify that they have each done their job correctly, you can access the application logs in your cluster's Service Fabric Explorer page.
+Once running on your cluster, the applications should each perform the same task: using a `ManagedIdentityCredential` to list your key vault's secret properties. One uses a system-assigned managed identity to do so, while the other uses a user-assigned managed identity. To verify that they have each done their job correctly, you can access the application logs in your cluster's Service Fabric Explorer page.
 
 Verify in a browser:
 
-1. [Connect to your cluster on Service Fabric Explorer.](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
+1. [Connect to your cluster on Service Fabric Explorer](https://docs.microsoft.com/azure/service-fabric/service-fabric-connect-to-secure-cluster#connect-to-a-secure-cluster-using-service-fabric-explorer).
 2. In the Explorer, you should see the applications running under the Applications tab. Otherwise, you may need to double check your deployment process.
 3. Under the Nodes tab, expand each node tab to see if it hosts an application ("fabric:/sfmitestsystem" or "fabric:/sfmitestuser").
 4. When you find an application entry, click the "+" sign by the name to expand it. There should be a "code" entry -- click on that to bring up a page that has a "Container Logs" tab.
