@@ -33,6 +33,15 @@ try:
     from ._models_py3 import EventSourceMutableProperties
     from ._models_py3 import EventSourceResource
     from ._models_py3 import EventSourceUpdateParameters
+    from ._models_py3 import Gen1EnvironmentCreateOrUpdateParameters
+    from ._models_py3 import Gen1EnvironmentResource
+    from ._models_py3 import Gen1EnvironmentUpdateParameters
+    from ._models_py3 import Gen2EnvironmentCreateOrUpdateParameters
+    from ._models_py3 import Gen2EnvironmentResource
+    from ._models_py3 import Gen2EnvironmentUpdateParameters
+    from ._models_py3 import Gen2StorageConfigurationInput
+    from ._models_py3 import Gen2StorageConfigurationMutableProperties
+    from ._models_py3 import Gen2StorageConfigurationOutput
     from ._models_py3 import IngressEnvironmentStatus
     from ._models_py3 import IoTHubEventSourceCommonProperties
     from ._models_py3 import IoTHubEventSourceCreateOrUpdateParameters
@@ -40,12 +49,6 @@ try:
     from ._models_py3 import IoTHubEventSourceUpdateParameters
     from ._models_py3 import LocalTimestamp
     from ._models_py3 import LocalTimestampTimeZoneOffset
-    from ._models_py3 import LongTermEnvironmentCreateOrUpdateParameters
-    from ._models_py3 import LongTermEnvironmentResource
-    from ._models_py3 import LongTermEnvironmentUpdateParameters
-    from ._models_py3 import LongTermStorageConfigurationInput
-    from ._models_py3 import LongTermStorageConfigurationMutableProperties
-    from ._models_py3 import LongTermStorageConfigurationOutput
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import ReferenceDataSetCreateOrUpdateParameters
@@ -56,12 +59,10 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import ResourceProperties
     from ._models_py3 import Sku
-    from ._models_py3 import StandardEnvironmentCreateOrUpdateParameters
-    from ._models_py3 import StandardEnvironmentResource
-    from ._models_py3 import StandardEnvironmentUpdateParameters
     from ._models_py3 import TimeSeriesIdProperty
     from ._models_py3 import TrackedResource
     from ._models_py3 import WarmStorageEnvironmentStatus
+    from ._models_py3 import WarmStoreConfigurationProperties
 except (SyntaxError, ImportError):
     from ._models import AccessPolicyCreateOrUpdateParameters
     from ._models import AccessPolicyListResponse
@@ -86,6 +87,15 @@ except (SyntaxError, ImportError):
     from ._models import EventSourceMutableProperties
     from ._models import EventSourceResource
     from ._models import EventSourceUpdateParameters
+    from ._models import Gen1EnvironmentCreateOrUpdateParameters
+    from ._models import Gen1EnvironmentResource
+    from ._models import Gen1EnvironmentUpdateParameters
+    from ._models import Gen2EnvironmentCreateOrUpdateParameters
+    from ._models import Gen2EnvironmentResource
+    from ._models import Gen2EnvironmentUpdateParameters
+    from ._models import Gen2StorageConfigurationInput
+    from ._models import Gen2StorageConfigurationMutableProperties
+    from ._models import Gen2StorageConfigurationOutput
     from ._models import IngressEnvironmentStatus
     from ._models import IoTHubEventSourceCommonProperties
     from ._models import IoTHubEventSourceCreateOrUpdateParameters
@@ -93,12 +103,6 @@ except (SyntaxError, ImportError):
     from ._models import IoTHubEventSourceUpdateParameters
     from ._models import LocalTimestamp
     from ._models import LocalTimestampTimeZoneOffset
-    from ._models import LongTermEnvironmentCreateOrUpdateParameters
-    from ._models import LongTermEnvironmentResource
-    from ._models import LongTermEnvironmentUpdateParameters
-    from ._models import LongTermStorageConfigurationInput
-    from ._models import LongTermStorageConfigurationMutableProperties
-    from ._models import LongTermStorageConfigurationOutput
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import ReferenceDataSetCreateOrUpdateParameters
@@ -109,12 +113,10 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import ResourceProperties
     from ._models import Sku
-    from ._models import StandardEnvironmentCreateOrUpdateParameters
-    from ._models import StandardEnvironmentResource
-    from ._models import StandardEnvironmentUpdateParameters
     from ._models import TimeSeriesIdProperty
     from ._models import TrackedResource
     from ._models import WarmStorageEnvironmentStatus
+    from ._models import WarmStoreConfigurationProperties
 from ._paged_models import OperationPaged
 from ._time_series_insights_client_enums import (
     ProvisioningState,
@@ -153,6 +155,15 @@ __all__ = [
     'EventSourceMutableProperties',
     'EventSourceResource',
     'EventSourceUpdateParameters',
+    'Gen1EnvironmentCreateOrUpdateParameters',
+    'Gen1EnvironmentResource',
+    'Gen1EnvironmentUpdateParameters',
+    'Gen2EnvironmentCreateOrUpdateParameters',
+    'Gen2EnvironmentResource',
+    'Gen2EnvironmentUpdateParameters',
+    'Gen2StorageConfigurationInput',
+    'Gen2StorageConfigurationMutableProperties',
+    'Gen2StorageConfigurationOutput',
     'IngressEnvironmentStatus',
     'IoTHubEventSourceCommonProperties',
     'IoTHubEventSourceCreateOrUpdateParameters',
@@ -160,12 +171,6 @@ __all__ = [
     'IoTHubEventSourceUpdateParameters',
     'LocalTimestamp',
     'LocalTimestampTimeZoneOffset',
-    'LongTermEnvironmentCreateOrUpdateParameters',
-    'LongTermEnvironmentResource',
-    'LongTermEnvironmentUpdateParameters',
-    'LongTermStorageConfigurationInput',
-    'LongTermStorageConfigurationMutableProperties',
-    'LongTermStorageConfigurationOutput',
     'Operation',
     'OperationDisplay',
     'ReferenceDataSetCreateOrUpdateParameters',
@@ -176,12 +181,10 @@ __all__ = [
     'Resource',
     'ResourceProperties',
     'Sku',
-    'StandardEnvironmentCreateOrUpdateParameters',
-    'StandardEnvironmentResource',
-    'StandardEnvironmentUpdateParameters',
     'TimeSeriesIdProperty',
     'TrackedResource',
     'WarmStorageEnvironmentStatus',
+    'WarmStoreConfigurationProperties',
     'OperationPaged',
     'ProvisioningState',
     'SkuName',
