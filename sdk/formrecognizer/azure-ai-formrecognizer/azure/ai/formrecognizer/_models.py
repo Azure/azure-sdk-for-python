@@ -299,6 +299,9 @@ class FieldData(object):
         constitutes of elements such as lines, words, and selection marks.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):
@@ -598,6 +601,9 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
         For calls to begin_recognize_content(), this list is always populated.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):

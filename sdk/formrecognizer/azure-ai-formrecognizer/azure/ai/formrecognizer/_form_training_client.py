@@ -401,6 +401,7 @@ class FormTrainingClient(FormRecognizerClientBase):
     ):
         # type: (List[str], Any) -> LROPoller[CustomFormModel]
         """Creates a composed model from a collection of existing models that were trained with labels.
+
         A composed model allows multiple models to be called with a single model ID. When a document is
         submitted to be analyzed with a composed model ID, a classification step is first performed to
         route it to the correct custom model
