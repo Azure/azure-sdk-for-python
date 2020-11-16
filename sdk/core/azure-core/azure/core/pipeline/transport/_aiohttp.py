@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType
+from typing import Any, Optional, TypeVar, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
 from collections.abc import AsyncIterator
 
 import logging
@@ -42,6 +42,9 @@ from ._base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration)
+
+if TYPE_CHECKING:
+    import aiohttp
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -270,7 +273,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, request: HttpRequest, aiohttp_response: "aiohttp.ClientResponse", block_size=None) -> None:
+    def __init__(self, request, aiohttp_response, block_size):
+        # type: (HttpRequest, aiohttp.ClientResponse, Optional[int]) -> None
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status  # type:ignore
