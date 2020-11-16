@@ -18,23 +18,23 @@ interactions:
     uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "12135335-f868-4b86-8723-fdd893f0029a"},
+      string: '{"error": {"code": "InvalidImageURL", "innerError": {"requestId": "c2d1d648-e729-4da2-93d2-679f5c49291a"},
         "message": "Image URL is badly formatted."}}'
     headers:
       apim-request-id:
-      - 12135335-f868-4b86-8723-fdd893f0029a
+      - c2d1d648-e729-4da2-93d2-679f5c49291a
       content-length:
       - '144'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 18:07:38 GMT
+      - Mon, 16 Nov 2020 19:13:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '4'
+      - '2'
     status:
       code: 400
       message: Bad Request

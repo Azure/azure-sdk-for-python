@@ -20,23 +20,23 @@ interactions:
   response:
     body:
       string: '{"error": {"code": "UnsupportedLocale", "innerError": {"requestId":
-        "a11979c7-545d-42df-8731-ceb5ba76b2db"}, "message": "Locale unsupported. Supported
+        "04fc9a9b-c239-4a3b-80ea-1ab42ef044e4"}, "message": "Locale unsupported. Supported
         locales include en-AU, en-CA, en-GB, en-IN and en-US."}}'
     headers:
       apim-request-id:
-      - a11979c7-545d-42df-8731-ceb5ba76b2db
+      - 04fc9a9b-c239-4a3b-80ea-1ab42ef044e4
       content-length:
       - '200'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 18:04:12 GMT
+      - Mon, 16 Nov 2020 19:09:41 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '131'
+      - '134'
     status:
       code: 400
       message: Bad Request
