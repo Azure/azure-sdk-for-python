@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import SubscriptionClientConfiguration
 from .operations import SubscriptionsOperations
@@ -23,39 +21,38 @@ from .operations import TenantsOperations
 from .operations import SubscriptionOperations
 from .operations import Operations
 from .operations import AliasOperations
-from . import models
+from .. import models
 
 
 class SubscriptionClient(object):
     """The subscription client.
 
     :ivar subscriptions: SubscriptionsOperations operations
-    :vartype subscriptions: subscription_client.operations.SubscriptionsOperations
+    :vartype subscriptions: subscription_client.aio.operations.SubscriptionsOperations
     :ivar tenants: TenantsOperations operations
-    :vartype tenants: subscription_client.operations.TenantsOperations
+    :vartype tenants: subscription_client.aio.operations.TenantsOperations
     :ivar subscription: SubscriptionOperations operations
-    :vartype subscription: subscription_client.operations.SubscriptionOperations
+    :vartype subscription: subscription_client.aio.operations.SubscriptionOperations
     :ivar operations: Operations operations
-    :vartype operations: subscription_client.operations.Operations
+    :vartype operations: subscription_client.aio.operations.Operations
     :ivar alias: AliasOperations operations
-    :vartype alias: subscription_client.operations.AliasOperations
+    :vartype alias: subscription_client.aio.operations.AliasOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = SubscriptionClientConfiguration(credential, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -73,15 +70,12 @@ class SubscriptionClient(object):
         self.alias = AliasOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> SubscriptionClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "SubscriptionClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
