@@ -129,6 +129,8 @@ class LocalFileStorage:
         lease_deadline = _fmt(now)
         retention_deadline = _fmt(now - _seconds(self.retention_period))
         timeout_deadline = _fmt(now - _seconds(self.write_timeout))
+        if not os.path.exists(self.path):
+            return
         for name in sorted(os.listdir(self.path)):
             path = os.path.join(self.path, name)
             if not os.path.isfile(path):
