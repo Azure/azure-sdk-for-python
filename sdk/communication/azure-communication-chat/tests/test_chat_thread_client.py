@@ -61,7 +61,7 @@ class TestChatThreadClient(unittest.TestCase):
             content='hello world'
             sender_display_name='sender name'
 
-            create_message_result = chat_thread_client.send_message(
+            create_message_result_id = chat_thread_client.send_message(
                 content,
                 priority=priority,
                 sender_display_name=sender_display_name)
@@ -69,7 +69,7 @@ class TestChatThreadClient(unittest.TestCase):
             raised = True
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        assert create_message_result.id == message_id
+        assert create_message_result_id == message_id
 
     def test_get_message(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"

@@ -52,13 +52,13 @@ async def test_send_message():
         return mock_response(status_code=201, json_payload={"id": message_id})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
-    create_message_result = None
+    create_message_result_id = None
     try:
         priority=ChatMessagePriority.NORMAL
         content='hello world'
         sender_display_name='sender name'
 
-        create_message_result = await chat_thread_client.send_message(
+        create_message_result_id = await chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
@@ -66,7 +66,7 @@ async def test_send_message():
         raised = True
 
     assert raised == False
-    assert create_message_result.id == message_id
+    assert create_message_result_id == message_id
 
 @pytest.mark.asyncio
 async def test_get_message():

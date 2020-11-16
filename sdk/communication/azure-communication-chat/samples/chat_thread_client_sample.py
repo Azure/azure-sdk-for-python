@@ -88,13 +88,13 @@ class ChatThreadClientSamples(object):
         content = 'hello world'
         sender_display_name = 'sender name'
 
-        send_message_result = chat_thread_client.send_message(
+        send_message_result_id = chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
         # [END send_message]
 
-        self._message_id = send_message_result.id
+        self._message_id = send_message_result_id
         print("send_chat_message succeeded, message id:", self._message_id)
 
     def get_message(self):

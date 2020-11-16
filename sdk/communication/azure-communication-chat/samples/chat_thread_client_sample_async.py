@@ -91,12 +91,12 @@ class ChatThreadClientSamplesAsync(object):
             content='hello world'
             sender_display_name='sender name'
 
-            send_message_result = await chat_thread_client.send_message(
+            send_message_result_id = await chat_thread_client.send_message(
                 content,
                 priority=priority,
                 sender_display_name=sender_display_name)
             # [END send_message]
-            self._message_id = send_message_result.id
+            self._message_id = send_message_result_id
             print("send_message succeeded, message id:", self._message_id)
 
     async def get_message_async(self):

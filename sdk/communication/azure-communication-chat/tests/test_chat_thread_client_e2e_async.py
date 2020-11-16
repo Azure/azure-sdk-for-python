@@ -78,11 +78,11 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
         priority = ChatMessagePriority.NORMAL
         content = 'hello world'
         sender_display_name = 'sender name'
-        create_message_result = await self.chat_thread_client.send_message(
+        create_message_result_id = await self.chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
-        self.message_id = create_message_result.id
+        self.message_id = create_message_result_id
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
@@ -109,12 +109,12 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
                 content = 'hello world'
                 sender_display_name = 'sender name'
 
-                create_message_result = await self.chat_thread_client.send_message(
+                create_message_result_id = await self.chat_thread_client.send_message(
                     content,
                     priority=priority,
                     sender_display_name=sender_display_name)
 
-                self.assertTrue(create_message_result.id)
+                self.assertTrue(create_message_result_id)
 
             # delete chat threads
             if not self.is_playback():

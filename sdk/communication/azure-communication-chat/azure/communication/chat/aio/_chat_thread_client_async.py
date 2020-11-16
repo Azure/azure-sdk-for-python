@@ -230,7 +230,7 @@ class ChatThreadClient(object):
         self,
         content: str,
         **kwargs
-    ) -> SendChatMessageResult:
+    ) -> str:
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
@@ -240,8 +240,8 @@ class ChatThreadClient(object):
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SendChatMessageResult, or the result of cls(response)
-        :rtype: ~azure.communication.chat.SendChatMessageResult
+        :return: str, or the result of cls(response)
+        :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -264,10 +264,12 @@ class ChatThreadClient(object):
             priority=priority,
             sender_display_name=sender_display_name
         )
-        return await self._client.send_chat_message(
+        send_chat_message_result = await self._client.send_chat_message(
             chat_thread_id=self._thread_id,
             body=create_message_request,
             **kwargs)
+
+        return send_chat_message_result.id
 
     @distributed_trace_async
     async def get_message(

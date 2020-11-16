@@ -81,11 +81,11 @@ class ChatThreadClientTest(CommunicationTestCase):
         priority = ChatMessagePriority.NORMAL
         content = 'hello world'
         sender_display_name = 'sender name'
-        create_message_result = self.chat_thread_client.send_message(
+        create_message_result_id = self.chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
-        self.message_id = create_message_result.id
+        self.message_id = create_message_result_id
 
     @pytest.mark.live_test_only
     def test_update_thread(self):
@@ -101,12 +101,12 @@ class ChatThreadClientTest(CommunicationTestCase):
         content = 'hello world'
         sender_display_name = 'sender name'
 
-        create_message_result = self.chat_thread_client.send_message(
+        create_message_result_id = self.chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
 
-        assert create_message_result.id is not None
+        assert create_message_result_id is not None
 
     @pytest.mark.live_test_only
     def test_get_message(self):
