@@ -383,7 +383,6 @@ class HealthcareEntity(DictMixin):
         :ivar str category: Entity category, such as Dosage or MedicationName, etc.
         :ivar str subcategory: Entity subcategory.  # TODO: add subcategory examples
         :ivar int offset: The Healthcare entity text offset from the start of the document.
-        :ivar int length: The length of the Healthcare entity text.
         :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
             entity.
         :ivar links: A collection of entity references in known data sources.
@@ -395,7 +394,6 @@ class HealthcareEntity(DictMixin):
         self.category = kwargs.get("category", None)
         self.subcategory = kwargs.get("subcategory", None)
         self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
         self.confidence_score = kwargs.get("confidence_score", None)
         self.links = kwargs.get("links", [])
 
@@ -406,19 +404,17 @@ class HealthcareEntity(DictMixin):
             category=healthcare_entity.category,
             subcategory=healthcare_entity.subcategory,
             offset=healthcare_entity.offset,
-            length=healthcare_entity.length,
             confidence_score=healthcare_entity.confidence_score,
             links=[HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links] if healthcare_entity.links else None
         )
 
     def __repr__(self):
-        return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, length={}, confidence_score={},\
+        return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, confidence_score={},\
         links={})".format(
             self.text,
             self.category,
             self.subcategory,
             self.offset,
-            self.length,
             self.confidence_score,
             repr(self.links)
         )[:1024]
@@ -1170,24 +1166,19 @@ class EntitiesRecognitionTask(DictMixin):
     """EntitiesRecognitionTask encapsulates the parameters for starting a long-running Entities Recognition operation.
 
     :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
-        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
-        https://aka.ms/text-analytics-offsets
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
-        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
 
     def __repr__(self, **kwargs):
-        return "EntitiesRecognitionTask(model_version={}, string_index_type={})" \
-            .format(self.model_version, self.string_index_type)[:1024]
+        return "EntitiesRecognitionTask(model_version={})" \
+            .format(self.model_version)[:1024]
 
     def to_generated(self):
         return _v3_1_preview_3_models.EntitiesTask(
             parameters=_v3_1_preview_3_models.EntitiesTaskParameters(
-                model_version=self.model_version,
-                string_index_type=self.string_index_type
+                model_version=self.model_version
             )
         )
 
@@ -1214,26 +1205,21 @@ class PiiEntitiesRecognitionTask(DictMixin):
     """PiiEntitiesRecognitionTask encapsulates the parameters for starting a long-running PII Entities Recognition operation.
 
     :ivar str model_version: The model version to use for the analysis.
-    :ivar str string_index_type: An optional string for specifying the method used to interpret string offsets.  
-        Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see 
-        https://aka.ms/text-analytics-offsets
     :ivar str domain: An optional string to set the PII domain to include only a subset of the entity categories. Possible values include 'PHI' or None.
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", "latest")
-        self.string_index_type = kwargs.get("string_index_type", "TextElements_v8")
         self.domain = kwargs.get("domain", None)
 
     def __repr__(self, **kwargs):
-        return "PiiEntitiesRecognitionTask(model_version={}, string_index_type={}, domain={})" \
-            .format(self.model_version, self.string_index_type, self.domain)[:1024]
+        return "PiiEntitiesRecognitionTask(model_version={}, domain={})" \
+            .format(self.model_version, self.domain)[:1024]
 
     def to_generated(self):
         return _v3_1_preview_3_models.PiiTask(
             parameters=_v3_1_preview_3_models.PiiTaskParameters(
                 model_version=self.model_version,
-                string_index_type=self.string_index_type,
                 domain=self.domain
             )
         )
