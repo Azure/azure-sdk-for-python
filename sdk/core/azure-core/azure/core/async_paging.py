@@ -71,7 +71,6 @@ class AsyncList(AsyncIterator[ReturnType]):
 class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
-        *args,
         get_next: Optional[Callable[
             [Optional[str]], Awaitable[ResponseType]
         ]] = None,
@@ -108,7 +107,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
                     "the initial response"
                 )
             self._paging_method = paging_method
-            self._paging_method.initialize(*args, **kwargs)
+            self._paging_method.initialize(**kwargs)
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]

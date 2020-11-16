@@ -69,7 +69,6 @@ class _LegacyPagingMethod:
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
         self,
-        *args,
         get_next=None,  # type: Callable[[Optional[str]], ResponseType]
         extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
@@ -101,7 +100,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
                     "the initial response"
                 )
             self._paging_method = paging_method
-            self._paging_method.initialize(*args, **kwargs)
+            self._paging_method.initialize(**kwargs)
 
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
