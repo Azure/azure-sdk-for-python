@@ -37,6 +37,12 @@ stages:
                           pwsh: true
                           workingDirectory: $(Build.SourcesDirectory)
                           filePath: eng/scripts/SetTestPipelineVersion.ps1
+                    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
+                      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+                        parameters:
+                          PackageName: ${{artifact.name}}
+                          ServiceName: ${{parameters.ServiceDirectory}}
+                          ForRelease: true
                     - template: /eng/pipelines/templates/steps/stage-filtered-artifacts.yml
                       parameters:
                         SourceFolder: ${{parameters.ArtifactName}} 
