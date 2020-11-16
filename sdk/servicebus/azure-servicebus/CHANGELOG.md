@@ -5,6 +5,10 @@
 **Breaking Changes**
 * `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
 
+**Bug Fixes**
+
+* Using parameter `auto_lock_renewer` on a sessionful receiver alongside `ReceiveMode.ReceiveAndDelete` will no longer fail during receipt due to failure to register the message with the renewer.
+
 ## 7.0.0b8 (2020-11-05)
 
 **New Features**

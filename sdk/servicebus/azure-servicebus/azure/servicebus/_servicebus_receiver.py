@@ -184,7 +184,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             self._message_iter = self._handler.receive_messages_iter()
         uamqp_message = next(self._message_iter)
         message = self._build_message(uamqp_message)
-        if self._auto_lock_renewer and not self._session:
+        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
             self._auto_lock_renewer.register(self, message)
         return message
 
@@ -521,7 +521,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             timeout=max_wait_time,
             operation_requires_timeout=True
         )
-        if self._auto_lock_renewer and not self._session:
+        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
             for message in messages:
                 self._auto_lock_renewer.register(self, message)
         return messages
@@ -576,7 +576,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             handler,
             timeout=timeout
         )
-        if self._auto_lock_renewer and not self._session:
+        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
             for message in messages:
                 self._auto_lock_renewer.register(self, message)
         return messages
