@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._operational_insights_management_client import OperationalInsightsManagementClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['OperationalInsightsManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
