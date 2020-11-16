@@ -88,10 +88,10 @@ class ChatThreadClientTest(CommunicationTestCase):
         self.message_id = create_message_result_id
 
     @pytest.mark.live_test_only
-    def test_update_thread(self):
+    def test_update_topic(self):
         self._create_thread()
         topic = "update topic"
-        self.chat_thread_client.update_thread(topic=topic)
+        self.chat_thread_client.update_topic(topic=topic)
 
     @pytest.mark.live_test_only
     def test_send_message(self):

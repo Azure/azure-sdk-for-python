@@ -26,7 +26,7 @@ credential = Mock()
 credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
 
 @pytest.mark.asyncio
-async def test_update_thread():
+async def test_update_topic():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     raised = False
 
@@ -36,7 +36,7 @@ async def test_update_thread():
 
     topic = "update topic"
     try:
-        await chat_thread_client.update_thread(topic=topic)
+        await chat_thread_client.update_topic(topic=topic)
     except:
         raised = True
 

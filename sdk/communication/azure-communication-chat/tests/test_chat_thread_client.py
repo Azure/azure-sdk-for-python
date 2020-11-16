@@ -30,7 +30,7 @@ class TestChatThreadClient(unittest.TestCase):
         credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
         TestChatThreadClient.credential = credential
 
-    def test_update_thread(self):
+    def test_update_topic(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         raised = False
 
@@ -40,7 +40,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         topic = "update topic"
         try:
-            chat_thread_client.update_thread(topic=topic)
+            chat_thread_client.update_topic(topic=topic)
         except:
             raised = True
 

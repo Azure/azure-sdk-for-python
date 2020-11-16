@@ -67,17 +67,17 @@ class ChatThreadClientSamplesAsync(object):
         self._thread_id = chat_thread_client.thread_id
         print("thread created, id: " + self._thread_id)
 
-    async def update_thread_async(self):
+    async def update_topic_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
 
         async with chat_thread_client:
-            # [START update_thread]
+            # [START update_topic]
             topic = "updated thread topic"
-            await chat_thread_client.update_thread(topic=topic)
-            # [END update_thread]
+            await chat_thread_client.update_topic(topic=topic)
+            # [END update_topic]
 
-        print("update_thread succeeded")
+        print("update_topic succeeded")
 
     async def send_message_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
@@ -227,7 +227,7 @@ class ChatThreadClientSamplesAsync(object):
 async def main():
     sample = ChatThreadClientSamplesAsync()
     await sample.create_chat_thread_client_async()
-    await sample.update_thread_async()
+    await sample.update_topic_async()
     await sample.send_message_async()
     await sample.get_message_async()
     await sample.list_messages_async()

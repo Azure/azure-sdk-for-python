@@ -86,13 +86,13 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_update_thread(self):
+    async def test_update_topic(self):
         async with self.chat_client:
             await self._create_thread()
             topic = "update topic"
 
             async with self.chat_thread_client:
-                await self.chat_thread_client.update_thread(topic=topic)
+                await self.chat_thread_client.update_topic(topic=topic)
 
             # delete chat threads
             if not self.is_playback():

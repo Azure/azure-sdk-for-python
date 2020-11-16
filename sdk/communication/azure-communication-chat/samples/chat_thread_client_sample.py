@@ -66,14 +66,14 @@ class ChatThreadClientSamples(object):
         self._thread_id = chat_thread_client.thread_id
         print("chat_thread_client created")
 
-    def update_thread(self):
+    def update_topic(self):
         from azure.communication.chat import ChatThreadClient
         from azure.communication.chat import CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
-        # [START update_thread]
+        # [START update_topic]
         topic = "updated thread topic"
-        chat_thread_client.update_thread(topic=topic)
-        # [END update_thread]
+        chat_thread_client.update_topic(topic=topic)
+        # [END update_topic]
 
         print("update_chat_thread succeeded")
 
@@ -219,7 +219,7 @@ class ChatThreadClientSamples(object):
 if __name__ == '__main__':
     sample = ChatThreadClientSamples()
     sample.create_chat_thread_client()
-    sample.update_thread()
+    sample.update_topic()
     sample.send_message()
     sample.get_message()
     sample.list_messages()

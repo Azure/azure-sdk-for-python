@@ -113,7 +113,7 @@ class ChatThreadClient(object):
         return self._thread_id
 
     @distributed_trace
-    def update_thread(
+    def update_topic(
         self,
         topic=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -132,17 +132,17 @@ class ChatThreadClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START update_thread]
-                :end-before: [END update_thread]
+                :start-after: [START update_topic]
+                :end-before: [END update_topic]
                 :language: python
                 :dedent: 8
                 :caption: Updating chat thread.
         """
 
-        update_thread_request = UpdateChatThreadRequest(topic=topic)
+        update_topic_request = UpdateChatThreadRequest(topic=topic)
         return self._client.update_chat_thread(
             chat_thread_id=self._thread_id,
-            body=update_thread_request,
+            body=update_topic_request,
             **kwargs)
 
     @distributed_trace

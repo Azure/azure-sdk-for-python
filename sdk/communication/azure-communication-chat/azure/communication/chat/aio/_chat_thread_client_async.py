@@ -111,7 +111,7 @@ class ChatThreadClient(object):
         return self._thread_id
 
     @distributed_trace_async
-    async def update_thread(
+    async def update_topic(
         self,
         *,
         topic: str = None,
@@ -130,17 +130,17 @@ class ChatThreadClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample_async.py
-                :start-after: [START update_thread]
-                :end-before: [END update_thread]
+                :start-after: [START update_topic]
+                :end-before: [END update_topic]
                 :language: python
                 :dedent: 12
                 :caption: Updating chat thread.
         """
 
-        update_thread_request = UpdateChatThreadRequest(topic=topic)
+        update_topic_request = UpdateChatThreadRequest(topic=topic)
         return await self._client.update_chat_thread(
             chat_thread_id=self._thread_id,
-            body=update_thread_request,
+            body=update_topic_request,
             **kwargs)
 
     @distributed_trace_async
