@@ -103,3 +103,4 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # .env file with secrets
 .env
+*.json.env
