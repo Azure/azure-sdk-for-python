@@ -150,8 +150,8 @@ class ChatThread(object):
         )
 
 
-class ReadReceipt(object):
-    """A read receipt indicates the time a chat message was read by a recipient.
+class ChatMessageReadReceipt(object):
+    """A chat message read receipt indicates the time a chat message was read by a recipient.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
