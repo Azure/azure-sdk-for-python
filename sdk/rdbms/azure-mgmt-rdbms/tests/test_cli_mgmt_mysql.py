@@ -159,9 +159,9 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #     "end_ip_address": "255.255.255.255"
         #   }
         # }
-        START_IP_ADDRESS = "0.0.0.0"
-        END_IP_ADDRESS = "255.255.255.255"
-        result = self.mgmt_client.firewall_rules.begin_create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, START_IP_ADDRESS, END_IP_ADDRESS)
+        from azure.mgmt.rdbms.mysql.v2020_01_01.models import FirewallRule
+        firewall_rule = FirewallRule(start_ip_address='0.0.0.0', end_ip_address='255.255.255.255')
+        result = self.mgmt_client.firewall_rules.begin_create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, firewall_rule)
         result = result.result()
 
         # ConfigurationCreateOrUpdate[put]
@@ -204,8 +204,10 @@ class MgmtMySQLTest(AzureMgmtTestCase):
                 "storage_endpoint": "https://mystorage.blob.core.windows.net"
             }
         }
-        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME,
-                                                                                  BODY)
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
+                                                                                        SERVER_NAME,
+                                                                                        SECURITY_ALERT_POLICY_NAME,
+                                                                                        BODY)
         result = result.result()
 
         # Update a server's threat detection policy with minimal parameters[put]
@@ -215,12 +217,15 @@ class MgmtMySQLTest(AzureMgmtTestCase):
                 "email_account_admins": True
             }
         }
-        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME,
-                                                                                  BODY)
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
+                                                                                        SERVER_NAME,
+                                                                                        SECURITY_ALERT_POLICY_NAME,
+                                                                                        BODY)
         result = result.result()
 
         # Get a server's threat detection policy[get]
-        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME,
+                                                                     SECURITY_ALERT_POLICY_NAME)
 
         # # Gets a virtual network rule[get]
         # result = self.mgmt_client.virtual_network_rules.get(resource_group.name, SERVER_NAME, VIRTUAL_NETWORK_RULE_NAME)
@@ -268,7 +273,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         result = self.mgmt_client.operations.list()
 
         # ServerRestart[post]
-        result = self.mgmt_client.servers.restart(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.servers.begin_restart(resource_group.name, SERVER_NAME)
         result = result.result()
 
         # ServerUpdate[patch]
@@ -278,7 +283,7 @@ class MgmtMySQLTest(AzureMgmtTestCase):
                 "ssl_enforcement": "Disabled"
             }
         }
-        result = self.mgmt_client.servers.update(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.servers.begin_update(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
 
         # NameAvailability[post]
@@ -286,9 +291,10 @@ class MgmtMySQLTest(AzureMgmtTestCase):
         #   "name": "name1",
         #   "type": "Microsoft.DBforMySQL"
         # }
-        NAME = "name1"
-        TYPE = "Microsoft.DBforMySQL"
-        result = self.mgmt_client.check_name_availability.execute(NAME, TYPE)
+        NAME = self.create_random_name("name1")
+        from azure.mgmt.rdbms.mysql.v2020_01_01.models import NameAvailabilityRequest
+        nameAvailabilityRequest = NameAvailabilityRequest(name=NAME, type="Microsoft.DBforMySQL")
+        result = self.mgmt_client.check_name_availability.execute(nameAvailabilityRequest)
 
         # # Delete a virtual network rule[delete]
         # result = self.mgmt_client.virtual_network_rules.delete(resource_group.name, SERVER_NAME, VIRTUAL_NETWORK_RULE_NAME)
