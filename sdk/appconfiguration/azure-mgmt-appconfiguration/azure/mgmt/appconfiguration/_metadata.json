@@ -1,35 +1,40 @@
 {
-    "chosen_version": "2019-11-01-preview",
-    "total_api_version_list": ["2019-11-01-preview"],
+    "chosen_version": "2020-07-01-preview",
+    "total_api_version_list": ["2020-07-01-preview"],
     "client": {
         "name": "AppConfigurationManagementClient",
         "filename": "_app_configuration_management_client",
-        "description": "AppConfigurationManagementClient."
+        "description": "AppConfigurationManagementClient.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": true
     },
     "global_parameters": {
-        "sync_method": {
+        "sync": {
             "credential": {
-                "method_signature": "credential,  # type: \"TokenCredential\"",
+                "signature": "credential,  # type: \"TokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "method_signature": "subscription_id,  # type: str",
+                "signature": "subscription_id,  # type: str",
                 "description": "The Microsoft Azure subscription ID.",
                 "docstring_type": "str",
                 "required": true
             }
         },
-        "async_method": {
+        "async": {
             "credential": {
-                "method_signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
                 "description": "Credential needed for the client to connect to Azure.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "method_signature": "subscription_id,  # type: str",
+                "signature": "subscription_id,  # type: str",
                 "description": "The Microsoft Azure subscription ID.",
                 "docstring_type": "str",
                 "required": true
@@ -41,13 +46,17 @@
     },
     "config": {
         "credential": true,
-        "credential_scopes": ["https://management.azure.com/.default"]
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
     },
     "operation_groups": {
         "configuration_stores": "ConfigurationStoresOperations",
         "operations": "Operations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
-        "private_link_resources": "PrivateLinkResourcesOperations"
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "key_values": "KeyValuesOperations"
     },
     "operation_mixins": {
     },
