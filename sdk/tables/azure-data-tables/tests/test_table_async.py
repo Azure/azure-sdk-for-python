@@ -471,10 +471,6 @@ class TableTestAsync(AsyncTableTestCase):
             service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
 
             # Act
-            # service = TableServiceClient(
-            #     self.account_url(storage_account, "table"),
-            #     credential=token,
-            # )
             sas_table = service.get_table_client(table.table_name)
             entities = []
             async for e in sas_table.list_entities():
@@ -482,8 +478,8 @@ class TableTestAsync(AsyncTableTestCase):
 
             # Assert
             assert len(entities) ==  2
-            assert entities[0].text.value == u'hello'
-            assert entities[1].text.value == u'hello'
+            assert entities[0].text == u'hello'
+            assert entities[1].text == u'hello'
         finally:
             await self._delete_table(table=table, ts=tsc)
 
