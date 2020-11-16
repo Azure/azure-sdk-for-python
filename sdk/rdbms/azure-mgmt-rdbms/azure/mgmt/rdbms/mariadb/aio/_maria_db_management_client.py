@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import MariaDBManagementClientConfiguration
 from .operations import ServersOperations
@@ -39,54 +37,54 @@ from .operations import LocationBasedRecommendedActionSessionsResultOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import ServerSecurityAlertPoliciesOperations
-from . import models
+from .. import models
 
 
 class MariaDBManagementClient(MariaDBManagementClientOperationsMixin):
     """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MariaDB resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.
 
     :ivar servers: ServersOperations operations
-    :vartype servers: maria_db_management_client.operations.ServersOperations
+    :vartype servers: maria_db_management_client.aio.operations.ServersOperations
     :ivar replicas: ReplicasOperations operations
-    :vartype replicas: maria_db_management_client.operations.ReplicasOperations
+    :vartype replicas: maria_db_management_client.aio.operations.ReplicasOperations
     :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules: maria_db_management_client.operations.FirewallRulesOperations
+    :vartype firewall_rules: maria_db_management_client.aio.operations.FirewallRulesOperations
     :ivar virtual_network_rules: VirtualNetworkRulesOperations operations
-    :vartype virtual_network_rules: maria_db_management_client.operations.VirtualNetworkRulesOperations
+    :vartype virtual_network_rules: maria_db_management_client.aio.operations.VirtualNetworkRulesOperations
     :ivar databases: DatabasesOperations operations
-    :vartype databases: maria_db_management_client.operations.DatabasesOperations
+    :vartype databases: maria_db_management_client.aio.operations.DatabasesOperations
     :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations: maria_db_management_client.operations.ConfigurationsOperations
+    :vartype configurations: maria_db_management_client.aio.operations.ConfigurationsOperations
     :ivar log_files: LogFilesOperations operations
-    :vartype log_files: maria_db_management_client.operations.LogFilesOperations
+    :vartype log_files: maria_db_management_client.aio.operations.LogFilesOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTierOperations operations
-    :vartype location_based_performance_tier: maria_db_management_client.operations.LocationBasedPerformanceTierOperations
+    :vartype location_based_performance_tier: maria_db_management_client.aio.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
-    :vartype check_name_availability: maria_db_management_client.operations.CheckNameAvailabilityOperations
+    :vartype check_name_availability: maria_db_management_client.aio.operations.CheckNameAvailabilityOperations
     :ivar operations: Operations operations
-    :vartype operations: maria_db_management_client.operations.Operations
+    :vartype operations: maria_db_management_client.aio.operations.Operations
     :ivar query_texts: QueryTextsOperations operations
-    :vartype query_texts: maria_db_management_client.operations.QueryTextsOperations
+    :vartype query_texts: maria_db_management_client.aio.operations.QueryTextsOperations
     :ivar top_query_statistics: TopQueryStatisticsOperations operations
-    :vartype top_query_statistics: maria_db_management_client.operations.TopQueryStatisticsOperations
+    :vartype top_query_statistics: maria_db_management_client.aio.operations.TopQueryStatisticsOperations
     :ivar wait_statistics: WaitStatisticsOperations operations
-    :vartype wait_statistics: maria_db_management_client.operations.WaitStatisticsOperations
+    :vartype wait_statistics: maria_db_management_client.aio.operations.WaitStatisticsOperations
     :ivar advisors: AdvisorsOperations operations
-    :vartype advisors: maria_db_management_client.operations.AdvisorsOperations
+    :vartype advisors: maria_db_management_client.aio.operations.AdvisorsOperations
     :ivar recommended_actions: RecommendedActionsOperations operations
-    :vartype recommended_actions: maria_db_management_client.operations.RecommendedActionsOperations
+    :vartype recommended_actions: maria_db_management_client.aio.operations.RecommendedActionsOperations
     :ivar location_based_recommended_action_sessions_operation_status: LocationBasedRecommendedActionSessionsOperationStatusOperations operations
-    :vartype location_based_recommended_action_sessions_operation_status: maria_db_management_client.operations.LocationBasedRecommendedActionSessionsOperationStatusOperations
+    :vartype location_based_recommended_action_sessions_operation_status: maria_db_management_client.aio.operations.LocationBasedRecommendedActionSessionsOperationStatusOperations
     :ivar location_based_recommended_action_sessions_result: LocationBasedRecommendedActionSessionsResultOperations operations
-    :vartype location_based_recommended_action_sessions_result: maria_db_management_client.operations.LocationBasedRecommendedActionSessionsResultOperations
+    :vartype location_based_recommended_action_sessions_result: maria_db_management_client.aio.operations.LocationBasedRecommendedActionSessionsResultOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: maria_db_management_client.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: maria_db_management_client.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: maria_db_management_client.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: maria_db_management_client.aio.operations.PrivateLinkResourcesOperations
     :ivar server_security_alert_policies: ServerSecurityAlertPoliciesOperations operations
-    :vartype server_security_alert_policies: maria_db_management_client.operations.ServerSecurityAlertPoliciesOperations
+    :vartype server_security_alert_policies: maria_db_management_client.aio.operations.ServerSecurityAlertPoliciesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -95,16 +93,15 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = MariaDBManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -152,15 +149,12 @@ class MariaDBManagementClient(MariaDBManagementClientOperationsMixin):
         self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> MariaDBManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "MariaDBManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
