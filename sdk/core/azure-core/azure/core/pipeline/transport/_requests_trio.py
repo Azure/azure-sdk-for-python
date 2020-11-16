@@ -155,7 +155,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         try:
             import trio
         except ImportError:
-            raise ImportError("Please make sure trio library are installed")
+            raise ImportError("trio package is not installed")
         super(TrioRequestsTransport, self).__init__(**kwargs)
 
     async def __aenter__(self):
