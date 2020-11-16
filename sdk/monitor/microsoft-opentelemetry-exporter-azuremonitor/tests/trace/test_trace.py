@@ -21,7 +21,7 @@ from microsoft.opentelemetry.exporter.azuremonitor.export.trace import (
 )
 from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
 
-TEST_FOLDER = os.path.abspath(".test")
+TEST_FOLDER = os.path.abspath(".test.trace")
 STORAGE_PATH = os.path.join(TEST_FOLDER)
 
 
