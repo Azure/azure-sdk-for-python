@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, TypeVar, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING
 from collections.abc import AsyncIterator
 
 import logging
