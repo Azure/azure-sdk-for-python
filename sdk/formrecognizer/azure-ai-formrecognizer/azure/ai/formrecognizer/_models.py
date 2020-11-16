@@ -296,7 +296,7 @@ class FieldData(object):
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
     """
@@ -593,7 +593,7 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this cell is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
         For calls to begin_recognize_content(), this list is always populated.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
