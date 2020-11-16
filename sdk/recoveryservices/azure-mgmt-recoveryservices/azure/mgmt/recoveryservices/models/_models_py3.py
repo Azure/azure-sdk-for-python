@@ -421,6 +421,8 @@ class PatchVault(PatchTrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param identity:
+    :type identity: ~azure.mgmt.recoveryservices.models.IdentityData
     :param properties:
     :type properties: ~azure.mgmt.recoveryservices.models.VaultProperties
     :param sku:
@@ -440,12 +442,14 @@ class PatchVault(PatchTrackedResource):
         'e_tag': {'key': 'eTag', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'IdentityData'},
         'properties': {'key': 'properties', 'type': 'VaultProperties'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, e_tag: str=None, location: str=None, tags=None, properties=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, e_tag: str=None, location: str=None, tags=None, identity=None, properties=None, sku=None, **kwargs) -> None:
         super(PatchVault, self).__init__(e_tag=e_tag, location=location, tags=tags, **kwargs)
+        self.identity = identity
         self.properties = properties
         self.sku = sku
 
