@@ -6,12 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import Operations
-from ._namespaces_operations import NamespacesOperations
-from ._notification_hubs_operations import NotificationHubsOperations
-
-__all__ = [
-    'Operations',
-    'NamespacesOperations',
-    'NotificationHubsOperations',
-]
+from ._notification_hubs_management_client import NotificationHubsManagementClient
+__all__ = ['NotificationHubsManagementClient']
