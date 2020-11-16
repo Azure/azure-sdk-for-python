@@ -77,6 +77,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory) {
   return New-Object PSObject -Property @{
     PackageId      = $pkgId
     PackageVersion = $pkgVersion
+    ReleaseTag     = "$($pkgId)_$($pkgVersion)"
     Deployable     = $forceCreate -or !(IsPythonPackageVersionPublished -pkgId $pkgId -pkgVersion $pkgVersion)
     ReleaseNotes   = $releaseNotes
     ReadmeContent  = $readmeContent
@@ -102,7 +103,7 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
     Write-Host "Discovered Package Name: $PkgName"
     Write-Host "Discovered Package Version: $Version"
     Write-Host "Directory for Upload: $UnzippedDocumentationPath"
-    $releaseTag = RetrieveReleaseTag "PyPI" $PublicArtifactLocation
+    $releaseTag = RetrieveReleaseTag $PublicArtifactLocation
     Upload-Blobs -DocDir $UnzippedDocumentationPath -PkgName $PkgName -DocVersion $Version -ReleaseTag $releaseTag
   }
 }
