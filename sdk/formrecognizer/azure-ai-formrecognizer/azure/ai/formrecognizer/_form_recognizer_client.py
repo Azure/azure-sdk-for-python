@@ -32,9 +32,9 @@ if TYPE_CHECKING:
 
 class FormRecognizerClient(FormRecognizerClientBase):
     """FormRecognizerClient extracts information from forms and images into structured data.
-    It is the interface to use for analyzing receipts, recognizing content/layout from
-    forms, and analyzing custom forms from trained models. It provides different methods
-    based on inputs from a URL and inputs from a stream.
+    It is the interface to use for analyzing receipts, business cards, invoices, recognizing
+    content/layout from forms, and analyzing custom forms from trained models. It provides
+    different methods based on inputs from a URL and inputs from a stream.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -99,7 +99,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *locale* keyword argument
+            The *locale* keyword argument and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -161,7 +161,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *locale* keyword argument
+            The *locale* keyword argument and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -465,7 +465,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *pages* and *language* keyword arguments
+            The *pages* and *language* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -533,7 +533,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *pages* and *language* keyword arguments
+            The *pages* and *language* keyword arguments and support for image/bmp content
         """
         pages = kwargs.pop("pages", None)
         language = kwargs.pop("language", None)

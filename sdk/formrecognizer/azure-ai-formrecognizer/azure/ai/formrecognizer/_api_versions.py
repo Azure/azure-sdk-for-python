@@ -9,7 +9,7 @@ from enum import Enum
 class FormRecognizerApiVersion(str, Enum):
     """Form Recognizer API versions supported by this package"""
 
-    #: this is the default version
+    #: This is the default version
     V2_1_PREVIEW = "2.1-preview.2"
     V2_0 = "2.0"
 
