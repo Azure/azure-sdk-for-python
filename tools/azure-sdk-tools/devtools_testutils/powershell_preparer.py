@@ -4,8 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from dotenv import load_dotenv, find_dotenv
 import os
+try:
+    from dotenv import load_dotenv, find_dotenv
+except ImportError:
+    # python-dotenv is not installed, assuming that the PowerShellPreparer is not used in this case
+    pass
+
 from . import AzureMgmtPreparer
 from .resource_testcase import RESOURCE_GROUP_PARAM
 from azure_devtools.scenario_tests.exceptions import AzureTestError
@@ -28,7 +33,12 @@ class PowerShellPreparer(AzureMgmtPreparer):
             playback_fake_resource=playback_fake_resource,
             client_kwargs=client_kwargs, random_name_enabled=random_name_enabled
         )
-        load_dotenv(find_dotenv())
+        try:
+            load_dotenv(find_dotenv())
+        except NameError:
+            # see above
+            pass
+
         self.directory = directory
         self.fake_values = {}
         self.real_values = {}
