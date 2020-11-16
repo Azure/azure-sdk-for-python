@@ -27,8 +27,6 @@ from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
 
 import logging
-import asyncio
-import aiohttp
 from multidict import CIMultiDict
 
 from requests.exceptions import (
@@ -71,6 +69,12 @@ class AioHttpTransport(AsyncHttpTransport):
             :caption: Asynchronous transport with aiohttp.
     """
     def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
+        # pylint:disable=unused-import
+        try:
+            import asyncio
+            import aiohttp
+        except ImportError:
+            raise ImportError("Please make sure aiohttp is installed")
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -87,6 +91,7 @@ class AioHttpTransport(AsyncHttpTransport):
     async def open(self):
         """Opens the connection.
         """
+        import aiohttp
         if not self.session and self._session_owner:
             jar = aiohttp.DummyCookieJar()
             self.session = aiohttp.ClientSession(
@@ -120,6 +125,7 @@ class AioHttpTransport(AsyncHttpTransport):
         return verify
 
     def _get_request_data(self, request): #pylint: disable=no-self-use
+        import aiohttp
         if request.files:
             form_data = aiohttp.FormData()
             for form_file, data in request.files.items():
@@ -147,6 +153,8 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword dict proxies: dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
         :keyword str proxy: will define the proxy to use all the time
         """
+        import aiohttp
+        import asyncio
         await self.open()
 
         proxies = config.pop('proxies', None)
@@ -215,6 +223,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
+        import asyncio
         retry_active = True
         retry_total = 3
         retry_interval = 1  # 1 second
@@ -261,13 +270,13 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None) -> None:
+    def __init__(self, request: HttpRequest, aiohttp_response: "aiohttp.ClientResponse", block_size=None) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
-        self.status_code = aiohttp_response.status
-        self.headers = CIMultiDict(aiohttp_response.headers)
-        self.reason = aiohttp_response.reason
-        self.content_type = aiohttp_response.headers.get('content-type')
+        self.status_code = aiohttp_response.status  # type:ignore
+        self.headers = CIMultiDict(aiohttp_response.headers)    # type:ignore
+        self.reason = aiohttp_response.reason   # type:ignore
+        self.content_type = aiohttp_response.headers.get('content-type')    # type:ignore
         self._body = None
 
     def body(self) -> bytes:
