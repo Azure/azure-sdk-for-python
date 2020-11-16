@@ -73,6 +73,7 @@ jobs:
             ServiceDirectory: '${{ parameters.ServiceDirectory }}'
             SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
             ArmTemplateParameters: ${{ cloudConfig.value.ArmTemplateParameters }}
+            AdditionalParameters: $ {{ parameters.AdditionalTestArgs }}
 
         - template: ../steps/build-test.yml
           parameters:
