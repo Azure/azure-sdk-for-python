@@ -59,7 +59,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         try:
             import trio
         except ImportError:
-            raise ImportError("Please make sure trio library are installed")
+            raise ImportError("trio package is not installed")
         self.pipeline = pipeline
         self.request = response.request
         self.response = response

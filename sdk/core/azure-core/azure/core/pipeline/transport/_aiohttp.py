@@ -74,7 +74,7 @@ class AioHttpTransport(AsyncHttpTransport):
             import asyncio
             import aiohttp
         except ImportError:
-            raise ImportError("Please make sure aiohttp is installed")
+            raise ImportError("aiohttp package is not installed")
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
