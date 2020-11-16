@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
-from opentelemetry.trace.status import StatusCode
 
 from microsoft.opentelemetry.exporter.azuremonitor import utils
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import (
