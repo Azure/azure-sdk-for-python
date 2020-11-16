@@ -7,8 +7,6 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 
 # Usage
 
-For code examples, see [Resource Graph](https://docs.microsoft.com/python/api/overview/azure/resourcegraph)
-on docs.microsoft.com.
 
 To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
 
