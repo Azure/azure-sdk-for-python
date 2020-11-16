@@ -9,7 +9,6 @@
 import unittest
 import azure.mgmt.recoveryservices
 import azure.mgmt.resource.resources.models
-import azure.common.exceptions
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from recoveryservices_testcase import MgmtRecoveryServicesTestDefinition, MgmtRecoveryServicesTestHelper
 
@@ -76,3 +75,4 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
         # self.assertIsNotNone(replication_usages)
         # self.assertEqual(len(replication_usages),0)
+
