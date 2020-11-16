@@ -109,7 +109,7 @@ class AppConfigurationClientTest(AzureTestCase):
 
     def _set_app_config_client(self, base_url):
         if self.is_playback():
-            credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
+            credential = Mock(get_token=lambda _: AccessToken("fake-token", 0))
         else:
             credential = DefaultAzureCredential()
         app_config_client = AzureAppConfigurationClient(base_url=base_url, credential=credential)
