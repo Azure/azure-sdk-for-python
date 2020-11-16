@@ -18,23 +18,23 @@ interactions:
     uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "bab9230b-4ff3-42aa-81c8-b00582452cb6"},
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "a533931f-55a1-4fd1-ad36-3c11ec5618a2"},
         "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - bab9230b-4ff3-42aa-81c8-b00582452cb6
+      - a533931f-55a1-4fd1-ad36-3c11ec5618a2
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 11 Nov 2020 18:03:43 GMT
+      - Mon, 16 Nov 2020 19:09:09 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '10'
+      - '5'
     status:
       code: 400
       message: Bad Request

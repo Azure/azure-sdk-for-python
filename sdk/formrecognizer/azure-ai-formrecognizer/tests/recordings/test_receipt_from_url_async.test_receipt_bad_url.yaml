@@ -15,16 +15,16 @@ interactions:
   response:
     body:
       string: '{"error": {"code": "FailedToDownloadImage", "innerError": {"requestId":
-        "bb15a804-e4e4-4a5b-8a06-82a5ef966f46"}, "message": "Failed to download image
+        "e9cdf0a3-fd5d-48f6-beb4-a0597734f7b4"}, "message": "Failed to download image
         from input URL."}}'
     headers:
-      apim-request-id: bb15a804-e4e4-4a5b-8a06-82a5ef966f46
+      apim-request-id: e9cdf0a3-fd5d-48f6-beb4-a0597734f7b4
       content-length: '161'
       content-type: application/json; charset=utf-8
-      date: Wed, 11 Nov 2020 18:08:24 GMT
+      date: Mon, 16 Nov 2020 19:13:50 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '3226'
+      x-envoy-upstream-service-time: '3272'
     status:
       code: 400
       message: Bad Request
