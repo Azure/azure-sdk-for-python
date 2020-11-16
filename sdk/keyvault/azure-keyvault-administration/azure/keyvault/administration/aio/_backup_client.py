@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
-from .._internal import AsyncKeyVaultClientBase
+from .._internal import AsyncKeyVaultClientBase, parse_blob_storage_url
 from .._internal.polling import KeyVaultBackupClientPolling
 from .._models import BackupOperation, RestoreOperation, SelectiveKeyRestoreOperation
 
@@ -58,13 +58,12 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :param str blob_storage_url: URL for the blob storage resource, including the path to the blob holding the
             backup. This would be the `blob_storage_url` of a :class:`BackupOperation` returned by
             :func:`begin_full_backup` or :func:`get_backup_status`, for example
-            https://contoso.blob.core.windows.net/backup/mhsm-contoso-2020090117323313
+            https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :rtype: ~azure.core.polling.AsyncLROPoller[RestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        folder_name = blob_storage_url.split("/")[-1]
-        container_url = blob_storage_url[: -len(folder_name)]
+        container_url, folder_name = parse_blob_storage_url(blob_storage_url)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)
         restore_details = self._models.RestoreOperationParameters(
             sas_token_parameters=sas_parameter, folder_to_restore=folder_name
@@ -88,14 +87,13 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :param str blob_storage_url: URL for the blob storage resource, including the path to the blob holding the
             backup. This would be the `blob_storage_url` of a :class:`BackupOperation` returned by
             :func:`begin_full_backup` or :func:`get_backup_status`, for example
-            https://contoso.blob.core.windows.net/backup/mhsm-contoso-2020090117323313
+            https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
         :param str key_name: name of the key to restore from the backup
         :rtype: ~azure.core.polling.AsyncLROPoller[RestoreOperation]
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        folder_name = blob_storage_url.split("/")[-1]
-        container_url = blob_storage_url[: -len(folder_name)]
+        container_url, folder_name = parse_blob_storage_url(blob_storage_url)
         sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)
         restore_details = self._models.SelectiveKeyRestoreOperationParameters(
             sas_token_parameters=sas_parameter, folder=folder_name
