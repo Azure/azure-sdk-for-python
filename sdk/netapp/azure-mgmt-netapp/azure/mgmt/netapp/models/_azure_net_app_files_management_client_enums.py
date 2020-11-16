@@ -67,8 +67,6 @@ class ReplicationSchedule(str, Enum):
     _10minutely = "_10minutely"
     hourly = "hourly"
     daily = "daily"
-    weekly = "weekly"
-    monthly = "monthly"
 
 
 class SecurityStyle(str, Enum):

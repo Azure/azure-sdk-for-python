@@ -105,9 +105,9 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
 
     def test_update_pool(self):
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        self.assertEqual(pool.service_level, "Premium")
+        self.assertEqual(pool.qos_type, "Auto")
 
-        pool_body = CapacityPool(service_level="Standard", size=DEFAULT_SIZE, location=LOCATION)
+        pool_body = CapacityPoolPatch(qos_type="Manual", size=DEFAULT_SIZE, location=LOCATION)
         pool = self.client.pools.create_or_update(
             pool_body,
             TEST_RG,
@@ -115,7 +115,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
             TEST_POOL_1,
             {'location': LOCATION}
         ).result()
-        self.assertEqual(pool.service_level, "Standard")
+        self.assertEqual(pool.qos_type, "Manual")
 
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
         wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)

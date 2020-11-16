@@ -1,5 +1,25 @@
 # Release History
 
+
+## 0.14.0 (2020-11-16)
+
+**Features**
+
+  - Model SnapshotPolicy has a new parameter provisioning_state
+  - Model SnapshotPolicy has a new parameter name1
+  - Model ActiveDirectory has a new parameter aes_encryption
+  - Model ActiveDirectory has a new parameter ldap_signing
+  - Model Backup has a new parameter backup_id
+  - Model SnapshotPolicyDetails has a new parameter provisioning_state
+  - Model SnapshotPolicyDetails has a new parameter name1
+  - Model BackupPolicyPatch has a new parameter tags
+  - Model BackupPolicyPatch has a new parameter type
+  - Model BackupPolicyPatch has a new parameter id
+  - Model BackupPolicyPatch has a new parameter name1
+  - Model SnapshotPolicyPatch has a new parameter provisioning_state
+  - Model SnapshotPolicyPatch has a new parameter name1
+  - Model BackupPatch has a new parameter backup_id
+  
 ## 0.13.0 (2020-08-31)
 
 **Features**

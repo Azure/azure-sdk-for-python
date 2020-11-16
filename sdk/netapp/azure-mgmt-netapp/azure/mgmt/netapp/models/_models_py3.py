@@ -60,6 +60,12 @@ class ActiveDirectory(Model):
      Certificate Service's self-signed root CA certificate, this optional
      parameter is used only for dual protocol with LDAP user-mapping volumes.
     :type server_root_ca_certificate: str
+    :param aes_encryption: If enabled, AES encryption will be enabled for SMB
+     communication.
+    :type aes_encryption: bool
+    :param ldap_signing: Specifies whether or not the LDAP traffic needs to be
+     signed.
+    :type ldap_signing: bool
     """
 
     _validation = {
@@ -86,9 +92,11 @@ class ActiveDirectory(Model):
         'kdc_ip': {'key': 'kdcIP', 'type': 'str'},
         'ad_name': {'key': 'adName', 'type': 'str'},
         'server_root_ca_certificate': {'key': 'serverRootCACertificate', 'type': 'str'},
+        'aes_encryption': {'key': 'aesEncryption', 'type': 'bool'},
+        'ldap_signing': {'key': 'ldapSigning', 'type': 'bool'},
     }
 
-    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, smb_server_name: str=None, organizational_unit: str=None, site: str=None, backup_operators=None, kdc_ip: str=None, ad_name: str=None, server_root_ca_certificate: str=None, **kwargs) -> None:
+    def __init__(self, *, active_directory_id: str=None, username: str=None, password: str=None, domain: str=None, dns: str=None, smb_server_name: str=None, organizational_unit: str=None, site: str=None, backup_operators=None, kdc_ip: str=None, ad_name: str=None, server_root_ca_certificate: str=None, aes_encryption: bool=None, ldap_signing: bool=None, **kwargs) -> None:
         super(ActiveDirectory, self).__init__(**kwargs)
         self.active_directory_id = active_directory_id
         self.username = username
@@ -104,6 +112,8 @@ class ActiveDirectory(Model):
         self.kdc_ip = kdc_ip
         self.ad_name = ad_name
         self.server_root_ca_certificate = server_root_ca_certificate
+        self.aes_encryption = aes_encryption
+        self.ldap_signing = ldap_signing
 
 
 class AuthorizeRequest(Model):
@@ -138,6 +148,8 @@ class Backup(Model):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :ivar backup_id: backupId. UUID v4 used to identify the Backup
+    :vartype backup_id: str
     :ivar creation_date: name. The creation date of the backup
     :vartype creation_date: datetime
     :ivar provisioning_state: Azure lifecycle management
@@ -155,6 +167,7 @@ class Backup(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'backup_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'size': {'readonly': True},
@@ -166,6 +179,7 @@ class Backup(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'backup_id': {'key': 'properties.backupId', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'size': {'key': 'properties.size', 'type': 'long'},
@@ -179,6 +193,7 @@ class Backup(Model):
         self.id = None
         self.name = None
         self.type = None
+        self.backup_id = None
         self.creation_date = None
         self.provisioning_state = None
         self.size = None
@@ -194,6 +209,8 @@ class BackupPatch(Model):
 
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar backup_id: backupId. UUID v4 used to identify the Backup
+    :vartype backup_id: str
     :ivar creation_date: name. The creation date of the backup
     :vartype creation_date: datetime
     :ivar provisioning_state: Azure lifecycle management
@@ -207,6 +224,7 @@ class BackupPatch(Model):
     """
 
     _validation = {
+        'backup_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'size': {'readonly': True},
@@ -215,6 +233,7 @@ class BackupPatch(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'backup_id': {'key': 'properties.backupId', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'size': {'key': 'properties.size', 'type': 'long'},
@@ -225,6 +244,7 @@ class BackupPatch(Model):
     def __init__(self, *, tags=None, label: str=None, **kwargs) -> None:
         super(BackupPatch, self).__init__(**kwargs)
         self.tags = tags
+        self.backup_id = None
         self.creation_date = None
         self.provisioning_state = None
         self.size = None
@@ -401,8 +421,16 @@ class BackupPolicyPatch(Model):
 
     :param location: Resource location
     :type location: str
-    :ivar name: Name of backup policy
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
     :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :ivar name1: Name of backup policy
+    :vartype name1: str
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     :param daily_backups_to_keep: Daily backups count to keep
@@ -422,13 +450,20 @@ class BackupPolicyPatch(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
+        'name1': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'properties.name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
         'weekly_backups_to_keep': {'key': 'properties.weeklyBackupsToKeep', 'type': 'int'},
@@ -439,10 +474,14 @@ class BackupPolicyPatch(Model):
         'volume_backups': {'key': 'properties.volumeBackups', 'type': '[VolumeBackups]'},
     }
 
-    def __init__(self, *, location: str=None, daily_backups_to_keep: int=None, weekly_backups_to_keep: int=None, monthly_backups_to_keep: int=None, yearly_backups_to_keep: int=None, volumes_assigned: int=None, enabled: bool=None, volume_backups=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, daily_backups_to_keep: int=None, weekly_backups_to_keep: int=None, monthly_backups_to_keep: int=None, yearly_backups_to_keep: int=None, volumes_assigned: int=None, enabled: bool=None, volume_backups=None, **kwargs) -> None:
         super(BackupPolicyPatch, self).__init__(**kwargs)
         self.location = location
+        self.id = None
         self.name = None
+        self.type = None
+        self.tags = tags
+        self.name1 = None
         self.provisioning_state = None
         self.daily_backups_to_keep = daily_backups_to_keep
         self.weekly_backups_to_keep = weekly_backups_to_keep
@@ -534,8 +573,8 @@ class CapacityPool(Model):
         'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
         'service_level': {'required': True},
         'provisioning_state': {'readonly': True},
-        'total_throughput_mibps': {'readonly': True, 'multiple': 0.001},
-        'utilized_throughput_mibps': {'readonly': True, 'multiple': 0.001},
+        'total_throughput_mibps': {'readonly': True},
+        'utilized_throughput_mibps': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1240,7 +1279,7 @@ class ReplicationObject(Model):
      'dst'
     :type endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
     :param replication_schedule: Required. Schedule. Possible values include:
-     '_10minutely', 'hourly', 'daily', 'weekly', 'monthly'
+     '_10minutely', 'hourly', 'daily'
     :type replication_schedule: str or
      ~azure.mgmt.netapp.models.ReplicationSchedule
     :param remote_volume_resource_id: Required. The resource ID of the remote
@@ -1435,16 +1474,20 @@ class SnapshotPolicy(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar name1: Snapshot policy name
+    :vartype name1: str
     :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
-    :type hourly_schedule: object
+    :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: dailySchedule. Schedule for daily snapshots
-    :type daily_schedule: object
+    :type daily_schedule: ~azure.mgmt.netapp.models.DailySchedule
     :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
-    :type weekly_schedule: object
+    :type weekly_schedule: ~azure.mgmt.netapp.models.WeeklySchedule
     :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
-    :type monthly_schedule: object
+    :type monthly_schedule: ~azure.mgmt.netapp.models.MonthlySchedule
     :param enabled: The property to decide policy is enabled or not
     :type enabled: bool
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
     """
 
     _validation = {
@@ -1452,6 +1495,8 @@ class SnapshotPolicy(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1460,11 +1505,13 @@ class SnapshotPolicy(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
-        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
-        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
-        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'MonthlySchedule'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, location: str, tags=None, hourly_schedule=None, daily_schedule=None, weekly_schedule=None, monthly_schedule=None, enabled: bool=None, **kwargs) -> None:
@@ -1474,11 +1521,13 @@ class SnapshotPolicy(Model):
         self.name = None
         self.type = None
         self.tags = tags
+        self.name1 = None
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
         self.monthly_schedule = monthly_schedule
         self.enabled = enabled
+        self.provisioning_state = None
 
 
 class SnapshotPolicyDetails(Model):
@@ -1497,22 +1546,28 @@ class SnapshotPolicyDetails(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar name1: Snapshot policy name
+    :vartype name1: str
     :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
-    :type hourly_schedule: object
+    :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: dailySchedule. Schedule for daily snapshots
-    :type daily_schedule: object
+    :type daily_schedule: ~azure.mgmt.netapp.models.DailySchedule
     :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
-    :type weekly_schedule: object
+    :type weekly_schedule: ~azure.mgmt.netapp.models.WeeklySchedule
     :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
-    :type monthly_schedule: object
+    :type monthly_schedule: ~azure.mgmt.netapp.models.MonthlySchedule
     :param enabled: The property to decide policy is enabled or not
     :type enabled: bool
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1521,11 +1576,13 @@ class SnapshotPolicyDetails(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
-        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
-        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
-        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'MonthlySchedule'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, location: str=None, tags=None, hourly_schedule=None, daily_schedule=None, weekly_schedule=None, monthly_schedule=None, enabled: bool=None, **kwargs) -> None:
@@ -1535,11 +1592,13 @@ class SnapshotPolicyDetails(Model):
         self.name = None
         self.type = None
         self.tags = tags
+        self.name1 = None
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
         self.monthly_schedule = monthly_schedule
         self.enabled = enabled
+        self.provisioning_state = None
 
 
 class SnapshotPolicyPatch(Model):
@@ -1558,22 +1617,28 @@ class SnapshotPolicyPatch(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :ivar name1: Snapshot policy name
+    :vartype name1: str
     :param hourly_schedule: hourlySchedule. Schedule for hourly snapshots
-    :type hourly_schedule: object
+    :type hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :param daily_schedule: dailySchedule. Schedule for daily snapshots
-    :type daily_schedule: object
+    :type daily_schedule: ~azure.mgmt.netapp.models.DailySchedule
     :param weekly_schedule: weeklySchedule. Schedule for weekly snapshots
-    :type weekly_schedule: object
+    :type weekly_schedule: ~azure.mgmt.netapp.models.WeeklySchedule
     :param monthly_schedule: monthlySchedule. Schedule for monthly snapshots
-    :type monthly_schedule: object
+    :type monthly_schedule: ~azure.mgmt.netapp.models.MonthlySchedule
     :param enabled: The property to decide policy is enabled or not
     :type enabled: bool
+    :ivar provisioning_state: Azure lifecycle management
+    :vartype provisioning_state: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'name1': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1582,11 +1647,13 @@ class SnapshotPolicyPatch(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'object'},
-        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'object'},
-        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'object'},
-        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'object'},
+        'name1': {'key': 'properties.name', 'type': 'str'},
+        'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
+        'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
+        'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
+        'monthly_schedule': {'key': 'properties.monthlySchedule', 'type': 'MonthlySchedule'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, *, location: str=None, tags=None, hourly_schedule=None, daily_schedule=None, weekly_schedule=None, monthly_schedule=None, enabled: bool=None, **kwargs) -> None:
@@ -1596,11 +1663,13 @@ class SnapshotPolicyPatch(Model):
         self.name = None
         self.type = None
         self.tags = tags
+        self.name1 = None
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
         self.monthly_schedule = monthly_schedule
         self.enabled = enabled
+        self.provisioning_state = None
 
 
 class SnapshotPolicyVolumeList(Model):
@@ -1750,7 +1819,7 @@ class Volume(Model):
         'provisioning_state': {'readonly': True},
         'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
         'backup_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}|(\\?([^\/]*[\/])*)([^\/]+)$'},
-        'baremetal_tenant_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'baremetal_tenant_id': {'readonly': True},
         'subnet_id': {'required': True},
         'throughput_mibps': {'maximum': 4500, 'minimum': 1, 'multiple': 0.001},
     }
