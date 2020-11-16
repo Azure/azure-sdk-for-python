@@ -17,9 +17,6 @@ For a more complete set of Azure libraries, see the
 
 ## Usage
 
-For code examples, see [OperationsManagement
-Management](https://docs.microsoft.com/python/api/overview/azure/) on
-docs.microsoft.com.
 
 To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
 
