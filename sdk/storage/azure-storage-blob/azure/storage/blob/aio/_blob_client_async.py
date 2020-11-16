@@ -137,11 +137,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_blob_from_url(
-            self, source_url,   # type: str
-            include_source_blob_properties=True,  # type: Optional[bool]
-            **kwargs):
-        # type: (...) -> Dict[str, Any]
+    async def upload_blob_from_url(self, source_url, **kwargs):
+        # type: (str, Any) -> Dict[str, Any]
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
         The content of an existing blob is overwritten with the new blob.
@@ -158,7 +155,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
-        :param bool include_source_blob_properties:
+        :keyword bool include_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
@@ -208,10 +205,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             destination blob. If the request does not include the lease ID or it is not
             valid, the operation fails with status code 412 (Precondition Failed).
         :paramtype destination_lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword source_lease:
-            Specify this to perform the Copy Blob operation only if
-            the lease ID given matches the active lease ID of the source blob.
-        :paramtype source_lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword ~azure.storage.blob.ContentSettings content_settings:
@@ -233,7 +226,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
-            include_source_blob_properties=include_source_blob_properties,
             **kwargs)
         try:
             return await self._client.block_blob.put_blob_from_url(**options)

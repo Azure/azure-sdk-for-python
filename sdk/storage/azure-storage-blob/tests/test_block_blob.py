@@ -12,7 +12,9 @@ from datetime import datetime, timedelta
 import pytest
 import uuid
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
+from azure.data.tables._policies import StorageContentValidation
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
@@ -20,7 +22,7 @@ from azure.storage.blob import (
     BlobType,
     ContentSettings,
     BlobBlock,
-    StandardBlobTier, generate_blob_sas, BlobSasPermissions
+    StandardBlobTier, generate_blob_sas, BlobSasPermissions, CustomerProvidedEncryptionKey
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
@@ -85,7 +87,7 @@ class StorageBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_blob_from_url_with_existing_blob(
             self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob(data=b"test data")
         # Act
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
@@ -105,7 +107,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_upload_blob_from_url_with_standard_tier_specified(
             self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob()
         self.bsc.get_blob_client(self.container_name, blob.blob_name)
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
@@ -115,11 +117,11 @@ class StorageBlockBlobTest(StorageTestCase):
         source_blob = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
 
-        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         blob_tier = StandardBlobTier.Hot
-        new_blob.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
+        new_blob_client.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
 
-        new_blob_properties = new_blob.get_blob_properties()
+        new_blob_properties = new_blob_client.get_blob_properties()
 
         # Assert
         self.assertEqual(new_blob_properties.blob_tier, blob_tier)
@@ -128,7 +130,7 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_upload_blob_from_url_without_using_source_properties(
             self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        self._setup(storage_account, storage_account_key)
         blob = self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
         self.bsc.get_blob_client(self.container_name, blob.blob_name)
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
@@ -138,14 +140,132 @@ class StorageBlockBlobTest(StorageTestCase):
         source_blob = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
 
-        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        new_blob.upload_blob_from_url(source_blob, include_source_blob_properties=False)
+        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob_client.upload_blob_from_url(source_blob, include_source_blob_properties=False)
 
-        new_blob_properties = new_blob.get_blob_properties()
+        new_blob_properties = new_blob_client.get_blob_properties()
         source_blob_properties = blob.get_blob_properties()
 
         # Assert
-        self.assertNotEqual(new_blob_properties.blob_tier, source_blob_properties.blob_tier)
+        self.assertEqual(new_blob_properties.blob_tier, source_blob_properties.blob_tier)
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_with_destination_lease(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key)
+        source_blob = self._create_blob()
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=source_blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob_url = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
+        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob_client.upload_blob(data="test")
+        new_blob_lease = new_blob_client.acquire_lease()
+        with self.assertRaises(HttpResponseError):
+            new_blob_client.upload_blob_from_url(
+                source_blob_url, destination_lease="baddde9e-8247-4276-8bfa-c7a8081eba1d")
+        with self.assertRaises(HttpResponseError):
+            new_blob_client.upload_blob_from_url(source_blob_url)
+        new_blob_client.upload_blob_from_url(
+            source_blob_url, destination_lease=new_blob_lease)
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_if_match_condition(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        source_blob = self._create_blob()
+        early_test_datetime = (datetime.utcnow() - timedelta(minutes=15))
+        late_test_datetime = (datetime.utcnow() + timedelta(minutes=15))
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=source_blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob_url = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
+        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob_client.upload_blob(data="fake data")
+        with self.assertRaises(ResourceModifiedError):
+            new_blob_client.upload_blob_from_url(
+                source_blob_url, if_modified_since=late_test_datetime)
+        new_blob_client.upload_blob_from_url(
+            source_blob_url, if_modified_since=early_test_datetime)
+        with self.assertRaises(ResourceModifiedError):
+            new_blob_client.upload_blob_from_url(
+                source_blob_url, if_unmodified_since=early_test_datetime)
+        new_blob_client.upload_blob_from_url(
+            source_blob_url, if_unmodified_since=late_test_datetime)
+        with self.assertRaises(ResourceNotFoundError):
+            new_blob_client.upload_blob_from_url(
+                source_blob_url, source_if_modified_since=late_test_datetime)
+        new_blob_client.upload_blob_from_url(
+            source_blob_url, source_if_modified_since=early_test_datetime)
+        with self.assertRaises(ResourceNotFoundError):
+            new_blob_client.upload_blob_from_url(
+                source_blob_url, source_if_unmodified_since=early_test_datetime)
+        new_blob_client.upload_blob_from_url(
+            source_blob_url, source_if_unmodified_since=late_test_datetime)
+
+    #HNS account
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_if_tags_match_condition(
+            self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account, storage_account_key, container_name="tcodsdswxntvdcbaifdnvcer")
+        source_blob = self._create_blob(tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"})
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=source_blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob_url = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
+        new_blob1_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob2_client = self.bsc.get_blob_client(self.container_name, 'blob2copy')
+
+        #with self.assertRaises(ResourceModifiedError):
+        new_blob1_client.upload_blob_from_url(
+                    source_blob_url, tags={"tag1": "firsttag"}, if_tags_match_condition="\"condition tag\"='wrong tag'")
+        new_blob2_client.upload_blob_from_url(
+            source_blob_url, tags={"tag1": "firsttag"}, if_tags_match_condition="\"tag1\"='firsttag'")
+
+    # HNS account
+    @GlobalStorageAccountPreparer()
+    def test_compare_source_and_destination_properties(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Arrange
+        self._setup(storage_account, storage_account_key, container_name="tesgftsgfgd12fgbfrgfthj34sffdfcbf567fdf8fe")
+        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+                                      key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+
+        content_settings = ContentSettings(
+                content_type='application/octet-stream',
+                content_language='spanish',
+                content_disposition='inline'
+        )
+        source_blob = self._create_blob(
+                                 data=b"This is test data to be copied over.",
+                                 metadata={'blobdata': 'data1'},
+                                 tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"},
+                                 content_settings=content_settings,
+                                 cpk=test_cpk
+                                 )
+        source_blob_snapshot = source_blob.create_snapshot(cpk=test_cpk)
+        source_blob_lease = source_blob.acquire_lease()
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=source_blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        # Act
+        source_blob_url = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
+
+        new_blob_copy1 = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob_copy2 = self.bsc.get_blob_client(self.container_name, 'blob2copy')
+        new_blob_copy1.upload_blob_from_url(
+            source_blob_url, include_source_blob_properties=True, cpk=test_cpk)
+        new_blob_copy2.upload_blob_from_url(
+            source_blob_url, include_source_blob_properties=False, cpk=test_cpk)
+
+        source_blob_props = source_blob.get_blob_properties()
+        new_blob_copy1_props = new_blob_copy1.get_blob_properties()
+        new_blob_copy2_props = new_blob_copy2.get_blob_properties()
+        print("")
 
     @GlobalStorageAccountPreparer()
     def test_put_block(self, resource_group, location, storage_account, storage_account_key):

@@ -406,24 +406,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("Unsupported BlobType: {}".format(blob_type))
         return kwargs
 
-    def _upload_blob_from_url_options(self, source_url, include_source_blob_properties, **kwargs):
+    def _upload_blob_from_url_options(self, source_url, **kwargs):
         # type: (...) -> Dict[str, Any]
         headers = kwargs.pop('headers', {})
-        if 'source_lease' in kwargs:
-            source_lease = kwargs.pop('source_lease')
-            try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: str
-            except AttributeError:
-                headers['x-ms-source-lease-id'] = source_lease
-
         tier = kwargs.pop('standard_blob_tier', None)
-
+        include_source_blob_properties = kwargs.pop('include_source_blob_properties', True)
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
         content_settings = kwargs.pop('content_settings', None)
         if content_settings:
-            kwargs['blob_headers'] = BlobHTTPHeaders(
+            kwargs['blob_http_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
                 blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
@@ -460,11 +453,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return options
 
     @distributed_trace
-    def upload_blob_from_url(
-            self, source_url,   # type: str
-            include_source_blob_properties=True,   # type: Optional[bool]
-            **kwargs):
-        # type: (...) -> Dict[str, Any]
+    def upload_blob_from_url(self, source_url, **kwargs):
+        # type: (str, Any) -> Dict[str, Any]
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
         The content of an existing blob is overwritten with the new blob.
@@ -481,7 +471,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
-        :param bool include_source_blob_properties:
+        :keyword bool include_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
@@ -531,10 +521,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             destination blob. If the request does not include the lease ID or it is not
             valid, the operation fails with status code 412 (Precondition Failed).
         :paramtype destination_lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword source_lease:
-            Specify this to perform the Copy Blob operation only if
-            the lease ID given matches the active lease ID of the source blob.
-        :paramtype source_lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword ~azure.storage.blob.ContentSettings content_settings:
@@ -556,7 +542,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
-            include_source_blob_properties=include_source_blob_properties,
             **kwargs)
         try:
             return self._client.block_blob.put_blob_from_url(**options)
