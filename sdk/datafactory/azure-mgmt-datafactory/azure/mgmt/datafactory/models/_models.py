@@ -13425,6 +13425,18 @@ class ExecuteDataFlowActivity(ExecutionActivity):
     :param compute: Compute properties for data flow activity.
     :type compute:
      ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
+    :param trace_level: Trace level setting used for data flow monitoring
+     output. Supported values are: 'coarse', 'fine', and 'none'. Type: string
+     (or Expression with resultType string)
+    :type trace_level: object
+    :param continue_on_error: Continue on error setting used for data flow
+     execution. Enables processing to continue if a sink fails. Type: boolean
+     (or Expression with resultType boolean)
+    :type continue_on_error: object
+    :param run_concurrently: Concurrent run setting used for data flow
+     execution. Allows sinks with the same save order to be processed
+     concurrently. Type: boolean (or Expression with resultType boolean)
+    :type run_concurrently: object
     """
 
     _validation = {
@@ -13446,6 +13458,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         'staging': {'key': 'typeProperties.staging', 'type': 'DataFlowStagingInfo'},
         'integration_runtime': {'key': 'typeProperties.integrationRuntime', 'type': 'IntegrationRuntimeReference'},
         'compute': {'key': 'typeProperties.compute', 'type': 'ExecuteDataFlowActivityTypePropertiesCompute'},
+        'trace_level': {'key': 'typeProperties.traceLevel', 'type': 'object'},
+        'continue_on_error': {'key': 'typeProperties.continueOnError', 'type': 'object'},
+        'run_concurrently': {'key': 'typeProperties.runConcurrently', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -13454,6 +13469,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         self.staging = kwargs.get('staging', None)
         self.integration_runtime = kwargs.get('integration_runtime', None)
         self.compute = kwargs.get('compute', None)
+        self.trace_level = kwargs.get('trace_level', None)
+        self.continue_on_error = kwargs.get('continue_on_error', None)
+        self.run_concurrently = kwargs.get('run_concurrently', None)
         self.type = 'ExecuteDataFlow'
 
 
@@ -13462,17 +13480,17 @@ class ExecuteDataFlowActivityTypePropertiesCompute(Model):
 
     :param compute_type: Compute type of the cluster which will execute data
      flow job. Possible values include: 'General', 'MemoryOptimized',
-     'ComputeOptimized'
-    :type compute_type: str or
-     ~azure.mgmt.datafactory.models.DataFlowComputeType
+     'ComputeOptimized'. Type: string (or Expression with resultType string)
+    :type compute_type: object
     :param core_count: Core count of the cluster which will execute data flow
-     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272.
-    :type core_count: int
+     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272. Type: integer
+     (or Expression with resultType integer)
+    :type core_count: object
     """
 
     _attribute_map = {
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'compute_type': {'key': 'computeType', 'type': 'object'},
+        'core_count': {'key': 'coreCount', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):

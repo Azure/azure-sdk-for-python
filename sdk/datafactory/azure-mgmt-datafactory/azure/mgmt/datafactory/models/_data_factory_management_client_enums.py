@@ -384,13 +384,6 @@ class RecurrenceFrequency(str, Enum):
     year = "Year"
 
 
-class DataFlowComputeType(str, Enum):
-
-    general = "General"
-    memory_optimized = "MemoryOptimized"
-    compute_optimized = "ComputeOptimized"
-
-
 class AzureFunctionActivityMethod(str, Enum):
 
     get = "GET"
@@ -604,6 +597,13 @@ class IntegrationRuntimeEdition(str, Enum):
 
     standard = "Standard"
     enterprise = "Enterprise"
+
+
+class DataFlowComputeType(str, Enum):
+
+    general = "General"
+    memory_optimized = "MemoryOptimized"
+    compute_optimized = "ComputeOptimized"
 
 
 class SsisObjectMetadataType(str, Enum):

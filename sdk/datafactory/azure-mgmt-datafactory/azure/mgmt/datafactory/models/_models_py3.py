@@ -13425,6 +13425,18 @@ class ExecuteDataFlowActivity(ExecutionActivity):
     :param compute: Compute properties for data flow activity.
     :type compute:
      ~azure.mgmt.datafactory.models.ExecuteDataFlowActivityTypePropertiesCompute
+    :param trace_level: Trace level setting used for data flow monitoring
+     output. Supported values are: 'coarse', 'fine', and 'none'. Type: string
+     (or Expression with resultType string)
+    :type trace_level: object
+    :param continue_on_error: Continue on error setting used for data flow
+     execution. Enables processing to continue if a sink fails. Type: boolean
+     (or Expression with resultType boolean)
+    :type continue_on_error: object
+    :param run_concurrently: Concurrent run setting used for data flow
+     execution. Allows sinks with the same save order to be processed
+     concurrently. Type: boolean (or Expression with resultType boolean)
+    :type run_concurrently: object
     """
 
     _validation = {
@@ -13446,14 +13458,20 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         'staging': {'key': 'typeProperties.staging', 'type': 'DataFlowStagingInfo'},
         'integration_runtime': {'key': 'typeProperties.integrationRuntime', 'type': 'IntegrationRuntimeReference'},
         'compute': {'key': 'typeProperties.compute', 'type': 'ExecuteDataFlowActivityTypePropertiesCompute'},
+        'trace_level': {'key': 'typeProperties.traceLevel', 'type': 'object'},
+        'continue_on_error': {'key': 'typeProperties.continueOnError', 'type': 'object'},
+        'run_concurrently': {'key': 'typeProperties.runConcurrently', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, data_flow, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, staging=None, integration_runtime=None, compute=None, **kwargs) -> None:
+    def __init__(self, *, name: str, data_flow, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, staging=None, integration_runtime=None, compute=None, trace_level=None, continue_on_error=None, run_concurrently=None, **kwargs) -> None:
         super(ExecuteDataFlowActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.data_flow = data_flow
         self.staging = staging
         self.integration_runtime = integration_runtime
         self.compute = compute
+        self.trace_level = trace_level
+        self.continue_on_error = continue_on_error
+        self.run_concurrently = run_concurrently
         self.type = 'ExecuteDataFlow'
 
 
@@ -13462,20 +13480,20 @@ class ExecuteDataFlowActivityTypePropertiesCompute(Model):
 
     :param compute_type: Compute type of the cluster which will execute data
      flow job. Possible values include: 'General', 'MemoryOptimized',
-     'ComputeOptimized'
-    :type compute_type: str or
-     ~azure.mgmt.datafactory.models.DataFlowComputeType
+     'ComputeOptimized'. Type: string (or Expression with resultType string)
+    :type compute_type: object
     :param core_count: Core count of the cluster which will execute data flow
-     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272.
-    :type core_count: int
+     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272. Type: integer
+     (or Expression with resultType integer)
+    :type core_count: object
     """
 
     _attribute_map = {
-        'compute_type': {'key': 'computeType', 'type': 'str'},
-        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'compute_type': {'key': 'computeType', 'type': 'object'},
+        'core_count': {'key': 'coreCount', 'type': 'object'},
     }
 
-    def __init__(self, *, compute_type=None, core_count: int=None, **kwargs) -> None:
+    def __init__(self, *, compute_type=None, core_count=None, **kwargs) -> None:
         super(ExecuteDataFlowActivityTypePropertiesCompute, self).__init__(**kwargs)
         self.compute_type = compute_type
         self.core_count = core_count
