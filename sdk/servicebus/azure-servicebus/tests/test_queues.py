@@ -25,7 +25,7 @@ from azure.servicebus import (
     ServiceBusMessageBatch,
     ServiceBusReceivedMessage,
     ServiceBusReceiveMode,
-    SubQueue
+    ServiceBusSubQueue
 )
 from azure.servicebus._common.constants import (
     _X_OPT_LOCK_TOKEN,
@@ -565,7 +565,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             count = 0
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                              sub_queue = SubQueue.DeadLetter,
+                                              sub_queue = ServiceBusSubQueue.DeadLetter,
                                               max_wait_time=5) as receiver:
                 for message in receiver:
                     count += 1
@@ -690,7 +690,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             with sb_client.get_queue_receiver(
                     servicebus_queue.name,
-                    sub_queue = SubQueue.DeadLetter,
+                    sub_queue = ServiceBusSubQueue.DeadLetter,
                     max_wait_time=5,
                     receive_mode=ServiceBusReceiveMode.PeekLock) as dl_receiver:
                 count = 0
@@ -739,7 +739,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             with sb_client.get_queue_receiver(
                     servicebus_queue.name,
-                    sub_queue = SubQueue.DeadLetter,
+                    sub_queue = ServiceBusSubQueue.DeadLetter,
                     max_wait_time=5,
                     receive_mode=ServiceBusReceiveMode.PeekLock) as dl_receiver:
                 count = 0
@@ -1072,7 +1072,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             with sb_client.get_queue_receiver(
                     servicebus_queue.name,
-                    sub_queue = SubQueue.DeadLetter,
+                    sub_queue = ServiceBusSubQueue.DeadLetter,
                     max_wait_time=5,
                     receive_mode=ServiceBusReceiveMode.PeekLock) as dl_receiver:
                 count = 0

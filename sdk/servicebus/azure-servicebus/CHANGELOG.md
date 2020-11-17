@@ -2,10 +2,14 @@
 
 ## 7.0.0b9 (Unreleased)
 
+**New Features**
+
+* `sub_queue` and `receive_mode` may now be passed in as a valid string (as defined by their respective enum type) as well as their enum form.
+
 **Breaking Changes**
 
 * `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
-* Rename `ReceiveMode` to `ServiceBusReceiveMode`.
+* Rename `ReceiveMode` to `ServiceBusReceiveMode` and `SubQueue` to `ServiceBusSubQueue`
 
 ## 7.0.0b8 (2020-11-05)
 

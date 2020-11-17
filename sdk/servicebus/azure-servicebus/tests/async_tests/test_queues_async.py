@@ -27,9 +27,9 @@ from azure.servicebus import (
     ServiceBusReceivedMessage,
     TransportType,
     ServiceBusReceiveMode,
-    SubQueue
+    ServiceBusSubQueue
 )
-from azure.servicebus._common.constants import ServiceBusReceiveMode, SubQueue
+from azure.servicebus._common.constants import ServiceBusReceiveMode, ServiceBusSubQueue
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
     ServiceBusConnectionError,
@@ -471,7 +471,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             count = 0
             async with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                                    sub_queue = SubQueue.DeadLetter,
+                                                    sub_queue = ServiceBusSubQueue.DeadLetter,
                                                     max_wait_time=5) as receiver:
                 async for message in receiver:
                     count += 1
@@ -586,7 +586,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             async with sb_client.get_queue_receiver(
                     servicebus_queue.name,
-                    sub_queue = SubQueue.DeadLetter,
+                    sub_queue = ServiceBusSubQueue.DeadLetter,
                     max_wait_time=5,
                     mode=ServiceBusReceiveMode.PeekLock) as dl_receiver:
                 count = 0
@@ -628,7 +628,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
             async with sb_client.get_queue_receiver(
                 servicebus_queue.name,
-                sub_queue = SubQueue.DeadLetter,
+                sub_queue = ServiceBusSubQueue.DeadLetter,
                 max_wait_time=5,
                 receive_mode=ServiceBusReceiveMode.PeekLock
             ) as receiver:
@@ -898,7 +898,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             assert not messages
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                                    sub_queue = SubQueue.DeadLetter,
+                                                    sub_queue = ServiceBusSubQueue.DeadLetter,
                                                     max_wait_time=5, 
                                                     receive_mode=ServiceBusReceiveMode.PeekLock) as receiver:
                 count = 0

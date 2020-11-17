@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
-from azure.servicebus._common.constants import SubQueue
+from azure.servicebus._common.constants import ServiceBusSubQueue
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -177,7 +177,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
             with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
-                sub_queue = SubQueue.DeadLetter,
+                sub_queue = ServiceBusSubQueue.DeadLetter,
                 max_wait_time=5,
                 receive_mode=ServiceBusReceiveMode.PeekLock
             ) as dl_receiver:

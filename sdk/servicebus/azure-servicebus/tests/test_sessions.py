@@ -20,7 +20,7 @@ from azure.servicebus import (
     ServiceBusReceivedMessage,
     ServiceBusReceiveMode,
     NEXT_AVAILABLE_SESSION,
-    SubQueue
+    ServiceBusSubQueue
 )
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
@@ -338,7 +338,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
             count = 0
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              sub_queue=SubQueue.DeadLetter,
+                                              sub_queue=ServiceBusSubQueue.DeadLetter,
                                               max_wait_time=5) as receiver:
                 for message in receiver:
                     count += 1
@@ -451,7 +451,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             assert count == 10
 
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                              sub_queue = SubQueue.DeadLetter,
+                                              sub_queue = ServiceBusSubQueue.DeadLetter,
                                               max_wait_time=5) as receiver:
                 count = 0
                 for message in receiver:

@@ -19,7 +19,7 @@ from azure.servicebus import (
     ServiceBusReceivedMessage,
     ServiceBusReceiveMode,
     NEXT_AVAILABLE_SESSION,
-    SubQueue
+    ServiceBusSubQueue
 )
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
 from azure.servicebus._common.utils import utc_now
@@ -259,7 +259,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             count = 0
             async with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                                    sub_queue = SubQueue.DeadLetter,
+                                                    sub_queue = ServiceBusSubQueue.DeadLetter,
                                                     max_wait_time=5) as receiver:
                 async for message in receiver:
                     count += 1
@@ -364,7 +364,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             assert count == 10
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                                    sub_queue = SubQueue.DeadLetter,
+                                                    sub_queue = ServiceBusSubQueue.DeadLetter,
                                                     max_wait_time=5) as receiver:
                 count = 0
                 async for message in receiver:

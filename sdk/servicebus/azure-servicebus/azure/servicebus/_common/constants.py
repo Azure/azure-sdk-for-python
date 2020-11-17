@@ -119,13 +119,13 @@ class ServiceBusReceiveMode(Enum):
     ReceiveAndDelete = constants.ReceiverSettleMode.ReceiveAndDelete
 
 
-class SessionFilter(Enum):
+class ServiceBusSessionFilter(Enum):
     NextAvailable = 0
 
 
-class SubQueue(Enum):
-    DeadLetter = 1
-    TransferDeadLetter = 2
+class ServiceBusSubQueue(Enum):
+    DeadLetter = 'deadletter'
+    TransferDeadLetter = 'transfer-deadletter'
 
 
 ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
@@ -139,4 +139,4 @@ ANNOTATION_SYMBOL_KEY_MAP = {
 }
 
 
-NEXT_AVAILABLE_SESSION = SessionFilter.NextAvailable
+NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NextAvailable
