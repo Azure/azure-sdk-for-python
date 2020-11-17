@@ -35,7 +35,7 @@ ERROR_CODE_ARGUMENT_ERROR = VENDOR + b":argument-error"
 ERROR_CODE_OUT_OF_RANGE = VENDOR + b":argument-out-of-range"
 ERROR_CODE_ENTITY_DISABLED = VENDOR + b":entity-disabled"
 ERROR_CODE_ENTITY_ALREADY_EXISTS = VENDOR + b":entity-already-exists"
-ERROR_CODE_PRECONDITION_FAILED = VENDOR + b":precondition-failed",
+ERROR_CODE_PRECONDITION_FAILED = VENDOR + b":precondition-failed"
 
 
 REQUEST_RESPONSE_OPERATION_NAME = b"operation"

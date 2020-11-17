@@ -55,7 +55,7 @@ class SenderMixin(object):
             if last_exception:
                 error = last_exception
             else:
-                error = OperationTimeoutError("Send operation timed out")
+                error = OperationTimeoutError(message="Send operation timed out")
             _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
             raise error
         self._handler._msg_timeout = timeout * 1000  # type: ignore

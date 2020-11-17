@@ -87,6 +87,7 @@ def _handle_amqp_exception_with_condition(
     exception=None,
     status_code=None
 ):
+    #
     # handling AMQP Errors that have the condition field or the mgmt handler
     logger.info("AMQP error occurred: (%r), condition: (%r), description: (%r).", exception, condition, description)
     if condition == AMQPErrorCodes.NotFound:
@@ -102,7 +103,7 @@ def _handle_amqp_exception_with_condition(
 
     error = error_cls(message=description, error=exception, condition=condition, status_code=status_code)
     if condition in _NO_RETRY_CONDITION_ERROR_CODES:
-        error._retryable = False
+        error._retryable = False  # pylint: disable=protected-access
 
     return error
 
@@ -264,7 +265,7 @@ class OperationTimeoutError(ServiceBusError):
 class MessageSizeExceededError(ServiceBusError, ValueError):
     """Message content is larger than the service bus frame size."""
     def __init__(self, **kwargs):
-        message= kwargs.pop("message", None) or "Message content is larger than the service bus frame size."
+        message = kwargs.pop("message", None) or "Message content is larger than the service bus frame size."
         super(MessageSizeExceededError, self).__init__(
             message,
             retryable=False,
@@ -341,7 +342,7 @@ class MessageNotFoundError(ServiceBusError):
 class MessagingEntityNotFoundError(ServiceBusError):
     """A Service Bus resource cannot be found by the Service Bus service."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "A Service Bus resource cannot be found by the Service Bus service.",
+        message = kwargs.pop("message", None) or "A Service Bus resource cannot be found by the Service Bus service."
         super(MessagingEntityNotFoundError, self).__init__(
             message,
             retryable=False,

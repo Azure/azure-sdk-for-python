@@ -227,6 +227,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def _handle_exception(self, exception):
         # type: (BaseException) -> ServiceBusError
         # pylint: disable=protected-access
+        # type: ignore
         error = _create_servicebus_exception(_LOGGER, exception)
 
         try:
@@ -278,7 +279,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             except StopIteration:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = self._handle_exception(exception, **kwargs)
+                last_exception = self._handle_exception(exception)
                 if require_last_exception:
                     kwargs["last_exception"] = last_exception
                 retried_times += 1
@@ -377,7 +378,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", error=exp)
+                raise OperationTimeoutError(error=exp)
             raise
 
     def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):

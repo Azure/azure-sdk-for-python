@@ -262,7 +262,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError(message="Service request timed out.", error=exp)
+                raise OperationTimeoutError(error=exp)
             raise
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
