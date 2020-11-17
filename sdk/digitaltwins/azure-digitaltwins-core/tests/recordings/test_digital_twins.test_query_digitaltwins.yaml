@@ -1,0 +1,71 @@
+interactions:
+- request:
+    body: '{"$metadata": {"$model": "dtmi:samples:Building;1"}, "AverageTemperature":
+      68, "TemperatureUnit": "Celsius"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '108'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-76d61187?api-version=2020-10-31
+  response:
+    body:
+      string: '{"$dtId":"digitalTwin-76d61187","$etag":"W/\"29546134-b09e-4bb3-9cc6-5e655fda870a\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:58:00.4593263Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:58:00.4593263Z"}}}'
+    headers:
+      content-length:
+      - '325'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 08 Nov 2020 05:58:00 GMT
+      etag:
+      - W/"29546134-b09e-4bb3-9cc6-5e655fda870a"
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "SELECT * FROM digitaltwins"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '39'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/query?api-version=2020-10-31
+  response:
+    body:
+      string: '{"value":[{"$dtId":"digitalTwin-f8db143b","$etag":"W/\"14c43357-ee70-49b4-adbc-e51257946b0c\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:57:24.3573655Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:57:24.3573655Z"}}},{"$dtId":"digitalTwin-93051735","$etag":"W/\"986fa578-be78-4f51-b143-3f17650a284b\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T03:09:09.2675062Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T03:09:09.2675062Z"}}},{"$dtId":"digitalTwin-59f11a82","$etag":"W/\"0ba07291-a86d-45fc-9654-3546cc8ccbfa\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T03:47:48.7059018Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T03:47:48.7059018Z"}}},{"$dtId":"digitalTwin-da8b9690-30a4-45ee-ad53-4b9d40d9aaf9","$etag":"W/\"098f9eda-ea4e-4b38-b056-b9d68fe6726e\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T03:37:14.7882483Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T03:37:14.7882483Z"}}},{"$dtId":"digitalTwin-01a796b7-13fe-4524-baa4-0275448787db","$etag":"W/\"d68d426f-09b0-4e1f-bfad-71fd68ad6a70\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T03:39:25.2207989Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T03:39:25.2207989Z"}}},{"$dtId":"digitalTwin-f2fae040-1c0a-4a25-8f47-36b4da16dbbe","$etag":"W/\"44efe0d8-dd1c-4d8f-a4d6-02690375acd9\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T03:44:07.9282650Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T03:44:07.9282650Z"}}},{"$dtId":"digitalTwin-2d828f14-8a97-4292-931d-5e8b40276f1d","$etag":"W/\"7e67a355-f19c-4c19-8a10-2d69b2d2253f\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T03:45:37.3557825Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T03:45:37.3557825Z"}}},{"$dtId":"digitalTwin-34cbdbed-8349-4553-a4b1-6d04283a7e4f","$etag":"W/\"eb9d68e3-2722-43b8-ad1b-a6805b828e8d\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T03:48:06.5640369Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T03:48:06.5640369Z"}}},{"$dtId":"digitalTwin-fd09146a","$etag":"W/\"00469cf9-b9e7-4a7b-9257-a61ea11b56bc\"","AverageTemperature":69,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:48:10.3599195Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:48:10.3599195Z"}}},{"$dtId":"digitalTwin-41e7101e","$etag":"W/\"842ef5ba-17df-4384-a29b-2bca0dbb9f7d\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:57:53.8357362Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:57:53.8357362Z"}}},{"$dtId":"digitalTwin-edc149c","$etag":"W/\"c0337973-0544-4953-a542-e939447b8c92\"","AverageTemperature":42,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:48:05.7704832Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:48:04.9118269Z"}}},{"$dtId":"digitalTwin-4f6c15d6","$etag":"W/\"70f5547e-d2d0-4716-851a-fc159035ac94\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:02:28.2109878Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:02:28.2109878Z"}}},{"$dtId":"digitalTwin-fa5a144e","$etag":"W/\"06316dbc-0ac0-4007-a8b0-7d85e1bfab5b\"","TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:48:01.1962873Z"}}},{"$dtId":"digitalTwin-be7212e9","$etag":"W/\"a9d48e0b-e50e-4768-8971-3fa078118b04\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:47:24.7364164Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:47:25.3186745Z"}}},{"$dtId":"digitalTwin-248a152c","$etag":"W/\"cfa4f888-5c60-45a6-a89f-5c4050f22745\"","AverageTemperature":42,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:47:51.2877400Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:47:51.2877400Z"}}},{"$dtId":"digitalTwin-93531716","$etag":"W/\"cc80d630-7606-40e8-9ea9-e384170e7b7d\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:47:42.9813566Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:47:42.9813566Z"}}},{"$dtId":"digitalTwin-e64e1c83","$etag":"W/\"7e118030-5787-44ae-9ad1-258b0fc9f6d5\"","AverageTemperature":42,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:47:32.9874855Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:47:32.2876207Z"}}},{"$dtId":"digitalTwin-add71bc7","$etag":"W/\"db955562-76b1-4038-a597-e537092cd8ed\"","AverageTemperature":42,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:47:37.4176006Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:47:36.9833250Z"}}},{"$dtId":"digitalTwin-ab481bb1","$etag":"W/\"b9214fe9-1c5f-4579-b042-4e92d2bd28fb\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:57:07.2143341Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:57:07.2143341Z"}}},{"$dtId":"digitalTwin-c6dc1bf8","$etag":"W/\"e2f9f366-f6fc-4d12-8e31-375af425a341\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:46:27.8706581Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:46:27.8706581Z"}}},{"$dtId":"digitalTwin-76d61187","$etag":"W/\"7cb08434-58c9-4ab4-9a6f-e324f9de6969\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:52:20.8042297Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:52:20.8042297Z"}}},{"$dtId":"digitalTwin-127f197c","$etag":"W/\"205be083-66b8-4fd4-94ea-5cc162ec01d8\"","AverageTemperature":68,"TemperatureUnit":"Celsius","$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-08T05:52:24.6907189Z"},"TemperatureUnit":{"lastUpdateTime":"2020-11-08T05:52:24.6907189Z"}}}],"continuationToken":null}'
+    headers:
+      content-length:
+      - '7252'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 08 Nov 2020 05:58:00 GMT
+      query-charge:
+      - '4.55'
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 200
+      message: OK
+version: 1

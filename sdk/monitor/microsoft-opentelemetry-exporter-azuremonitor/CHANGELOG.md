@@ -5,6 +5,9 @@
   **Breaking Changes**
   - This library is renamed to `microsoft-opentelemetry-exporter-azuremonitor`.
 
+- Change span to envelope conversion to adhere to common schema and other languages
+  ([#15344](https://github.com/Azure/azure-sdk-for-python/pull/15344))
+
 ## 0.5b.0 (2020-09-24)
 
 - Change epoch for live metrics
