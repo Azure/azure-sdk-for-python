@@ -166,14 +166,15 @@ class ConnectorsOperations(object):
     def create_or_update(
             self, connector_name, hybrid_compute_settings=None, authentication_details=None, custom_headers=None, raw=False, **operation_config):
         """Create a cloud account connector or update an existing one. Connect to
-        your AWS cloud account using either account credentials or role-based
-        authentication.
+        your cloud account. For AWS, use either account credentials or
+        role-based authentication. For GCP, use account organization
+        credentials.
 
         :param connector_name: Name of the cloud account connector
         :type connector_name: str
         :param hybrid_compute_settings: Settings for hybrid compute
-         management, these settings are relevant only Arc autoProvision (Hybrid
-         Compute).
+         management. These settings are relevant only for Arc autoProvision
+         (Hybrid Compute).
         :type hybrid_compute_settings:
          ~azure.mgmt.security.models.HybridComputeSettingsProperties
         :param authentication_details: Settings for authentication management,

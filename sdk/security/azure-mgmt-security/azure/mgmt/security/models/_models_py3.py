@@ -1911,8 +1911,8 @@ class AutoProvisioningSetting(Resource):
 
 class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):
     """AWS cloud account connector based assume role, the role enables delegating
-    access to your AWS resources. The role is composed of role arn and external
-    id, for more details, refer to <a
+    access to your AWS resources. The role is composed of role Amazon Resource
+    Name (ARN) and external ID. For more details, refer to <a
     href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html">Creating
     a Role to Delegate Permissions to an IAM User (write only)</a>.
 
@@ -1969,7 +1969,7 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
 
 class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
     """AWS cloud account connector based credentials, the credentials is composed
-    of access key id and secret key, for more details, refer to <a
+    of access key ID and secret key, for more details, refer to <a
     href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">Creating
     an IAM User in Your AWS Account (write only)</a>.
 
@@ -2181,6 +2181,75 @@ class AzureTrackedResourceLocation(Model):
     def __init__(self, *, location: str=None, **kwargs) -> None:
         super(AzureTrackedResourceLocation, self).__init__(**kwargs)
         self.location = location
+
+
+class Baseline(Model):
+    """Baseline details.
+
+    :param expected_results: Expected results.
+    :type expected_results: list[list[str]]
+    :param updated_time: Baseline update time (UTC).
+    :type updated_time: datetime
+    """
+
+    _attribute_map = {
+        'expected_results': {'key': 'expectedResults', 'type': '[[str]]'},
+        'updated_time': {'key': 'updatedTime', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, expected_results=None, updated_time=None, **kwargs) -> None:
+        super(Baseline, self).__init__(**kwargs)
+        self.expected_results = expected_results
+        self.updated_time = updated_time
+
+
+class BaselineAdjustedResult(Model):
+    """The rule result adjusted with baseline.
+
+    :param baseline:
+    :type baseline: ~azure.mgmt.security.models.Baseline
+    :param status: Possible values include: 'NonFinding', 'Finding',
+     'InternalError'
+    :type status: str or ~azure.mgmt.security.models.RuleStatus
+    :param results_not_in_baseline: Results the are not in baseline.
+    :type results_not_in_baseline: list[list[str]]
+    :param results_only_in_baseline: Results the are in baseline.
+    :type results_only_in_baseline: list[list[str]]
+    """
+
+    _attribute_map = {
+        'baseline': {'key': 'baseline', 'type': 'Baseline'},
+        'status': {'key': 'status', 'type': 'str'},
+        'results_not_in_baseline': {'key': 'resultsNotInBaseline', 'type': '[[str]]'},
+        'results_only_in_baseline': {'key': 'resultsOnlyInBaseline', 'type': '[[str]]'},
+    }
+
+    def __init__(self, *, baseline=None, status=None, results_not_in_baseline=None, results_only_in_baseline=None, **kwargs) -> None:
+        super(BaselineAdjustedResult, self).__init__(**kwargs)
+        self.baseline = baseline
+        self.status = status
+        self.results_not_in_baseline = results_not_in_baseline
+        self.results_only_in_baseline = results_only_in_baseline
+
+
+class BenchmarkReference(Model):
+    """The benchmark references.
+
+    :param benchmark: The benchmark name.
+    :type benchmark: str
+    :param reference: The benchmark reference.
+    :type reference: str
+    """
+
+    _attribute_map = {
+        'benchmark': {'key': 'benchmark', 'type': 'str'},
+        'reference': {'key': 'reference', 'type': 'str'},
+    }
+
+    def __init__(self, *, benchmark: str=None, reference: str=None, **kwargs) -> None:
+        super(BenchmarkReference, self).__init__(**kwargs)
+        self.benchmark = benchmark
+        self.reference = reference
 
 
 class CefExternalSecuritySolution(ExternalSecuritySolution):
@@ -2571,8 +2640,8 @@ class ConnectorSetting(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param hybrid_compute_settings: Settings for hybrid compute management,
-     these settings are relevant only Arc autoProvision (Hybrid Compute).
+    :param hybrid_compute_settings: Settings for hybrid compute management.
+     These settings are relevant only for Arc autoProvision (Hybrid Compute).
     :type hybrid_compute_settings:
      ~azure.mgmt.security.models.HybridComputeSettingsProperties
     :param authentication_details: Settings for authentication management,
@@ -2969,13 +3038,10 @@ class Device(Resource):
     :vartype last_scan_time: datetime
     :ivar risk_score: risk score of the device.
     :vartype risk_score: int
-    :ivar sensor_name: When the device is unmanaged, the sensor that scanned
-     this device.
-    :vartype sensor_name: str
-    :ivar site_name: The sensor site name.
-    :vartype site_name: str
-    :ivar zone_name: The sensor zone name.
-    :vartype zone_name: str
+    :ivar sensors: List of sensors that scanned this device.
+    :vartype sensors: list[~azure.mgmt.security.models.Sensor]
+    :ivar site:
+    :vartype site: ~azure.mgmt.security.models.Site
     :ivar device_status: Device status. Possible values include: 'Active',
      'Removed'
     :vartype device_status: str or ~azure.mgmt.security.models.DeviceStatus
@@ -2999,9 +3065,8 @@ class Device(Resource):
         'scanning_functionality': {'readonly': True},
         'last_scan_time': {'readonly': True},
         'risk_score': {'readonly': True, 'maximum': 100, 'minimum': 0},
-        'sensor_name': {'readonly': True},
-        'site_name': {'readonly': True},
-        'zone_name': {'readonly': True},
+        'sensors': {'readonly': True},
+        'site': {'readonly': True},
         'device_status': {'readonly': True},
     }
 
@@ -3030,9 +3095,8 @@ class Device(Resource):
         'scanning_functionality': {'key': 'properties.scanningFunctionality', 'type': 'str'},
         'last_scan_time': {'key': 'properties.lastScanTime', 'type': 'iso-8601'},
         'risk_score': {'key': 'properties.riskScore', 'type': 'int'},
-        'sensor_name': {'key': 'properties.sensorName', 'type': 'str'},
-        'site_name': {'key': 'properties.siteName', 'type': 'str'},
-        'zone_name': {'key': 'properties.zoneName', 'type': 'str'},
+        'sensors': {'key': 'properties.sensors', 'type': '[Sensor]'},
+        'site': {'key': 'properties.site', 'type': 'Site'},
         'device_status': {'key': 'properties.deviceStatus', 'type': 'str'},
     }
 
@@ -3059,9 +3123,8 @@ class Device(Resource):
         self.scanning_functionality = None
         self.last_scan_time = None
         self.risk_score = None
-        self.sensor_name = None
-        self.site_name = None
-        self.zone_name = None
+        self.sensors = None
+        self.site = None
         self.device_status = None
 
 
@@ -3437,8 +3500,8 @@ class Firmware(Model):
 
 class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
     """GCP cloud account connector based service to service credentials, the
-    credentials is composed of organization id and json api key (write
-    only)</a>.
+    credentials are composed of the organization ID and a JSON API key (write
+    only).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3455,14 +3518,14 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
      ~azure.mgmt.security.models.PermissionProperty]
     :param authentication_type: Required. Constant filled by server.
     :type authentication_type: str
-    :param organization_id: Required. The Organization ID of the GCP cloud
+    :param organization_id: Required. The organization ID of the GCP cloud
      account
     :type organization_id: str
     :param type: Required. Type field of the API key (write only)
     :type type: str
-    :param project_id: Required. Project Id field of the API key (write only)
+    :param project_id: Required. Project ID field of the API key (write only)
     :type project_id: str
-    :param private_key_id: Required. Private key Id field of the API key
+    :param private_key_id: Required. Private key ID field of the API key
      (write only)
     :type private_key_id: str
     :param private_key: Required. Private key field of the API key (write
@@ -3471,16 +3534,16 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
     :param client_email: Required. Client email field of the API key (write
      only)
     :type client_email: str
-    :param client_id: Required. Client Id field of the API key (write only)
+    :param client_id: Required. Client ID field of the API key (write only)
     :type client_id: str
-    :param auth_uri: Required. Auth Uri field of the API key (write only)
+    :param auth_uri: Required. Auth URI field of the API key (write only)
     :type auth_uri: str
-    :param token_uri: Required. Token Uri field of the API key (write only)
+    :param token_uri: Required. Token URI field of the API key (write only)
     :type token_uri: str
     :param auth_provider_x509_cert_url: Required. Auth provider x509
-     certificate url field of the API key (write only)
+     certificate URL field of the API key (write only)
     :type auth_provider_x509_cert_url: str
-    :param client_x509_cert_url: Required. Client x509 certificate url field
+    :param client_x509_cert_url: Required. Client x509 certificate URL field
      of the API key (write only)
     :type client_x509_cert_url: str
     """
@@ -3702,7 +3765,7 @@ class HybridComputeSettingsProperties(Model):
     :param resource_group_name: The name of the resource group where Arc
      (Hybrid Compute) connectors are connected.
     :type resource_group_name: str
-    :param region: The location where the meta data of machines will be stored
+    :param region: The location where the metadata of machines will be stored
     :type region: str
     :param proxy_server: For a non-Azure machine that is not connected
      directly to the internet, specify a proxy server that the non-Azure
@@ -3906,6 +3969,62 @@ class IotAlert(Model):
 
     def __init__(self, *, entities=None, extended_properties=None, **kwargs) -> None:
         super(IotAlert, self).__init__(**kwargs)
+        self.system_alert_id = None
+        self.compromised_entity = None
+        self.alert_type = None
+        self.start_time_utc = None
+        self.end_time_utc = None
+        self.entities = entities
+        self.extended_properties = extended_properties
+
+
+class IotAlertModel(Model):
+    """IoT alert.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar system_alert_id: Holds the product canonical identifier of the alert
+     within the scope of a product
+    :vartype system_alert_id: str
+    :ivar compromised_entity: Display name of the main entity being reported
+     on
+    :vartype compromised_entity: str
+    :ivar alert_type: The type name of the alert
+    :vartype alert_type: str
+    :ivar start_time_utc: The impact start time of the alert (the time of the
+     first event or activity included in the alert)
+    :vartype start_time_utc: str
+    :ivar end_time_utc: The impact end time of the alert (the time of the last
+     event or activity included in the alert)
+    :vartype end_time_utc: str
+    :param entities: A list of entities related to the alert
+    :type entities: list[object]
+    :param extended_properties: A bag of fields which extends the alert
+     information
+    :type extended_properties: object
+    """
+
+    _validation = {
+        'system_alert_id': {'readonly': True},
+        'compromised_entity': {'readonly': True},
+        'alert_type': {'readonly': True},
+        'start_time_utc': {'readonly': True},
+        'end_time_utc': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'system_alert_id': {'key': 'properties.systemAlertId', 'type': 'str'},
+        'compromised_entity': {'key': 'properties.compromisedEntity', 'type': 'str'},
+        'alert_type': {'key': 'properties.alertType', 'type': 'str'},
+        'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'str'},
+        'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'str'},
+        'entities': {'key': 'properties.entities', 'type': '[object]'},
+        'extended_properties': {'key': 'properties.extendedProperties', 'type': 'object'},
+    }
+
+    def __init__(self, *, entities=None, extended_properties=None, **kwargs) -> None:
+        super(IotAlertModel, self).__init__(**kwargs)
         self.system_alert_id = None
         self.compromised_entity = None
         self.alert_type = None
@@ -4126,6 +4245,56 @@ class IotRecommendation(Resource):
 
     def __init__(self, *, recommendation_additional_data=None, **kwargs) -> None:
         super(IotRecommendation, self).__init__(**kwargs)
+        self.device_id = None
+        self.recommendation_type = None
+        self.discovered_time_utc = None
+        self.recommendation_additional_data = recommendation_additional_data
+
+
+class IotRecommendationModel(Resource):
+    """IoT recommendation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar device_id: Identifier of the device being reported on
+    :vartype device_id: str
+    :ivar recommendation_type: The type name of the recommendation
+    :vartype recommendation_type: str
+    :ivar discovered_time_utc: The discovery time of the recommendation
+    :vartype discovered_time_utc: str
+    :param recommendation_additional_data: A bag of fields which extends the
+     recommendation information
+    :type recommendation_additional_data: object
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'device_id': {'readonly': True},
+        'recommendation_type': {'readonly': True},
+        'discovered_time_utc': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'device_id': {'key': 'properties.deviceId', 'type': 'str'},
+        'recommendation_type': {'key': 'properties.recommendationType', 'type': 'str'},
+        'discovered_time_utc': {'key': 'properties.discoveredTimeUtc', 'type': 'str'},
+        'recommendation_additional_data': {'key': 'properties.recommendationAdditionalData', 'type': 'object'},
+    }
+
+    def __init__(self, *, recommendation_additional_data=None, **kwargs) -> None:
+        super(IotRecommendationModel, self).__init__(**kwargs)
         self.device_id = None
         self.recommendation_type = None
         self.discovered_time_utc = None
@@ -6396,6 +6565,30 @@ class PublisherInfo(Model):
         self.version = version
 
 
+class QueryCheck(Model):
+    """The rule query details.
+
+    :param query: The rule query.
+    :type query: str
+    :param expected_result: Expected result.
+    :type expected_result: list[list[str]]
+    :param column_names: Column names of expected result.
+    :type column_names: list[str]
+    """
+
+    _attribute_map = {
+        'query': {'key': 'query', 'type': 'str'},
+        'expected_result': {'key': 'expectedResult', 'type': '[[str]]'},
+        'column_names': {'key': 'columnNames', 'type': '[str]'},
+    }
+
+    def __init__(self, *, query: str=None, expected_result=None, column_names=None, **kwargs) -> None:
+        super(QueryCheck, self).__init__(**kwargs)
+        self.query = query
+        self.expected_result = expected_result
+        self.column_names = column_names
+
+
 class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
     """Number of device queue purges is not in allowed range.
 
@@ -6688,6 +6881,34 @@ class RegulatoryComplianceStandard(Resource):
         self.unsupported_controls = None
 
 
+class Remediation(Model):
+    """Remediation details.
+
+    :param description: Remediation description.
+    :type description: str
+    :param scripts: Remediation script.
+    :type scripts: list[str]
+    :param automated: Is remediation automated.
+    :type automated: bool
+    :param portal_link: Optional link to remediate in Azure Portal.
+    :type portal_link: str
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'scripts': {'key': 'scripts', 'type': '[str]'},
+        'automated': {'key': 'automated', 'type': 'bool'},
+        'portal_link': {'key': 'portalLink', 'type': 'str'},
+    }
+
+    def __init__(self, *, description: str=None, scripts=None, automated: bool=None, portal_link: str=None, **kwargs) -> None:
+        super(Remediation, self).__init__(**kwargs)
+        self.description = description
+        self.scripts = scripts
+        self.automated = automated
+        self.portal_link = portal_link
+
+
 class Rule(Model):
     """Describes remote addresses that is recommended to communicate with the
     Azure resource on some (Protocol, Port, Direction). All other remote
@@ -6724,6 +6945,330 @@ class Rule(Model):
         self.destination_port = destination_port
         self.protocols = protocols
         self.ip_addresses = ip_addresses
+
+
+class RuleResults(Resource):
+    """Rule results.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param properties:
+    :type properties: ~azure.mgmt.security.models.RuleResultsProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'RuleResultsProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(RuleResults, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class RuleResultsInput(Model):
+    """Rule results input.
+
+    :param latest_scan: Take results from latest scan.
+    :type latest_scan: bool
+    :param results: Expected results to be inserted into the baseline.
+     Leave this field empty it LatestScan == true.
+    :type results: list[list[str]]
+    """
+
+    _attribute_map = {
+        'latest_scan': {'key': 'latestScan', 'type': 'bool'},
+        'results': {'key': 'results', 'type': '[[str]]'},
+    }
+
+    def __init__(self, *, latest_scan: bool=None, results=None, **kwargs) -> None:
+        super(RuleResultsInput, self).__init__(**kwargs)
+        self.latest_scan = latest_scan
+        self.results = results
+
+
+class RuleResultsProperties(Model):
+    """Rule results properties.
+
+    :param results: Expected results in the baseline.
+    :type results: list[list[str]]
+    """
+
+    _attribute_map = {
+        'results': {'key': 'results', 'type': '[[str]]'},
+    }
+
+    def __init__(self, *, results=None, **kwargs) -> None:
+        super(RuleResultsProperties, self).__init__(**kwargs)
+        self.results = results
+
+
+class RulesResults(Model):
+    """A list of rules results.
+
+    :param value: List of rule results.
+    :type value: list[~azure.mgmt.security.models.RuleResults]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[RuleResults]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(RulesResults, self).__init__(**kwargs)
+        self.value = value
+
+
+class RulesResultsInput(Model):
+    """Rules results input.
+
+    :param latest_scan: Take results from latest scan.
+    :type latest_scan: bool
+    :param results: Expected results to be inserted into the baseline.
+     Leave this field empty it LatestScan == true.
+    :type results: dict[str, list[list[str]]]
+    """
+
+    _attribute_map = {
+        'latest_scan': {'key': 'latestScan', 'type': 'bool'},
+        'results': {'key': 'results', 'type': '{[[str]]}'},
+    }
+
+    def __init__(self, *, latest_scan: bool=None, results=None, **kwargs) -> None:
+        super(RulesResultsInput, self).__init__(**kwargs)
+        self.latest_scan = latest_scan
+        self.results = results
+
+
+class Scan(Resource):
+    """A vulnerability assessment scan record.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param properties:
+    :type properties: ~azure.mgmt.security.models.ScanProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ScanProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(Scan, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class ScanProperties(Model):
+    """A vulnerability assessment scan record properties.
+
+    :param trigger_type: Possible values include: 'OnDemand', 'Recurring'
+    :type trigger_type: str or ~azure.mgmt.security.models.ScanTriggerType
+    :param state: Possible values include: 'Failed', 'FailedToRun',
+     'InProgress', 'Passed'
+    :type state: str or ~azure.mgmt.security.models.ScanState
+    :param server: The server name.
+    :type server: str
+    :param database: The database name.
+    :type database: str
+    :param sql_version: The SQL version.
+    :type sql_version: str
+    :param start_time: The scan start time (UTC).
+    :type start_time: datetime
+    :param end_time: Scan results are valid until end time (UTC).
+    :type end_time: datetime
+    :param high_severity_failed_rules_count: The number of failed rules with
+     high severity.
+    :type high_severity_failed_rules_count: int
+    :param medium_severity_failed_rules_count: The number of failed rules with
+     medium severity.
+    :type medium_severity_failed_rules_count: int
+    :param low_severity_failed_rules_count: The number of failed rules with
+     low severity.
+    :type low_severity_failed_rules_count: int
+    :param total_passed_rules_count: The number of total passed rules.
+    :type total_passed_rules_count: int
+    :param total_failed_rules_count: The number of total failed rules.
+    :type total_failed_rules_count: int
+    :param total_rules_count: The number of total rules assessed.
+    :type total_rules_count: int
+    :param is_baseline_applied: Baseline created for this database, and has
+     one or more rules.
+    :type is_baseline_applied: bool
+    """
+
+    _attribute_map = {
+        'trigger_type': {'key': 'triggerType', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'server': {'key': 'server', 'type': 'str'},
+        'database': {'key': 'database', 'type': 'str'},
+        'sql_version': {'key': 'sqlVersion', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'high_severity_failed_rules_count': {'key': 'highSeverityFailedRulesCount', 'type': 'int'},
+        'medium_severity_failed_rules_count': {'key': 'mediumSeverityFailedRulesCount', 'type': 'int'},
+        'low_severity_failed_rules_count': {'key': 'lowSeverityFailedRulesCount', 'type': 'int'},
+        'total_passed_rules_count': {'key': 'totalPassedRulesCount', 'type': 'int'},
+        'total_failed_rules_count': {'key': 'totalFailedRulesCount', 'type': 'int'},
+        'total_rules_count': {'key': 'totalRulesCount', 'type': 'int'},
+        'is_baseline_applied': {'key': 'isBaselineApplied', 'type': 'bool'},
+    }
+
+    def __init__(self, *, trigger_type=None, state=None, server: str=None, database: str=None, sql_version: str=None, start_time=None, end_time=None, high_severity_failed_rules_count: int=None, medium_severity_failed_rules_count: int=None, low_severity_failed_rules_count: int=None, total_passed_rules_count: int=None, total_failed_rules_count: int=None, total_rules_count: int=None, is_baseline_applied: bool=None, **kwargs) -> None:
+        super(ScanProperties, self).__init__(**kwargs)
+        self.trigger_type = trigger_type
+        self.state = state
+        self.server = server
+        self.database = database
+        self.sql_version = sql_version
+        self.start_time = start_time
+        self.end_time = end_time
+        self.high_severity_failed_rules_count = high_severity_failed_rules_count
+        self.medium_severity_failed_rules_count = medium_severity_failed_rules_count
+        self.low_severity_failed_rules_count = low_severity_failed_rules_count
+        self.total_passed_rules_count = total_passed_rules_count
+        self.total_failed_rules_count = total_failed_rules_count
+        self.total_rules_count = total_rules_count
+        self.is_baseline_applied = is_baseline_applied
+
+
+class ScanResult(Resource):
+    """A vulnerability assessment scan result for a single rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param properties:
+    :type properties: ~azure.mgmt.security.models.ScanResultProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ScanResultProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(ScanResult, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class ScanResultProperties(Model):
+    """A vulnerability assessment scan result properties for a single rule.
+
+    :param rule_id: The rule Id.
+    :type rule_id: str
+    :param status: Possible values include: 'NonFinding', 'Finding',
+     'InternalError'
+    :type status: str or ~azure.mgmt.security.models.RuleStatus
+    :param is_trimmed: Indicated whether the results specified here are
+     trimmed.
+    :type is_trimmed: bool
+    :param query_results: The results of the query that was run.
+    :type query_results: list[list[str]]
+    :param remediation:
+    :type remediation: ~azure.mgmt.security.models.Remediation
+    :param baseline_adjusted_result:
+    :type baseline_adjusted_result:
+     ~azure.mgmt.security.models.BaselineAdjustedResult
+    :param rule_metadata:
+    :type rule_metadata: ~azure.mgmt.security.models.VaRule
+    """
+
+    _attribute_map = {
+        'rule_id': {'key': 'ruleId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'is_trimmed': {'key': 'isTrimmed', 'type': 'bool'},
+        'query_results': {'key': 'queryResults', 'type': '[[str]]'},
+        'remediation': {'key': 'remediation', 'type': 'Remediation'},
+        'baseline_adjusted_result': {'key': 'baselineAdjustedResult', 'type': 'BaselineAdjustedResult'},
+        'rule_metadata': {'key': 'ruleMetadata', 'type': 'VaRule'},
+    }
+
+    def __init__(self, *, rule_id: str=None, status=None, is_trimmed: bool=None, query_results=None, remediation=None, baseline_adjusted_result=None, rule_metadata=None, **kwargs) -> None:
+        super(ScanResultProperties, self).__init__(**kwargs)
+        self.rule_id = rule_id
+        self.status = status
+        self.is_trimmed = is_trimmed
+        self.query_results = query_results
+        self.remediation = remediation
+        self.baseline_adjusted_result = baseline_adjusted_result
+        self.rule_metadata = rule_metadata
+
+
+class ScanResults(Model):
+    """A list of vulnerability assessment scan results.
+
+    :param value: List of vulnerability assessment scan results.
+    :type value: list[~azure.mgmt.security.models.ScanResult]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ScanResult]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(ScanResults, self).__init__(**kwargs)
+        self.value = value
+
+
+class Scans(Model):
+    """A list of vulnerability assessment scan records.
+
+    :param value: List of vulnerability assessment scan records.
+    :type value: list[~azure.mgmt.security.models.Scan]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Scan]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(Scans, self).__init__(**kwargs)
+        self.value = value
 
 
 class ScopeElement(Model):
@@ -7708,6 +8253,34 @@ class SensitivityLabel(Model):
         self.enabled = enabled
 
 
+class Sensor(Model):
+    """Sensor data.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: Sensor name
+    :vartype name: str
+    :ivar zone: Zone Name.
+    :vartype zone: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'zone': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'zone': {'key': 'zone', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Sensor, self).__init__(**kwargs)
+        self.name = None
+        self.zone = None
+
+
 class ServerVulnerabilityAssessment(Resource):
     """Describes the server vulnerability assessment details on a resource.
 
@@ -7827,7 +8400,7 @@ class ServerVulnerabilityProperties(AdditionalData):
 class ServicePrincipalProperties(Model):
     """Details of the service principal.
 
-    :param application_id: Application id of service principal.
+    :param application_id: Application ID of service principal.
     :type application_id: str
     :param secret: A secret string that the application uses to prove its
      identity, also can be referred to as application password (write only).
@@ -7843,6 +8416,29 @@ class ServicePrincipalProperties(Model):
         super(ServicePrincipalProperties, self).__init__(**kwargs)
         self.application_id = application_id
         self.secret = secret
+
+
+class Site(Model):
+    """Site data.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar display_name: Site display name
+    :vartype display_name: str
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Site, self).__init__(**kwargs)
+        self.display_name = None
 
 
 class SqlServerVulnerabilityProperties(AdditionalData):
@@ -8314,6 +8910,57 @@ class UserRecommendation(Model):
         super(UserRecommendation, self).__init__(**kwargs)
         self.username = username
         self.recommendation_action = recommendation_action
+
+
+class VaRule(Model):
+    """vulnerability assessment rule metadata details.
+
+    :param rule_id: The rule Id.
+    :type rule_id: str
+    :param severity: Possible values include: 'High', 'Medium', 'Low',
+     'Informational', 'Obsolete'
+    :type severity: str or ~azure.mgmt.security.models.RuleSeverity
+    :param category: The rule category.
+    :type category: str
+    :param rule_type: Possible values include: 'Binary', 'BaselineExpected',
+     'PositiveList', 'NegativeList'
+    :type rule_type: str or ~azure.mgmt.security.models.RuleType
+    :param title: The rule title.
+    :type title: str
+    :param description: The rule description.
+    :type description: str
+    :param rationale: The rule rationale.
+    :type rationale: str
+    :param query_check:
+    :type query_check: ~azure.mgmt.security.models.QueryCheck
+    :param benchmark_references: The benchmark references.
+    :type benchmark_references:
+     list[~azure.mgmt.security.models.BenchmarkReference]
+    """
+
+    _attribute_map = {
+        'rule_id': {'key': 'ruleId', 'type': 'str'},
+        'severity': {'key': 'severity', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'rationale': {'key': 'rationale', 'type': 'str'},
+        'query_check': {'key': 'queryCheck', 'type': 'QueryCheck'},
+        'benchmark_references': {'key': 'benchmarkReferences', 'type': '[BenchmarkReference]'},
+    }
+
+    def __init__(self, *, rule_id: str=None, severity=None, category: str=None, rule_type=None, title: str=None, description: str=None, rationale: str=None, query_check=None, benchmark_references=None, **kwargs) -> None:
+        super(VaRule, self).__init__(**kwargs)
+        self.rule_id = rule_id
+        self.severity = severity
+        self.category = category
+        self.rule_type = rule_type
+        self.title = title
+        self.description = description
+        self.rationale = rationale
+        self.query_check = query_check
+        self.benchmark_references = benchmark_references
 
 
 class VendorReference(Model):

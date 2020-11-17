@@ -52,6 +52,9 @@ try:
     from ._models_py3 import AzureResourceIdentifier
     from ._models_py3 import AzureResourceLink
     from ._models_py3 import AzureTrackedResourceLocation
+    from ._models_py3 import Baseline
+    from ._models_py3 import BaselineAdjustedResult
+    from ._models_py3 import BenchmarkReference
     from ._models_py3 import CefExternalSecuritySolution
     from ._models_py3 import CefSolutionProperties
     from ._models_py3 import Compliance
@@ -89,11 +92,13 @@ try:
     from ._models_py3 import InformationProtectionPolicy
     from ._models_py3 import InformationType
     from ._models_py3 import IotAlert
+    from ._models_py3 import IotAlertModel
     from ._models_py3 import IotAlertType
     from ._models_py3 import IotAlertTypeList
     from ._models_py3 import IotDefenderSettingsList
     from ._models_py3 import IotDefenderSettingsModel
     from ._models_py3 import IotRecommendation
+    from ._models_py3 import IotRecommendationModel
     from ._models_py3 import IotRecommendationType
     from ._models_py3 import IotRecommendationTypeList
     from ._models_py3 import IoTSecurityAggregatedAlert
@@ -152,15 +157,28 @@ try:
     from ._models_py3 import Protocol1
     from ._models_py3 import ProxyServerProperties
     from ._models_py3 import PublisherInfo
+    from ._models_py3 import QueryCheck
     from ._models_py3 import QueuePurgesNotInAllowedRange
     from ._models_py3 import RecommendationConfigurationProperties
     from ._models_py3 import RegulatoryComplianceAssessment
     from ._models_py3 import RegulatoryComplianceControl
     from ._models_py3 import RegulatoryComplianceStandard
+    from ._models_py3 import Remediation
     from ._models_py3 import Resource
     from ._models_py3 import ResourceDetails
     from ._models_py3 import ResourceIdentifier
     from ._models_py3 import Rule
+    from ._models_py3 import RuleResults
+    from ._models_py3 import RuleResultsInput
+    from ._models_py3 import RuleResultsProperties
+    from ._models_py3 import RulesResults
+    from ._models_py3 import RulesResultsInput
+    from ._models_py3 import Scan
+    from ._models_py3 import ScanProperties
+    from ._models_py3 import ScanResult
+    from ._models_py3 import ScanResultProperties
+    from ._models_py3 import ScanResults
+    from ._models_py3 import Scans
     from ._models_py3 import ScopeElement
     from ._models_py3 import SecureScoreControlDefinitionItem
     from ._models_py3 import SecureScoreControlDefinitionSource
@@ -180,12 +198,14 @@ try:
     from ._models_py3 import SecurityTask
     from ._models_py3 import SecurityTaskParameters
     from ._models_py3 import SensitivityLabel
+    from ._models_py3 import Sensor
     from ._models_py3 import ServerVulnerabilityAssessment
     from ._models_py3 import ServerVulnerabilityAssessmentsList
     from ._models_py3 import ServerVulnerabilityProperties
     from ._models_py3 import ServicePrincipalProperties
     from ._models_py3 import Setting
     from ._models_py3 import SettingResource
+    from ._models_py3 import Site
     from ._models_py3 import SqlServerVulnerabilityProperties
     from ._models_py3 import SubAssessmentStatus
     from ._models_py3 import SuppressionAlertsScope
@@ -203,6 +223,7 @@ try:
     from ._models_py3 import UpdateIotSecuritySolutionData
     from ._models_py3 import UserDefinedResourcesProperties
     from ._models_py3 import UserRecommendation
+    from ._models_py3 import VaRule
     from ._models_py3 import VendorReference
     from ._models_py3 import VmRecommendation
     from ._models_py3 import WorkspaceSetting
@@ -249,6 +270,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureResourceIdentifier
     from ._models import AzureResourceLink
     from ._models import AzureTrackedResourceLocation
+    from ._models import Baseline
+    from ._models import BaselineAdjustedResult
+    from ._models import BenchmarkReference
     from ._models import CefExternalSecuritySolution
     from ._models import CefSolutionProperties
     from ._models import Compliance
@@ -286,11 +310,13 @@ except (SyntaxError, ImportError):
     from ._models import InformationProtectionPolicy
     from ._models import InformationType
     from ._models import IotAlert
+    from ._models import IotAlertModel
     from ._models import IotAlertType
     from ._models import IotAlertTypeList
     from ._models import IotDefenderSettingsList
     from ._models import IotDefenderSettingsModel
     from ._models import IotRecommendation
+    from ._models import IotRecommendationModel
     from ._models import IotRecommendationType
     from ._models import IotRecommendationTypeList
     from ._models import IoTSecurityAggregatedAlert
@@ -349,15 +375,28 @@ except (SyntaxError, ImportError):
     from ._models import Protocol1
     from ._models import ProxyServerProperties
     from ._models import PublisherInfo
+    from ._models import QueryCheck
     from ._models import QueuePurgesNotInAllowedRange
     from ._models import RecommendationConfigurationProperties
     from ._models import RegulatoryComplianceAssessment
     from ._models import RegulatoryComplianceControl
     from ._models import RegulatoryComplianceStandard
+    from ._models import Remediation
     from ._models import Resource
     from ._models import ResourceDetails
     from ._models import ResourceIdentifier
     from ._models import Rule
+    from ._models import RuleResults
+    from ._models import RuleResultsInput
+    from ._models import RuleResultsProperties
+    from ._models import RulesResults
+    from ._models import RulesResultsInput
+    from ._models import Scan
+    from ._models import ScanProperties
+    from ._models import ScanResult
+    from ._models import ScanResultProperties
+    from ._models import ScanResults
+    from ._models import Scans
     from ._models import ScopeElement
     from ._models import SecureScoreControlDefinitionItem
     from ._models import SecureScoreControlDefinitionSource
@@ -377,12 +416,14 @@ except (SyntaxError, ImportError):
     from ._models import SecurityTask
     from ._models import SecurityTaskParameters
     from ._models import SensitivityLabel
+    from ._models import Sensor
     from ._models import ServerVulnerabilityAssessment
     from ._models import ServerVulnerabilityAssessmentsList
     from ._models import ServerVulnerabilityProperties
     from ._models import ServicePrincipalProperties
     from ._models import Setting
     from ._models import SettingResource
+    from ._models import Site
     from ._models import SqlServerVulnerabilityProperties
     from ._models import SubAssessmentStatus
     from ._models import SuppressionAlertsScope
@@ -400,6 +441,7 @@ except (SyntaxError, ImportError):
     from ._models import UpdateIotSecuritySolutionData
     from ._models import UserDefinedResourcesProperties
     from ._models import UserRecommendation
+    from ._models import VaRule
     from ._models import VendorReference
     from ._models import VmRecommendation
     from ._models import WorkspaceSetting
@@ -418,7 +460,9 @@ from ._paged_models import DeviceSecurityGroupPaged
 from ._paged_models import DiscoveredSecuritySolutionPaged
 from ._paged_models import ExternalSecuritySolutionPaged
 from ._paged_models import InformationProtectionPolicyPaged
+from ._paged_models import IotAlertModelPaged
 from ._paged_models import IotAlertPaged
+from ._paged_models import IotRecommendationModelPaged
 from ._paged_models import IotRecommendationPaged
 from ._paged_models import IoTSecurityAggregatedAlertPaged
 from ._paged_models import IoTSecurityAggregatedRecommendationPaged
@@ -486,6 +530,11 @@ from ._security_center_enums import (
     HybridComputeProvisioningState,
     AuthenticationProvisioningState,
     PermissionProperty,
+    ScanTriggerType,
+    ScanState,
+    RuleStatus,
+    RuleSeverity,
+    RuleType,
     VersionKind,
     MacSignificance,
     RelationToIpStatus,
@@ -544,6 +593,9 @@ __all__ = [
     'AzureResourceIdentifier',
     'AzureResourceLink',
     'AzureTrackedResourceLocation',
+    'Baseline',
+    'BaselineAdjustedResult',
+    'BenchmarkReference',
     'CefExternalSecuritySolution',
     'CefSolutionProperties',
     'Compliance',
@@ -581,11 +633,13 @@ __all__ = [
     'InformationProtectionPolicy',
     'InformationType',
     'IotAlert',
+    'IotAlertModel',
     'IotAlertType',
     'IotAlertTypeList',
     'IotDefenderSettingsList',
     'IotDefenderSettingsModel',
     'IotRecommendation',
+    'IotRecommendationModel',
     'IotRecommendationType',
     'IotRecommendationTypeList',
     'IoTSecurityAggregatedAlert',
@@ -644,15 +698,28 @@ __all__ = [
     'Protocol1',
     'ProxyServerProperties',
     'PublisherInfo',
+    'QueryCheck',
     'QueuePurgesNotInAllowedRange',
     'RecommendationConfigurationProperties',
     'RegulatoryComplianceAssessment',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceStandard',
+    'Remediation',
     'Resource',
     'ResourceDetails',
     'ResourceIdentifier',
     'Rule',
+    'RuleResults',
+    'RuleResultsInput',
+    'RuleResultsProperties',
+    'RulesResults',
+    'RulesResultsInput',
+    'Scan',
+    'ScanProperties',
+    'ScanResult',
+    'ScanResultProperties',
+    'ScanResults',
+    'Scans',
     'ScopeElement',
     'SecureScoreControlDefinitionItem',
     'SecureScoreControlDefinitionSource',
@@ -672,12 +739,14 @@ __all__ = [
     'SecurityTask',
     'SecurityTaskParameters',
     'SensitivityLabel',
+    'Sensor',
     'ServerVulnerabilityAssessment',
     'ServerVulnerabilityAssessmentsList',
     'ServerVulnerabilityProperties',
     'ServicePrincipalProperties',
     'Setting',
     'SettingResource',
+    'Site',
     'SqlServerVulnerabilityProperties',
     'SubAssessmentStatus',
     'SuppressionAlertsScope',
@@ -695,6 +764,7 @@ __all__ = [
     'UpdateIotSecuritySolutionData',
     'UserDefinedResourcesProperties',
     'UserRecommendation',
+    'VaRule',
     'VendorReference',
     'VmRecommendation',
     'WorkspaceSetting',
@@ -705,7 +775,9 @@ __all__ = [
     'IoTSecurityAggregatedAlertPaged',
     'IoTSecurityAggregatedRecommendationPaged',
     'IotAlertPaged',
+    'IotAlertModelPaged',
     'IotRecommendationPaged',
+    'IotRecommendationModelPaged',
     'AscLocationPaged',
     'OperationPaged',
     'SecurityTaskPaged',
@@ -780,6 +852,11 @@ __all__ = [
     'HybridComputeProvisioningState',
     'AuthenticationProvisioningState',
     'PermissionProperty',
+    'ScanTriggerType',
+    'ScanState',
+    'RuleStatus',
+    'RuleSeverity',
+    'RuleType',
     'VersionKind',
     'MacSignificance',
     'RelationToIpStatus',

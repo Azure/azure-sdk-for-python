@@ -103,6 +103,19 @@ class IotAlertPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(IotAlertPaged, self).__init__(*args, **kwargs)
+class IotAlertModelPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IotAlertModel <azure.mgmt.security.models.IotAlertModel>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IotAlertModel]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IotAlertModelPaged, self).__init__(*args, **kwargs)
 class IotRecommendationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`IotRecommendation <azure.mgmt.security.models.IotRecommendation>` object
@@ -116,6 +129,19 @@ class IotRecommendationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(IotRecommendationPaged, self).__init__(*args, **kwargs)
+class IotRecommendationModelPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IotRecommendationModel <azure.mgmt.security.models.IotRecommendationModel>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IotRecommendationModel]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IotRecommendationModelPaged, self).__init__(*args, **kwargs)
 class AscLocationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`AscLocation <azure.mgmt.security.models.AscLocation>` object

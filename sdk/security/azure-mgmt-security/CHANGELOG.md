@@ -1,5 +1,29 @@
 # Release History
 
+## 0.6.0 (2020-11-17)
+
+**Features**
+
+  - Model Device has a new parameter sensors
+  - Model Device has a new parameter site
+  - Added operation IotRecommendationsOperations.get1
+  - Added operation IotRecommendationsOperations.list1
+  - Added operation IotAlertsOperations.get1
+  - Added operation IotAlertsOperations.list1
+  - Added operation IotRecommendationTypesOperations.get1
+  - Added operation IotRecommendationTypesOperations.list1
+  - Added operation IotAlertTypesOperations.get1
+  - Added operation IotAlertTypesOperations.list1
+  - Added operation group SqlVulnerabilityAssessmentBaselineRulesOperations
+  - Added operation group SqlVulnerabilityAssessmentScanResultsOperations
+  - Added operation group SqlVulnerabilityAssessmentScansOperations
+
+**Breaking changes**
+
+  - Model Device no longer has parameter site_name
+  - Model Device no longer has parameter sensor_name
+  - Model Device no longer has parameter zone_name
+
 ## 0.5.0 (2020-10-29)
 
 **Features**
