@@ -1,6 +1,6 @@
 # Release History
 
-## 0.3.0 (2020-11-17)
+## 0.2.0 (2020-11-17)
 
 **Features**
 
@@ -11,20 +11,6 @@
   - Model OperationList has a new parameter system_data
   - Added operation AttestationProvidersOperations.get_default_by_location
   - Added operation AttestationProvidersOperations.list_default
-  - Added operation AttestationProvidersOperations.update
-
-**Breaking changes**
-
-  - Model AttestationProvider has a new required parameter location
-  - Operation AttestationProvidersOperations.create has a new signature
-  - Model AttestationServiceCreationParams has a new signature
-
-## 0.2.0 (2020-04-15)
-
-**Features**
-
-  - Model AttestationProvider has a new parameter tags
-  - Model AttestationProvider has a new parameter trust_model
   - Added operation AttestationProvidersOperations.update
 
 **Breaking changes**
