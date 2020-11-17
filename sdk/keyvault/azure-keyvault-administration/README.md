@@ -256,11 +256,10 @@ from azure.keyvault.administration import KeyVaultBackupClient
 credential = DefaultAzureCredential()
 client = KeyVaultBackupClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
 
-blob_storage_url = "<your-blob-storage-url>"
 sas_token = "<your-sas-token>"  # replace with a sas token to your storage account
 
 # URL to a storage blob, for example https://<account name>.blob.core.windows.net/backup/mhsm-account-2020090117323313
-blob_url = "<blob-container-url>"
+blob_url = "<your-blob-url>"
 
 # performing a full key restore is a long-running operation. Calling `result()` on the poller will wait
 # until the restore is completed, then return an object representing the restore operation.
