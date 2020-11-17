@@ -690,7 +690,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             with sb_client.get_queue_receiver(
                     servicebus_queue.name,
-                    sub_queue = ServiceBusSubQueue.DeadLetter,
+                    sub_queue = ServiceBusSubQueue.DeadLetter.value,
                     max_wait_time=5,
                     receive_mode=ServiceBusReceiveMode.PeekLock) as dl_receiver:
                 count = 0
