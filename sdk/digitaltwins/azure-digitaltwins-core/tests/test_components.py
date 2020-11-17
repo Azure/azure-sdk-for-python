@@ -7,7 +7,7 @@ import pytest
 import uuid
 
 from devtools_testutils import AzureTestCase
-from _test_base.preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
+from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
 
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsModelData
 from azure.core import MatchConditions
@@ -24,6 +24,14 @@ DIGITAL_TWIN_ID = "DTComponentTestsTempTwin"
 
 
 class DigitalTwinsComponentTests(AzureTestCase):
+
+    def _get_client(self, endpoint, **kwargs):
+        credential = self.get_credential(DigitalTwinsClient)
+        return self.create_client_from_credential(
+            DigitalTwinsClient,
+            credential,
+            endpoint=endpoint,
+            **kwargs)
 
     def _set_up_models(self, client):
         component = {
@@ -88,7 +96,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_get_component_not_existing(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             client.get_component(DIGITAL_TWIN_ID, "Component3")
         
@@ -98,7 +106,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_get_component_simple(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
 
         component = client.get_component(DIGITAL_TWIN_ID, "Component1")
@@ -112,7 +120,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_replace(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
 
         patch = [
@@ -134,7 +142,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_remove(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
 
         patch = [
@@ -155,7 +163,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_add(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
 
         patch = [
@@ -178,7 +186,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_multiple(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
         patch = [
             {
@@ -203,7 +211,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_invalid_patch(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
         patch = [
             {
@@ -248,7 +256,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_conditionally_if_not_modified(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
         twin = client.get_digital_twin(DIGITAL_TWIN_ID)
         patch = [
@@ -278,7 +286,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_conditionally_if_present(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         self._set_up_models(client)
         patch = [
             {
@@ -299,7 +307,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_update_component_invalid_conditions(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         patch = [
             {
                 "op": "replace",
@@ -347,7 +355,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
                 "value": "value2"
             }
         ]
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(HttpResponseError):
             client.update_component(DIGITAL_TWIN_ID, "Component2", patch)
         
@@ -359,7 +367,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     def test_publish_component_telemetry(self, resource_group, location, digitaltwin):
         # TODO: How to validate this test? It seems to pass regardless
         telemetry = {"ComponentTelemetry1": 5} # ComponentTelemetry1
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         client.publish_component_telemetry(
             DIGITAL_TWIN_ID,
             "Component1",
@@ -370,7 +378,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_publish_component_telemetry_not_existing(self, resource_group, location, digitaltwin):
         telemetry = {"ComponentTelemetry1": 5}
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
 
         with pytest.raises(ResourceNotFoundError):
             client.publish_component_telemetry(

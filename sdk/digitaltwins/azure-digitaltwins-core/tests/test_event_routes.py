@@ -7,7 +7,7 @@ import pytest
 import uuid
 
 from devtools_testutils import AzureTestCase
-from _test_base.preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
+from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
 
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
 from azure.core.exceptions import (
@@ -19,6 +19,14 @@ from azure.core.exceptions import (
 
 class DigitalTwinsEventRouteTests(AzureTestCase):
 
+    def _get_client(self, endpoint, **kwargs):
+        credential = self.get_credential(DigitalTwinsClient)
+        return self.create_client_from_credential(
+            DigitalTwinsClient,
+            credential,
+            endpoint=endpoint,
+            **kwargs)
+
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_create_event_route_no_endpoint(self, resource_group, location, digitaltwin):
@@ -29,7 +37,7 @@ class DigitalTwinsEventRouteTests(AzureTestCase):
             endpoint_name=endpoint,
             filter=event_filter
         )
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(HttpResponseError):
             client.upsert_event_route(event_route_id, route)
 
@@ -37,14 +45,14 @@ class DigitalTwinsEventRouteTests(AzureTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_get_event_route_not_existing(self, resource_group, location, digitaltwin):
         event_route_id = self.create_random_name('eventRoute-')
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             client.get_event_route(event_route_id)
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_list_event_routes(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         all_routes = list(client.list_event_routes())
         assert all_routes == []
 
@@ -52,6 +60,6 @@ class DigitalTwinsEventRouteTests(AzureTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     def test_delete_event_route_not_existing(self, resource_group, location, digitaltwin):
         event_route_id = self.create_random_name('eventRoute-')
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             client.delete_event_route(event_route_id)

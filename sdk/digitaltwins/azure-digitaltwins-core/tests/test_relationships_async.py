@@ -6,8 +6,8 @@
 import pytest
 import uuid
 
-from _test_base.asynctestcase import AsyncDigitalTwinsTestCase
-from _test_base.preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
+from devtools_testutils import AzureTestCase
+from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
 
 from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.core import MatchConditions
@@ -27,7 +27,15 @@ FLOOR_DIGITAL_TWIN = "DTRelationshipTestsFloorTwin"
 ROOM_DIGITAL_TWIN = "DTRelationshipTestsRoomTwin"
 
 
-class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
+class DigitalTwinsRelationshipTestsAsync(AzureTestCase):
+
+    def _get_client(self, endpoint, **kwargs):
+        credential = self.get_credential(DigitalTwinsClient, is_async=True)
+        return self.create_client_from_credential(
+            DigitalTwinsClient,
+            credential,
+            endpoint=endpoint,
+            **kwargs)
 
     async def _set_up_models(self, client, *delete_old):
         dtdl_model_building = {
@@ -126,7 +134,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_basic_relationship(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         relationship =   {
             "$relationshipId": "FloorContainsRoom",
@@ -144,7 +152,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_invalid_relationship(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         relationship =   {
             "$relationshipId": "FloorContainsRoom",
@@ -222,7 +230,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_relationship_conditionally_if_missing(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client, FLOOR_DIGITAL_TWIN, "FloorContainsRoom")
 
         relationship =   {
@@ -247,7 +255,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_relationship_conditionally_if_modified(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
 
         relationship =   {
@@ -278,7 +286,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_upsert_relationship(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -312,7 +320,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
             "$targetId": FLOOR_DIGITAL_TWIN,
             "isAccessRestricted": False
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ValueError):
             await client.upsert_relationship(
                 BUILDING_DIGITAL_TWIN,
@@ -346,7 +354,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_get_relationship(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -366,7 +374,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_get_relationship_not_existing(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.get_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasRoof")
         with pytest.raises(ResourceNotFoundError):
@@ -375,7 +383,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_relationship(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -397,7 +405,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_relationship_not_existing(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.delete_relationship(BUILDING_DIGITAL_TWIN, "BuildingHasRoof")
         with pytest.raises(ResourceNotFoundError):
@@ -406,7 +414,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_relationship_conditionally_if_not_modified(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -439,7 +447,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_relationship_conditionally_if_present(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -464,7 +472,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_relationship_invalid_conditions(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ValueError):
             await client.delete_relationship(
                 BUILDING_DIGITAL_TWIN,
@@ -494,7 +502,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_replace(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -524,7 +532,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_remove(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -553,7 +561,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_add(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -583,7 +591,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_multiple(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -616,7 +624,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_invalid_patch(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -664,7 +672,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_conditionally_if_not_modified(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -703,7 +711,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_conditionally_if_present(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -734,7 +742,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_relationship_invalid_conditions(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         patch = [
             {
                 "op": "replace",
@@ -782,7 +790,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
                 "value": 42
             }
         ]
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.update_relationship(BUILDING_DIGITAL_TWIN, "foo", patch)
         with pytest.raises(ResourceNotFoundError):
@@ -791,7 +799,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_list_relationships(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -814,7 +822,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_list_relationship_by_id(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",
@@ -836,7 +844,7 @@ class DigitalTwinsRelationshipTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_list_incoming_relationships(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         new_relationship =   {
             "$relationshipId": "BuildingHasFloor",

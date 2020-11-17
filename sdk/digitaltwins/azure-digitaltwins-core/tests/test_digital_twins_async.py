@@ -7,8 +7,8 @@ from os import pathsep
 import pytest
 import uuid
 
-from _test_base.asynctestcase import AsyncDigitalTwinsTestCase
-from _test_base.preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
+from devtools_testutils import AzureTestCase
+from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
 
 from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.core import MatchConditions
@@ -21,7 +21,15 @@ from azure.core.exceptions import (
 )
 
 
-class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
+class DigitalTwinsTestsAsync(AzureTestCase):
+
+    def _get_client(self, endpoint, **kwargs):
+        credential = self.get_credential(DigitalTwinsClient, is_async=True)
+        return self.create_client_from_credential(
+            DigitalTwinsClient,
+            credential,
+            endpoint=endpoint,
+            **kwargs)
 
     async def _set_up_models(self, client, old_id=None):
         dtdl_model_building = {
@@ -81,7 +89,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin["AverageTemperature"] == dtdl_digital_twins_building_twin["AverageTemperature"]
@@ -99,7 +107,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(HttpResponseError):
             await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -113,7 +121,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             },
             "LowestTemperature": 68,
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         with pytest.raises(HttpResponseError):
             await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
@@ -129,7 +137,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client, old_id=digital_twin_id)
         created_twin = await client.upsert_digital_twin(
             digital_twin_id,
@@ -155,7 +163,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client, old_id=digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin.get('$dtId') == digital_twin_id
@@ -187,7 +195,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin.get('$dtId') == digital_twin_id
@@ -208,7 +216,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ValueError):
             await client.upsert_digital_twin(
                 digital_twin_id,
@@ -246,7 +254,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -256,7 +264,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_get_digitaltwin_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.get_digital_twin(self.create_random_name('digitalTwin-'))
 
@@ -271,7 +279,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -283,7 +291,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_digitaltwin_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.delete_digital_twin(self.create_random_name('digitalTwin-'))
 
@@ -298,7 +306,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -327,7 +335,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         deleted = await client.delete_digital_twin(
@@ -341,7 +349,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_digitaltwin_invalid_conditions_async(self, resource_group, location, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ValueError):
             await client.delete_digital_twin(
                 digital_twin_id,
@@ -375,7 +383,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin['AverageTemperature'] == 68
@@ -403,7 +411,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -429,7 +437,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             },
             "AverageTemperature": 68,
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -456,7 +464,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             },
             "AverageTemperature": 68,
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -490,7 +498,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -525,7 +533,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         patch = [
@@ -560,7 +568,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await self._set_up_models(client)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         patch = [
@@ -581,7 +589,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_update_digitaltwin_invalid_conditions_async(self, resource_group, location, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         patch = [
             {
                 "op": "replace",
@@ -626,7 +634,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
                 "value": 42
             }
         ]
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.update_digital_twin(digital_twin_id, patch)
 
@@ -641,7 +649,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         dt_ids = []
@@ -652,7 +660,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_query_digitaltwins_invalid_expression_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(HttpResponseError):
             async for t in client.query_twins("foo"):
                 print(t)
@@ -669,7 +677,7 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
             },
             "AverageTemperature": 68
         }
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         published = await client.publish_telemetry(digital_twin_id, telemetry)
@@ -679,6 +687,6 @@ class DigitalTwinsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_publish_telemetry_not_existing(self, resource_group, location, digitaltwin):
         telemetry = {"ComponentTelemetry1": 5}
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.publish_telemetry("foo", telemetry)

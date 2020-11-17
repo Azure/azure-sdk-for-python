@@ -7,15 +7,23 @@ import pytest
 import random
 import asyncio
 
-from _test_base.asynctestcase import AsyncDigitalTwinsTestCase
-from _test_base.preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
+from devtools_testutils import AzureTestCase
+from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
 
 from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.digitaltwins.core import DigitalTwinsModelData
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 
-class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
+class DigitalTwinsModelsTestsAsync(AzureTestCase):
+
+    def _get_client(self, endpoint, **kwargs):
+        credential = self.get_credential(DigitalTwinsClient, is_async=True)
+        return self.create_client_from_credential(
+            DigitalTwinsClient,
+            credential,
+            endpoint=endpoint,
+            **kwargs)
 
     async def _clean_up_models(self, client, *models):
         models = []
@@ -53,7 +61,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_models_empty_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(HttpResponseError):
             await client.create_models([])
 
@@ -66,7 +74,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_models_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         model_id = await self._get_unique_model_id(client)
         component_id = await self._get_unique_component_id(client)
         component = {
@@ -122,7 +130,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_model_existing_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         model_id = await self._get_unique_model_id(client)
         component_id = await self._get_unique_component_id(client)
         component = {
@@ -172,7 +180,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_model_invalid_model_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         model = {
             "@context": "dtmi:dtdl:context;2",
@@ -201,7 +209,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_create_model_invalid_reference_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         model_id = await self._get_unique_model_id(client)
         model = {
@@ -233,7 +241,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_get_model_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -262,7 +270,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_get_model_with_definition_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -292,14 +300,14 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_get_model_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.get_model("dtmi:com:samples:NonExistingModel;1")
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_list_models_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -329,7 +337,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_list_models_with_definition_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -360,7 +368,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_decommission_model_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -393,14 +401,14 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_decommission_model_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.decommission_model("dtmi:com:samples:NonExistingModel;1")
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_decommission_model_already_decommissioned_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -433,7 +441,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_model_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -464,14 +472,14 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_model_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.delete_model("dtmi:com:samples:NonExistingModel;1")
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_model_already_deleted_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -499,7 +507,7 @@ class DigitalTwinsModelsTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_models_with_dependencies_async(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         component_id = await self._get_unique_component_id(client)
         model_id = await self._get_unique_model_id(client)
         component = {

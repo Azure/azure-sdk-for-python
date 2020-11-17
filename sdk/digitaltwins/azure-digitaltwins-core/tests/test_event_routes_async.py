@@ -6,8 +6,8 @@
 import pytest
 import uuid
 
-from _test_base.asynctestcase import AsyncDigitalTwinsTestCase
-from _test_base.preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
+from devtools_testutils import AzureTestCase
+from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
 
 from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.digitaltwins.core import DigitalTwinsEventRoute
@@ -17,7 +17,15 @@ from azure.core.exceptions import (
 )
 
 
-class DigitalTwinsEventRouteTestsAsync(AsyncDigitalTwinsTestCase):
+class DigitalTwinsEventRouteTestsAsync(AzureTestCase):
+
+    def _get_client(self, endpoint, **kwargs):
+        credential = self.get_credential(DigitalTwinsClient, is_async=True)
+        return self.create_client_from_credential(
+            DigitalTwinsClient,
+            credential,
+            endpoint=endpoint,
+            **kwargs)
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
@@ -29,7 +37,7 @@ class DigitalTwinsEventRouteTestsAsync(AsyncDigitalTwinsTestCase):
             endpoint_name=endpoint,
             filter=event_filter
         )
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(HttpResponseError):
             await client.upsert_event_route(event_route_id, route)
 
@@ -37,14 +45,14 @@ class DigitalTwinsEventRouteTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_get_event_route_not_existing(self, resource_group, location, digitaltwin):
         event_route_id = self.create_random_name('eventRoute-')
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.get_event_route(event_route_id)
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_list_event_routes(self, resource_group, location, digitaltwin):
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         all_routes = []
         async for r in client.list_event_routes():
             all_routes.append(r)
@@ -54,6 +62,6 @@ class DigitalTwinsEventRouteTestsAsync(AsyncDigitalTwinsTestCase):
     @DigitalTwinsPreparer(name_prefix="dttest")
     async def test_delete_event_route_not_existing(self, resource_group, location, digitaltwin):
         event_route_id = self.create_random_name('eventRoute-')
-        client = self.create_basic_client(DigitalTwinsClient, endpoint=digitaltwin.host_name)
+        client = self._get_client(digitaltwin.host_name)
         with pytest.raises(ResourceNotFoundError):
             await client.delete_event_route(event_route_id)
