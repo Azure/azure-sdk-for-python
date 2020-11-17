@@ -6,10 +6,7 @@ import codecs
 from dateutil import parser as date_parse
 import functools
 import time
-import hashlib
-import os
 import logging
-import sys
 import json
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
@@ -215,9 +212,6 @@ class KeyClientTests(KeyVaultTestCase):
 
         # purge key
         client.purge_deleted_key(created_bundle.name)
-        self._poll_until_exception(
-            functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
-        )
 
         # restore key
         restore_function = functools.partial(client.restore_key_backup, key_backup)

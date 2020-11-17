@@ -3,8 +3,8 @@
 # Licensed under the MIT License.
 # -------------------------------------
 import functools
+import time
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.keyvault.secrets.aio import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -169,6 +169,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         await secret_client.delete_secret(created_secret.name)
         await secret_client.purge_deleted_secret(created_secret.name)
+
+        if self.is_live:
+            time.sleep(15)
 
         # [START restore_secret_backup]
 

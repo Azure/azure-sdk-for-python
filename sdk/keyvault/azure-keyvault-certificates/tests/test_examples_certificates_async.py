@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+import time
 
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.keyvault.certificates.aio import CertificateClient
@@ -221,6 +222,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         await certificate_client.delete_certificate(certificate_name=cert_name)
         await certificate_client.purge_deleted_certificate(certificate_name=cert_name)
+
+        if self.is_live:
+            time.sleep(15)
 
         # [START restore_certificate]
 

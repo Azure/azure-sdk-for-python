@@ -4,11 +4,9 @@
 # ------------------------------------
 from __future__ import print_function
 import functools
-import hashlib
-import os
+import time
 
 from azure.keyvault.keys import KeyClient
-from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
 from _shared.preparer import KeyVaultClientPreparer as _KeyVaultClientPreparer
@@ -204,6 +202,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         key_client.begin_delete_key(key_name).wait()
         key_client.purge_deleted_key(key_name)
+
+        if self.is_live:
+            time.sleep(15)
 
         # [START restore_key_backup]
 

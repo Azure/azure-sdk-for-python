@@ -5,12 +5,10 @@
 import asyncio
 import functools
 import codecs
-import hashlib
-import os
 import logging
 import json
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import ResourceExistsError
 from azure.keyvault.keys import JsonWebKey
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer

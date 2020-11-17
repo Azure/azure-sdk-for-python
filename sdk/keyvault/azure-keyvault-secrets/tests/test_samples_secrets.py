@@ -4,8 +4,8 @@
 # -------------------------------------
 from __future__ import print_function
 import functools
+import time
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.keyvault.secrets import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 
@@ -168,8 +168,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(secret_backup)
 
         # [END backup_secret]
+
         secret_client.begin_delete_secret("secret-name").wait()
         secret_client.purge_deleted_secret("secret-name")
+
+        if self.is_live:
+            time.sleep(15)
+
         # [START restore_secret_backup]
 
         # restores a backed up secret

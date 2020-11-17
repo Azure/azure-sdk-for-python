@@ -3,10 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-import hashlib
-import os
+import time
 
-from azure.core.exceptions import ResourceNotFoundError
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 from _shared.preparer_async import KeyVaultClientPreparer as _KeyVaultClientPreparer
@@ -198,6 +196,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         await key_client.delete_key(key_name)
         await key_client.purge_deleted_key(key_name)
+
+        if self.is_live:
+            time.sleep(15)
 
         # [START restore_key_backup]
 

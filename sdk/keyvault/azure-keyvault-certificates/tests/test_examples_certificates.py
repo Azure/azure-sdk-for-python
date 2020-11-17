@@ -4,6 +4,7 @@
 # ------------------------------------
 from __future__ import print_function
 import functools
+import time
 
 from azure.keyvault.certificates import (
     CertificateClient,
@@ -231,6 +232,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client.begin_delete_certificate(certificate_name=cert_name).wait()
         certificate_client.purge_deleted_certificate(certificate_name=cert_name)
+
+        if self.is_live:
+            time.sleep(15)
 
         # [START restore_certificate]
 
