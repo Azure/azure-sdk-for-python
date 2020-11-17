@@ -5,30 +5,41 @@
 # -------------------------------------------------------------------------
 
 from azure.core import MatchConditions
+from azure.core.exceptions import (
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotModifiedError)
 
-def quote_etag(etag):
-    if not etag or etag == "*":
-        return etag
-    if etag.startswith('"') and etag.endswith('"'):
-        return etag
-    if etag.startswith("'") and etag.endswith("'"):
-        return etag
-    return '"' + etag + '"'
 
 def prep_if_match(etag, match_condition):
     # type: (str, MatchConditions) -> Optional[str]
+    error_map = {}
     if match_condition == MatchConditions.IfNotModified:
-        if_match = quote_etag(etag) if etag else None
-        return if_match
+        if not etag:
+            raise ValueError("The 'IfNotModified' match condition must be paired with an etag.")
+        error_map[412] = ResourceModifiedError
+        return etag, error_map
     if match_condition == MatchConditions.IfPresent:
-        return "*"
-    return None
+        if etag:
+            raise ValueError("An etag value cannot be paired with the 'IfPresent' match condition.")
+        return "*", error_map
+    if match_condition != MatchConditions.Unconditionally:
+        raise ValueError("Unsupported match condition: {}".format(match_condition))
+    return None, error_map
 
 def prep_if_none_match(etag, match_condition):
     # type: (str, MatchConditions) -> Optional[str]
+    error_map = {}
     if match_condition == MatchConditions.IfModified:
-        if_none_match = quote_etag(etag) if etag else None
-        return if_none_match
+        error_map[412] = ResourceNotModifiedError
+        if not etag:
+            raise ValueError("The 'IfModified' match condition must be paired with an etag.")
+        return etag, error_map
     if match_condition == MatchConditions.IfMissing:
-        return "*"
-    return None
+        error_map[412] = ResourceExistsError
+        if etag:
+            raise ValueError("An etag value cannot be paired with the 'IfMissing' match condition.")
+        return "*", error_map
+    if match_condition != MatchConditions.Unconditionally:
+        raise ValueError("Unsupported match condition: {}".format(match_condition))
+    return None, error_map
