@@ -30,6 +30,40 @@ Type annotations support using typing. SDKs are mypy ready.
 This client has now stable and official support for async. Check the aio namespace of your package to find the async client.
 This client now support natively tracing library like OpenCensus or OpenTelemetry. See this tracing quickstart for an overview.
 
+## 0.7.0 (2020-10-12)
+
+**Features**
+
+  - Added operation group AliasOperations
+
+**Breaking changes**
+
+  - Removed operation SubscriptionOperations.create_subscription_in_enrollment_account
+  - Removed operation SubscriptionOperations.create_subscription
+  - Removed operation SubscriptionOperations.create_csp_subscription
+  - Removed operation group SubscriptionOperationOperations
+
+## 0.6.0 (2020-06-05)
+
+**Features**
+
+  - Model SubscriptionCreationParameters has a new parameter management_group_id
+  - Added operation SubscriptionOperations.create_subscription_in_enrollment_account
+  - Added operation SubscriptionOperations.create_subscription
+  - Added operation SubscriptionOperations.create_csp_subscription
+  - Added operation SubscriptionOperations.cancel
+  - Added operation SubscriptionOperations.rename
+  - Added operation SubscriptionOperations.enable
+
+**Breaking changes**
+
+  - Model ModernSubscriptionCreationParameters no longer has parameter billing_profile_id
+  - Removed operation SubscriptionsOperations.cancel
+  - Removed operation SubscriptionsOperations.rename
+  - Removed operation SubscriptionsOperations.enable
+  - Removed operation SubscriptionOperations.list
+  - Removed operation group SubscriptionFactoryOperations
+
 ## 0.5.0 (2019-08-21)
 
 **Features**
