@@ -48,7 +48,7 @@ def parse_vault_id(url):
     )
 
 
-BackupLocation = namedtuple("BackupLocation", "container_url,folder_name")
+BackupLocation = namedtuple("BackupLocation", ["container_url", "folder_name"])
 
 
 def parse_blob_storage_url(blob_storage_url):
