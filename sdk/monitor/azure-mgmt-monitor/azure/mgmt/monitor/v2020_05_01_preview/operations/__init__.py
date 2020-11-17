@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.12.0"
+from ._scheduled_query_rules_operations import ScheduledQueryRulesOperations
 
+__all__ = [
+    'ScheduledQueryRulesOperations',
+]

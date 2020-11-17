@@ -9,5 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.12.0"
+from enum import Enum
 
+
+class TimeAggregation(str, Enum):
+
+    count = "Count"
+    average = "Average"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+
+
+class DimensionOperator(str, Enum):
+
+    include = "Include"
+    exclude = "Exclude"
+
+
+class ConditionOperator(str, Enum):
+
+    equals = "Equals"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"

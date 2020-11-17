@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.12.0"
+from ._data_collection_rule_associations_operations import DataCollectionRuleAssociationsOperations
+from ._data_collection_rules_operations import DataCollectionRulesOperations
 
+__all__ = [
+    'DataCollectionRuleAssociationsOperations',
+    'DataCollectionRulesOperations',
+]
