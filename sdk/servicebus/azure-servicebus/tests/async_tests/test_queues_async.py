@@ -506,7 +506,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     await receiver.defer_message(message)
 
             assert count == 10
-            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ServiceBusReceiveMode.ReceiveAndDelete) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ServiceBusReceiveMode.ReceiveAndDelete.value) as receiver:
                 deferred = await receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:

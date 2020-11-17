@@ -601,7 +601,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     
             assert count == 10
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              receive_mode=ServiceBusReceiveMode.ReceiveAndDelete, 
+                                              receive_mode=ServiceBusReceiveMode.ReceiveAndDelete.value, 
                                               max_wait_time=5) as receiver:
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
@@ -1955,7 +1955,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
-            with pytest.raises(TypeError):
+            with pytest.raises(ValueError):
                 with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                   receive_mode=2) as receiver:
                 

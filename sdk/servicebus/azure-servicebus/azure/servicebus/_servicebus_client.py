@@ -222,7 +222,7 @@ class ServiceBusClient(object):
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default receive_mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ServiceBusReceiveMode
+        :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword Optional[~azure.servicebus.AutoLockRenewer] auto_lock_renewer: An ~azure.servicebus.AutoLockRenewer
@@ -335,7 +335,7 @@ class ServiceBusClient(object):
          lock period before they will be removed from the subscription. Messages received with ReceiveAndDelete
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
          the client fails to process the message. The default receive_mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ServiceBusReceiveMode
+        :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword Optional[~azure.servicebus.AutoLockRenewer] auto_lock_renewer: An ~azure.servicebus.AutoLockRenewer

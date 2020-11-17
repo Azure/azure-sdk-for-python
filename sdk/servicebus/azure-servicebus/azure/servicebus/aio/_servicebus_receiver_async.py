@@ -38,7 +38,8 @@ from .._common.constants import (
     MESSAGE_MGMT_SETTLEMENT_TERM_MAP,
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
-    MGMT_RESPONSE_MESSAGE_EXPIRATION
+    MGMT_RESPONSE_MESSAGE_EXPIRATION,
+    ServiceBusToAMQPReceiveModeMap
 )
 from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
@@ -84,7 +85,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
      will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
      if the client fails to process the message.
      The default mode is PeekLock.
-    :paramtype receive_mode: ~azure.servicebus.ServiceBusReceiveMode
+    :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
     :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
      will automatically stop receiving. The default value is None, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -205,7 +206,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
          if the client fails to process the message.
          The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ServiceBusReceiveMode
+        :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -260,7 +261,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             on_attach=self._on_attach,
             auto_complete=False,
             encoding=self._config.encoding,
-            receive_settle_mode=self._receive_mode.value,
+            receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
             send_settle_mode=SenderSettleMode.Settled \
                 if self._receive_mode == ServiceBusReceiveMode.ReceiveAndDelete \
                 else None,
@@ -562,10 +563,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if not sequence_numbers:
             raise ValueError("At least one sequence number must be specified.")
         await self._open()
+        uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
-            receive_mode = self._receive_mode.value.value
+            receive_mode = uamqp_receive_mode.value.value
         except AttributeError:
-            receive_mode = int(self._receive_mode)
+            receive_mode = int(uamqp_receive_mode.value)
         message = {
             MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
             MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)

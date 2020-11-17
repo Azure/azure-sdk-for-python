@@ -9,7 +9,8 @@
 **Breaking Changes**
 
 * `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
-* Rename `ReceiveMode` to `ServiceBusReceiveMode` and `SubQueue` to `ServiceBusSubQueue`
+* Rename `ReceiveMode` to `ServiceBusReceiveMode` and `SubQueue` to `ServiceBusSubQueue`, and convert their enum values from ints to human-readable strings.
+* An improper `receive_mode` value will now raise `ValueError` instead of `TypeError` in line with supporting extensible enums.
 
 ## 7.0.0b8 (2020-11-05)
 
