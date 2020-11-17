@@ -13,7 +13,7 @@ from microsoft.opentelemetry.exporter.azuremonitor.storage import (
     _seconds,
 )
 
-TEST_FOLDER = os.path.abspath(".test")
+TEST_FOLDER = os.path.abspath(".test.storage")
 
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
@@ -70,6 +70,14 @@ class TestLocalFileBlob(unittest.TestCase):
 
 # pylint: disable=protected-access
 class TestLocalFileStorage(unittest.TestCase):
+    @classmethod
+    def setup_class(cls):
+        os.makedirs(TEST_FOLDER, exist_ok=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEST_FOLDER, True)
+
     def test_get_nothing(self):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "test", "a")) as stor:
             pass
