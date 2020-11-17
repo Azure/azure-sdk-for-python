@@ -25,24 +25,18 @@ from microsoft.opentelemetry.exporter.azuremonitor.export import (
 logger = logging.getLogger(__name__)
 
 
-class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
+class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor span exporter for OpenTelemetry.
-
-    Args:
-        options: :doc:`export.options` to allow configuration for the exporter
     """
-
-    def __init__(self, **options):
-        super().__init__(**options)
-        self.add_telemetry_processor(indicate_processed_by_metric_extractors)
 
     def export(self, spans: Sequence[Span]) -> SpanExportResult:
         envelopes = [self._span_to_envelope(span) for span in spans]
-        envelopes = self._apply_telemetry_processors(envelopes)
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
-                self.storage.put(envelopes, result)
+                envelopes_to_store = map(
+                        lambda x: x.as_dict(), envelopes)
+                self.storage.put(envelopes_to_store, result)
             if result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
@@ -55,7 +49,7 @@ class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
         if not span:
             return None
         envelope = convert_span_to_envelope(span)
-        envelope.instrumentation_key = self.options.instrumentation_key
+        envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
 
@@ -201,12 +195,3 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
         data.properties["_MS.links"] = json.dumps(links)
     # TODO: tracestate, tags
     return envelope
-
-
-def indicate_processed_by_metric_extractors(envelope):
-    name = "Requests"
-    if envelope.data.base_type == "RemoteDependencyData":
-        name = "Dependencies"
-    envelope.data.base_data.properties["_MS.ProcessedByMetricExtractors"] = (
-        "(Name:'" + name + "',Ver:'1.1')"
-    )

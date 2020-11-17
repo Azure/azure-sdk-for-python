@@ -8,7 +8,7 @@ products:
 
 # Microsoft Azure Monitor Opentelemetry Exporter Python Samples
 
-These code samples show common champion scenario operations with the AzureMonitorSpanExporter.
+These code samples show common champion scenario operations with the AzureMonitorTraceExporter.
 
 * Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/samples/traces/sample_trace.py)
 * Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/microsoft-opentelemetry-exporter-azuremonitor/samples/traces/sample_client.py)
