@@ -1,10 +1,10 @@
 ﻿# coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import unittest
 import datetime
 
@@ -29,6 +29,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             azure.mgmt.monitor.MonitorManagementClient
         )
 
+    @unittest.skip("Resource Not Found")
     @ResourceGroupPreparer()
     def test_activity_log(self, resource_group):
 
@@ -41,7 +42,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         # filter/select syntax: https://msdn.microsoft.com/en-us/library/azure/dn931934.aspx
 
         # Need to freeze the date for the recorded tests
-        today = datetime.date(2020,6,8)
+        today = datetime.date(2020, 6, 8)
         filter = " and ".join([
             "eventTimestamp ge {}".format(today),
             "eventChannels eq 'Admin, Operation'"
@@ -54,10 +55,10 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         ))
         for log in activity_logs:
             # azure.monitor.models.EventData
-            #print(" ".join([
+            # print(" ".join([
             #    log.event_name.localized_value,
             #    log.operation_name.localized_value
-            #]))
+            # ]))
             self.assertIsNotNone(log.event_name.localized_value)
             self.assertIsNotNone(log.operation_name.localized_value)
 
@@ -171,7 +172,6 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             rule_name
         )
 
-
     @unittest.skip("Known bug")
     def test_tenants_event(self):
         tenant_events = list(self.client.tenant_events.list())
@@ -216,7 +216,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             profile_name,
             {
                 "storage_account_id": "/subscriptions/f9d8179e-43f0-46cb-99cd-f72bfab0a63b/resourceGroups/test_mgmt_media_test_media8fdd0a81/providers/Microsoft.Storage/storageAccounts/msmediapttest",
-            #    "service_bus_rule_id": "/subscriptions/6983c752-c9b8-48dd-b4d4-da739beb7e98/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/myNamespace/RootManageSharedAccessKey",
+                #    "service_bus_rule_id": "/subscriptions/6983c752-c9b8-48dd-b4d4-da739beb7e98/resourceGroups/Default-ServiceBus-WestUS/providers/Microsoft.ServiceBus/namespaces/myNamespace/RootManageSharedAccessKey",
                 "locations": [
                     "eastus",
                     "westus"
@@ -255,7 +255,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             as_name,
             {
                 'location': location,
-                'autoscale_setting_resource_name': as_name, # Name as to be written again
+                'autoscale_setting_resource_name': as_name,  # Name as to be written again
                 'enabled': False,
                 'target_resource_uri': resource_id,
                 'profiles': [{
@@ -304,6 +304,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             as_name
         )
 
-#------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
