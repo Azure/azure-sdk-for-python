@@ -160,7 +160,7 @@ Long-running operations are operations which consist of an initial request sent 
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
 
-Methods that train models, recognize values from forms, or copy models are modeled as long-running operations.
+Methods that train models, recognize values from forms, or copy/compose models are modeled as long-running operations.
 The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
@@ -221,7 +221,7 @@ result = poller.result()
 ```
 
 ### Recognize Content
-Recognize text and table structures, along with their bounding box coordinates, from documents.
+Recognize text, selection marks, and table structures, along with their bounding box coordinates, from documents.
 
 ```python
 from azure.ai.formrecognizer import FormRecognizerClient

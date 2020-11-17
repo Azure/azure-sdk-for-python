@@ -61,7 +61,7 @@ def get_field_value(field, value, read_result):  # pylint: disable=too-many-retu
             for key, value in value.value_object.items()
         }
     if value.type == "selectionMark":
-        return value.text
+        return value.text  # FIXME https://github.com/Azure/azure-sdk-for-python/issues/15276
 
     return None
 
@@ -151,7 +151,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
 class FormElement(object):
     """Base type which includes properties for a form element.
 
-    :ivar str text: The text content of the line.
+    :ivar str text: The text content of the element.
     :ivar list[~azure.ai.formrecognizer.Point] bounding_box:
         A list of 4 points representing the quadrilateral bounding box
         that outlines the text. The points are listed in clockwise
@@ -191,7 +191,7 @@ class RecognizedForm(object):
         The first and last page number of the input form.
     :ivar list[~azure.ai.formrecognizer.FormPage] pages:
         A list of pages recognized from the input document. Contains lines,
-        words, tables and page metadata.
+        words, selection marks, tables and page metadata.
 
     .. versionadded:: v2.1-preview
         The *form_type_confidence* and *model_id* properties
@@ -296,9 +296,12 @@ class FieldData(object):
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this field or value is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine,  ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):
@@ -341,7 +344,7 @@ class FieldData(object):
 
 class FormPage(object):
     """Represents a page recognized from the input document. Contains lines,
-    words, tables and page metadata.
+    words, selection marks, tables and page metadata.
 
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -496,8 +499,9 @@ class FormSelectionMark(FormElement):
         that outlines the text. The points are listed in clockwise
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
-    :ivar float confidence: Confidence value.
-    :ivar str state: Required. State of the selection mark. Possible values include: "selected",
+    :ivar float confidence:
+        Measures the degree of certainty of the recognition result. Value is between [0.0, 1.0].
+    :ivar str state: State of the selection mark. Possible values include: "selected",
      "unselected".
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
@@ -593,10 +597,13 @@ class FormTableCell(object):  # pylint:disable=too-many-instance-attributes
     :ivar field_elements:
         When `include_field_elements` is set to true, a list of
         elements constituting this cell is returned. The list
-        constitutes of elements such as lines and words.
+        constitutes of elements such as lines, words, and selection marks.
         For calls to begin_recognize_content(), this list is always populated.
     :vartype field_elements: list[Union[~azure.ai.formrecognizer.FormElement, ~azure.ai.formrecognizer.FormWord,
         ~azure.ai.formrecognizer.FormLine, ~azure.ai.formrecognizer.FormSelectionMark]]
+
+    .. versionadded:: v2.1-preview
+        *FormSelectionMark* is added to the types returned in the list of field_elements
     """
 
     def __init__(self, **kwargs):

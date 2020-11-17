@@ -32,9 +32,9 @@ if TYPE_CHECKING:
 
 class FormRecognizerClient(FormRecognizerClientBase):
     """FormRecognizerClient extracts information from forms and images into structured data.
-    It is the interface to use for analyzing receipts, recognizing content/layout from
-    forms, and analyzing custom forms from trained models. It provides different methods
-    based on inputs from a URL and inputs from a stream.
+    It is the interface to use for analyzing receipts, business cards, invoices, recognizing
+    content/layout from forms, and analyzing custom forms from trained models. It provides
+    different methods based on inputs from a URL and inputs from a stream.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://westus2.api.cognitive.microsoft.com).
@@ -82,7 +82,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :param receipt: JPEG, PNG, PDF, TIFF, or BMP type file stream or bytes.
         :type receipt: bytes or IO[bytes]
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -98,7 +99,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *locale* keyword argument
+            The *locale* keyword argument and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -147,7 +148,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :param str receipt_url: The URL of the receipt to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -159,7 +161,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *locale* keyword argument
+            The *locale* keyword argument and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -208,7 +210,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -276,7 +279,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :keyword str locale: Locale of the business card. Supported locales include: en-US, en-AU, en-CA, en-GB,
             and en-IN.
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -326,7 +330,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :type invoice: bytes or IO[bytes]
         :keyword str locale: Locale of the invoice. Supported locales include: en-US
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -393,7 +398,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             of one of the supported formats: JPEG, PNG, PDF, TIFF, or BMP.
         :keyword str locale: Locale of the invoice. Supported locales include: en-US
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -459,7 +465,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *pages* and *language* keyword arguments
+            The *pages* and *language* keyword arguments and support for image/bmp content
 
         .. admonition:: Example:
 
@@ -527,7 +533,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2.1-preview
-            The *pages* and *language* keyword arguments
+            The *pages* and *language* keyword arguments and support for image/bmp content
         """
         pages = kwargs.pop("pages", None)
         language = kwargs.pop("language", None)
@@ -565,7 +571,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :param form: JPEG, PNG, PDF, or TIFF type file stream or bytes.
         :type form: bytes or IO[bytes]
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword content_type: Content-type of the body sent to the API. Content-type is
             auto-detected, but can be overridden by passing this keyword argument. For options,
             see :class:`~azure.ai.formrecognizer.FormContentType`.
@@ -627,7 +634,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
         :param str form_url: The URL of the form to analyze. The input must be a valid, encoded URL
             of one of the supported formats: JPEG, PNG, PDF, or TIFF.
         :keyword bool include_field_elements:
-            Whether or not to include field elements such as lines and words in addition to form fields.
+            Whether or not to include all lines per page and field elements such as lines, words,
+            and selection marks for each form field.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
