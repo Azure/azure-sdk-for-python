@@ -2,6 +2,8 @@
 
 ## 7.0.0b9 (Unreleased)
 
+**Breaking Changes**
+* `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
 
 ## 7.0.0b8 (2020-11-05)
 

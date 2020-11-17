@@ -27,7 +27,7 @@ class TableClientBase(StorageAccountHostsMixin):
         account URL already has a SAS token, or the connection string already has shared
         access key values. The value can be a SAS token string, an account shared access
         key.
-    :type credential: Union[str,TokenCredential]
+    :type credential: str
 
     :returns: None
     """

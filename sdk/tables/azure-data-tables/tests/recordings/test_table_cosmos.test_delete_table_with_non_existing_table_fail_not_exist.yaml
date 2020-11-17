@@ -11,11 +11,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 02 Nov 2020 22:43:55 GMT
+      - Tue, 17 Nov 2020 01:35:02 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:43:55 GMT
+      - Tue, 17 Nov 2020 01:35:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -23,13 +23,13 @@ interactions:
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\"\
-        :\"en-us\",\"value\":\"The specified resource does not exist.\\nRequestID:e37037aa-1d5c-11eb-961a-58961df361d1\\\
+        :\"en-us\",\"value\":\"The specified resource does not exist.\\nRequestID:1ca38054-2875-11eb-86e7-58961df361d1\\\
         n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=fullmetadata
       date:
-      - Mon, 02 Nov 2020 22:43:55 GMT
+      - Tue, 17 Nov 2020 01:35:03 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

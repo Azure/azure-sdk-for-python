@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 03 Nov 2020 21:18:52 GMT
+      - Tue, 17 Nov 2020 01:28:16 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 03 Nov 2020 21:18:52 GMT
+      - Tue, 17 Nov 2020 01:28:16 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 03 Nov 2020 21:18:54 GMT
+      - Tue, 17 Nov 2020 01:28:17 GMT
       etag:
-      - W/"datetime'2020-11-03T21%3A18%3A53.9715591Z'"
+      - W/"datetime'2020-11-17T01%3A28%3A17.3179911Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttablef6c71cb8')
       server:
@@ -65,25 +65,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Tue, 03 Nov 2020 21:18:54 GMT
+      - Tue, 17 Nov 2020 01:28:17 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 03 Nov 2020 21:18:54 GMT
+      - Tue, 17 Nov 2020 01:28:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://tablestestcosmosname.table.cosmos.azure.com/uttablef6c71cb8
   response:
     body:
-      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttablef6c71cb8/$metadata#uttablef6c71cb8/@Element","odata.etag":"W/\"datetime''2020-11-03T21%3A18%3A54.4592903Z''\"","PartitionKey":"001","RowKey":"batch_negative_1","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-11-03T21:18:54.4592903Z"}'
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttablef6c71cb8/$metadata#uttablef6c71cb8/@Element","odata.etag":"W/\"datetime''2020-11-17T01%3A28%3A17.7257479Z''\"","PartitionKey":"001","RowKey":"batch_negative_1","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-11-17T01:28:17.7257479Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Tue, 03 Nov 2020 21:18:54 GMT
+      - Tue, 17 Nov 2020 01:28:17 GMT
       etag:
-      - W/"datetime'2020-11-03T21%3A18%3A54.4592903Z'"
+      - W/"datetime'2020-11-17T01%3A28%3A17.7257479Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/uttablef6c71cb8(PartitionKey='001',RowKey='batch_negative_1')
       server:
@@ -105,11 +105,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Tue, 03 Nov 2020 21:18:54 GMT
+      - Tue, 17 Nov 2020 01:28:17 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 03 Nov 2020 21:18:54 GMT
+      - Tue, 17 Nov 2020 01:28:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -121,7 +121,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Nov 2020 21:18:54 GMT
+      - Tue, 17 Nov 2020 01:28:17 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

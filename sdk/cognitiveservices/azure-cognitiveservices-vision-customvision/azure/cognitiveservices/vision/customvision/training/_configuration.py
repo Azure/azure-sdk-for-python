@@ -33,7 +33,7 @@ class CustomVisionTrainingClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/customvision/v3.3/training'
+        base_url = '{Endpoint}/customvision/v3.4-preview/training'
 
         super(CustomVisionTrainingClientConfiguration, self).__init__(base_url)
 

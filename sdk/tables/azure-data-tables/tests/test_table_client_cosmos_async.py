@@ -42,13 +42,11 @@ class StorageTableClientTest(TableTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
-        self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, account_name)
-        self.assertEqual(service.credential.account_name, account_name)
-        self.assertEqual(service.credential.account_key, account_key)
-        self.assertTrue(
-            ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or
-            ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url))
+        assert service is not None
+        assert service.account_name ==  account_name
+        assert service.credential.account_name ==  account_name
+        assert service.credential.account_key ==  account_key
+        assert '{}.{}'.format(account_name, 'table.core.windows.net') in service.url or '{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url
 
     # --Direct Parameters Test Cases --------------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -63,7 +61,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
-            self.assertEqual(service.scheme, 'https')
+            assert service.scheme ==  'https'
         if self.is_live:
             sleep(SLEEP_DELAY)
 
@@ -78,7 +76,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
-            self.assertEqual(service.scheme, 'https')
+            assert service.scheme ==  'https'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -92,11 +90,11 @@ class StorageTableClientTest(TableTestCase):
                 self.account_url(cosmos_account, "cosmos"), credential=self.sas_token, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + suffix))
-            self.assertTrue(service.url.endswith(self.sas_token))
-            self.assertIsNone(service.credential)
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.url.startswith('https://' + cosmos_account.name + suffix)
+            assert service.url.endswith(self.sas_token)
+            assert service.credential is None
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -108,19 +106,19 @@ class StorageTableClientTest(TableTestCase):
             service = service_type(url, credential=self.token_credential, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + suffix))
-            self.assertEqual(service.credential, self.token_credential)
-            self.assertFalse(hasattr(service.credential, 'account_key'))
-            self.assertTrue(hasattr(service.credential, 'get_token'))
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.url.startswith('https://' + cosmos_account.name + suffix)
+            assert service.credential ==  self.token_credential
+            assert not hasattr(service.credential, 'account_key')
+            assert hasattr(service.credential, 'get_token')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_token_and_http_async(self, resource_group, location, cosmos_account, cosmos_account_key):
         for service_type in SERVICES:
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 url = self.account_url(cosmos_account, "cosmos").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
@@ -137,12 +135,11 @@ class StorageTableClientTest(TableTestCase):
                 url, credential=cosmos_account_key, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith(
-                'https://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos")))
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "cosmos"))
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -157,7 +154,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
-            self.assertEqual(service.scheme, 'http')
+            assert service.scheme ==  'http'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -167,11 +164,10 @@ class StorageTableClientTest(TableTestCase):
 
         for service_type in TABLE_SERVICES:
             # Act
-            with self.assertRaises(ValueError) as e:
+            with pytest.raises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
-            self.assertEqual(
-                str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
+            assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -204,7 +200,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, cosmos_account.name, cosmos_account_key)
-            self.assertEqual(service.scheme, 'https')
+            assert service.scheme ==  'https'
 
     @pytest.mark.skip("Error with sas formation")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -218,11 +214,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type.from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + '.table.core.windows.net'))
-            self.assertTrue(service.url.endswith(self.sas_token))
-            self.assertIsNone(service.credential)
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.url.startswith('https://' + cosmos_account.name + '.table.core.windows.net')
+            assert service.url.endswith(self.sas_token)
+            assert service.credential is None
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -236,13 +232,13 @@ class StorageTableClientTest(TableTestCase):
             service = service_type.from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertTrue(service.url.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com'))
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com'))
-            self.assertEqual(service.scheme, 'https')
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.url.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com')
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            assert service._primary_endpoint.startswith('https://' + cosmos_account.name + '.table.cosmos.azure.com')
+            assert service.scheme ==  'https'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -256,14 +252,13 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(
-                service._primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "table")))
-            self.assertEqual(service.scheme, 'http')
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            print(service._primary_endpoint)
+            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "table"))
+            assert service.scheme ==  'http'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -273,7 +268,7 @@ class StorageTableClientTest(TableTestCase):
             conn_string = 'UseDevelopmentStorage=true;'.format(cosmos_account.name, cosmos_account_key)
 
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -288,11 +283,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -306,11 +301,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -325,11 +320,11 @@ class StorageTableClientTest(TableTestCase):
                 conn_string, secondary_hostname="www-sec.mydomain.com", table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -341,7 +336,7 @@ class StorageTableClientTest(TableTestCase):
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Fails if primary excluded
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -359,11 +354,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -377,31 +372,31 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertEqual(service.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_name, cosmos_account.name)
-            self.assertEqual(service.credential.account_key, cosmos_account_key)
-            self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
+            assert service.account_name ==  cosmos_account.name
+            assert service.credential.account_name ==  cosmos_account.name
+            assert service.credential.account_key ==  cosmos_account_key
+            assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
-        self.assertEqual(service.account_name, None)
-        self.assertEqual(service.credential, None)
-        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
+        assert service.account_name ==  None
+        assert service.credential ==  None
+        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         # mine doesnt have a question mark at the end
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
+        assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
-        self.assertEqual(service.account_name, None)
-        self.assertEqual(service.table_name, "foo")
-        self.assertEqual(service.credential, None)
-        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
+        assert service.account_name ==  None
+        assert service.table_name ==  "foo"
+        assert service.credential ==  None
+        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
-        self.assertEqual(service.account_name, None)
-        self.assertEqual(service.table_name, "foo")
-        self.assertEqual(service.credential, None)
-        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
+        assert service.account_name ==  None
+        assert service.table_name ==  "foo"
+        assert service.credential ==  None
+        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -409,16 +404,14 @@ class StorageTableClientTest(TableTestCase):
         service = TableServiceClient(self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key)
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
-                response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-table/{} Python/{} ({})".format(
+            assert 'User-Agent' in response.http_request.headers
+            assert response.http_request.headers['User-Agent'] == "azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()))
+                    platform.platform())
 
         tables = service.list_tables(raw_response_hook=callback)
-        self.assertIsNotNone(tables)
+        assert tables is not None
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -428,30 +421,24 @@ class StorageTableClientTest(TableTestCase):
             self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key, user_agent=custom_app)
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn(
-                "TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
+            assert 'User-Agent' in response.http_request.headers
+            assert "TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()),
-                response.http_request.headers['User-Agent']
-                )
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = service.list_tables(raw_response_hook=callback)
-        self.assertIsNotNone(tables)
+        assert tables is not None
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn(
-                "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
+            assert 'User-Agent' in response.http_request.headers
+            assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-table/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()),
-                response.http_request.headers['User-Agent']
-                )
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0")
-        self.assertIsNotNone(tables)
+        assert tables is not None
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -460,14 +447,11 @@ class StorageTableClientTest(TableTestCase):
         service = TableServiceClient(self.account_url(cosmos_account, "cosmos"), credential=cosmos_account_key)
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertEqual(
-                response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-tables/{} Python/{} ({}) customer_user_agent".format(
+            assert 'User-Agent' in response.http_request.headers
+            assert response.http_request.headers['User-Agent'] == "azsdk-python-storage-tables/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())
-            )
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
@@ -480,9 +464,9 @@ class StorageTableClientTest(TableTestCase):
         service = TableClient(table_url, table_name='bar', credential=cosmos_account_key)
 
         # Assert
-        self.assertEqual(service.scheme, 'https')
-        self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, cosmos_account.name)
+        assert service.scheme ==  'https'
+        assert service.table_name ==  'bar'
+        assert service.account_name ==  cosmos_account.name
 
     @pytest.mark.skip("cosmos differential")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -493,9 +477,9 @@ class StorageTableClientTest(TableTestCase):
         service = TableClient(table_url, table_name='bar', credential=cosmos_account_key)
 
         # Assert
-        self.assertEqual(service.scheme, 'https')
-        self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, cosmos_account.name)
+        assert service.scheme ==  'https'
+        assert service.table_name ==  'bar'
+        assert service.account_name ==  cosmos_account.name
 
     @AzureTestCase.await_prepared_test
     async def test_create_table_client_with_invalid_name_async(self):
@@ -520,9 +504,9 @@ class StorageTableClientTest(TableTestCase):
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    assert "Connection string is either blank or malformed." in str(e)
+                    assert str(e.value) == "Connection string is either blank or malformed."
                 elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    assert "Connection string missing required connection details." in str(e)
+                    assert str(e.value) == "Connection string missing required connection details."
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")

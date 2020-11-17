@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 02 Nov 2020 22:41:20 GMT
+      - Tue, 17 Nov 2020 01:32:28 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:41:20 GMT
+      - Tue, 17 Nov 2020 01:32:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 02 Nov 2020 22:41:20 GMT
+      - Tue, 17 Nov 2020 01:32:30 GMT
       etag:
-      - W/"datetime'2020-11-02T22%3A41%3A20.6913031Z'"
+      - W/"datetime'2020-11-17T01%3A32%3A29.7148423Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytablesync2a40e43')
       server:
@@ -55,11 +55,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 02 Nov 2020 22:41:21 GMT
+      - Tue, 17 Nov 2020 01:32:29 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:41:21 GMT
+      - Tue, 17 Nov 2020 01:32:29 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 02 Nov 2020 22:41:21 GMT
+      - Tue, 17 Nov 2020 01:32:30 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

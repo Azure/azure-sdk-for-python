@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 02 Nov 2020 22:41:51 GMT
+      - Tue, 17 Nov 2020 01:32:59 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:41:51 GMT
+      - Tue, 17 Nov 2020 01:32:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 02 Nov 2020 22:41:52 GMT
+      - Tue, 17 Nov 2020 01:33:00 GMT
       etag:
-      - W/"datetime'2020-11-02T22%3A41%3A52.2913287Z'"
+      - W/"datetime'2020-11-17T01%3A33%3A00.7203335Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/Tables('pytablesyncf46e1406')
       server:
@@ -59,11 +59,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Mon, 02 Nov 2020 22:41:53 GMT
+      - Tue, 17 Nov 2020 01:33:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:41:53 GMT
+      - Tue, 17 Nov 2020 01:33:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -71,13 +71,13 @@ interactions:
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"TableAlreadyExists\",\"message\":{\"lang\"\
-        :\"en-us\",\"value\":\"The specified table already exists.\\nRequestID:9a72f51d-1d5c-11eb-bc6c-58961df361d1\\\
+        :\"en-us\",\"value\":\"The specified table already exists.\\nRequestID:d4273e5e-2874-11eb-831a-58961df361d1\\\
         n\"}}}\r\n"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Mon, 02 Nov 2020 22:41:52 GMT
+      - Tue, 17 Nov 2020 01:33:00 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -97,11 +97,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Mon, 02 Nov 2020 22:41:53 GMT
+      - Tue, 17 Nov 2020 01:33:00 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Mon, 02 Nov 2020 22:41:53 GMT
+      - Tue, 17 Nov 2020 01:33:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -113,7 +113,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 02 Nov 2020 22:41:52 GMT
+      - Tue, 17 Nov 2020 01:33:01 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:

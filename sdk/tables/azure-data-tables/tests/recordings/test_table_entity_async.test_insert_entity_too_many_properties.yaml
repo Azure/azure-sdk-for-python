@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 04 Nov 2020 16:44:59 GMT
+      - Tue, 17 Nov 2020 01:06:28 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 04 Nov 2020 16:44:59 GMT
+      - Tue, 17 Nov 2020 01:06:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -26,7 +26,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 04 Nov 2020 16:44:59 GMT
+      date: Tue, 17 Nov 2020 01:06:28 GMT
       location: https://tablesteststorname.table.core.windows.net/Tables('uttable2c5919f0')
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
@@ -35,7 +35,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://tablestestarrzi67zssvbff.table.core.windows.net/Tables
+    url: https://tablestestml6tbwir5k4kit.table.core.windows.net/Tables
 - request:
     body: '{"PartitionKey": "pk2c5919f0", "PartitionKey@odata.type": "Edm.String",
       "RowKey": "rk2c5919f0", "RowKey@odata.type": "Edm.String", "key0": "value0",
@@ -218,11 +218,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Wed, 04 Nov 2020 16:45:00 GMT
+      - Tue, 17 Nov 2020 01:06:29 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 04 Nov 2020 16:45:00 GMT
+      - Tue, 17 Nov 2020 01:06:29 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -231,11 +231,11 @@ interactions:
     body:
       string: '{"odata.error":{"code":"TooManyProperties","message":{"lang":"en-US","value":"The
         entity contains more properties than allowed. Each entity can include up to
-        252 properties to store data. Each entity also has 3 system properties.\nRequestId:fe7f2f62-7002-0054-1fc9-b2c9e1000000\nTime:2020-11-04T16:45:01.2025773Z"}}}'
+        252 properties to store data. Each entity also has 3 system properties.\nRequestId:4e68ebe3-9002-0011-227d-bc1470000000\nTime:2020-11-17T01:06:29.8606405Z"}}}'
     headers:
       cache-control: no-cache
       content-type: application/json;odata=minimalmetadata;streaming=true;charset=utf-8
-      date: Wed, 04 Nov 2020 16:45:00 GMT
+      date: Tue, 17 Nov 2020 01:06:29 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-content-type-options: nosniff
@@ -243,18 +243,18 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://tablestestarrzi67zssvbff.table.core.windows.net/uttable2c5919f0
+    url: https://tablestestml6tbwir5k4kit.table.core.windows.net/uttable2c5919f0
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Wed, 04 Nov 2020 16:45:01 GMT
+      - Tue, 17 Nov 2020 01:06:29 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 04 Nov 2020 16:45:01 GMT
+      - Tue, 17 Nov 2020 01:06:29 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -265,12 +265,12 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Wed, 04 Nov 2020 16:45:00 GMT
+      date: Tue, 17 Nov 2020 01:06:29 GMT
       server: Windows-Azure-Table/1.0 Microsoft-HTTPAPI/2.0
       x-content-type-options: nosniff
       x-ms-version: '2019-02-02'
     status:
       code: 204
       message: No Content
-    url: https://tablestestarrzi67zssvbff.table.core.windows.net/Tables('uttable2c5919f0')
+    url: https://tablestestml6tbwir5k4kit.table.core.windows.net/Tables('uttable2c5919f0')
 version: 1

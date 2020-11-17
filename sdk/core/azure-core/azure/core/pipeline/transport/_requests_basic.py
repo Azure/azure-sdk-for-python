@@ -43,6 +43,7 @@ from ._base import (
     HttpResponse,
     _HttpResponseBase
 )
+from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 
 PipelineType = TypeVar("PipelineType")
 
@@ -117,7 +118,7 @@ class StreamDownloadGenerator(object):
     def __next__(self):
         retry_active = True
         retry_total = 3
-        retry_interval = 1000
+        retry_interval = 1  # 1 second
         while retry_active:
             try:
                 chunk = next(self.iter_content_func)
@@ -213,7 +214,7 @@ class RequestsTransport(HttpTransport):
         """
         session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
-        adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
+        adapter = BiggerBlockSizeHTTPAdapter(max_retries=disable_retries)
         for p in self._protocols:
             session.mount(p, adapter)
 

@@ -1,12 +1,16 @@
 # Release History
 
-## 1.5.0b3 (Unreleased)
+## 1.5.1 (Unreleased)
+
+
+## 1.5.0 (2020-11-11)
 ### Breaking Changes
 - Renamed optional `CertificateCredential` keyword argument `send_certificate`
-  to `send_certificate_chain`
-- Removed application authentication APIs added in prior betas. These will be
+  (added in 1.5.0b1) to `send_certificate_chain`
+- Removed user authentication APIs added in prior betas. These will be
   reintroduced in 1.6.0b1. Passing the keyword arguments below
   generally won't cause a runtime error, but the arguments have no effect.
+  ([#14601](https://github.com/Azure/azure-sdk-for-python/issues/14601))
   - Removed `authenticate` method from `DeviceCodeCredential`,
     `InteractiveBrowserCredential`, and `UsernamePasswordCredential`
   - Removed `allow_unencrypted_cache` and `enable_persistent_cache` keyword
@@ -19,6 +23,7 @@
     `SharedTokenCacheCredential`
   - Removed classes `AuthenticationRecord` and `AuthenticationRequiredError`
 - Removed `identity_config` keyword argument from `ManagedIdentityCredential`
+  (was added in 1.5.0b1)
 
 ### Changed
 - `DeviceCodeCredential` parameter `client_id` is now optional. When not
@@ -30,6 +35,12 @@
   ([#14821](https://github.com/Azure/azure-sdk-for-python/issues/14821))
 - Raised minimum msal version to 1.6.0
 
+### Added
+- `ManagedIdentityCredential` supports Service Fabric
+  ([#12705](https://github.com/Azure/azure-sdk-for-python/issues/12705))
+  and Azure Arc
+  ([#12702](https://github.com/Azure/azure-sdk-for-python/issues/12702))
+
 ### Fixed
 - Prevent `VisualStudioCodeCredential` using invalid authentication data when
   no user is signed in to Visual Studio Code
@@ -37,7 +48,9 @@
 - `ManagedIdentityCredential` uses the API version supported by Azure Functions
   on Linux consumption hosting plans
   ([#14670](https://github.com/Azure/azure-sdk-for-python/issues/14670))
-
+- `InteractiveBrowserCredential.get_token()` raises a clearer error message when
+  it times out waiting for a user to authenticate on Python 2.7
+  ([#14773](https://github.com/Azure/azure-sdk-for-python/pull/14773))
 
 ## 1.5.0b2 (2020-10-07)
 ### Fixed

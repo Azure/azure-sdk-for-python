@@ -83,8 +83,9 @@ class TableBatchOperations(object):
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
-        :raises: ValueError
+        :type entity: TableEntity or dict[str,str]
+        :return: None
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -110,7 +111,7 @@ class TableBatchOperations(object):
     def _batch_create_entity(
         self,
         table, # type: str
-        entity, # type: Union[Dict, TableEntity]
+        entity,  # type: Union[TableEntity, Dict[str,str]]
         timeout=None, # type: Optional[int]
         request_id_parameter=None, # type: Optional[str]
         response_preference="return-no-content", # type: Optional[Union[str, "models.ResponseFormat"]]
@@ -192,13 +193,13 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace entity
         :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
         :return: None
-        :raises: ValueError
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -273,7 +274,7 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -361,7 +362,7 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -427,7 +428,7 @@ class TableBatchOperations(object):
         :type row_key: str
         :keyword str etag: Etag of the entity
         :keyword ~azure.core.MatchConditions match_condition: MatchCondition
-        :raises: ValueError
+        :raises ValueError:
 
         .. admonition:: Example:
 
@@ -493,7 +494,7 @@ class TableBatchOperations(object):
         :type query_options: ~azure.data.tables.models.QueryOptions
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         _format = None
@@ -544,10 +545,10 @@ class TableBatchOperations(object):
         """Adds an upsert (update/merge) operation to the batch.
 
         :param entity: The properties for the table entity.
-        :type entity: Union[TableEntity, dict[str,str]]
+        :type entity: TableEntity or dict[str,str]
         :param mode: Merge or Replace and Insert on fail
         :type mode: ~azure.data.tables.UpdateMode
-        :raises: ValueError
+        :raises ValueError:
 
         .. admonition:: Example:
 

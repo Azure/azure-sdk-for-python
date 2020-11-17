@@ -35,13 +35,12 @@ class StorageTableClientTest(TableTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, account_name, account_key):
-        self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, account_name)
-        self.assertEqual(service.credential.account_name, account_name)
-        self.assertEqual(service.credential.account_key, account_key)
-        self.assertTrue(
-            ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or
-            ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url))
+        assert service is not None
+        assert service.account_name ==  account_name
+        assert service.credential.account_name ==  account_name
+        assert service.credential.account_key ==  account_key
+        assert ('{}.{}'.format(account_name, 'table.core.windows.net') in service.url) or ('{}.{}'.format(account_name, 'table.cosmos.azure.com') in service.url)
+
 
     # --Direct Parameters Test Cases --------------------------------------------
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -56,7 +55,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
-            self.assertEqual(service.scheme, 'https')
+            assert service.scheme ==  'https'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -69,7 +68,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
-            self.assertEqual(service.scheme, 'https')
+            assert service.scheme ==  'https'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -83,11 +82,11 @@ class StorageTableClientTest(TableTestCase):
                 self.account_url(storage_account, "table"), credential=self.sas_token, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertTrue(service.url.startswith('https://' + storage_account.name + suffix))
-            self.assertTrue(service.url.endswith(self.sas_token))
-            self.assertIsNone(service.credential)
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.url.startswith('https://' + storage_account.name + suffix)
+            assert service.url.endswith(self.sas_token)
+            assert service.credential is None
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -99,19 +98,19 @@ class StorageTableClientTest(TableTestCase):
             service = service_type(url, credential=self.token_credential, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertTrue(service.url.startswith('https://' + storage_account.name + suffix))
-            self.assertEqual(service.credential, self.token_credential)
-            self.assertFalse(hasattr(service.credential, 'account_key'))
-            self.assertTrue(hasattr(service.credential, 'get_token'))
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.url.startswith('https://' + storage_account.name + suffix)
+            assert service.credential ==  self.token_credential
+            assert not hasattr(service.credential, 'account_key')
+            assert hasattr(service.credential, 'get_token')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_token_and_http(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 url = self.account_url(storage_account, "table").replace('https', 'http')
                 service_type(url, credential=self.token_credential, table_name='foo')
 
@@ -126,12 +125,11 @@ class StorageTableClientTest(TableTestCase):
                 url, credential=storage_account_key, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service._primary_endpoint.startswith(
-                'https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_endpoint.startswith('https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table"))
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -146,7 +144,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
-            self.assertEqual(service.scheme, 'http')
+            assert service.scheme ==  'http'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -156,15 +154,14 @@ class StorageTableClientTest(TableTestCase):
 
         for service_type in TABLE_SERVICES:
             # Act
-            with self.assertRaises(ValueError) as e:
+            with pytest.raises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', table_name='foo')
 
             # test non-string account URL
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 test_service = service_type(account_url=123456, credential=storage_account_key, table_name='foo')
 
-            self.assertEqual(
-                str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
+            assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -197,7 +194,7 @@ class StorageTableClientTest(TableTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, storage_account.name, storage_account_key)
-            self.assertEqual(service.scheme, 'https')
+            assert service.scheme ==  'https'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -210,11 +207,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type.from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.table.core.windows.net'))
-            self.assertTrue(service.url.endswith(self.sas_token))
-            self.assertIsNone(service.credential)
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.url.startswith('https://' + storage_account.name + '.table.core.windows.net')
+            assert service.url.endswith(self.sas_token)
+            assert service.credential is None
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -228,13 +225,13 @@ class StorageTableClientTest(TableTestCase):
             service = service_type.from_connection_string(conn_string, table_name='foo')
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com'))
-            self.assertEqual(service.scheme, 'https')
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.url.startswith('https://' + storage_account.name + '.table.cosmos.azure.com')
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_endpoint.startswith('https://' + storage_account.name + '.table.cosmos.azure.com')
+            assert service.scheme ==  'https'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -248,14 +245,12 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(
-                service._primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table")))
-            self.assertEqual(service.scheme, 'http')
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table"))
+            assert service.scheme ==  'http'
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -265,7 +260,7 @@ class StorageTableClientTest(TableTestCase):
             conn_string = 'UseDevelopmentStorage=true;'.format(storage_account.name, storage_account_key)
 
             # Act
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -280,11 +275,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -298,11 +293,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -317,11 +312,11 @@ class StorageTableClientTest(TableTestCase):
                 conn_string, secondary_hostname="www-sec.mydomain.com", table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -335,7 +330,7 @@ class StorageTableClientTest(TableTestCase):
             # Act
 
             # Fails if primary excluded
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -353,11 +348,11 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertTrue(service._primary_endpoint.startswith('https://www.mydomain.com'))
+            assert service is not None
+            assert service.account_name ==  storage_account.name
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -371,30 +366,30 @@ class StorageTableClientTest(TableTestCase):
             service = service_type[0].from_connection_string(conn_string, table_name="foo")
 
             # Assert
-            self.assertEqual(service.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_name, storage_account.name)
-            self.assertEqual(service.credential.account_key, storage_account_key)
-            self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
+            assert service.account_name ==  storage_account.name
+            assert service.credential.account_name ==  storage_account.name
+            assert service.credential.account_key ==  storage_account_key
+            assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
 
         service = TableServiceClient(account_url=custom_account_url)
-        self.assertEqual(service.account_name, None)
-        self.assertEqual(service.credential, None)
-        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
+        assert service.account_name ==  None
+        assert service.credential ==  None
+        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient(account_url=custom_account_url, table_name="foo")
-        self.assertEqual(service.account_name, None)
-        self.assertEqual(service.table_name, "foo")
-        self.assertEqual(service.credential, None)
-        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
+        assert service.account_name ==  None
+        assert service.table_name ==  "foo"
+        assert service.credential ==  None
+        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token)
-        self.assertEqual(service.account_name, None)
-        self.assertEqual(service.table_name, "foo")
-        self.assertEqual(service.credential, None)
-        self.assertEqual(service._primary_hostname, 'local-machine:11002/custom/account/path')
-        self.assertTrue(service.url.startswith('http://local-machine:11002/custom/account/path'))
+        assert service.account_name ==  None
+        assert service.table_name ==  "foo"
+        assert service.credential ==  None
+        assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+        assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -402,15 +397,14 @@ class StorageTableClientTest(TableTestCase):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn("azsdk-python-data-tables/{} Python/{} ({})".format(
-                VERSION,
-                platform.python_version(),
-                platform.platform()),
-                response.http_request.headers['User-Agent'])
+            assert 'User-Agent' in response.http_request.headers
+            assert response.http_request.headers['User-Agent'] in "azsdk-python-data-tables/{} Python/{} ({})".format(
+                    VERSION,
+                    platform.python_version(),
+                    platform.platform())
 
         tables = list(service.list_tables(raw_response_hook=callback))
-        self.assertIsInstance(tables, list)
+        assert isinstance(tables,  list)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -420,30 +414,24 @@ class StorageTableClientTest(TableTestCase):
             self.account_url(storage_account, "table"), credential=storage_account_key, user_agent=custom_app)
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn(
-                "TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
+            assert 'User-Agent' in response.http_request.headers
+            assert "TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()),
-                response.http_request.headers['User-Agent']
-                )
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = list(service.list_tables(raw_response_hook=callback))
-        self.assertIsInstance(tables, list)
+        assert isinstance(tables,  list)
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn(
-                "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
+            assert 'User-Agent' in response.http_request.headers
+            assert "TestApp/v2.0 TestApp/v1.0 azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform()),
-                response.http_request.headers['User-Agent']
-                )
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = list(service.list_tables(raw_response_hook=callback, user_agent="TestApp/v2.0"))
-        self.assertIsInstance(tables, list)
+        assert isinstance(tables,  list)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -451,14 +439,11 @@ class StorageTableClientTest(TableTestCase):
         service = TableServiceClient(self.account_url(storage_account, "table"), credential=storage_account_key)
 
         def callback(response):
-            self.assertTrue('User-Agent' in response.http_request.headers)
-            self.assertIn(
-                response.http_request.headers['User-Agent'],
-                "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
+            assert 'User-Agent' in response.http_request.headers
+            assert response.http_request.headers['User-Agent'] == "azsdk-python-data-tables/{} Python/{} ({}) customer_user_agent".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())
-)
 
         custom_headers = {'User-Agent': 'customer_user_agent'}
         tables = service.list_tables(raw_response_hook=callback, headers=custom_headers)
@@ -471,9 +456,9 @@ class StorageTableClientTest(TableTestCase):
         service = TableClient(table_url, table_name='bar', credential=storage_account_key)
 
         # Assert
-        self.assertEqual(service.scheme, 'https')
-        self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, storage_account.name)
+        assert service.scheme ==  'https'
+        assert service.table_name ==  'bar'
+        assert service.account_name ==  storage_account.name
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
@@ -483,9 +468,9 @@ class StorageTableClientTest(TableTestCase):
         service = TableClient(account_url=table_url, table_name='bar', credential=storage_account_key)
 
         # Assert
-        self.assertEqual(service.scheme, 'https')
-        self.assertEqual(service.table_name, 'bar')
-        self.assertEqual(service.account_name, storage_account.name)
+        assert service.scheme ==  'https'
+        assert service.table_name ==  'bar'
+        assert service.account_name ==  storage_account.name
 
     def test_create_table_client_with_invalid_name(self):
         # Arrange
@@ -504,15 +489,13 @@ class StorageTableClientTest(TableTestCase):
         for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
             for service_type in SERVICES.items():
                 # Act
-                with self.assertRaises(ValueError) as e:
+                with pytest.raises(ValueError) as e:
                     service = service_type[0].from_connection_string(conn_str, table_name="test")
 
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    self.assertEqual(
-                        str(e.exception), "Connection string is either blank or malformed.")
+                    assert str(e.value) == "Connection string is either blank or malformed."
                 elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    self.assertEqual(
-                        str(e.exception), "Connection string missing required connection details.")
+                    assert str(e.value) == "Connection string missing required connection details."
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
