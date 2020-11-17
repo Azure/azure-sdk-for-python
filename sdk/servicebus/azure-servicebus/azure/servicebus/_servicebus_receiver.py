@@ -231,7 +231,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
+        :raises ~azure.servicebus.UnauthorizedAccessError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 
@@ -642,8 +642,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostLost if message settle operation fails.
 
         .. admonition:: Example:
 
@@ -666,8 +666,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostLost if message settle operation fails.
 
         .. admonition:: Example:
 
@@ -691,8 +691,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostLost if message settle operation fails.
 
         .. admonition:: Example:
 
@@ -719,8 +719,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :param Optional[str] error_description: The detailed error description for dead-lettering the message.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostLost if message settle operation fails.
 
         .. admonition:: Example:
 
@@ -760,8 +760,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
 
         .. admonition:: Example:
 

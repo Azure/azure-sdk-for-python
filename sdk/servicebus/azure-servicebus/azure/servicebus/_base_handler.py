@@ -24,8 +24,9 @@ from ._common._configuration import Configuration
 from .exceptions import (
     ServiceBusError,
     ServiceBusAuthenticationError,
+    ServiceBusConnectionError,
     OperationTimeoutError,
-    SessionLockExpired,
+    SessionLockLostError,
     _create_servicebus_exception
 )
 from ._common.utils import create_properties
@@ -194,8 +195,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         entity_in_kwargs = queue_name or topic_name
         if entity_in_conn_str and entity_in_kwargs and (entity_in_conn_str != entity_in_kwargs):
-            raise ServiceBusAuthenticationError(
-                "The queue or topic name provided: {} which does not match the EntityPath in"
+            raise ServiceBusAuthenticationError(  # TODO: should this be a ValueError?
+                message="The queue or topic name provided: {} which does not match the EntityPath in"
                 " the connection string passed to the ServiceBusClient constructor: {}.".format(
                     entity_in_conn_str, entity_in_kwargs
                 )
@@ -223,13 +224,25 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    def _handle_exception(self, exception, **kwargs):
-        # type: (BaseException, Any) -> ServiceBusError
-        error, error_need_close_handler, error_need_raise = \
-            _create_servicebus_exception(_LOGGER, exception, self, **kwargs)
-        if error_need_close_handler:
+    def _handle_exception(self, exception):
+        # type: (BaseException) -> ServiceBusError
+        # pylint: disable=protected-access
+        error = _create_servicebus_exception(_LOGGER, exception)
+
+        try:
+            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
+            # the receiver can no longer be used and should create a new session receiver
+            # instance to receive from session.
+            if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
+                self._session._lock_lost = True
+                self._close_handler()
+                raise error
+        except AttributeError:
+            pass
+
+        if error._shutdown_handler:
             self._close_handler()
-        if error_need_raise:
+        if not error._retryable:
             raise error
 
         return error
@@ -241,9 +254,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
                              "create a new instance.")
         try:
-            if self._session and self._session._lock_expired:  # pylint: disable=protected-access
-                # TODO: this would be useful in a session error case
-                raise SessionLockExpired(error=self._session.auto_renew_error)
+            if self._session and self._session._lock_lost:
+                raise SessionLockLostError(error=self._session.auto_renew_error)
         except AttributeError:
             pass
 

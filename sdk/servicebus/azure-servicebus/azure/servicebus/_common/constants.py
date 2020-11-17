@@ -26,6 +26,7 @@ SESSION_LOCKED_UNTIL = VENDOR + b":locked-until-utc"
 # Error codes
 ERROR_CODE_SESSION_LOCK_LOST = VENDOR + b":session-lock-lost"
 ERROR_CODE_MESSAGE_LOCK_LOST = VENDOR + b":message-lock-lost"
+ERROR_CODE_MESSAGE_NOT_FOUND = VENDOR + b":message-not-found"
 ERROR_CODE_TIMEOUT = VENDOR + b":timeout"
 ERROR_CODE_AUTH_FAILED = VENDOR + b":auth-failed"
 ERROR_CODE_SESSION_CANNOT_BE_LOCKED = VENDOR + b":session-cannot-be-locked"
@@ -33,7 +34,9 @@ ERROR_CODE_SERVER_BUSY = VENDOR + b":server-busy"
 ERROR_CODE_ARGUMENT_ERROR = VENDOR + b":argument-error"
 ERROR_CODE_OUT_OF_RANGE = VENDOR + b":argument-out-of-range"
 ERROR_CODE_ENTITY_DISABLED = VENDOR + b":entity-disabled"
-ERROR_CODE_ENTITY_ALREAD_EXISTS = VENDOR + b":entity-already-exists"
+ERROR_CODE_ENTITY_ALREADY_EXISTS = VENDOR + b":entity-already-exists"
+ERROR_CODE_PRECONDITION_FAILED = VENDOR + b":precondition-failed",
+
 
 REQUEST_RESPONSE_OPERATION_NAME = b"operation"
 REQUEST_RESPONSE_TIMEOUT = VENDOR + b":server-timeout"

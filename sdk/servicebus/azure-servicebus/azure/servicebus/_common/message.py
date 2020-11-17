@@ -32,7 +32,7 @@ from .constants import (
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
     ANNOTATION_SYMBOL_KEY_MAP
 )
-from ..exceptions import MessageContentTooLarge
+from ..exceptions import MessageSizeExceededError
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from ..aio._servicebus_receiver_async import ServiceBusReceiver as AsyncServiceBusReceiver
@@ -518,7 +518,7 @@ class ServiceBusMessageBatch(object):
         :param message: The Message to be added to the batch.
         :type message: ~azure.servicebus.ServiceBusMessage
         :rtype: None
-        :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
+        :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
         message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
@@ -532,8 +532,8 @@ class ServiceBusMessageBatch(object):
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise MessageContentTooLarge(
-                "ServiceBusMessageBatch has reached its size limit: {}".format(
+            raise MessageSizeExceededError(
+                message="ServiceBusMessageBatch has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
@@ -589,7 +589,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         try:
             if self._receiver.session:  # type: ignore
                 raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
-        except AttributeError: # Is not a session receiver
+        except AttributeError:  # Is not a session receiver
             pass
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True

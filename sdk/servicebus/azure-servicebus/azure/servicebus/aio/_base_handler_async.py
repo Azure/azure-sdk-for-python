@@ -23,7 +23,8 @@ from .._common.constants import (
     ASSOCIATEDLINKPROPERTYNAME,
     CONTAINER_PREFIX, MANAGEMENT_PATH_SUFFIX)
 from ..exceptions import (
-    SessionLockExpired,
+    ServiceBusConnectionError,
+    SessionLockLostError,
     OperationTimeoutError,
     _create_servicebus_exception
 )
@@ -114,12 +115,24 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _handle_exception(self, exception, **kwargs):
-        error, error_need_close_handler, error_need_raise = \
-            _create_servicebus_exception(_LOGGER, exception, self, **kwargs)
-        if error_need_close_handler:
+    async def _handle_exception(self, exception):
+        # pylint: disable=protected-access
+        error = _create_servicebus_exception(_LOGGER, exception)
+
+        try:
+            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
+            # the receiver can no longer be used and should create a new session receiver
+            # instance to receive from session.
+            if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
+                self._session._lock_lost = True
+                await self._close_handler()
+                raise error
+        except AttributeError:
+            pass
+
+        if error._shutdown_handler:
             await self._close_handler()
-        if error_need_raise:
+        if not error._retryable:
             raise error
 
         return error
@@ -131,9 +144,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
                              "create a new instance.")
         try:
-            if self._session and self._session._lock_expired:  # pylint: disable=protected-access
-                # TODO: this would be useful in a session error case
-                raise SessionLockExpired(error=self._session.auto_renew_error)
+            if self._session and self._session._lock_lost:
+                raise SessionLockLostError(error=self._session.auto_renew_error)
         except AttributeError:
             pass
 
@@ -155,7 +167,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             except StopAsyncIteration:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = await self._handle_exception(exception, **kwargs)
+                last_exception = await self._handle_exception(exception)
                 if require_last_exception:
                     kwargs["last_exception"] = last_exception
                 retried_times += 1
@@ -250,7 +262,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", error=exp)
+                raise OperationTimeoutError(message="Service request timed out.", error=exp)
             raise
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):

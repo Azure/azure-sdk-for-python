@@ -17,7 +17,6 @@ from ._common.constants import (
     MGMT_REQUEST_SESSION_ID,
     MGMT_REQUEST_SESSION_STATE,
 )
-from .exceptions import SessionLockExpired
 from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
@@ -35,6 +34,7 @@ class BaseSession(object):
         self._encoding = "UTF-8"
         self._session_start = None
         self._locked_until_utc = None  # type: Optional[datetime.datetime]
+        self._lock_lost = False
         self.auto_renew_error = None
 
     @property

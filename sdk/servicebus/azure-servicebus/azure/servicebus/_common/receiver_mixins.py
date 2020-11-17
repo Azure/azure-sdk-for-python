@@ -26,10 +26,7 @@ from .constants import (
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
-    ServiceBusMessageError,
-    MessageAlreadySettled,
-    SessionLockExpired,
-    MessageSettleFailed
+    MessageAlreadySettled
 )
 from .utils import utc_from_timestamp, utc_now
 
@@ -108,7 +105,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
             )
 
         if message._settled:
-            raise MessageAlreadySettled(action)  # TODO: should this be a value error?
+            raise MessageAlreadySettled(action=action)
 
         if not self._running:
             raise ValueError(

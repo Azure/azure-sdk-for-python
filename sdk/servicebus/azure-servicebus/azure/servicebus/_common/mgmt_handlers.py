@@ -4,49 +4,44 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import logging
 import uamqp
 from .message import ServiceBusReceivedMessage
-from ..exceptions import ServiceBusError, MessageLockExpired, SessionLockExpired
+from ..exceptions import _handle_amqp_mgmt_error
 from .constants import (
     ReceiveMode,
-    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
-    ERROR_CODE_SESSION_LOCK_LOST,
-    ERROR_CODE_MESSAGE_LOCK_LOST
+    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def default(status_code, message, description):
     condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()
-    raise ServiceBusError(
-        "Service request returned status code: {}. Condition: {}, Description: {}".format(
-            status_code, condition, description))
+
+    _handle_amqp_mgmt_error(_LOGGER, "Service request failed.", condition, description, status_code)
 
 
 def session_lock_renew_op(status_code, message, description):
     condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()
-    if condition == ERROR_CODE_SESSION_LOCK_LOST or status_code == 410:
-        raise SessionLockExpired(message=description)
-    raise ServiceBusError(
-        "Session lock renew request returned status code: {}. Description: {}, Data: {}".format(
-            status_code, description, message.get_data()))
+
+    _handle_amqp_mgmt_error(_LOGGER, "Session lock renew failed.", condition, description, status_code)
 
 
 def message_lock_renew_op(status_code, message, description):
     condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()
-    if condition == ERROR_CODE_MESSAGE_LOCK_LOST or status_code == 410:
-        raise MessageLockExpired(message=description)
-    raise ServiceBusError(
-        "Message Lock renew request returned status code: {}. Description: {}, Data: {}".format(
-            status_code, description, message.get_data()))
+
+    _handle_amqp_mgmt_error(_LOGGER, "Message lock renew failed.", condition, description, status_code)
 
 
 def peek_op(status_code, message, description, receiver):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'messages']:
@@ -55,13 +50,12 @@ def peek_op(status_code, message, description, receiver):
         return parsed
     if status_code in [202, 204]:
         return []
-    error_msg = "Message peek failed with status code: {}.\n".format(status_code)
-    if description:
-        error_msg += "{}.".format(description)
-    raise ServiceBusError(error_msg)
+
+    _handle_amqp_mgmt_error(_LOGGER, "Message peek failed.", condition, description, status_code)
 
 
 def list_sessions_op(status_code, message, description):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'sessions-ids']:
@@ -69,10 +63,8 @@ def list_sessions_op(status_code, message, description):
         return parsed
     if status_code in [202, 204]:
         return []
-    error_msg = "List sessions failed with status code: {}.\n".format(status_code)
-    if description:
-        error_msg += "{}.".format(description)
-    raise ServiceBusError(error_msg)
+
+    _handle_amqp_mgmt_error(_LOGGER, "List sessions failed.", condition, description, status_code)
 
 
 def deferred_message_op(
@@ -83,6 +75,7 @@ def deferred_message_op(
         receive_mode=ReceiveMode.PeekLock,
         message_type=ServiceBusReceivedMessage
 ):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         parsed = []
         for m in message.get_data()[b'messages']:
@@ -91,16 +84,13 @@ def deferred_message_op(
         return parsed
     if status_code in [202, 204]:
         return []
-    error_msg = "Retrieving deferred messages failed with status code: {}.\n".format(status_code)
-    if description:
-        error_msg += "{}.".format(description)
-    raise ServiceBusError(error_msg)
+
+    _handle_amqp_mgmt_error(_LOGGER, "Retrieving deferred messages failed.", condition, description, status_code)
 
 
 def schedule_op(status_code, message, description):
+    condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         return message.get_data()[b'sequence-numbers']
-    error_msg = "Scheduling messages failed with status code: {}.\n".format(status_code)
-    if description:
-        error_msg += "{}.".format(description)
-    raise ServiceBusError(error_msg)
+
+    _handle_amqp_mgmt_error(_LOGGER, "Scheduling messages failed.", condition, description, status_code)
