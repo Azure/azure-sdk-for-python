@@ -8,7 +8,7 @@ from datetime import time
 
 device_id = "lva-sample-device"
 module_d = "lvaEdge"
-connection_string = "HostName=lvasamplehub77xvrvtar2bpw.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=o77hgzsswnBZsaGKVSDjSmm53m4ViJb/s1xv9zfDCi0="
+connection_string = os.getenv("IOTHUB_DEVICE_CONNECTION_STRING")
 graph_instance_name = "graphInstance1"
 graph_topology_name = "graphTopology1"
 

@@ -1,4 +1,3 @@
-recursive-include tests *.py
 include *.md
 include azure/__init__.py
 recursive-include samples *.py *.md
