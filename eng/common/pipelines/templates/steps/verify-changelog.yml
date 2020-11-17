@@ -13,6 +13,10 @@ parameters:
   default: false
 
 steps:
+  - pwsh: | 
+      pip install packaging==20.4
+    displayName: Install Requirements
+
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
