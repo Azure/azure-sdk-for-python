@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-import os
 
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
 from azure.mgmt.storage.models import StorageAccount, Endpoints
@@ -22,24 +21,6 @@ FakeCosmosAccount = FakeResource
 RESOURCE_GROUP_PARAM = 'resource_group'
 
 # Cosmos Account Preparer and its shorthand decorator
-
-COSMOS_ENV_VARS = [
-    "TABLES_RESOURCE_MANAGER_URL",
-    "TABLES_CLIENT_ID",
-    "TABLES_SERVICE_MANAGEMENT_URL",
-    "TABLES_TENANT_ID",
-    "TABLES_STORAGE_ACCOUNT_NAME",
-    "TABLES_RESOURCE_GROUP",
-    "TABLES_LOCATION",
-    "TABLES_AZURE_AUTHORITY_HOST",
-    "TABLES_COSMOS_ACCOUNT_NAME",
-    "TABLES_PRIMARY_COSMOS_ACCOUNT_KEY",
-    "TABLES_SUBSCRIPTION_ID",
-    "TABLES_PRIMARY_STORAGE_ACCOUNT_KEY",
-    "TABLES_CLIENT_SECRET",
-    "TABLES_STORAGE_ENDPOINT_SUFFIX",
-    "TABLES_ENVIRONMENT"
-]
 
 class CosmosAccountPreparer(AzureMgmtPreparer):
     def __init__(
@@ -76,30 +57,9 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
         self.set_cache(use_cache, sku, location, name_prefix)
         if random_name_enabled:
             self.resource_moniker += "cosmosname"
-        self.env_variables_set()
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-
-            if self.powershell_script_used:
-                return {
-                    "client_id": os.environ["TABLES_CLIENT_ID"],
-                    "service_management_url": os.environ["TABLES_SERVICE_MANAGEMENT_URL"],
-                    "tenant_id": os.environ["TABLES_TENANT_ID"],
-                    "storage_account_name": os.environ["TABLES_STORAGE_ACCOUNT_NAME"],
-                    "resource_group": os.environ["TABLES_RESOURCE_GROUP"],
-                    "location": os.environ["TABLES_LOCATION"],
-                    "azure_authority_host": os.environ["TABLES_AZURE_AUTHORITY_HOST"],
-                    "cosmos_account": os.environ["TABLES_COSMOS_ACCOUNT_NAME"],
-                    "cosmos_account_key": os.environ["TABLES_PRIMARY_COSMOS_ACCOUNT_KEY"],
-                    "subscription_id": os.environ["TABLES_SUBSCRIPTION_ID"],
-                    "storage_account_key": os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"],
-                    "client_secret": os.environ["TABLES_CLIENT_SECRET"],
-                    "storage_endpoint_suffix": os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"],
-                    "environment": os.environ["TABLES_ENVIRONMENT"],
-                }
-
-            quit()
             capabilities = Capability(name='EnableTable')
             db_params = DatabaseAccountCreateUpdateParameters(
                 capabilities=[capabilities],
@@ -160,14 +120,5 @@ class CosmosAccountPreparer(AzureMgmtPreparer):
             template = 'To create a cosmos instance a resource group is required. Please add ' \
                        'decorator @{} in front of this cosmos account preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
-
-    def env_variables_set(self):
-        keys = os.environ.keys()
-        self.powershell_script_used = True
-        for var in COSMOS_ENV_VARS:
-            if var not in keys:
-                self.powershell_script_used = False
-                break
-
 
 CachedCosmosAccountPreparer = functools.partial(CosmosAccountPreparer, use_cache=True, random_name_enabled=True)

@@ -2,4 +2,3 @@
 -e ../../identity/azure-identity
 aiohttp>=3.0; python_version >= '3.5'
 msrest>=0.6.10
-python-dotenv
