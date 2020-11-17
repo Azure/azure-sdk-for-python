@@ -28,10 +28,7 @@ import os
 from ._version import VERSION
 __version__ = VERSION
 
-
-if os.environ.get('AZURE_PURE_CORE', False):
-    pass
-else:
+if not os.environ.get('AZURE_PURE_CORE', None) == 'True':
     from .pipeline_client import PipelineClient
     from .match_conditions import MatchConditions
 
