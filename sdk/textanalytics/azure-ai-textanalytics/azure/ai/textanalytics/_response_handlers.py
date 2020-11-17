@@ -87,7 +87,7 @@ def order_lro_results(doc_id_order, combined):
 
 
 def prepare_result(func):
-    def choose_wrapper(lro=False, *args):
+    def choose_wrapper(*args, **kwargs):
         def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
             if obj.errors:
                 combined = obj.documents + obj.errors
@@ -118,6 +118,8 @@ def prepare_result(func):
                     results[idx] = func(item, results)
             return results
 
+        lro = kwargs.pop("lro", False)
+        
         if lro:
             return lro_wrapper(*args)
 

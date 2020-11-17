@@ -51,7 +51,7 @@ class AnalyzeSample(object):
             and he is super nice, coming out of the kitchen and greeted us all. We enjoyed very much dining in the place! \
             The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their \
             online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com! \
-            The only complaint I have is the food didn't come fast enough. Overall I highly recommend it!
+            The only complaint I have is the food didn't come fast enough. Overall I highly recommend it!"
         ]
 
         poller = text_analytics_client.begin_analyze(
@@ -66,7 +66,7 @@ class AnalyzeSample(object):
 
         for page in result:
             for task in page.entities_recognition_results:
-                print("Results of task '{}':".format(task.name))
+                print("Results of Entities Recognition task:")
                 
                 docs = [doc for doc in task.results if not doc.is_error]
                 for idx, doc in enumerate(docs):
@@ -80,7 +80,7 @@ class AnalyzeSample(object):
                     print("------------------------------------------")
 
             for task in page.pii_entities_recognition_results:
-                print("Results of task '{}':".format(task.name))
+                print("Results of PII Entities Recognition task:")
 
                 docs = [doc for doc in task.results if not doc.is_error]
                 for idx, doc in enumerate(docs):
@@ -92,7 +92,7 @@ class AnalyzeSample(object):
                     print("------------------------------------------")
 
             for task in page.key_phrase_extraction_results:
-                print("Results of task '{}':".format(task.name))
+                print("Results of Key Phrase Extraction task:")
 
                 docs = [doc for doc in task.results if not doc.is_error]
                 for idx, doc in enumerate(docs):
