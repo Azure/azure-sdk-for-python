@@ -18,6 +18,7 @@ uuid_regex_pattern = re.compile(
 )
 
 
+# pylint: disable=R0201
 class ConnectionStringParser:
     """ConnectionString parser.
 
@@ -37,9 +38,9 @@ class ConnectionStringParser:
 
     def _initialize(self) -> None:
         # connection string and ikey
-        code_cs = parse_connection_string(self._connection_string)
+        code_cs = self._parse_connection_string(self._connection_string)
         code_ikey = self.instrumentation_key
-        env_cs = parse_connection_string(
+        env_cs = self._parse_connection_string(
             os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
         )
         env_ikey = os.getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
@@ -78,37 +79,36 @@ class ConnectionStringParser:
             raise ValueError(
                 "Invalid instrumentation key. It should be a valid UUID.")
 
-
-def parse_connection_string(connection_string) -> typing.Dict:
-    if connection_string is None:
-        return {}
-    try:
-        pairs = connection_string.split(";")
-        result = dict(s.split("=") for s in pairs)
-        # Convert keys to lower-case due to case type-insensitive checking
-        result = {key.lower(): value for key, value in result.items()}
-    except Exception:
-        raise ValueError("Invalid connection string")
-    # Validate authorization
-    auth = result.get("authorization")
-    if auth is not None and auth.lower() != "ikey":
-        raise ValueError("Invalid authorization mechanism")
-    # Construct the ingestion endpoint if not passed in explicitly
-    if result.get(INGESTION_ENDPOINT) is None:
-        endpoint_suffix = ""
-        location_prefix = ""
-        suffix = result.get("endpointsuffix")
-        if suffix is not None:
-            endpoint_suffix = suffix
-            # Get regional information if provided
-            prefix = result.get("location")
-            if prefix is not None:
-                location_prefix = prefix + "."
-            endpoint = "https://{0}dc.{1}".format(
-                location_prefix, endpoint_suffix
-            )
-            result[INGESTION_ENDPOINT] = endpoint
-        else:
-            # Default to None if cannot construct
-            result[INGESTION_ENDPOINT] = None
-    return result
+    def _parse_connection_string(self, connection_string) -> typing.Dict:
+        if connection_string is None:
+            return {}
+        try:
+            pairs = connection_string.split(";")
+            result = dict(s.split("=") for s in pairs)
+            # Convert keys to lower-case due to case type-insensitive checking
+            result = {key.lower(): value for key, value in result.items()}
+        except Exception:
+            raise ValueError("Invalid connection string")
+        # Validate authorization
+        auth = result.get("authorization")
+        if auth is not None and auth.lower() != "ikey":
+            raise ValueError("Invalid authorization mechanism")
+        # Construct the ingestion endpoint if not passed in explicitly
+        if result.get(INGESTION_ENDPOINT) is None:
+            endpoint_suffix = ""
+            location_prefix = ""
+            suffix = result.get("endpointsuffix")
+            if suffix is not None:
+                endpoint_suffix = suffix
+                # Get regional information if provided
+                prefix = result.get("location")
+                if prefix is not None:
+                    location_prefix = prefix + "."
+                endpoint = "https://{0}dc.{1}".format(
+                    location_prefix, endpoint_suffix
+                )
+                result[INGESTION_ENDPOINT] = endpoint
+            else:
+                # Default to None if cannot construct
+                result[INGESTION_ENDPOINT] = None
+        return result

@@ -7,8 +7,7 @@ import typing
 from enum import Enum
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import ProxyPolicy, RetryPolicy
-
+from azure.core.pipeline.policies import RetryPolicy
 from opentelemetry.sdk.trace.export import SpanExportResult
 from microsoft.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
@@ -20,6 +19,7 @@ from microsoft.opentelemetry.exporter.azuremonitor.storage import LocalFileStora
 logger = logging.getLogger(__name__)
 
 TEMPDIR_PREFIX = "opentelemetry-python-"
+
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -37,23 +37,24 @@ class BaseExporter:
 
     def __init__(self, **options):
         options = ExporterOptions(**options)
-        parsed_connection_string = ConnectionStringParser(options.connection_string)
+        parsed_connection_string = ConnectionStringParser(
+            options.connection_string)
+
         self._instrumentation_key = parsed_connection_string.instrumentation_key
-        self._timeout = 10.0 # networking timeout in seconds
+        self._timeout = 10.0  # networking timeout in seconds
 
         temp_suffix = self._instrumentation_key or ""
         default_storage_path = os.path.join(
             tempfile.gettempdir(), TEMPDIR_PREFIX + temp_suffix
         )
         retry_policy = RetryPolicy(timeout=self._timeout)
-        proxy_policy = ProxyPolicy()
         self.client = AzureMonitorClient(
-            parsed_connection_string.endpoint, proxy_policy=proxy_policy, retry_policy=retry_policy)
+            parsed_connection_string.endpoint, retry_policy=retry_policy)
         self.storage = LocalFileStorage(
             path=default_storage_path,
-            max_size=50 * 1024 * 1024,
-            maintenance_period=60,
-            retention_period=7 * 24 * 60 * 60,
+            max_size=50 * 1024 * 1024,  # Maximum size in bytes.
+            maintenance_period=60,  # Maintenance interval in seconds.
+            retention_period=7 * 24 * 60 * 60,  # Retention period in seconds
         )
 
     def _transmit_from_storage(self) -> None:
@@ -62,7 +63,7 @@ class BaseExporter:
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
                 envelopes = blob.get()
-                result = self._transmit(envelopes)
+                result = self._transmit(list(envelopes))
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
                 else:
@@ -99,7 +100,9 @@ class BaseExporter:
                             envelopes[error.index],
                         )
                 if resend_envelopes:
-                    self.storage.put(resend_envelopes)
+                    envelopes_to_store = map(
+                        lambda x: x.as_dict(), resend_envelopes)
+                    self.storage.put(envelopes_to_store)
 
             except HttpResponseError as response_error:
                 if is_retryable_code(response_error.status_code):

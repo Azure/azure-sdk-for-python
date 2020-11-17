@@ -35,7 +35,9 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
-                self.storage.put(envelopes, result)
+                envelopes_to_store = map(
+                        lambda x: x.as_dict(), envelopes)
+                self.storage.put(envelopes_to_store, result)
             if result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
