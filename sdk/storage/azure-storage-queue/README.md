@@ -54,7 +54,7 @@ service = QueueServiceClient(account_url="https://<my-storage-account-name>.queu
 You can find the storage account's queue service URL using the 
 [Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints),
 [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.storage/get-azstorageaccount),
-or [Azure CLI](https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show):
+or [Azure CLI](https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az_storage_account_show):
 
 ```bash
 # Get the queue service URL for the storage account
