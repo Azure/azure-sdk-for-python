@@ -7,11 +7,9 @@
 import asyncio
 import functools
 from urllib.parse import urlparse, parse_qsl
-from azure.core.paging import ItemPaged
-from azure.core.async_paging import AsyncItemPaged
 
 from ._models import RequestStatistics
-from ._paging import AnalyzeHealthcareResultAsync, AnalyzeResultAsync
+from ._async_paging import AnalyzeHealthcareResultAsync, AnalyzeResultAsync
 from ._response_handlers import healthcare_result, analyze_result
 
 

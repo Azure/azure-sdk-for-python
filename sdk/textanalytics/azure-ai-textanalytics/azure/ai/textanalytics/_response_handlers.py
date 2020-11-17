@@ -5,15 +5,13 @@
 # ------------------------------------
 
 import json
-import asyncio
 import functools
-from urllib.parse import urlparse, parse_qsl, urlencode
+from six.moves.urllib.parse import urlparse, parse_qsl, urlencode
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
     ODataV4Format
 )
-from azure.core.paging import ItemPaged
 from ._models import (
     RecognizeEntitiesResult,
     CategorizedEntity,
@@ -89,7 +87,7 @@ def order_lro_results(doc_id_order, combined):
 
 
 def prepare_result(func):
-    def choose_wrapper(*args, lro=False):
+    def choose_wrapper(lro=False, *args):
         def wrapper(response, obj, response_headers):  # pylint: disable=unused-argument
             if obj.errors:
                 combined = obj.documents + obj.errors

@@ -47,7 +47,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -57,7 +57,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -90,7 +90,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -131,7 +131,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -175,7 +175,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -208,7 +208,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -248,7 +248,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -291,7 +291,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -323,7 +323,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -339,7 +339,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -375,7 +375,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -418,13 +418,13 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -433,7 +433,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -475,7 +475,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": "",
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -491,7 +491,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": "xxxxxxxxxxxx",
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -507,7 +507,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -525,7 +525,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -546,7 +546,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -588,7 +588,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -630,7 +630,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -669,7 +669,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -708,7 +708,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -744,7 +744,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -788,7 +788,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -825,7 +825,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -864,7 +864,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -901,7 +901,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT'),
         "default_language": "en"
@@ -938,7 +938,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -970,7 +970,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1043,7 +1043,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1075,7 +1075,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1091,7 +1091,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1126,7 +1126,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1144,7 +1144,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1162,7 +1162,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1180,7 +1180,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1192,7 +1192,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1212,7 +1212,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1232,7 +1232,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1277,7 +1277,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })
@@ -1321,7 +1321,7 @@ class TestAsync(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW,
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
     })

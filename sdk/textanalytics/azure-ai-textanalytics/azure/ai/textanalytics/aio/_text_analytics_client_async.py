@@ -40,7 +40,8 @@ from .._models import (
     DocumentError,
     RecognizePiiEntitiesResult,
 )
-from .._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsAsyncLROPoller
+from .._lro import TextAnalyticsOperationResourcePolling
+from .._async_lro import TextAnalyticsAsyncLROPoller
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -655,7 +656,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         key_phrase_extraction_tasks=None,  # type: List[~azure.ai.textanalytics.KeyPhraseExtractionTask]
         sentiment_analysis_tasks=None,  # type: List[~azure.ai.textanalytics.SentimentAnalysisTask]
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]):
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]:
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -707,9 +708,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         try:
             analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
-                entity_recognition_tasks = [t.to_generated() for t in entities_recognition_tasks] if entities_recognition_tasks else [],
-                entity_recognition_pii_tasks = [t.to_generated() for t in pii_entities_recognition_tasks] if pii_entities_recognition_tasks else [],
-                key_phrase_extraction_tasks = [t.to_generated() for t in key_phrase_extraction_tasks] if key_phrase_extraction_tasks else []
+                entity_recognition_tasks=[
+                    t.to_generated() for t in entities_recognition_tasks
+                ] if entities_recognition_tasks else [],
+                entity_recognition_pii_tasks=[
+                    t.to_generated() for t in pii_entities_recognition_tasks
+                ] if pii_entities_recognition_tasks else [],
+                key_phrase_extraction_tasks=[
+                    t.to_generated() for t in key_phrase_extraction_tasks
+                ] if key_phrase_extraction_tasks else []
             )
             analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
                 display_name=display_name,

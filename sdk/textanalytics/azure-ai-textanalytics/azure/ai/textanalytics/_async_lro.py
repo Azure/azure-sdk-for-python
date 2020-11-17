@@ -4,8 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from six.moves.urllib.parse import urlencode
-from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling, OperationFailed, BadStatus
+from urllib.parse import urlencode
+from azure.core.polling.base_polling import OperationFailed, BadStatus
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallysucceeded"])
@@ -13,22 +14,7 @@ _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallysucceeded"])
 
 
-class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
-    def __init__(self, operation_location_header="operation-location", show_stats=False):
-        super(TextAnalyticsOperationResourcePolling, self).__init__(operation_location_header=operation_location_header)
-        self._show_stats = show_stats
-        self._query_params = {
-            "showStats": show_stats
-        }
-
-    def get_polling_url(self):
-        if not self._show_stats:
-            return super().get_polling_url()
-
-        return super().get_polling_url() + "?" + urlencode(self._query_params)
-
-
-class TextAnalyticsLROPoller(LROBasePolling):
+class TextAnalyticsAsyncLROPoller(AsyncLROBasePolling):
     def __init__(self,
         timeout=30,
         lro_algorithms=None,
@@ -37,7 +23,7 @@ class TextAnalyticsLROPoller(LROBasePolling):
         **operation_config
     ):
 
-        super(TextAnalyticsLROPoller, self).__init__(
+        super(TextAnalyticsAsyncLROPoller, self).__init__(
             timeout=timeout,
             lro_algorithms=lro_algorithms,
             lro_options=lro_options,
@@ -52,7 +38,6 @@ class TextAnalyticsLROPoller(LROBasePolling):
         return self._finished(self.status())
 
     def _finished(self, status):
-        print("current status: " + str(status).lower())
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FINISHED
@@ -79,7 +64,7 @@ class TextAnalyticsLROPoller(LROBasePolling):
             )
         )
 
-    def _poll(self):
+    async def _poll(self):  # pylint:disable=invalid-overridden-method
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
@@ -89,15 +74,16 @@ class TextAnalyticsLROPoller(LROBasePolling):
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
         """
+        count = 0
+        while not self.finished() and count < 100:
+            await self._delay()
+            await self.update_status()
+            count += 1
 
-        while not self.finished():
-            self._delay()
-            self.update_status()
-
-        if self._failed(self.status()):
+        if self._failed(self.status()) or count == 100:
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
-            self._pipeline_response = self.request_status(final_get_url)
+            self._pipeline_response = await self.request_status(final_get_url)
             self._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)

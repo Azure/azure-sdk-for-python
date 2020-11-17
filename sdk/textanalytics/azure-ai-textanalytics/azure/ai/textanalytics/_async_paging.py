@@ -4,18 +4,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.paging import ItemPaged, PageIterator
+from azure.core.async_paging import AsyncItemPaged
 
 
-class AnalyzeHealthcareResult(ItemPaged):
+class AnalyzeHealthcareResultAsync(AsyncItemPaged):
     def __init__(self, *args, **kwargs):
         self.model_version = kwargs.pop('model_version')
         self.statistics = kwargs.pop('statistics')
-        super(AnalyzeHealthcareResult, self).__init__(*args, **kwargs)
+        super(AnalyzeHealthcareResultAsync, self).__init__(*args, **kwargs)
 
 
-class AnalyzeResult(ItemPaged):
+class AnalyzeResultAsync(AsyncItemPaged):
     def __init__(self, *args, **kwargs):
         self.statistics = kwargs.pop('statistics')
-        super(AnalyzeResult, self).__init__(*args, **kwargs)
+        super(AnalyzeResultAsync, self).__init__(*args, **kwargs)
 
