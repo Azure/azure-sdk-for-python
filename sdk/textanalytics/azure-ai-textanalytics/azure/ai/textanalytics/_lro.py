@@ -52,7 +52,6 @@ class TextAnalyticsLROPoller(LROBasePolling):
         return self._finished(self.status())
 
     def _finished(self, status):
-        print("current status: " + str(status).lower())
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FINISHED
