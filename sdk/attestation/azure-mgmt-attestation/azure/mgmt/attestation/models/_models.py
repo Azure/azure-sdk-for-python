@@ -16,16 +16,19 @@ from msrest.exceptions import HttpOperationError
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -49,20 +52,23 @@ class Resource(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
@@ -99,22 +105,24 @@ class AttestationProvider(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives
     :type location: str
+    :ivar system_data: The system metadata relating to this resource
+    :vartype system_data: ~azure.mgmt.attestation.models.SystemData
     :param trust_model: Trust model for the attestation service instance.
     :type trust_model: str
-    :param status: Required. Status of attestation service. Possible values
-     include: 'Ready', 'NotReady', 'Error'
+    :param status: Status of attestation service. Possible values include:
+     'Ready', 'NotReady', 'Error'
     :type status: str or
      ~azure.mgmt.attestation.models.AttestationServiceStatus
     :param attest_uri: Gets the uri of attestation service
@@ -126,7 +134,7 @@ class AttestationProvider(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'status': {'required': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -135,6 +143,7 @@ class AttestationProvider(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'trust_model': {'key': 'properties.trustModel', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'attest_uri': {'key': 'properties.attestUri', 'type': 'str'},
@@ -142,6 +151,7 @@ class AttestationProvider(TrackedResource):
 
     def __init__(self, **kwargs):
         super(AttestationProvider, self).__init__(**kwargs)
+        self.system_data = None
         self.trust_model = kwargs.get('trust_model', None)
         self.status = kwargs.get('status', None)
         self.attest_uri = kwargs.get('attest_uri', None)
@@ -150,16 +160,27 @@ class AttestationProvider(TrackedResource):
 class AttestationProviderListResult(Model):
     """Attestation Providers List.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar system_data: The system metadata relating to this resource
+    :vartype system_data: ~azure.mgmt.attestation.models.SystemData
     :param value: Attestation Provider array.
     :type value: list[~azure.mgmt.attestation.models.AttestationProvider]
     """
 
+    _validation = {
+        'system_data': {'readonly': True},
+    }
+
     _attribute_map = {
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'value': {'key': 'value', 'type': '[AttestationProvider]'},
     }
 
     def __init__(self, **kwargs):
         super(AttestationProviderListResult, self).__init__(**kwargs)
+        self.system_data = None
         self.value = kwargs.get('value', None)
 
 
@@ -202,8 +223,6 @@ class AttestationServiceCreationSpecificParams(Model):
     """Client supplied parameters used to create a new attestation service
     instance.
 
-    :param attestation_policy: Name of attestation policy.
-    :type attestation_policy: str
     :param policy_signing_certificates: JSON Web Key Set defining a set of
      X.509 Certificates that will represent the parent certificate for the
      signing certificate used for policy operations
@@ -212,13 +231,11 @@ class AttestationServiceCreationSpecificParams(Model):
     """
 
     _attribute_map = {
-        'attestation_policy': {'key': 'attestationPolicy', 'type': 'str'},
         'policy_signing_certificates': {'key': 'policySigningCertificates', 'type': 'JSONWebKeySet'},
     }
 
     def __init__(self, **kwargs):
         super(AttestationServiceCreationSpecificParams, self).__init__(**kwargs)
-        self.attestation_policy = kwargs.get('attestation_policy', None)
         self.policy_signing_certificates = kwargs.get('policy_signing_certificates', None)
 
 
@@ -240,19 +257,21 @@ class AttestationServicePatchParams(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -470,16 +489,27 @@ class JSONWebKeySet(Model):
 class OperationList(Model):
     """List of supported operations.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar system_data: The system metadata relating to this resource
+    :vartype system_data: ~azure.mgmt.attestation.models.SystemData
     :param value: List of supported operations.
     :type value: list[~azure.mgmt.attestation.models.OperationsDefinition]
     """
 
+    _validation = {
+        'system_data': {'readonly': True},
+    }
+
     _attribute_map = {
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'value': {'key': 'value', 'type': '[OperationsDefinition]'},
     }
 
     def __init__(self, **kwargs):
         super(OperationList, self).__init__(**kwargs)
+        self.system_data = None
         self.value = kwargs.get('value', None)
 
 
@@ -532,19 +562,21 @@ class OperationsDisplayDefinition(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -562,3 +594,44 @@ class ProxyResource(Resource):
 
     def __init__(self, **kwargs):
         super(ProxyResource, self).__init__(**kwargs)
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or ~azure.mgmt.attestation.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.attestation.models.CreatedByType
+    :param last_modified_at: The type of identity that last modified the
+     resource.
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
