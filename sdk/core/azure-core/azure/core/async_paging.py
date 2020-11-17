@@ -79,7 +79,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         ]] = None,
         continuation_token: Optional[str] = None,
         paging_method=None,
-        **kwargs,
+        **kwargs
     ) -> None:
         """Return an async iterator of pages.
 

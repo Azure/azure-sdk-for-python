@@ -73,7 +73,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         extract_data=None,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         continuation_token=None,  # type: Optional[str]
         paging_method=None,
-        **kwargs,
+        **kwargs
     ):
         """Return an iterator of pages.
         :param get_next: Callable that take the continuation token and return a HTTP response
