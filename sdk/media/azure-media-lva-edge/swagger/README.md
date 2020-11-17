@@ -11,7 +11,7 @@ autorest --v3 --python README.md
 
 ### Settings
 ```yaml
-require: C:\azure-rest-api-specs-pr\specification\mediaservices\data-plane\readme.md
+require: <<LocalPathToPrivateRepo--LVA-Release-do-not-delete--branch>>Azure\azure-rest-api-specs-pr\specification\mediaservices\data-plane\readme.md
 output-folder: ../azure/media/lva/edge/_generated
 namespace: azure.media.lva.edge
 no-namespace-folders: true
