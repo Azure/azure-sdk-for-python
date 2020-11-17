@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._automation_client import AutomationClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['AutomationClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
