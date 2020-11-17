@@ -27,17 +27,22 @@
 from ._version import VERSION
 __version__ = VERSION
 
-from ._pipeline_client import PipelineClient
-from ._match_conditions import MatchConditions
+import os
 
-
-__all__ = [
-    "PipelineClient",
-    "MatchConditions"
-]
-
-try:
-    from ._pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
-    __all__.extend(["AsyncPipelineClient"])
-except (ImportError, SyntaxError): # Python <= 3.5
+if os.environ.get('AZURE_PURE_CORE', False):
     pass
+else:
+    from ._pipeline_client import PipelineClient
+    from ._match_conditions import MatchConditions
+
+
+    __all__ = [
+        "PipelineClient",
+        "MatchConditions"
+    ]
+
+    try:
+        from ._pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
+        __all__.extend(["AsyncPipelineClient"])
+    except (ImportError, SyntaxError): # Python <= 3.5
+        pass
