@@ -24,10 +24,10 @@
 #
 # --------------------------------------------------------------------------
 
+import os
 from ._version import VERSION
 __version__ = VERSION
 
-import os
 
 if os.environ.get('AZURE_PURE_CORE', False):
     pass
