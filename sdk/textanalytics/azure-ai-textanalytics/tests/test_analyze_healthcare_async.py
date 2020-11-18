@@ -25,7 +25,15 @@ from azure.ai.textanalytics import (
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
+TextAnalyticsClientPreparer = functools.partial(
+    _TextAnalyticsClientPreparer,
+    TextAnalyticsClient,
+    client_kwargs={
+        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
+        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
+        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
+    }
+)
 
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -41,22 +49,14 @@ class AiohttpTestTransport(AioHttpTransport):
 class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             async with client:
                 response = await (await client.begin_analyze_healthcare("hello world")).result()
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_dict(self, client):
         docs = [{"id": "1", "language": "en", "text": "Patient does not suffer from high blood pressure."},
                 {"id": "2", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
@@ -74,11 +74,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.relations)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_all_successful_passing_text_document_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="Patient does not suffer from high blood pressure."),
@@ -97,11 +93,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(doc.relations)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_passing_only_string(self, client):
         docs = [
             u"Patient does not suffer from high blood pressure.",
@@ -120,11 +112,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_input_with_some_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
@@ -138,11 +126,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_input_with_all_errors(self, client):
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "Patient does not suffer from high blood pressure."},
@@ -156,11 +140,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertTrue(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_too_many_documents(self, client):
         docs = list(itertools.repeat("input document", 1001))  # Maximum number of documents per request is 1000
 
@@ -171,11 +151,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert excinfo.value.status_code == 400
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_payload_too_large(self, client):
         large_doc = "RECORD #333582770390100 | MH | 85986313 | | 054351 | 2/14/2001 12:00:00 AM | \
             CORONARY ARTERY DISEASE | Signed | DIS | Admission Date: 5/22/2001 \
@@ -199,11 +175,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert excinfo.value.status_code == 413
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_document_warnings(self, client):
         # TODO: reproduce a warnings scenario for implementation
         docs = [
@@ -218,11 +190,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertEqual(len(doc_warnings), 0)  # Currently the service doesn't return any warnings at all even though it is expressed in the Swagger.
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_output_same_order_as_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="one"),
@@ -239,11 +207,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertEqual(str(idx + 1), doc.id)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": "",
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
@@ -252,11 +216,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": "xxxx",
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
@@ -265,11 +225,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_bad_document_input(self, client):
         docs = "This is the wrong type"
 
@@ -278,11 +234,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 response = await client.begin_analyze_healthcare(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_mixing_inputs(self, client):
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
@@ -294,11 +246,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 response = await client.begin_analyze_healthcare(docs)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_out_of_order_ids(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -316,11 +264,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertEqual(resp.id, expected_order[idx])
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_show_stats_and_model_version(self, client):
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -348,11 +292,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_whole_batch_language_hint(self, client):
         docs = [
             u"This was the best day of my life.",
@@ -368,11 +308,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_whole_batch_dont_use_language_hint(self, client):
         docs = [
             u"This was the best day of my life.",
@@ -388,11 +324,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_per_item_dont_use_language_hint(self, client):
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
@@ -406,11 +338,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_whole_batch_language_hint_and_obj_input(self, client):
         docs = [
             TextDocumentInput(id="1", text="I should take my cat to the veterinarian."),
@@ -426,11 +354,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_whole_batch_language_hint_and_dict_input(self, client):
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
@@ -444,11 +368,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
         docs = [
             TextDocumentInput(id="1", text="I should take my cat to the veterinarian.", language="en"),
@@ -462,11 +382,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[1].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
         docs = [{"id": "1", "language": "", "text": "I will go to the park."},
                 {"id": "2", "language": "", "text": "I did not like the hotel we stayed at."},
@@ -499,11 +415,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[2].is_error)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_invalid_language_hint_method(self, client):
         docs = ["This should fail because we're passing in an invalid language hint"]
 
@@ -513,11 +425,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_invalid_language_hint_docs(self, client):
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         
@@ -551,11 +459,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_user_agent(self, client):  # TODO: verify
         def callback(resp):
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -577,11 +481,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
@@ -604,11 +504,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
@@ -624,11 +520,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             )
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_bad_model_version_error(self, client):
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
@@ -640,11 +532,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_document_errors(self, client):
         text = ""
         for _ in range(5121):
@@ -664,11 +552,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertIsNotNone(doc_errors[2].error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_not_passing_list_for_docs(self, client):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
@@ -677,11 +561,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_missing_input_records_error(self, client):
         docs = []
         with pytest.raises(ValueError) as excinfo:
@@ -690,11 +570,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             async with client:
@@ -702,11 +578,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_duplicate_ids_error(self, client):
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
@@ -719,11 +591,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertIsNotNone(err.error.message)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_pass_cls(self, client):
         def callback(pipeline_response, deserialized, _):
             return "cls result"
@@ -736,11 +604,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         assert res == "cls result"
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_multiple_pages_of_results_returned_successfully(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
@@ -760,11 +624,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             self.assertEqual(docs[idx]["id"], doc.id)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_multiple_pages_of_results_with_errors_returned_successfully(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 9)))]
@@ -791,11 +651,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(doc.statistics)
 
     @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": os.environ.get('AZURE_TEXT_ANALYTICS_ENDPOINT')
-    })
+    @TextAnalyticsClientPreparer()
     async def test_cancellation(self, client):
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]

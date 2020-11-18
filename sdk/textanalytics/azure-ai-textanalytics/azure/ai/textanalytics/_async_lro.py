@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from urllib.parse import urlencode
 from azure.core.polling.base_polling import OperationFailed, BadStatus
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 
@@ -35,20 +34,22 @@ class TextAnalyticsAsyncLROPoller(AsyncLROBasePolling):
         """Is this polling finished?
         :rtype: bool
         """
-        return self._finished(self.status())
+        return TextAnalyticsAsyncLROPoller._finished(self.status())
 
-    def _finished(self, status):
+    @staticmethod
+    def _finished(status):
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FINISHED
 
-    def _failed(self, status):
+    @staticmethod
+    def _failed(status):
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FAILED
 
-    def _raise_if_bad_http_status_and_method(self, response):
-        # type: (ResponseType) -> None
+    @staticmethod
+    def _raise_if_bad_http_status_and_method(response):
         """Check response status code is valid.
 
         Must be 200, 201, 202, or 204.

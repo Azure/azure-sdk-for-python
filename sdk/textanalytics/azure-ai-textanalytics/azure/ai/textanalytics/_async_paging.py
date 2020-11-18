@@ -18,4 +18,3 @@ class AnalyzeResultAsync(AsyncItemPaged):
     def __init__(self, *args, **kwargs):
         self.statistics = kwargs.pop('statistics')
         super(AnalyzeResultAsync, self).__init__(*args, **kwargs)
-

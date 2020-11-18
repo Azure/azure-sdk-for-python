@@ -89,6 +89,4 @@ class AnalyzeHealthcareSample(object):
 
 if __name__ == "__main__":
     sample = AnalyzeHealthcareSample()
-    sample.analyze_health()
-
-
+    sample.analyze_healthcare()

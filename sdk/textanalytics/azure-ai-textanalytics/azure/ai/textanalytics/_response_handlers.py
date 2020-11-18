@@ -6,7 +6,7 @@
 
 import json
 import functools
-from six.moves.urllib.parse import urlparse, parse_qsl, urlencode
+from six.moves.urllib.parse import urlparse, parse_qsl
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -30,8 +30,6 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     AnalyzeHealthcareResultItem,
-    HealthcareEntity,
-    HealthcareRelation,
     TextAnalysisResult,
     EntitiesRecognitionTaskResult,
     PiiEntitiesRecognitionTaskResult,
@@ -119,7 +117,7 @@ def prepare_result(func):
             return results
 
         lro = kwargs.pop("lro", False)
-        
+
         if lro:
             return lro_wrapper(*args)
 
@@ -191,35 +189,36 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
 
 
 @prepare_result
-def healthcare_result(health_result, results):
-    return AnalyzeHealthcareResultItem._from_generated(health_result)
+def healthcare_result(health_result, results): # pylint: disable=unused-argument
+    return AnalyzeHealthcareResultItem._from_generated(health_result) # pylint: disable=protected-access
 
 
-def analyze_result(doc_id_order, obj, response_headers, tasks):
+def analyze_result(doc_id_order, _, response_headers, tasks, **kwargs): # pylint: disable=unused-argument
     return TextAnalysisResult(
         entities_recognition_results=[
             EntitiesRecognitionTaskResult(
-                name=t.name, 
-                results=entities_result(doc_id_order, t.results, response_headers, lro=True)
+                name=t.name,
+                results=prepare_result(entities_result)(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_tasks
         ] if tasks.entity_recognition_tasks else [],
         pii_entities_recognition_results=[
             PiiEntitiesRecognitionTaskResult(
                 name=t.name,
-                results=pii_entities_result(doc_id_order, t.results, response_headers, lro=True)
+                results=prepare_result(pii_entities_result)(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_pii_tasks
         ] if tasks.entity_recognition_pii_tasks else [],
         key_phrase_extraction_results=[
             KeyPhraseExtractionTaskResult(
                 name=t.name,
-                results=key_phrases_result(doc_id_order, t.results, response_headers, lro=True)
+                results=prepare_result(key_phrases_result)(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.key_phrase_extraction_tasks
         ] if tasks.key_phrase_extraction_tasks else []
     )
 
 
-def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job_state):
-    return health_job_state.next_link, healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True)
+def healthcare_extract_page_data(doc_id_order, _, response_headers, health_job_state): # pylint: disable=unused-argument
+    return health_job_state.next_link, \
+        prepare_result(healthcare_result)(doc_id_order, health_job_state.results, response_headers, lro=True)
 
 
 def analyze_extract_page_data(doc_id_order, obj, response_headers, analyze_job_state):
@@ -234,7 +233,7 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
         continuation_token = continuation_token.decode("utf-8")
 
     except AttributeError:
-        pass 
+        pass
 
     parsed_url = urlparse(continuation_token)
     job_id = parsed_url.path.split("/")[-1]
@@ -244,22 +243,22 @@ def lro_get_next_page(lro_status_callback, first_page, continuation_token, show_
     return lro_status_callback(job_id, **query_params)
 
 
-def healthcare_paged_result(doc_id_order, health_status_callback, response, obj, response_headers, show_stats=False):
+def healthcare_paged_result(doc_id_order, health_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
     return AnalyzeHealthcareResult(
         functools.partial(lro_get_next_page, health_status_callback, obj, show_stats=show_stats),
         functools.partial(healthcare_extract_page_data, doc_id_order, obj, response_headers),
         model_version=obj.results.model_version,
-        statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None
+        statistics=RequestStatistics._from_generated(obj.results.statistics) if show_stats else None # pylint: disable=protected-access
     )
 
-def analyze_paged_result(doc_id_order, analyze_status_callback, response, obj, response_headers, show_stats=False):
+def analyze_paged_result(doc_id_order, analyze_status_callback, _, obj, response_headers, show_stats=False): # pylint: disable=unused-argument
     return AnalyzeResult(
         functools.partial(lro_get_next_page, analyze_status_callback, obj, show_stats=show_stats),
         functools.partial(analyze_extract_page_data, doc_id_order, obj, response_headers),
-        statistics=RequestStatistics._from_generated(obj.statistics) if show_stats and obj.statistics is not None else None
+        statistics=RequestStatistics._from_generated(obj.statistics) \
+            if show_stats and obj.statistics is not None else None # pylint: disable=protected-access
     )
 
 def _get_deserialize():
     from ._generated.v3_1_preview_3 import TextAnalyticsClient
     return TextAnalyticsClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
-

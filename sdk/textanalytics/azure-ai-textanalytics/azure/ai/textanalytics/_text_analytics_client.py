@@ -13,9 +13,10 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING,
 )
 from functools import partial
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling.base_polling import LROBasePolling
 from ._base_client import TextAnalyticsClientBase
 from ._request_handlers import _validate_input
 from ._response_handlers import (
@@ -29,11 +30,6 @@ from ._response_handlers import (
     healthcare_paged_result,
     analyze_paged_result,
     _get_deserialize
-) 
-from ._models import (
-    EntitiesRecognitionTask,
-    PiiEntitiesRecognitionTask,
-    KeyPhraseExtractionTask,
 )
 from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPoller
 
@@ -48,7 +44,11 @@ if TYPE_CHECKING:
         ExtractKeyPhrasesResult,
         AnalyzeSentimentResult,
         DocumentError,
-        RecognizePiiEntitiesResult
+        RecognizePiiEntitiesResult,
+        EntitiesRecognitionTask,
+        PiiEntitiesRecognitionTask,
+        KeyPhraseExtractionTask,
+        AnalyzeHealthcareResultItem,
     )
 
 
@@ -390,18 +390,30 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        healthcare_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").HealthcareJobState, raw_response)
-        return healthcare_paged_result(doc_id_order, self._client.health_status, raw_response, healthcare_result, headers, show_stats=show_stats)
+        healthcare_result = self._deserialize(
+            self._client.models(api_version="v3.1-preview.3").HealthcareJobState,
+            raw_response
+        )
+        return healthcare_paged_result(
+            doc_id_order,
+            self._client.health_status,
+            raw_response,
+            healthcare_result,
+            headers,
+            show_stats=show_stats
+        )
 
     @distributed_trace
     def begin_analyze_healthcare(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareResult]]
+    ):  # type: (...) -> LROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
-        Entities are associated with references that can be found in existing knowledge bases, such as UMLS, CHV, MSH, etc.
+        Entities are associated with references that can be found in existing knowledge bases,
+        such as UMLS, CHV, MSH, etc.
+
         Relations are comprised of a pair of entities and a directional relationship.
 
         :param documents: The set of documents to process as part of this batch.
@@ -420,14 +432,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 30 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResult`].
+            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`].
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_analyze_healthcare.py
                 :start-after: [START analyze_healthcare]
-                :end-before: [END recognize_healthcare]
+                :end-before: [END analyze_healthcare]
                 :language: python
                 :dedent: 8
                 :caption: Recognize healthcare entities in a batch of documents.
@@ -437,7 +449,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval) # pylint: disable=protected-access
         continuation_token = kwargs.pop("continuation_token", None)
 
         doc_id_order = [doc.get("id") for doc in docs]
@@ -449,7 +461,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=TextAnalyticsLROPoller(
-                    timeout=polling_interval, 
+                    timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
                     ],
@@ -457,21 +469,21 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-        
+
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
-        
+
         except HttpResponseError as error:
             process_http_response_error(error)
 
-    def begin_cancel_analyze_healthcare(
+    def begin_cancel_analyze_healthcare(  # type: ignore
         self,
-        poller,  # type: LROPoller[None]
-        **kwargs
+        poller,  # type: LROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
+        **kwargs # pylint: disable=unused-argument
     ):
         # type: (...) -> LROPoller[None]
         """Cancel an existing health operation.
@@ -481,7 +493,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        initial_response = poller._polling_method._initial_response
+        initial_response = getattr(poller._polling_method, "_initial_response") # pylint: disable=protected-access
         operation_location = initial_response.http_response.headers["Operation-Location"]
 
         from urllib.parse import urlparse
@@ -647,18 +659,28 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             process_http_response_error(error)
 
     def _analyze_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
-        analyze_result = self._deserialize(self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, raw_response)
-        return analyze_paged_result(doc_id_order, self._client.analyze_status, raw_response, analyze_result, headers, show_stats=show_stats)
+        analyze_result = self._deserialize(
+            self._client.models(api_version="v3.1-preview.3").AnalyzeJobState, # pylint: disable=protected-access
+            raw_response
+        )
+        return analyze_paged_result(
+            doc_id_order,
+            self._client.analyze_status,
+            raw_response,
+            analyze_result,
+            headers,
+            show_stats=show_stats
+        )
 
     @distributed_trace
     def begin_analyze(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.EntitiesRecognitionTask]
-        pii_entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.PiiEntitiesRecognitionTask]
-        key_phrase_extraction_tasks=None,  # type: List[~azure.ai.textanalytics.KeyPhraseExtractionTask]
+        entities_recognition_tasks=None,  # type: List[EntitiesRecognitionTask]
+        pii_entities_recognition_tasks=None,  # type: List[PiiEntitiesRecognitionTask]
+        key_phrase_extraction_tasks=None,  # type: List[KeyPhraseExtractionTask]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[TextAnalysisResult]])
+    ):  # type: (...) -> LROPoller[ItemPaged[TextAnalysisResult]]
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
@@ -671,7 +693,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[dict[str, str]]
         :param tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
             used for the particular task type.
-        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask, 
+        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask,
             ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
             ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
         :keyword str display_name: An optional display name to set for the requested analysis.
@@ -683,7 +705,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 30 seconds.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return an instance of TextAnalysisResult.
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
@@ -695,17 +716,20 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :end-before: [END analyze]
                 :language: python
                 :dedent: 8
-                :caption: Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+                :caption: Start a long-running operation to perform a variety of text analysis
+                    tasks over a batch of documents.
         """
 
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
         language = language_arg if language_arg is not None else self._default_language
-        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(documents=_validate_input(documents, "language", language))
+        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(
+            documents=_validate_input(documents, "language", language)
+        )
         show_stats = kwargs.pop("show_stats", False)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval) # pylint: disable=protected-access
         continuation_token = kwargs.pop("continuation_token", None)
-        
+
         doc_id_order = [doc.get("id") for doc in docs.documents]
 
         try:
@@ -729,6 +753,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=TextAnalyticsLROPoller(timeout=polling_interval, **kwargs),
+                continuation_token=continuation_token
                 **kwargs
             )
 
@@ -738,7 +763,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     "'begin_analyze' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
-        
+
         except HttpResponseError as error:
             process_http_response_error(error)
-

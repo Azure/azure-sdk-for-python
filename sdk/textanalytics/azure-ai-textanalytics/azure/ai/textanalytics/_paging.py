@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.paging import ItemPaged, PageIterator
+from azure.core.paging import ItemPaged
 
 
 class AnalyzeHealthcareResult(ItemPaged):
@@ -18,4 +18,3 @@ class AnalyzeResult(ItemPaged):
     def __init__(self, *args, **kwargs):
         self.statistics = kwargs.pop('statistics')
         super(AnalyzeResult, self).__init__(*args, **kwargs)
-

@@ -184,14 +184,14 @@ class RecognizePiiEntitiesResult(DictMixin):
 
 class AnalyzeHealthcareResultItem(DictMixin):
     """
-    AnalyzeHealthcareResultItem contains the Healthcare entities and relations from a 
+    AnalyzeHealthcareResultItem contains the Healthcare entities and relations from a
     particular document.
 
     :ivar str id: Unique, non-empty document identifier that matches the
         document id that was passed in with the request. If not specified
         in the request, an id is assigned for the document.
     :ivar entities: Identified Healthcare entities in the document.
-    :vartype entities: 
+    :vartype entities:
         list[~azure.ai.textanalytics.HealthcareEntity]
     :ivar relations: A list of detected relations between recognized entities.
     :vartype relations:
@@ -217,14 +217,14 @@ class AnalyzeHealthcareResultItem(DictMixin):
 
     @classmethod
     def _from_generated(cls, healthcare_result):
-        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities]
+        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
         relations = []
         if healthcare_result.relations:
             for r in healthcare_result.relations:
                 _, source_idx = _get_indices(r.source)
                 _, target_idx = _get_indices(r.target)
-                relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx]))
-        
+                relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx])) # pylint: disable=protected-access
+
         return cls(
             id=healthcare_result.id,
             entities=entities,
@@ -405,7 +405,9 @@ class HealthcareEntity(DictMixin):
             subcategory=healthcare_entity.subcategory,
             offset=healthcare_entity.offset,
             confidence_score=healthcare_entity.confidence_score,
-            links=[HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links] if healthcare_entity.links else None
+            links=[
+                HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links
+            ] if healthcare_entity.links else None
         )
 
     def __repr__(self):
@@ -1184,7 +1186,7 @@ class EntitiesRecognitionTask(DictMixin):
 
 
 class EntitiesRecognitionTaskResult(DictMixin):
-    """EntitiesRecognitionTaskResult contains the results of a single Entities Recognition task, 
+    """EntitiesRecognitionTaskResult contains the results of a single Entities Recognition task,
         including additional task metadata.
 
     :ivar str name: The name of the task.
@@ -1202,10 +1204,12 @@ class EntitiesRecognitionTaskResult(DictMixin):
 
 
 class PiiEntitiesRecognitionTask(DictMixin):
-    """PiiEntitiesRecognitionTask encapsulates the parameters for starting a long-running PII Entities Recognition operation.
+    """PiiEntitiesRecognitionTask encapsulates the parameters for starting a
+    long-running PII Entities Recognition operation.
 
     :ivar str model_version: The model version to use for the analysis.
-    :ivar str domain: An optional string to set the PII domain to include only a subset of the entity categories. Possible values include 'PHI' or None.
+    :ivar str domain: An optional string to set the PII domain to include only a
+    subset of the entity categories. Possible values include 'PHI' or None.
     """
 
     def __init__(self, **kwargs):
@@ -1226,7 +1230,7 @@ class PiiEntitiesRecognitionTask(DictMixin):
 
 
 class PiiEntitiesRecognitionTaskResult(DictMixin):
-    """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task, 
+    """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task,
         including additional task metadata.
 
     :ivar str name: The name of the task.
@@ -1265,7 +1269,7 @@ class KeyPhraseExtractionTask(DictMixin):
 
 
 class KeyPhraseExtractionTaskResult(DictMixin):
-    """KeyPhraseExtractionTaskResult contains the results of a single Key Phrase Extraction task, including additional 
+    """KeyPhraseExtractionTaskResult contains the results of a single Key Phrase Extraction task, including additional
         task metadata.
 
     :ivar str name: The name of the task.
@@ -1291,7 +1295,7 @@ class TextAnalysisResult(DictMixin):
     :ivar pii_entities_recognition_results: A list of objects containing results for all PII Entity Recognition
         tasks included in the analysis.
     :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionTaskResult]
-    :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks 
+    :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks
         included in the analysis.
     :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionTaskResult]
     """
@@ -1334,12 +1338,3 @@ class RequestStatistics(DictMixin):
                 self.erroneous_documents_count,
                 self.transactions_count
             )[:1024]
-
-
-
-
-        
-
-
-
-
