@@ -91,18 +91,19 @@ To interact with these resources, one should be familiar with the following SDK 
 
 The following sections provide several code snippets covering some of the most common Service Bus tasks, including:
 
-* [Send messages to a queue](#send-messages-to-a-queue)
-* [Receive messages from a queue](#receive-messages-from-a-queue)
-* [Send and receive a message from a session enabled queue](#send-and-receive-a-message-from-a-session-enabled-queue)
-* [Working with topics and subscriptions](#working-with-topics-and-subscriptions)
-* [Settle a message after receipt](#settle-a-message-after-receipt)
-* [Automatically renew Message or Session locks](#automatically-renew-message-or-session-locks)
+* [Send messages to a queue](#send-messages-to-a-queue "Send messages to a queue")
+* [Receive messages from a queue](#receive-messages-from-a-queue "Receive messages from a queue")
+* [Send and receive a message from a session enabled queue](#send-and-receive-a-message-from-a-session-enabled-queue "Send and receive a message from a session enabled queue")
+* [Working with topics and subscriptions](#working-with-topics-and-subscriptions "Working with topics and subscriptions")
+* [Settle a message after receipt](#settle-a-message-after-receipt "Settle a message after receipt")
+* [Automatically renew Message or Session locks](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks")
 
 To perform management tasks such as creating and deleting queues/topics/subscriptions, please utilize the azure-mgmt-servicebus library, available [here][servicebus_management_repository].
 
 Please find further examples in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples) directory demonstrating common Service Bus scenarios such as sending, receiving, session management and message handling.
 
-### [Send messages to a queue][send_reference]
+### Send messages to a queue 
+> **NOTE:** see reference documentation [here][send_reference].
 
 This example sends single message and array of messages to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
@@ -152,7 +153,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 > **NOTE:** Any message received with `mode=PeekLock` (this is the default, with the alternative ReceiveAndDelete removing the message from the queue immediately on receipt)
 > has a lock that must be renewed via `receiver.renew_message_lock` before it expires if processing would take longer than the lock duration.
-> See [AutoLockRenewer](#automatically-renew-message-or-session-locks) for a helper to perform this in the background automatically.
+> See [AutoLockRenewer](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks") for a helper to perform this in the background automatically.
 > Lock duration is set in Azure on the queue or topic itself.
 
 #### [Receive messages from a queue through ServiceBusReceiver.receive_messages()][receive_reference]
@@ -183,7 +184,8 @@ In this example, max_message_count declares the maximum number of messages to at
 > **NOTE:** It should also be noted that `ServiceBusReceiver.peek_messages()` is subtly different than receiving, as it does not lock the messages being peeked, and thus they cannot be settled.
 
 
-### [Send][session_send_reference] and [receive][session_receive_reference] a message from a session enabled queue
+### Send and receive a message from a session enabled queue
+> **NOTE:** see reference documentation for session [send][session_send_reference] and [receive][session_receive_reference].
 
 Sessions provide first-in-first-out and single-receiver semantics on top of a queue or subscription.  While the actual receive syntax is the same, initialization differs slightly.
 
@@ -210,6 +212,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 
 ### Working with [topics][topic_reference] and [subscriptions][subscription_reference]
+> **NOTE:** see reference documentation for [topics][topic_reference] and [subscriptions][subscription_reference].
 
 Topics and subscriptions give an alternative to queues for sending and receiving messages.  See documents [here][topic_concept] for more overarching detail,
 and of how these differ from queues.
@@ -243,7 +246,7 @@ When receiving from a queue, you have multiple actions you can take on the messa
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  
 If processing would take longer than the lock duration, it must be maintained via `receiver.renew_message_lock` before it expires.
 Lock duration is set in Azure on the queue or topic itself.
-See [AutoLockRenewer](#automatically-renew-message-or-session-locks) for a helper to perform this in the background automatically.
+See [AutoLockRenewer](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks") for a helper to perform this in the background automatically.
 
 #### [Complete][complete_reference]
 
@@ -318,7 +321,8 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             receiver.defer_message(msg)
 ```
 
-### [Automatically renew Message or Session locks][autolockrenew_reference]
+### Automatically renew Message or Session locks
+> **NOTE:** see reference documentation for [auto-lock-renewal][autolockrenew_reference].
 
 `AutoLockRenewer` is a simple method for ensuring your message or session remains locked even over long periods of time, if calling `receiver.renew_message_lock`/`receiver.session.renew_lock` is impractical or undesired.
 Internally, it is not much more than shorthand for creating a concurrent watchdog to do lock renewal if the object is nearing expiry.
@@ -387,7 +391,7 @@ link will extend this timeout.
 a generator-style receive will run for before exiting if there are no messages.  Passing None (default) will wait forever, up until the 10 minute threshold if no other action is taken.
 
 > **NOTE:** If processing of a message or session is sufficiently long as to cause timeouts, as an alternative to calling `receiver.renew_message_lock`/`receiver.session.renew_lock` manually, one can
-> leverage the `AutoLockRenewer` functionality detailed [above](#automatically-renew-message-or-session-locks).
+> leverage the `AutoLockRenewer` functionality detailed [above](#automatically-renew-message-or-session-locks "Automatically renew Message or Session locks").
 
 ### Common Exceptions
 
