@@ -18,7 +18,7 @@ from microsoft.opentelemetry.exporter.azuremonitor.export import (
     get_trace_export_result,
 )
 from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
-from microsoft.opentelemetry.exporter.azuremonitor._generated.models import MonitorBase, TelemetryItem, RequestData
+from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
 
 TEST_FOLDER = os.path.abspath(".test.base")
 STORAGE_PATH = os.path.join(TEST_FOLDER)
