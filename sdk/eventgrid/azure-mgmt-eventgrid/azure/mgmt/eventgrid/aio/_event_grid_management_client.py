@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import EventGridManagementClientConfiguration
 from .operations import DomainsOperations
@@ -26,30 +24,30 @@ from .operations import TopicsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import TopicTypesOperations
-from . import models
+from .. import models
 
 
 class EventGridManagementClient(object):
     """Azure EventGrid Management Client.
 
     :ivar domains: DomainsOperations operations
-    :vartype domains: azure.mgmt.eventgrid.operations.DomainsOperations
+    :vartype domains: azure.mgmt.eventgrid.aio.operations.DomainsOperations
     :ivar domain_topics: DomainTopicsOperations operations
-    :vartype domain_topics: azure.mgmt.eventgrid.operations.DomainTopicsOperations
+    :vartype domain_topics: azure.mgmt.eventgrid.aio.operations.DomainTopicsOperations
     :ivar event_subscriptions: EventSubscriptionsOperations operations
-    :vartype event_subscriptions: azure.mgmt.eventgrid.operations.EventSubscriptionsOperations
+    :vartype event_subscriptions: azure.mgmt.eventgrid.aio.operations.EventSubscriptionsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.eventgrid.operations.Operations
+    :vartype operations: azure.mgmt.eventgrid.aio.operations.Operations
     :ivar topics: TopicsOperations operations
-    :vartype topics: azure.mgmt.eventgrid.operations.TopicsOperations
+    :vartype topics: azure.mgmt.eventgrid.aio.operations.TopicsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections: azure.mgmt.eventgrid.operations.PrivateEndpointConnectionsOperations
+    :vartype private_endpoint_connections: azure.mgmt.eventgrid.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.eventgrid.operations.PrivateLinkResourcesOperations
+    :vartype private_link_resources: azure.mgmt.eventgrid.aio.operations.PrivateLinkResourcesOperations
     :ivar topic_types: TopicTypesOperations operations
-    :vartype topic_types: azure.mgmt.eventgrid.operations.TopicTypesOperations
+    :vartype topic_types: azure.mgmt.eventgrid.aio.operations.TopicTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -58,16 +56,15 @@ class EventGridManagementClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = EventGridManagementClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -91,15 +88,12 @@ class EventGridManagementClient(object):
         self.topic_types = TopicTypesOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> EventGridManagementClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "EventGridManagementClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
