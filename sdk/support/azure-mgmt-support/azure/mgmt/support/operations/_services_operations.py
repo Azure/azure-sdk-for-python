@@ -24,7 +24,7 @@ class ServicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2020-04-01".
+    :ivar api_version: API version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -45,7 +45,7 @@ class ServicesOperations(object):
         service/product as displayed in the **Services** drop-down list on the
         Azure portal's [New support
         request](https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/overview)
-        page. Always use the service and it's corresponding problem
+        page. Always use the service and its corresponding problem
         classification(s) obtained programmatically for support ticket
         creation. This practice ensures that you always have the most recent
         set of service and problem classification Ids.
@@ -111,7 +111,7 @@ class ServicesOperations(object):
             self, service_name, custom_headers=None, raw=False, **operation_config):
         """Gets a specific Azure service for support ticket creation.
 
-        :param service_name: Name of Azure service
+        :param service_name: Name of the Azure service.
         :type service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

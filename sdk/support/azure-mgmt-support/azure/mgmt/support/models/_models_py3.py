@@ -18,7 +18,7 @@ class CheckNameAvailabilityInput(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The resource name to validate
+    :param name: Required. The resource name to validate.
     :type name: str
     :param type: Required. The type of resource. Possible values include:
      'Microsoft.Support/supportTickets', 'Microsoft.Support/communications'
@@ -84,18 +84,18 @@ class CloudError(Model):
 
 
 class CommunicationDetails(Model):
-    """Object that represents Communication resource.
+    """Object that represents a Communication resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Id of the resource
+    :ivar id: Id of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource 'Microsoft.Support/communications'
+    :ivar type: Type of the resource 'Microsoft.Support/communications'.
     :vartype type: str
     :ivar communication_type: Communication type. Possible values include:
      'web', 'phone'
@@ -106,11 +106,11 @@ class CommunicationDetails(Model):
     :vartype communication_direction: str or
      ~azure.mgmt.support.models.CommunicationDirection
     :param sender: Email address of the sender. This property is required if
-     called by a service principal
+     called by a service principal.
     :type sender: str
-    :param subject: Required. Subject of the communication
+    :param subject: Required. Subject of the communication.
     :type subject: str
-    :param body: Required. Body of the communication
+    :param body: Required. Body of the communication.
     :type body: str
     :ivar created_date: Time in UTC (ISO 8601 format) when the communication
      was created.
@@ -154,7 +154,7 @@ class CommunicationDetails(Model):
 
 
 class ContactProfile(Model):
-    """Contact information associated with support ticket.
+    """Contact information associated with the support ticket.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -229,9 +229,9 @@ class ContactProfile(Model):
 
 
 class ExceptionResponse(Model):
-    """The api error.
+    """The API error.
 
-    :param error: The api error details.
+    :param error: The API error details.
     :type error: ~azure.mgmt.support.models.ServiceError
     """
 
@@ -257,12 +257,12 @@ class ExceptionResponseException(HttpOperationError):
 
 
 class Operation(Model):
-    """The operation supported by Microsoft Support RP.
+    """The operation supported by Microsoft Support resource provider.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :param display: The object that describes the operation.
     :type display: ~azure.mgmt.support.models.OperationDisplay
@@ -289,14 +289,14 @@ class OperationDisplay(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar description: The description of the operation
+    :ivar description: The description of the operation.
     :vartype description: str
     :ivar operation: The action that users can perform, based on their
-     permission level
+     permission level.
     :vartype operation: str
-    :ivar provider: Service provider: Microsoft Support
+    :ivar provider: Service provider: Microsoft Support.
     :vartype provider: str
-    :ivar resource: Resource on which the operation is performed
+    :ivar resource: Resource on which the operation is performed.
     :vartype resource: str
     """
 
@@ -328,11 +328,12 @@ class ProblemClassification(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Id of the resource
+    :ivar id: Id of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource 'Microsoft.Support/problemClassification'
+    :ivar type: Type of the resource
+     'Microsoft.Support/problemClassification'.
     :vartype type: str
     :param display_name: Localized name of problem classification.
     :type display_name: str
@@ -386,10 +387,10 @@ class QuotaTicketDetails(Model):
     request](https://aka.ms/supportrpquotarequestpayload).
 
     :param quota_change_request_sub_type: Required for certain quota types
-     when there is a sub type that you are requesting quota increase for.
-     Example: Batch
+     when there is a sub type, such as Batch, for which you are requesting a
+     quota increase.
     :type quota_change_request_sub_type: str
-    :param quota_change_request_version: Quota change request version
+    :param quota_change_request_version: Quota change request version.
     :type quota_change_request_version: str
     :param quota_change_requests: This property is required for providing the
      region and new quota limits.
@@ -416,15 +417,15 @@ class Service(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Id of the resource
+    :ivar id: Id of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource 'Microsoft.Support/services'
+    :ivar type: Type of the resource 'Microsoft.Support/services'.
     :vartype type: str
-    :param display_name: Localized name of Azure service
+    :param display_name: Localized name of the Azure service.
     :type display_name: str
-    :param resource_types: ARM Resource types
+    :param resource_types: ARM Resource types.
     :type resource_types: list[str]
     """
 
@@ -452,7 +453,7 @@ class Service(Model):
 
 
 class ServiceError(Model):
-    """The api error details.
+    """The API error details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -524,13 +525,13 @@ class ServiceLevelAgreement(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar start_time: Time in UTC (ISO 8601 format) when service level
+    :ivar start_time: Time in UTC (ISO 8601 format) when the service level
      agreement starts.
     :vartype start_time: datetime
-    :ivar expiration_time: Time in UTC (ISO 8601 format) when service level
-     agreement expires.
+    :ivar expiration_time: Time in UTC (ISO 8601 format) when the service
+     level agreement expires.
     :vartype expiration_time: datetime
-    :ivar sla_minutes: Service Level Agreement in minutes
+    :ivar sla_minutes: Service Level Agreement in minutes.
     :vartype sla_minutes: int
     """
 
@@ -585,22 +586,21 @@ class SupportTicketDetails(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Id of the resource
+    :ivar id: Id of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource 'Microsoft.Support/supportTickets'
+    :ivar type: Type of the resource 'Microsoft.Support/supportTickets'.
     :vartype type: str
-    :param support_ticket_id: System generated support ticket id that is
+    :param support_ticket_id: System generated support ticket Id that is
      unique.
     :type support_ticket_id: str
     :param description: Required. Detailed description of the question or
      issue.
     :type description: str
     :param problem_classification_id: Required. Each Azure service has its own
-     set of issue category called problem classification that corresponds to
-     the type of problem you're experiencing. This parameter is the resource id
-     of ProblemClassification resource.
+     set of issue categories, also known as problem classification. This
+     parameter is the unique Id for the type of problem you are experiencing.
     :type problem_classification_id: str
     :ivar problem_classification_display_name: Localized name of problem
      classification.
@@ -608,11 +608,12 @@ class SupportTicketDetails(Model):
     :param severity: Required. A value that indicates the urgency of the case,
      which in turn determines the response time according to the service level
      agreement of the technical support plan you have with Azure. Note:
-     'Highest critical impact' severity is reserved only to our Premium
-     customers. Possible values include: 'minimal', 'moderate', 'critical',
+     'Highest critical impact', also known as the 'Emergency - Severe impact'
+     level in the Azure portal is reserved only for our Premium customers.
+     Possible values include: 'minimal', 'moderate', 'critical',
      'highestcriticalimpact'
     :type severity: str or ~azure.mgmt.support.models.SeverityLevel
-    :ivar enrollment_id: Enrollment ID associated with the support ticket.
+    :ivar enrollment_id: Enrollment Id associated with the support ticket.
     :vartype enrollment_id: str
     :param require24_x7_response: Indicates if this requires a 24x7 response
      from Azure.
@@ -624,7 +625,7 @@ class SupportTicketDetails(Model):
      this support ticket.
     :type service_level_agreement:
      ~azure.mgmt.support.models.ServiceLevelAgreement
-    :param support_engineer: Information about support engineer working on
+    :param support_engineer: Information about the support engineer working on
      this support ticket.
     :type support_engineer: ~azure.mgmt.support.models.SupportEngineer
     :ivar support_plan_type: Support plan type associated with the support
@@ -635,18 +636,18 @@ class SupportTicketDetails(Model):
     :param problem_start_time: Time in UTC (ISO 8601 format) when the problem
      started.
     :type problem_start_time: datetime
-    :param service_id: Required. This is the resource id of the Azure service
+    :param service_id: Required. This is the resource Id of the Azure service
      resource associated with the support ticket.
     :type service_id: str
-    :ivar service_display_name: Localized name of Azure service.
+    :ivar service_display_name: Localized name of the Azure service.
     :vartype service_display_name: str
     :ivar status: Status of the support ticket.
     :vartype status: str
-    :ivar created_date: Time in UTC (ISO 8601 format) when support ticket was
-     created.
+    :ivar created_date: Time in UTC (ISO 8601 format) when the support ticket
+     was created.
     :vartype created_date: datetime
-    :ivar modified_date: Time in UTC (ISO 8601 format) when support ticket was
-     last modified.
+    :ivar modified_date: Time in UTC (ISO 8601 format) when the support ticket
+     was last modified.
     :vartype modified_date: datetime
     :param technical_ticket_details: Additional ticket details associated with
      a technical support ticket request.
@@ -732,7 +733,7 @@ class SupportTicketDetails(Model):
 class TechnicalTicketDetails(Model):
     """Additional information for technical support ticket.
 
-    :param resource_id: This is the resource id of the Azure service resource
+    :param resource_id: This is the resource Id of the Azure service resource
      (For example: A virtual machine resource or an HDInsight resource) for
      which the support ticket is created.
     :type resource_id: str
@@ -750,25 +751,25 @@ class TechnicalTicketDetails(Model):
 class UpdateContactProfile(Model):
     """Contact information associated with the support ticket.
 
-    :param first_name: First name
+    :param first_name: First name.
     :type first_name: str
-    :param last_name: Last name
+    :param last_name: Last name.
     :type last_name: str
     :param preferred_contact_method: Preferred contact method. Possible values
      include: 'email', 'phone'
     :type preferred_contact_method: str or
      ~azure.mgmt.support.models.PreferredContactMethod
-    :param primary_email_address: Primary email address
+    :param primary_email_address: Primary email address.
     :type primary_email_address: str
     :param additional_email_addresses: Email addresses listed will be copied
-     on any correspondence about the support ticket
+     on any correspondence about the support ticket.
     :type additional_email_addresses: list[str]
     :param phone_number: Phone number. This is required if preferred contact
      method is phone.
     :type phone_number: str
     :param preferred_time_zone: Time zone of the user. This is the name of the
      time zone from [Microsoft Time Zone Index
-     Values](https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values).
+     Values](https://support.microsoft.com/help/973627/microsoft-time-zone-index-values).
     :type preferred_time_zone: str
     :param country: Country of the user. This is the ISO 3166-1 alpha-3 code.
     :type country: str
@@ -810,7 +811,7 @@ class UpdateContactProfile(Model):
 
 
 class UpdateSupportTicket(Model):
-    """Updates severity, ticket status and contact details in the support ticket.
+    """Updates severity, ticket status, and contact details in the support ticket.
 
     :param severity: Severity level. Possible values include: 'minimal',
      'moderate', 'critical', 'highestcriticalimpact'

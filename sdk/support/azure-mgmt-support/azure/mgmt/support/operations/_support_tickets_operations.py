@@ -26,7 +26,7 @@ class SupportTicketsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2020-04-01".
+    :ivar api_version: API version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -42,11 +42,11 @@ class SupportTicketsOperations(object):
 
     def check_name_availability(
             self, name, type, custom_headers=None, raw=False, **operation_config):
-        """Check the availability of a resource name. This API should to be used
-        to check the uniqueness of the name for support ticket creation for the
+        """Check the availability of a resource name. This API should be used to
+        check the uniqueness of the name for support ticket creation for the
         selected subscription.
 
-        :param name: The resource name to validate
+        :param name: The resource name to validate.
         :type name: str
         :param type: The type of resource. Possible values include:
          'Microsoft.Support/supportTickets', 'Microsoft.Support/communications'
@@ -113,8 +113,8 @@ class SupportTicketsOperations(object):
         filter the support tickets by _Status_ or _CreatedDate_ using the
         $filter parameter. Output will be a paged result with _nextLink_, using
         which you can retrieve the next set of support tickets.
-        <br/><br/>Support ticket data is available for 12 months after ticket
-        creation. If a ticket was created more than 12 months ago, a request
+        <br/><br/>Support ticket data is available for 18 months after ticket
+        creation. If a ticket was created more than 18 months ago, a request
         for data might cause an error.
 
         :param top: The number of values to return in the collection. Default
@@ -123,9 +123,10 @@ class SupportTicketsOperations(object):
         :param filter: The filter to apply on the operation. We support 'odata
          v4.0' filter semantics. [Learn
          more](https://docs.microsoft.com/odata/concepts/queryoptions-overview).
-         _Status_ filter can only be used with 'eq' operator. For _CreatedDate_
-         filter, the supported operators are 'gt' and 'ge'. When using both
-         filters, combine them using the logical 'AND'.
+         _Status_ filter can only be used with Equals ('eq') operator. For
+         _CreatedDate_ filter, the supported operators are Greater Than ('gt')
+         and Greater Than or Equals ('ge'). When using both filters, combine
+         them using the logical 'AND'.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -195,10 +196,10 @@ class SupportTicketsOperations(object):
     def get(
             self, support_ticket_name, custom_headers=None, raw=False, **operation_config):
         """Get ticket details for an Azure subscription. Support ticket data is
-        available for 12 months after ticket creation. If a ticket was created
-        more than 12 months ago, a request for data might cause an error.
+        available for 18 months after ticket creation. If a ticket was created
+        more than 18 months ago, a request for data might cause an error.
 
-        :param support_ticket_name: Support ticket name
+        :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -263,9 +264,9 @@ class SupportTicketsOperations(object):
         an engineer is actively working on the ticket, send your ticket closure
         request by sending a note to your engineer.
 
-        :param support_ticket_name: Support ticket name
+        :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str
-        :param update_support_ticket: UpdateSupportTicket object
+        :param update_support_ticket: UpdateSupportTicket object.
         :type update_support_ticket:
          ~azure.mgmt.support.models.UpdateSupportTicket
         :param dict custom_headers: headers that will be added to the request
@@ -378,19 +379,20 @@ class SupportTicketsOperations(object):
         [prerequisites](https://aka.ms/supportAPI) required to create a support
         ticket.<br/><br/>Always call the Services and ProblemClassifications
         API to get the most recent set of services and problem categories
-        required for support ticket creation.<br/><br/>Adding attachments are
+        required for support ticket creation.<br/><br/>Adding attachments is
         not currently supported via the API. To add a file to an existing
         support ticket, visit the [Manage support
         ticket](https://portal.azure.com/#blade/Microsoft_Azure_Support/HelpAndSupportBlade/managesupportrequest)
         page in the Azure portal, select the support ticket, and use the file
         upload control to add a new file.<br/><br/>Providing consent to share
         diagnostic information with Azure support is currently not supported
-        via the API. Azure support engineer, working on your ticket, will reach
-        out to you for consent if your issue requires gathering diagnostic
-        information from your Azure resources.<br/><br/>**Creating a support
-        ticket for on-behalf-of**: Include _x-ms-authorization-auxiliary_
-        header to provide an auxiliary token as per
-        [this](https://docs.microsoft.com/azure/azure-resource-manager/management/authenticate-multi-tenant).
+        via the API. The Azure support engineer working on your ticket will
+        reach out to you for consent if your issue requires gathering
+        diagnostic information from your Azure resources.<br/><br/>**Creating a
+        support ticket for on-behalf-of**: Include
+        _x-ms-authorization-auxiliary_ header to provide an auxiliary token as
+        per
+        [documentation](https://docs.microsoft.com/azure/azure-resource-manager/management/authenticate-multi-tenant).
         The primary token will be from the tenant for whom a support ticket is
         being raised against the subscription, i.e. Cloud solution provider
         (CSP) customer tenant. The auxiliary token will be from the Cloud
