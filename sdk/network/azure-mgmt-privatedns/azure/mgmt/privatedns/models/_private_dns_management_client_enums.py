@@ -9,11 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import PrivateDnsManagementClientConfiguration
-from ._private_dns_management_client import PrivateDnsManagementClient
-__all__ = ['PrivateDnsManagementClient', 'PrivateDnsManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class ProvisioningState(str, Enum):
 
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    failed = "Failed"
+    canceled = "Canceled"
+
+
+class VirtualNetworkLinkState(str, Enum):
+
+    in_progress = "InProgress"
+    completed = "Completed"
+
+
+class RecordType(str, Enum):
+
+    a = "A"
+    aaaa = "AAAA"
+    cname = "CNAME"
+    mx = "MX"
+    ptr = "PTR"
+    soa = "SOA"
+    srv = "SRV"
+    txt = "TXT"

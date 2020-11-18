@@ -10,62 +10,62 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .private_zone_py3 import PrivateZone
-    from .sub_resource_py3 import SubResource
-    from .virtual_network_link_py3 import VirtualNetworkLink
-    from .arecord_py3 import ARecord
-    from .aaaa_record_py3 import AaaaRecord
-    from .cname_record_py3 import CnameRecord
-    from .mx_record_py3 import MxRecord
-    from .ptr_record_py3 import PtrRecord
-    from .soa_record_py3 import SoaRecord
-    from .srv_record_py3 import SrvRecord
-    from .txt_record_py3 import TxtRecord
-    from .record_set_py3 import RecordSet
-    from .resource_py3 import Resource
-    from .tracked_resource_py3 import TrackedResource
-    from .proxy_resource_py3 import ProxyResource
+    from ._models_py3 import AaaaRecord
+    from ._models_py3 import ARecord
+    from ._models_py3 import CnameRecord
+    from ._models_py3 import MxRecord
+    from ._models_py3 import PrivateZone
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import PtrRecord
+    from ._models_py3 import RecordSet
+    from ._models_py3 import Resource
+    from ._models_py3 import SoaRecord
+    from ._models_py3 import SrvRecord
+    from ._models_py3 import SubResource
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import TxtRecord
+    from ._models_py3 import VirtualNetworkLink
 except (SyntaxError, ImportError):
-    from .private_zone import PrivateZone
-    from .sub_resource import SubResource
-    from .virtual_network_link import VirtualNetworkLink
-    from .arecord import ARecord
-    from .aaaa_record import AaaaRecord
-    from .cname_record import CnameRecord
-    from .mx_record import MxRecord
-    from .ptr_record import PtrRecord
-    from .soa_record import SoaRecord
-    from .srv_record import SrvRecord
-    from .txt_record import TxtRecord
-    from .record_set import RecordSet
-    from .resource import Resource
-    from .tracked_resource import TrackedResource
-    from .proxy_resource import ProxyResource
-from .private_zone_paged import PrivateZonePaged
-from .virtual_network_link_paged import VirtualNetworkLinkPaged
-from .record_set_paged import RecordSetPaged
-from .private_dns_management_client_enums import (
+    from ._models import AaaaRecord
+    from ._models import ARecord
+    from ._models import CnameRecord
+    from ._models import MxRecord
+    from ._models import PrivateZone
+    from ._models import ProxyResource
+    from ._models import PtrRecord
+    from ._models import RecordSet
+    from ._models import Resource
+    from ._models import SoaRecord
+    from ._models import SrvRecord
+    from ._models import SubResource
+    from ._models import TrackedResource
+    from ._models import TxtRecord
+    from ._models import VirtualNetworkLink
+from ._paged_models import PrivateZonePaged
+from ._paged_models import RecordSetPaged
+from ._paged_models import VirtualNetworkLinkPaged
+from ._private_dns_management_client_enums import (
     ProvisioningState,
     VirtualNetworkLinkState,
     RecordType,
 )
 
 __all__ = [
-    'PrivateZone',
-    'SubResource',
-    'VirtualNetworkLink',
-    'ARecord',
     'AaaaRecord',
+    'ARecord',
     'CnameRecord',
     'MxRecord',
+    'PrivateZone',
+    'ProxyResource',
     'PtrRecord',
-    'SoaRecord',
-    'SrvRecord',
-    'TxtRecord',
     'RecordSet',
     'Resource',
+    'SoaRecord',
+    'SrvRecord',
+    'SubResource',
     'TrackedResource',
-    'ProxyResource',
+    'TxtRecord',
+    'VirtualNetworkLink',
     'PrivateZonePaged',
     'VirtualNetworkLinkPaged',
     'RecordSetPaged',

@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .private_zones_operations import PrivateZonesOperations
-from .virtual_network_links_operations import VirtualNetworkLinksOperations
-from .record_sets_operations import RecordSetsOperations
+from ._private_zones_operations import PrivateZonesOperations
+from ._virtual_network_links_operations import VirtualNetworkLinksOperations
+from ._record_sets_operations import RecordSetsOperations
 
 __all__ = [
     'PrivateZonesOperations',
