@@ -239,7 +239,7 @@ class BlockBlobOperations(object):
             return cls(response, None, response_headers)
     upload.metadata = {'url': '/{containerName}/{blob}'}
 
-    def put_blob_from_url(self, content_length, copy_source, timeout=None, transactional_content_md5=None, metadata=None, tier=None, request_id=None, blob_tags_string=None, copy_source_blob_properties=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
+    def put_blob_from_url(self, content_length, copy_source, timeout=None, transactional_content_md5=None, metadata=None, tier=None, request_id=None, source_content_md5=None, blob_tags_string=None, copy_source_blob_properties=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, cpk_scope_info=None, modified_access_conditions=None, source_modified_access_conditions=None, cls=None, **kwargs):
         """The Put Blob from URL operation creates a new Block Blob where the
         contents of the blob are read from a given URL.  This API is supported
         beginning with the 2020-04-08 version. Partial updates are not
@@ -282,6 +282,9 @@ class BlockBlobOperations(object):
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param source_content_md5: Specify the md5 calculated for the range of
+         bytes that must be read from the copy source.
+        :type source_content_md5: bytearray
         :param blob_tags_string: Optional.  Used to set blob tags in various
          blob operations.
         :type blob_tags_string: str
@@ -402,6 +405,8 @@ class BlockBlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if source_content_md5 is not None:
+            header_parameters['x-ms-source-content-md5'] = self._serialize.header("source_content_md5", source_content_md5, 'bytearray')
         if blob_tags_string is not None:
             header_parameters['x-ms-tags'] = self._serialize.header("blob_tags_string", blob_tags_string, 'str')
         header_parameters['x-ms-copy-source'] = self._serialize.header("copy_source", copy_source, 'str')
