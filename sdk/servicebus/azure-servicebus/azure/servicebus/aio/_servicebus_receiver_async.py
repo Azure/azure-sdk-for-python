@@ -14,6 +14,7 @@ import six
 from uamqp import ReceiveClientAsync, types, Message
 from uamqp.constants import SenderSettleMode
 
+from ..exceptions import ServiceBusError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage
@@ -342,6 +343,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, settle_operation)
+
+        # The following condition check is a hot fix for settling a message received for non-session queue after
+        # lock expiration.
+        # uamqp doesn't have the ability to receive disposition result returned from the service after settlement,
+        # so there's no way we could tell whether a disposition succeeds or not and there's no error condition info.
+        # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
+        # subclasses in the future after we add the missing feature support in uamqp.
+        # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
+        if not self._session and message._lock_expired:
+            raise ServiceBusError(
+                message="The lock on the message lock has expired.",
+                error=message.auto_renew_error
+            )
+
         await self._do_retryable_operation(
             self._settle_message,
             timeout=None,
@@ -644,8 +659,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -668,8 +683,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -693,8 +708,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -721,8 +736,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :param Optional[str] error_description: The detailed error description for dead-lettering the message.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
         :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -775,7 +790,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 :caption: Renew the lock on a received message.
 
         """
-        self._check_live()
         try:
             if self.session:
                 raise TypeError(
@@ -785,6 +799,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         except AttributeError:
             pass
 
+        self._check_live()
         self._check_message_alive(message, MESSAGE_RENEW_LOCK)
         token = message.lock_token
         if not token:

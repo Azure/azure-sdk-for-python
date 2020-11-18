@@ -369,7 +369,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @message_id.setter
     def message_id(self, value):
         # type: (str) -> None
-        if value and len(value) > 128:
+        if value and len(str(value)) > 128:
             raise ValueError("message_id cannot be longer than 128 characters.")
 
         self._amqp_properties.message_id = value
@@ -575,7 +575,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             raise TypeError("ServiceBusReceivedMessage requires a receiver to be initialized. " +
                             "This class should never be initialized by a user; " +
                             "for outgoing messages, the ServiceBusMessage class should be utilized instead.")
-        self._expiry = None # type: Optional[datetime.datetime]
+        self._expiry = None  # type: Optional[datetime.datetime]
 
     @property
     def _lock_expired(self):

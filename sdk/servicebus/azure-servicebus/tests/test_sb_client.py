@@ -18,9 +18,8 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceivedMessage
 from azure.servicebus.exceptions import (
     ServiceBusError,
-    ServiceBusConnectionError,
     ServiceBusAuthenticationError,
-    ServiceBusAuthorizationError
+    UnauthorizedAccessError
 )
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -88,7 +87,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
-            with pytest.raises(ServiceBusAuthorizationError):
+            with pytest.raises(UnauthorizedAccessError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
@@ -134,7 +133,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                 sender.send_messages(ServiceBusMessage("test")) 
 
             # Now do the same but with direct connstr initialization.
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(ValueError):
                 with ServiceBusSender._from_connection_string(
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,

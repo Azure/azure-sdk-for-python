@@ -203,15 +203,17 @@ class ServiceBusError(AzureError):
         except AttributeError:
             pass
 
+        message = message or "Service Bus has encountered an error."
+
         if self._condition:
             try:
                 condition = self._condition.decode('UTF-8')
             except AttributeError:
                 condition = self._condition
-            message = message + "\nError condition: {}".format(str(condition))
+            message = message + " Error condition: {}.".format(str(condition))
         if self._status_code is not None:
-            message = message + "\nStatus Code: {}".format(str(self._status_code))
-        super(ServiceBusError, self).__init__(message, *kwargs, **kwargs)
+            message = message + " Status Code: {}.".format(str(self._status_code))
+        super(ServiceBusError, self).__init__(message, *args, **kwargs)
 
 
 class ServiceBusConnectionError(ServiceBusError):
@@ -267,7 +269,7 @@ class MessageSizeExceededError(ServiceBusError, ValueError):
     def __init__(self, **kwargs):
         message = kwargs.pop("message", None) or "Message content is larger than the service bus frame size."
         super(MessageSizeExceededError, self).__init__(
-            message,
+            message=message,
             retryable=False,
             shutdown_handler=False,
             **kwargs
@@ -298,11 +300,11 @@ class MessageLockLostError(ServiceBusError):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        message = kwargs.pop("message", "None") or\
-                  "The lock on the message lock has expired. The lock on the message is lost. " \
+        message = kwargs.pop("message", None) or\
+                  "The lock on the message lock has expired. " \
                   "Callers should call attempt to receive and process the message again."
         super(MessageLockLostError, self).__init__(
-            message,
+            message=message,
             retryable=False,
             shutdown_handler=False,
             **kwargs
@@ -346,7 +348,7 @@ class MessagingEntityNotFoundError(ServiceBusError):
         super(MessagingEntityNotFoundError, self).__init__(
             message,
             retryable=False,
-            shutdown_handler=False,
+            shutdown_handler=True,
             **kwargs
         )
 
