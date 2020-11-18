@@ -37,6 +37,7 @@ stages:
                           pwsh: true
                           workingDirectory: $(Build.SourcesDirectory)
                           filePath: eng/scripts/SetTestPipelineVersion.ps1
+                          arguments: '-BuildNumber $(Build.BuildNumber)'
                     # TEMPORARILY DISABLING 11/16. Will re-enable after patch to common tooling.
                     # - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
                     #   - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
