@@ -7,13 +7,4 @@
 # --------------------------------------------------------------------------
 
 from ._recovery_services_client import RecoveryServicesClient
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['RecoveryServicesClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
