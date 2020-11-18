@@ -26,7 +26,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
         availability = self.client.services.check_name_availability(account_name)
         self.assertTrue(availability.is_name_available)
 
-        service = self.client.services.create_or_update(
+        service = self.client.services.begin_create_or_update(
             resource_group.name,
             account_name,
             {
@@ -35,7 +35,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
                 'partition_count': 1,
                 'hosting_mode': 'Default',
                 'sku': {
-                    'name': 'free'
+                    'name': 'standard'
                 }
             }
         ).result()
@@ -61,10 +61,10 @@ class MgmtSearchTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer()
     def test_search_query_keys(self, resource_group, location):
-        account_name = 'ptvstestquerykeys'
+        account_name = 'ptvstestquerykeysxxy'
         key_name = 'testkey'
 
-        service = self.client.services.create_or_update(
+        service = self.client.services.begin_create_or_update(
             resource_group.name,
             account_name,
             {
@@ -73,10 +73,10 @@ class MgmtSearchTest(AzureMgmtTestCase):
                 'partition_count': 1,
                 'hosting_mode': 'Default',
                 'sku': {
-                    'name': 'free'
+                    'name': 'standard'
                 }
             }
-        )
+        ).result()
 
         key = self.client.query_keys.create(
             resource_group.name,
@@ -103,7 +103,7 @@ class MgmtSearchTest(AzureMgmtTestCase):
     def test_search_admin_keys(self, resource_group, location):
         account_name = 'ptvstestquerykeys'
 
-        service = self.client.services.create_or_update(
+        service = self.client.services.begin_create_or_update(
             resource_group.name,
             account_name,
             {
