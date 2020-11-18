@@ -14,11 +14,11 @@ from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
-from microsoft.opentelemetry.exporter.azuremonitor.export import ExportResult
-from microsoft.opentelemetry.exporter.azuremonitor.export.trace import (
-    AzureMonitorTraceExporter,
+from microsoft.opentelemetry.exporter.azuremonitor.export._base import ExportResult
+from microsoft.opentelemetry.exporter.azuremonitor.export.trace._exporter import (
+    AzureMonitorTraceExporter
 )
-from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
+from microsoft.opentelemetry.exporter.azuremonitor._options import ExporterOptions
 
 TEST_FOLDER = os.path.abspath(".test.trace")
 STORAGE_PATH = os.path.join(TEST_FOLDER)
@@ -79,7 +79,7 @@ class TestAzureTraceExporter(unittest.TestCase):
     def test_export_failure(self):
         exporter = self._exporter
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             test_span = trace._Span(
                 name="test",
@@ -109,7 +109,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.SUCCESS
             storage_mock = mock.Mock()
@@ -121,7 +121,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             except FileNotFoundError as ex:
                 pass
 
-    @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace.logger")
+    @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace._exporter.logger")
     def test_export_exception(self, logger_mock):
         test_span = trace._Span(
             name="test",
@@ -135,7 +135,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         test_span.end()
         exporter = self._exporter
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit",
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit",
             throw(Exception),
         ):  # noqa: E501
             result = exporter.export([test_span])
@@ -155,7 +155,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
             result = exporter.export([test_span])

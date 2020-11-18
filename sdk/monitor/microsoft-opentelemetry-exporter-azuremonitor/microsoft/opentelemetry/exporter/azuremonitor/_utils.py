@@ -11,6 +11,22 @@ import pkg_resources
 
 from microsoft.opentelemetry.exporter.azuremonitor._version import VERSION as ext_version
 
+class BaseObject:
+    __slots__ = ()
+
+    def __repr__(self):
+        tmp = {}
+
+        for key in self.__slots__:
+            data = getattr(self, key, None)
+            if isinstance(data, BaseObject):
+                tmp[key] = repr(data)
+            else:
+                tmp[key] = data
+
+        return repr(tmp)
+
+
 # Workaround for missing version file
 opentelemetry_version = pkg_resources.get_distribution(
     "opentelemetry-sdk"

@@ -12,12 +12,12 @@ import requests
 from opentelemetry.sdk.metrics.export import MetricsExportResult
 from opentelemetry.sdk.trace.export import SpanExportResult
 
-from microsoft.opentelemetry.exporter.azuremonitor.export import (
+from microsoft.opentelemetry.exporter.azuremonitor.export._base import (
     BaseExporter,
     ExportResult,
     get_trace_export_result,
 )
-from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
+from microsoft.opentelemetry.exporter.azuremonitor._options import ExporterOptions
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
 
 TEST_FOLDER = os.path.abspath(".test.base")
@@ -108,7 +108,7 @@ class TestBaseExporter(unittest.TestCase):
             [TelemetryItem(name="Test", time=datetime.now())]))
         self._base.storage.put(envelopes_to_export)
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.storage.LocalFileBlob.lease"
+            "microsoft.opentelemetry.exporter.azuremonitor._storage.LocalFileBlob.lease"
         ) as lease:  # noqa: E501
             lease.return_value = False
             self._base._transmit_from_storage()
