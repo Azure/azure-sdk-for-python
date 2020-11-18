@@ -133,7 +133,7 @@ jobs:
           pwsh: true
           workingDirectory: $(Build.SourcesDirectory)
           filePath: eng/scripts/SetTestPipelineVersion.ps1
-          arguments: '-BuildNumber $(Build.BuildNumber)'
+          arguments: '-BuildID $(Build.BuildId)'
 
     - pwsh: |
         $toxenvvar = "whl,sdist"
