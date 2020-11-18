@@ -8,41 +8,59 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrestazure import AzureConfiguration
+from typing import Any
 
-from .version import VERSION
+from azure.core.configuration import Configuration
+from azure.core.pipeline import policies
+from azure.mgmt.core.policies import ARMHttpLoggingPolicy
+
+from ._version import VERSION
 
 
-class IotHubClientConfiguration(AzureConfiguration):
-    """Configuration for IotHubClient
+class IotHubClientConfiguration(Configuration):
+    """Configuration for IotHubClient.
+
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
+        super(IotHubClientConfiguration, self).__init__(**kwargs)
 
-        super(IotHubClientConfiguration, self).__init__(base_url)
-
-        # Starting Autorest.Python 4.0.64, make connection pool activated by default
-        self.keep_alive = True
-
-        self.add_user_agent('azure-mgmt-iothub/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
+        self.credential = credential
         self.subscription_id = subscription_id
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'azure-mgmt-iothub/{}'.format(VERSION))
+        self._configure(**kwargs)
+
+    def _configure(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or ARMHttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
