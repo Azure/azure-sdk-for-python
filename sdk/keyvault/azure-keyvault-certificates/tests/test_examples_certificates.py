@@ -29,14 +29,12 @@ def test_create_certificate_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_certificate_client]
-
     from azure.identity import DefaultAzureCredential
     from azure.keyvault.certificates import CertificateClient
 
     # Create a CertificateClient using default Azure credentials
     credential = DefaultAzureCredential()
     certificate_client = CertificateClient(vault_url=vault_url, credential=credential)
-
     # [END create_certificate_client]
 
 
@@ -78,33 +76,27 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(certificate.id)
         print(certificate.name)
         print(certificate.policy.issuer_name)
-
         # [END create_certificate]
 
         # [START get_certificate]
-
         # get the certificate
         certificate = certificate_client.get_certificate(cert_name)
 
         print(certificate.id)
         print(certificate.name)
         print(certificate.policy.issuer_name)
-
         # [END get_certificate]
 
         version = certificate.properties.version
 
         # [START get_certificate_version]
-
         certificate = certificate_client.get_certificate_version(cert_name, version)
 
         print(certificate.id)
         print(certificate.properties.version)
-
         # [END get_certificate_version]
 
         # [START update_certificate]
-
         # update attributes of an existing certificate
         tags = {"foo": "updated tag"}
         updated_certificate = certificate_client.update_certificate_properties(
@@ -114,10 +106,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(updated_certificate.properties.version)
         print(updated_certificate.properties.updated_on)
         print(updated_certificate.properties.tags)
-
         # [END update_certificate]
-        # [START delete_certificate]
 
+        # [START delete_certificate]
         # delete a certificate
         deleted_certificate = certificate_client.begin_delete_certificate(certificate.name).result()
 
@@ -128,7 +119,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
-
         # [END delete_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -154,7 +144,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client.begin_create_certificate(certificate_name, cert_policy).wait()
 
         # [START list_properties_of_certificates]
-
         # get an iterator of certificates
         certificates = certificate_client.list_properties_of_certificates()
 
@@ -164,14 +153,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.name)
             print(certificate.updated_on)
             print(certificate.enabled)
-
         # [END list_properties_of_certificates]
 
         # create a second version of the cert
         certificate_client.begin_create_certificate(certificate_name, cert_policy).wait()
 
         # [START list_properties_of_certificate_versions]
-
         # get an iterator of a certificate's versions
         certificate_versions = certificate_client.list_properties_of_certificate_versions(certificate_name)
 
@@ -179,13 +166,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.id)
             print(certificate.updated_on)
             print(certificate.version)
-
         # [END list_properties_of_certificate_versions]
 
         certificate_client.begin_delete_certificate(certificate_name).wait()
 
         # [START list_deleted_certificates]
-
         # get an iterator of deleted certificates (requires soft-delete enabled for the vault)
         deleted_certificates = certificate_client.list_deleted_certificates()
 
@@ -195,7 +180,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(certificate.deleted_on)
             print(certificate.scheduled_purge_date)
             print(certificate.deleted_on)
-
         # [END list_deleted_certificates]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -269,7 +253,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client.begin_delete_certificate(certificate_name=cert_name).wait()
         # [START get_deleted_certificate]
-
         # get a deleted certificate (requires soft-delete enabled for the vault)
         deleted_certificate = certificate_client.get_deleted_certificate(cert_name)
         print(deleted_certificate.name)
@@ -279,16 +262,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_certificate.deleted_on)
         print(deleted_certificate.scheduled_purge_date)
         print(deleted_certificate.recovery_id)
-
         # [END get_deleted_certificate]
-        # [START recover_deleted_certificate]
 
+        # [START recover_deleted_certificate]
         # recover a deleted certificate to its latest version (requires soft-delete enabled for the vault)
         recovered_certificate = certificate_client.begin_recover_deleted_certificate(cert_name).result()
 
         print(recovered_certificate.id)
         print(recovered_certificate.name)
-
         # [END recover_deleted_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -311,11 +292,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(contact.name)
             print(contact.email)
             print(contact.phone)
-
         # [END set_contacts]
 
         # [START get_contacts]
-
         contacts = certificate_client.get_contacts()
 
         # Loop through the certificate contacts for this key vault.
@@ -323,18 +302,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(contact.name)
             print(contact.email)
             print(contact.phone)
-
         # [END get_contacts]
 
         # [START delete_contacts]
-
         deleted_contacts = certificate_client.delete_contacts()
 
         for deleted_contact in deleted_contacts:
             print(deleted_contact.name)
             print(deleted_contact.email)
             print(deleted_contact.phone)
-
         # [END delete_contacts]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -368,11 +344,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(contact.last_name)
             print(contact.email)
             print(contact.phone)
-
         # [END create_issuer]
 
         # [START get_issuer]
-
         issuer = certificate_client.get_issuer("issuer1")
 
         print(issuer.name)
@@ -384,7 +358,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(contact.last_name)
             print(contact.email)
             print(contact.phone)
-
         # [END get_issuer]
 
         certificate_client.create_issuer(
@@ -392,17 +365,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         )
 
         # [START list_properties_of_issuers]
-
         issuers = certificate_client.list_properties_of_issuers()
 
         for issuer in issuers:
             print(issuer.name)
             print(issuer.provider)
-
         # [END list_properties_of_issuers]
 
         # [START delete_issuer]
-
         deleted_issuer = certificate_client.delete_issuer("issuer1")
 
         print(deleted_issuer.name)
@@ -414,5 +384,4 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(contact.last_name)
             print(contact.email)
             print(contact.phone)
-
         # [END delete_issuer]

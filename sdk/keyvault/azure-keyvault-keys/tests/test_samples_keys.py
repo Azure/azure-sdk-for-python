@@ -25,14 +25,12 @@ def test_create_key_client():
     vault_url = "vault_url"
     # pylint:disable=unused-variable
     # [START create_key_client]
-
     from azure.identity import DefaultAzureCredential
     from azure.keyvault.keys import KeyClient
 
     # Create a KeyClient using default Azure credentials
     credential = DefaultAzureCredential()
     key_client = KeyClient(vault_url, credential)
-
     # [END create_key_client]
 
 
@@ -57,10 +55,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.id)
         print(key.key_type)
         print(key.properties.expires_on)
-
         # [END create_key]
-        # [START create_rsa_key]
 
+        # [START create_rsa_key]
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
 
@@ -72,8 +69,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.name)
         print(key.key_type)
         print(key.key_operations)
-
         # [END create_rsa_key]
+
         # [START create_ec_key]
         key_curve = "P-256"
 
@@ -85,10 +82,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(ec_key.properties.version)
         print(ec_key.key_type)
         print(ec_key.key.crv)
-
         # [END create_ec_key]
-        # [START get_key]
 
+        # [START get_key]
         # get the latest version of a key
         key = key_client.get_key("key-name")
 
@@ -101,10 +97,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(key.properties.version)
         print(key.key_type)
         print(key.properties.vault_url)
-
         # [END get_key]
-        # [START update_key]
 
+        # [START update_key]
         # update attributes of an existing key
         expires_on = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
@@ -115,10 +110,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(updated_key.properties.expires_on)
         print(updated_key.properties.tags)
         print(key.key_type)
-
         # [END update_key]
-        # [START delete_key]
 
+        # [START delete_key]
         # delete a key
         deleted_key_poller = key_client.begin_delete_key("key-name")
         deleted_key = deleted_key_poller.result()
@@ -133,7 +127,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if you want to block until deletion is complete, call wait() on the poller
         deleted_key_poller.wait()
-
         # [END delete_key]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -148,29 +141,24 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_client.create_rsa_key("key{}".format(i))
 
         # [START list_keys]
-
         # get an iterator of keys
         keys = key_client.list_properties_of_keys()
 
         for key in keys:
             print(key.id)
             print(key.name)
-
         # [END list_keys]
 
         # [START list_properties_of_key_versions]
-
         # get an iterator of a key's versions
         key_versions = key_client.list_properties_of_key_versions("key-name")
 
         for key in key_versions:
             print(key.id)
             print(key.name)
-
         # [END list_properties_of_key_versions]
 
         # [START list_deleted_keys]
-
         # get an iterator of deleted keys (requires soft-delete enabled for the vault)
         deleted_keys = key_client.list_deleted_keys()
 
@@ -180,7 +168,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.scheduled_purge_date)
             print(key.recovery_id)
             print(key.deleted_date)
-
         # [END list_deleted_keys]
 
     @ResourceGroupPreparer(random_name_enabled=True)
@@ -219,7 +206,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         created_key = key_client.create_key("key-name", "RSA")
         key_client.begin_delete_key(created_key.name).wait()
         # [START get_deleted_key]
-
         # get a deleted key (requires soft-delete enabled for the vault)
         deleted_key = key_client.get_deleted_key("key-name")
         print(deleted_key.name)
@@ -229,10 +215,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_key.deleted_date)
         print(deleted_key.scheduled_purge_date)
         print(deleted_key.recovery_id)
-
         # [END get_deleted_key]
-        # [START recover_deleted_key]
 
+        # [START recover_deleted_key]
         # recover a deleted key to its latest version (requires soft-delete enabled for the vault)
         recover_key_poller = key_client.begin_recover_deleted_key("key-name")
         recovered_key = recover_key_poller.result()
@@ -241,5 +226,4 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # if you want to block until key is recovered server-side, call wait() on the poller
         recover_key_poller.wait()
-
         # [END recover_deleted_key]
