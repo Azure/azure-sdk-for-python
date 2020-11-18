@@ -172,30 +172,6 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
-    async def test_upload_blob_from_url_without_using_source_properties(
-            self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        await self._setup(storage_account, storage_account_key, container_name="testcontainer")
-        blob = await self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
-        self.bsc.get_blob_client(self.container_name, blob.blob_name)
-        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
-                                container_name=self.container_name, blob_name=blob.blob_name,
-                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
-        # Act
-        source_blob = '{0}/{1}/{2}?{3}'.format(
-            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
-
-        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        await new_blob.upload_blob_from_url(source_blob, include_source_blob_properties=False)
-
-        new_blob_properties = await new_blob.get_blob_properties()
-        source_blob_properties = await blob.get_blob_properties()
-
-        # Assert
-        self.assertNotEqual(new_blob_properties.blob_tier, source_blob_properties.blob_tier)
-
-    @GlobalStorageAccountPreparer()
-    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_blob_with_destination_lease(
             self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key)
@@ -207,7 +183,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
         new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         await new_blob_client.upload_blob(data="test")
-        new_blob_lease = new_blob_client.acquire_lease()
+        new_blob_lease = await new_blob_client.acquire_lease()
         with self.assertRaises(HttpResponseError):
             await new_blob_client.upload_blob_from_url(
                 source_blob_url, destination_lease="baddde9e-8247-4276-8bfa-c7a8081eba1d")
@@ -321,7 +297,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         # Act
         await self._setup(storage_account, storage_account_key)
         source_blob = await self._create_blob(data=b"This is test data to be copied over.")
-        source_blob_props = source_blob.get_blob_properties()
+        source_blob_props = await source_blob.get_blob_properties()
         source_md5 = source_blob_props.content_settings.content_md5
         bad_source_md5 = StorageContentValidation.get_content_md5(b"this is bad data")
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,

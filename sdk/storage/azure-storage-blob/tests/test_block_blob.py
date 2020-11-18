@@ -104,39 +104,15 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(new_blob_content, b'test data')
 
     @GlobalStorageAccountPreparer()
-    def test_upload_blob_from_url_with_standard_tier_specified(
-            self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        self._setup(storage_account, storage_account_key)
-        blob = self._create_blob()
-        self.bsc.get_blob_client(self.container_name, blob.blob_name)
-        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
-                                container_name=self.container_name, blob_name=blob.blob_name,
-                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
-        # Act
-        source_blob = '{0}/{1}/{2}?{3}'.format(
-            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
-
-        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        blob_tier = StandardBlobTier.Hot
-        new_blob_client.upload_blob_from_url(source_blob, standard_blob_tier=blob_tier)
-
-        new_blob_properties = new_blob_client.get_blob_properties()
-
-        # Assert
-        self.assertEqual(new_blob_properties.blob_tier, blob_tier)
-
-    @GlobalStorageAccountPreparer()
     def test_upload_blob_from_url_without_using_source_properties(
             self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
+        # Act
         self._setup(storage_account, storage_account_key)
         blob = self._create_blob(standard_blob_tier=StandardBlobTier.Hot)
         self.bsc.get_blob_client(self.container_name, blob.blob_name)
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
                                 container_name=self.container_name, blob_name=blob.blob_name,
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
-        # Act
         source_blob = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
 

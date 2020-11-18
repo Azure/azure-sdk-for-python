@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:13 GMT
+      - Wed, 18 Nov 2020 22:23:08 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Nov 2020 22:07:13 GMT
+      - Wed, 18 Nov 2020 22:23:08 GMT
       etag:
-      - '"0x8D88C0E4E102337"'
+      - '"0x8D88C10874BD24D"'
       last-modified:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,7 +57,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - 1B2M2Y8AsgTpgAmY7PhCfg==
       date:
-      - Wed, 18 Nov 2020 22:07:13 GMT
+      - Wed, 18 Nov 2020 22:23:08 GMT
       etag:
-      - '"0x8D88C0E4E23C90F"'
+      - '"0x8D88C10875ED3FE"'
       last-modified:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -85,7 +85,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
       x-ms-version-id:
-      - '2020-11-18T22:07:14.1324047Z'
+      - '2020-11-18T22:23:09.1429374Z'
     status:
       code: 201
       message: Created
@@ -109,7 +109,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -123,11 +123,11 @@ interactions:
       content-md5:
       - CY9rzUYh03PK3k6DJie09g==
       date:
-      - Wed, 18 Nov 2020 22:07:13 GMT
+      - Wed, 18 Nov 2020 22:23:08 GMT
       etag:
-      - '"0x8D88C0E4E361BE3"'
+      - '"0x8D88C1087721160"'
       last-modified:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -137,7 +137,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
       x-ms-version-id:
-      - '2020-11-18T22:07:14.2524899Z'
+      - '2020-11-18T22:23:09.2690272Z'
     status:
       code: 201
       message: Created
@@ -155,13 +155,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - cb7d6cd7-7475-455b-b261-695c29201879
+      - e2e7be50-407d-4e95-bba8-087c3a0acaad
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -173,15 +173,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Nov 2020 22:07:13 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       etag:
-      - '"0x8D88C0E4E361BE3"'
+      - '"0x8D88C1087721160"'
       last-modified:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - cb7d6cd7-7475-455b-b261-695c29201879
+      - e2e7be50-407d-4e95-bba8-087c3a0acaad
       x-ms-version:
       - '2020-04-08'
     status:
@@ -203,11 +203,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-11-18T23%3A07%3A14Z&sp=rt&sv=2020-04-08&sr=b&sig=jeM7zObzQNZ1vrNYzbaJBqceb1dyo08lCpVftiU/AUc%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-11-18T23%3A23%3A09Z&sp=rt&sv=2020-04-08&sr=b&sig=k7ZcWcT1kL/4mMDjjHmAnAEtgYEoZGzvhoecd014orY%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       x-ms-lease-id:
       - baddde9e-8247-4276-8bfa-c7a8081eba1d
       x-ms-version:
@@ -217,14 +217,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithBlobOperation</Code><Message>The
-        lease ID specified did not match the lease ID for the blob.\nRequestId:de387336-501e-0074-07f7-bdee32000000\nTime:2020-11-18T22:07:14.6110695Z</Message></Error>"
+        lease ID specified did not match the lease ID for the blob.\nRequestId:562d7a13-d01e-008e-1ef9-bd0c74000000\nTime:2020-11-18T22:23:09.8659774Z</Message></Error>"
     headers:
       content-length:
       - '264'
       content-type:
       - application/xml
       date:
-      - Wed, 18 Nov 2020 22:07:13 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -250,11 +250,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-11-18T23%3A07%3A14Z&sp=rt&sv=2020-04-08&sr=b&sig=jeM7zObzQNZ1vrNYzbaJBqceb1dyo08lCpVftiU/AUc%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-11-18T23%3A23%3A09Z&sp=rt&sv=2020-04-08&sr=b&sig=k7ZcWcT1kL/4mMDjjHmAnAEtgYEoZGzvhoecd014orY%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:10 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -262,14 +262,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
-        is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:de387365-501e-0074-2cf7-bdee32000000\nTime:2020-11-18T22:07:14.7421625Z</Message></Error>"
+        is currently a lease on the blob and no lease ID was specified in the request.\nRequestId:562d7a73-d01e-008e-65f9-bd0c74000000\nTime:2020-11-18T22:23:09.9980707Z</Message></Error>"
     headers:
       content-length:
       - '267'
       content-type:
       - application/xml
       date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -296,13 +296,13 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-11-18T23%3A07%3A14Z&sp=rt&sv=2020-04-08&sr=b&sig=jeM7zObzQNZ1vrNYzbaJBqceb1dyo08lCpVftiU/AUc%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer7427167e/blob7427167e?se=2020-11-18T23%3A23%3A09Z&sp=rt&sv=2020-04-08&sr=b&sig=k7ZcWcT1kL/4mMDjjHmAnAEtgYEoZGzvhoecd014orY%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:10 GMT
       x-ms-lease-id:
-      - cb7d6cd7-7475-455b-b261-695c29201879
+      - e2e7be50-407d-4e95-bba8-087c3a0acaad
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -314,11 +314,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:09 GMT
       etag:
-      - '"0x8D88C0E4E940446"'
+      - '"0x8D88C1087F56311"'
       last-modified:
-      - Wed, 18 Nov 2020 22:07:14 GMT
+      - Wed, 18 Nov 2020 22:23:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -328,7 +328,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
       x-ms-version-id:
-      - '2020-11-18T22:07:14.8689238Z'
+      - '2020-11-18T22:23:10.1306401Z'
     status:
       code: 201
       message: Created
