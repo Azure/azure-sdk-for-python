@@ -75,13 +75,11 @@ class TextAnalyticsAsyncLROPoller(AsyncLROBasePolling):
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
         """
-        count = 0
-        while not self.finished() and count < 100:
+        while not self.finished():
             await self._delay()
             await self.update_status()
-            count += 1
 
-        if self._failed(self.status()) or count == 100:
+        if self._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)

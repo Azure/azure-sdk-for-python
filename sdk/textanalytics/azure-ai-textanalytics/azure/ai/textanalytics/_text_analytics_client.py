@@ -753,7 +753,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
                 polling=TextAnalyticsLROPoller(timeout=polling_interval, **kwargs),
-                continuation_token=continuation_token
+                continuation_token=continuation_token,
                 **kwargs
             )
 

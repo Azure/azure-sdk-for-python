@@ -116,7 +116,7 @@ def prepare_result(func):
                     results[idx] = func(item, results)
             return results
 
-        lro = kwargs.pop("lro", False)
+        lro = kwargs.get("lro", False)
 
         if lro:
             return lro_wrapper(*args)
@@ -193,32 +193,32 @@ def healthcare_result(health_result, results): # pylint: disable=unused-argument
     return AnalyzeHealthcareResultItem._from_generated(health_result) # pylint: disable=protected-access
 
 
-def analyze_result(doc_id_order, _, response_headers, tasks, **kwargs): # pylint: disable=unused-argument
+def analyze_result(doc_id_order, obj, response_headers, tasks, **kwargs): # pylint: disable=unused-argument
     return TextAnalysisResult(
         entities_recognition_results=[
             EntitiesRecognitionTaskResult(
                 name=t.name,
-                results=prepare_result(entities_result)(doc_id_order, t.results, response_headers, lro=True)
+                results=entities_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_tasks
         ] if tasks.entity_recognition_tasks else [],
         pii_entities_recognition_results=[
             PiiEntitiesRecognitionTaskResult(
                 name=t.name,
-                results=prepare_result(pii_entities_result)(doc_id_order, t.results, response_headers, lro=True)
+                results=pii_entities_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.entity_recognition_pii_tasks
         ] if tasks.entity_recognition_pii_tasks else [],
         key_phrase_extraction_results=[
             KeyPhraseExtractionTaskResult(
                 name=t.name,
-                results=prepare_result(key_phrases_result)(doc_id_order, t.results, response_headers, lro=True)
+                results=key_phrases_result(doc_id_order, t.results, response_headers, lro=True)
             ) for t in tasks.key_phrase_extraction_tasks
         ] if tasks.key_phrase_extraction_tasks else []
     )
 
 
-def healthcare_extract_page_data(doc_id_order, _, response_headers, health_job_state): # pylint: disable=unused-argument
-    return health_job_state.next_link, \
-        prepare_result(healthcare_result)(doc_id_order, health_job_state.results, response_headers, lro=True)
+def healthcare_extract_page_data(doc_id_order, obj, response_headers, health_job_state): # pylint: disable=unused-argument
+    return (health_job_state.next_link,
+        healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True))
 
 
 def analyze_extract_page_data(doc_id_order, obj, response_headers, analyze_job_state):

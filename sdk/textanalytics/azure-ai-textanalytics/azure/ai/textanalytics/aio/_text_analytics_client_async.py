@@ -43,7 +43,8 @@ from .._models import (
     AnalyzeHealthcareResultItem,
     EntitiesRecognitionTask,
     PiiEntitiesRecognitionTask,
-    KeyPhraseExtractionTask
+    KeyPhraseExtractionTask,
+    TextAnalysisResult
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from .._async_lro import TextAnalyticsAsyncLROPoller
@@ -562,7 +563,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResult]]
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResultItem]]
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -586,7 +587,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if no Retry-After header is present. Defaults to 30 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
-            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResult`].
+            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`].
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. admonition:: Example:
