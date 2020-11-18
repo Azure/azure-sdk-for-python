@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class LinkedServicesOperations(object):
-    """LinkedServicesOperations operations.
+class ManagedVirtualNetworksOperations(object):
+    """ManagedVirtualNetworksOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -51,19 +51,19 @@ class LinkedServicesOperations(object):
         factory_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.LinkedServiceListResponse"]
-        """Lists linked services.
+        # type: (...) -> Iterable["models.ManagedVirtualNetworkListResponse"]
+        """Lists managed Virtual Networks.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either LinkedServiceListResponse or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.LinkedServiceListResponse]
+        :return: An iterator like instance of either ManagedVirtualNetworkListResponse or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.ManagedVirtualNetworkListResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LinkedServiceListResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedVirtualNetworkListResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -97,7 +97,7 @@ class LinkedServicesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('LinkedServiceListResponse', pipeline_response)
+            deserialized = self._deserialize('ManagedVirtualNetworkListResponse', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -118,37 +118,37 @@ class LinkedServicesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices'}  # type: ignore
+    list_by_factory.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks'}  # type: ignore
 
     def create_or_update(
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        linked_service_name,  # type: str
-        linked_service,  # type: "models.LinkedServiceResource"
+        managed_virtual_network_name,  # type: str
+        managed_virtual_network,  # type: "models.ManagedVirtualNetworkResource"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.LinkedServiceResource"
-        """Creates or updates a linked service.
+        # type: (...) -> "models.ManagedVirtualNetworkResource"
+        """Creates or updates a managed Virtual Network.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param linked_service_name: The linked service name.
-        :type linked_service_name: str
-        :param linked_service: Linked service resource definition.
-        :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceResource
-        :param if_match: ETag of the linkedService entity.  Should only be specified for update, for
-         which it should match existing entity or can be * for unconditional update.
+        :param managed_virtual_network_name: Managed virtual network name.
+        :type managed_virtual_network_name: str
+        :param managed_virtual_network: Managed Virtual Network resource definition.
+        :type managed_virtual_network: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
+        :param if_match: ETag of the managed Virtual Network entity. Should only be specified for
+         update, for which it should match existing entity or can be * for unconditional update.
         :type if_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LinkedServiceResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource
+        :return: ManagedVirtualNetworkResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LinkedServiceResource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedVirtualNetworkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -163,7 +163,7 @@ class LinkedServicesOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+            'managedVirtualNetworkName': self._serialize.url("managed_virtual_network_name", managed_virtual_network_name, 'str', max_length=127, min_length=1, pattern=r'^([_A-Za-z0-9]|([_A-Za-z0-9][-_A-Za-z0-9]{0,125}[_A-Za-z0-9]))$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -179,7 +179,7 @@ class LinkedServicesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(linked_service, 'LinkedServiceResource')
+        body_content = self._serialize.body(managed_virtual_network, 'ManagedVirtualNetworkResource')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -189,41 +189,41 @@ class LinkedServicesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('LinkedServiceResource', pipeline_response)
+        deserialized = self._deserialize('ManagedVirtualNetworkResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}'}  # type: ignore
 
     def get(
         self,
         resource_group_name,  # type: str
         factory_name,  # type: str
-        linked_service_name,  # type: str
+        managed_virtual_network_name,  # type: str
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.LinkedServiceResource"]
-        """Gets a linked service.
+        # type: (...) -> "models.ManagedVirtualNetworkResource"
+        """Gets a managed Virtual Network.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
         :param factory_name: The factory name.
         :type factory_name: str
-        :param linked_service_name: The linked service name.
-        :type linked_service_name: str
-        :param if_none_match: ETag of the linked service entity. Should only be specified for get. If
-         the ETag matches the existing entity tag, or if * was provided, then no content will be
+        :param managed_virtual_network_name: Managed virtual network name.
+        :type managed_virtual_network_name: str
+        :param if_none_match: ETag of the managed Virtual Network entity. Should only be specified for
+         get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned.
         :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LinkedServiceResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource or None
+        :return: ManagedVirtualNetworkResource, or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LinkedServiceResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedVirtualNetworkResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -237,7 +237,7 @@ class LinkedServicesOperations(object):
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+            'managedVirtualNetworkName': self._serialize.url("managed_virtual_network_name", managed_virtual_network_name, 'str', max_length=127, min_length=1, pattern=r'^([_A-Za-z0-9]|([_A-Za-z0-9][-_A-Za-z0-9]{0,125}[_A-Za-z0-9]))$'),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -255,76 +255,14 @@ class LinkedServicesOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('LinkedServiceResource', pipeline_response)
+        deserialized = self._deserialize('ManagedVirtualNetworkResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}'}  # type: ignore
-
-    def delete(
-        self,
-        resource_group_name,  # type: str
-        factory_name,  # type: str
-        linked_service_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Deletes a linked service.
-
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param factory_name: The factory name.
-        :type factory_name: str
-        :param linked_service_name: The linked service name.
-        :type linked_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01"
-        accept = "application/json"
-
-        # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'factoryName': self._serialize.url("factory_name", factory_name, 'str', max_length=63, min_length=3, pattern=r'^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$'),
-            'linkedServiceName': self._serialize.url("linked_service_name", linked_service_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}'}  # type: ignore
