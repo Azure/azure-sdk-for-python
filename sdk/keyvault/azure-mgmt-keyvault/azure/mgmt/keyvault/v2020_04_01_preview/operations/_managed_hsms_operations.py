@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class ManagedHsmsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,11 +51,11 @@ class ManagedHsmsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        parameters,  # type: "models.ManagedHsm"
+        parameters,  # type: "_models.ManagedHsm"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedHsm"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        # type: (...) -> "_models.ManagedHsm"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -91,7 +91,7 @@ class ManagedHsmsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -110,10 +110,10 @@ class ManagedHsmsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        parameters,  # type: "models.ManagedHsm"
+        parameters,  # type: "_models.ManagedHsm"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ManagedHsm"]
+        # type: (...) -> LROPoller["_models.ManagedHsm"]
         """Create or update a managed HSM Pool in the specified subscription.
 
         :param resource_group_name: Name of the resource group that contains the managed HSM pool.
@@ -133,7 +133,7 @@ class ManagedHsmsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -158,7 +158,13 @@ class ManagedHsmsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -176,11 +182,11 @@ class ManagedHsmsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        parameters,  # type: "models.ManagedHsm"
+        parameters,  # type: "_models.ManagedHsm"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedHsm"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        # type: (...) -> "_models.ManagedHsm"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,7 +222,7 @@ class ManagedHsmsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -235,10 +241,10 @@ class ManagedHsmsOperations(object):
         self,
         resource_group_name,  # type: str
         name,  # type: str
-        parameters,  # type: "models.ManagedHsm"
+        parameters,  # type: "_models.ManagedHsm"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.ManagedHsm"]
+        # type: (...) -> LROPoller["_models.ManagedHsm"]
         """Update a managed HSM Pool in the specified subscription.
 
         :param resource_group_name: Name of the resource group that contains the managed HSM pool.
@@ -258,7 +264,7 @@ class ManagedHsmsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -283,7 +289,13 @@ class ManagedHsmsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -335,7 +347,7 @@ class ManagedHsmsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -388,7 +400,13 @@ class ManagedHsmsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -408,7 +426,7 @@ class ManagedHsmsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ManagedHsm"
+        # type: (...) -> "_models.ManagedHsm"
         """Gets the specified managed HSM Pool.
 
         :param resource_group_name: Name of the resource group that contains the managed HSM pool.
@@ -420,7 +438,7 @@ class ManagedHsmsOperations(object):
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsm
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -451,7 +469,7 @@ class ManagedHsmsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagedHsm', pipeline_response)
@@ -468,7 +486,7 @@ class ManagedHsmsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagedHsmListResult"]
+        # type: (...) -> Iterable["_models.ManagedHsmListResult"]
         """The List operation gets information about the managed HSM Pools associated with the
         subscription and within the specified resource group.
 
@@ -481,7 +499,7 @@ class ManagedHsmsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsmListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsmListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -529,7 +547,7 @@ class ManagedHsmsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ManagedHsmError, response)
+                error = self._deserialize(_models.ManagedHsmError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -545,7 +563,7 @@ class ManagedHsmsOperations(object):
         top=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.ManagedHsmListResult"]
+        # type: (...) -> Iterable["_models.ManagedHsmListResult"]
         """The List operation gets information about the managed HSM Pools associated with the
         subscription.
 
@@ -556,7 +574,7 @@ class ManagedHsmsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsmListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsmListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -603,7 +621,7 @@ class ManagedHsmsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ManagedHsmError, response)
+                error = self._deserialize(_models.ManagedHsmError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
