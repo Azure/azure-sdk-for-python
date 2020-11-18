@@ -13,6 +13,121 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class CheckRestrictionsRequest(Model):
+    """The check policy restrictions parameters describing the resource that is
+    being evaluated.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_details: Required. The information about the resource that
+     will be evaluated.
+    :type resource_details:
+     ~azure.mgmt.policyinsights.models.CheckRestrictionsResourceDetails
+    :param pending_fields: The list of fields and values that should be
+     evaluated for potential restrictions.
+    :type pending_fields: list[~azure.mgmt.policyinsights.models.PendingField]
+    """
+
+    _validation = {
+        'resource_details': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_details': {'key': 'resourceDetails', 'type': 'CheckRestrictionsResourceDetails'},
+        'pending_fields': {'key': 'pendingFields', 'type': '[PendingField]'},
+    }
+
+    def __init__(self, *, resource_details, pending_fields=None, **kwargs) -> None:
+        super(CheckRestrictionsRequest, self).__init__(**kwargs)
+        self.resource_details = resource_details
+        self.pending_fields = pending_fields
+
+
+class CheckRestrictionsResourceDetails(Model):
+    """The information about the resource that will be evaluated.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_content: Required. The resource content. This should
+     include whatever properties are already known and can be a partial set of
+     all resource properties.
+    :type resource_content: object
+    :param api_version: The api-version of the resource content.
+    :type api_version: str
+    :param scope: The scope where the resource is being created. For example,
+     if the resource is a child resource this would be the parent resource's
+     resource ID.
+    :type scope: str
+    """
+
+    _validation = {
+        'resource_content': {'required': True},
+    }
+
+    _attribute_map = {
+        'resource_content': {'key': 'resourceContent', 'type': 'object'},
+        'api_version': {'key': 'apiVersion', 'type': 'str'},
+        'scope': {'key': 'scope', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_content, api_version: str=None, scope: str=None, **kwargs) -> None:
+        super(CheckRestrictionsResourceDetails, self).__init__(**kwargs)
+        self.resource_content = resource_content
+        self.api_version = api_version
+        self.scope = scope
+
+
+class CheckRestrictionsResult(Model):
+    """The result of a check policy restrictions evaluation on a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar field_restrictions: The restrictions that will be placed on various
+     fields in the resource by policy.
+    :vartype field_restrictions:
+     list[~azure.mgmt.policyinsights.models.FieldRestrictions]
+    :ivar content_evaluation_result: Evaluation results for the provided
+     partial resource content.
+    :vartype content_evaluation_result:
+     ~azure.mgmt.policyinsights.models.CheckRestrictionsResultContentEvaluationResult
+    """
+
+    _validation = {
+        'field_restrictions': {'readonly': True},
+        'content_evaluation_result': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'field_restrictions': {'key': 'fieldRestrictions', 'type': '[FieldRestrictions]'},
+        'content_evaluation_result': {'key': 'contentEvaluationResult', 'type': 'CheckRestrictionsResultContentEvaluationResult'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CheckRestrictionsResult, self).__init__(**kwargs)
+        self.field_restrictions = None
+        self.content_evaluation_result = None
+
+
+class CheckRestrictionsResultContentEvaluationResult(Model):
+    """Evaluation results for the provided partial resource content.
+
+    :param policy_evaluations: Policy evaluation results against the given
+     resource content. This will indicate if the partial content that was
+     provided will be denied as-is.
+    :type policy_evaluations:
+     list[~azure.mgmt.policyinsights.models.PolicyEvaluationResult]
+    """
+
+    _attribute_map = {
+        'policy_evaluations': {'key': 'policyEvaluations', 'type': '[PolicyEvaluationResult]'},
+    }
+
+    def __init__(self, *, policy_evaluations=None, **kwargs) -> None:
+        super(CheckRestrictionsResultContentEvaluationResult, self).__init__(**kwargs)
+        self.policy_evaluations = policy_evaluations
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -200,10 +315,15 @@ class ErrorResponseException(HttpOperationError):
 class ExpressionEvaluationDetails(Model):
     """Evaluation details of policy language expressions.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param result: Evaluation result.
     :type result: str
     :param expression: Expression evaluated.
     :type expression: str
+    :ivar expression_kind: The kind of expression that was evaluated.
+    :vartype expression_kind: str
     :param path: Property path if the expression is a field or an alias.
     :type path: str
     :param expression_value: Value of the expression.
@@ -216,9 +336,14 @@ class ExpressionEvaluationDetails(Model):
     :type operator: str
     """
 
+    _validation = {
+        'expression_kind': {'readonly': True},
+    }
+
     _attribute_map = {
         'result': {'key': 'result', 'type': 'str'},
         'expression': {'key': 'expression', 'type': 'str'},
+        'expression_kind': {'key': 'expressionKind', 'type': 'str'},
         'path': {'key': 'path', 'type': 'str'},
         'expression_value': {'key': 'expressionValue', 'type': 'object'},
         'target_value': {'key': 'targetValue', 'type': 'object'},
@@ -229,10 +354,83 @@ class ExpressionEvaluationDetails(Model):
         super(ExpressionEvaluationDetails, self).__init__(**kwargs)
         self.result = result
         self.expression = expression
+        self.expression_kind = None
         self.path = path
         self.expression_value = expression_value
         self.target_value = target_value
         self.operator = operator
+
+
+class FieldRestriction(Model):
+    """The restrictions on a field imposed by a specific policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar result: The type of restriction that is imposed on the field.
+     Possible values include: 'Required', 'Removed', 'Deny'
+    :vartype result: str or
+     ~azure.mgmt.policyinsights.models.FieldRestrictionResult
+    :ivar default_value: The value that policy will set for the field if the
+     user does not provide a value.
+    :vartype default_value: str
+    :ivar values: The values that policy either requires or denies for the
+     field.
+    :vartype values: list[str]
+    :ivar policy: The details of the policy that is causing the field
+     restriction.
+    :vartype policy: ~azure.mgmt.policyinsights.models.PolicyReference
+    """
+
+    _validation = {
+        'result': {'readonly': True},
+        'default_value': {'readonly': True},
+        'values': {'readonly': True},
+        'policy': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'result': {'key': 'result', 'type': 'str'},
+        'default_value': {'key': 'defaultValue', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+        'policy': {'key': 'policy', 'type': 'PolicyReference'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(FieldRestriction, self).__init__(**kwargs)
+        self.result = None
+        self.default_value = None
+        self.values = None
+        self.policy = None
+
+
+class FieldRestrictions(Model):
+    """The restrictions that will be placed on a field in the resource by policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar field: The name of the field. This can be a top-level property like
+     'name' or 'type' or an Azure Policy field alias.
+    :vartype field: str
+    :param restrictions: The restrictions placed on that field by policy.
+    :type restrictions:
+     list[~azure.mgmt.policyinsights.models.FieldRestriction]
+    """
+
+    _validation = {
+        'field': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'field': {'key': 'field', 'type': 'str'},
+        'restrictions': {'key': 'restrictions', 'type': '[FieldRestriction]'},
+    }
+
+    def __init__(self, *, restrictions=None, **kwargs) -> None:
+        super(FieldRestrictions, self).__init__(**kwargs)
+        self.field = None
+        self.restrictions = restrictions
 
 
 class IfNotExistsEvaluationDetails(Model):
@@ -328,6 +526,35 @@ class OperationsListResults(Model):
         super(OperationsListResults, self).__init__(**kwargs)
         self.odatacount = odatacount
         self.value = value
+
+
+class PendingField(Model):
+    """A field that should be evaluated against Azure Policy to determine
+    restrictions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param field: Required. The name of the field. This can be a top-level
+     property like 'name' or 'type' or an Azure Policy field alias.
+    :type field: str
+    :param values: The list of potential values for the field that should be
+     evaluated against Azure Policy.
+    :type values: list[str]
+    """
+
+    _validation = {
+        'field': {'required': True},
+    }
+
+    _attribute_map = {
+        'field': {'key': 'field', 'type': 'str'},
+        'values': {'key': 'values', 'type': '[str]'},
+    }
+
+    def __init__(self, *, field: str, values=None, **kwargs) -> None:
+        super(PendingField, self).__init__(**kwargs)
+        self.field = field
+        self.values = values
 
 
 class PolicyAssignmentSummary(Model):
@@ -467,6 +694,44 @@ class PolicyEvaluationDetails(Model):
         super(PolicyEvaluationDetails, self).__init__(**kwargs)
         self.evaluated_expressions = evaluated_expressions
         self.if_not_exists_details = if_not_exists_details
+
+
+class PolicyEvaluationResult(Model):
+    """The result of a non-compliant policy evaluation against the given resource
+    content.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar policy_info: The details of the policy that was evaluated.
+    :vartype policy_info: ~azure.mgmt.policyinsights.models.PolicyReference
+    :ivar evaluation_result: The result of the policy evaluation against the
+     resource. This will typically be 'NonCompliant' but may contain other
+     values if errors were encountered.
+    :vartype evaluation_result: str
+    :ivar evaluation_details: The detailed results of the policy expressions
+     and values that were evaluated.
+    :vartype evaluation_details:
+     ~azure.mgmt.policyinsights.models.PolicyEvaluationDetails
+    """
+
+    _validation = {
+        'policy_info': {'readonly': True},
+        'evaluation_result': {'readonly': True},
+        'evaluation_details': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'policy_info': {'key': 'policyInfo', 'type': 'PolicyReference'},
+        'evaluation_result': {'key': 'evaluationResult', 'type': 'str'},
+        'evaluation_details': {'key': 'evaluationDetails', 'type': 'PolicyEvaluationDetails'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PolicyEvaluationResult, self).__init__(**kwargs)
+        self.policy_info = None
+        self.evaluation_result = None
+        self.evaluation_details = None
 
 
 class PolicyEvent(Model):
@@ -718,6 +983,48 @@ class PolicyMetadata(Model):
         self.id = None
         self.type = None
         self.name = None
+
+
+class PolicyReference(Model):
+    """Resource identifiers for a policy.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar policy_definition_id: The resource identifier of the policy
+     definition.
+    :vartype policy_definition_id: str
+    :ivar policy_set_definition_id: The resource identifier of the policy set
+     definition.
+    :vartype policy_set_definition_id: str
+    :ivar policy_definition_reference_id: The reference identifier of a
+     specific policy definition within a policy set definition.
+    :vartype policy_definition_reference_id: str
+    :ivar policy_assignment_id: The resource identifier of the policy
+     assignment.
+    :vartype policy_assignment_id: str
+    """
+
+    _validation = {
+        'policy_definition_id': {'readonly': True},
+        'policy_set_definition_id': {'readonly': True},
+        'policy_definition_reference_id': {'readonly': True},
+        'policy_assignment_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'policy_definition_id': {'key': 'policyDefinitionId', 'type': 'str'},
+        'policy_set_definition_id': {'key': 'policySetDefinitionId', 'type': 'str'},
+        'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'policy_assignment_id': {'key': 'policyAssignmentId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PolicyReference, self).__init__(**kwargs)
+        self.policy_definition_id = None
+        self.policy_set_definition_id = None
+        self.policy_definition_reference_id = None
+        self.policy_assignment_id = None
 
 
 class PolicyState(Model):

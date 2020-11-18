@@ -21,14 +21,18 @@ class PolicyInsightsClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id2: The ID of the target subscription.
+    :type subscription_id2: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, subscription_id2, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
+        if subscription_id2 is None:
+            raise ValueError("Parameter 'subscription_id2' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -41,3 +45,4 @@ class PolicyInsightsClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
+        self.subscription_id2 = subscription_id2

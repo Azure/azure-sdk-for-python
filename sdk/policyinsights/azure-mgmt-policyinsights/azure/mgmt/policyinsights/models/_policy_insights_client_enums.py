@@ -18,6 +18,13 @@ class ResourceDiscoveryMode(str, Enum):
     re_evaluate_compliance = "ReEvaluateCompliance"  #: Re-evaluate the compliance state of resources and then remediate the resources found to be non-compliant.
 
 
+class FieldRestrictionResult(str, Enum):
+
+    required = "Required"  #: The field and/or values are required by policy.
+    removed = "Removed"  #: The field will be removed by policy.
+    deny = "Deny"  #: The field and/or values will be denied by policy.
+
+
 class PolicyStatesResource(str, Enum):
 
     default = "default"
