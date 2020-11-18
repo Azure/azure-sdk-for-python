@@ -6,26 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from ... import models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class PolicyEventsOperations(object):
-    """PolicyEventsOperations operations.
+class PolicyEventsOperations:
+    """PolicyEventsOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -40,7 +36,7 @@ class PolicyEventsOperations(object):
 
     models = models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -48,11 +44,10 @@ class PolicyEventsOperations(object):
 
     def list_query_results_for_management_group(
         self,
-        management_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        management_group_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the management group.
 
         :param management_group_name: Management group name.
@@ -61,7 +56,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -133,17 +128,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -153,18 +148,17 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_management_group.metadata = {'url': '/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore
 
     def list_query_results_for_subscription(
         self,
-        subscription_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        subscription_id: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the subscription.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -173,7 +167,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -243,17 +237,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -263,19 +257,18 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore
 
     def list_query_results_for_resource_group(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        subscription_id: str,
+        resource_group_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the resources under the resource group.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -286,7 +279,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -357,17 +350,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -377,18 +370,17 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore
 
     def list_query_results_for_resource(
         self,
-        resource_id,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        resource_id: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the resource.
 
         :param resource_id: Resource ID.
@@ -397,7 +389,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -471,17 +463,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -491,19 +483,18 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_resource.metadata = {'url': '/{resourceId}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore
 
     def list_query_results_for_policy_set_definition(
         self,
-        subscription_id,  # type: str
-        policy_set_definition_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        subscription_id: str,
+        policy_set_definition_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy set definition.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -514,7 +505,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -587,17 +578,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -607,19 +598,18 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_policy_set_definition.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore
 
     def list_query_results_for_policy_definition(
         self,
-        subscription_id,  # type: str
-        policy_definition_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        subscription_id: str,
+        policy_definition_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy definition.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -630,7 +620,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -703,17 +693,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -723,19 +713,18 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_policy_definition.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore
 
     def list_query_results_for_subscription_level_policy_assignment(
         self,
-        subscription_id,  # type: str
-        policy_assignment_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        subscription_id: str,
+        policy_assignment_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the subscription level policy assignment.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -746,7 +735,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -819,17 +808,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -839,20 +828,19 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_subscription_level_policy_assignment.metadata = {'url': '/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore
 
     def list_query_results_for_resource_group_level_policy_assignment(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        policy_assignment_name,  # type: str
-        query_options=None,  # type: Optional["models.QueryOptions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.PolicyEventsQueryResults"]
+        subscription_id: str,
+        resource_group_name: str,
+        policy_assignment_name: str,
+        query_options: Optional["models.QueryOptions"] = None,
+        **kwargs
+    ) -> AsyncIterable["models.PolicyEventsQueryResults"]:
         """Queries policy events for the resource group level policy assignment.
 
         :param subscription_id: Microsoft Azure subscription ID.
@@ -865,7 +853,7 @@ class PolicyEventsOperations(object):
         :type query_options: ~azure.mgmt.policyinsights.models.QueryOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PolicyEventsQueryResults or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.policyinsights.models.PolicyEventsQueryResults]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["models.PolicyEventsQueryResults"]
@@ -939,17 +927,17 @@ class PolicyEventsOperations(object):
                 request = self._client.get(url, query_parameters, header_parameters)
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize('PolicyEventsQueryResults', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -959,7 +947,7 @@ class PolicyEventsOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
     list_query_results_for_resource_group_level_policy_assignment.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults'}  # type: ignore

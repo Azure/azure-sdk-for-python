@@ -6,16 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core import AsyncARMPipelineClient
 from msrest import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import PolicyInsightsClientConfiguration
 from .operations import PolicyTrackedResourcesOperations
@@ -24,26 +22,26 @@ from .operations import PolicyEventsOperations
 from .operations import PolicyStatesOperations
 from .operations import Operations
 from .operations import PolicyMetadataOperations
-from . import models
+from .. import models
 
 
 class PolicyInsightsClient(object):
     """PolicyInsightsClient.
 
     :ivar policy_tracked_resources: PolicyTrackedResourcesOperations operations
-    :vartype policy_tracked_resources: azure.mgmt.policyinsights.operations.PolicyTrackedResourcesOperations
+    :vartype policy_tracked_resources: azure.mgmt.policyinsights.aio.operations.PolicyTrackedResourcesOperations
     :ivar remediations: RemediationsOperations operations
-    :vartype remediations: azure.mgmt.policyinsights.operations.RemediationsOperations
+    :vartype remediations: azure.mgmt.policyinsights.aio.operations.RemediationsOperations
     :ivar policy_events: PolicyEventsOperations operations
-    :vartype policy_events: azure.mgmt.policyinsights.operations.PolicyEventsOperations
+    :vartype policy_events: azure.mgmt.policyinsights.aio.operations.PolicyEventsOperations
     :ivar policy_states: PolicyStatesOperations operations
-    :vartype policy_states: azure.mgmt.policyinsights.operations.PolicyStatesOperations
+    :vartype policy_states: azure.mgmt.policyinsights.aio.operations.PolicyStatesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.policyinsights.operations.Operations
+    :vartype operations: azure.mgmt.policyinsights.aio.operations.Operations
     :ivar policy_metadata: PolicyMetadataOperations operations
-    :vartype policy_metadata: azure.mgmt.policyinsights.operations.PolicyMetadataOperations
+    :vartype policy_metadata: azure.mgmt.policyinsights.aio.operations.PolicyMetadataOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: Microsoft Azure subscription ID.
     :type subscription_id: str
     :param str base_url: Service URL
@@ -52,16 +50,15 @@ class PolicyInsightsClient(object):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         if not base_url:
             base_url = 'https://management.azure.com'
         self._config = PolicyInsightsClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -81,15 +78,12 @@ class PolicyInsightsClient(object):
         self.policy_metadata = PolicyMetadataOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> PolicyInsightsClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "PolicyInsightsClient":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
