@@ -16,7 +16,7 @@ class MgmtRelayTest(AzureMgmtTestCase):
         super(MgmtRelayTest, self).setUp()
 
         self.relay_client = self.create_mgmt_client(
-            azure.mgmt.relay.RelayManagementClient
+            azure.mgmt.relay.RelayAPI
         )
 
     def test_operations_list(self):

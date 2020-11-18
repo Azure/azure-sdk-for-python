@@ -181,7 +181,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message)
-        if self._auto_lock_renewer and not self._session:
+        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
             self._auto_lock_renewer.register(self, message)
         return message
 
@@ -520,7 +520,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=max_wait_time,
             operation_requires_timeout=True
         )
-        if self._auto_lock_renewer and not self._session:
+        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
             for message in messages:
                 self._auto_lock_renewer.register(self, message)
         return messages
@@ -581,7 +581,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             handler,
             timeout=timeout
         )
-        if self._auto_lock_renewer and not self._session:
+        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
             for message in messages:
                 self._auto_lock_renewer.register(self, message)
         return messages

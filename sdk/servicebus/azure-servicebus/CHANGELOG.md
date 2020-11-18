@@ -7,6 +7,11 @@
 * `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
 * `send_messages`, `schedule_messages`, `cancel_scheduled_messages` and `receive_deferred_messages` now performs a no-op rather than raising a `ValueError` if provided an empty list of messages or an empty batch.
 
+**BugFixes**
+
+* FQDNs and Connection strings are now supported even with strippable whitespace or protocol headers (e.g. 'sb://').
+* Using parameter `auto_lock_renewer` on a sessionful receiver alongside `ReceiveMode.ReceiveAndDelete` will no longer fail during receipt due to failure to register the message with the renewer.
+
 ## 7.0.0b8 (2020-11-05)
 
 **New Features**
