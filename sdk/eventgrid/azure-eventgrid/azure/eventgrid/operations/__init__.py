@@ -9,11 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import EventGridClientConfiguration
-from ._event_grid_client import EventGridClient
-__all__ = ['EventGridClient', 'EventGridClientConfiguration']
+from ._event_grid_client_operations import EventGridClientOperationsMixin
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'EventGridClientOperationsMixin',
+]
