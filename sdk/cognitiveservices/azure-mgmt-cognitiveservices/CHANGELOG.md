@@ -1,5 +1,8 @@
 # Release History
 
+## 11.0.0b2 (Unreleased)
+
+
 ## 11.0.0b1 (2020-11-03)
 
 This is beta preview version.
