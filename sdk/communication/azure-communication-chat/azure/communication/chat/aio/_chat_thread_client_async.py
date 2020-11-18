@@ -140,7 +140,7 @@ class ChatThreadClient(object):
         update_topic_request = UpdateChatThreadRequest(topic=topic)
         return await self._client.update_chat_thread(
             chat_thread_id=self._thread_id,
-            update_chat_thread_request=update_thread_request,
+            update_chat_thread_request=update_topic_request,
             **kwargs)
 
     @distributed_trace_async
