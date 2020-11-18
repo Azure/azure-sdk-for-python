@@ -9,8 +9,8 @@ FILE: chat_thread_client_sample.py
 DESCRIPTION:
     These samples demonstrate create a chat thread client, to update
     chat thread, get chat message, list chat messages, update chat message, send
-    read receipt, list read receipts, delete chat message, add members, remove
-    members, list members, send typing notification
+    read receipt, list read receipts, delete chat message, add participants, remove
+    participants, list participants, send typing notification
     You need to use azure.communication.configuration module to get user access
     token and user identity before run this sample
 
@@ -50,18 +50,18 @@ class ChatThreadClientSamples(object):
         from datetime import datetime
         from azure.communication.chat import (
             ChatClient,
-            ChatThreadMember,
+            ChatThreadParticipant,
             CommunicationUser,
             CommunicationUserCredential
         )
         chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
         topic = "test topic"
-        members = [ChatThreadMember(
+        participants = [ChatThreadParticipant(
             user=self.user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
-        chat_thread_client = chat_client.create_chat_thread(topic, members)
+        chat_thread_client = chat_client.create_chat_thread(topic, participants)
         # [END create_chat_thread_client]
         self._thread_id = chat_thread_client.thread_id
         print("chat_thread_client created")
@@ -164,43 +164,43 @@ class ChatThreadClientSamples(object):
         # [END delete_message]
         print("delete_chat_message succeeded")
 
-    def list_members(self):
+    def list_participants(self):
         from azure.communication.chat import ChatThreadClient
         from azure.communication.chat import CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
-        # [START list_members]
-        chat_thread_members = chat_thread_client.list_members()
-        print("list_chat_members succeeded, members: ")
-        for chat_thread_member in chat_thread_members:
-            print(chat_thread_member)
-        # [END list_members]
+        # [START list_participants]
+        chat_thread_participants = chat_thread_client.list_participants()
+        print("list_chat_participants succeeded, participants: ")
+        for chat_thread_participant in chat_thread_participants:
+            print(chat_thread_participant)
+        # [END list_participants]
 
-    def add_members(self):
+    def add_participants(self):
         from azure.communication.chat import ChatThreadClient, CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
 
-        # [START add_members]
-        from azure.communication.chat import ChatThreadMember
+        # [START add_participants]
+        from azure.communication.chat import ChatThreadParticipant
         from datetime import datetime
-        new_member = ChatThreadMember(
+        new_participant = ChatThreadParticipant(
                 user=self.new_user,
                 display_name='name',
                 share_history_time=datetime.utcnow())
-        thread_members = [new_member]
-        chat_thread_client.add_members(thread_members)
-        # [END add_members]
-        print("add_chat_members succeeded")
+        thread_participants = [new_participant]
+        chat_thread_client.add_participants(thread_participants)
+        # [END add_participants]
+        print("add_chat_participants succeeded")
 
-    def remove_member(self):
+    def remove_participant(self):
         from azure.communication.chat import ChatThreadClient
         from azure.communication.chat import CommunicationUserCredential, CommunicationUser
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
 
-        # [START remove_member]
-        chat_thread_client.remove_member(self.new_user)
-        # [END remove_member]
+        # [START remove_participant]
+        chat_thread_client.remove_participant(self.new_user)
+        # [END remove_participant]
 
-        print("remove_chat_member succeeded")
+        print("remove_chat_participant succeeded")
 
     def send_typing_notification(self):
         from azure.communication.chat import ChatThreadClient, CommunicationUserCredential
@@ -227,8 +227,8 @@ if __name__ == '__main__':
     sample.send_read_receipt()
     sample.list_read_receipts()
     sample.delete_message()
-    sample.add_members()
-    sample.list_members()
-    sample.remove_member()
+    sample.add_participants()
+    sample.list_participants()
+    sample.remove_participant()
     sample.send_typing_notification()
     sample.clean_up()

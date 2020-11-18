@@ -12,7 +12,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (
     ChatThreadClient,
     ChatMessagePriority,
-    ChatThreadMember,
+    ChatThreadParticipant,
     CommunicationUser,
     CommunicationUserCredential
 )
@@ -35,7 +35,7 @@ class TestChatThreadClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=200)
+            return mock_response(status_code=204)
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         topic = "update topic"
@@ -141,7 +141,7 @@ class TestChatThreadClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=200)
+            return mock_response(status_code=204)
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
@@ -168,52 +168,52 @@ class TestChatThreadClient(unittest.TestCase):
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
 
-    def test_list_members(self):
+    def test_list_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        member_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+        participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=200, json_payload={"value": [{"id": member_id}]})
+            return mock_response(status_code=200, json_payload={"value": [{"id": participant_id}]})
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
-        chat_thread_members = None
+        chat_thread_participants = None
         try:
-            chat_thread_members = chat_thread_client.list_members()
+            chat_thread_participants = chat_thread_client.list_participants()
         except:
             raised = True
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
-        for chat_thread_member_page in chat_thread_members.by_page():
-            l = list(chat_thread_member_page)
+        for chat_thread_participant_page in chat_thread_participants.by_page():
+            l = list(chat_thread_participant_page)
             assert len(l) == 1
-            l[0].user.id = member_id
+            l[0].user.id = participant_id
 
-    def test_add_members(self):
+    def test_add_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        new_member_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=207)
+            return mock_response(status_code=201)
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
-        new_member = ChatThreadMember(
-                user=CommunicationUser(new_member_id),
+        new_participant = ChatThreadParticipant(
+                user=CommunicationUser(new_participant_id),
                 display_name='name',
                 share_history_time=datetime.utcnow())
-        members = [new_member]
+        participants = [new_participant]
 
         try:
-            chat_thread_client.add_members(members)
+            chat_thread_client.add_participants(participants)
         except:
             raised = True
 
         self.assertFalse(raised, 'Expected is no excpetion raised')
 
-    def test_remove_member(self):
+    def test_remove_participant(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-        member_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+        participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
         raised = False
 
         def mock_send(*_, **__):
@@ -221,7 +221,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
 
         try:
-            chat_thread_client.remove_member(CommunicationUser(member_id))
+            chat_thread_client.remove_participant(CommunicationUser(participant_id))
         except:
             raised = True
 

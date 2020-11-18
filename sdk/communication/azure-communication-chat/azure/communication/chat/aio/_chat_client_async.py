@@ -28,7 +28,7 @@ from .._generated.models import (
 )
 from .._models import (
     ChatThread,
-    ChatThreadMember
+    ChatThreadParticipant
 )
 from .._utils import _to_utc_datetime  # pylint: disable=unused-import
 from .._version import SDK_MONIKER
@@ -118,15 +118,15 @@ class ChatClient(object):
     @distributed_trace_async
     async def create_chat_thread(
         self, topic: str,
-        thread_members: List[ChatThreadMember],
+        thread_participants: List[ChatThreadParticipant],
         **kwargs
     ) -> ChatThreadClient:
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
         :type topic: str
-        :param thread_members: Required. Members to be added to the thread.
-        :type thread_members: list[~azure.communication.chat.ChatThreadMember]
+        :param thread_participants: Required. Participants to be added to the thread.
+        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
         :return: ChatThreadClient
         :rtype: ~azure.communication.chat.aio.ChatThreadClient
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -142,23 +142,15 @@ class ChatClient(object):
         """
         if not topic:
             raise ValueError("topic cannot be None.")
-        if not thread_members:
-            raise ValueError("List of ThreadMember cannot be None.")
+        if not thread_participants:
+            raise ValueError("List of ThreadParticipant cannot be None.")
 
-        members = [m._to_generated() for m in thread_members]  # pylint:disable=protected-access
-        create_thread_request = CreateChatThreadRequest(topic=topic, members=members)
+        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+        create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants)
 
         create_chat_thread_result = await self._client.create_chat_thread(create_thread_request, **kwargs)
 
-        multiple_status = create_chat_thread_result.multiple_status
-        thread_status = [status for status in multiple_status if status.type == "Thread"]
-        if not thread_status:
-            raise HttpResponseError(message="Can not find chat thread status result from: {}".format(thread_status))
-        if thread_status[0].status_code != 201:
-            raise HttpResponseError(message="Chat thread creation failed with status code {}, message: {}.".format(
-                thread_status[0].status_code, thread_status[0].message))
-
-        thread_id = thread_status[0].id
+        thread_id = create_chat_thread_result.id
 
         return ChatThreadClient(
             endpoint=self._endpoint,

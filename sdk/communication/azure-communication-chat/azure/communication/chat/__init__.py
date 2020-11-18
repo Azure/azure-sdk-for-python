@@ -8,7 +8,7 @@ from ._generated.models import (
 )
 from ._shared.user_credential import CommunicationUserCredential
 from ._models import (
-    ChatThreadMember,
+    ChatThreadParticipant,
     ChatMessage,
     ChatThread,
     ChatMessageReadReceipt,
@@ -25,7 +25,7 @@ __all__ = [
     'ChatThread',
     'ChatThreadInfo',
     'CommunicationUserCredential',
-    'ChatThreadMember',
+    'ChatThreadParticipant',
     'CommunicationUser',
 ]
 __version__ = VERSION

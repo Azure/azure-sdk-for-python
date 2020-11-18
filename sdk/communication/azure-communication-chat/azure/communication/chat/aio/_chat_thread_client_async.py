@@ -21,7 +21,7 @@ from .._common import CommunicationUserCredentialPolicy
 from .._shared.user_credential_async import CommunicationUserCredential
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
-    AddChatThreadMembersRequest,
+    AddChatParticipantsRequest,
     SendReadReceiptRequest,
     SendChatMessageRequest,
     UpdateChatMessageRequest,
@@ -29,7 +29,7 @@ from .._generated.models import (
     SendChatMessageResult
 )
 from .._models import (
-    ChatThreadMember,
+    ChatThreadParticipant,
     ChatMessage,
     ChatMessageReadReceipt
 )
@@ -42,7 +42,7 @@ class ChatThreadClient(object):
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally created by ChatClient.create_chat_thread()
 
-    This client provides operations to add member to chat thread, remove member from
+    This client provides operations to add participant to chat thread, remove participant from
     chat thread, send message, delete message, update message, send typing notifications,
     send and list read receipt
 
@@ -140,7 +140,7 @@ class ChatThreadClient(object):
         update_topic_request = UpdateChatThreadRequest(topic=topic)
         return await self._client.update_chat_thread(
             chat_thread_id=self._thread_id,
-            body=update_topic_request,
+            update_chat_thread_request=update_thread_request,
             **kwargs)
 
     @distributed_trace_async
@@ -173,7 +173,7 @@ class ChatThreadClient(object):
         post_read_receipt_request = SendReadReceiptRequest(chat_message_id=message_id)
         return await self._client.send_chat_read_receipt(
             self._thread_id,
-            body=post_read_receipt_request,
+            send_read_receipt_request=post_read_receipt_request,
             **kwargs)
 
     @distributed_trace
@@ -266,7 +266,7 @@ class ChatThreadClient(object):
         )
         send_chat_message_result = await self._client.send_chat_message(
             chat_thread_id=self._thread_id,
-            body=create_message_request,
+            send_chat_message_request=create_message_request,
             **kwargs)
 
         return send_chat_message_result.id
@@ -370,7 +370,7 @@ class ChatThreadClient(object):
         return await self._client.update_chat_message(
             chat_thread_id=self._thread_id,
             chat_message_id=message_id,
-            body=update_message_request,
+            update_chat_message_request=update_message_request,
             **kwargs)
 
     @distributed_trace_async
@@ -406,41 +406,41 @@ class ChatThreadClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_members(
+    def list_participants(
         self,
         **kwargs
-    ) -> AsyncItemPaged[ChatThreadMember]:
-        """Gets the members of a thread.
+    ) -> AsyncItemPaged[ChatThreadParticipant]:
+        """Gets the participants of a thread.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatThreadMember`]
+        :return: AsyncItemPaged[:class:`~azure.communication.chat.ChatThreadParticipant`]
         :rtype: ~azure.core.async_paging.AsyncItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample_async.py
-                :start-after: [START list_members]
-                :end-before: [END list_members]
+                :start-after: [START list_participants]
+                :end-before: [END list_participants]
                 :language: python
                 :dedent: 12
-                :caption: Listing members of chat thread.
+                :caption: Listing participants of chat thread.
         """
-        return self._client.list_chat_thread_members(
+        return self._client.list_chat_participants(
             self._thread_id,
-            cls=lambda objs: [ChatThreadMember._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
     @distributed_trace_async
-    async def add_members(
+    async def add_participants(
         self,
-        thread_members: List[ChatThreadMember],
+        thread_participants: List[ChatThreadParticipant],
         **kwargs
     ) -> None:
-        """Adds thread members to a thread. If members already exist, no change occurs.
+        """Adds thread participants to a thread. If participants already exist, no change occurs.
 
-        :param thread_members: Required. Thread members to be added to the thread.
-        :type thread_members: list[~azure.communication.chat.ChatThreadMember]
+        :param thread_participants: Required. Thread participants to be added to the thread.
+        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -449,32 +449,32 @@ class ChatThreadClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample_async.py
-                :start-after: [START add_members]
-                :end-before: [END add_members]
+                :start-after: [START add_participants]
+                :end-before: [END add_participants]
                 :language: python
                 :dedent: 12
-                :caption: Adding members to chat thread.
+                :caption: Adding participants to chat thread.
         """
-        if not thread_members:
-            raise ValueError("thread_members cannot be None.")
+        if not thread_participants:
+            raise ValueError("thread_participants cannot be None.")
 
-        members = [m._to_generated() for m in thread_members]  # pylint:disable=protected-access
-        add_thread_members_request = AddChatThreadMembersRequest(members=members)
+        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return await self._client.add_chat_thread_members(
+        return await self._client.add_chat_participants(
             chat_thread_id=self._thread_id,
-            body=add_thread_members_request,
+            add_chat_participants_request=add_thread_participants_request,
             **kwargs)
 
     @distributed_trace_async
-    async def remove_member(
+    async def remove_participant(
         self,
         user: CommunicationUser,
         **kwargs
     ) -> None:
-        """Remove a member from a thread.
+        """Remove a participant from a thread.
 
-        :param user: Required. User identity of the thread member to remove from the thread.
+        :param user: Required. User identity of the thread participant to remove from the thread.
         :type user: ~azure.communication.chat.CommunicationUser
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -484,18 +484,18 @@ class ChatThreadClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample_async.py
-                :start-after: [START remove_member]
-                :end-before: [END remove_member]
+                :start-after: [START remove_participant]
+                :end-before: [END remove_participant]
                 :language: python
                 :dedent: 12
-                :caption: Removing member from chat thread.
+                :caption: Removing participant from chat thread.
         """
         if not user:
             raise ValueError("user cannot be None.")
 
-        return await self._client.remove_chat_thread_member(
+        return await self._client.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            chat_member_id=user.identifier,
+            chat_participant_id=user.identifier,
             **kwargs)
 
     async def close(self) -> None:
