@@ -358,7 +358,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
         # subclasses in the future after we add the missing feature support in uamqp.
         # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
-        if not self._session and message._lock_expired:
+        if not self._session and message._lock_expired:  # pylint: disable=protected-access
             raise ServiceBusError(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error

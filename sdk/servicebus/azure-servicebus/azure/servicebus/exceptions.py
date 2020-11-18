@@ -153,7 +153,7 @@ def _create_servicebus_exception(logger, exception):
             # handling AMQP Errors that don't have the condition field
             exception = _handle_amqp_exception_without_condition(logger, exception)
     elif not isinstance(exception, ServiceBusError):
-        logger.info("Unexpected error occurred (%r). Handler shutting down.", exception)
+        logger.exception("Unexpected error occurred (%r). Handler shutting down.", exception)
         exception = ServiceBusError(message="Handler failed: {}.".format(exception), error=exception)
 
     return exception
@@ -207,10 +207,10 @@ class ServiceBusError(AzureError):
 
         if self._condition:
             try:
-                condition = self._condition.decode('UTF-8')
+                self._condition = self._condition.decode('UTF-8')
             except AttributeError:
-                condition = self._condition
-            message = message + " Error condition: {}.".format(str(condition))
+                pass
+            message = message + " Error condition: {}.".format(str(self._condition))
         if self._status_code is not None:
             message = message + " Status Code: {}.".format(str(self._status_code))
         super(ServiceBusError, self).__init__(message, *args, **kwargs)
@@ -219,7 +219,7 @@ class ServiceBusError(AzureError):
 class ServiceBusConnectionError(ServiceBusError):
     """An error occurred in the connection."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "An error occurred in the connection."
+        message = kwargs.pop("message", "An error occurred in the connection.")
         super(ServiceBusConnectionError, self).__init__(
             message,
             retryable=True,
@@ -231,7 +231,7 @@ class ServiceBusConnectionError(ServiceBusError):
 class ServiceBusAuthenticationError(ServiceBusError):
     """An error occurred when authenticate the connection."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "An error occurred when authenticate the connection."
+        message = kwargs.pop("message", "An error occurred when authenticating the connection.")
         super(ServiceBusAuthenticationError, self).__init__(
             message,
             retryable=True,
@@ -243,7 +243,7 @@ class ServiceBusAuthenticationError(ServiceBusError):
 class UnauthorizedAccessError(ServiceBusError):
     """An error occurred when authorizing the connection."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "An error occurred when authorizing the connection."
+        message = kwargs.pop("message", "An error occurred when authorizing the connection.")
         super(UnauthorizedAccessError, self).__init__(
             message,
             retryable=True,
@@ -255,7 +255,7 @@ class UnauthorizedAccessError(ServiceBusError):
 class OperationTimeoutError(ServiceBusError):
     """Operation timed out."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "Operation timed out."
+        message = kwargs.pop("message", "Operation timed out.")
         super(OperationTimeoutError, self).__init__(
             message,
             retryable=True,
@@ -267,7 +267,7 @@ class OperationTimeoutError(ServiceBusError):
 class MessageSizeExceededError(ServiceBusError, ValueError):
     """Message content is larger than the service bus frame size."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "Message content is larger than the service bus frame size."
+        message = kwargs.pop("message", "Message content is larger than the service bus frame size.")
         super(MessageSizeExceededError, self).__init__(
             message=message,
             retryable=False,
@@ -276,6 +276,8 @@ class MessageSizeExceededError(ServiceBusError, ValueError):
         )
 
 
+# ValueError was preferred to ServiceBusMessageError/ServiceBusError as a base
+# since this arises only from client validation.
 class MessageAlreadySettled(ValueError):
     """Failed to settle the message.
 
@@ -300,9 +302,12 @@ class MessageLockLostError(ServiceBusError):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        message = kwargs.pop("message", None) or\
-                  "The lock on the message lock has expired. " \
-                  "Callers should call attempt to receive and process the message again."
+        message = kwargs.pop(
+            "message",
+            "The lock on the message lock has expired. Callers should " +
+            "call attempt to receive and process the message again."
+        )
+
         super(MessageLockLostError, self).__init__(
             message=message,
             retryable=False,
@@ -319,8 +324,11 @@ class SessionLockLostError(ServiceBusError):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
-        message = kwargs.pop("message", None) or\
-                  "The lock on the session has expired. Callers should request the session again."
+        message = kwargs.pop(
+            "message",
+            "The lock on the session has expired. Callers should request the session again."
+        )
+
         super(SessionLockLostError, self).__init__(
             message,
             retryable=False,
@@ -332,7 +340,7 @@ class SessionLockLostError(ServiceBusError):
 class MessageNotFoundError(ServiceBusError):
     """The requested message was not found."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "The requested message was not found."
+        message = kwargs.pop("message", "The requested message was not found.")
         super(MessageNotFoundError, self).__init__(
             message,
             retryable=False,
@@ -344,7 +352,7 @@ class MessageNotFoundError(ServiceBusError):
 class MessagingEntityNotFoundError(ServiceBusError):
     """A Service Bus resource cannot be found by the Service Bus service."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "A Service Bus resource cannot be found by the Service Bus service."
+        message = kwargs.pop("message", "A Service Bus resource cannot be found by the Service Bus service.")
         super(MessagingEntityNotFoundError, self).__init__(
             message,
             retryable=False,
@@ -356,8 +364,8 @@ class MessagingEntityNotFoundError(ServiceBusError):
 class MessagingEntityDisabledError(ServiceBusError):
     """The Messaging Entity is disabled. Enable the entity again using Portal."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or \
-                  "The Messaging Entity is disabled. Enable the entity again using Portal."
+        message = kwargs.pop("message", "The Messaging Entity is disabled. Enable the entity again using Portal.")
+
         super(MessagingEntityDisabledError, self).__init__(
             message,
             retryable=True,
@@ -369,7 +377,7 @@ class MessagingEntityDisabledError(ServiceBusError):
 class MessagingEntityAlreadyExistsError(ServiceBusError):
     """An entity with the same name exists under the same namespace."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "An entity with the same name exists under the same namespace."
+        message = kwargs.pop("message", "An entity with the same name exists under the same namespace.")
         super(MessagingEntityAlreadyExistsError, self).__init__(
             message,
             retryable=False,
@@ -383,9 +391,12 @@ class QuotaExceededError(ServiceBusError):
     The quota applied to a Service Bus resource has been exceeded while interacting with the Azure Service Bus service.
     """
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or\
-                  "The quota applied to a Service Bus resource has been exceeded while " \
-                  "interacting with the Azure Service Bus service."
+        message = kwargs.pop(
+            "message",
+            "The quota applied to a Service Bus resource has been exceeded while " +
+            "interacting with the Azure Service Bus service."
+        )
+
         super(QuotaExceededError, self).__init__(
             message,
             retryable=False,
@@ -399,9 +410,11 @@ class ServiceBusyError(ServiceBusError):
     The Azure Service Bus service reports that it is busy in response to a client request to perform an operation.
     """
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or\
-                  "The Azure Service Bus service reports that it is busy in response to a " \
-                  "client request to perform an operation."
+        message = kwargs.pop(
+            "message",
+            "The Azure Service Bus service reports that it is busy in response to a " +
+            "client request to perform an operation."
+        )
         super(ServiceBusyError, self).__init__(
             message,
             retryable=False,
@@ -413,9 +426,11 @@ class ServiceBusyError(ServiceBusError):
 class ServiceBusCommunicationError(ServiceBusError):
     """There was a general communications error encountered when interacting with the Azure Service Bus service."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or \
-                  "There was a general communications error encountered when interacting " \
-                  "with the Azure Service Bus service."
+        message = kwargs.pop(
+            "message",
+            "There was a general communications error encountered when interacting " +
+            "with the Azure Service Bus service."
+        )
         super(ServiceBusCommunicationError, self).__init__(
             message,
             retryable=True,
@@ -427,7 +442,7 @@ class ServiceBusCommunicationError(ServiceBusError):
 class SessionCannotBeLockedError(ServiceBusError):
     """The requested session cannot be locked."""
     def __init__(self, **kwargs):
-        message = kwargs.pop("message", None) or "The requested session cannot be locked."
+        message = kwargs.pop("message", "The requested session cannot be locked.")
         super(SessionCannotBeLockedError, self).__init__(
             message,
             retryable=True,
