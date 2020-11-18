@@ -23,6 +23,7 @@ try:
     from ._models_py3 import OperationsDisplayDefinition
     from ._models_py3 import ProxyResource
     from ._models_py3 import Resource
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
     from ._models import AttestationProvider
@@ -38,8 +39,10 @@ except (SyntaxError, ImportError):
     from ._models import OperationsDisplayDefinition
     from ._models import ProxyResource
     from ._models import Resource
+    from ._models import SystemData
     from ._models import TrackedResource
 from ._attestation_management_client_enums import (
+    CreatedByType,
     AttestationServiceStatus,
 )
 
@@ -57,6 +60,8 @@ __all__ = [
     'OperationsDisplayDefinition',
     'ProxyResource',
     'Resource',
+    'SystemData',
     'TrackedResource',
+    'CreatedByType',
     'AttestationServiceStatus',
 ]

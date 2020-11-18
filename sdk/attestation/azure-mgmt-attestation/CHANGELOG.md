@@ -1,11 +1,16 @@
 # Release History
 
-## 0.2.0 (2020-04-15)
+## 0.2.0 (2020-11-17)
 
 **Features**
 
-  - Model AttestationProvider has a new parameter tags
   - Model AttestationProvider has a new parameter trust_model
+  - Model AttestationProvider has a new parameter tags
+  - Model AttestationProvider has a new parameter system_data
+  - Model AttestationProviderListResult has a new parameter system_data
+  - Model OperationList has a new parameter system_data
+  - Added operation AttestationProvidersOperations.get_default_by_location
+  - Added operation AttestationProvidersOperations.list_default
   - Added operation AttestationProvidersOperations.update
 
 **Breaking changes**
