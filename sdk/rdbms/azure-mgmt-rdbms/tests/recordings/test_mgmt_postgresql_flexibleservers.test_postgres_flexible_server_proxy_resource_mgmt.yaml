@@ -1,0 +1,734 @@
+interactions:
+- request:
+    body: '{"properties": {"startIpAddress": "0.0.0.0", "endIpAddress": "255.255.255.255"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '80'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"operation":"UpsertServerFirewallRulesManagementOperation","startTime":"2020-10-22T04:54:35.17Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/6f8dcc0a-4c37-46f9-9664-482a328ddbce?api-version=2020-02-14-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '98'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:54:34 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/operationResults/6f8dcc0a-4c37-46f9-9664-482a328ddbce?api-version=2020-02-14-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/6f8dcc0a-4c37-46f9-9664-482a328ddbce?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"name":"6f8dcc0a-4c37-46f9-9664-482a328ddbce","status":"Succeeded","startTime":"2020-10-22T04:54:35.17Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:55:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"0.0.0.0","endIpAddress":"255.255.255.255"},"name":"pg-testserver2134-testfirewallrule","type":"Microsoft.DBforPostgreSQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '201'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:55:35 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"startIpAddress": "12.12.12.12", "endIpAddress": "255.255.255.255"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '84'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"operation":"UpsertServerFirewallRulesManagementOperation","startTime":"2020-10-22T04:55:37.153Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/df225003-c62f-4952-8b08-0d8300eb4b80?api-version=2020-02-14-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '99'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:55:37 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/operationResults/df225003-c62f-4952-8b08-0d8300eb4b80?api-version=2020-02-14-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/df225003-c62f-4952-8b08-0d8300eb4b80?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"name":"df225003-c62f-4952-8b08-0d8300eb4b80","status":"Succeeded","startTime":"2020-10-22T04:55:37.153Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:56:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"12.12.12.12","endIpAddress":"255.255.255.255"},"name":"pg-testserver2134-testfirewallrule","type":"Microsoft.DBforPostgreSQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '205'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:56:37 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"startIpAddress": "12.12.12.12", "endIpAddress": "233.233.233.233"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '84'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"operation":"UpsertServerFirewallRulesManagementOperation","startTime":"2020-10-22T04:56:38.68Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/0e49f4a6-e394-44b4-97b1-16a7627a561d?api-version=2020-02-14-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '98'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:56:38 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/operationResults/0e49f4a6-e394-44b4-97b1-16a7627a561d?api-version=2020-02-14-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/0e49f4a6-e394-44b4-97b1-16a7627a561d?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"name":"0e49f4a6-e394-44b4-97b1-16a7627a561d","status":"Succeeded","startTime":"2020-10-22T04:56:38.68Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:57:38 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"12.12.12.12","endIpAddress":"233.233.233.233"},"name":"pg-testserver2134-testfirewallrule","type":"Microsoft.DBforPostgreSQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '205'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:57:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"12.12.12.12","endIpAddress":"233.233.233.233"},"name":"pg-testserver2134-testfirewallrule","type":"Microsoft.DBforPostgreSQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '205'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:57:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/firewallRules/pg-testserver2134-testfirewallrule?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"operation":"DropServerFirewallRulesManagementOperation","startTime":"2020-10-22T04:57:40.26Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/f5908610-5958-47f5-801d-2527f45fd55f?api-version=2020-02-14-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '96'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:57:40 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/operationResults/f5908610-5958-47f5-801d-2527f45fd55f?api-version=2020-02-14-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/f5908610-5958-47f5-801d-2527f45fd55f?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"name":"f5908610-5958-47f5-801d-2527f45fd55f","status":"Succeeded","startTime":"2020-10-22T04:57:40.26Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:58:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/configurations/lock_timeout?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"properties":{"value":"0","description":"Sets the maximum allowed
+        duration (in milliseconds) of any wait for a lock. 0 turns this off.","defaultValue":"0","dataType":"Integer","allowedValues":"0-2147483647","source":"system-default"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBforPostgreSQL/serversv2/pg-testserver2134/configurations/lock_timeout","name":"lock_timeout","type":"Microsoft.DBforPostgreSQL/flexibleServers/configurations"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '525'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:58:41 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"value": "2000", "source": "user-override"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '60'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/configurations/lock_timeout?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"operation":"UpdateConfigurationManagementOperation","startTime":"2020-10-22T04:58:42.83Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/068d0473-5297-4486-b363-3276860aa0c6?api-version=2020-02-14-preview
+      cache-control:
+      - no-cache
+      content-length:
+      - '92'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:58:42 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/operationResults/068d0473-5297-4486-b363-3276860aa0c6?api-version=2020-02-14-preview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforPostgreSQL/locations/eastus/azureAsyncOperation/068d0473-5297-4486-b363-3276860aa0c6?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"name":"068d0473-5297-4486-b363-3276860aa0c6","status":"Succeeded","startTime":"2020-10-22T04:58:42.83Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:58:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-02-14-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBForPostgreSql/flexibleServers/pg-testserver2134/configurations/lock_timeout?api-version=2020-02-14-preview
+  response:
+    body:
+      string: '{"properties":{"value":"2000","description":"Sets the maximum allowed
+        duration (in milliseconds) of any wait for a lock. 0 turns this off.","defaultValue":"0","dataType":"Integer","allowedValues":"0-2147483647","source":"user-override"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/postgres-rg22a6241c/providers/Microsoft.DBforPostgreSQL/serversv2/pg-testserver2134/configurations/lock_timeout","name":"lock_timeout","type":"Microsoft.DBforPostgreSQL/flexibleServers/configurations"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '527'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 22 Oct 2020 04:58:53 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

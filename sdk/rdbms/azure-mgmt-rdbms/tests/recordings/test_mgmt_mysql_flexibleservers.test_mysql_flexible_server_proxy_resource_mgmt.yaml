@@ -1,0 +1,1010 @@
+interactions:
+- request:
+    body: '{"properties": {"charset": "utf8", "collation": "utf8_general_ci"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/databases/testdatabase?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"operation":"UpsertServerDatabaseManagementOperation","startTime":"2020-10-21T00:12:35.91Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/6b5e329a-4a29-407f-b924-a99e4b6b5ed0?api-version=2020-07-01-privatepreview
+      cache-control:
+      - no-cache
+      content-length:
+      - '93'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:12:35 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/operationResults/6b5e329a-4a29-407f-b924-a99e4b6b5ed0?api-version=2020-07-01-privatepreview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/6b5e329a-4a29-407f-b924-a99e4b6b5ed0?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"name":"6b5e329a-4a29-407f-b924-a99e4b6b5ed0","status":"Succeeded","startTime":"2020-10-21T00:12:35.91Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:12:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/databases/testdatabase?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"charset":"utf8","collation":"utf8_general_ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBforMySQL/flexibleServers/mysql-testserver2134/databases/testdatabase","name":"testdatabase","type":"Microsoft.DBforMySQL/flexibleServers/databases"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '341'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:12:51 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/databases/testdatabase?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"charset":"utf8","collation":"utf8_general_ci"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBforMySQL/flexibleServers/mysql-testserver2134/databases/testdatabase","name":"testdatabase","type":"Microsoft.DBforMySQL/flexibleServers/databases"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '341'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:12:52 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/databases/testdatabase?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"operation":"DropServerDatabaseManagementOperation","startTime":"2020-10-21T00:12:52.423Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/be0400cf-4fe1-403e-a591-36d8e60ebbb1?api-version=2020-07-01-privatepreview
+      cache-control:
+      - no-cache
+      content-length:
+      - '92'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:12:52 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/operationResults/be0400cf-4fe1-403e-a591-36d8e60ebbb1?api-version=2020-07-01-privatepreview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/be0400cf-4fe1-403e-a591-36d8e60ebbb1?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"name":"be0400cf-4fe1-403e-a591-36d8e60ebbb1","status":"Succeeded","startTime":"2020-10-21T00:12:52.423Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:13:07 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"startIpAddress": "0.0.0.0", "endIpAddress": "255.255.255.255"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '80'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"operation":"UpsertServerFirewallRulesManagementOperation","startTime":"2020-10-21T00:13:08.503Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/4a3e3986-33ed-40ce-93b5-8f4f14c2e244?api-version=2020-07-01-privatepreview
+      cache-control:
+      - no-cache
+      content-length:
+      - '99'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:13:08 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/operationResults/4a3e3986-33ed-40ce-93b5-8f4f14c2e244?api-version=2020-07-01-privatepreview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/4a3e3986-33ed-40ce-93b5-8f4f14c2e244?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"name":"4a3e3986-33ed-40ce-93b5-8f4f14c2e244","status":"Succeeded","startTime":"2020-10-21T00:13:08.503Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:14:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"0.0.0.0","endIpAddress":"255.255.255.255"},"name":"mysql-testserver2134-testfirewallrule","type":"Microsoft.DBforMySQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '192'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:14:08 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"startIpAddress": "12.12.12.12", "endIpAddress": "255.255.255.255"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '84'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"operation":"UpsertServerFirewallRulesManagementOperation","startTime":"2020-10-21T00:14:09.877Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/26fc0e25-f0b8-46f9-a300-53898dc3171a?api-version=2020-07-01-privatepreview
+      cache-control:
+      - no-cache
+      content-length:
+      - '99'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:14:09 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/operationResults/26fc0e25-f0b8-46f9-a300-53898dc3171a?api-version=2020-07-01-privatepreview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/26fc0e25-f0b8-46f9-a300-53898dc3171a?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"name":"26fc0e25-f0b8-46f9-a300-53898dc3171a","status":"Succeeded","startTime":"2020-10-21T00:14:09.877Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:15:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"12.12.12.12","endIpAddress":"255.255.255.255"},"name":"mysql-testserver2134-testfirewallrule","type":"Microsoft.DBforMySQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '196'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:15:09 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"startIpAddress": "12.12.12.12", "endIpAddress": "233.233.233.233"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '84'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"operation":"UpsertServerFirewallRulesManagementOperation","startTime":"2020-10-21T00:15:10.877Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/13904623-0995-4403-850a-f4e9626b8fae?api-version=2020-07-01-privatepreview
+      cache-control:
+      - no-cache
+      content-length:
+      - '99'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:15:10 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/operationResults/13904623-0995-4403-850a-f4e9626b8fae?api-version=2020-07-01-privatepreview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1196'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/13904623-0995-4403-850a-f4e9626b8fae?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"name":"13904623-0995-4403-850a-f4e9626b8fae","status":"Succeeded","startTime":"2020-10-21T00:15:10.877Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:16:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"12.12.12.12","endIpAddress":"233.233.233.233"},"name":"mysql-testserver2134-testfirewallrule","type":"Microsoft.DBforMySQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '196'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:16:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"startIpAddress":"12.12.12.12","endIpAddress":"233.233.233.233"},"name":"mysql-testserver2134-testfirewallrule","type":"Microsoft.DBforMySQL/flexibleServers/firewallRules"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '196'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:16:11 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/firewallRules/mysql-testserver2134-testfirewallrule?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"operation":"DropServerFirewallRulesManagementOperation","startTime":"2020-10-21T00:16:12.203Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/9ebfcc78-f36a-4fc2-8de9-02a8e1e9fc4a?api-version=2020-07-01-privatepreview
+      cache-control:
+      - no-cache
+      content-length:
+      - '97'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:16:11 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/operationResults/9ebfcc78-f36a-4fc2-8de9-02a8e1e9fc4a?api-version=2020-07-01-privatepreview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14998'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/9ebfcc78-f36a-4fc2-8de9-02a8e1e9fc4a?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"name":"9ebfcc78-f36a-4fc2-8de9-02a8e1e9fc4a","status":"Succeeded","startTime":"2020-10-21T00:16:12.203Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '107'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:17:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/configurations/wait_timeout?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"value":"28800","description":"The number of seconds
+        the server waits for activity on a noninteractive connection before closing
+        it.","defaultValue":"28800","dataType":"Integer","allowedValues":"1-31536000","source":"system-default","isConfigPendingRestart":"True","isDynamicConfig":"True","isReadOnly":"False"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBforMySQL/flexibleServers/mysql-testserver2134/configurations/wait_timeout","name":"wait_timeout","type":"Microsoft.DBforMySQL/flexibleServers/configurations"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '615'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:17:12 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"value": "30000", "source": "user-override"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PATCH
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/configurations/wait_timeout?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"operation":"UpdateServerParameterManagementOperation","startTime":"2020-10-21T00:17:13.27Z"}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/931238bf-0da5-42b6-9ab9-40c7934ac829?api-version=2020-07-01-privatepreview
+      cache-control:
+      - no-cache
+      content-length:
+      - '94'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:17:12 GMT
+      expires:
+      - '-1'
+      location:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/operationResults/931238bf-0da5-42b6-9ab9-40c7934ac829?api-version=2020-07-01-privatepreview
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.DBforMySQL/locations/westus2/azureAsyncOperation/931238bf-0da5-42b6-9ab9-40c7934ac829?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"name":"931238bf-0da5-42b6-9ab9-40c7934ac829","status":"Succeeded","startTime":"2020-10-21T00:17:13.27Z"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '106'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:17:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.7 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        azure-mgmt-rdbms/2020-07-01-privatepreview Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBForMySql/flexibleServers/mysql-testserver2134/configurations/wait_timeout?api-version=2020-07-01-privatepreview
+  response:
+    body:
+      string: '{"properties":{"value":"30000","description":"The number of seconds
+        the server waits for activity on a noninteractive connection before closing
+        it.","defaultValue":"28800","dataType":"Integer","allowedValues":"1-31536000","source":"user-override","isConfigPendingRestart":"True","isDynamicConfig":"True","isReadOnly":"False"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pythonsdk-mysql-rgc3220bd/providers/Microsoft.DBforMySQL/flexibleServers/mysql-testserver2134/configurations/wait_timeout","name":"wait_timeout","type":"Microsoft.DBforMySQL/flexibleServers/configurations"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '614'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 21 Oct 2020 00:17:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1
