@@ -1,5 +1,8 @@
 # Release History
 
+## 8.0.0b2 (Unreleased)
+
+
 ## 8.0.0b1 (2020-10-31)
 
 This is beta preview version.
