@@ -6,14 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._solutions_operations import SolutionsOperations
-from ._management_associations_operations import ManagementAssociationsOperations
-from ._management_configurations_operations import ManagementConfigurationsOperations
-from ._operations import Operations
-
-__all__ = [
-    'SolutionsOperations',
-    'ManagementAssociationsOperations',
-    'ManagementConfigurationsOperations',
-    'Operations',
-]
+from ._operations_management_client import OperationsManagementClient
+__all__ = ['OperationsManagementClient']
