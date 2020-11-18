@@ -19,6 +19,7 @@ from .operations import PolicyEventsOperations
 from .operations import PolicyStatesOperations
 from .operations import Operations
 from .operations import PolicyMetadataOperations
+from .operations import PolicyRestrictionsOperations
 from . import models
 
 
@@ -40,17 +41,21 @@ class PolicyInsightsClient(SDKClient):
     :vartype operations: azure.mgmt.policyinsights.operations.Operations
     :ivar policy_metadata: PolicyMetadata operations
     :vartype policy_metadata: azure.mgmt.policyinsights.operations.PolicyMetadataOperations
+    :ivar policy_restrictions: PolicyRestrictions operations
+    :vartype policy_restrictions: azure.mgmt.policyinsights.operations.PolicyRestrictionsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param subscription_id2: The ID of the target subscription.
+    :type subscription_id2: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, subscription_id2, base_url=None):
 
-        self.config = PolicyInsightsClientConfiguration(credentials, base_url)
+        self.config = PolicyInsightsClientConfiguration(credentials, subscription_id2, base_url)
         super(PolicyInsightsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -68,4 +73,6 @@ class PolicyInsightsClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.policy_metadata = PolicyMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policy_restrictions = PolicyRestrictionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

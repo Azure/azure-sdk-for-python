@@ -15,6 +15,7 @@ from ._policy_events_operations import PolicyEventsOperations
 from ._policy_states_operations import PolicyStatesOperations
 from ._operations import Operations
 from ._policy_metadata_operations import PolicyMetadataOperations
+from ._policy_restrictions_operations import PolicyRestrictionsOperations
 
 __all__ = [
     'PolicyTrackedResourcesOperations',
@@ -23,4 +24,5 @@ __all__ = [
     'PolicyStatesOperations',
     'Operations',
     'PolicyMetadataOperations',
+    'PolicyRestrictionsOperations',
 ]
