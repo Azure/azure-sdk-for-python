@@ -26,7 +26,7 @@ class CommunicationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Api version. Constant value: "2020-04-01".
+    :ivar api_version: API version. Constant value: "2020-04-01".
     """
 
     models = models
@@ -42,13 +42,13 @@ class CommunicationsOperations(object):
 
     def check_name_availability(
             self, support_ticket_name, name, type, custom_headers=None, raw=False, **operation_config):
-        """Check the availability of a resource name. This API should to be used
-        to check the uniqueness of the name for adding a new communication to
-        the support ticket.
+        """Check the availability of a resource name. This API should be used to
+        check the uniqueness of the name for adding a new communication to the
+        support ticket.
 
-        :param support_ticket_name: Support ticket name
+        :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str
-        :param name: The resource name to validate
+        :param name: The resource name to validate.
         :type name: str
         :param type: The type of resource. Possible values include:
          'Microsoft.Support/supportTickets', 'Microsoft.Support/communications'
@@ -118,10 +118,10 @@ class CommunicationsOperations(object):
         only type of communication supported today is _Web_. Output will be a
         paged result with _nextLink_, using which you can retrieve the next set
         of Communication results. <br/><br/>Support ticket data is available
-        for 12 months after ticket creation. If a ticket was created more than
-        12 months ago, a request for data might cause an error.
+        for 18 months after ticket creation. If a ticket was created more than
+        18 months ago, a request for data might cause an error.
 
-        :param support_ticket_name: Support ticket name
+        :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str
         :param top: The number of values to return in the collection. Default
          is 10 and max is 10.
@@ -203,9 +203,9 @@ class CommunicationsOperations(object):
             self, support_ticket_name, communication_name, custom_headers=None, raw=False, **operation_config):
         """Returns communication details for a support ticket.
 
-        :param support_ticket_name: Support ticket name
+        :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str
-        :param communication_name: Communication name
+        :param communication_name: Communication name.
         :type communication_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -311,11 +311,11 @@ class CommunicationsOperations(object):
             self, support_ticket_name, communication_name, create_communication_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Adds a new customer communication to an Azure support ticket.
 
-        :param support_ticket_name: Support ticket name
+        :param support_ticket_name: Support ticket name.
         :type support_ticket_name: str
-        :param communication_name: Communication name
+        :param communication_name: Communication name.
         :type communication_name: str
-        :param create_communication_parameters: Communication object
+        :param create_communication_parameters: Communication object.
         :type create_communication_parameters:
          ~azure.mgmt.support.models.CommunicationDetails
         :param dict custom_headers: headers that will be added to the request
