@@ -7,7 +7,6 @@ import typing
 from enum import Enum
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import RetryPolicy
 from opentelemetry.sdk.trace.export import SpanExportResult
 from microsoft.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
@@ -35,8 +34,8 @@ class BaseExporter:
         options: :doc:`export.options` to allow configuration for the exporter
     """
 
-    def __init__(self, **options):
-        options = ExporterOptions(**options)
+    def __init__(self, **kwargs):
+        options = ExporterOptions(**kwargs)
         parsed_connection_string = ConnectionStringParser(
             options.connection_string)
 
@@ -47,9 +46,8 @@ class BaseExporter:
         default_storage_path = os.path.join(
             tempfile.gettempdir(), TEMPDIR_PREFIX + temp_suffix
         )
-        retry_policy = RetryPolicy(timeout=self._timeout)
         self.client = AzureMonitorClient(
-            parsed_connection_string.endpoint, retry_policy=retry_policy)
+            host=parsed_connection_string.endpoint, connection_timeout=self._timeout, **kwargs)
         self.storage = LocalFileStorage(
             path=default_storage_path,
             max_size=50 * 1024 * 1024,  # Maximum size in bytes.
@@ -62,7 +60,8 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = blob.get()
+                envelopes = map(
+                    lambda x: TelemetryItem(**x), blob.get())
                 result = self._transmit(list(envelopes))
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
@@ -88,16 +87,16 @@ class BaseExporter:
                     return ExportResult.SUCCESS
                 resend_envelopes = []
                 for error in track_response.errors:
-                    if is_retryable_code(error.statusCode):
+                    if is_retryable_code(error.status_code):
                         resend_envelopes.append(
                             envelopes[error.index]
                         )
                     else:
                         logger.error(
                             "Data drop %s: %s %s.",
-                            error.statusCode,
+                            error.status_code,
                             error.message,
-                            envelopes[error.index],
+                            envelopes[error.index] if error.index else "",
                         )
                 if resend_envelopes:
                     envelopes_to_store = map(
