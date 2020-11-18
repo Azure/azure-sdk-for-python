@@ -166,7 +166,7 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
             install_type = "pypi"
             name=$releasingPkg.PackageId
           }
-          excludePath = @("test*","example*","sample*","doc*")
+          exclude_path = @("test*","example*","sample*","doc*")
         }
       $allJson.packages += $newItem
     }
