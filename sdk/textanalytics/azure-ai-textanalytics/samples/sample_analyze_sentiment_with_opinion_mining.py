@@ -116,7 +116,7 @@ class AnalyzeSentimentWithOpinionMiningSample(object):
         print("\nLet's now go through the aspects of our hotel people have complained about and see what users have specifically said")
 
         for aspect, complaints in aspect_to_complaints.items():
-            print("Users have made {} complaints about '{}', specifically saying that it's '{}'".format(
+            print("Users have made {} complaint(s) about '{}', specifically saying that it's '{}'".format(
                 len(complaints),
                 aspect,
                 "', '".join(

@@ -61,14 +61,14 @@ class DetectLanguageSample(object):
         print("Let's see what language each review is in!")
 
         for idx, doc in enumerate(reviewed_docs):
-            print("Review #{} is in '{}', which has ISO6391 name '{}'\n".format(
+            print("Review #{} is in '{}', which has ISO639-1 name '{}'\n".format(
                 idx, doc.primary_language.name, doc.primary_language.iso6391_name
             ))
             if doc.is_error:
                 print(doc.id, doc.error)
         # [END detect_language]
         print(
-            "When actually storing the reviews, we want to map the review to their ISO6391 name "
+            "When actually storing the reviews, we want to map the review to their ISO639-1 name "
             "so everything is more standardized"
         )
 
