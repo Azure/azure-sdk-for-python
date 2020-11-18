@@ -1,5 +1,8 @@
 # Release History
 
+## 10.0.0b2 (Unreleased)
+
+
 ## 10.0.0b1 (2020-10-31)
 This is beta preview version.
 For detailed changelog please refer to equivalent stable version 5.1.0 (https://pypi.org/project/azure-mgmt-cdn/5.1.0/)
