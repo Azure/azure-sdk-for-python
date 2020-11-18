@@ -124,8 +124,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         try:
             # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
-            # the receiver can no longer be used and should create a new session receiver
-            # instance to receive from session.
+            # the receiver should no longer be used and should create a new session receiver
+            # instance to receive from session. There are pitfalls WRT both next session IDs,
+            # and the diversity of session failure modes, that motivates us to disallow this.
             if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
                 self._session._lock_lost = True
                 await self._close_handler()

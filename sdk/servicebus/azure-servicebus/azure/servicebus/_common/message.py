@@ -30,7 +30,8 @@ from .constants import (
     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION,
     ANNOTATION_SYMBOL_PARTITION_KEY,
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
-    ANNOTATION_SYMBOL_KEY_MAP
+    ANNOTATION_SYMBOL_KEY_MAP,
+    MESSAGE_PROPERTY_MAX_LENGTH
 )
 from ..exceptions import MessageSizeExceededError
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
@@ -161,8 +162,8 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @session_id.setter
     def session_id(self, value):
         # type: (str) -> None
-        if value and len(value) > 128:
-            raise ValueError("session_id cannot be longer than 128 characters.")
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
 
         self._amqp_properties.group_id = value
 
@@ -205,8 +206,8 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @partition_key.setter
     def partition_key(self, value):
         # type: (str) -> None
-        if value and len(value) > 128:
-            raise ValueError("partition_key cannot be longer than 128 characters.")
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("partition_key cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
 
         if value and value != self.session_id:
             raise ValueError(
@@ -369,8 +370,8 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @message_id.setter
     def message_id(self, value):
         # type: (str) -> None
-        if value and len(str(value)) > 128:
-            raise ValueError("message_id cannot be longer than 128 characters.")
+        if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("message_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
 
         self._amqp_properties.message_id = value
 
@@ -421,8 +422,10 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @reply_to_session_id.setter
     def reply_to_session_id(self, value):
         # type: (str) -> None
-        if value and len(value) > 128:
-            raise ValueError("reply_to_session_id cannot be longer than 128 characters.")
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError(
+                "reply_to_session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH)
+            )
 
         self._amqp_properties.reply_to_group_id = value
 

@@ -23,7 +23,6 @@ from azure.core.credentials import AccessToken
 from ._common._configuration import Configuration
 from .exceptions import (
     ServiceBusError,
-    ServiceBusAuthenticationError,
     ServiceBusConnectionError,
     OperationTimeoutError,
     SessionLockLostError,
@@ -230,16 +229,16 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     def _handle_exception(self, exception):
         # type: (BaseException) -> ServiceBusError
-        # pylint: disable=protected-access
-        # type: ignore
+        # pylint: disable=protected-access, line-too-long
         error = _create_servicebus_exception(_LOGGER, exception)
 
         try:
             # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
-            # the receiver can no longer be used and should create a new session receiver
-            # instance to receive from session.
-            if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
-                self._session._lock_lost = True
+            # the receiver should no longer be used and should create a new session receiver
+            # instance to receive from session. There are pitfalls WRT both next session IDs,
+            # and the diversity of session failure modes, that motivates us to disallow this.
+            if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
+                self._session._lock_lost = True  # type: ignore
                 self._close_handler()
                 raise error
         except AttributeError:
