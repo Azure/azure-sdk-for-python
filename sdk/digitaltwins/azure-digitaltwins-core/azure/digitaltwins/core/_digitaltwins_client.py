@@ -10,6 +10,7 @@ from typing import Dict, List, Any, TYPE_CHECKING
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
+from ._version import SDK_MONIKER
 
 from ._utils import (
     prep_if_match,
@@ -47,6 +48,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         self._client = AzureDigitalTwinsAPI(
             credential=credential,
             base_url=endpoint,
+            sdk_moniker=SDK_MONIKER,
             **kwargs
         )
 
