@@ -27,6 +27,7 @@
 from typing import AsyncIterator, TypeVar, List
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.exceptions import HttpResponseError
 
 import pytest
 
@@ -120,3 +121,23 @@ class TestPaging:
         result_iterated = await _as_list(pager)
 
         assert len(result_iterated) == 0
+
+
+    @pytest.mark.asyncio
+    async def test_paging_continue_on_error(self):
+        async def get_next(continuation_token=None):
+            if not continuation_token:
+                return {
+                    'nextLink': 'foo',
+                    'value': ['bar']
+                }
+            else:
+                raise HttpResponseError()
+        async def extract_data(response):
+            return response['nextLink'], iter(response['value'] or [])
+        
+        pager = AsyncItemPaged(get_next, extract_data)
+        assert await pager.__anext__() == 'bar'
+        with pytest.raises(HttpResponseError) as err:
+            await pager.__anext__()
+        assert err.value.continuation_token == 'foo'

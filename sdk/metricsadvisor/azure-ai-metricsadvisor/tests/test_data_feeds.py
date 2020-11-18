@@ -31,7 +31,7 @@ from azure.ai.metricsadvisor.models import (
     MongoDBDataFeed,
     MySqlDataFeed,
     PostgreSqlDataFeed,
-    ElasticsearchDataFeed
+    ElasticsearchDataFeed,
 )
 from base_testcase import TestMetricsAdvisorAdministrationClientBase
 
@@ -447,10 +447,10 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorAdministrationCli
     def test_create_data_feed_with_application_insights(self):
         name = self.create_random_name("applicationinsights")
         try:
-            query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
-                "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
-                "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
-                "duration_max_ms = max(duration) by resultCode"
+            query = "let gran=60m; let starttime=datetime(@StartTime); let endtime=starttime + gran; requests | " \
+                "where timestamp >= starttime and timestamp < endtime | summarize request_count = count(), " \
+                "duration_avg_ms = avg(duration), duration_95th_ms = percentile(duration, 95), " \
+                "duration_max_ms = max(duration) by resultCode"
             data_feed = self.admin_client.create_data_feed(
                 name=name,
                 source=AzureApplicationInsightsDataFeed(

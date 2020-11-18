@@ -12,7 +12,6 @@ import time
 import pytest
 import re
 import logging
-from azure.ai.formrecognizer import SelectionMarkState
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from azure.ai.formrecognizer._helpers import adjust_value_type
 from devtools_testutils import (
@@ -435,7 +434,7 @@ class FormRecognizerTest(AzureTestCase):
                     self.assertEqual(selection_mark.page_number, page.page_number)
                     self.assertBoundingBoxHasPoints(selection_mark.bounding_box)
                     self.assertIsNotNone(selection_mark.confidence)
-                    self.assertTrue(selection_mark.state in [item.value for item in SelectionMarkState])
+                    self.assertTrue(selection_mark.state in ["selected", "unselected"])
 
     def assertFormWordHasValues(self, word, page_number):
         self.assertEqual(word.kind, "word")

@@ -39,7 +39,7 @@ def sample_create_data_feed():
         DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
-        DataFeedMissingDataPointFillSettings
+        DataFeedMissingDataPointFillSettings,
     )
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")

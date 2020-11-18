@@ -36,6 +36,19 @@ except ImportError:  # python < 3.3
 WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        InteractiveBrowserCredential(tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            InteractiveBrowserCredential(tenant_id=tenant)
+
+
 def test_no_scopes():
     """The credential should raise when get_token is called with no scopes"""
 
@@ -170,7 +183,7 @@ def test_interactive_credential(mock_open, redirect_url):
     expected_token = "access-token"
     expires_in = 3600
     authority = "authority"
-    tenant_id = "tenant_id"
+    tenant_id = "tenant-id"
     endpoint = "https://{}/{}".format(authority, tenant_id)
 
     transport = msal_validating_transport(
@@ -244,8 +257,16 @@ def test_interactive_credential(mock_open, redirect_url):
     assert transport.send.call_count == 4
 
 
-@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: True)
-def test_interactive_credential_timeout():
+def test_timeout():
+    """get_token should raise ClientAuthenticationError when the server times out without receiving a redirect"""
+
+    timeout = 0.01
+
+    class GuaranteedTimeout(AuthCodeRedirectServer, object):
+        def handle_request(self):
+            time.sleep(timeout + 0.01)
+            super(GuaranteedTimeout, self).handle_request()
+
     # mock transport handles MSAL's tenant discovery
     transport = Mock(
         send=lambda _, **__: mock_response(
@@ -253,22 +274,13 @@ def test_interactive_credential_timeout():
         )
     )
 
-    # mock local server blocks long enough to exceed the timeout
-    timeout = 0.01
-    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 0.01))
-    server_class = Mock(return_value=server_instance)
-
     credential = InteractiveBrowserCredential(
-        client_id="guid",
-        _server_class=server_class,
-        timeout=timeout,
-        transport=transport,
-        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
-        _cache=TokenCache(),
+        timeout=timeout, transport=transport, _cache=TokenCache(), _server_class=GuaranteedTimeout
     )
 
-    with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
+    with patch(WEBBROWSER_OPEN, lambda _: True):
+        with pytest.raises(ClientAuthenticationError) as ex:
+            credential.get_token("scope")
     assert "timed out" in ex.value.message.lower()
 
 

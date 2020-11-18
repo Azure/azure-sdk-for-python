@@ -32,6 +32,10 @@ parameters:
 - name: DevFeedName
   type: string
   default: public/azure-sdk-for-python
+- name: BuildTargetingString
+  type: string
+  default: azure-*
+  
 
 stages:
   - stage: Build
@@ -39,6 +43,7 @@ stages:
     - template: ../jobs/archetype-sdk-client.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        Artifacts: ${{ parameters.Artifacts }}
         TestPipeline: ${{ parameters.TestPipeline }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         BuildDocs: ${{ parameters.BuildDocs }}
@@ -46,6 +51,7 @@ stages:
         SkipPythonVersion: ${{ parameters.SkipPythonVersion }}
         AdditionalTestMatrix: ${{ parameters.AdditionalTestMatrix }}
         DevFeedName: ${{ parameters.DevFeedName }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

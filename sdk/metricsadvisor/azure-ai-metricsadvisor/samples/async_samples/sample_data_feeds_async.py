@@ -41,7 +41,7 @@ async def sample_create_data_feed_async():
         DataFeedDimension,
         DataFeedOptions,
         DataFeedRollupSettings,
-        DataFeedMissingDataPointFillSettings
+        DataFeedMissingDataPointFillSettings,
     )
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
@@ -52,7 +52,6 @@ async def sample_create_data_feed_async():
 
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
-
     async with client:
         data_feed = await client.create_data_feed(
             name="My data feed",

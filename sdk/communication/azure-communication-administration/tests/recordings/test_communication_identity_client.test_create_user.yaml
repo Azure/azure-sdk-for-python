@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 10 Oct 2020 02:12:50 GMT
+      - Tue, 27 Oct 2020 19:38:10 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-48-generic-x86_64-with-glibc2.29)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.8.5 (Linux-5.4.0-52-generic-x86_64-with-glibc2.29)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://communication27b5151c.communication.azure.com/identities?api-version=2020-07-20-preview2
+    uri: https://communicationk453hklaelp.communication.azure.com/identities?api-version=2020-07-20-preview2
   response:
     body: '{"id": "sanitized"}'
     headers:
@@ -26,15 +26,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 10 Oct 2020 02:12:50 GMT
+      - Tue, 27 Oct 2020 19:38:10 GMT
       ms-cv:
-      - QLKE+FLVdUq7AXq6kOHFAA.0
+      - /tvMPee3QkWdY1zilCt7Hw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 31ms
+      - 22ms
     status:
       code: 200
       message: OK

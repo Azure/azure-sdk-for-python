@@ -1,5 +1,6 @@
 parameters:
   BeforePublishSteps: []
+  TestPipeline: false
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
   BuildDocs: true
@@ -13,6 +14,7 @@ steps:
         pwsh: true
         workingDirectory: $(Build.SourcesDirectory)
         filePath: eng/scripts/SetTestPipelineVersion.ps1
+        arguments: '-BuildNumber $(Build.BuildNumber)'
 
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"

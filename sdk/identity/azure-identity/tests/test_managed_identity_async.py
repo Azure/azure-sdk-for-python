@@ -2,10 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import time
 from unittest import mock
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio import ManagedIdentityCredential
 from azure.identity._constants import Endpoints, EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
@@ -93,6 +95,73 @@ async def test_cloud_shell_user_assigned_identity():
         assert token == expected_token
 
 
+@pytest.mark.asyncio
+async def test_prefers_app_service_2017_09_01():
+    """When the environment is configured for both App Service versions, the credential should prefer 2017-09-01
+
+    Support for 2019-08-01 was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test
+    should be removed when that support is added back.
+    """
+
+    access_token = "****"
+    expires_on = 42
+    expected_token = AccessToken(access_token, expires_on)
+    url = "http://localhost:42/token"
+    secret = "expected-secret"
+    scope = "scope"
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                url,
+                method="GET",
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
+            )
+        ]
+        * 2,
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),  # linux format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": "1/1/1970 12:00:{} AM +00:00".format(expires_on),  # windows format
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON,
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: url,
+            EnvironmentVariables.IDENTITY_HEADER: secret,
+            EnvironmentVariables.MSI_ENDPOINT: url,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+        clear=True,
+    ):
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+        credential = ManagedIdentityCredential(transport=transport)
+        token = await credential.get_token(scope)
+        assert token == expected_token
+        assert token.expires_on == expires_on
+
+
+@pytest.mark.skip("2019-08-01 support was removed due to https://github.com/Azure/azure-sdk-for-python/issues/14670. This test should be enabled when that support is added back.")
 @pytest.mark.asyncio
 async def test_app_service_2019_08_01():
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
@@ -351,3 +420,115 @@ async def test_imds_user_assigned_identity():
     with mock.patch.dict("os.environ", clear=True):
         token = await ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
     assert token == expected_token
+
+
+@pytest.mark.asyncio
+async def test_service_fabric():
+    """Service Fabric 2019-07-01-preview"""
+    access_token = "****"
+    expires_on = 42
+    endpoint = "http://localhost:42/token"
+    secret = "expected-secret"
+    thumbprint = "SHA1HEX"
+    scope = "scope"
+
+    async def send(request, **_):
+        assert request.url.startswith(endpoint)
+        assert request.method == "GET"
+        assert request.headers["Secret"] == secret
+        assert request.query["api-version"] == "2019-07-01-preview"
+        assert request.query["resource"] == scope
+
+        return mock_response(
+            json_payload={
+                "access_token": access_token,
+                "expires_on": str(expires_on),
+                "resource": scope,
+                "token_type": "Bearer",
+            }
+        )
+
+    with mock.patch(
+        "os.environ",
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: secret,
+            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: thumbprint,
+        },
+    ):
+        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
+        assert token.token == access_token
+        assert token.expires_on == expires_on
+
+
+@pytest.mark.asyncio
+async def test_azure_arc(tmpdir):
+    """Azure Arc 2019-11-01"""
+    access_token = "****"
+    api_version = "2019-11-01"
+    expires_on = 42
+    identity_endpoint = "http://localhost:42/token"
+    imds_endpoint = "http://localhost:42"
+    scope = "scope"
+    secret_key = "XXXX"
+
+    key_file = tmpdir.mkdir("key").join("key_file.key")
+    key_file.write(secret_key)
+    assert key_file.read() == secret_key
+    key_path = os.path.join(key_file.dirname, key_file.basename)
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"api-version": api_version, "resource": scope},
+            ),
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true", "Authorization": "Basic {}".format(secret_key)},
+                required_params={"api-version": api_version, "resource": scope},
+            ),
+        ],
+        responses=[
+            # first response gives path to authentication key
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_path)}),
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_on": expires_on,
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    with mock.patch(
+            "os.environ",
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint,
+                EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint,
+            },
+    ):
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+        assert token.token == access_token
+        assert token.expires_on == expires_on
+
+
+@pytest.mark.asyncio
+async def test_azure_arc_client_id():
+    """Azure Arc doesn't support user-assigned managed identity"""
+    with mock.patch(
+            "os.environ",
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: "http://localhost:42/token",
+                EnvironmentVariables.IMDS_ENDPOINT: "http://localhost:42",
+            }
+    ):
+        credential = ManagedIdentityCredential(client_id="some-guid")
+
+    with pytest.raises(ClientAuthenticationError):
+        await credential.get_token("scope")

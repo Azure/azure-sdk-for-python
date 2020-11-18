@@ -1,0 +1,258 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable5eae109d"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Mon, 26 Oct 2020 22:25:33 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 26 Oct 2020 22:25:33 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable5eae109d","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Mon, 26 Oct 2020 22:25:29 GMT
+      etag:
+      - W/"datetime'2020-10-26T22%3A25%3A29.9078151Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable5eae109d')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Ok
+- request:
+    body: '{"PartitionKey": "001", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "batch_delete", "RowKey@odata.type": "Edm.String", "test": true, "test2": "value",
+      "test2@odata.type": "Edm.String", "test3": 3, "test4": 1234567890, "test5":
+      "2020-10-26T22:25:34Z", "test5@odata.type": "Edm.DateTime"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '293'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable5eae109d
+  response:
+    body:
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable5eae109d/$metadata#uttable5eae109d/@Element","odata.etag":"W/\"datetime''2020-10-26T22%3A25%3A30.5039879Z''\"","PartitionKey":"001","RowKey":"batch_delete","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-10-26T22:25:34.0000000Z","Timestamp":"2020-10-26T22:25:30.5039879Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Mon, 26 Oct 2020 22:25:30 GMT
+      etag:
+      - W/"datetime'2020-10-26T22%3A25%3A30.5039879Z'"
+      location:
+      - https://tablestestcosmosname.table.cosmos.azure.com/uttable5eae109d(PartitionKey='001',RowKey='batch_delete')
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable5eae109d(PartitionKey='001',RowKey='batch_delete')
+  response:
+    body:
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable5eae109d/$metadata#uttable5eae109d/@Element","odata.etag":"W/\"datetime''2020-10-26T22%3A25%3A30.5039879Z''\"","PartitionKey":"001","RowKey":"batch_delete","test":true,"test2":"value","test3":3,"test4":1234567890,"test5@odata.type":"Edm.DateTime","test5":"2020-10-26T22:25:34.0000000Z","Timestamp":"2020-10-26T22:25:30.5039879Z"}'
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Mon, 26 Oct 2020 22:25:30 GMT
+      etag:
+      - W/"datetime'2020-10-26T22%3A25%3A30.5039879Z'"
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: Ok
+- request:
+    body: "--batch_40510d36-a57c-4dcf-9487-7563f5d2693c\r\nContent-Type: multipart/mixed;\
+      \ boundary=changeset_1f6fe9de-5d3b-4c03-b678-d471ab65c417\r\n\r\n--changeset_1f6fe9de-5d3b-4c03-b678-d471ab65c417\r\
+      \nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\nContent-ID:\
+      \ 0\r\n\r\nDELETE https://tablestest6slpbij4mcunun.table.cosmos.azure.com/uttable5eae109d(PartitionKey='001',RowKey='batch_delete')\
+      \ HTTP/1.1\r\nx-ms-version: 2019-02-02\r\nDataServiceVersion: 3.0\r\nIf-Match:\
+      \ *\r\nAccept: application/json;odata=minimalmetadata\r\nx-ms-date: Mon, 26\
+      \ Oct 2020 22:25:34 GMT\r\nDate: Mon, 26 Oct 2020 22:25:34 GMT\r\nx-ms-client-request-id:\
+      \ 2a7a8285-17da-11eb-ba6b-58961df361d1\r\n\r\n\r\n--changeset_1f6fe9de-5d3b-4c03-b678-d471ab65c417--\r\
+      \n\r\n--batch_40510d36-a57c-4dcf-9487-7563f5d2693c--\r\n"
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '760'
+      Content-Type:
+      - multipart/mixed; boundary=batch_40510d36-a57c-4dcf-9487-7563f5d2693c
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      MaxDataServiceVersion:
+      - 3.0;NetFx
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/$batch
+  response:
+    body:
+      string: "--batchresponse_298e2b84-de72-45e8-885f-41ae99e23c5c\nContent-Type:\
+        \ multipart/mixed; boundary=changesetresponse_0199b874-f665-409d-b297-c5474aa09b14\r\
+        \n\r\n--changesetresponse_0199b874-f665-409d-b297-c5474aa09b14\nContent-Type:\
+        \ application/http\nContent-Transfer-Encoding: binary\n\nHTTP/1.1 204 No Content\r\
+        \nContent-ID: 1\r\n\r\n\r\n--changesetresponse_0199b874-f665-409d-b297-c5474aa09b14--\n\
+        --batchresponse_298e2b84-de72-45e8-885f-41ae99e23c5c--\r\n"
+    headers:
+      content-type:
+      - multipart/mixed; boundary=batchresponse_298e2b84-de72-45e8-885f-41ae99e23c5c
+      date:
+      - Mon, 26 Oct 2020 22:25:30 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 26 Oct 2020 22:25:34 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable5eae109d(PartitionKey='001',RowKey='batch_delete')
+  response:
+    body:
+      string: "{\"odata.error\":{\"code\":\"ResourceNotFound\",\"message\":{\"lang\"\
+        :\"en-us\",\"value\":\"The specified resource does not exist.\\nRequestID:2a94d5a6-17da-11eb-9a44-58961df361d1\\\
+        n\"}}}\r\n"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      date:
+      - Mon, 26 Oct 2020 22:25:30 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Date:
+      - Mon, 26 Oct 2020 22:25:35 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0b3 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Mon, 26 Oct 2020 22:25:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable5eae109d')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Mon, 26 Oct 2020 22:25:30 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+version: 1

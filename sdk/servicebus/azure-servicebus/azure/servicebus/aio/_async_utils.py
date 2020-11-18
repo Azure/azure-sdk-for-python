@@ -6,7 +6,6 @@
 
 import asyncio
 import logging
-import datetime
 import functools
 
 from uamqp import authentication

@@ -1,0 +1,38 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/alert/anomaly/configurations
+  response:
+    body:
+      string: '{"value":[{"anomalyAlertingConfigurationId":"43a7f19d-c1b4-40de-a9e0-d978adea7ac7","name":"test_alert_configuration","description":"testing_alert_configuration_description","hookIds":["793adcdb-5293-4e4a-a60c-7c32cd5829fc"],"metricAlertingConfigurations":[{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","anomalyScopeType":"All","negationOperation":false}]},{"anomalyAlertingConfigurationId":"204a211a-c5f4-45f3-a30e-512fb25d1d2c","name":"alert-test-setting","description":"","hookIds":["65fa0aa4-9b71-451c-a04c-cc74cb413ad7"],"metricAlertingConfigurations":[{"anomalyDetectionConfigurationId":"anomaly_detection_configuration_id","anomalyScopeType":"All","negationOperation":false,"severityFilter":{"minAlertSeverity":"Low","maxAlertSeverity":"High"},"snoozeFilter":{"autoSnooze":0,"snoozeScope":"Series","onlyForSuccessive":true}}]}]}'
+    headers:
+      apim-request-id:
+      - c816f4c8-ee2b-4d8d-ae9a-9c8809b8e342
+      content-length:
+      - '864'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 26 Oct 2020 17:33:30 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '189'
+      x-request-id:
+      - c816f4c8-ee2b-4d8d-ae9a-9c8809b8e342
+    status:
+      code: 200
+      message: OK
+version: 1

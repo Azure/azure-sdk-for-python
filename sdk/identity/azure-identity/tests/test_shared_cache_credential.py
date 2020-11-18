@@ -39,6 +39,24 @@ from helpers import (
 )
 
 
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        record = AuthenticationRecord(tenant, "client-id", "authority", "home.account.id", "username")
+        SharedTokenCacheCredential(authentication_record=record)
+        SharedTokenCacheCredential(authentication_record=record, tenant_id=tenant)
+
+    invalid_ids = {"", "my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        record = AuthenticationRecord(tenant, "client-id", "authority", "home.account.id", "username")
+        with pytest.raises(ValueError):
+            SharedTokenCacheCredential(authentication_record=record)
+        with pytest.raises(ValueError):
+            SharedTokenCacheCredential(authentication_record=record, tenant_id=tenant)
+
+
 def test_supported():
     """the cache is supported on Linux, macOS, Windows, so this should pass unless you're developing on e.g. FreeBSD"""
     assert SharedTokenCacheCredential.supported()
@@ -520,7 +538,7 @@ def test_authority_environment_variable():
 
 
 def test_authentication_record_empty_cache():
-    record = AuthenticationRecord("tenant_id", "client_id", "authority", "home_account_id", "username")
+    record = AuthenticationRecord("tenant-id", "client_id", "authority", "home_account_id", "username")
 
     def send(request, **_):
         # expecting only MSAL discovery requests

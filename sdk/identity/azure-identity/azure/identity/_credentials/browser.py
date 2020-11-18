@@ -27,7 +27,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
     there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
-    https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
+    https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-oauth-code
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`

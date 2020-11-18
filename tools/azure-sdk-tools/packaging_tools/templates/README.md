@@ -8,7 +8,7 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 # Usage
 
 {% if is_arm %}
-To learn how to use this package, see the [quickstart guide](http://aka.ms/azsdk/python/mgmt)
+To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
 {% endif %}
 
 {% if is_arm %} 

@@ -9,7 +9,7 @@ import datetime
 import logging
 import functools
 import platform
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict, Tuple, Union, TYPE_CHECKING
 from msrest.serialization import UTC
 
 try:
@@ -28,6 +28,10 @@ from .constants import (
     TRANSFER_DEAD_LETTER_QUEUE_SUFFIX,
     USER_AGENT_PREFIX,
 )
+
+if TYPE_CHECKING:
+    from .message import ServiceBusReceivedMessage
+    from .._servicebus_session import BaseSession
 
 _log = logging.getLogger(__name__)
 
@@ -81,7 +85,7 @@ def create_properties(user_agent=None):
     return properties
 
 
-def renewable_start_time(renewable):
+def get_renewable_start_time(renewable):
     try:
         return renewable._received_timestamp_utc  # pylint: disable=protected-access
     except AttributeError:
@@ -89,7 +93,18 @@ def renewable_start_time(renewable):
     try:
         return renewable._session_start  # pylint: disable=protected-access
     except AttributeError:
-        raise TypeError("Registered object is not renewable.")
+        raise TypeError("Registered object is not renewable, renewable must be" +
+                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
+
+
+def get_renewable_lock_duration(renewable):
+    # type: (Union[ServiceBusReceivedMessage, BaseSession]) -> datetime.timedelta
+    # pylint: disable=protected-access
+    try:
+        return max(renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0))
+    except AttributeError:
+        raise TypeError("Registered object is not renewable, renewable must be" +
+                        "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver.")
 
 
 def create_authentication(client):

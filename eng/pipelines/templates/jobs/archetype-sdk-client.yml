@@ -1,5 +1,6 @@
 parameters:
   ServiceDirectory: ''
+  Artifacts: []
   TestPipeline: false
   BeforePublishSteps: []
   TestMarkArgument: ''
@@ -63,6 +64,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
+        TestPipeline: ${{ parameters.TestPipeline }}
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
@@ -80,7 +82,7 @@ jobs:
       parameters:
         ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           Directory: ''
-          Urls: (git diff origin/${env:SYSTEM_PULLREQUEST_TARGETBRANCH} HEAD --name-only -- '*.md')
+          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
         ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
           Directory: sdk/${{ parameters.ServiceDirectory }}
         CheckLinkGuidance: $true
@@ -91,6 +93,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -130,6 +133,7 @@ jobs:
           pwsh: true
           workingDirectory: $(Build.SourcesDirectory)
           filePath: eng/scripts/SetTestPipelineVersion.ps1
+          arguments: '-BuildNumber $(Build.BuildNumber)'
 
     - pwsh: |
         $toxenvvar = "whl,sdist"

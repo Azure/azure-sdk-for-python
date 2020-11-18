@@ -115,7 +115,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         await self._client.__aexit__()
 
     @distributed_trace_async
-    async def create_anomaly_alert_configuration(
+    async def create_alert_configuration(
             self, name: str,
             metric_alert_configurations: List[MetricAlertConfiguration],
             hook_ids: List[str],
@@ -138,9 +138,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START create_anomaly_alert_config_async]
-                :end-before: [END create_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START create_alert_config_async]
+                :end-before: [END create_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly alert configuration
@@ -162,7 +162,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
         response_headers = cast(dict, response_headers)
         config_id = response_headers["Location"].split("configurations/")[1]
-        return await self.get_anomaly_alert_configuration(config_id)
+        return await self.get_alert_configuration(config_id)
 
     @distributed_trace_async
     async def create_data_feed(
@@ -229,14 +229,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_hook(
-            self, name: str,
-            hook: Union[EmailNotificationHook, WebNotificationHook],
+            self, hook: Union[EmailNotificationHook, WebNotificationHook],
             **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Create a new email or web hook.
 
-        :param str name: The name for the hook.
-        :param hook: An email or web hook
+        :param hook: An email or web hook to create
         :type hook: Union[~azure.ai.metricsadvisor.models.EmailNotificationHook,
             ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :return: EmailNotificationHook or WebNotificationHook
@@ -257,10 +255,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         hook_request = None
         if hook.hook_type == "Email":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated(name)
+            hook_request = hook._to_generated()
 
         response_headers = await self._client.create_hook(
             hook_request,  # type: ignore
@@ -272,7 +270,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return await self.get_hook(hook_id)
 
     @distributed_trace_async
-    async def create_metric_anomaly_detection_configuration(
+    async def create_detection_configuration(
             self, name: str,
             metric_id: str,
             whole_series_detection_condition: MetricDetectionCondition,
@@ -298,13 +296,14 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START create_anomaly_detection_config_async]
-                :end-before: [END create_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START create_detection_config_async]
+                :end-before: [END create_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly detection configuration
         """
+
         description = kwargs.pop("description", None)
         series_group_detection_conditions = kwargs.pop("series_group_detection_conditions", None)
         series_detection_conditions = kwargs.pop("series_detection_conditions", None)
@@ -328,7 +327,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
         response_headers = cast(dict, response_headers)
         config_id = response_headers["Location"].split("configurations/")[1]
-        return await self.get_metric_anomaly_detection_configuration(config_id)
+        return await self.get_detection_configuration(config_id)
 
     @distributed_trace_async
     async def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> DataFeed:
@@ -357,7 +356,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return DataFeed._from_generated(data_feed)
 
     @distributed_trace_async
-    async def get_anomaly_alert_configuration(
+    async def get_alert_configuration(
             self, alert_configuration_id: str,
             **kwargs: Any
     ) -> AnomalyAlertConfiguration:
@@ -371,9 +370,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START get_anomaly_alert_config_async]
-                :end-before: [END get_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START get_alert_config_async]
+                :end-before: [END get_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly alert configuration by its ID
@@ -383,7 +382,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return AnomalyAlertConfiguration._from_generated(config)
 
     @distributed_trace_async
-    async def get_metric_anomaly_detection_configuration(
+    async def get_detection_configuration(
             self, detection_configuration_id: str,
             **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
@@ -397,9 +396,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START get_anomaly_detection_config_async]
-                :end-before: [END get_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START get_detection_config_async]
+                :end-before: [END get_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly detection configuration by its ID
@@ -507,7 +506,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace_async
-    async def delete_anomaly_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> None:
+    async def delete_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> None:
         """Delete an anomaly alert configuration by its ID.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -518,9 +517,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START delete_anomaly_alert_config_async]
-                :end-before: [END delete_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START delete_alert_config_async]
+                :end-before: [END delete_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly alert configuration by its ID
@@ -529,7 +528,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         await self._client.delete_anomaly_alerting_configuration(alert_configuration_id, **kwargs)
 
     @distributed_trace_async
-    async def delete_metric_anomaly_detection_configuration(
+    async def delete_detection_configuration(
             self, detection_configuration_id: str,
             **kwargs: Any
     ) -> None:
@@ -543,9 +542,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START delete_anomaly_detection_config_async]
-                :end-before: [END delete_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START delete_detection_config_async]
+                :end-before: [END delete_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly detection configuration by its ID
@@ -699,7 +698,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return await self.get_data_feed(data_feed_id)
 
     @distributed_trace_async
-    async def update_anomaly_alert_configuration(
+    async def update_alert_configuration(
         self,
         alert_configuration: Union[str, AnomalyAlertConfiguration],
         **kwargs: Any
@@ -726,9 +725,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START update_anomaly_alert_config_async]
-                :end-before: [END update_anomaly_alert_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START update_alert_config_async]
+                :end-before: [END update_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly alert configuration
@@ -762,10 +761,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             alert_configuration_patch,
             **kwargs
         )
-        return await self.get_anomaly_alert_configuration(alert_configuration_id)
+        return await self.get_alert_configuration(alert_configuration_id)
 
     @distributed_trace_async
-    async def update_metric_anomaly_detection_configuration(
+    async def update_detection_configuration(
         self,
         detection_configuration: Union[str, AnomalyDetectionConfiguration],
         **kwargs: Any
@@ -796,9 +795,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START update_anomaly_detection_config_async]
-                :end-before: [END update_anomaly_detection_config_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START update_detection_config_async]
+                :end-before: [END update_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly detection configuration
@@ -832,7 +831,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             detection_config_patch,
             **kwargs
         )
-        return await self.get_metric_anomaly_detection_configuration(detection_configuration_id)
+        return await self.get_detection_configuration(detection_configuration_id)
 
     @distributed_trace_async
     async def update_hook(
@@ -1016,7 +1015,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def list_anomaly_alert_configurations(
+    def list_alert_configurations(
         self,
         detection_configuration_id: str,
         **kwargs: Any
@@ -1031,9 +1030,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_alert_configuration_async.py
-                :start-after: [START list_anomaly_alert_configs_async]
-                :end-before: [END list_anomaly_alert_configs_async]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START list_alert_configs_async]
+                :end-before: [END list_alert_configs_async]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
@@ -1047,7 +1046,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         )
 
     @distributed_trace
-    def list_metric_anomaly_detection_configurations(
+    def list_detection_configurations(
         self,
         metric_id: str,
         **kwargs: Any
@@ -1062,9 +1061,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_anomaly_detection_configuration_async.py
-                :start-after: [START list_anomaly_detection_configs_async]
-                :end-before: [END list_anomaly_detection_configs_async]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START list_detection_configs_async]
+                :end-before: [END list_detection_configs_async]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric

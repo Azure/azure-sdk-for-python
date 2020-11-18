@@ -71,14 +71,6 @@ def get_field_value(field, value, read_result, **kwargs):  # pylint: disable=too
     return None
 
 
-class SelectionMarkState(str, Enum):
-    """State of the selection mark.
-    """
-
-    SELECTED = "selected"
-    UNSELECTED = "unselected"
-
-
 class FieldValueType(str, Enum):
     """Semantic data type of the field value.
     """
@@ -508,9 +500,8 @@ class FormSelectionMark(FormElement):
         order: top-left, top-right, bottom-right, bottom-left.
         Units are in pixels for images and inches for PDF.
     :ivar float confidence: Confidence value.
-    :ivar state: Required. State of the selection mark. Possible values include: "selected",
+    :ivar str state: Required. State of the selection mark. Possible values include: "selected",
      "unselected".
-    :type state: str or ~azure.ai.formrecognizer.SelectionMarkState
     :ivar int page_number:
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormSelectionMark, this is "selectionMark".

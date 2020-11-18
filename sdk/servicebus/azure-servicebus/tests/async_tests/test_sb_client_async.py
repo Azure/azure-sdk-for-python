@@ -9,7 +9,7 @@ import logging
 import pytest
 
 from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer
@@ -87,4 +87,4 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
-                await sender.send_messages(Message("foo"))
+                await sender.send_messages(ServiceBusMessage("foo"))

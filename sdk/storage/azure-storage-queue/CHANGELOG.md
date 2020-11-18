@@ -1,6 +1,14 @@
 # Release History
 
-## 12.1.4 (Unreleased)
+## 12.1.5 (Unreleased)
+
+
+## 12.1.4 (2020-11-10)
+**New feature**
+- Added `receive_message` on QueueClient to support receiving one message from queue (#14844, #14762)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 
 ## 12.1.3 (2020-09-10)
@@ -120,7 +128,7 @@ https://aka.ms/azure-sdk-preview1-python.
     - `QueueClient`: The client handles operations within a particular queue. This includes creating or deleting that queue, as well as enqueueing and dequeueing messages.
 
     These clients can be accessed by navigating down the client hierarchy, or instantiated directly using URLs to the resource (account or queue).
-    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/ref/Storage.html#azure-storage-queue).
+    For full details on the new API, please see the [reference documentation](https://azure.github.io/azure-sdk-for-python/storage.html#azure-storage-queue).
 - New message iterator, for receiving messages from a queue in a continuous stream.
 - New underlying REST pipeline implementation, based on the new `azure-core` library.
 - Client and pipeline configuration is now available via keyword arguments at both the client level, and per-operation. See reference documentation for a full list of optional configuration arguments.

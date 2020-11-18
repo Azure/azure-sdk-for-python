@@ -59,6 +59,8 @@ from .._generated.models import (
     ElasticsearchParameter as _ElasticsearchParameter,
     DimensionGroupIdentity as _DimensionGroupIdentity,
     SeriesIdentity as _SeriesIdentity,
+    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
+    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     AnomalyAlertingConfigurationPatch as _AnomalyAlertingConfigurationPatch,
     AnomalyDetectionConfigurationPatch as _AnomalyDetectionConfigurationPatch
 )
@@ -75,6 +77,7 @@ if TYPE_CHECKING:
         IncidentResult,
         RootCause,
     )
+    from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
 
 class MetricAnomalyAlertScopeType(str, Enum):
@@ -350,17 +353,25 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
     """
-    def __init__(self, **kwargs):
-        self.created_time = kwargs.get('created_time', None)
-        self.granularity = kwargs.get('granularity', None)
+    def __init__(
+        self, name,  # type: str
+        source,  # type: DataFeedSourceUnion
+        granularity,  # type: DataFeedGranularity
+        schema,  # type: DataFeedSchema
+        ingestion_settings,  # type: DataFeedIngestionSettings
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        self.name = name
+        self.granularity = granularity
+        self.ingestion_settings = ingestion_settings
+        self.schema = schema
+        self.source = source
         self.id = kwargs.get('id', None)
-        self.ingestion_settings = kwargs.get('ingestion_settings', None)
+        self.created_time = kwargs.get('created_time', None)
         self.is_admin = kwargs.get('is_admin', None)
         self.metric_ids = kwargs.get('metric_ids', None)
-        self.name = kwargs.get('name', None)
         self.options = kwargs.get('options', None)
-        self.schema = kwargs.get('schema', None)
-        self.source = kwargs.get('source', None)
         self.status = kwargs.get('status', None)
 
     def __repr__(self):
@@ -730,10 +741,13 @@ class MetricAlertConfiguration(object):
 class AnomalyAlertConfiguration(object):
     """AnomalyAlertConfiguration.
 
+    :param str name: Required. anomaly alert configuration name.
+    :param list[str] hook_ids: Required. hook unique ids.
+    :param metric_alert_configurations: Required. Anomaly alert configurations.
+    :type metric_alert_configurations:
+     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
     :ivar id: anomaly alert configuration unique id.
     :vartype id: str
-    :ivar name: Required. anomaly alert configuration name.
-    :vartype name: str
     :ivar description: anomaly alert configuration description.
     :vartype description: str
     :ivar cross_metrics_operator: cross metrics operator
@@ -741,19 +755,16 @@ class AnomalyAlertConfiguration(object):
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
-    :ivar hook_ids: Required. hook unique ids.
-    :vartype hook_ids: list[str]
-    :ivar metric_alert_configurations: Required. Anomaly alert configurations.
-    :vartype metric_alert_configurations:
-     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
+
     """
-    def __init__(self, **kwargs):
+    def __init__(self, name, metric_alert_configurations, hook_ids, **kwargs):
+        # type: (str, List[MetricAlertConfiguration], List[str], Any) -> None
+        self.name = name
+        self.hook_ids = hook_ids
+        self.metric_alert_configurations = metric_alert_configurations
         self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
-        self.hook_ids = kwargs.get('hook_ids', None)
-        self.metric_alert_configurations = kwargs.get('metric_alert_configurations', None)
 
     def __repr__(self):
         return "AnomalyAlertConfiguration(id={}, name={}, description={}, cross_metrics_operator={}, hook_ids={}, " \
@@ -780,6 +791,17 @@ class AnomalyAlertConfiguration(object):
             ]
         )
 
+    def _to_generated(self):
+        return _AnomalyAlertingConfiguration(
+            name=self.name,
+            metric_alerting_configurations=[
+                config._to_generated() for config in self.metric_alert_configurations
+            ],
+            hook_ids=self.hook_ids,
+            cross_metrics_operator=self.cross_metrics_operator,
+            description=self.description
+        )
+
     def _to_generated_patch(
             self, name,
             metric_alert_configurations,
@@ -802,13 +824,14 @@ class AnomalyAlertConfiguration(object):
 class AnomalyDetectionConfiguration(object):
     """AnomalyDetectionConfiguration.
 
-    :ivar str id: anomaly detection configuration unique id.
-    :ivar str name: Required. anomaly detection configuration name.
-    :ivar str description: anomaly detection configuration description.
-    :ivar str metric_id: Required. metric unique id.
-    :ivar whole_series_detection_condition: Required.
+
+    :param str name: Required. anomaly detection configuration name.
+    :param str metric_id: Required. metric unique id.
+    :param whole_series_detection_condition: Required.
         Conditions to detect anomalies in all time series of a metric.
-    :vartype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
+    :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
+    :ivar str description: anomaly detection configuration description.
+    :ivar str id: anomaly detection configuration unique id.
     :ivar series_group_detection_conditions: detection configuration for series group.
     :vartype series_group_detection_conditions:
         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
@@ -817,12 +840,13 @@ class AnomalyDetectionConfiguration(object):
         list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, name, metric_id, whole_series_detection_condition, **kwargs):
+        # type: (str, str, MetricDetectionCondition, Any) -> None
+        self.name = name
+        self.metric_id = metric_id
+        self.whole_series_detection_condition = whole_series_detection_condition
         self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
-        self.metric_id = kwargs.get('metric_id', None)
-        self.whole_series_detection_condition = kwargs.get('whole_series_detection_condition', None)
         self.series_group_detection_conditions = kwargs.get('series_group_detection_conditions', None)
         self.series_detection_conditions = kwargs.get('series_detection_conditions', None)
 
@@ -857,6 +881,20 @@ class AnomalyDetectionConfiguration(object):
                 MetricSingleSeriesDetectionCondition._from_generated(conf)
                 for conf in config.series_override_configurations]
             if config.series_override_configurations else None,
+        )
+
+    def _to_generated(self):
+        return _AnomalyDetectionConfiguration(
+            name=self.name,
+            metric_id=self.metric_id,
+            description=self.description,
+            whole_metric_configuration=self.whole_series_detection_condition._to_generated(),
+            dimension_group_override_configurations=[
+                group._to_generated() for group in self.series_group_detection_conditions
+            ] if self.series_group_detection_conditions else None,
+            series_override_configurations=[
+                series._to_generated() for series in self.series_detection_conditions]
+            if self.series_detection_conditions else None,
         )
 
     def _to_generated_patch(
@@ -1478,18 +1516,18 @@ class MongoDBDataFeed(object):
 class NotificationHook(object):
     """NotificationHook.
 
+    :param str name: Hook unique name.
     :ivar str description: Hook description.
     :ivar str external_link: Hook external link.
     :ivar list[str] admin_emails: Hook administrator emails.
-    :ivar str name: Hook unique name.
     :ivar str hook_type: Constant filled by server. Possible values include:
         "Webhook", "Email".
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, name, **kwargs):
         self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.description = kwargs.get('description', None)
         self.external_link = kwargs.get('external_link', None)
         self.admin_emails = kwargs.get('admin_emails', None)
@@ -1510,18 +1548,18 @@ class NotificationHook(object):
 class EmailNotificationHook(NotificationHook):
     """EmailNotificationHook.
 
+    :param str name: Hook unique name.
     :param list[str] emails_to_alert: Required. Email TO: list.
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
     :ivar list[str] admin_emails: Hook administrator emails.
-    :ivar str name: Hook unique name.
     :ivar str hook_type: Constant filled by server - "Email".
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, emails_to_alert, **kwargs):
-        # type: (List[str], Any) -> None
-        super(EmailNotificationHook, self).__init__(**kwargs)
+    def __init__(self, name, emails_to_alert, **kwargs):
+        # type: (str, List[str], Any) -> None
+        super(EmailNotificationHook, self).__init__(name, **kwargs)
         self.hook_type = 'Email'  # type: str
         self.emails_to_alert = emails_to_alert
 
@@ -1548,9 +1586,9 @@ class EmailNotificationHook(NotificationHook):
             id=hook.hook_id
         )
 
-    def _to_generated(self, name):
+    def _to_generated(self):
         return _EmailHookInfo(
-            hook_name=name,
+            hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
             admins=self.admin_emails,
@@ -1574,6 +1612,7 @@ class EmailNotificationHook(NotificationHook):
 class WebNotificationHook(NotificationHook):
     """WebNotificationHook.
 
+    :param str name: Hook unique name.
     :param str endpoint: Required. API address, will be called when alert is triggered, only support
         POST method via SSL.
     :keyword str username: basic authentication.
@@ -1583,14 +1622,13 @@ class WebNotificationHook(NotificationHook):
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
     :ivar list[str] admin_emails: Hook administrator emails.
-    :ivar str name: Hook unique name.
     :ivar str hook_type: Constant filled by server - "Webhook".
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, endpoint, **kwargs):
-        # type: (str, Any) -> None
-        super(WebNotificationHook, self).__init__(**kwargs)
+    def __init__(self, name, endpoint, **kwargs):
+        # type: (str, str, Any) -> None
+        super(WebNotificationHook, self).__init__(name, **kwargs)
         self.hook_type = 'Webhook'  # type: str
         self.endpoint = endpoint
         self.username = kwargs.get('username', None)
@@ -1629,9 +1667,9 @@ class WebNotificationHook(NotificationHook):
             id=hook.hook_id
         )
 
-    def _to_generated(self, name):
+    def _to_generated(self):
         return _WebhookHookInfo(
-            hook_name=name,
+            hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
             admins=self.admin_emails,
