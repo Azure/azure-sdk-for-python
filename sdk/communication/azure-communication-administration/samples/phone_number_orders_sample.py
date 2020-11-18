@@ -73,15 +73,12 @@ def get_reservation_by_id():
 
 def begin_reserve_phone_numbers():
     # [START begin_reserve_phone_numbers]
-    reservationOptions = CreateSearchOptions(
+    reserve_phone_numbers_response = phone_number_administration_client.begin_reserve_phone_numbers(
         area_code=area_code_for_reservation,
         description="testreservation20200014",
         display_name="testreservation20200014",
         phone_plan_ids=[phone_plan_id],
         quantity=1
-    )
-    reserve_phone_numbers_response = phone_number_administration_client.begin_reserve_phone_numbers(
-        options=reservationOptions
     )
     # [END begin_reserve_phone_numbers]
     print('reserve phone numbers status:')
