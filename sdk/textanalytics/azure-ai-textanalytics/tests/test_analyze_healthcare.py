@@ -699,6 +699,7 @@ class TestHealth(TextAnalyticsTest):
         # Service now only accepts 10 documents for a job, and since the current default server-side value
         # for records per page is 20, pagination logic will never be activated.  This is intended to change
         # in the future but for now this test actually won't hit the pagination logic now.
+        
 
         result = client.begin_analyze_healthcare(docs, show_stats=True).result()
         response = list(result)
