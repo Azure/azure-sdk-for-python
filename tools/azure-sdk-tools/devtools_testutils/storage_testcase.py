@@ -8,7 +8,7 @@ import os
 import functools
 
 from azure.mgmt.storage import StorageManagementClient
-from azure.mgmt.storage.models import StorageAccount, Endpoints
+from azure.mgmt.storage.models import StorageAccount, Endpoints, BlobServiceProperties, FileServiceProperties
 
 from azure_devtools.scenario_tests.preparers import (
     AbstractPreparer,
@@ -33,7 +33,7 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None,
                  random_name_enabled=False,
-                 use_cache=False):
+                 use_cache=False, **kwargs):
         super(StorageAccountPreparer, self).__init__(name_prefix, 24,
                                                      disable_recording=disable_recording,
                                                      playback_fake_resource=playback_fake_resource,
@@ -47,6 +47,8 @@ class StorageAccountPreparer(AzureMgmtPreparer):
         self.storage_key = ''
         self.resource_moniker = self.name_prefix
         self.set_cache(use_cache, sku, location, name_prefix)
+        self.blob_service_props = BlobServiceProperties(**kwargs)
+        self.file_service_props = FileServiceProperties(**kwargs)
         if random_name_enabled:
             self.resource_moniker += "storname"
 
@@ -64,6 +66,13 @@ class StorageAccountPreparer(AzureMgmtPreparer):
                     'enable_https_traffic_only': True,
                 }
             )
+
+            if not all(prop is None for prop in self.blob_service_props.as_dict().values()):
+                self.client.blob_services.set_service_properties(group.name, name, self.blob_service_props)
+
+            if not all(prop is None for prop in self.file_service_props.as_dict().values()):
+                self.client.file_services.set_service_properties(group.name, name, self.file_service_props)
+
             self.resource = storage_async_operation.result()
             storage_keys = {
                 v.key_name: v.value
