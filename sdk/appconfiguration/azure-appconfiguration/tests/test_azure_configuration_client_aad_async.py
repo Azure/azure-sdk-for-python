@@ -40,7 +40,7 @@ import functools
 AppConfigPreparer = functools.partial(
     PowerShellPreparer,
     'appconfiguration',
-    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg=",
+    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
     appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io")
 
 class AppConfigurationClientTest(AzureMgmtTestCase):

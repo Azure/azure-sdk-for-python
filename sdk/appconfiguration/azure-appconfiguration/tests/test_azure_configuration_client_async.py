@@ -33,7 +33,7 @@ import logging
 import re
 import functools
 
-AppConfigPreparer = functools.partial(PowerShellPreparer, 'appconfiguration', appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg=")
+AppConfigPreparer = functools.partial(PowerShellPreparer, 'appconfiguration', appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=")
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
     def __init__(self, method_name):
