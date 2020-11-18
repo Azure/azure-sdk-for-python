@@ -6,24 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models as _models
+from ... import models as _models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class DirectoryOperations(object):
-    """DirectoryOperations operations.
+class DirectoryOperations:
+    """DirectoryOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -38,25 +34,24 @@ class DirectoryOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def create(
+    async def create(
         self,
-        timeout=None,  # type: Optional[int]
-        directory_properties=None,  # type: Optional[str]
-        posix_permissions=None,  # type: Optional[str]
-        posix_umask=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        directory_http_headers=None,  # type: Optional["_models.DirectoryHttpHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        directory_properties: Optional[str] = None,
+        posix_permissions: Optional[str] = None,
+        posix_umask: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        directory_http_headers: Optional["_models.DirectoryHttpHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Create a directory. By default, the destination is overwritten and if the destination already
         exists and has a lease the lease is broken. This operation supports conditional HTTP requests.
         For more information, see `Specifying Conditional Headers for Blob Service Operations
@@ -177,7 +172,7 @@ class DirectoryOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -199,24 +194,23 @@ class DirectoryOperations(object):
 
     create.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def rename(
+    async def rename(
         self,
-        rename_source,  # type: str
-        timeout=None,  # type: Optional[int]
-        marker=None,  # type: Optional[str]
-        path_rename_mode=None,  # type: Optional[Union[str, "_models.PathRenameMode"]]
-        directory_properties=None,  # type: Optional[str]
-        posix_permissions=None,  # type: Optional[str]
-        posix_umask=None,  # type: Optional[str]
-        source_lease_id=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        directory_http_headers=None,  # type: Optional["_models.DirectoryHttpHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        rename_source: str,
+        timeout: Optional[int] = None,
+        marker: Optional[str] = None,
+        path_rename_mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
+        directory_properties: Optional[str] = None,
+        posix_permissions: Optional[str] = None,
+        posix_umask: Optional[str] = None,
+        source_lease_id: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        directory_http_headers: Optional["_models.DirectoryHttpHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Rename a directory. By default, the destination is overwritten and if the destination already
         exists and has a lease the lease is broken. This operation supports conditional HTTP requests.
         For more information, see `Specifying Conditional Headers for Blob Service Operations
@@ -376,7 +370,7 @@ class DirectoryOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -399,17 +393,16 @@ class DirectoryOperations(object):
 
     rename.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def delete(
+    async def delete(
         self,
-        recursive_directory_delete,  # type: bool
-        timeout=None,  # type: Optional[int]
-        marker=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        recursive_directory_delete: bool,
+        timeout: Optional[int] = None,
+        marker: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Deletes the directory.
 
         :param recursive_directory_delete: If "true", all paths beneath the directory will be deleted.
@@ -490,7 +483,7 @@ class DirectoryOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -510,19 +503,18 @@ class DirectoryOperations(object):
 
     delete.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def set_access_control(
+    async def set_access_control(
         self,
-        timeout=None,  # type: Optional[int]
-        owner=None,  # type: Optional[str]
-        group=None,  # type: Optional[str]
-        posix_permissions=None,  # type: Optional[str]
-        posix_acl=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        posix_permissions: Optional[str] = None,
+        posix_acl: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Set the owner, group, permissions, or access control list for a directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -615,7 +607,7 @@ class DirectoryOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.patch(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -635,16 +627,15 @@ class DirectoryOperations(object):
 
     set_access_control.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def get_access_control(
+    async def get_access_control(
         self,
-        timeout=None,  # type: Optional[int]
-        upn=None,  # type: Optional[bool]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        upn: Optional[bool] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Get the owner, group, permissions, or access control list for a directory.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -723,7 +714,7 @@ class DirectoryOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

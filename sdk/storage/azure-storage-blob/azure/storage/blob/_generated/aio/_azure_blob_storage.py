@@ -6,14 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
 from ._configuration import AzureBlobStorageConfiguration
 from .operations import ServiceOperations
@@ -23,39 +19,38 @@ from .operations import BlobOperations
 from .operations import PageBlobOperations
 from .operations import AppendBlobOperations
 from .operations import BlockBlobOperations
-from . import models
+from .. import models
 
 
 class AzureBlobStorage(object):
     """AzureBlobStorage.
 
     :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.blob.operations.ServiceOperations
+    :vartype service: azure.storage.blob.aio.operations.ServiceOperations
     :ivar container: ContainerOperations operations
-    :vartype container: azure.storage.blob.operations.ContainerOperations
+    :vartype container: azure.storage.blob.aio.operations.ContainerOperations
     :ivar directory: DirectoryOperations operations
-    :vartype directory: azure.storage.blob.operations.DirectoryOperations
+    :vartype directory: azure.storage.blob.aio.operations.DirectoryOperations
     :ivar blob: BlobOperations operations
-    :vartype blob: azure.storage.blob.operations.BlobOperations
+    :vartype blob: azure.storage.blob.aio.operations.BlobOperations
     :ivar page_blob: PageBlobOperations operations
-    :vartype page_blob: azure.storage.blob.operations.PageBlobOperations
+    :vartype page_blob: azure.storage.blob.aio.operations.PageBlobOperations
     :ivar append_blob: AppendBlobOperations operations
-    :vartype append_blob: azure.storage.blob.operations.AppendBlobOperations
+    :vartype append_blob: azure.storage.blob.aio.operations.AppendBlobOperations
     :ivar block_blob: BlockBlobOperations operations
-    :vartype block_blob: azure.storage.blob.operations.BlockBlobOperations
+    :vartype block_blob: azure.storage.blob.aio.operations.BlockBlobOperations
     :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
     :type url: str
     """
 
     def __init__(
         self,
-        url,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        url: str,
+        **kwargs: Any
+    ) -> None:
         base_url = '{url}'
         self._config = AzureBlobStorageConfiguration(url, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -77,15 +72,12 @@ class AzureBlobStorage(object):
         self.block_blob = BlockBlobOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureBlobStorage
-        self._client.__enter__()
+    async def __aenter__(self) -> "AzureBlobStorage":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

@@ -6,24 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models as _models
+from ... import models as _models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class ContainerOperations(object):
-    """ContainerOperations operations.
+class ContainerOperations:
+    """ContainerOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -38,22 +34,21 @@ class ContainerOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def create(
+    async def create(
         self,
-        timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
-        access=None,  # type: Optional[Union[str, "_models.PublicAccessType"]]
-        request_id_parameter=None,  # type: Optional[str]
-        container_cpk_scope_info=None,  # type: Optional["_models.ContainerCpkScopeInfo"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
+        access: Optional[Union[str, "_models.PublicAccessType"]] = None,
+        request_id_parameter: Optional[str] = None,
+        container_cpk_scope_info: Optional["_models.ContainerCpkScopeInfo"] = None,
+        **kwargs
+    ) -> None:
         """creates a new container under the specified account. If the container with the same name
         already exists, the operation fails.
 
@@ -125,7 +120,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -146,14 +141,13 @@ class ContainerOperations(object):
 
     create.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def get_properties(
+    async def get_properties(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """returns all user-defined metadata and system properties for the specified container. The data
         returned does not include the container's list of blobs.
 
@@ -206,7 +200,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -236,15 +230,14 @@ class ContainerOperations(object):
 
     get_properties.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def delete(
+    async def delete(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """operation marks the specified container for deletion. The container and any blobs contained
         within it are later deleted during garbage collection.
 
@@ -308,7 +301,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -327,16 +320,15 @@ class ContainerOperations(object):
 
     delete.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def set_metadata(
+    async def set_metadata(
         self,
-        timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified container.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -407,7 +399,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -428,14 +420,13 @@ class ContainerOperations(object):
 
     set_metadata.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def get_access_policy(
+    async def get_access_policy(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List["_models.SignedIdentifier"]
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        **kwargs
+    ) -> List["_models.SignedIdentifier"]:
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
@@ -490,7 +481,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -514,17 +505,16 @@ class ContainerOperations(object):
         return deserialized
     get_access_policy.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def set_access_policy(
+    async def set_access_policy(
         self,
-        timeout=None,  # type: Optional[int]
-        access=None,  # type: Optional[Union[str, "_models.PublicAccessType"]]
-        request_id_parameter=None,  # type: Optional[str]
-        container_acl=None,  # type: Optional[List["_models.SignedIdentifier"]]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        access: Optional[Union[str, "_models.PublicAccessType"]] = None,
+        request_id_parameter: Optional[str] = None,
+        container_acl: Optional[List["_models.SignedIdentifier"]] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
         container may be accessed publicly.
 
@@ -606,7 +596,7 @@ class ContainerOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -627,15 +617,14 @@ class ContainerOperations(object):
 
     set_access_policy.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def restore(
+    async def restore(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        deleted_container_name=None,  # type: Optional[str]
-        deleted_container_version=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        deleted_container_name: Optional[str] = None,
+        deleted_container_version: Optional[str] = None,
+        **kwargs
+    ) -> None:
         """Restores a previously-deleted container.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -691,7 +680,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -710,16 +699,15 @@ class ContainerOperations(object):
 
     restore.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def acquire_lease(
+    async def acquire_lease(
         self,
-        timeout=None,  # type: Optional[int]
-        duration=None,  # type: Optional[int]
-        proposed_lease_id=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        duration: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -792,7 +780,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -814,15 +802,14 @@ class ContainerOperations(object):
 
     acquire_lease.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def release_lease(
+    async def release_lease(
         self,
-        lease_id,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        lease_id: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -886,7 +873,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -907,15 +894,14 @@ class ContainerOperations(object):
 
     release_lease.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def renew_lease(
+    async def renew_lease(
         self,
-        lease_id,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        lease_id: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -979,7 +965,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1001,15 +987,14 @@ class ContainerOperations(object):
 
     renew_lease.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def break_lease(
+    async def break_lease(
         self,
-        timeout=None,  # type: Optional[int]
-        break_period=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        break_period: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -1080,7 +1065,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1102,16 +1087,15 @@ class ContainerOperations(object):
 
     break_lease.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def change_lease(
+    async def change_lease(
         self,
-        lease_id,  # type: str
-        proposed_lease_id,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        lease_id: str,
+        proposed_lease_id: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -1180,7 +1164,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1202,17 +1186,16 @@ class ContainerOperations(object):
 
     change_lease.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def list_blob_flat_segment(
+    async def list_blob_flat_segment(
         self,
-        prefix=None,  # type: Optional[str]
-        marker=None,  # type: Optional[str]
-        maxresults=None,  # type: Optional[int]
-        include=None,  # type: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]]
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ListBlobsFlatSegmentResponse"
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> "_models.ListBlobsFlatSegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters the results to return only containers whose name begins with the
@@ -1286,7 +1269,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1308,18 +1291,17 @@ class ContainerOperations(object):
         return deserialized
     list_blob_flat_segment.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def list_blob_hierarchy_segment(
+    async def list_blob_hierarchy_segment(
         self,
-        delimiter,  # type: str
-        prefix=None,  # type: Optional[str]
-        marker=None,  # type: Optional[str]
-        maxresults=None,  # type: Optional[int]
-        include=None,  # type: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]]
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ListBlobsHierarchySegmentResponse"
+        delimiter: str,
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> "_models.ListBlobsHierarchySegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
         :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
@@ -1399,7 +1381,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1421,11 +1403,10 @@ class ContainerOperations(object):
         return deserialized
     list_blob_hierarchy_segment.metadata = {'url': '/{containerName}'}  # type: ignore
 
-    def get_account_info(
+    async def get_account_info(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs
+    ) -> None:
         """Returns the sku name and account kind.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1460,7 +1441,7 @@ class ContainerOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

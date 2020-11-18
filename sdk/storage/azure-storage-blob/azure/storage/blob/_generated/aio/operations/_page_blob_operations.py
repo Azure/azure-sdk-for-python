@@ -6,24 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models as _models
+from ... import models as _models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class PageBlobOperations(object):
-    """PageBlobOperations operations.
+class PageBlobOperations:
+    """PageBlobOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -38,31 +34,30 @@ class PageBlobOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def create(
+    async def create(
         self,
-        content_length,  # type: int
-        blob_content_length,  # type: int
-        timeout=None,  # type: Optional[int]
-        tier=None,  # type: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]]
-        metadata=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        blob_sequence_number=0,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        blob_tags_string=None,  # type: Optional[str]
-        blob_http_headers=None,  # type: Optional["_models.BlobHTTPHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        content_length: int,
+        blob_content_length: int,
+        timeout: Optional[int] = None,
+        tier: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]] = None,
+        metadata: Optional[str] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        blob_sequence_number: Optional[int] = 0,
+        request_id_parameter: Optional[str] = None,
+        blob_tags_string: Optional[str] = None,
+        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request.
@@ -219,7 +214,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -245,24 +240,23 @@ class PageBlobOperations(object):
 
     create.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def upload_pages(
+    async def upload_pages(
         self,
-        content_length,  # type: int
-        body,  # type: IO
-        transactional_content_md5=None,  # type: Optional[bytearray]
-        transactional_content_crc64=None,  # type: Optional[bytearray]
-        timeout=None,  # type: Optional[int]
-        range=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        sequence_number_access_conditions=None,  # type: Optional["_models.SequenceNumberAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        content_length: int,
+        body: IO,
+        transactional_content_md5: Optional[bytearray] = None,
+        transactional_content_crc64: Optional[bytearray] = None,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param content_length: The length of the request.
@@ -401,7 +395,7 @@ class PageBlobOperations(object):
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['stream_content'] = body
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -428,21 +422,20 @@ class PageBlobOperations(object):
 
     upload_pages.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def clear_pages(
+    async def clear_pages(
         self,
-        content_length,  # type: int
-        timeout=None,  # type: Optional[int]
-        range=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        sequence_number_access_conditions=None,  # type: Optional["_models.SequenceNumberAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        content_length: int,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Clear Pages operation clears a set of pages from a page blob.
 
         :param content_length: The length of the request.
@@ -565,7 +558,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -589,26 +582,25 @@ class PageBlobOperations(object):
 
     clear_pages.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def upload_pages_from_url(
+    async def upload_pages_from_url(
         self,
-        source_url,  # type: str
-        source_range,  # type: str
-        content_length,  # type: int
-        range,  # type: str
-        source_content_md5=None,  # type: Optional[bytearray]
-        source_contentcrc64=None,  # type: Optional[bytearray]
-        timeout=None,  # type: Optional[int]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        sequence_number_access_conditions=None,  # type: Optional["_models.SequenceNumberAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        source_url: str,
+        source_range: str,
+        content_length: int,
+        range: str,
+        source_content_md5: Optional[bytearray] = None,
+        source_contentcrc64: Optional[bytearray] = None,
+        timeout: Optional[int] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        sequence_number_access_conditions: Optional["_models.SequenceNumberAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
@@ -768,7 +760,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -794,17 +786,16 @@ class PageBlobOperations(object):
 
     upload_pages_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def get_page_ranges(
+    async def get_page_ranges(
         self,
-        snapshot=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        range=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PageList"
+        snapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> "_models.PageList":
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
@@ -892,7 +883,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -916,19 +907,18 @@ class PageBlobOperations(object):
         return deserialized
     get_page_ranges.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def get_page_ranges_diff(
+    async def get_page_ranges_diff(
         self,
-        snapshot=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        prevsnapshot=None,  # type: Optional[str]
-        prev_snapshot_url=None,  # type: Optional[str]
-        range=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PageList"
+        snapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        prevsnapshot: Optional[str] = None,
+        prev_snapshot_url: Optional[str] = None,
+        range: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> "_models.PageList":
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
@@ -1032,7 +1022,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1056,19 +1046,18 @@ class PageBlobOperations(object):
         return deserialized
     get_page_ranges_diff.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def resize(
+    async def resize(
         self,
-        blob_content_length,  # type: int
-        timeout=None,  # type: Optional[int]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        blob_content_length: int,
+        timeout: Optional[int] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Resize the Blob.
 
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
@@ -1171,7 +1160,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1193,17 +1182,16 @@ class PageBlobOperations(object):
 
     resize.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def update_sequence_number(
+    async def update_sequence_number(
         self,
-        sequence_number_action,  # type: Union[str, "_models.SequenceNumberActionType"]
-        timeout=None,  # type: Optional[int]
-        blob_sequence_number=0,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        sequence_number_action: Union[str, "_models.SequenceNumberActionType"],
+        timeout: Optional[int] = None,
+        blob_sequence_number: Optional[int] = 0,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Update the sequence number of the blob.
 
         :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
@@ -1289,7 +1277,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1311,15 +1299,14 @@ class PageBlobOperations(object):
 
     update_sequence_number.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def copy_incremental(
+    async def copy_incremental(
         self,
-        copy_source,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        copy_source: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
         blob. The snapshot is copied such that only the differential changes between the previously
         copied snapshot are transferred to the destination. The copied snapshots are complete copies of
@@ -1397,7 +1384,7 @@ class PageBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:

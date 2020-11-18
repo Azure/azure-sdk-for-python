@@ -6,24 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models as _models
+from ... import models as _models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class AppendBlobOperations(object):
-    """AppendBlobOperations operations.
+class AppendBlobOperations:
+    """AppendBlobOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -38,28 +34,27 @@ class AppendBlobOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def create(
+    async def create(
         self,
-        content_length,  # type: int
-        timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        blob_tags_string=None,  # type: Optional[str]
-        blob_http_headers=None,  # type: Optional["_models.BlobHTTPHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        content_length: int,
+        timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        blob_tags_string: Optional[str] = None,
+        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Create Append Blob operation creates a new append blob.
 
         :param content_length: The length of the request.
@@ -202,7 +197,7 @@ class AppendBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -228,23 +223,22 @@ class AppendBlobOperations(object):
 
     create.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def append_block(
+    async def append_block(
         self,
-        content_length,  # type: int
-        body,  # type: IO
-        timeout=None,  # type: Optional[int]
-        transactional_content_md5=None,  # type: Optional[bytearray]
-        transactional_content_crc64=None,  # type: Optional[bytearray]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        append_position_access_conditions=None,  # type: Optional["_models.AppendPositionAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        content_length: int,
+        body: IO,
+        timeout: Optional[int] = None,
+        transactional_content_md5: Optional[bytearray] = None,
+        transactional_content_crc64: Optional[bytearray] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        append_position_access_conditions: Optional["_models.AppendPositionAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Append Block operation commits a new block of data to the end of an existing append blob.
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
@@ -375,7 +369,7 @@ class AppendBlobOperations(object):
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['stream_content'] = body
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -403,26 +397,25 @@ class AppendBlobOperations(object):
 
     append_block.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def append_block_from_url(
+    async def append_block_from_url(
         self,
-        source_url,  # type: str
-        content_length,  # type: int
-        source_range=None,  # type: Optional[str]
-        source_content_md5=None,  # type: Optional[bytearray]
-        source_contentcrc64=None,  # type: Optional[bytearray]
-        timeout=None,  # type: Optional[int]
-        transactional_content_md5=None,  # type: Optional[bytearray]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        append_position_access_conditions=None,  # type: Optional["_models.AppendPositionAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        source_url: str,
+        content_length: int,
+        source_range: Optional[str] = None,
+        source_content_md5: Optional[bytearray] = None,
+        source_contentcrc64: Optional[bytearray] = None,
+        timeout: Optional[int] = None,
+        transactional_content_md5: Optional[bytearray] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        append_position_access_conditions: Optional["_models.AppendPositionAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Append Block operation commits a new block of data to the end of an existing append blob
         where the contents are read from a source url. The Append Block operation is permitted only if
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
@@ -579,7 +572,7 @@ class AppendBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -606,16 +599,15 @@ class AppendBlobOperations(object):
 
     append_block_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def seal(
+    async def seal(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        append_position_access_conditions=None,  # type: Optional["_models.AppendPositionAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        append_position_access_conditions: Optional["_models.AppendPositionAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
         version 2019-12-12 version or later.
 
@@ -694,7 +686,7 @@ class AppendBlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:

@@ -6,24 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models as _models
+from ... import models as _models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class BlobOperations(object):
-    """BlobOperations operations.
+class BlobOperations:
+    """BlobOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -38,28 +34,27 @@ class BlobOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def download(
+    async def download(
         self,
-        snapshot=None,  # type: Optional[str]
-        version_id=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        range=None,  # type: Optional[str]
-        range_get_content_md5=None,  # type: Optional[bool]
-        range_get_content_crc64=None,  # type: Optional[bool]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> IO
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        range_get_content_md5: Optional[bool] = None,
+        range_get_content_crc64: Optional[bool] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> IO:
         """The Download operation reads or downloads a blob from the system, including its metadata and
         properties. You can also call Download to read a snapshot.
 
@@ -179,7 +174,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
@@ -276,19 +271,18 @@ class BlobOperations(object):
         return deserialized
     download.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def get_properties(
+    async def get_properties(
         self,
-        snapshot=None,  # type: Optional[str]
-        version_id=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Get Properties operation returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -392,7 +386,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -453,18 +447,17 @@ class BlobOperations(object):
 
     get_properties.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def delete(
+    async def delete(
         self,
-        snapshot=None,  # type: Optional[str]
-        version_id=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        delete_snapshots=None,  # type: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """If the storage account's soft delete feature is disabled then, when a blob is deleted, it is
         permanently removed from the storage account. If the storage account's soft delete feature is
         enabled, then, when a blob is deleted, it is marked for deletion and becomes inaccessible
@@ -567,7 +560,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -586,19 +579,18 @@ class BlobOperations(object):
 
     delete.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def set_access_control(
+    async def set_access_control(
         self,
-        timeout=None,  # type: Optional[int]
-        owner=None,  # type: Optional[str]
-        group=None,  # type: Optional[str]
-        posix_permissions=None,  # type: Optional[str]
-        posix_acl=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        posix_permissions: Optional[str] = None,
+        posix_acl: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Set the owner, group, permissions, or access control list for a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -691,7 +683,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.patch(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -711,16 +703,15 @@ class BlobOperations(object):
 
     set_access_control.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def get_access_control(
+    async def get_access_control(
         self,
-        timeout=None,  # type: Optional[int]
-        upn=None,  # type: Optional[bool]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        upn: Optional[bool] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Get the owner, group, permissions, or access control list for a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -799,7 +790,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -823,23 +814,22 @@ class BlobOperations(object):
 
     get_access_control.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def rename(
+    async def rename(
         self,
-        rename_source,  # type: str
-        timeout=None,  # type: Optional[int]
-        path_rename_mode=None,  # type: Optional[Union[str, "_models.PathRenameMode"]]
-        directory_properties=None,  # type: Optional[str]
-        posix_permissions=None,  # type: Optional[str]
-        posix_umask=None,  # type: Optional[str]
-        source_lease_id=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        directory_http_headers=None,  # type: Optional["_models.DirectoryHttpHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        rename_source: str,
+        timeout: Optional[int] = None,
+        path_rename_mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
+        directory_properties: Optional[str] = None,
+        posix_permissions: Optional[str] = None,
+        posix_umask: Optional[str] = None,
+        source_lease_id: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        directory_http_headers: Optional["_models.DirectoryHttpHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Rename a blob/file.  By default, the destination is overwritten and if the destination already
         exists and has a lease the lease is broken.  This operation supports conditional HTTP requests.
         For more information, see `Specifying Conditional Headers for Blob Service Operations
@@ -991,7 +981,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1013,13 +1003,12 @@ class BlobOperations(object):
 
     rename.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def undelete(
+    async def undelete(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> None:
         """Undelete a blob that was previously soft deleted.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1063,7 +1052,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1082,15 +1071,14 @@ class BlobOperations(object):
 
     undelete.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def set_expiry(
+    async def set_expiry(
         self,
-        expiry_options,  # type: Union[str, "_models.BlobExpiryOptions"]
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        expires_on=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        expiry_options: Union[str, "_models.BlobExpiryOptions"],
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        expires_on: Optional[str] = None,
+        **kwargs
+    ) -> None:
         """Sets the time a blob will expire and be deleted.
 
         :param expiry_options: Required. Indicates mode of the expiry time.
@@ -1141,7 +1129,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1162,16 +1150,15 @@ class BlobOperations(object):
 
     set_expiry.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def set_http_headers(
+    async def set_http_headers(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        blob_http_headers=None,  # type: Optional["_models.BlobHTTPHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        blob_http_headers: Optional["_models.BlobHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Set HTTP Headers operation sets system properties on the blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1273,7 +1260,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1295,19 +1282,18 @@ class BlobOperations(object):
 
     set_http_headers.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def set_metadata(
+    async def set_metadata(
         self,
-        timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Set Blob Metadata operation sets user-defined metadata for the specified blob as one or
         more name-value pairs.
 
@@ -1417,7 +1403,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1442,16 +1428,15 @@ class BlobOperations(object):
 
     set_metadata.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def acquire_lease(
+    async def acquire_lease(
         self,
-        timeout=None,  # type: Optional[int]
-        duration=None,  # type: Optional[int]
-        proposed_lease_id=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        duration: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1534,7 +1519,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1556,15 +1541,14 @@ class BlobOperations(object):
 
     acquire_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def release_lease(
+    async def release_lease(
         self,
-        lease_id,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        lease_id: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1638,7 +1622,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1659,15 +1643,14 @@ class BlobOperations(object):
 
     release_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def renew_lease(
+    async def renew_lease(
         self,
-        lease_id,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        lease_id: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1741,7 +1724,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1763,16 +1746,15 @@ class BlobOperations(object):
 
     renew_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def change_lease(
+    async def change_lease(
         self,
-        lease_id,  # type: str
-        proposed_lease_id,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        lease_id: str,
+        proposed_lease_id: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1851,7 +1833,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1873,15 +1855,14 @@ class BlobOperations(object):
 
     change_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def break_lease(
+    async def break_lease(
         self,
-        timeout=None,  # type: Optional[int]
-        break_period=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        break_period: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """[Update] The Lease Blob operation establishes and manages a lock on a blob for write and delete
         operations.
 
@@ -1962,7 +1943,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1984,19 +1965,18 @@ class BlobOperations(object):
 
     break_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def create_snapshot(
+    async def create_snapshot(
         self,
-        timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        cpk_scope_info=None,  # type: Optional["_models.CpkScopeInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Create Snapshot operation creates a read-only snapshot of a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2105,7 +2085,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -2129,22 +2109,21 @@ class BlobOperations(object):
 
     create_snapshot.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def start_copy_from_url(
+    async def start_copy_from_url(
         self,
-        copy_source,  # type: str
-        timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
-        tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
-        rehydrate_priority=None,  # type: Optional[Union[str, "_models.RehydratePriority"]]
-        request_id_parameter=None,  # type: Optional[str]
-        blob_tags_string=None,  # type: Optional[str]
-        seal_blob=None,  # type: Optional[bool]
-        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        copy_source: str,
+        timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+        rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
+        request_id_parameter: Optional[str] = None,
+        blob_tags_string: Optional[str] = None,
+        seal_blob: Optional[bool] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Start Copy From URL operation copies a blob or an internet resource to a new blob.
 
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
@@ -2274,7 +2253,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2298,21 +2277,20 @@ class BlobOperations(object):
 
     start_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def copy_from_url(
+    async def copy_from_url(
         self,
-        copy_source,  # type: str
-        timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
-        tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
-        request_id_parameter=None,  # type: Optional[str]
-        source_content_md5=None,  # type: Optional[bytearray]
-        blob_tags_string=None,  # type: Optional[str]
-        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        copy_source: str,
+        timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+        request_id_parameter: Optional[str] = None,
+        source_content_md5: Optional[bytearray] = None,
+        blob_tags_string: Optional[str] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Copy From URL operation copies a blob or an internet resource to a new blob. It will not
         return a response until the copy is complete.
 
@@ -2436,7 +2414,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2462,15 +2440,14 @@ class BlobOperations(object):
 
     copy_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def abort_copy_from_url(
+    async def abort_copy_from_url(
         self,
-        copy_id,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        copy_id: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a
         destination blob with zero length and full metadata.
 
@@ -2529,7 +2506,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -2548,19 +2525,18 @@ class BlobOperations(object):
 
     abort_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def set_tier(
+    async def set_tier(
         self,
-        tier,  # type: Union[str, "_models.AccessTierRequired"]
-        snapshot=None,  # type: Optional[str]
-        version_id=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        rehydrate_priority=None,  # type: Optional[Union[str, "_models.RehydratePriority"]]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        tier: Union[str, "_models.AccessTierRequired"],
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Set Tier operation sets the tier on a blob. The operation is allowed on a page blob in a
         premium storage account and on a block blob in a blob storage account (locally redundant
         storage only). A premium page blob's tier determines the allowed size, IOPS, and bandwidth of
@@ -2644,7 +2620,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -2668,11 +2644,10 @@ class BlobOperations(object):
 
     set_tier.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def get_account_info(
+    async def get_account_info(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        **kwargs
+    ) -> None:
         """Returns the sku name and account kind.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -2707,7 +2682,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2728,19 +2703,18 @@ class BlobOperations(object):
 
     get_account_info.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def query(
+    async def query(
         self,
-        snapshot=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        encryption_algorithm="AES256",  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        query_request=None,  # type: Optional["_models.QueryRequest"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        cpk_info=None,  # type: Optional["_models.CpkInfo"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> IO
+        snapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        encryption_algorithm: Optional[str] = "AES256",
+        request_id_parameter: Optional[str] = None,
+        query_request: Optional["_models.QueryRequest"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        cpk_info: Optional["_models.CpkInfo"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> IO:
         """The Query operation enables users to select/project on blob data by providing simple query
         expressions.
 
@@ -2851,7 +2825,7 @@ class BlobOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
@@ -2937,16 +2911,15 @@ class BlobOperations(object):
         return deserialized
     query.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def get_tags(
+    async def get_tags(
         self,
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        snapshot=None,  # type: Optional[str]
-        version_id=None,  # type: Optional[str]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.BlobTags"
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> "_models.BlobTags":
         """The Get Tags operation enables users to get the tags associated with a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -3011,7 +2984,7 @@ class BlobOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -3032,18 +3005,17 @@ class BlobOperations(object):
         return deserialized
     get_tags.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
 
-    def set_tags(
+    async def set_tags(
         self,
-        timeout=None,  # type: Optional[int]
-        version_id=None,  # type: Optional[str]
-        transactional_content_md5=None,  # type: Optional[bytearray]
-        transactional_content_crc64=None,  # type: Optional[bytearray]
-        request_id_parameter=None,  # type: Optional[str]
-        tags=None,  # type: Optional["_models.BlobTags"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        version_id: Optional[str] = None,
+        transactional_content_md5: Optional[bytearray] = None,
+        transactional_content_crc64: Optional[bytearray] = None,
+        request_id_parameter: Optional[str] = None,
+        tags: Optional["_models.BlobTags"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """The Set Tags operation enables users to set tags on a blob.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -3120,7 +3092,7 @@ class BlobOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
