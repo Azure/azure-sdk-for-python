@@ -513,10 +513,10 @@ class CertificateClientTests(KeyVaultTestCase):
         await client.purge_deleted_certificate(certificate_name=cert_name)
 
         # restore certificate
-        await self._poll_until_no_exception(
-            client.restore_certificate_backup, certificate_backup, expected_exception=ResourceExistsError
+        restore_function = functools.partial(client.restore_certificate_backup, certificate_backup)
+        restored_certificate = await self._poll_until_no_exception(
+            restore_function, expected_exception=ResourceExistsError
         )
-        restored_certificate = await client.get_certificate(certificate_name=cert_name)
         self._validate_certificate_bundle(cert=restored_certificate, cert_name=cert_name, cert_policy=policy)
 
     @ResourceGroupPreparer(random_name_enabled=True)

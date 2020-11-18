@@ -191,13 +191,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         created_key = key_client.create_key("keyrec", "RSA")
         key_name = created_key.name
         # [START backup_key]
-
         # backup key
         key_backup = key_client.backup_key(key_name)
 
         # returns the raw bytes of the backed up key
         print(key_backup)
-
         # [END backup_key]
 
         key_client.begin_delete_key(key_name).wait()
@@ -207,12 +205,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             time.sleep(15)
 
         # [START restore_key_backup]
-
         # restore a key backup
         restored_key = key_client.restore_key_backup(key_backup)
         print(restored_key.id)
         print(restored_key.properties.version)
-
         # [END restore_key_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)

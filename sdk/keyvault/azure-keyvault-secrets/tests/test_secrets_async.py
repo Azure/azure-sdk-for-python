@@ -224,12 +224,9 @@ class KeyVaultSecretTest(KeyVaultTestCase):
         await client.purge_deleted_secret(created_bundle.name)
 
         # restore secret
-        await self._poll_until_no_exception(
-            client.restore_secret_backup, secret_backup, expected_exception=ResourceExistsError
-        )
-        restored_secret = await client.get_secret(name=secret_name)
-        self.assertEqual(created_bundle.id, restored_secret.id)
-        self._assert_secret_attributes_equal(created_bundle.properties, restored_secret.properties)
+        restore_function = functools.partial(client.restore_secret_backup, secret_backup)
+        restored_secret = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
+        self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()
@@ -256,9 +253,9 @@ class KeyVaultSecretTest(KeyVaultTestCase):
             await client.recover_deleted_secret(secret_name)
 
         # validate the recovered secrets exist
-        await self._poll_until_no_exception(
-            client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
-        )
+        for secret in secrets.keys():
+            get_function = functools.partial(client.get_secret, secret)
+            await self._poll_until_no_exception(get_function, expected_exception=ResourceNotFoundError)
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @KeyVaultPreparer()

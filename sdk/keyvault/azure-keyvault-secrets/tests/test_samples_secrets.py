@@ -166,7 +166,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_backup = secret_client.backup_secret("secret-name")
 
         print(secret_backup)
-
         # [END backup_secret]
 
         secret_client.begin_delete_secret("secret-name").wait()
@@ -176,12 +175,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             time.sleep(15)
 
         # [START restore_secret_backup]
-
         # restores a backed up secret
         restored_secret = secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
-
         # [END restore_secret_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)

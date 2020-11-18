@@ -317,11 +317,8 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         await client.purge_deleted_key(created_bundle.name)
 
         # restore key
-        await self._poll_until_no_exception(
-            client.restore_key_backup, key_backup, expected_exception=ResourceExistsError
-        )
-        restored_key = await client.get_key(name=key_name)
-        self.assertEqual(created_bundle.id, restored_key.id)
+        restore_function = functools.partial(client.restore_key_backup, key_backup)
+        restored_key = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
         self._assert_key_attributes_equal(created_bundle.properties, restored_key.properties)
 
     @ResourceGroupPreparer(random_name_enabled=True)

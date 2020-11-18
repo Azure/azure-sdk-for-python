@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
+import asyncio
 import functools
-import time
 
 from azure.keyvault.secrets.aio import SecretClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -158,28 +158,24 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
         secret_name = created_secret.name
         # [START backup_secret]
-
         # backup secret
         secret_backup = await secret_client.backup_secret(secret_name)
 
         # returns the raw bytes of the backed up secret
         print(secret_backup)
-
         # [END backup_secret]
 
         await secret_client.delete_secret(created_secret.name)
         await secret_client.purge_deleted_secret(created_secret.name)
 
         if self.is_live:
-            time.sleep(15)
+            await asyncio.sleep(15)
 
         # [START restore_secret_backup]
-
         # restores a backed up secret
         restored_secret = await secret_client.restore_secret_backup(secret_backup)
         print(restored_secret.id)
         print(restored_secret.version)
-
         # [END restore_secret_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)

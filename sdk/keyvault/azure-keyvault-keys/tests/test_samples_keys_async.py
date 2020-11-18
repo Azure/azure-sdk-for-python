@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import functools
-import time
 
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
@@ -185,29 +185,25 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         key_name = "test-key"
         await key_client.create_key(key_name, "RSA")
         # [START backup_key]
-
         # backup key
         key_backup = await key_client.backup_key(key_name)
 
         # returns the raw bytes of the backup
         print(key_backup)
-
         # [END backup_key]
 
         await key_client.delete_key(key_name)
         await key_client.purge_deleted_key(key_name)
 
         if self.is_live:
-            time.sleep(15)
+            await asyncio.sleep(15)
 
         # [START restore_key_backup]
-
         # restores a backup
         restored_key = await key_client.restore_key_backup(key_backup)
         print(restored_key.id)
         print(restored_key.name)
         print(restored_key.properties.version)
-
         # [END restore_key_backup]
 
     @ResourceGroupPreparer(random_name_enabled=True)

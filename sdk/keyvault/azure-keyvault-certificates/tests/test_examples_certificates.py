@@ -221,13 +221,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
-
         # backup certificate
         certificate_backup = certificate_client.backup_certificate(cert_name)
 
         # returns the raw bytes of the backed up certificate
         print(certificate_backup)
-
         # [END backup_certificate]
 
         certificate_client.begin_delete_certificate(certificate_name=cert_name).wait()
@@ -237,14 +235,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             time.sleep(15)
 
         # [START restore_certificate]
-
         # restore a certificate backup
         restored_certificate = certificate_client.restore_certificate_backup(certificate_backup)
 
         print(restored_certificate.id)
         print(restored_certificate.name)
         print(restored_certificate.properties.version)
-
         # [END restore_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)

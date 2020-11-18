@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import functools
-import time
 
 from azure.keyvault.certificates import CertificatePolicy, CertificateContentType, WellKnownIssuerNames
 from azure.keyvault.certificates.aio import CertificateClient
@@ -211,29 +211,25 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         await create_certificate_poller
 
         # [START backup_certificate]
-
         # backup certificate
         certificate_backup = await certificate_client.backup_certificate(cert_name)
 
         # returns the raw bytes of the backed up certificate
         print(certificate_backup)
-
         # [END backup_certificate]
 
         await certificate_client.delete_certificate(certificate_name=cert_name)
         await certificate_client.purge_deleted_certificate(certificate_name=cert_name)
 
         if self.is_live:
-            time.sleep(15)
+            await asyncio.sleep(15)
 
         # [START restore_certificate]
-
         # restores a certificate backup
         restored_certificate = await certificate_client.restore_certificate_backup(certificate_backup)
         print(restored_certificate.id)
         print(restored_certificate.name)
         print(restored_certificate.properties.version)
-
         # [END restore_certificate]
 
     @ResourceGroupPreparer(random_name_enabled=True)
