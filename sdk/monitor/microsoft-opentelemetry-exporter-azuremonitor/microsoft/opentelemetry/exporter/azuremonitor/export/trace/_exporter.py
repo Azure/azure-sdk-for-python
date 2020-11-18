@@ -44,7 +44,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = map(
-                        lambda x: x.as_dict(), envelopes)
+                    lambda x: x.as_dict(), envelopes)
                 self.storage.put(envelopes_to_store, result)
             if result == ExportResult.SUCCESS:
                 # Try to send any cached events
@@ -54,7 +54,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             logger.exception("Exception occurred while exporting the data.")
             return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
-    def shutdown(self)
+    def shutdown(self):
         """Shuts down the exporter.
 
         Called when the SDK is shut down.
@@ -95,7 +95,7 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
-        if "http.method" in span.attributes: # HTTP
+        if "http.method" in span.attributes:  # HTTP
             if "http.route" in span.attributes:
                 envelope.tags["ai.operation.name"] = span.attributes["http.route"]
             elif "http.path" in span.attributes:
@@ -109,7 +109,7 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
             if "http.status_code" in span.attributes:
                 status_code = span.attributes["http.status_code"]
                 data.response_code = str(status_code)
-        elif "messaging.system" in span.attributes: # Messaging
+        elif "messaging.system" in span.attributes:  # Messaging
             envelope.tags["ai.operation.name"] = span.name
 
             if "messaging.destination" in span.attributes:
@@ -139,7 +139,7 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
             base_data=data, base_type="RemoteDependencyData"
         )
         if span.kind in (SpanKind.CLIENT, SpanKind.PRODUCER):
-            if "http.method" in span.attributes: # HTTP
+            if "http.method" in span.attributes:  # HTTP
                 data.type = "HTTP"
                 if "net.peer.port" in span.attributes:
                     name = ""
@@ -161,7 +161,7 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
                 if "http.status_code" in span.attributes:
                     status_code = span.attributes["http.status_code"]
                     data.result_code = str(status_code)
-            elif "db.system" in span.attributes: # Database
+            elif "db.system" in span.attributes:  # Database
                 data.type = span.attributes["db.system"]
                 # data is the full statement
                 if "db.statement" in span.attributes:
@@ -170,17 +170,17 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
                     data.target = span.attributes["db.name"]
                 else:
                     data.target = span.attributes["db.system"]
-            elif "rpc.system" in span.attributes: # Rpc
+            elif "rpc.system" in span.attributes:  # Rpc
                 data.type = "rpc.system"
                 if "rpc.service" in span.attributes:
                     data.target = span.attributes["rpc.service"]
                 else:
                     data.target = span.attributes["rpc.system"]
-            elif "messaging.system" in span.attributes: # Messaging
+            elif "messaging.system" in span.attributes:  # Messaging
                 data.type = "Queue Message | {}" \
                     .format(span.attributes["messaging.system"])
                 if "net.peer.ip" in span.attributes and \
-                    "messaging.destination" in span.attributes:
+                        "messaging.destination" in span.attributes:
                     data.target = "{}/{}".format(
                         span.attributes["net.peer.ip"],
                         span.attributes["messaging.destination"]
@@ -196,10 +196,10 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
     for key in span.attributes:
         # Remove Opentelemetry related span attributes from custom dimensions
         if key.startswith("http.") or \
-            key.startswith("db.") or \
-            key.startswith("rpc.") or \
-            key.startswith("net.") or \
-            key.startswith("messaging."):
+                key.startswith("db.") or \
+                key.startswith("rpc.") or \
+                key.startswith("net.") or \
+                key.startswith("messaging."):
             continue
         data.properties[key] = span.attributes[key]
     if span.links:
