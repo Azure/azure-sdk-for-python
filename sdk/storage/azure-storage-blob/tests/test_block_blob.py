@@ -280,7 +280,6 @@ class StorageBlockBlobTest(StorageTestCase):
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
         new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        new_blob_content_md5 = new_blob.get_blob_properties().content_settings.content_md5
 
         # Assert
         new_blob.upload_blob_from_url(
@@ -288,6 +287,7 @@ class StorageBlockBlobTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             new_blob.upload_blob_from_url(
                 source_blob_url, include_source_blob_properties=False, source_content_md5=bad_source_md5)
+        new_blob_content_md5 = new_blob.get_blob_properties().content_settings.content_md5
         self.assertEqual(new_blob_content_md5, source_md5)
 
     @GlobalStorageAccountPreparer()
