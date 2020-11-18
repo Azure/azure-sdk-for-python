@@ -15,7 +15,7 @@ from ._base_handler import (
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
 from ._common._configuration import Configuration
-from ._common.utils import create_authentication, generate_dead_letter_entity_name
+from ._common.utils import create_authentication, generate_dead_letter_entity_name, strip_protocol_from_uri
 from ._common.constants import SubQueue
 
 if TYPE_CHECKING:
@@ -70,7 +70,9 @@ class ServiceBusClient(object):
         **kwargs
     ):
         # type: (str, TokenCredential, Any) -> None
-        self.fully_qualified_namespace = fully_qualified_namespace
+        # If the user provided http:// or sb://, let's be polite and strip that.
+        self.fully_qualified_namespace = strip_protocol_from_uri(fully_qualified_namespace.strip())
+
         self._credential = credential
         self._config = Configuration(**kwargs)
         self._connection = None

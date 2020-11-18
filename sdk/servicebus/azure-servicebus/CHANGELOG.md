@@ -3,7 +3,12 @@
 ## 7.0.0b9 (Unreleased)
 
 **Breaking Changes**
-* `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
+
+* `ServiceBusSender` and `ServiceBusReceiver` are no longer reusable and will raise `ValueError` when trying to operate on a closed handler.
+
+**BugFixes**
+
+* FQDNs and Connection strings are now supported even with strippable whitespace or protocol headers (e.g. 'sb://').
 
 **Bug Fixes**
 
