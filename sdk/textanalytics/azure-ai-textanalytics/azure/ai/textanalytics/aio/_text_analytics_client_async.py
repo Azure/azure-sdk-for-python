@@ -656,7 +656,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         key_phrase_extraction_tasks=None,  # type: List[~azure.ai.textanalytics.KeyPhraseExtractionTask]
         sentiment_analysis_tasks=None,  # type: List[~azure.ai.textanalytics.SentimentAnalysisTask]
         **kwargs  # type: Any
-    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]:
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.

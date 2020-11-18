@@ -658,7 +658,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         pii_entities_recognition_tasks=None,  # type: List[~azure.ai.textanalytics.PiiEntitiesRecognitionTask]
         key_phrase_extraction_tasks=None,  # type: List[~azure.ai.textanalytics.KeyPhraseExtractionTask]
         **kwargs  # type: Any
-    ):  # type: (...) -> LROPoller[ItemPaged[TextAnalysisResult]]):
+    ):  # type: (...) -> LROPoller[ItemPaged[TextAnalysisResult]])
         """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
 
         :param documents: The set of documents to process as part of this batch.
