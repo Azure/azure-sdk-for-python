@@ -173,7 +173,8 @@ class StorageBlockBlobTest(StorageTestCase):
     @GlobalStorageAccountPreparer()
     def test_upload_blob_from_url_if_match_condition(
             self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key, container_name="tcontainer")
+        # Act
+        self._setup(storage_account, storage_account_key)
         source_blob = self._create_blob()
         early_test_datetime = (datetime.utcnow() - timedelta(minutes=15))
         late_test_datetime = (datetime.utcnow() + timedelta(minutes=15))
@@ -184,6 +185,8 @@ class StorageBlockBlobTest(StorageTestCase):
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
         new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         new_blob_client.upload_blob(data="fake data")
+
+        # Assert
         with self.assertRaises(ResourceModifiedError):
             new_blob_client.upload_blob_from_url(
                 source_blob_url, if_modified_since=late_test_datetime)
@@ -205,35 +208,93 @@ class StorageBlockBlobTest(StorageTestCase):
         new_blob_client.upload_blob_from_url(
             source_blob_url, source_if_unmodified_since=late_test_datetime)
 
-    #HNS account
     @GlobalStorageAccountPreparer()
-    def test_upload_blob_from_url_if_tags_match_condition(
-            self, resource_group, location, storage_account, storage_account_key):
-        self._setup(storage_account, storage_account_key, container_name="tcodsdswxntvdcbaifdnvcer")
-        source_blob = self._create_blob(tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"})
+    def test_upload_blob_from_url_with_cpk(self, resource_group, location, storage_account, storage_account_key):
+        # Act
+        self._setup(storage_account, storage_account_key)
+        source_blob = self._create_blob(data=b"This is test data to be copied over.")
+        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
                                 container_name=self.container_name, blob_name=source_blob.blob_name,
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
-        new_blob1_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
-        new_blob2_client = self.bsc.get_blob_client(self.container_name, 'blob2copy')
+        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob.upload_blob_from_url(
+            source_blob_url, include_source_blob_properties=True, cpk=test_cpk)
 
-        #with self.assertRaises(ResourceModifiedError):
-        new_blob1_client.upload_blob_from_url(
-                    source_blob_url, tags={"tag1": "firsttag"}, if_tags_match_condition="\"condition tag\"='wrong tag'")
-        new_blob2_client.upload_blob_from_url(
-            source_blob_url, tags={"tag1": "firsttag"}, if_tags_match_condition="\"tag1\"='firsttag'")
+        # Assert
+        with self.assertRaises(HttpResponseError):
+            new_blob.create_snapshot()
+        new_blob.create_snapshot(cpk=test_cpk)
+        self.assertIsNotNone(new_blob.create_snapshot)
 
-    # HNS account
     @GlobalStorageAccountPreparer()
-    def test_compare_source_and_destination_properties(
+    def test_upload_blob_from_url_overwrite_properties(
             self, resource_group, location, storage_account, storage_account_key):
-        # Arrange
-        self._setup(storage_account, storage_account_key, container_name="tesgftsgfgd12fgbfrgfthj34sffdfcbf567fdf8fe")
-        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-                                      key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+        # Act
+        self._setup(storage_account, storage_account_key)
+        source_blob_content_settings = ContentSettings(content_language='spanish')
+        new_blob_content_settings = ContentSettings(content_language='english')
+        source_blob_tags = {"tag1": "sourcetag", "tag2": "secondsourcetag"}
+        new_blob_tags = {"tag1": "copytag"}
+        new_blob_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
+                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+        source_blob = self._create_blob(
+                                 data=b"This is test data to be copied over.",
+                                 tags=source_blob_tags,
+                                 content_settings=source_blob_content_settings,
+                                 )
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=source_blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob_url = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
 
+        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob.upload_blob_from_url(source_blob_url,
+                                      include_source_blob_properties=True,
+                                      tags=new_blob_tags,
+                                      content_settings=new_blob_content_settings,
+                                      cpk=new_blob_cpk)
+        new_blob_props = new_blob.get_blob_properties(cpk=new_blob_cpk)
+
+        # Assert that source blob properties did not take precedence.
+        self.assertEqual(new_blob_props.tag_count, 1)
+        self.assertEqual(new_blob_props.content_settings.content_language, new_blob_content_settings.content_language)
+        self.assertEqual(new_blob_props.encryption_key_sha256, new_blob_cpk.key_hash)
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_with_source_content_md5(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Act
+        self._setup(storage_account, storage_account_key)
+        source_blob = self._create_blob(data=b"This is test data to be copied over.")
+        source_blob_props = source_blob.get_blob_properties()
+        source_md5 = source_blob_props.content_settings.content_md5
+        bad_source_md5 = StorageContentValidation.get_content_md5(b"this is bad data")
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=source_blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob_url = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
+        new_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        new_blob_content_md5 = new_blob.get_blob_properties().content_settings.content_md5
+
+        # Assert
+        new_blob.upload_blob_from_url(
+            source_blob_url, include_source_blob_properties=True, source_content_md5=source_md5)
+        with self.assertRaises(HttpResponseError):
+            new_blob.upload_blob_from_url(
+                source_blob_url, include_source_blob_properties=False, source_content_md5=bad_source_md5)
+        self.assertEqual(new_blob_content_md5, source_md5)
+
+    @GlobalStorageAccountPreparer()
+    def test_upload_blob_from_url_source_and_destination_properties(
+            self, resource_group, location, storage_account, storage_account_key):
+        # Act
+        self._setup(storage_account, storage_account_key)
         content_settings = ContentSettings(
                 content_type='application/octet-stream',
                 content_language='spanish',
@@ -241,31 +302,45 @@ class StorageBlockBlobTest(StorageTestCase):
         )
         source_blob = self._create_blob(
                                  data=b"This is test data to be copied over.",
-                                 metadata={'blobdata': 'data1'},
                                  tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"},
                                  content_settings=content_settings,
-                                 cpk=test_cpk
+                                 standard_blob_tier=StandardBlobTier.Cool
                                  )
-        source_blob_snapshot = source_blob.create_snapshot(cpk=test_cpk)
-        source_blob_lease = source_blob.acquire_lease()
+        source_blob.acquire_lease()
+        source_blob_props = source_blob.get_blob_properties()
         sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
                                 container_name=self.container_name, blob_name=source_blob.blob_name,
                                 permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
-        # Act
         source_blob_url = '{0}/{1}/{2}?{3}'.format(
             self.account_url(storage_account, "blob"), self.container_name, source_blob.blob_name, sas)
 
         new_blob_copy1 = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         new_blob_copy2 = self.bsc.get_blob_client(self.container_name, 'blob2copy')
         new_blob_copy1.upload_blob_from_url(
-            source_blob_url, include_source_blob_properties=True, cpk=test_cpk)
+            source_blob_url, include_source_blob_properties=True)
         new_blob_copy2.upload_blob_from_url(
-            source_blob_url, include_source_blob_properties=False, cpk=test_cpk)
+            source_blob_url, include_source_blob_properties=False)
 
-        source_blob_props = source_blob.get_blob_properties()
         new_blob_copy1_props = new_blob_copy1.get_blob_properties()
         new_blob_copy2_props = new_blob_copy2.get_blob_properties()
-        print("")
+
+        # Assert
+        self.assertEqual(new_blob_copy1_props.content_settings.content_language,
+                         source_blob_props.content_settings.content_language)
+        self.assertNotEqual(new_blob_copy2_props.content_settings.content_language,
+                            source_blob_props.content_settings.content_language)
+
+        self.assertEqual(source_blob_props.lease.status, 'locked')
+        self.assertEqual(new_blob_copy1_props.lease.status, 'unlocked')
+        self.assertEqual(new_blob_copy2_props.lease.status, 'unlocked')
+
+        self.assertEqual(source_blob_props.blob_tier, 'Cool')
+        self.assertEqual(new_blob_copy1_props.blob_tier, 'Hot')
+        self.assertEqual(new_blob_copy2_props.blob_tier, 'Hot')
+
+        self.assertEqual(source_blob_props.tag_count, 3)
+        self.assertEqual(new_blob_copy1_props.tag_count, None)
+        self.assertEqual(new_blob_copy2_props.tag_count, None)
 
     @GlobalStorageAccountPreparer()
     def test_put_block(self, resource_group, location, storage_account, storage_account_key):

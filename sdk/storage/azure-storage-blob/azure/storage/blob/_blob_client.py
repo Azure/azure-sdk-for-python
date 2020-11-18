@@ -415,11 +415,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         dest_mod_conditions = get_modify_conditions(kwargs)
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
         content_settings = kwargs.pop('content_settings', None)
+        source_content_md5 = kwargs.pop('source_content_md5', None)
         if content_settings:
             kwargs['blob_http_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_md5=None,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -437,6 +438,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = {
             'content_length': 0,
             'copy_source_blob_properties': include_source_blob_properties,
+            'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
             'copy_source': source_url,
             'timeout': timeout,
             'modified_access_conditions': dest_mod_conditions,
@@ -480,6 +482,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
             space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
         :paramtype tags: dict(str, str)
+        :keyword bytearray source_content_md5:
+            Specify the md5 calculated for the range of
+            bytes that must be read from the upload source.
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -495,8 +500,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword str source_etag:
             The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
         :keyword ~datetime.datetime if_modified_since:
