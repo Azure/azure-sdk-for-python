@@ -54,6 +54,13 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             logger.exception("Exception occurred while exporting the data.")
             return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
+    def shutdown(self)
+        """Shuts down the exporter.
+
+        Called when the SDK is shut down.
+        """
+        self.storage.close()
+
     def _span_to_envelope(self, span: Span) -> TelemetryItem:
         if not span:
             return None
