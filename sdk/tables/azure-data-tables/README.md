@@ -63,25 +63,6 @@ az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryE
 #### Types of credentials
 The `credential` parameter may be provided in a number of different forms, depending on the type of authorization you wish to use:
 
-##### Creating the client from a SAS token
-To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()`
-   functions to create a sas token for the account or table:
-
-```python
-    from datetime import datetime, timedelta
-    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
-
-    sas_token = generate_account_sas(
-        account_name="<account-name>",
-        account_key="<account-access-key>",
-        resource_types=ResourceTypes(service=True),
-        permission=AccountSasPermissions(read=True),
-        expiry=datetime.utcnow() + timedelta(hours=1)
-    )
-
-    table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
-```
-
 ##### Creating the client from a shared key
 To use an account [shared key][azure_shared_key] (aka account key or access key), provide the key as a string. This can be found in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
 
@@ -108,6 +89,25 @@ The connection string to your account can be found in the Azure Portal under the
 
 ```bash
 az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
+```
+
+##### Creating the client from a SAS token
+To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()`
+   functions to create a sas token for the account or table:
+
+```python
+    from datetime import datetime, timedelta
+    from azure.data.tables import TableServiceClient, generate_account_sas, ResourceTypes, AccountSasPermissions
+
+    sas_token = generate_account_sas(
+        account_name="<account-name>",
+        account_key="<account-access-key>",
+        resource_types=ResourceTypes(service=True),
+        permission=AccountSasPermissions(read=True),
+        expiry=datetime.utcnow() + timedelta(hours=1)
+    )
+
+    table_service_client = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net", credential=sas_token)
 ```
 
 #### Looking up the account URL
