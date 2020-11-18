@@ -346,6 +346,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         dead_letter_reason=None,
         dead_letter_error_description=None
     ):
+        # pylint: disable=protected-access
         self._check_live()
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
@@ -358,7 +359,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
         # subclasses in the future after we add the missing feature support in uamqp.
         # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
-        if not self._session and message._lock_expired:  # pylint: disable=protected-access
+        if not self._session and message._lock_expired:
             raise ServiceBusError(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error
@@ -373,7 +374,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             dead_letter_error_description=dead_letter_error_description
         )
 
-        message._settled = True  # pylint: disable=protected-access
+        message._settled = True
 
     def _settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
