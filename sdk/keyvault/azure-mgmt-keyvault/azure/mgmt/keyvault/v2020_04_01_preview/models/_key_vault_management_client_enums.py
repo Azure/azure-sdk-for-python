@@ -134,39 +134,22 @@ class Reason(str, Enum):
     already_exists = "AlreadyExists"
 
 
-class DeletionRecoveryLevel(str, Enum):
+class ManagedHsmSkuName(str, Enum):
 
-    purgeable = "Purgeable"
-    recoverable_purgeable = "Recoverable+Purgeable"
-    recoverable = "Recoverable"
-    recoverable_protected_subscription = "Recoverable+ProtectedSubscription"
+    standard_b1 = "Standard_B1"
+    custom_b32 = "Custom_B32"
 
 
-class JsonWebKeyType(str, Enum):
+class ProvisioningState(str, Enum):
 
-    ec = "EC"
-    ec_hsm = "EC-HSM"
-    rsa = "RSA"
-    rsa_hsm = "RSA-HSM"
-
-
-class JsonWebKeyOperation(str, Enum):
-
-    encrypt = "encrypt"
-    decrypt = "decrypt"
-    sign = "sign"
-    verify = "verify"
-    wrap_key = "wrapKey"
-    unwrap_key = "unwrapKey"
-    import_enum = "import"
-
-
-class JsonWebKeyCurveName(str, Enum):
-
-    p_256 = "P-256"
-    p_384 = "P-384"
-    p_521 = "P-521"
-    p_256_k = "P-256K"
+    succeeded = "Succeeded"  #: The managed HSM Pool has been full provisioned.
+    provisioning = "Provisioning"  #: The managed HSM Pool is currently being provisioned.
+    failed = "Failed"  #: Provisioning of the managed HSM Pool has failed.
+    updating = "Updating"  #: The managed HSM Pool is currently being updated.
+    deleting = "Deleting"  #: The managed HSM Pool is currently being deleted.
+    activated = "Activated"  #: The managed HSM pool is ready for normal use.
+    security_domain_restore = "SecurityDomainRestore"  #: The managed HSM pool is waiting for a security domain restore action.
+    restoring = "Restoring"  #: The managed HSM pool is being restored from full HSM backup.
 
 
 class AccessPolicyUpdateKind(str, Enum):
