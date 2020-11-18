@@ -32,12 +32,6 @@ class DetectLanguageSample(object):
 
     def detect_language(self):
         print(
-            "In this sample we will be going through our customer's loan payment information and redacting "
-            "all PII (personally identifable information) before storing this information on our public website. "
-            "I'm also looking to explicitly extract the SSN information, so I can update my database with SSNs for "
-            "our customers"
-        )
-        print(
             "In this sample we own a hotel with customers from all around the globe. We want to eventually "
             "translate these reviews into English so our manager can read them. However, we first need to know which language "
             "they are in for more accurate translation. This is the step we will be covering in this sample\n"
