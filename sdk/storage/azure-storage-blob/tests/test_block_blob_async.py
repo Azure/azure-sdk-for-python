@@ -13,7 +13,7 @@ import uuid
 
 from datetime import datetime, timedelta
 
-from azure.data.tables._policies import StorageContentValidation
+from azure.storage.blob._shared.policies import StorageContentValidation
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.core.pipeline.transport import AioHttpTransport
