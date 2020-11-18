@@ -275,6 +275,7 @@ class ChatThreadClient(object):
             chat_thread_id=self._thread_id,
             send_chat_message_request=create_message_request,
             **kwargs)
+        return send_chat_message_result.id
 
     @distributed_trace
     def get_message(
