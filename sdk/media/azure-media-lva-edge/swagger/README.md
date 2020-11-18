@@ -3,13 +3,13 @@
 > see https://aka.ms/autorest
 
 
-### Generation
+## Generation
 ```ps
 cd <swagger-folder>
 autorest --v3 --python README.md
 ```
 
-### Settings
+## Settings
 ```yaml
 require: <<LocalPathToPrivateRepo--LVA-Release-do-not-delete--branch>>Azure\azure-rest-api-specs-pr\specification\mediaservices\data-plane\readme.md
 output-folder: ../azure/media/lva/edge/_generated
