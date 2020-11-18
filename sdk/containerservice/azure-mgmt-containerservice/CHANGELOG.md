@@ -1,5 +1,22 @@
 # Release History
 
+## 10.1.0 (2020-11-17)
+
+**Features**
+
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter kubelet_config
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter pod_subnet_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter linux_os_config
+  - Model ManagedClusterAPIServerAccessProfile has a new parameter private_dns_zone
+  - Model ManagedCluster has a new parameter pod_identity_profile
+  - Model ManagedCluster has a new parameter auto_upgrade_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter kubelet_config
+  - Model ManagedClusterAgentPoolProfile has a new parameter pod_subnet_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter linux_os_config
+  - Model AgentPool has a new parameter kubelet_config
+  - Model AgentPool has a new parameter pod_subnet_id
+  - Model AgentPool has a new parameter linux_os_config
+
 ## 10.0.0 (2020-11-02)
 
 **Features**
