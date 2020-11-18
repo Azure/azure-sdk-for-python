@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class StreamingJobsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,12 +47,12 @@ class StreamingJobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        streaming_job: "models.StreamingJob",
+        streaming_job: "_models.StreamingJob",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> "models.StreamingJob":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+    ) -> "_models.StreamingJob":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -113,11 +113,11 @@ class StreamingJobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        streaming_job: "models.StreamingJob",
+        streaming_job: "_models.StreamingJob",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.StreamingJob"]:
+    ) -> AsyncLROPoller["_models.StreamingJob"]:
         """Creates a streaming job or replaces an already existing streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -146,7 +146,7 @@ class StreamingJobsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -176,7 +176,13 @@ class StreamingJobsOperations:
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -194,10 +200,10 @@ class StreamingJobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        streaming_job: "models.StreamingJob",
+        streaming_job: "_models.StreamingJob",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.StreamingJob":
+    ) -> "_models.StreamingJob":
         """Updates an existing streaming job. This can be used to partially update (ie. update one or two
         properties) a streaming job without affecting the rest the job definition.
 
@@ -219,7 +225,7 @@ class StreamingJobsOperations:
         :rtype: ~stream_analytics_management_client.models.StreamingJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -355,7 +361,13 @@ class StreamingJobsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -375,7 +387,7 @@ class StreamingJobsOperations:
         job_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.StreamingJob":
+    ) -> "_models.StreamingJob":
         """Gets details about the specified streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -392,7 +404,7 @@ class StreamingJobsOperations:
         :rtype: ~stream_analytics_management_client.models.StreamingJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -442,7 +454,7 @@ class StreamingJobsOperations:
         resource_group_name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.StreamingJobListResult"]:
+    ) -> AsyncIterable["_models.StreamingJobListResult"]:
         """Lists all of the streaming jobs in the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -457,7 +469,7 @@ class StreamingJobsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~stream_analytics_management_client.models.StreamingJobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -519,7 +531,7 @@ class StreamingJobsOperations:
         self,
         expand: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.StreamingJobListResult"]:
+    ) -> AsyncIterable["_models.StreamingJobListResult"]:
         """Lists all of the streaming jobs in the given subscription.
 
         :param expand: The $expand OData query parameter. This is a comma-separated list of additional
@@ -532,7 +544,7 @@ class StreamingJobsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~stream_analytics_management_client.models.StreamingJobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -593,7 +605,7 @@ class StreamingJobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        start_job_parameters: Optional["models.StartStreamingJobParameters"] = None,
+        start_job_parameters: Optional["_models.StartStreamingJobParameters"] = None,
         **kwargs
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -644,7 +656,7 @@ class StreamingJobsOperations:
         self,
         resource_group_name: str,
         job_name: str,
-        start_job_parameters: Optional["models.StartStreamingJobParameters"] = None,
+        start_job_parameters: Optional["_models.StartStreamingJobParameters"] = None,
         **kwargs
     ) -> AsyncLROPoller[None]:
         """Starts a streaming job. Once a job is started it will start processing input events and produce
@@ -689,7 +701,13 @@ class StreamingJobsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -790,7 +808,13 @@ class StreamingJobsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

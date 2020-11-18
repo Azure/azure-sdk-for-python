@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class PrivateEndpointsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,12 +52,12 @@ class PrivateEndpointsOperations(object):
         resource_group_name,  # type: str
         cluster_name,  # type: str
         private_endpoint_name,  # type: str
-        private_endpoint,  # type: "models.PrivateEndpoint"
+        private_endpoint,  # type: "_models.PrivateEndpoint"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpoint"
+        # type: (...) -> "_models.PrivateEndpoint"
         """Creates a Stream Analytics Private Endpoint or replaces an already existing Private Endpoint.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -81,7 +81,7 @@ class PrivateEndpointsOperations(object):
         :rtype: ~stream_analytics_management_client.models.PrivateEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class PrivateEndpointsOperations(object):
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -144,7 +144,7 @@ class PrivateEndpointsOperations(object):
         private_endpoint_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.PrivateEndpoint"
+        # type: (...) -> "_models.PrivateEndpoint"
         """Gets information about the specified Private Endpoint.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -158,7 +158,7 @@ class PrivateEndpointsOperations(object):
         :rtype: ~stream_analytics_management_client.models.PrivateEndpoint
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpoint"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpoint"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -190,7 +190,7 @@ class PrivateEndpointsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('PrivateEndpoint', pipeline_response)
@@ -241,7 +241,7 @@ class PrivateEndpointsOperations(object):
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -298,7 +298,14 @@ class PrivateEndpointsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'privateEndpointName': self._serialize.url("private_endpoint_name", private_endpoint_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -318,7 +325,7 @@ class PrivateEndpointsOperations(object):
         cluster_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PrivateEndpointListResult"]
+        # type: (...) -> Iterable["_models.PrivateEndpointListResult"]
         """Lists the private endpoints in the cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -330,7 +337,7 @@ class PrivateEndpointsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~stream_analytics_management_client.models.PrivateEndpointListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateEndpointListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -377,7 +384,7 @@ class PrivateEndpointsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 

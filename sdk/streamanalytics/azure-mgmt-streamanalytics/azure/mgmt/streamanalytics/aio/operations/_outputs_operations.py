@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class OutputsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -48,11 +48,11 @@ class OutputsOperations:
         resource_group_name: str,
         job_name: str,
         output_name: str,
-        output: "models.Output",
+        output: "_models.Output",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> "models.Output":
+    ) -> "_models.Output":
         """Creates an output or replaces an already existing output under an existing streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -76,7 +76,7 @@ class OutputsOperations:
         :rtype: ~stream_analytics_management_client.models.Output
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Output"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Output"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -139,10 +139,10 @@ class OutputsOperations:
         resource_group_name: str,
         job_name: str,
         output_name: str,
-        output: "models.Output",
+        output: "_models.Output",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> "models.Output":
+    ) -> "_models.Output":
         """Updates an existing output under an existing streaming job. This can be used to partially
         update (ie. update one or two properties) an output without affecting the rest the job or
         output definition.
@@ -167,7 +167,7 @@ class OutputsOperations:
         :rtype: ~stream_analytics_management_client.models.Output
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Output"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Output"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -281,7 +281,7 @@ class OutputsOperations:
         job_name: str,
         output_name: str,
         **kwargs
-    ) -> "models.Output":
+    ) -> "_models.Output":
         """Gets details about the specified output.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -295,7 +295,7 @@ class OutputsOperations:
         :rtype: ~stream_analytics_management_client.models.Output
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Output"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Output"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -345,7 +345,7 @@ class OutputsOperations:
         job_name: str,
         select: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.OutputListResult"]:
+    ) -> AsyncIterable["_models.OutputListResult"]:
         """Lists all of the outputs under the specified streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -361,7 +361,7 @@ class OutputsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~stream_analytics_management_client.models.OutputListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.OutputListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OutputListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -425,10 +425,10 @@ class OutputsOperations:
         resource_group_name: str,
         job_name: str,
         output_name: str,
-        output: Optional["models.Output"] = None,
+        output: Optional["_models.Output"] = None,
         **kwargs
-    ) -> Optional["models.ResourceTestStatus"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.ResourceTestStatus"]]
+    ) -> Optional["_models.ResourceTestStatus"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.ResourceTestStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -485,9 +485,9 @@ class OutputsOperations:
         resource_group_name: str,
         job_name: str,
         output_name: str,
-        output: Optional["models.Output"] = None,
+        output: Optional["_models.Output"] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.ResourceTestStatus"]:
+    ) -> AsyncLROPoller["_models.ResourceTestStatus"]:
         """Tests whether an output’s datasource is reachable and usable by the Azure Stream Analytics
         service.
 
@@ -514,7 +514,7 @@ class OutputsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceTestStatus"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceTestStatus"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -540,7 +540,14 @@ class OutputsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+            'outputName': self._serialize.url("output_name", output_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

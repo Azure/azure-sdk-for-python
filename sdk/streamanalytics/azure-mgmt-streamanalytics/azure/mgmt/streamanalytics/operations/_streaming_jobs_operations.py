@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class StreamingJobsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,13 +51,13 @@ class StreamingJobsOperations(object):
         self,
         resource_group_name,  # type: str
         job_name,  # type: str
-        streaming_job,  # type: "models.StreamingJob"
+        streaming_job,  # type: "_models.StreamingJob"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StreamingJob"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+        # type: (...) -> "_models.StreamingJob"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -118,12 +118,12 @@ class StreamingJobsOperations(object):
         self,
         resource_group_name,  # type: str
         job_name,  # type: str
-        streaming_job,  # type: "models.StreamingJob"
+        streaming_job,  # type: "_models.StreamingJob"
         if_match=None,  # type: Optional[str]
         if_none_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.StreamingJob"]
+        # type: (...) -> LROPoller["_models.StreamingJob"]
         """Creates a streaming job or replaces an already existing streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -152,7 +152,7 @@ class StreamingJobsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -182,7 +182,13 @@ class StreamingJobsOperations(object):
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -200,11 +206,11 @@ class StreamingJobsOperations(object):
         self,
         resource_group_name,  # type: str
         job_name,  # type: str
-        streaming_job,  # type: "models.StreamingJob"
+        streaming_job,  # type: "_models.StreamingJob"
         if_match=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StreamingJob"
+        # type: (...) -> "_models.StreamingJob"
         """Updates an existing streaming job. This can be used to partially update (ie. update one or two
         properties) a streaming job without affecting the rest the job definition.
 
@@ -226,7 +232,7 @@ class StreamingJobsOperations(object):
         :rtype: ~stream_analytics_management_client.models.StreamingJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -364,7 +370,13 @@ class StreamingJobsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -385,7 +397,7 @@ class StreamingJobsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.StreamingJob"
+        # type: (...) -> "_models.StreamingJob"
         """Gets details about the specified streaming job.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -402,7 +414,7 @@ class StreamingJobsOperations(object):
         :rtype: ~stream_analytics_management_client.models.StreamingJob
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJob"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -453,7 +465,7 @@ class StreamingJobsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.StreamingJobListResult"]
+        # type: (...) -> Iterable["_models.StreamingJobListResult"]
         """Lists all of the streaming jobs in the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -468,7 +480,7 @@ class StreamingJobsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~stream_analytics_management_client.models.StreamingJobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -531,7 +543,7 @@ class StreamingJobsOperations(object):
         expand=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.StreamingJobListResult"]
+        # type: (...) -> Iterable["_models.StreamingJobListResult"]
         """Lists all of the streaming jobs in the given subscription.
 
         :param expand: The $expand OData query parameter. This is a comma-separated list of additional
@@ -544,7 +556,7 @@ class StreamingJobsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~stream_analytics_management_client.models.StreamingJobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.StreamingJobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.StreamingJobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -605,7 +617,7 @@ class StreamingJobsOperations(object):
         self,
         resource_group_name,  # type: str
         job_name,  # type: str
-        start_job_parameters=None,  # type: Optional["models.StartStreamingJobParameters"]
+        start_job_parameters=None,  # type: Optional["_models.StartStreamingJobParameters"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -657,7 +669,7 @@ class StreamingJobsOperations(object):
         self,
         resource_group_name,  # type: str
         job_name,  # type: str
-        start_job_parameters=None,  # type: Optional["models.StartStreamingJobParameters"]
+        start_job_parameters=None,  # type: Optional["_models.StartStreamingJobParameters"]
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -703,7 +715,13 @@ class StreamingJobsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -806,7 +824,13 @@ class StreamingJobsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'jobName': self._serialize.url("job_name", job_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

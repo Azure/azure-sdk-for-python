@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ClustersOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,12 +47,12 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster: "models.Cluster",
+        cluster: "_models.Cluster",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> "models.Cluster":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+    ) -> "_models.Cluster":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -92,7 +92,7 @@ class ClustersOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -111,11 +111,11 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster: "models.Cluster",
+        cluster: "_models.Cluster",
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.Cluster"]:
+    ) -> AsyncLROPoller["_models.Cluster"]:
         """Creates a Stream Analytics Cluster or replaces an already existing cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -143,7 +143,7 @@ class ClustersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -170,7 +170,13 @@ class ClustersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -188,11 +194,11 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster: "models.Cluster",
+        cluster: "_models.Cluster",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> Optional["models.Cluster"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.Cluster"]]
+    ) -> Optional["_models.Cluster"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Cluster"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -230,7 +236,7 @@ class ClustersOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
@@ -247,10 +253,10 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster: "models.Cluster",
+        cluster: "_models.Cluster",
         if_match: Optional[str] = None,
         **kwargs
-    ) -> AsyncLROPoller["models.Cluster"]:
+    ) -> AsyncLROPoller["_models.Cluster"]:
         """Updates an existing cluster. This can be used to partially update (ie. update one or two
         properties) a cluster without affecting the rest of the cluster definition.
 
@@ -276,7 +282,7 @@ class ClustersOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -302,7 +308,13 @@ class ClustersOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -321,7 +333,7 @@ class ClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         **kwargs
-    ) -> "models.Cluster":
+    ) -> "_models.Cluster":
         """Gets information about the specified cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -333,7 +345,7 @@ class ClustersOperations:
         :rtype: ~stream_analytics_management_client.models.Cluster
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Cluster"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Cluster"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -364,7 +376,7 @@ class ClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Cluster', pipeline_response)
@@ -412,7 +424,7 @@ class ClustersOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.Error, response)
+            error = self._deserialize(_models.Error, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -464,7 +476,13 @@ class ClustersOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -481,7 +499,7 @@ class ClustersOperations:
     def list_by_subscription(
         self,
         **kwargs
-    ) -> AsyncIterable["models.ClusterListResult"]:
+    ) -> AsyncIterable["_models.ClusterListResult"]:
         """Lists all of the clusters in the given subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -489,7 +507,7 @@ class ClustersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~stream_analytics_management_client.models.ClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -534,7 +552,7 @@ class ClustersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -549,7 +567,7 @@ class ClustersOperations:
         self,
         resource_group_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ClusterListResult"]:
+    ) -> AsyncIterable["_models.ClusterListResult"]:
         """Lists all of the clusters in the given resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -559,7 +577,7 @@ class ClustersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~stream_analytics_management_client.models.ClusterListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -605,7 +623,7 @@ class ClustersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -621,7 +639,7 @@ class ClustersOperations:
         resource_group_name: str,
         cluster_name: str,
         **kwargs
-    ) -> AsyncIterable["models.ClusterJobListResult"]:
+    ) -> AsyncIterable["_models.ClusterJobListResult"]:
         """Lists all of the streaming jobs in the given cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -633,7 +651,7 @@ class ClustersOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~stream_analytics_management_client.models.ClusterJobListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ClusterJobListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ClusterJobListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -680,7 +698,7 @@ class ClustersOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.Error, response)
+                error = self._deserialize(_models.Error, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
