@@ -17,7 +17,7 @@ The guides mentioned above can help you get started with key elements of Azure D
 Install [azure-digitaltwins-core][pypi_package_keys] and
 [azure-identity][azure_identity_pypi] with [pip][pip]:
 ```Bash
-pip install azure-digitaltiwns-core azure-identity
+pip install azure-digitaltwins-core azure-identity
 ```
 [azure-identity][azure_identity] is used for Azure Active Directory
 authentication as demonstrated below.
@@ -43,7 +43,7 @@ It attempts to use multiple credential types in an order until it finds a workin
 # DefaultAzureCredential supports different authentication mechanisms and determines the appropriate credential type based of the environment it is executing in.
 # It attempts to use multiple credential types in an order until it finds a working credential.
 
-# - AZURE_URL: The tenant ID in Azure Active Directory
+# - AZURE_URL: The URL to the ADT in Azure
 url = os.getenv("AZURE_URL")
 
 # DefaultAzureCredential expects the following three environment variables:
