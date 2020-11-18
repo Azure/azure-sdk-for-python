@@ -22,6 +22,7 @@ from .operations import VaultsOperations
 from .operations import PrivateEndpointConnectionsOperations
 from .operations import PrivateLinkResourcesOperations
 from .operations import Operations
+from .operations import KeysOperations
 from . import models
 
 
@@ -36,6 +37,8 @@ class KeyVaultManagementClient(object):
     :vartype private_link_resources: azure.mgmt.keyvault.v2019_09_01.operations.PrivateLinkResourcesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.keyvault.v2019_09_01.operations.Operations
+    :ivar keys: KeysOperations operations
+    :vartype keys: azure.mgmt.keyvault.v2019_09_01.operations.KeysOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
@@ -68,6 +71,8 @@ class KeyVaultManagementClient(object):
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize)
+        self.keys = KeysOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):

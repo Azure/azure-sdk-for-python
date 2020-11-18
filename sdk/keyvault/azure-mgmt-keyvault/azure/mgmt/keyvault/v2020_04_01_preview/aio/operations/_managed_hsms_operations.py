@@ -16,7 +16,7 @@ from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMetho
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -35,7 +35,7 @@ class ManagedHsmsOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -47,10 +47,10 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: "models.ManagedHsm",
+        parameters: "_models.ManagedHsm",
         **kwargs
-    ) -> "models.ManagedHsm":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+    ) -> "_models.ManagedHsm":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -86,7 +86,7 @@ class ManagedHsmsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -105,9 +105,9 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: "models.ManagedHsm",
+        parameters: "_models.ManagedHsm",
         **kwargs
-    ) -> AsyncLROPoller["models.ManagedHsm"]:
+    ) -> AsyncLROPoller["_models.ManagedHsm"]:
         """Create or update a managed HSM Pool in the specified subscription.
 
         :param resource_group_name: Name of the resource group that contains the managed HSM pool.
@@ -127,7 +127,7 @@ class ManagedHsmsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -152,7 +152,13 @@ class ManagedHsmsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -170,10 +176,10 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: "models.ManagedHsm",
+        parameters: "_models.ManagedHsm",
         **kwargs
-    ) -> "models.ManagedHsm":
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+    ) -> "_models.ManagedHsm":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -209,7 +215,7 @@ class ManagedHsmsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -228,9 +234,9 @@ class ManagedHsmsOperations:
         self,
         resource_group_name: str,
         name: str,
-        parameters: "models.ManagedHsm",
+        parameters: "_models.ManagedHsm",
         **kwargs
-    ) -> AsyncLROPoller["models.ManagedHsm"]:
+    ) -> AsyncLROPoller["_models.ManagedHsm"]:
         """Update a managed HSM Pool in the specified subscription.
 
         :param resource_group_name: Name of the resource group that contains the managed HSM pool.
@@ -250,7 +256,7 @@ class ManagedHsmsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -275,7 +281,13 @@ class ManagedHsmsOperations:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -326,7 +338,7 @@ class ManagedHsmsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -378,7 +390,13 @@ class ManagedHsmsOperations:
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'name': self._serialize.url("name", name, 'str'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -397,7 +415,7 @@ class ManagedHsmsOperations:
         resource_group_name: str,
         name: str,
         **kwargs
-    ) -> "models.ManagedHsm":
+    ) -> "_models.ManagedHsm":
         """Gets the specified managed HSM Pool.
 
         :param resource_group_name: Name of the resource group that contains the managed HSM pool.
@@ -409,7 +427,7 @@ class ManagedHsmsOperations:
         :rtype: ~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsm
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsm"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsm"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -440,7 +458,7 @@ class ManagedHsmsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ManagedHsmError, response)
+            error = self._deserialize(_models.ManagedHsmError, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ManagedHsm', pipeline_response)
@@ -456,7 +474,7 @@ class ManagedHsmsOperations:
         resource_group_name: str,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ManagedHsmListResult"]:
+    ) -> AsyncIterable["_models.ManagedHsmListResult"]:
         """The List operation gets information about the managed HSM Pools associated with the
         subscription and within the specified resource group.
 
@@ -469,7 +487,7 @@ class ManagedHsmsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsmListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsmListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -517,7 +535,7 @@ class ManagedHsmsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ManagedHsmError, response)
+                error = self._deserialize(_models.ManagedHsmError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -532,7 +550,7 @@ class ManagedHsmsOperations:
         self,
         top: Optional[int] = None,
         **kwargs
-    ) -> AsyncIterable["models.ManagedHsmListResult"]:
+    ) -> AsyncIterable["_models.ManagedHsmListResult"]:
         """The List operation gets information about the managed HSM Pools associated with the
         subscription.
 
@@ -543,7 +561,7 @@ class ManagedHsmsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2020_04_01_preview.models.ManagedHsmListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ManagedHsmListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ManagedHsmListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -590,7 +608,7 @@ class ManagedHsmsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ManagedHsmError, response)
+                error = self._deserialize(_models.ManagedHsmError, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
