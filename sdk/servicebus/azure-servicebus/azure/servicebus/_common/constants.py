@@ -115,20 +115,20 @@ TRANSFER_DEAD_LETTER_QUEUE_SUFFIX = '/$Transfer' + DEAD_LETTER_QUEUE_SUFFIX
 
 
 class ServiceBusReceiveMode(str, Enum):
-    PeekLock = "peeklock"
-    ReceiveAndDelete = "receiveanddelete"
+    PEEK_LOCK = "peeklock"
+    RECEIVE_AND_DELETE = "receiveanddelete"
 
 # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
-ServiceBusToAMQPReceiveModeMap = {ServiceBusReceiveMode.PeekLock:constants.ReceiverSettleMode.PeekLock,
-                                   ServiceBusReceiveMode.ReceiveAndDelete:constants.ReceiverSettleMode.ReceiveAndDelete}
+ServiceBusToAMQPReceiveModeMap = {ServiceBusReceiveMode.PEEK_LOCK:constants.ReceiverSettleMode.PeekLock,
+                                   ServiceBusReceiveMode.RECEIVE_AND_DELETE:constants.ReceiverSettleMode.ReceiveAndDelete}
 
 class ServiceBusSessionFilter(Enum):
-    NextAvailable = 0
+    NEXT_AVAILABLE = 0
 
 
 class ServiceBusSubQueue(str, Enum):
-    DeadLetter = 'deadletter'
-    TransferDeadLetter = 'transferdeadletter'
+    DEAD_LETTER = 'deadletter'
+    TRANSFER_DEAD_LETTER = 'transferdeadletter'
 
 
 ANNOTATION_SYMBOL_PARTITION_KEY = types.AMQPSymbol(_X_OPT_PARTITION_KEY)
@@ -142,4 +142,4 @@ ANNOTATION_SYMBOL_KEY_MAP = {
 }
 
 
-NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NextAvailable
+NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE

@@ -46,7 +46,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
-        self._receive_mode = ServiceBusReceiveMode(kwargs.get("receive_mode", ServiceBusReceiveMode.PeekLock))
+        self._receive_mode = ServiceBusReceiveMode(kwargs.get("receive_mode", ServiceBusReceiveMode.PEEK_LOCK))
 
         self._session_id = kwargs.get("session_id")
         self._error_policy = _ServiceBusErrorPolicy(
@@ -73,9 +73,9 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
         self._auto_lock_renewer = kwargs.get("auto_lock_renewer", None)
         if self._auto_lock_renewer \
-                and self._receive_mode == ServiceBusReceiveMode.ReceiveAndDelete \
+                and self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE \
                 and self._session_id is None:
-            raise ValueError("Messages received in ReceiveAndDelete receive mode cannot have their locks removed "
+            raise ValueError("Messages received in RECEIVE_AND_DELETE receive mode cannot have their locks removed "
                              "as they have been deleted, providing an AutoLockRenewer in this mode is invalid.")
 
     def _build_message(self, received, message_type=ServiceBusReceivedMessage):

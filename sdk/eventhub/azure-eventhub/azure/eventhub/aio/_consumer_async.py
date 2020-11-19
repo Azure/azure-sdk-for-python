@@ -143,7 +143,7 @@ class EventHubConsumer(
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
-            receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
+            receive_settle_mode=uamqp.constants.ReceiverSettleMode.RECEIVE_AND_DELETE,
             auto_complete=False,
             properties=properties,
             desired_capabilities=desired_capabilities,

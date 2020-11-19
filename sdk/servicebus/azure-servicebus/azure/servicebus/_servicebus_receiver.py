@@ -85,11 +85,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
      receiver will automatically stop receiving. The default value is None, meaning no timeout.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-     are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-     lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+     are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+     lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
      will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
      if the client fails to process the message.
-     The default mode is PeekLock.
+     The default mode is PEEK_LOCK.
     :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword transport_type: The type of transport protocol that will be used for communicating with
@@ -206,11 +206,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+         lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
          will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
          if the client fails to process the message.
-         The default mode is PeekLock.
+         The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
@@ -269,7 +269,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             encoding=self._config.encoding,
             receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
             send_settle_mode=SenderSettleMode.Settled \
-                if self._receive_mode == ServiceBusReceiveMode.ReceiveAndDelete \
+                if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE \
                 else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
@@ -754,7 +754,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         In order to complete (or otherwise settle) the message, the lock must be maintained,
         and cannot already have expired; an expired lock cannot be renewed.
 
-        Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
+        Messages received via RECEIVE_AND_DELETE mode are not locked, and therefore cannot be renewed.
         This operation is only available for non-sessionful messages as well.
 
         :param message: The message to renew the lock for.

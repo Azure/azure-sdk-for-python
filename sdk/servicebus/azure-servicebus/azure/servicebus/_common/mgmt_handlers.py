@@ -62,7 +62,7 @@ def deferred_message_op(
         message,
         description,
         receiver,
-        receive_mode=ServiceBusReceiveMode.PeekLock,
+        receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
         message_type=ServiceBusReceivedMessage
 ):
     if status_code == 200:

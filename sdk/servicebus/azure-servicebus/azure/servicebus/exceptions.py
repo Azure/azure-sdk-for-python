@@ -264,7 +264,7 @@ class MessageAlreadySettled(ServiceBusMessageError):
     An attempt was made to complete an operation on a message that has already
     been settled (completed, abandoned, dead-lettered or deferred).
     This error will also be raised if an attempt is made to settle a message
-    received via ReceiveAndDelete mode.
+    received via RECEIVE_AND_DELETE mode.
 
     :param str action: The settlement operation, there are four types of settlement,
      `complete/abandon/defer/dead_letter`.

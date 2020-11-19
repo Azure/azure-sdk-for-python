@@ -207,15 +207,15 @@ class ServiceBusClient(object):
         :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
         :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
          connect to.
-         This includes the DeadLetter and TransferDeadLetter queues, holds messages that can't be delivered to any
+         This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+         lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
          will be immediately removed from the queue, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
+         the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
@@ -252,7 +252,7 @@ class ServiceBusClient(object):
         try:
             queue_name = generate_dead_letter_entity_name(
                 queue_name=queue_name,
-                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TransferDeadLetter)
+                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER)
             )
         except ValueError:
             if sub_queue: # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
@@ -319,15 +319,15 @@ class ServiceBusClient(object):
         :paramtype session_id: Union[str, ~azure.servicebus.NEXT_AVAILABLE_SESSION]
         :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
          connect to.
-         This includes the DeadLetter and TransferDeadLetter queues, holds messages that can't be delivered to any
+         This includes the DEAD_LETTER and TRANSFER_DEAD_LETTER queues, holds messages that can't be delivered to any
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
          enum or equivalent string values "deadletter" and "transferdeadletter".
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the subscription. Messages received with ReceiveAndDelete
+         are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+         lock period before they will be removed from the subscription. Messages received with RECEIVE_AND_DELETE
          will be immediately removed from the subscription, and cannot be subsequently rejected or re-received if
-         the client fails to process the message. The default mode is PeekLock.
+         the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
@@ -366,7 +366,7 @@ class ServiceBusClient(object):
             entity_name = generate_dead_letter_entity_name(
                 topic_name=topic_name,
                 subscription_name=subscription_name,
-                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TransferDeadLetter)
+                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER)
             )
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,

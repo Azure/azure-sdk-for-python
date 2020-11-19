@@ -107,7 +107,7 @@ async def example_create_servicebus_receiver_async():
     queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
-        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, sub_queue=ServiceBusSubQueue.DeadLetter)
+        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     # [END create_queue_deadletter_receiver_from_sb_client_async]
 
     # [START create_servicebus_receiver_from_sb_client_async]
@@ -132,7 +132,7 @@ async def example_create_servicebus_receiver_async():
         subscription_receiver = servicebus_client.get_subscription_receiver(
             topic_name=topic_name,
             subscription_name=subscription_name,
-            sub_queue=ServiceBusSubQueue.DeadLetter
+            sub_queue=ServiceBusSubQueue.DEAD_LETTER
         )
     # [END create_subscription_deadletter_receiver_from_sb_client_async]
 
@@ -278,7 +278,7 @@ async def example_receive_deadletter_async():
                     error_description='description for dead lettering'
                 )
 
-        async with servicebus_client.get_queue_receiver(queue_name, sub_queue=ServiceBusSubQueue.DeadLetter) as servicebus_deadletter_receiver:
+        async with servicebus_client.get_queue_receiver(queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER) as servicebus_deadletter_receiver:
             messages = await servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
             for message in messages:
                 await servicebus_deadletter_receiver.complete_message(message)

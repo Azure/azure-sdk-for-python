@@ -34,7 +34,7 @@ with servicebus_client:
             receiver.dead_letter_message(msg)
 
     print('receiving deadlettered messages')
-    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, sub_queue=ServiceBusSubQueue.DeadLetter)
+    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     with dlq_receiver:
         received_msgs = dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:

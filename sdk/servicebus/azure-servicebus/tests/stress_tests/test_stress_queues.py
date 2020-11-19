@@ -107,7 +107,7 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
             servicebus_namespace_connection_string, logging_enable=LOGGING_ENABLE)
 
         stress_test = StressTestRunner(senders = [sb_client.get_queue_sender(servicebus_queue.name)],
-                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.ReceiveAndDelete)],
+                                       receivers = [sb_client.get_queue_receiver(servicebus_queue.name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE)],
                                        duration=timedelta(seconds=60))
 
         result = stress_test.run()
