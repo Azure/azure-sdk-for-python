@@ -138,18 +138,28 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to interact with the various components of the Table Service:
-1. `TableServiceClient` -
+1. **`TableServiceClient`** -
     this client represents interaction with the Azure account itself, and allows you to acquire preconfigured
     client instances to access the tables within. It provides operations to retrieve and configure the account
     properties as well as query, create, and delete tables within the account. To perform operations on a specific table,
     retrieve a client using the `get_table_client` method.
-2. `TableClient` -
+2. **`TableClient`** -
     this client represents interaction with a specific table (which need not exist yet). It provides operations to
     create, delete, or update a table and includes operations to query, get, and upsert entities
     within it.
 
 ### Entities
-Entities are similar to rows. An entity has a primary key, a row key and a set of properties. A property is a name value pair, similar to a column.
+Entities are similar to rows. An entity has a **`PartitionKey`**, a **`RowKey`** and a set of properties. A property is a name value pair, similar to a column.
+Entities can be represented as dictionaries like this as an example:
+```python
+entity = {
+    'PartitionKey': 'color',
+    'RowKey': 'brand',
+    'text': 'Marker',
+    'color': 'Purple',
+    'price': '5'
+}
+```
 * **Create** - Adds an entity to the table.
 * **Delete** - Deletes an entity from the table.
 * **Update** - Updates an entities information by either merging or replacing the existing entity.
@@ -179,9 +189,13 @@ table_service_client.create_table(table_name="myTable")
 Create entities in the table
 
 ```python
-from azure.data.tables import TableClient
+from azure.data.tables import TableServiceClient
+
 my_entity = {'PartitionKey':'part','RowKey':'row'}
-table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
+
+table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
+table_client = table_service_client.get_table_client(table_name="myTable")
+
 entity = table_client.create_entity(entity=my_entity)
 ```
 
