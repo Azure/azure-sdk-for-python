@@ -589,7 +589,6 @@ async def test_authority_environment_variable():
     assert token.token == expected_access_token
 
 
-@pytest.mark.skip("in 1.5.0 allow_unencrypted_cache is private and defaults to True")
 @pytest.mark.asyncio
 async def test_allow_unencrypted_cache():
     """The credential should use an unencrypted cache when encryption is unavailable and the user explicitly allows it.

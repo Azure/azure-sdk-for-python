@@ -27,7 +27,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
     there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
-    https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
+    https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-oauth-code
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -40,6 +40,13 @@ class InteractiveBrowserCredential(InteractiveCredential):
           Active Directory, for example "http://localhost:8400". This is only required when passing a value for
           `client_id`, and must match a redirect URI in the application's registration. The credential must be able to
           bind a socket to this URI.
+    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
+    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
+          :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache shared by
+         other user credentials. Defaults to False.
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache on platforms
+          where encryption is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     """
 

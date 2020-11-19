@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync
 from .._common._configuration import Configuration
-from .._common.utils import create_properties
+from .._common.utils import create_properties, strip_protocol_from_uri
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
@@ -82,7 +82,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        self.fully_qualified_namespace = fully_qualified_namespace
+        # If the user provided http:// or sb://, let's be polite and strip that.
+        self.fully_qualified_namespace = strip_protocol_from_uri(fully_qualified_namespace.strip())
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")

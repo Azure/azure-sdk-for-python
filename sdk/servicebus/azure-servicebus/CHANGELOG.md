@@ -5,7 +5,12 @@
 **Breaking Changes**
 
 * Setting `ServiceBusMessage.partition_key` to a value different than `session_id` on the message instance now raises `ValueError`.
-* `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
+* `ServiceBusSender` and `ServiceBusReceiver` are no longer reusable and will raise `ValueError` when trying to operate on a closed handler.
+
+**BugFixes**
+
+* FQDNs and Connection strings are now supported even with strippable whitespace or protocol headers (e.g. 'sb://').
+* Using parameter `auto_lock_renewer` on a sessionful receiver alongside `ReceiveMode.ReceiveAndDelete` will no longer fail during receipt due to failure to register the message with the renewer.
 
 ## 7.0.0b8 (2020-11-05)
 

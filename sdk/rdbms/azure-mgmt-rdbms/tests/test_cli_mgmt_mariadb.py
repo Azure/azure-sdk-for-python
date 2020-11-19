@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -24,6 +24,7 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
 AZURE_LOCATION = 'eastus'
 ZERO = dt.timedelta(0)
+
 
 class UTC(dt.tzinfo):
     """UTC"""
@@ -45,10 +46,9 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.rdbms.mariadb.MariaDBManagementClient
         )
-    
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_mariadb(self, resource_group):
-
         SERVER_NAME = "testserver21827"
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
@@ -65,45 +65,45 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
 
         # Create a new server[put]
         BODY = {
-          "location": "eastus",
-          "properties": {
-            "administrator_login": "cloudsa",
-            "administrator_login_password": "pass$w0rd",
-            "ssl_enforcement": "Enabled",
-            "storage_profile": {
-              "storage_mb": "128000",
-              "backup_retention_days": "7",
-              "geo_redundant_backup": "Enabled"
+            "location": "eastus",
+            "properties": {
+                "administrator_login": "cloudsa",
+                "administrator_login_password": "pass$w0rd",
+                "ssl_enforcement": "Enabled",
+                "storage_profile": {
+                    "storage_mb": "128000",
+                    "backup_retention_days": "7",
+                    "geo_redundant_backup": "Enabled"
+                },
+                "create_mode": "Default"
             },
-            "create_mode": "Default"
-          },
-          "sku": {
-            "name": "GP_Gen5_2",
-            "tier": "GeneralPurpose",
-            "capacity": "2",
-            "family": "Gen5"
-          },
-          "tags": {
-            "elastic_server": "1"
-          }
+            "sku": {
+                "name": "GP_Gen5_2",
+                "tier": "GeneralPurpose",
+                "capacity": "2",
+                "family": "Gen5"
+            },
+            "tags": {
+                "elastic_server": "1"
+            }
         }
-        result = self.mgmt_client.servers.create(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.servers.begin_create(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
 
         # Create a replica server[put]
         BODY = {
-          "location": "eastus",
-          "properties": {
-            "create_mode": "Replica",
-            "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMariaDB/servers/" + SERVER_NAME + ""
-          }
+            "location": "eastus",
+            "properties": {
+                "create_mode": "Replica",
+                "source_server_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.DBforMariaDB/servers/" + SERVER_NAME + ""
+            }
         }
-        result = self.mgmt_client.servers.create(resource_group.name, SERVER_REPLICA_NAME, BODY)
+        result = self.mgmt_client.servers.begin_create(resource_group.name, SERVER_REPLICA_NAME, BODY)
         result = result.result()
 
         # Create a database as a point in time restore[put]
-        #point_in_time = dt.datetime.now(tz=UTC()).isoformat()
-        #BODY = {
+        # point_in_time = dt.datetime.now(tz=UTC()).isoformat()
+        # BODY = {
         #  "location": "eastus",
         #  "properties": {
         #    "restore_point_in_time": point_in_time,
@@ -119,9 +119,9 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         #  "tags": {
         #    "elastic_server": "1"
         #  }
-        #}
-        #result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
-        #result = result.result()
+        # }
+        # result = self.mgmt_client.servers.create(resource_group.name, SERVER_POINT_NAME, BODY)
+        # result = result.result()
 
         # # Create a server as a geo restore [put]
         # BODY = {
@@ -145,12 +145,12 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
 
         # DatabaseCreate[put]
         BODY = {
-          "properties": {
-            "charset": "utf8",
-            "collation": "utf8_general_ci"
-          }
+            "properties": {
+                "charset": "utf8",
+                "collation": "utf8_general_ci"
+            }
         }
-        result = self.mgmt_client.databases.create_or_update(resource_group.name, SERVER_NAME, DATABASE_NAME, BODY)
+        result = self.mgmt_client.databases.begin_create_or_update(resource_group.name, SERVER_NAME, DATABASE_NAME, BODY)
         result = result.result()
 
         # FirewallRuleCreate[put]
@@ -160,9 +160,9 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         #     "end_ip_address": "255.255.255.255"
         #   }
         # }
-        START_IP_ADDRESS = "0.0.0.0"
-        END_IP_ADDRESS = "255.255.255.255"
-        result = self.mgmt_client.firewall_rules.create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, START_IP_ADDRESS, END_IP_ADDRESS)
+        from azure.mgmt.rdbms.mariadb.models import FirewallRule
+        firewall_rule = FirewallRule(start_ip_address='0.0.0.0', end_ip_address='255.255.255.255')
+        result = self.mgmt_client.firewall_rules.begin_create_or_update(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME, firewall_rule)
         result = result.result()
 
         # ConfigurationCreateOrUpdate[put]
@@ -189,32 +189,38 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
 
         # Update a server's threat detection policy with all parameters[put]
         BODY = {
-          "properties": {
-            "state": "Enabled",
-            "email_account_admins": True,
-            "email_addresses": [
-              "testSecurityAlert@microsoft.com"
-            ],
-            "disabled_alerts": [
-              "Access_Anomaly",
-              "Usage_Anomaly"
-            ],
-            "retention_days": "5",
-            "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
-            "storage_endpoint": "https://mystorage.blob.core.windows.net"
-          }
+            "properties": {
+                "state": "Enabled",
+                "email_account_admins": True,
+                "email_addresses": [
+                    "testSecurityAlert@microsoft.com"
+                ],
+                "disabled_alerts": [
+                    "Access_Anomaly",
+                    "Usage_Anomaly"
+                ],
+                "retention_days": "5",
+                "storage_account_access_key": "sdlfkjabc+sdlfkjsdlkfsjdfLDKFTERLKFDFKLjsdfksjdflsdkfD2342309432849328476458/3RSD==",
+                "storage_endpoint": "https://mystorage.blob.core.windows.net"
+            }
         }
-        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
+                                                                                        SERVER_NAME,
+                                                                                        SECURITY_ALERT_POLICY_NAME,
+                                                                                        BODY)
         result = result.result()
 
         # Update a server's threat detection policy with minimal parameters[put]
         BODY = {
-          "properties": {
-            "state": "Disabled",
-            "email_account_admins": True
-          }
+            "properties": {
+                "state": "Disabled",
+                "email_account_admins": True
+            }
         }
-        result = self.mgmt_client.server_security_alert_policies.create_or_update(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.server_security_alert_policies.begin_create_or_update(resource_group.name,
+                                                                                        SERVER_NAME,
+                                                                                        SECURITY_ALERT_POLICY_NAME,
+                                                                                        BODY)
         result = result.result()
 
         # # Approve or reject a private endpoint connection with a given name.[put]
@@ -245,7 +251,7 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         # result = self.mgmt_client.location_based_recommended_action_sessions_result.list(LOCATION_NAME, RECOMMENDED_ACTION_SESSIONS_OPERATION_RESULT_NAME)
 
         # Get a server's threat detection policy[get]
-        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.server_security_alert_policies.get(resource_group.name, SERVER_NAME, SECURITY_ALERT_POLICY_NAME)
 
         # # Gets a private link resource for MariaDB.[get]
         # TODO: private_link_resources is not exist.
@@ -358,17 +364,17 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         # result = result.result()
 
         # ServerRestart[post]
-        result = self.mgmt_client.servers.restart(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.servers.begin_restart(resource_group.name, SERVER_NAME)
         result = result.result()
 
         # ServerUpdate[patch]
         BODY = {
-          "properties": {
-            "administrator_login_password": "newpa$$w0rd",
-            "ssl_enforcement": "Disabled"
-          }
+            "properties": {
+                "administrator_login_password": "newpa$$w0rd",
+                "ssl_enforcement": "Disabled"
+            }
         }
-        result = self.mgmt_client.servers.update(resource_group.name, SERVER_NAME, BODY)
+        result = self.mgmt_client.servers.begin_update(resource_group.name, SERVER_NAME, BODY)
         result = result.result()
 
         # NameAvailability[post]
@@ -376,9 +382,10 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         #   "name": "name1",
         #   "type": "Microsoft.DBforMariaDB"
         # }
-        NAME = "name1"
-        TYPE = "Microsoft.DBforMariaDB"
-        result = self.mgmt_client.check_name_availability.execute(NAME, TYPE)
+        NAME = self.create_random_name("name1")
+        from azure.mgmt.rdbms.mariadb.models import NameAvailabilityRequest
+        nameAvailabilityRequest = NameAvailabilityRequest(name=NAME, type="Microsoft.DBforMariaDB")
+        result = self.mgmt_client.check_name_availability.execute(nameAvailabilityRequest)
 
         # # Deletes a private endpoint connection with a given name.[delete]
         # TODO: private_endpoint_connections is not exist.
@@ -390,18 +397,18 @@ class MgmtMariaDBTest(AzureMgmtTestCase):
         # result = result.result()
 
         # FirewallRuleDelete[delete]
-        result = self.mgmt_client.firewall_rules.delete(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME)
+        result = self.mgmt_client.firewall_rules.begin_delete(resource_group.name, SERVER_NAME, FIREWALL_RULE_NAME)
         result = result.result()
 
         # DatabaseDelete[delete]
-        result = self.mgmt_client.databases.delete(resource_group.name, SERVER_NAME, DATABASE_NAME)
+        result = self.mgmt_client.databases.begin_delete(resource_group.name, SERVER_NAME, DATABASE_NAME)
         result = result.result()
 
         # ServerDelete[delete]
-        result = self.mgmt_client.servers.delete(resource_group.name, SERVER_NAME)
+        result = self.mgmt_client.servers.begin_delete(resource_group.name, SERVER_NAME)
         result = result.result()
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

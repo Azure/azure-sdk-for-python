@@ -785,6 +785,28 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     raise
             await renewer.close()
 
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    async def test_session_receiver_partially_invalid_autolockrenew_mode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        session_id = str(uuid.uuid4())
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send_messages(ServiceBusMessage("test_message", session_id=session_id))
+
+            failures = 0
+            async def should_not_run(*args, **kwargs):
+                failures += 1
+
+            async with sb_client.get_queue_receiver(servicebus_queue.name,
+                                              session_id=session_id,
+                                              receive_mode=ReceiveMode.ReceiveAndDelete,
+                                              auto_lock_renewer=AutoLockRenewer()) as receiver:
+                assert receiver.receive_messages()
+                assert not failures
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

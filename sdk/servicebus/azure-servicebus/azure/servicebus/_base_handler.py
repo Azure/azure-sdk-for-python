@@ -28,7 +28,7 @@ from .exceptions import (
     SessionLockLostError,
     _create_servicebus_exception
 )
-from ._common.utils import create_properties
+from ._common.utils import create_properties, strip_protocol_from_uri
 from ._common.constants import (
     CONTAINER_PREFIX,
     MANAGEMENT_PATH_SUFFIX,
@@ -51,7 +51,7 @@ def _parse_conn_str(conn_str):
     entity_path = None  # type: Optional[str]
     shared_access_signature = None  # type: Optional[str]
     shared_access_signature_expiry = None # type: Optional[int]
-    for element in conn_str.split(";"):
+    for element in conn_str.strip().split(";"):
         key, _, value = element.partition("=")
         if key.lower() == "endpoint":
             endpoint = value.rstrip("/")
@@ -80,11 +80,7 @@ def _parse_conn_str(conn_str):
             "\nWith alternate option of providing SharedAccessSignature instead of SharedAccessKeyName and Key"
         )
     entity = cast(str, entity_path)
-    left_slash_pos = cast(str, endpoint).find("//")
-    if left_slash_pos != -1:
-        host = cast(str, endpoint)[left_slash_pos + 2:]
-    else:
-        host = str(endpoint)
+    host = cast(str, strip_protocol_from_uri(cast(str, endpoint)))
 
     return (host,
             str(shared_access_key_name) if shared_access_key_name else None,
@@ -164,7 +160,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         **kwargs
     ):
         # type: (str, str, TokenCredential, Any) -> None
-        self.fully_qualified_namespace = fully_qualified_namespace
+        # If the user provided http:// or sb://, let's be polite and strip that.
+        self.fully_qualified_namespace = strip_protocol_from_uri(fully_qualified_namespace.strip())
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")

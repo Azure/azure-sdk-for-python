@@ -45,7 +45,7 @@ async def sample_create_hook_async():
                 name="email hook",
                 description="my email hook",
                 emails_to_alert=["alertme@alertme.com"],
-                external_link="https://adwiki.azurewebsites.net/articles/howto/alerts/create-hooks.html"
+                external_link="https://docs.microsoft.com/en-us/azure/cognitive-services/metrics-advisor/how-tos/alerts"
             )
         )
 
