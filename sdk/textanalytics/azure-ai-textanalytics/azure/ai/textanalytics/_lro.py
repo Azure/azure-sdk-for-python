@@ -25,7 +25,8 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
         if not self._show_stats:
             return super(TextAnalyticsOperationResourcePolling, self).get_polling_url()
 
-        return super(TextAnalyticsOperationResourcePolling, self).get_polling_url() + "?" + urlencode(self._query_params)
+        return super(TextAnalyticsOperationResourcePolling, self).get_polling_url() + \
+            "?" + urlencode(self._query_params)
 
 
 class TextAnalyticsLROPollingMethod(LROBasePolling):
@@ -87,4 +88,3 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
             TextAnalyticsLROPollingMethod._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
-

@@ -12,8 +12,8 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     TYPE_CHECKING,
 )
-from six.moves.urllib.parse import urlparse
 from functools import partial
+from six.moves.urllib.parse import urlparse
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
