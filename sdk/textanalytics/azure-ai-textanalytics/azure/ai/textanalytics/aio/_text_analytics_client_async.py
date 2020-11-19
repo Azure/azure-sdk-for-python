@@ -47,7 +47,7 @@ from .._models import (
     TextAnalysisResult
 )
 from .._lro import TextAnalyticsOperationResourcePolling
-from .._async_lro import TextAnalyticsAsyncLROPoller
+from .._async_lro import TextAnalyticsAsyncLROPollingMethod
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -615,7 +615,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsAsyncLROPoller(
+                polling=TextAnalyticsAsyncLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
@@ -659,7 +659,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         try:
             return await self._client.begin_cancel_health_job(
                 job_id,
-                polling=TextAnalyticsAsyncLROPoller(polling_interval=polling_interval)
+                polling=TextAnalyticsAsyncLROPollingMethod(polling_interval=polling_interval)
             )
 
         except HttpResponseError as error:
@@ -760,7 +760,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             return await self._client.begin_analyze(
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsAsyncLROPoller(
+                polling=TextAnalyticsAsyncLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

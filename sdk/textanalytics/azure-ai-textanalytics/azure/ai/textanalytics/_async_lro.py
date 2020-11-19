@@ -13,13 +13,13 @@ _FAILED = frozenset(["failed"])
 _SUCCEEDED = frozenset(["succeeded", "partiallysucceeded"])
 
 
-class TextAnalyticsAsyncLROPoller(AsyncLROBasePolling):
+class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
 
     def finished(self):
         """Is this polling finished?
         :rtype: bool
         """
-        return TextAnalyticsAsyncLROPoller._finished(self.status())
+        return TextAnalyticsAsyncLROPollingMethod._finished(self.status())
 
     @staticmethod
     def _finished(status):
@@ -64,10 +64,10 @@ class TextAnalyticsAsyncLROPoller(AsyncLROBasePolling):
             await self._delay()
             await self.update_status()
 
-        if TextAnalyticsAsyncLROPoller._failed(self.status()):
+        if TextAnalyticsAsyncLROPollingMethod._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
             self._pipeline_response = await self.request_status(final_get_url)
-            TextAnalyticsAsyncLROPoller._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+            TextAnalyticsAsyncLROPollingMethod._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)

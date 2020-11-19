@@ -31,7 +31,7 @@ from ._response_handlers import (
     analyze_paged_result,
     _get_deserialize
 )
-from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPoller
+from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -461,7 +461,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPoller(
+                polling=TextAnalyticsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
@@ -504,7 +504,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             return self._client.begin_cancel_health_job(
                 job_id,
-                polling=TextAnalyticsLROPoller(timeout=polling_interval)
+                polling=TextAnalyticsLROPollingMethod(timeout=polling_interval)
             )
 
         except HttpResponseError as error:
@@ -757,7 +757,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return self._client.begin_analyze(
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPoller(
+                polling=TextAnalyticsLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)

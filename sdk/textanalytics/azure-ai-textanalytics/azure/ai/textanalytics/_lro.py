@@ -28,13 +28,13 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
         return super().get_polling_url() + "?" + urlencode(self._query_params)
 
 
-class TextAnalyticsLROPoller(LROBasePolling):
+class TextAnalyticsLROPollingMethod(LROBasePolling):
 
     def finished(self):
         """Is this polling finished?
         :rtype: bool
         """
-        return TextAnalyticsLROPoller._finished(self.status())
+        return TextAnalyticsLROPollingMethod._finished(self.status())
 
     @staticmethod
     def _finished(status):
@@ -80,10 +80,10 @@ class TextAnalyticsLROPoller(LROBasePolling):
             self._delay()
             self.update_status()
 
-        if TextAnalyticsLROPoller._failed(self.status()):
+        if TextAnalyticsLROPollingMethod._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
-            TextAnalyticsLROPoller._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+            TextAnalyticsLROPollingMethod._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
