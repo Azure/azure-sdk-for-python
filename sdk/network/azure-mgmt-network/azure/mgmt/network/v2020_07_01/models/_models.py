@@ -7714,8 +7714,6 @@ class ExpressRouteConnection(SubResource):
     :type routing_weight: int
     :param enable_internet_security: Enable internet security.
     :type enable_internet_security: bool
-    :param express_route_gateway_bypass: Enable FastPath to vWan Firewall hub.
-    :type express_route_gateway_bypass: bool
     :param routing_configuration: The Routing Configuration indicating the
      associated and propagated route tables on this connection.
     :type routing_configuration:
@@ -7737,7 +7735,6 @@ class ExpressRouteConnection(SubResource):
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
-        'express_route_gateway_bypass': {'key': 'properties.expressRouteGatewayBypass', 'type': 'bool'},
         'routing_configuration': {'key': 'properties.routingConfiguration', 'type': 'RoutingConfiguration'},
         'name': {'key': 'name', 'type': 'str'},
     }
@@ -7749,7 +7746,6 @@ class ExpressRouteConnection(SubResource):
         self.authorization_key = kwargs.get('authorization_key', None)
         self.routing_weight = kwargs.get('routing_weight', None)
         self.enable_internet_security = kwargs.get('enable_internet_security', None)
-        self.express_route_gateway_bypass = kwargs.get('express_route_gateway_bypass', None)
         self.routing_configuration = kwargs.get('routing_configuration', None)
         self.name = kwargs.get('name', None)
 
@@ -18125,13 +18121,9 @@ class VirtualNetworkPeering(SubResource):
      (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-peering).
     :type remote_virtual_network:
      ~azure.mgmt.network.v2020_07_01.models.SubResource
-    :param remote_address_space: The reference to the address space peered
-     with the remote virtual network.
+    :param remote_address_space: The reference to the remote virtual network
+     address space.
     :type remote_address_space:
-     ~azure.mgmt.network.v2020_07_01.models.AddressSpace
-    :param remote_virtual_network_address_space: The reference to the current
-     address space of the remote virtual network.
-    :type remote_virtual_network_address_space:
      ~azure.mgmt.network.v2020_07_01.models.AddressSpace
     :param remote_bgp_communities: The reference to the remote virtual
      network's Bgp Communities.
@@ -18141,15 +18133,6 @@ class VirtualNetworkPeering(SubResource):
      values include: 'Initiated', 'Connected', 'Disconnected'
     :type peering_state: str or
      ~azure.mgmt.network.v2020_07_01.models.VirtualNetworkPeeringState
-    :param peering_sync_level: The peering sync status of the virtual network
-     peering. Possible values include: 'FullySynced', 'RemoteUnsynced',
-     'LocalUnsynced', 'LocalAndRemoteUnsynced'
-    :type peering_sync_level: str or
-     ~azure.mgmt.network.v2020_07_01.models.VirtualNetworkPeeringLevel
-    :param sync_remote_address_space: Provided when user wants to sync the
-     peering with address space on the remote virtual network after the address
-     space is updated. Default value: False .
-    :type sync_remote_address_space: bool
     :ivar provisioning_state: The provisioning state of the virtual network
      peering resource. Possible values include: 'Succeeded', 'Updating',
      'Deleting', 'Failed'
@@ -18176,11 +18159,8 @@ class VirtualNetworkPeering(SubResource):
         'use_remote_gateways': {'key': 'properties.useRemoteGateways', 'type': 'bool'},
         'remote_virtual_network': {'key': 'properties.remoteVirtualNetwork', 'type': 'SubResource'},
         'remote_address_space': {'key': 'properties.remoteAddressSpace', 'type': 'AddressSpace'},
-        'remote_virtual_network_address_space': {'key': 'properties.remoteVirtualNetworkAddressSpace', 'type': 'AddressSpace'},
         'remote_bgp_communities': {'key': 'properties.remoteBgpCommunities', 'type': 'VirtualNetworkBgpCommunities'},
         'peering_state': {'key': 'properties.peeringState', 'type': 'str'},
-        'peering_sync_level': {'key': 'properties.peeringSyncLevel', 'type': 'str'},
-        'sync_remote_address_space': {'key': 'properties.syncRemoteAddressSpace', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -18194,11 +18174,8 @@ class VirtualNetworkPeering(SubResource):
         self.use_remote_gateways = kwargs.get('use_remote_gateways', None)
         self.remote_virtual_network = kwargs.get('remote_virtual_network', None)
         self.remote_address_space = kwargs.get('remote_address_space', None)
-        self.remote_virtual_network_address_space = kwargs.get('remote_virtual_network_address_space', None)
         self.remote_bgp_communities = kwargs.get('remote_bgp_communities', None)
         self.peering_state = kwargs.get('peering_state', None)
-        self.peering_sync_level = kwargs.get('peering_sync_level', None)
-        self.sync_remote_address_space = kwargs.get('sync_remote_address_space', False)
         self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.etag = None

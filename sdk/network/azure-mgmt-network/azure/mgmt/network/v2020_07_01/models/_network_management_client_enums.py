@@ -779,14 +779,6 @@ class VirtualNetworkPeeringState(str, Enum):
     disconnected = "Disconnected"
 
 
-class VirtualNetworkPeeringLevel(str, Enum):
-
-    fully_synced = "FullySynced"
-    remote_unsynced = "RemoteUnsynced"
-    local_unsynced = "LocalUnsynced"
-    local_and_remote_unsynced = "LocalAndRemoteUnsynced"
-
-
 class VirtualNetworkGatewayType(str, Enum):
 
     vpn = "Vpn"

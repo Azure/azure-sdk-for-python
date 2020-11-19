@@ -7714,8 +7714,6 @@ class ExpressRouteConnection(SubResource):
     :type routing_weight: int
     :param enable_internet_security: Enable internet security.
     :type enable_internet_security: bool
-    :param express_route_gateway_bypass: Enable FastPath to vWan Firewall hub.
-    :type express_route_gateway_bypass: bool
     :param routing_configuration: The Routing Configuration indicating the
      associated and propagated route tables on this connection.
     :type routing_configuration:
@@ -7737,19 +7735,17 @@ class ExpressRouteConnection(SubResource):
         'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
         'routing_weight': {'key': 'properties.routingWeight', 'type': 'int'},
         'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
-        'express_route_gateway_bypass': {'key': 'properties.expressRouteGatewayBypass', 'type': 'bool'},
         'routing_configuration': {'key': 'properties.routingConfiguration', 'type': 'RoutingConfiguration'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, express_route_circuit_peering, name: str, id: str=None, authorization_key: str=None, routing_weight: int=None, enable_internet_security: bool=None, express_route_gateway_bypass: bool=None, routing_configuration=None, **kwargs) -> None:
+    def __init__(self, *, express_route_circuit_peering, name: str, id: str=None, authorization_key: str=None, routing_weight: int=None, enable_internet_security: bool=None, routing_configuration=None, **kwargs) -> None:
         super(ExpressRouteConnection, self).__init__(id=id, **kwargs)
         self.provisioning_state = None
         self.express_route_circuit_peering = express_route_circuit_peering
         self.authorization_key = authorization_key
         self.routing_weight = routing_weight
         self.enable_internet_security = enable_internet_security
-        self.express_route_gateway_bypass = express_route_gateway_bypass
         self.routing_configuration = routing_configuration
         self.name = name
 
@@ -18125,13 +18121,9 @@ class VirtualNetworkPeering(SubResource):
      (https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-create-peering).
     :type remote_virtual_network:
      ~azure.mgmt.network.v2020_07_01.models.SubResource
-    :param remote_address_space: The reference to the address space peered
-     with the remote virtual network.
+    :param remote_address_space: The reference to the remote virtual network
+     address space.
     :type remote_address_space:
-     ~azure.mgmt.network.v2020_07_01.models.AddressSpace
-    :param remote_virtual_network_address_space: The reference to the current
-     address space of the remote virtual network.
-    :type remote_virtual_network_address_space:
      ~azure.mgmt.network.v2020_07_01.models.AddressSpace
     :param remote_bgp_communities: The reference to the remote virtual
      network's Bgp Communities.
@@ -18141,15 +18133,6 @@ class VirtualNetworkPeering(SubResource):
      values include: 'Initiated', 'Connected', 'Disconnected'
     :type peering_state: str or
      ~azure.mgmt.network.v2020_07_01.models.VirtualNetworkPeeringState
-    :param peering_sync_level: The peering sync status of the virtual network
-     peering. Possible values include: 'FullySynced', 'RemoteUnsynced',
-     'LocalUnsynced', 'LocalAndRemoteUnsynced'
-    :type peering_sync_level: str or
-     ~azure.mgmt.network.v2020_07_01.models.VirtualNetworkPeeringLevel
-    :param sync_remote_address_space: Provided when user wants to sync the
-     peering with address space on the remote virtual network after the address
-     space is updated. Default value: False .
-    :type sync_remote_address_space: bool
     :ivar provisioning_state: The provisioning state of the virtual network
      peering resource. Possible values include: 'Succeeded', 'Updating',
      'Deleting', 'Failed'
@@ -18176,17 +18159,14 @@ class VirtualNetworkPeering(SubResource):
         'use_remote_gateways': {'key': 'properties.useRemoteGateways', 'type': 'bool'},
         'remote_virtual_network': {'key': 'properties.remoteVirtualNetwork', 'type': 'SubResource'},
         'remote_address_space': {'key': 'properties.remoteAddressSpace', 'type': 'AddressSpace'},
-        'remote_virtual_network_address_space': {'key': 'properties.remoteVirtualNetworkAddressSpace', 'type': 'AddressSpace'},
         'remote_bgp_communities': {'key': 'properties.remoteBgpCommunities', 'type': 'VirtualNetworkBgpCommunities'},
         'peering_state': {'key': 'properties.peeringState', 'type': 'str'},
-        'peering_sync_level': {'key': 'properties.peeringSyncLevel', 'type': 'str'},
-        'sync_remote_address_space': {'key': 'properties.syncRemoteAddressSpace', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, allow_virtual_network_access: bool=None, allow_forwarded_traffic: bool=None, allow_gateway_transit: bool=None, use_remote_gateways: bool=None, remote_virtual_network=None, remote_address_space=None, remote_virtual_network_address_space=None, remote_bgp_communities=None, peering_state=None, peering_sync_level=None, sync_remote_address_space: bool=False, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, allow_virtual_network_access: bool=None, allow_forwarded_traffic: bool=None, allow_gateway_transit: bool=None, use_remote_gateways: bool=None, remote_virtual_network=None, remote_address_space=None, remote_bgp_communities=None, peering_state=None, name: str=None, **kwargs) -> None:
         super(VirtualNetworkPeering, self).__init__(id=id, **kwargs)
         self.allow_virtual_network_access = allow_virtual_network_access
         self.allow_forwarded_traffic = allow_forwarded_traffic
@@ -18194,11 +18174,8 @@ class VirtualNetworkPeering(SubResource):
         self.use_remote_gateways = use_remote_gateways
         self.remote_virtual_network = remote_virtual_network
         self.remote_address_space = remote_address_space
-        self.remote_virtual_network_address_space = remote_virtual_network_address_space
         self.remote_bgp_communities = remote_bgp_communities
         self.peering_state = peering_state
-        self.peering_sync_level = peering_sync_level
-        self.sync_remote_address_space = sync_remote_address_space
         self.provisioning_state = None
         self.name = name
         self.etag = None
