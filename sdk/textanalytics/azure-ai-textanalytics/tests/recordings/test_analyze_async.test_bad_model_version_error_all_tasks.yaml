@@ -14,50 +14,50 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
       string: ''
     headers:
-      apim-request-id: bf8bf63b-3ec1-422a-89d9-08e4402f068d
-      date: Fri, 13 Nov 2020 21:47:30 GMT
-      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/600716e7-3751-469e-afc9-b08957e1a9f1_637408224000000000
+      apim-request-id: a1a8c606-5201-489e-ad26-02ccadddaf55
+      date: Thu, 19 Nov 2020 21:25:15 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/22e1d19f-5282-4109-84d2-5039333395e6_637413408000000000
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '339'
+      x-envoy-upstream-service-time: '30'
     status:
       code: 202
       message: Accepted
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/analyze
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/600716e7-3751-469e-afc9-b08957e1a9f1_637408224000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/22e1d19f-5282-4109-84d2-5039333395e6_637413408000000000
   response:
     body:
-      string: '{"jobId":"600716e7-3751-469e-afc9-b08957e1a9f1_637408224000000000","lastUpdateDateTime":"2020-11-13T21:47:31Z","createdDateTime":"2020-11-13T21:47:30Z","expirationDateTime":"2020-11-14T21:47:30Z","status":"failed","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:47:31Z"},"completed":0,"failed":3,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-13T21:47:31.6265756Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+      string: '{"jobId":"22e1d19f-5282-4109-84d2-5039333395e6_637413408000000000","lastUpdateDateTime":"2020-11-19T21:25:16Z","createdDateTime":"2020-11-19T21:25:16Z","expirationDateTime":"2020-11-20T21:25:16Z","status":"failed","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:25:16Z"},"completed":0,"failed":3,"inProgress":0,"total":3,"entityRecognitionTasks":[{"lastUpdateDateTime":"2020-11-19T21:25:16.5776935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T21:47:31.6265756Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type NamedEntityRecognition. Supported values latest,2020-04-01."}}],"modelVersion":""}}],"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-19T21:25:16.5776935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
-        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T21:47:31.6265756Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
+        job task type PersonallyIdentifiableInformation. Supported values latest,2020-07-01."}}],"modelVersion":""}}],"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-19T21:25:16.5776935Z","results":{"inTerminalState":true,"documents":[],"errors":[{"id":"1","error":{"code":"InvalidRequest","message":"Job
         task parameter value bad is not supported for model-version parameter for
         job task type KeyPhraseExtraction. Supported values latest,2020-07-01."}}],"modelVersion":""}}]}}'
     headers:
-      apim-request-id: 09849025-1f20-4026-90b1-b6b135b49ff8
+      apim-request-id: 36fe12c3-c34e-4ba1-8e40-ea1ce2f55394
       content-type: application/json; charset=utf-8
-      date: Fri, 13 Nov 2020 21:48:01 GMT
+      date: Thu, 19 Nov 2020 21:25:21 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '16'
+      x-envoy-upstream-service-time: '13'
     status:
       code: 200
       message: OK
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/600716e7-3751-469e-afc9-b08957e1a9f1_637408224000000000
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/22e1d19f-5282-4109-84d2-5039333395e6_637413408000000000
 version: 1

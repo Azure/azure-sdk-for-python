@@ -13,19 +13,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 4a9aca8c-5a48-4bf0-81e4-b61aa0a7c77d
+      - 2a0a1260-f913-4e46-a9e6-1889563291ae
       date:
-      - Sat, 14 Nov 2020 00:30:10 GMT
+      - Thu, 19 Nov 2020 21:28:20 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/5f0e9866-b2cb-4743-b2fc-7e7301401ba5
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/4db50e49-df5b-43b6-a0d5-64fccf2973d9
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -33,7 +33,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '170'
+      - '92'
     status:
       code: 202
       message: Accepted
@@ -47,21 +47,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/5f0e9866-b2cb-4743-b2fc-7e7301401ba5
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/4db50e49-df5b-43b6-a0d5-64fccf2973d9
   response:
     body:
-      string: '{"jobId":"5f0e9866-b2cb-4743-b2fc-7e7301401ba5","lastUpdateDateTime":"2020-11-14T00:30:12Z","createdDateTime":"2020-11-14T00:30:10Z","expirationDateTime":"2020-11-15T00:30:10Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"4db50e49-df5b-43b6-a0d5-64fccf2973d9","lastUpdateDateTime":"2020-11-19T21:28:22Z","createdDateTime":"2020-11-19T21:28:21Z","expirationDateTime":"2020-11-20T21:28:21Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         document in request.","innererror":{"code":"InvalidDocument","message":"Document
         text is empty."}}}],"modelVersion":"2020-09-03"}}'
     headers:
       apim-request-id:
-      - 3a920034-2beb-4b1e-894e-cf5503b72933
+      - acd93d2f-d9e2-4b24-90ce-dc98791d1b68
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 14 Nov 2020 00:30:41 GMT
+      - Thu, 19 Nov 2020 21:28:25 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -69,7 +69,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '220'
+      - '27'
     status:
       code: 200
       message: OK

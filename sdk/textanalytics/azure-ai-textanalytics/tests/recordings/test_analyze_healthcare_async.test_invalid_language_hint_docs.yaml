@@ -10,46 +10,46 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 6317821c-1198-4a46-802f-d0b63d76bf88
-      date: Sat, 14 Nov 2020 00:54:22 GMT
-      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/c99d6ef2-c24f-432e-9633-9ba83253f5e6
+      apim-request-id: 9e801bab-a376-4a4d-af5a-48526de21c02
+      date: Thu, 19 Nov 2020 21:29:11 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66a53a9d-950d-46d1-a481-40832e471f92
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '313'
+      x-envoy-upstream-service-time: '62'
     status:
       code: 202
       message: Accepted
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/c99d6ef2-c24f-432e-9633-9ba83253f5e6
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66a53a9d-950d-46d1-a481-40832e471f92
   response:
     body:
-      string: '{"jobId":"c99d6ef2-c24f-432e-9633-9ba83253f5e6","lastUpdateDateTime":"2020-11-14T00:54:26Z","createdDateTime":"2020-11-14T00:54:23Z","expirationDateTime":"2020-11-15T00:54:23Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
+      string: '{"jobId":"66a53a9d-950d-46d1-a481-40832e471f92","lastUpdateDateTime":"2020-11-19T21:29:12Z","createdDateTime":"2020-11-19T21:29:12Z","expirationDateTime":"2020-11-20T21:29:12Z","status":"succeeded","errors":[],"results":{"documents":[],"errors":[{"id":"1","error":{"code":"InvalidArgument","message":"Invalid
         Language Code.","innererror":{"code":"UnsupportedLanguageCode","message":"Invalid
         language code. Supported languages: en"}}}],"modelVersion":"2020-09-03"}}'
     headers:
-      apim-request-id: f8511bc9-8cf6-4953-9705-cb8f6ee177ae
+      apim-request-id: 2d5668e4-3861-463c-a4b4-5960380ae710
       content-type: application/json; charset=utf-8
-      date: Sat, 14 Nov 2020 00:54:54 GMT
+      date: Thu, 19 Nov 2020 21:29:17 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '71'
+      x-envoy-upstream-service-time: '29'
     status:
       code: 200
       message: OK
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/c99d6ef2-c24f-432e-9633-9ba83253f5e6
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/66a53a9d-950d-46d1-a481-40832e471f92
 version: 1

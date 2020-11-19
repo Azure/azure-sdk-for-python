@@ -19,19 +19,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 7b918c47-fbda-4115-81dc-49df971c4ae9
+      - 525b83e1-8014-487e-a2dc-6d3d7f65568e
       date:
-      - Fri, 13 Nov 2020 20:42:42 GMT
+      - Thu, 19 Nov 2020 21:11:42 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '88'
+      - '44'
     status:
       code: 202
       message: Accepted
@@ -53,19 +53,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
   response:
     body:
-      string: '{"jobId":"f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000","lastUpdateDateTime":"2020-11-13T20:42:43Z","createdDateTime":"2020-11-13T20:42:42Z","expirationDateTime":"2020-11-14T20:42:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:42:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - c96e69f7-47d6-42b3-a50f-510cec748542
+      - aafb1a3d-cf68-49df-a86a-096f1aaf6933
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 13 Nov 2020 20:43:13 GMT
+      - Thu, 19 Nov 2020 21:11:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -73,7 +73,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '75'
+      - '31'
     status:
       code: 200
       message: OK
@@ -87,19 +87,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
   response:
     body:
-      string: '{"jobId":"f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000","lastUpdateDateTime":"2020-11-13T20:42:43Z","createdDateTime":"2020-11-13T20:42:42Z","expirationDateTime":"2020-11-14T20:42:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:42:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 30501859-9563-4abd-9734-8492ee18bc56
+      - 9c94c8a8-4665-408e-9ca8-c163ff95317c
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 13 Nov 2020 20:43:43 GMT
+      - Thu, 19 Nov 2020 21:11:53 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -107,7 +107,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '187'
+      - '27'
     status:
       code: 200
       message: OK
@@ -121,19 +121,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
   response:
     body:
-      string: '{"jobId":"f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000","lastUpdateDateTime":"2020-11-13T20:42:43Z","createdDateTime":"2020-11-13T20:42:42Z","expirationDateTime":"2020-11-14T20:42:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:42:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 20833f7b-1e33-426f-b5e4-bd1696971011
+      - 22e3fa25-0c08-4eca-a028-a6862db56b41
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 13 Nov 2020 20:44:13 GMT
+      - Thu, 19 Nov 2020 21:11:58 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -141,7 +141,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '174'
+      - '32'
     status:
       code: 200
       message: OK
@@ -155,19 +155,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
   response:
     body:
-      string: '{"jobId":"f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000","lastUpdateDateTime":"2020-11-13T20:42:43Z","createdDateTime":"2020-11-13T20:42:42Z","expirationDateTime":"2020-11-14T20:42:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:42:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
     headers:
       apim-request-id:
-      - 2ce7895e-0781-405a-a4fd-a4138265812e
+      - ac16417c-9ee0-4144-8164-4c6e5513be31
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 13 Nov 2020 20:44:43 GMT
+      - Thu, 19 Nov 2020 21:12:03 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -175,7 +175,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '152'
+      - '35'
     status:
       code: 200
       message: OK
@@ -189,12 +189,284 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
   response:
     body:
-      string: '{"jobId":"f19976e3-8a50-4bba-bc75-fb9e4a3fb72b_637408224000000000","lastUpdateDateTime":"2020-11-13T20:42:43Z","createdDateTime":"2020-11-13T20:42:42Z","expirationDateTime":"2020-11-14T20:42:42Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T20:42:43Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-13T20:42:43.4263105Z","results":{"inTerminalState":true,"documents":[{"redactedText":"My
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 3a61c628-d776-4a6b-b478-4a4611412c64
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:08 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '37'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 5f1c25bc-bbe7-4f0d-a575-06fb0135536a
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:12 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '40'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 250b7280-7b28-4bb6-97d8-0019238c1fa1
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:18 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '33'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 5f121367-cf69-44fb-9585-b4bd4531d05f
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:23 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '37'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 7e250dda-1843-41b9-a42a-8fe4249668c4
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:28 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '34'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - e681540d-cb11-4546-921e-22ce3b19f4ec
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:34 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '33'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - e1ea85be-4bbc-40dc-8b01-bda40a52d89e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:39 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '47'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"running","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":0,"failed":0,"inProgress":1,"total":1}}'
+    headers:
+      apim-request-id:
+      - 33e7effa-d76c-4ecf-830e-31ab43a4003d
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:12:43 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '47'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/analyze/jobs/571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000
+  response:
+    body:
+      string: '{"jobId":"571585c3-fd6b-42ac-96f3-54eccf460dbd_637413408000000000","lastUpdateDateTime":"2020-11-19T21:11:43Z","createdDateTime":"2020-11-19T21:11:42Z","expirationDateTime":"2020-11-20T21:11:42Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-19T21:11:43Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"entityRecognitionPiiTasks":[{"lastUpdateDateTime":"2020-11-19T21:11:43.1283006Z","results":{"inTerminalState":true,"documents":[{"redactedText":"My
         SSN is ***********.","id":"1","entities":[{"text":"859-98-0987","category":"U.S.
         Social Security Number (SSN)","offset":10,"length":11,"confidenceScore":0.65}],"warnings":[]},{"redactedText":"Your
         ABA number - ********* - is the first 9 digits in the lower left hand corner
@@ -207,11 +479,11 @@ interactions:
         CPF Number","offset":3,"length":14,"confidenceScore":0.85}],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
     headers:
       apim-request-id:
-      - e6d659b0-ce36-4d1b-addc-88591d8c38c5
+      - 1ac7bc70-e38a-4cd9-93e5-2469e9afa742
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 13 Nov 2020 20:45:15 GMT
+      - Thu, 19 Nov 2020 21:12:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -219,7 +491,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '412'
+      - '100'
     status:
       code: 200
       message: OK

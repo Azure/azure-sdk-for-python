@@ -12,44 +12,44 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 3d4303bf-d242-4e09-b5be-fe7b2d83c38a
-      date: Sat, 14 Nov 2020 01:01:52 GMT
-      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/a8e2dbd4-3d36-41f2-a49b-fe999b8dffba
+      apim-request-id: efe470fc-3415-4647-8bf0-f3295ca3e6b0
+      date: Thu, 19 Nov 2020 21:32:00 GMT
+      operation-location: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/a191a1b3-4013-410a-b3b2-675ab0e1f2ea
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '118'
+      x-envoy-upstream-service-time: '133'
     status:
       code: 202
       message: Accepted
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    url: https://westus2.api.cognitive.microsoft.com//text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/a8e2dbd4-3d36-41f2-a49b-fe999b8dffba
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/a191a1b3-4013-410a-b3b2-675ab0e1f2ea
   response:
     body:
-      string: '{"jobId":"a8e2dbd4-3d36-41f2-a49b-fe999b8dffba","lastUpdateDateTime":"2020-11-14T01:01:53Z","createdDateTime":"2020-11-14T01:01:52Z","expirationDateTime":"2020-11-15T01:01:52Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]},{"id":"1","entities":[],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
+      string: '{"jobId":"a191a1b3-4013-410a-b3b2-675ab0e1f2ea","lastUpdateDateTime":"2020-11-19T21:32:03Z","createdDateTime":"2020-11-19T21:32:01Z","expirationDateTime":"2020-11-20T21:32:01Z","status":"succeeded","errors":[],"results":{"documents":[{"id":"0","entities":[],"relations":[],"warnings":[]},{"id":"1","entities":[],"relations":[],"warnings":[]},{"id":"2","entities":[],"relations":[],"warnings":[]}],"errors":[],"modelVersion":"2020-09-03"}}'
     headers:
-      apim-request-id: c77b8adb-c2f7-4d01-94a9-d781ff0e636f
+      apim-request-id: d47e7552-2281-4f95-84aa-f29fcb77d7aa
       content-type: application/json; charset=utf-8
-      date: Sat, 14 Nov 2020 01:02:23 GMT
+      date: Thu, 19 Nov 2020 21:32:06 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '195'
+      x-envoy-upstream-service-time: '41'
     status:
       code: 200
       message: OK
-    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/a8e2dbd4-3d36-41f2-a49b-fe999b8dffba
+    url: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/a191a1b3-4013-410a-b3b2-675ab0e1f2ea
 version: 1

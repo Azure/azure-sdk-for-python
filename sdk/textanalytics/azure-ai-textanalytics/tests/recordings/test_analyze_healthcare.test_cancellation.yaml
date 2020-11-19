@@ -19,19 +19,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: POST
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?stringIndexType=UnicodeCodePoint
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 77de9997-6e6c-4fdc-bf14-ea54c5e8788a
+      - b49b5cbe-bf26-464d-97b6-a29d3cce5589
       date:
-      - Sat, 14 Nov 2020 00:22:22 GMT
+      - Thu, 19 Nov 2020 21:24:16 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/40d0514b-2b63-4773-9384-54c3ea2d10db
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/2d8cc496-210c-4983-9e32-6205708918ca
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '361'
+      - '169'
     status:
       code: 202
       message: Accepted
@@ -55,19 +55,19 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: DELETE
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/40d0514b-2b63-4773-9384-54c3ea2d10db
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/2d8cc496-210c-4983-9e32-6205708918ca
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - d51a254e-bb80-4388-9e90-460a092f5ebc
+      - 9ee8d11b-b9a4-4877-87d9-b6f1e026109b
       date:
-      - Sat, 14 Nov 2020 00:22:22 GMT
+      - Thu, 19 Nov 2020 21:24:17 GMT
       operation-location:
-      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/40d0514b-2b63-4773-9384-54c3ea2d10db
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/2d8cc496-210c-4983-9e32-6205708918ca
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -75,7 +75,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '103'
+      - '12'
     status:
       code: 202
       message: Accepted
@@ -89,19 +89,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/40d0514b-2b63-4773-9384-54c3ea2d10db
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/2d8cc496-210c-4983-9e32-6205708918ca
   response:
     body:
-      string: '{"jobId":"40d0514b-2b63-4773-9384-54c3ea2d10db","lastUpdateDateTime":"2020-11-14T00:22:22Z","createdDateTime":"2020-11-14T00:22:21Z","expirationDateTime":"2020-11-15T00:22:21Z","status":"cancelled","errors":[]}'
+      string: '{"jobId":"2d8cc496-210c-4983-9e32-6205708918ca","lastUpdateDateTime":"2020-11-19T21:24:17Z","createdDateTime":"2020-11-19T21:24:17Z","expirationDateTime":"2020-11-20T21:24:17Z","status":"cancelled","errors":[]}'
     headers:
       apim-request-id:
-      - b0fc96bb-3d54-423b-81da-679552aa0f7e
+      - be25f035-4c73-47e4-8a5d-72459d6eabd1
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 14 Nov 2020 00:22:52 GMT
+      - Thu, 19 Nov 2020 21:24:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -109,7 +109,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '83'
+      - '6'
     status:
       code: 200
       message: OK
@@ -123,19 +123,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
     method: GET
-    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/entities/health/jobs/40d0514b-2b63-4773-9384-54c3ea2d10db
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/2d8cc496-210c-4983-9e32-6205708918ca
   response:
     body:
-      string: '{"jobId":"40d0514b-2b63-4773-9384-54c3ea2d10db","lastUpdateDateTime":"2020-11-14T00:22:22Z","createdDateTime":"2020-11-14T00:22:21Z","expirationDateTime":"2020-11-15T00:22:21Z","status":"cancelled","errors":[]}'
+      string: '{"jobId":"2d8cc496-210c-4983-9e32-6205708918ca","lastUpdateDateTime":"2020-11-19T21:24:17Z","createdDateTime":"2020-11-19T21:24:17Z","expirationDateTime":"2020-11-20T21:24:17Z","status":"cancelled","errors":[]}'
     headers:
       apim-request-id:
-      - 0fc174bb-350f-4203-9bac-41cedf654209
+      - 8736e340-d1e6-407f-9315-1a91ae611a24
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 14 Nov 2020 00:22:53 GMT
+      - Thu, 19 Nov 2020 21:24:21 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -143,7 +143,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '11'
+      - '6'
     status:
       code: 200
       message: OK
