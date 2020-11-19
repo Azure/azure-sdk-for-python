@@ -13,11 +13,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:06:58 GMT
+      - Thu, 19 Nov 2020 01:18:11 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerf7f71ca7?restype=container
+    uri: https://storagename.blob.core.windows.net/testcontainerf7f71ca7?restype=container
   response:
     body:
       string: ''
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Nov 2020 22:06:58 GMT
+      - Thu, 19 Nov 2020 01:18:11 GMT
       etag:
-      - '"0x8D88C0E4544A974"'
+      - '"0x8D88C28FBA1569C"'
       last-modified:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,11 +57,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerf7f71ca7/blobf7f71ca7
+    uri: https://storagename.blob.core.windows.net/testcontainerf7f71ca7/blobf7f71ca7
   response:
     body:
       string: ''
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - 1B2M2Y8AsgTpgAmY7PhCfg==
       date:
-      - Wed, 18 Nov 2020 22:06:58 GMT
+      - Thu, 19 Nov 2020 01:18:11 GMT
       etag:
-      - '"0x8D88C0E455822CF"'
+      - '"0x8D88C28FBB2BF59"'
       last-modified:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -85,7 +85,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
       x-ms-version-id:
-      - '2020-11-18T22:06:59.3759951Z'
+      - '2020-11-19T01:18:12.2301273Z'
     status:
       code: 201
       message: Created
@@ -107,15 +107,15 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainerf7f71ca7/blobf7f71ca7?se=2020-11-18T23%3A06%3A59Z&sp=rt&sv=2020-04-08&sr=b&sig=O9f5TtnsFlenkgO%2BvqkNjRvuwCsBrbAkBZq2CczkkY8%3D
+      - https://seanmcccanary3.blob.core.windows.net/testcontainerf7f71ca7/blobf7f71ca7?se=2020-11-19T02%3A18%3A12Z&sp=rt&sv=2020-04-08&sr=b&sig=9j/NRGhi3lxYfwJnpJOnZ6JvUvAW3/N4ZJUT%2B16uW48%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerf7f71ca7/blob1copy
+    uri: https://storagename.blob.core.windows.net/testcontainerf7f71ca7/blob1copy
   response:
     body:
       string: ''
@@ -123,11 +123,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       etag:
-      - '"0x8D88C0E459F4AC8"'
+      - '"0x8D88C28FC278F8A"'
       last-modified:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -137,7 +137,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
       x-ms-version-id:
-      - '2020-11-18T22:06:59.8423240Z'
+      - '2020-11-19T01:18:12.9956746Z'
     status:
       code: 201
       message: Created
@@ -153,11 +153,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:07:00 GMT
+      - Thu, 19 Nov 2020 01:18:13 GMT
       x-ms-version:
       - '2020-04-08'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainerf7f71ca7/blob1copy
+    uri: https://storagename.blob.core.windows.net/testcontainerf7f71ca7/blob1copy
   response:
     body:
       string: ''
@@ -171,11 +171,11 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       etag:
-      - '"0x8D88C0E459F4AC8"'
+      - '"0x8D88C28FC278F8A"'
       last-modified:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       vary:
@@ -183,15 +183,15 @@ interactions:
       x-ms-access-tier:
       - Hot
       x-ms-access-tier-change-time:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       x-ms-is-current-version:
       - 'true'
       x-ms-last-access-time:
-      - Wed, 18 Nov 2020 22:06:59 GMT
+      - Thu, 19 Nov 2020 01:18:12 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -201,7 +201,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
       x-ms-version-id:
-      - '2020-11-18T22:06:59.8423240Z'
+      - '2020-11-19T01:18:12.9956746Z'
     status:
       code: 200
       message: OK
