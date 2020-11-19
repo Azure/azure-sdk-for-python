@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from abc import ABCMeta
 from typing import Any, Callable, Iterable, Tuple
 from .paging import ResponseType, ReturnType
 from ._pipeline_client import PipelineClient
@@ -32,7 +33,7 @@ from .exceptions import (
     HttpResponseError, ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError, map_error
 )
 
-class AsyncPagingMethodABC:
+class AsyncPagingMethodABC(metaclass=ABCMeta):
 
     # making requests
     def initialize(

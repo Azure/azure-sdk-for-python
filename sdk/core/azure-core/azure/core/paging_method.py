@@ -24,6 +24,8 @@
 #
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
+from abc import ABCMeta
+from six import add_metaclass
 
 
 from .exceptions import (
@@ -36,6 +38,7 @@ if TYPE_CHECKING:
     from ._pipeline_client import PipelineClient
     from .pipeline.transport import HttpRequest, HttpResponse
 
+@add_metaclass(ABCMeta)
 class PagingMethodABC():
 
     # making requests
