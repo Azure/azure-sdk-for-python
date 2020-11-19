@@ -46,7 +46,7 @@ class AiohttpTestTransport(AioHttpTransport):
 class TestAnalyzeAsync(AsyncTextAnalyticsTest):
 
     def _interval(self):
-        return None if self.is_live else 0
+        return 5 if self.is_live else 0
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -1328,7 +1328,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             pages = []
             async for p in result:
                 pages.append(p)
-                
+
             self.assertEqual(len(pages), 2)  # default page size is 20
 
             # self.assertIsNotNone(result.statistics)  # statistics not working at the moment, but a bug has been filed on the service to correct this.
@@ -1367,7 +1367,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         async with client:
             result = await (await client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")], 
+                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval()

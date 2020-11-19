@@ -40,7 +40,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class TestHealth(AsyncTextAnalyticsTest):
     def _interval(self):
-        return None if self.is_live else 0
+        return 5 if self.is_live else 0
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -567,7 +567,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     })
     async def test_invalid_language_hint_docs(self, client):
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
-        
+
         async with client:
             result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
             response = []
@@ -853,7 +853,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
                 if doc.id == "9":
                     self.assertTrue(doc.is_error)
-                
+
                 else:
                     self.assertFalse(doc.is_error)
                     self.assertIsNotNone(doc.statistics)

@@ -27,7 +27,7 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 
 class TestHealth(TextAnalyticsTest):
     def _interval(self):
-        return None if self.is_live else 0
+        return 5 if self.is_live else 0
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -174,7 +174,7 @@ class TestHealth(TextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_analyze_healthcare(docs, polling_interval=self._interval())
-        assert excinfo.value.status_code == 413 
+        assert excinfo.value.status_code == 413
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -726,7 +726,7 @@ class TestHealth(TextAnalyticsTest):
 
             if doc.id == "9":
                 self.assertTrue(doc.is_error)
-            
+
             else:
                 self.assertFalse(doc.is_error)
                 self.assertIsNotNone(doc.statistics)

@@ -31,7 +31,7 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 class TestAnalyze(TextAnalyticsTest):
 
     def _interval(self):
-        return None if self.is_live else 0
+        return 5 if self.is_live else 0
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
