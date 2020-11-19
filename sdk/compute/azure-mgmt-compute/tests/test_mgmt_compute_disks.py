@@ -123,13 +123,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def create_key(self, group_name, location, key_vault, tenant_id, object_id):
         if self.is_live:
-            result = self.keyvault_client.vaults.create_or_update(
+            result = self.keyvault_client.vaults.begin_create_or_update(
                 group_name,
                 key_vault,
                 {
                   'location': location,
                   'properties': {
                     'sku': {
+                      'family': "A",
                       'name': 'standard'
                     },
                     'tenant_id': tenant_id,
