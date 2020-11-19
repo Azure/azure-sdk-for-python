@@ -7,6 +7,7 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 * Personally Identifiable Information (PII) Entity Recognition
 * Language Detection
 * Key Phrase Extraction
+* Healthcare Analysis (Gated Preview)
 
 [Source code][source_code] | [Package (PyPI)][TA_pypi] | [API reference documentation][TA_ref_docs]| [Product documentation][TA_product_documentation] | [Samples][TA_samples]
 
@@ -75,7 +76,7 @@ This table shows the relationship between SDK versions and supported API version
 |SDK version|Supported API version of service
 |-|-
 |5.0.0 - Latest GA release (can be installed by removing the `--pre` flag)| 3.0
-|5.1.0b2 - Latest release (beta)| 3.0, 3.1-preview
+|5.1.0b3 - Latest release (beta)| 3.0, 3.1-preview.2, 3.1-preview.3
 
 
 ### Authenticate the client
@@ -185,6 +186,15 @@ response = text_analytics_client.analyze_sentiment(documents)
 successful_responses = [doc for doc in response if not doc.is_error]
 ```
 
+### Long-Running Operations
+Long-running operations are operations which consist of an initial request sent to the service to start an operation,
+followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
+succeeded, to get the result.
+
+Methods that support Healthcare Analysis or batch operations over multiple Text Analytics APIs are modeled as long-running operations.
+The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
+for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
+Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
 
 ## Examples
 The following section provides several code snippets covering some of the most common Text Analytics tasks, including:
@@ -195,6 +205,8 @@ The following section provides several code snippets covering some of the most c
 * [Recognize PII Entities](#recognize-pii-entities "Recognize pii entities")
 * [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
 * [Detect Language](#detect-language "Detect language")
+* [Healthcare Analysis](#healthcare-analysis "Healthcare analysis")
+* [Batch Analysis](#analyze "Batch analysis")
 
 ### Analyze sentiment
 [analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
@@ -406,6 +418,120 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [language detection][language_detection]
 and [language and regional support][language_and_regional_support].
 
+### Healthcare Analysis
+The example below extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.  This sample demonstrates the usage for [long-running operations](#long-running-operations).
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
+
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential, api_version="v3.1-preview.3")
+
+documents = ["Subject is taking 100mg of ibuprofen twice daily"]
+
+poller = text_analytics_client.begin_analyze_healthcare(documents, show_stats=True)
+result = poller.result()
+
+docs = [doc for doc in result if not doc.is_error]
+
+print("Results of Healthcare Analysis:")
+for idx, doc in enumerate(docs):
+    for entity in doc.entities:
+        print("Entity: {}".format(entity.text))
+        print("...Category: {}".format(entity.category))
+        print("...Subcategory: {}".format(entity.subcategory))
+        print("...Offset: {}".format(entity.offset))
+        print("...Confidence score: {}".format(entity.confidence_score))
+        if entity.links is not None:
+            print("...Links:")
+            for link in entity.links:
+                print("......ID: {}".format(link.id))
+                print("......Data source: {}".format(link.data_source))
+    for relation in doc.relations:
+        print("Relation:")
+        print("...Source: {}".format(relation.source.text))
+        print("...Target: {}".format(relation.target.text))
+        print("...Type: {}".format(relation.relation_type))
+        print("...Bidirectional: {}".format(relation.is_bidirectional))
+    print("------------------------------------------")
+```
+
+The returned response is a heterogeneous list of result and error objects [[ MORE HERE ]]
+
+Note: The Healthcare Analysis service is currently available only in API version v3.1-preview.3 in gated preview.
+
+### Batch Analysis
+The example below demonstrates how to perform multiple analyses over one set of documents in a single request.  Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
+* Entities Recognition
+* PII Entities Recognition
+* Key Phrase Extraction
+
+This sample demonstrates the usage for [long-running operations](#long-running-operations)
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
+
+credential = AzureKeyCredential("<api_key>")
+endpoint="https://<region>.api.cognitive.microsoft.com/"
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential, api_version="v3.1-preview.3")
+
+documents = ["Microsoft was founded by Bill Gates and Paul Allen."]
+
+poller = text_analytics_client.begin_analyze(
+    documents,
+    display_name="Sample Text Analysis",
+    entities_recognition_tasks=[EntitiesRecognitionTask()],
+    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+)
+
+result = poller.result()
+
+for page in result:
+    for task in page.entities_recognition_results:
+        print("Results of Entities Recognition task:")
+        
+        docs = [doc for doc in task.results if not doc.is_error]
+        for idx, doc in enumerate(docs):
+            print("\nDocument text: {}".format(documents[idx]))
+            for entity in doc.entities:
+                print("Entity: {}".format(entity.text))
+                print("...Category: {}".format(entity.category))
+                print("...Confidence Score: {}".format(entity.confidence_score))
+                print("...Offset: {}".format(entity.offset))
+            print("------------------------------------------")
+
+    for task in page.pii_entities_recognition_results:
+        print("Results of PII Entities Recognition task:")
+
+        docs = [doc for doc in task.results if not doc.is_error]
+        for idx, doc in enumerate(docs):
+            print("Document text: {}".format(documents[idx]))
+            for entity in doc.entities:
+                print("Entity: {}".format(entity.text))
+                print("Category: {}".format(entity.category))
+                print("Confidence Score: {}\n".format(entity.confidence_score))
+            print("------------------------------------------")
+
+    for task in page.key_phrase_extraction_results:
+        print("Results of Key Phrase Extraction task:")
+
+        docs = [doc for doc in task.results if not doc.is_error]
+        for idx, doc in enumerate(docs):
+            print("Document text: {}\n".format(documents[idx]))
+            print("Key Phrases: {}\n".format(doc.key_phrases))
+            print("------------------------------------------")
+```
+
+The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
+
+Note: Batch analysis is currently available only in API version v3.1-preview.3.
+
 ## Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
@@ -471,6 +597,8 @@ Common scenarios
 * Recognize linked entities: [sample_recognize_linked_entities.py][recognize_linked_entities_sample] ([async version][recognize_linked_entities_sample_async])
 * Extract key phrases: [sample_extract_key_phrases.py][extract_key_phrases_sample] ([async version][extract_key_phrases_sample_async])
 * Detect language: [sample_detect_language.py][detect_language_sample] ([async version][detect_language_sample_async])
+* Healthcare Analysis: [sample_analyze_healthcare.py][analyze_healthcare_sample] ([async version][analyze_healthcare_sample_async])
+* Batch Analysis: [sample_anayze.py][analyze_sample] ([async version][analyze_sample_async])
 
 Advanced scenarios
 * Opinion Mining: [sample_analyze_sentiment_with_opinion_mining.py][opinion_mining_sample] ([async_version][opinion_mining_sample_async])
@@ -560,6 +688,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
 [recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
 [recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
+[analyze_healthcare_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare.py
+[analyze_healthcare_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_async.py
+[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze.py
+[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_async.py
 
 [opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
 [opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
