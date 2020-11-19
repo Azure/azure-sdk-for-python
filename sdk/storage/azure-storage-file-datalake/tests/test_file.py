@@ -266,6 +266,25 @@ class FileTest(StorageTestCase):
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
+    def test_snapshot_file_with_lease_id(self):
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        # Act
+        file_client.create_file()
+        good_lease = file_client.acquire_lease()
+        bad_lease = '444badfd-192b-471a-80c2-c36e994e4e0b'
+
+        # Assert
+        file_client.create_snapshot(lease=good_lease)
+        with self.assertRaises(HttpResponseError) as e:
+            file_client.create_snapshot(lease=bad_lease)
+        self.assertEqual('LeaseIdMismatchWithBlobOperation', e.exception.error_code)
+
+    @record
     def test_create_file_using_oauth_token_credential(self):
         # Arrange
         file_name = self._get_file_reference()
