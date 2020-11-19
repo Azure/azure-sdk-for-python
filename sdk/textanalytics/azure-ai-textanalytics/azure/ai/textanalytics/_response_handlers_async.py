@@ -10,7 +10,7 @@ from urllib.parse import urlparse, parse_qsl
 
 from ._models import RequestStatistics
 from ._async_paging import AnalyzeHealthcareResultAsync, AnalyzeResultAsync
-from ._response_handlers import healthcare_result, analyze_result, prepare_result
+from ._response_handlers import healthcare_result, analyze_result
 
 
 async def healthcare_extract_page_data_async(doc_id_order, obj, response_headers, health_job_state): # pylint: disable=unused-argument

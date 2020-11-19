@@ -137,7 +137,7 @@ def language_result(language, results):  # pylint: disable=unused-argument
 
 
 @prepare_result
-def entities_result(entity, results):  # pylint: disable=unused-argument
+def entities_result(entity, results, *args, **kwargs):  # pylint: disable=unused-argument
     return RecognizeEntitiesResult(
         id=entity.id,
         entities=[CategorizedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
@@ -147,7 +147,7 @@ def entities_result(entity, results):  # pylint: disable=unused-argument
 
 
 @prepare_result
-def linked_entities_result(entity, results):  # pylint: disable=unused-argument
+def linked_entities_result(entity, results, *args, **kwargs):  # pylint: disable=unused-argument
     return RecognizeLinkedEntitiesResult(
         id=entity.id,
         entities=[LinkedEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
@@ -157,7 +157,7 @@ def linked_entities_result(entity, results):  # pylint: disable=unused-argument
 
 
 @prepare_result
-def key_phrases_result(phrases, results):  # pylint: disable=unused-argument
+def key_phrases_result(phrases, results, *args, **kwargs):  # pylint: disable=unused-argument
     return ExtractKeyPhrasesResult(
         id=phrases.id,
         key_phrases=phrases.key_phrases,
@@ -167,7 +167,7 @@ def key_phrases_result(phrases, results):  # pylint: disable=unused-argument
 
 
 @prepare_result
-def sentiment_result(sentiment, results):
+def sentiment_result(sentiment, results, *args, **kwargs): # pylint: disable=unused-argument
     return AnalyzeSentimentResult(
         id=sentiment.id,
         sentiment=sentiment.sentiment,
@@ -178,7 +178,7 @@ def sentiment_result(sentiment, results):
     )
 
 @prepare_result
-def pii_entities_result(entity, results):  # pylint: disable=unused-argument
+def pii_entities_result(entity, results, *args, **kwargs):  # pylint: disable=unused-argument
     return RecognizePiiEntitiesResult(
         id=entity.id,
         entities=[PiiEntity._from_generated(e) for e in entity.entities],  # pylint: disable=protected-access
@@ -189,7 +189,7 @@ def pii_entities_result(entity, results):  # pylint: disable=unused-argument
 
 
 @prepare_result
-def healthcare_result(health_result, results): # pylint: disable=unused-argument
+def healthcare_result(health_result, results, *args, **kwargs): # pylint: disable=unused-argument
     return AnalyzeHealthcareResultItem._from_generated(health_result) # pylint: disable=protected-access
 
 
