@@ -75,6 +75,10 @@ class Resource(Model):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     """
 
     _validation = {
@@ -82,6 +86,7 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
@@ -90,6 +95,7 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
@@ -99,6 +105,7 @@ class Resource(Model):
         self.type = None
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
+        self.system_data = None
 
 
 class AgentPool(Resource):
@@ -121,6 +128,10 @@ class AgentPool(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :param count: The count of agent machine
     :type count: int
     :param tier: The Tier of agent machine
@@ -144,6 +155,7 @@ class AgentPool(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -153,6 +165,7 @@ class AgentPool(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'count': {'key': 'properties.count', 'type': 'int'},
         'tier': {'key': 'properties.tier', 'type': 'str'},
         'os': {'key': 'properties.os', 'type': 'str'},
@@ -2101,18 +2114,24 @@ class ProxyResource(Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs):
@@ -2120,6 +2139,7 @@ class ProxyResource(Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class QuarantinePolicy(Model):
@@ -2185,6 +2205,10 @@ class Registry(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :param sku: Required. The SKU of the container registry.
     :type sku: ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Sku
     :ivar login_server: The URL that can be used to log into the container
@@ -2222,6 +2246,7 @@ class Registry(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'sku': {'required': True},
         'login_server': {'readonly': True},
         'creation_date': {'readonly': True},
@@ -2235,6 +2260,7 @@ class Registry(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'login_server': {'key': 'properties.loginServer', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -2463,6 +2489,10 @@ class Replication(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :ivar provisioning_state: The provisioning state of the replication at the
      time the operation was called. Possible values include: 'Creating',
      'Updating', 'Deleting', 'Succeeded', 'Failed', 'Canceled'
@@ -2479,6 +2509,7 @@ class Replication(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'status': {'readonly': True},
     }
@@ -2489,6 +2520,7 @@ class Replication(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'Status'},
     }
@@ -2597,6 +2629,10 @@ class Run(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :param run_id: The unique identifier for the run.
     :type run_id: str
     :param status: The current status of the run. Possible values include:
@@ -2669,6 +2705,7 @@ class Run(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'run_error_message': {'readonly': True},
         'log_artifact': {'readonly': True},
     }
@@ -2677,6 +2714,7 @@ class Run(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'run_id': {'key': 'properties.runId', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
@@ -2836,6 +2874,10 @@ class ScopeMap(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :param description: The user friendly description of the scope map.
     :type description: str
     :ivar scope_map_type: The type of the scope map. E.g. BuildIn scope map.
@@ -2858,6 +2900,7 @@ class ScopeMap(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'scope_map_type': {'readonly': True},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
@@ -2868,6 +2911,7 @@ class ScopeMap(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'scope_map_type': {'key': 'properties.type', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -3322,6 +3366,47 @@ class StorageAccountProperties(Model):
         self.id = kwargs.get('id', None)
 
 
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.LastModifiedByType
+    :param last_modified_at: The timestamp of resource modification (UTC).
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = kwargs.get('created_by', None)
+        self.created_by_type = kwargs.get('created_by_type', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.last_modified_by = kwargs.get('last_modified_by', None)
+        self.last_modified_by_type = kwargs.get('last_modified_by_type', None)
+        self.last_modified_at = kwargs.get('last_modified_at', None)
+
+
 class Target(Model):
     """The target of the event.
 
@@ -3391,6 +3476,10 @@ class Task(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :param identity: Identity for the resource.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
@@ -3439,6 +3528,7 @@ class Task(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'creation_date': {'readonly': True},
         'timeout': {'maximum': 28800, 'minimum': 300},
@@ -3450,6 +3540,7 @@ class Task(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
@@ -3495,6 +3586,10 @@ class TaskRun(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :param identity: Identity for the resource.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
@@ -3520,6 +3615,7 @@ class TaskRun(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'run_result': {'readonly': True},
     }
@@ -3528,6 +3624,7 @@ class TaskRun(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
@@ -3790,6 +3887,10 @@ class Token(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :ivar creation_date: The creation date of scope map.
     :vartype creation_date: datetime
     :ivar provisioning_state: Provisioning state of the resource. Possible
@@ -3814,6 +3915,7 @@ class Token(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
@@ -3822,6 +3924,7 @@ class Token(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'scope_map_id': {'key': 'properties.scopeMapId', 'type': 'str'},
@@ -4113,6 +4216,10 @@ class Webhook(Resource):
     :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification
+     of the resource.
+    :vartype system_data:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.SystemData
     :param status: The status of the webhook at the time the operation was
      called. Possible values include: 'enabled', 'disabled'
     :type status: str or
@@ -4138,6 +4245,7 @@ class Webhook(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'actions': {'required': True},
         'provisioning_state': {'readonly': True},
     }
@@ -4148,6 +4256,7 @@ class Webhook(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'actions': {'key': 'properties.actions', 'type': '[str]'},
