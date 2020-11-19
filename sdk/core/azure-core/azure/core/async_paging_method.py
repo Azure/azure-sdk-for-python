@@ -211,10 +211,12 @@ class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
         super(AsyncDifferentNextOperationPagingMethod, self).initialize(
             client, deserialize_output, next_link_name, **kwargs
         )
-        self._prepare_next_request = kwargs.pop("prepare_next_request", None)
-        if not self._prepare_next_request:
-            raise ValueError(
-                "Must pass in prepare_next_request callback to use this paging method"
+        try:
+            self._prepare_next_request = kwargs.pop("prepare_next_request")
+        except KeyError:
+            raise TypeError(
+                "AsyncDifferentNextOperationPagingMethod is missing required keyword-only arg "
+                "'prepare_next_request'"
             )
 
     def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:

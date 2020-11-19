@@ -23,10 +23,9 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
 from abc import ABCMeta
+from typing import TYPE_CHECKING
 from six import add_metaclass
-
 
 from .exceptions import (
     HttpResponseError, ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -203,10 +202,12 @@ class DifferentNextOperationPagingMethod(BasicPagingMethod):
         super(DifferentNextOperationPagingMethod, self).initialize(
             client, deserialize_output, next_link_name, **kwargs
         )
-        self._prepare_next_request = kwargs.pop("prepare_next_request", None)
-        if not self._prepare_next_request:
-            raise ValueError(
-                "Must pass in prepare_next_request callback to use this paging method"
+        try:
+            self._prepare_next_request = kwargs.pop("prepare_next_request")
+        except KeyError:
+            raise TypeError(
+                "DifferentNextOperationPagingMethod is missing required keyword-only arg "
+                "'prepare_next_request'"
             )
 
     def get_next_request(self, continuation_token, initial_request):
