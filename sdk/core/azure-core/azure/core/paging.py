@@ -80,11 +80,6 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
         """
-        self._initial_request = kwargs.pop("initial_request", None)
-        self._initial_response = kwargs.pop("initial_response", None)
-        if self._initial_response:
-            self._initial_request = self._initial_response.http_response.request
-
         if get_next or extract_data:
             if paging_method:
                 raise ValueError(
@@ -93,11 +88,6 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
                 )
             self._paging_method = _LegacyPagingMethod(get_next, extract_data)
         else:
-            if not self._initial_request and not self._initial_response:
-                raise ValueError(
-                    "You must either supply the initial request the paging method must call, or provide "
-                    "the initial response"
-                )
             self._paging_method = paging_method
             self._paging_method.initialize(**kwargs)
 
