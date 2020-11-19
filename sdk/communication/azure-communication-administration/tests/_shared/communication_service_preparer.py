@@ -40,7 +40,7 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
         self.service_name = "TEST-SERVICE-NAME"
         self.mgmt_client = None
         self.set_cache(use_cache)
-        self.scrubbed_resource_name = "resource_name"
+        self.scrubbed_resource_name = "communicationegrcrs"
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -54,10 +54,10 @@ class CommunicationServicePreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if not self.is_live:
-            self.resource = FakeResource(name=name, id=name)
+            self.resource = FakeResource(name=self.scrubbed_resource_name, id=name)
 
             return {
-                "connection_string": "endpoint=https://{}.communication.azure.com/;accesskey=fake===".format(self.scrubbed_resource_name),
+                "connection_string": "endpoint=https://{}.communication.azure.com/;accesskey=fake===".format(self.resource.name),
             }
 
         self.test_class_instance.scrubber.register_name_pair(name, self.scrubbed_resource_name)
