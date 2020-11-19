@@ -557,8 +557,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
-        if not sequence_numbers:
-            raise ValueError("At least one sequence number must be specified.")
+        if len(sequence_numbers) == 0:
+            return [] # no-op on empty list.
         await self._open()
         try:
             receive_mode = self._receive_mode.value.value
