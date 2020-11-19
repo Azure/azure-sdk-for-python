@@ -584,7 +584,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
-            if no Retry-After header is present. Defaults to 10 seconds.
+            if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`].
@@ -604,7 +604,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         docs = _validate_input(documents, "language", language)
         model_version = kwargs.pop("model_version", None)
         show_stats = kwargs.pop("show_stats", False)
-        polling_interval = kwargs.pop("polling_interval", 10)
+        polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
 
         doc_id_order = [doc.get("id") for doc in docs]
@@ -648,7 +648,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval) # pylint: disable=protected-access
+        polling_interval = kwargs.pop("polling_interval", 5) # pylint: disable=protected-access
 
         initial_response = getattr(poller._polling_method, "_initial_response") # pylint: disable=protected-access
         operation_location = initial_response.http_response.headers["Operation-Location"]
