@@ -50,7 +50,7 @@ class _LegacyPagingMethod:
                 "and extract_data. Preferably switch to the new paging with PagingMethod, but if "
                 "not, please pass in the missing callback."
             )
-        self._get_page = get_next  # type: Callable[[Optional[str]], ResponseType]
+        self._get_next = get_next  # type: Callable[[Optional[str]], ResponseType]
         self.extract_data = extract_data  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
         self.did_a_call_already = False
 
@@ -61,10 +61,9 @@ class _LegacyPagingMethod:
     def finished(self, continuation_token):
         return continuation_token is None and self.did_a_call_already
 
-    @property
-    def get_page(self):
+    def get_page(self, continuation_token, initial_request):  # pylint: disable=unused-argument
         self.did_a_call_already = True
-        return self._get_page
+        return self._get_next(continuation_token)
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
@@ -116,11 +115,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         if self._paging_method.finished(self.continuation_token):
             raise StopIteration("End of paging")
         try:
-            try:
-                self._response = self._paging_method.get_page(self.continuation_token, self._initial_request)
-            except TypeError:
-                # legacy doesn't support passing initial request into get_page
-                self._response = self._paging_method.get_page(self.continuation_token)
+            self._response = self._paging_method.get_page(self.continuation_token, self._initial_request)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token

@@ -116,11 +116,7 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
         if self._paging_method.finished(self.continuation_token):
             raise StopAsyncIteration("End of paging")
         try:
-            try:
-                self._response = await self._paging_method.get_page(self.continuation_token, self._initial_request)
-            except TypeError:
-                # legacy doesn't support passing initial request into get_page
-                self._response = await self._paging_method.get_page(self.continuation_token)
+            self._response = await self._paging_method.get_page(self.continuation_token, self._initial_request)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token
