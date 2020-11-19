@@ -175,6 +175,21 @@ class ChatThreadClientSamples(object):
             print(chat_thread_participant)
         # [END list_participants]
 
+    def add_participant(self):
+        from azure.communication.chat import ChatThreadClient, CommunicationUserCredential
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+
+        # [START add_participant]
+        from azure.communication.chat import ChatThreadParticipant
+        from datetime import datetime
+        new_chat_thread_participant = ChatThreadParticipant(
+                user=self.new_user,
+                display_name='name',
+                share_history_time=datetime.utcnow())
+        chat_thread_client.add_participant(new_chat_thread_participant)
+        # [END add_participant]
+        print("add_chat_participant succeeded")
+
     def add_participants(self):
         from azure.communication.chat import ChatThreadClient, CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
@@ -227,6 +242,7 @@ if __name__ == '__main__':
     sample.send_read_receipt()
     sample.list_read_receipts()
     sample.delete_message()
+    sample.add_participant()
     sample.add_participants()
     sample.list_participants()
     sample.remove_participant()

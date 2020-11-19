@@ -189,6 +189,27 @@ class TestChatThreadClient(unittest.TestCase):
             assert len(l) == 1
             l[0].user.id = participant_id
 
+    def test_add_participant(self):
+        thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+        new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=201)
+        chat_thread_client = ChatThreadClient("https://endpoint", TestChatThreadClient.credential, thread_id, transport=Mock(send=mock_send))
+
+        new_participant = ChatThreadParticipant(
+                user=CommunicationUser(new_participant_id),
+                display_name='name',
+                share_history_time=datetime.utcnow())
+
+        try:
+            chat_thread_client.add_participant(new_participant)
+        except:
+            raised = True
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+
     def test_add_participants(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
         new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"

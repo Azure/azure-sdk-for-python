@@ -157,6 +157,19 @@ class ChatThreadClientTest(CommunicationTestCase):
             li[0].user.id = self.user.identifier
 
     @pytest.mark.live_test_only
+    def test_add_participant(self):
+        self._create_thread()
+
+        share_history_time = datetime.utcnow()
+        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        new_participant = ChatThreadParticipant(
+            user=self.new_user,
+            display_name='name',
+            share_history_time=share_history_time)
+
+        self.chat_thread_client.add_participant(new_participant)
+
+    @pytest.mark.live_test_only
     def test_add_participants(self):
         self._create_thread()
 

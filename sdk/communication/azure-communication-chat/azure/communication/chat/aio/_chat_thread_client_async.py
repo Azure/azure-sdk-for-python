@@ -432,6 +432,41 @@ class ChatThreadClient(object):
             **kwargs)
 
     @distributed_trace_async
+    async def add_participant(
+            self,
+            thread_participant: ChatThreadParticipant,
+            **kwargs
+    ) -> None:
+        """Adds single thread participant to a thread. If participant already exist, no change occurs.
+
+        :param thread_participant: Required. Single thread participant to be added to the thread.
+        :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/chat_thread_client_sample_async.py
+                :start-after: [START add_participant]
+                :end-before: [END add_participant]
+                :language: python
+                :dedent: 12
+                :caption: Adding single participant to chat thread.
+        """
+        if not thread_participant:
+            raise ValueError("thread_participant cannot be None.")
+
+        participants = [thread_participant._to_generated()]  # pylint:disable=protected-access
+        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
+
+        return await self._client.add_chat_participants(
+            chat_thread_id=self._thread_id,
+            add_chat_participants_request=add_thread_participants_request,
+            **kwargs)
+
+    @distributed_trace_async
     async def add_participants(
         self,
         thread_participants: List[ChatThreadParticipant],

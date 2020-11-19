@@ -210,6 +210,25 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
+    async def test_add_participant(self):
+        async with self.chat_client:
+            await self._create_thread()
+
+            async with self.chat_thread_client:
+                share_history_time = datetime.utcnow()
+                share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+                new_participant = ChatThreadParticipant(
+                    user=self.new_user,
+                    display_name='name',
+                    share_history_time=share_history_time)
+
+                await self.chat_thread_client.add_participant(new_participant)
+
+            if not self.is_playback():
+                await self.chat_client.delete_chat_thread(self.thread_id)
+
+    @pytest.mark.live_test_only
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_add_participants(self):
         async with self.chat_client:
             await self._create_thread()
