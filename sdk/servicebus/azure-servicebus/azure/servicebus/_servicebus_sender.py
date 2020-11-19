@@ -217,7 +217,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         except:
-            self.close()
+            self._close_handler()
             raise
 
     def _send(self, message, timeout=None, last_exception=None):

@@ -283,7 +283,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 await asyncio.sleep(0.05)
             self._running = True
         except:
-            await self.close()
+            await self._close_handler()
             raise
 
         if self._auto_lock_renewer and self._session:

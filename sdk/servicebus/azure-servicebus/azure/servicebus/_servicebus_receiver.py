@@ -289,7 +289,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 time.sleep(0.05)
             self._running = True
         except:
-            self.close()
+            self._close_handler()
             raise
 
         if self._auto_lock_renewer and self._session:
