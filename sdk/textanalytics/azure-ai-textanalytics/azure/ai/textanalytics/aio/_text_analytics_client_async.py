@@ -659,7 +659,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         try:
             return await self._client.begin_cancel_health_job(
                 job_id,
-                polling=TextAnalyticsAsyncLROPollingMethod(polling_interval=polling_interval)
+                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
             )
 
         except HttpResponseError as error:
