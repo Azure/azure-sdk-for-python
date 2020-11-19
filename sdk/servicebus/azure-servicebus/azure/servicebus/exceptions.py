@@ -417,7 +417,7 @@ class ServiceBusServerBusyError(ServiceBusError):
         )
         super(ServiceBusServerBusyError, self).__init__(
             message,
-            retryable=False,
+            retryable=True,
             shutdown_handler=False,
             **kwargs
         )

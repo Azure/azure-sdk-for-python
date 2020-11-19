@@ -19,7 +19,7 @@ from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceiv
 from azure.servicebus.exceptions import (
     ServiceBusError,
     ServiceBusAuthenticationError,
-    UnauthorizedAccessError
+    ServiceBusAuthorizationError
 )
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -87,7 +87,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             with client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_message_count=1, max_wait_time=1)
 
-            with pytest.raises(UnauthorizedAccessError):
+            with pytest.raises(ServiceBusAuthorizationError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
