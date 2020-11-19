@@ -265,10 +265,13 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
+
         with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
             if isinstance(messages, ServiceBusMessage):
                 request_body = self._build_schedule_request(schedule_time_utc, send_span, messages)
             else:
+                if len(messages) == 0:
+                    return []  # No-op on empty list.
                 request_body = self._build_schedule_request(schedule_time_utc, send_span, *messages)
             if send_span:
                 self._add_span_request_attributes(send_span)
@@ -308,6 +311,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             numbers = [types.AMQPLong(sequence_numbers)]
         else:
             numbers = [types.AMQPLong(s) for s in sequence_numbers]
+        if len(numbers) == 0:
+            return None # no-op on empty list.
         request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -370,8 +375,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     add_link_to_send(message, send_span)
 
             if isinstance(message, ServiceBusMessageBatch) and len(message) == 0:  # pylint: disable=len-as-condition
-                raise ValueError("A ServiceBusMessageBatch or list of ServiceBusMessage "
-                                 "must have at least one ServiceBusMessage")
+                return # Short circuit noop if an empty list or batch is provided.
             if not isinstance(message, ServiceBusMessageBatch) and not isinstance(message, ServiceBusMessage):
                 raise TypeError("Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage> "
                                 "or lists of ServiceBusMessage.")

@@ -193,7 +193,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message)
-        if self._auto_lock_renewer and not self._session:
+        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
             self._auto_lock_renewer.register(self, message)
         return message
 
@@ -534,7 +534,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 operation_requires_timeout=True
             )
             trace_link_message(messages, receive_span)
-            if self._auto_lock_renewer and not self._session:
+            if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
                 for message in messages:
                     self._auto_lock_renewer.register(self, message)
             return messages
@@ -571,8 +571,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
-        if not sequence_numbers:
-            raise ValueError("At least one sequence number must be specified.")
+        if len(sequence_numbers) == 0:
+            return [] # no-op on empty list.
         await self._open()
         try:
             receive_mode = self._receive_mode.value.value
@@ -597,7 +597,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 timeout=timeout
             )
             trace_link_message(messages, receive_span)
-            if self._auto_lock_renewer and not self._session:
+            if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
                 for message in messages:
                     self._auto_lock_renewer.register(self, message)
             return messages

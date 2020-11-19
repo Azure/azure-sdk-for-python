@@ -1,7 +1,20 @@
 # Release History
 
-## 12.6.0b2 (Unreleased)
+## 12.6.1 (Unreleased)
 
+
+## 12.6.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature `ArrowDialect` as output format of `query_blob`
+- Preview feature `undelete_container` on BlobServiceClient.
+- Preview feature Last Access Time.
+
+**Fixes**
+- Fixed the expired Authorization token problem during retry (#14701, #14067)
+- Catch exceptions thrown by async download (#14319)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0 to get continuation_token attr on AzureError.
 
 ## 12.6.0b1 (2020-10-02)
 **New features***

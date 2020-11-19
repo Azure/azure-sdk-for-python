@@ -192,6 +192,15 @@ def transform_messages_to_sendable_if_needed(messages):
             return messages
 
 
+def strip_protocol_from_uri(uri):
+    # type: (str) -> str
+    """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN."""
+    left_slash_pos = uri.find("//")
+    if left_slash_pos != -1:
+        return uri[left_slash_pos + 2:]
+    return uri
+
+
 @contextmanager
 def send_trace_context_manager(span_name=SPAN_NAME_SEND):
     span_impl_type = (

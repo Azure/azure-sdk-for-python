@@ -1,0 +1,224 @@
+interactions:
+- request:
+    body: '[{"@id": "dtmi:samples:Building;1", "@type": "Interface", "@context": "dtmi:dtdl:context;2",
+      "displayName": "Building", "contents": [{"@type": "Relationship", "name": "has",
+      "target": "dtmi:samples:Floor;1", "properties": [{"@type": "Property", "name":
+      "isAccessRestricted", "schema": "boolean"}]}, {"@type": "Property", "name":
+      "AverageTemperature", "schema": "double"}]}, {"@id": "dtmi:samples:Floor;1",
+      "@type": "Interface", "@context": "dtmi:dtdl:context;2", "displayName": "Floor",
+      "contents": [{"@type": "Relationship", "name": "contains", "target": "dtmi:samples:Room;1"},
+      {"@type": "Property", "name": "AverageTemperature", "schema": "double"}]}, {"@id":
+      "dtmi:samples:Room;1", "@type": "Interface", "@context": "dtmi:dtdl:context;2",
+      "displayName": "Room", "contents": [{"@type": "Property", "name": "Temperature",
+      "schema": "double"}, {"@type": "Property", "name": "IsOccupied", "schema": "boolean"}]}]'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '912'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"ModelIdAlreadyExists","message":"Some of the model
+        ids already exist: dtmi:samples:Building;1, dtmi:samples:Floor;1, dtmi:samples:Room;1.
+        Use Model_List API to view models that already exist. See the Swagger example
+        (http://aka.ms/ModelListSwSmpl)."}}'
+    headers:
+      content-length:
+      - '269'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 07:28:09 GMT
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 409
+      message: Conflict
+- request:
+    body: '{"$metadata": {"$model": "dtmi:samples:Building;1"}, "AverageTemperature":
+      68}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '78'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin?api-version=2020-10-31
+  response:
+    body:
+      string: '{"$dtId":"DTRelationshipTestsBuildingTwin","$etag":"W/\"1e204d81-fd03-4e99-9c5d-fe6bc8160739\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:Building;1","AverageTemperature":{"lastUpdateTime":"2020-11-09T07:28:09.3886803Z"}}}'
+    headers:
+      content-length:
+      - '240'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 07:28:09 GMT
+      etag:
+      - W/"1e204d81-fd03-4e99-9c5d-fe6bc8160739"
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"$metadata": {"$model": "dtmi:samples:Floor;1"}, "AverageTemperature":
+      75}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '75'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin?api-version=2020-10-31
+  response:
+    body:
+      string: '{"$dtId":"DTRelationshipTestsFloorTwin","$etag":"W/\"811f69e7-4907-4ba8-b133-c8d50066bbda\"","AverageTemperature":75,"$metadata":{"$model":"dtmi:samples:Floor;1","AverageTemperature":{"lastUpdateTime":"2020-11-09T07:28:09.8356352Z"}}}'
+    headers:
+      content-length:
+      - '234'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 07:28:09 GMT
+      etag:
+      - W/"811f69e7-4907-4ba8-b133-c8d50066bbda"
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"$metadata": {"$model": "dtmi:samples:Room;1"}, "Temperature": 80, "IsOccupied":
+      true}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '87'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsRoomTwin?api-version=2020-10-31
+  response:
+    body:
+      string: '{"$dtId":"DTRelationshipTestsRoomTwin","$etag":"W/\"5ee6fa09-1a35-45db-a15b-8d0952a2128a\"","Temperature":80,"IsOccupied":true,"$metadata":{"$model":"dtmi:samples:Room;1","Temperature":{"lastUpdateTime":"2020-11-09T07:28:10.3955260Z"},"IsOccupied":{"lastUpdateTime":"2020-11-09T07:28:10.3955260Z"}}}'
+    headers:
+      content-length:
+      - '299'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 07:28:10 GMT
+      etag:
+      - W/"5ee6fa09-1a35-45db-a15b-8d0952a2128a"
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"$relationshipId": "FloorContainsRoom", "$sourceId": "DTRelationshipTestsFloorTwin",
+      "$relationshipName": "contains", "$targetId": "DTRelationshipTestsRoomTwin"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '162'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2020-10-31
+  response:
+    body:
+      string: '{"$relationshipId":"FloorContainsRoom","$etag":"W/\"ac289241-4a60-4f71-9b8d-a72b6994199b\"","$sourceId":"DTRelationshipTestsFloorTwin","$relationshipName":"contains","$targetId":"DTRelationshipTestsRoomTwin"}'
+    headers:
+      content-length:
+      - '208'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 07:28:10 GMT
+      etag:
+      - W/"ac289241-4a60-4f71-9b8d-a72b6994199b"
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"$relationshipId": "FloorContainsRoom", "$sourceId": "DTRelationshipTestsFloorTwin",
+      "$relationshipName": "contains", "$targetId": "DTRelationshipTestsRoomTwin"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '162'
+      Content-Type:
+      - application/json
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+    method: PUT
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsFloorTwin/relationships/FloorContainsRoom?api-version=2020-10-31
+  response:
+    body:
+      string: '{"error":{"code":"PreconditionFailed","message":"If-None-Match: * header
+        was specified but a relationship with the id FloorContainsRoom was found.
+        Please specify a different relationship id."}}'
+    headers:
+      content-length:
+      - '193'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Mon, 09 Nov 2020 07:28:10 GMT
+      strict-transport-security:
+      - max-age=2592000
+    status:
+      code: 412
+      message: Precondition Failed
+version: 1

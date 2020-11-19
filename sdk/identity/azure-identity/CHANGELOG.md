@@ -1,6 +1,9 @@
 # Release History
 
-## 1.5.0 (2020-11-10)
+## 1.5.1 (Unreleased)
+
+
+## 1.5.0 (2020-11-11)
 ### Breaking Changes
 - Renamed optional `CertificateCredential` keyword argument `send_certificate`
   (added in 1.5.0b1) to `send_certificate_chain`
