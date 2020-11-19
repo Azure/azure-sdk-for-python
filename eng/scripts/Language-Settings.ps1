@@ -6,6 +6,7 @@ $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=con
 
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 {
+  pip install packaging==20.4 -q -I
   $pkgName = $pkgName.Replace('_', '-')
   if (Test-Path (Join-Path $pkgPath "setup.py"))
   {
