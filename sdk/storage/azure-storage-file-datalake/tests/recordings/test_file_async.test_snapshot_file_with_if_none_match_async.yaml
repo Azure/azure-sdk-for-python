@@ -5,9 +5,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 59280922-2a1a-11eb-afbb-c8348e5fffbf
+      - 2ba1f7db-2ac1-11eb-8548-c8348e5fffbf
       x-ms-date:
-      - Thu, 19 Nov 2020 03:50:21 GMT
+      - Thu, 19 Nov 2020 23:44:31 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -19,11 +19,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Thu, 19 Nov 2020 03:50:21 GMT
-      ETag: '"0x8D88C3E3D6CE915"'
-      Last-Modified: Thu, 19 Nov 2020 03:50:21 GMT
+      Date: Thu, 19 Nov 2020 23:44:30 GMT
+      ETag: '"0x8D88CE50FCEC43D"'
+      Last-Modified: Thu, 19 Nov 2020 23:44:31 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 1211cb73-101f-0057-7f27-be5812000000
+      x-ms-request-id: 170b84b7-601f-00a9-80cd-be3753000000
       x-ms-version: '2020-02-10'
     status:
       code: 201
@@ -35,9 +35,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 595aace9-2a1a-11eb-8e5e-c8348e5fffbf
+      - 2bd8e2a2-2ac1-11eb-9668-c8348e5fffbf
       x-ms-date:
-      - Thu, 19 Nov 2020 03:50:22 GMT
+      - Thu, 19 Nov 2020 23:44:31 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -49,11 +49,11 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Thu, 19 Nov 2020 03:50:21 GMT
-      ETag: '"0x8D88C3E3D7B42B9"'
-      Last-Modified: Thu, 19 Nov 2020 03:50:22 GMT
+      Date: Thu, 19 Nov 2020 23:44:30 GMT
+      ETag: '"0x8D88CE50FDD4432"'
+      Last-Modified: Thu, 19 Nov 2020 23:44:31 GMT
       Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 1211cb74-101f-0057-8027-be5812000000
+      x-ms-request-id: 170b84b8-601f-00a9-01cd-be3753000000
       x-ms-version: '2020-02-10'
     status:
       code: 201
@@ -67,9 +67,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - 5968df33-2a1a-11eb-9e95-c8348e5fffbf
+      - 2be71d29-2ac1-11eb-9de1-c8348e5fffbf
       x-ms-date:
-      - Thu, 19 Nov 2020 03:50:22 GMT
+      - Thu, 19 Nov 2020 23:44:31 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -79,105 +79,13 @@ interactions:
       string: ''
     headers:
       Content-Length: '0'
-      Date: Thu, 19 Nov 2020 03:50:22 GMT
-      ETag: '"0x8D88C3E3D7B42B9"'
-      Last-Modified: Thu, 19 Nov 2020 03:50:22 GMT
+      Date: Thu, 19 Nov 2020 23:44:31 GMT
+      ETag: '"0x8D88CE50FDD4432"'
+      Last-Modified: Thu, 19 Nov 2020 23:44:31 GMT
       Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: e0a88dd0-701e-0051-1f27-be6bad000000
+      x-ms-request-id: 4e866f97-a01e-0052-1acd-be8ac9000000
       x-ms-request-server-encrypted: 'true'
-      x-ms-snapshot: '2020-11-19T03:50:22.1576966Z'
-      x-ms-version: '2020-02-10'
-    status:
-      code: 201
-      message: Created
-    url: https://amandaadlscanary2.blob.core.windows.net/filesystemd72a183a/directoryd72a183a/filename?comp=snapshot
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - d0353e6d-2a1b-11eb-ad5d-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 04:00:51 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a?resource=directory
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length: '0'
-      Date: Thu, 19 Nov 2020 04:00:50 GMT
-      ETag: '"0x8D88C3FB484792A"'
-      Last-Modified: Thu, 19 Nov 2020 04:00:51 GMT
-      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 318a14df-301f-00b4-0428-be3aef000000
-      x-ms-version: '2020-02-10'
-    status:
-      code: 201
-      message: Created
-    url: https://amandaadlscanary2.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a?resource=directory
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - d0725735-2a1b-11eb-b400-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 04:00:51 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a%2Ffilename?resource=file
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length: '0'
-      Date: Thu, 19 Nov 2020 04:00:50 GMT
-      ETag: '"0x8D88C3FB4927E8D"'
-      Last-Modified: Thu, 19 Nov 2020 04:00:51 GMT
-      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 318a14e0-301f-00b4-0528-be3aef000000
-      x-ms-version: '2020-02-10'
-    status:
-      code: 201
-      message: Created
-    url: https://amandaadlscanary2.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a%2Ffilename?resource=file
-- request:
-    body: null
-    headers:
-      If-None-Match:
-      - '0x111111111111111'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - d07fca85-2a1b-11eb-96bf-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 04:00:51 GMT
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/filesystemd72a183a/directoryd72a183a/filename?comp=snapshot
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length: '0'
-      Date: Thu, 19 Nov 2020 04:00:51 GMT
-      ETag: '"0x8D88C3FB4927E8D"'
-      Last-Modified: Thu, 19 Nov 2020 04:00:51 GMT
-      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 1deafd85-701e-00b5-5228-be6533000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-snapshot: '2020-11-19T04:00:51.4260997Z'
+      x-ms-snapshot: '2020-11-19T23:44:31.5881048Z'
       x-ms-version: '2020-02-10'
     status:
       code: 201
