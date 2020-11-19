@@ -10,13 +10,13 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleExportSpanProcessor
 
-from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorSpanExporter
+from microsoft.opentelemetry.exporter.azuremonitor import AzureMonitorTraceExporter
 
 trace.set_tracer_provider(TracerProvider())
 
 RequestsInstrumentor().instrument()
 span_processor = SimpleExportSpanProcessor(
-    AzureMonitorSpanExporter(
+    AzureMonitorTraceExporter(
         connection_string = os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
     )
 )

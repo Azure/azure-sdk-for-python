@@ -16,8 +16,7 @@ from opentelemetry.trace.status import Status, StatusCode
 
 from microsoft.opentelemetry.exporter.azuremonitor.export import ExportResult
 from microsoft.opentelemetry.exporter.azuremonitor.export.trace import (
-    AzureMonitorSpanExporter,
-    indicate_processed_by_metric_extractors,
+    AzureMonitorTraceExporter,
 )
 from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
 
@@ -35,7 +34,7 @@ def throw(exc_type, *args, **kwargs):
 # pylint: disable=import-error
 # pylint: disable=protected-access
 # pylint: disable=too-many-lines
-class TestAzureSpanExporter(unittest.TestCase):
+class TestAzureTraceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         os.makedirs(TEST_FOLDER, exist_ok=True)
@@ -43,7 +42,8 @@ class TestAzureSpanExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
-        cls._exporter = AzureMonitorSpanExporter(storage_path=STORAGE_PATH)
+        cls._exporter = AzureMonitorTraceExporter()
+        cls._exporter.storage.path=STORAGE_PATH
 
     @classmethod
     def tearDownClass(cls):
@@ -63,31 +63,12 @@ class TestAzureSpanExporter(unittest.TestCase):
 
     def test_constructor(self):
         """Test the constructor."""
-        exporter = AzureMonitorSpanExporter(
-            instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab",
-            storage_path=os.path.join(TEST_FOLDER, self.id()),
-            storage_max_size=50,
-            storage_maintenance_period=100,
-            storage_retention_period=200,
-            proxies={"asd": "123"},
-            timeout=5.0,
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertIsInstance(exporter.options, ExporterOptions)
         self.assertEqual(
-            exporter.options.instrumentation_key,
+            exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
-        )
-        self.assertEqual(
-            exporter.storage.path, os.path.join(TEST_FOLDER, self.id())
-        )
-        self.assertEqual(exporter.storage.max_size, 50)
-        self.assertEqual(exporter.storage.maintenance_period, 100)
-        self.assertEqual(exporter.storage.retention_period, 200)
-        self.assertEqual(exporter.options.proxies, {"asd": "123"})
-        self.assertEqual(exporter.options.timeout, 5.0)
-        self.assertEqual(
-            exporter._telemetry_processors[0],
-            indicate_processed_by_metric_extractors,
         )
 
     def test_export_empty(self):
@@ -98,7 +79,7 @@ class TestAzureSpanExporter(unittest.TestCase):
     def test_export_failure(self):
         exporter = self._exporter
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             test_span = trace._Span(
                 name="test",
@@ -128,13 +109,12 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.SUCCESS
             storage_mock = mock.Mock()
             exporter._transmit_from_storage = storage_mock
             exporter.export([test_span])
-            self.assertEqual(len(exporter._telemetry_processors), 1)
             self.assertEqual(storage_mock.call_count, 1)
             try:
                 self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
@@ -155,7 +135,7 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.end()
         exporter = self._exporter
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit",
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit",
             throw(Exception),
         ):  # noqa: E501
             result = exporter.export([test_span])
@@ -175,31 +155,11 @@ class TestAzureSpanExporter(unittest.TestCase):
         test_span.start()
         test_span.end()
         with mock.patch(
-            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorSpanExporter._transmit"
+            "microsoft.opentelemetry.exporter.azuremonitor.export.trace.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
             transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
             result = exporter.export([test_span])
             self.assertEqual(result, SpanExportResult.FAILURE)
-
-    def test_indicate_processed_by_metric_extractors(self):
-        envelope = mock.Mock()
-        envelope.data.base_type = "RemoteDependencyData"
-        envelope.data.base_data.properties = {}
-        indicate_processed_by_metric_extractors(envelope)
-        self.assertEqual(
-            envelope.data.base_data.properties[
-                "_MS.ProcessedByMetricExtractors"
-            ],
-            "(Name:'Dependencies',Ver:'1.1')",
-        )
-        envelope.data.base_type = "RequestData"
-        indicate_processed_by_metric_extractors(envelope)
-        self.assertEqual(
-            envelope.data.base_data.properties[
-                "_MS.ProcessedByMetricExtractors"
-            ],
-            "(Name:'Requests',Ver:'1.1')",
-        )
 
     def test_span_to_envelope_none(self):
         exporter = self._exporter
@@ -207,10 +167,10 @@ class TestAzureSpanExporter(unittest.TestCase):
 
     # pylint: disable=too-many-statements
     def test_span_to_envelope(self):
-        exporter = AzureMonitorSpanExporter(
-            instrumentation_key="12345678-1234-5678-abcd-12345678abcd",
-            storage_path=os.path.join(TEST_FOLDER, self.id()),
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",
         )
+        exporter.storage.path==os.path.join(TEST_FOLDER, self.id())
 
         parent_span = SpanContext(
             trace_id=36873507687745823477771305566750195431,
