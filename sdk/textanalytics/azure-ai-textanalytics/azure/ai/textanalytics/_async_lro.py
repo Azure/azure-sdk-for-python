@@ -70,4 +70,6 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
             self._pipeline_response = await self.request_status(final_get_url)
-            TextAnalyticsAsyncLROPollingMethod._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+            TextAnalyticsAsyncLROPollingMethod._raise_if_bad_http_status_and_method(
+                self._pipeline_response.http_response
+            )

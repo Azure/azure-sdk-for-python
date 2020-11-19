@@ -401,15 +401,6 @@ class TestAnalyze(TextAnalyticsTest):
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
     })
-    def test_too_many_documents(self, client):
-        pass  # TODO: verify document limit
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
-    })
     def test_payload_too_large(self, client):
         pass  # TODO: verify payload size limit
 
@@ -964,7 +955,8 @@ class TestAnalyze(TextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
         text_analytics_account = "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
-        text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
+        if self.is_live:
+            text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3)

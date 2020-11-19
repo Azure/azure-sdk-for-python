@@ -19,6 +19,7 @@ async def healthcare_extract_page_data_async(doc_id_order, obj, response_headers
 
 
 async def analyze_extract_page_data_async(doc_id_order, obj, response_headers, analyze_job_state):
+    print(analyze_job_state.next_link)
     return analyze_job_state.next_link, [analyze_result(doc_id_order, obj, response_headers, analyze_job_state.tasks)]
 
 
