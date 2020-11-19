@@ -49,6 +49,7 @@ if TYPE_CHECKING:
         PiiEntitiesRecognitionTask,
         KeyPhraseExtractionTask,
         AnalyzeHealthcareResultItem,
+        TextAnalysisResult
     )
 
 
@@ -473,7 +474,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
-                    "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview and up"
+                    "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview.3"
                 )
             raise error
 
@@ -752,7 +753,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return self._client.begin_analyze(
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPoller(timeout=polling_interval, **kwargs),
+                polling=TextAnalyticsLROPoller(
+                    timeout=polling_interval,
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
                 continuation_token=continuation_token,
                 **kwargs
             )
@@ -760,7 +766,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
-                    "'begin_analyze' endpoint is only available for API version v3.1-preview and up"
+                    "'begin_analyze' endpoint is only available for API version v3.1-preview.3"
                 )
             raise error
 
