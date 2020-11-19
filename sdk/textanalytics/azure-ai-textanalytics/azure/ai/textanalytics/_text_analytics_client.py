@@ -12,6 +12,7 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     TYPE_CHECKING,
 )
+from six.moves.urllib.parse import urlparse
 from functools import partial
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -498,7 +499,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         initial_response = getattr(poller._polling_method, "_initial_response") # pylint: disable=protected-access
         operation_location = initial_response.http_response.headers["Operation-Location"]
 
-        from urllib.parse import urlparse
         job_id = urlparse(operation_location).path.split("/")[-1]
 
         try:

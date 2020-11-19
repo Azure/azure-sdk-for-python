@@ -189,7 +189,8 @@ class TestHealth(TextAnalyticsTest):
         ]
 
         result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
-        for doc in result:
+        response = list(result)
+        for doc in response:
             doc_warnings = doc.warnings
             self.assertEqual(len(doc_warnings), 0)
 
@@ -224,7 +225,7 @@ class TestHealth(TextAnalyticsTest):
             response = client.begin_analyze_healthcare(
                 ["This is written in English."],
                 polling_interval=self._interval()
-            )
+            ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -448,7 +449,8 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        response = list(result)
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
@@ -529,7 +531,8 @@ class TestHealth(TextAnalyticsTest):
     })
     def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        response = list(result)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -555,7 +558,8 @@ class TestHealth(TextAnalyticsTest):
     })
     def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
-        response = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        response = list(result)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -596,7 +600,8 @@ class TestHealth(TextAnalyticsTest):
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at."},
                 {"id": "3", "text": text}]
 
-        doc_errors = list(client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result())
+        result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+        doc_errors = list(result)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
@@ -650,7 +655,8 @@ class TestHealth(TextAnalyticsTest):
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
-            result = client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            result = client.begin_analyze_healthcare(docs, polling_interval=self._interval()).result()
+
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
