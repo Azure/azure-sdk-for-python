@@ -1,0 +1,130 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5ccf2fa9-2a1a-11eb-be60-c8348e5fffbf
+      x-ms-date:
+      - Thu, 19 Nov 2020 03:50:27 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem55a01a35/directory55a01a35?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Thu, 19 Nov 2020 03:50:27 GMT
+      ETag: '"0x8D88C3E4119FBAF"'
+      Last-Modified: Thu, 19 Nov 2020 03:50:28 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 0051201a-901f-00bd-4d27-be7f3c000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem55a01a35/directory55a01a35?resource=directory
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5d0811d9-2a1a-11eb-81f6-c8348e5fffbf
+      x-ms-date:
+      - Thu, 19 Nov 2020 03:50:28 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystem55a01a35/directory55a01a35%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Thu, 19 Nov 2020 03:50:27 GMT
+      ETag: '"0x8D88C3E4129240E"'
+      Last-Modified: Thu, 19 Nov 2020 03:50:28 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 0051201b-901f-00bd-4e27-be7f3c000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystem55a01a35/directory55a01a35%2Ffilename?resource=file
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5d1641ff-2a1a-11eb-bb76-c8348e5fffbf
+      x-ms-date:
+      - Thu, 19 Nov 2020 03:50:28 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: HEAD
+    uri: https://storagename.blob.core.windows.net/filesystem55a01a35/directory55a01a35/filename
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges: bytes
+      Content-Length: '0'
+      Content-Type: application/octet-stream
+      Date: Thu, 19 Nov 2020 03:50:27 GMT
+      ETag: '"0x8D88C3E4129240E"'
+      Last-Modified: Thu, 19 Nov 2020 03:50:28 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-access-tier: Hot
+      x-ms-access-tier-inferred: 'true'
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Thu, 19 Nov 2020 03:50:28 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-request-id: ba98eec2-501e-00c0-1427-be0e1f000000
+      x-ms-server-encrypted: 'true'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 200
+      message: OK
+    url: https://amandaadlscanary2.blob.core.windows.net/filesystem55a01a35/directory55a01a35/filename
+- request:
+    body: null
+    headers:
+      If-None-Match:
+      - '"0x8D88C3E4129240E"'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - 5d256b3b-2a1a-11eb-8ea5-c8348e5fffbf
+      x-ms-date:
+      - Thu, 19 Nov 2020 03:50:28 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystem55a01a35/directory55a01a35/filename?comp=snapshot
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:ba98eecc-501e-00c0-1d27-be0e1f000000\nTime:2020-11-19T03:50:28.4180249Z</Message></Error>"
+    headers:
+      Content-Length: '252'
+      Content-Type: application/xml
+      Date: Thu, 19 Nov 2020 03:50:28 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ConditionNotMet
+      x-ms-request-id: ba98eecc-501e-00c0-1d27-be0e1f000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+    url: https://amandaadlscanary2.blob.core.windows.net/filesystem55a01a35/directory55a01a35/filename?comp=snapshot
+version: 1
