@@ -13,54 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - be1c1c02-2a17-11eb-88e5-c8348e5fffbf
+      - 0f8ce998-2aba-11eb-86b8-c8348e5fffbf
       x-ms-date:
-      - Thu, 19 Nov 2020 03:31:42 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemcdea132c/directorycdea132c?resource=directory
-  response:
-    body:
-      string: '{"error":{"code":"FilesystemNotFound","message":"The specified filesystem
-        does not exist.\nRequestId:3c8e86fa-a01f-00a6-1924-be413f000000\nTime:2020-11-19T03:31:43.0877012Z"}}'
-    headers:
-      Content-Length:
-      - '175'
-      Content-Type:
-      - application/json;charset=utf-8
-      Date:
-      - Thu, 19 Nov 2020 03:31:42 GMT
-      Server:
-      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - FilesystemNotFound
-      x-ms-request-id:
-      - 3c8e86fa-a01f-00a6-1924-be413f000000
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 404
-      message: The specified filesystem does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - f9a06188-2a17-11eb-b52f-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 03:33:22 GMT
+      - Thu, 19 Nov 2020 22:53:37 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -74,15 +29,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 19 Nov 2020 03:33:23 GMT
+      - Thu, 19 Nov 2020 22:53:37 GMT
       ETag:
-      - '"0x8D88C3BDE6FECE0"'
+      - '"0x8D88CDDF3EE904D"'
       Last-Modified:
-      - Thu, 19 Nov 2020 03:33:23 GMT
+      - Thu, 19 Nov 2020 22:53:38 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 2aa5bbde-d01f-0058-5c24-be2e7e000000
+      - 9139b31e-b01f-00d8-78c6-bed178000000
       x-ms-version:
       - '2020-02-10'
     status:
@@ -102,9 +57,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - fb62a2cf-2a17-11eb-bc7a-c8348e5fffbf
+      - 1004dd0f-2aba-11eb-b160-c8348e5fffbf
       x-ms-date:
-      - Thu, 19 Nov 2020 03:33:25 GMT
+      - Thu, 19 Nov 2020 22:53:38 GMT
       x-ms-properties:
       - ''
       x-ms-version:
@@ -118,15 +73,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 19 Nov 2020 03:33:25 GMT
+      - Thu, 19 Nov 2020 22:53:37 GMT
       ETag:
-      - '"0x8D88C3BDFA5752E"'
+      - '"0x8D88CDDF41B9BA9"'
       Last-Modified:
-      - Thu, 19 Nov 2020 03:33:25 GMT
+      - Thu, 19 Nov 2020 22:53:38 GMT
       Server:
       - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
-      - 2aa5bbdf-d01f-0058-5d24-be2e7e000000
+      - 9139b31f-b01f-00d8-79c6-bed178000000
       x-ms-version:
       - '2020-02-10'
     status:
@@ -148,9 +103,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-client-request-id:
-      - fcdc1e63-2a17-11eb-808f-c8348e5fffbf
+      - 1024bf8d-2aba-11eb-8afd-c8348e5fffbf
       x-ms-date:
-      - Thu, 19 Nov 2020 03:33:27 GMT
+      - Thu, 19 Nov 2020 22:53:38 GMT
       x-ms-version:
       - '2020-02-10'
     method: PUT
@@ -158,286 +113,20 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:3ea0f617-301e-009b-4024-be3724000000\nTime:2020-11-19T03:33:28.8689328Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:9b0def65-101e-0035-11c6-be9a35000000\nTime:2020-11-19T22:53:38.9679806Z</Message></Error>"
     headers:
       Content-Length:
       - '252'
       Content-Type:
       - application/xml
       Date:
-      - Thu, 19 Nov 2020 03:33:28 GMT
+      - Thu, 19 Nov 2020 22:53:38 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ConditionNotMet
       x-ms-request-id:
-      - 3ea0f617-301e-009b-4024-be3724000000
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 412
-      message: The condition specified using HTTP conditional header(s) is not met.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - 9f9b0374-2a1b-11eb-8463-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 03:59:29 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemcdea132c/directorycdea132c?resource=directory
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Thu, 19 Nov 2020 03:59:29 GMT
-      ETag:
-      - '"0x8D88C3F840DA894"'
-      Last-Modified:
-      - Thu, 19 Nov 2020 03:59:29 GMT
-      Server:
-      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - f2014f26-b01f-00d8-1428-bed178000000
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - 9ffbb8a5-2a1b-11eb-af32-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 03:59:30 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemcdea132c/directorycdea132c%2Ffilename?resource=file
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Thu, 19 Nov 2020 03:59:29 GMT
-      ETag:
-      - '"0x8D88C3F842905CF"'
-      Last-Modified:
-      - Thu, 19 Nov 2020 03:59:30 GMT
-      Server:
-      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - f2014f27-b01f-00d8-1528-bed178000000
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      If-Match:
-      - '0x111111111111111'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - a016e204-2a1b-11eb-9fe8-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 03:59:30 GMT
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/filesystemcdea132c/directorycdea132c/filename?comp=snapshot
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:d9fc98b7-101e-00b3-2728-be568c000000\nTime:2020-11-19T03:59:30.6652463Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '252'
-      Content-Type:
-      - application/xml
-      Date:
-      - Thu, 19 Nov 2020 03:59:30 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ConditionNotMet
-      x-ms-request-id:
-      - d9fc98b7-101e-00b3-2728-be568c000000
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 412
-      message: The condition specified using HTTP conditional header(s) is not met.
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - ebddbccf-2a8c-11eb-8f5f-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 17:30:30 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemcdea132c/directorycdea132c?resource=directory
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Thu, 19 Nov 2020 17:30:30 GMT
-      ETag:
-      - '"0x8D88CB0D05459DB"'
-      Last-Modified:
-      - Thu, 19 Nov 2020 17:30:31 GMT
-      Server:
-      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - b7593036-c01f-0026-1f99-bebe39000000
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - ec61242a-2a8c-11eb-84dd-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 17:30:31 GMT
-      x-ms-properties:
-      - ''
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.dfs.core.windows.net/filesystemcdea132c/directorycdea132c%2Ffilename?resource=file
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Thu, 19 Nov 2020 17:30:31 GMT
-      ETag:
-      - '"0x8D88CB0D0881CE8"'
-      Last-Modified:
-      - Thu, 19 Nov 2020 17:30:31 GMT
-      Server:
-      - Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - b7593037-c01f-0026-2099-bebe39000000
-      x-ms-version:
-      - '2020-02-10'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      If-Match:
-      - '0x111111111111111'
-      User-Agent:
-      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-client-request-id:
-      - ec8fa54b-2a8c-11eb-85e0-c8348e5fffbf
-      x-ms-date:
-      - Thu, 19 Nov 2020 17:30:31 GMT
-      x-ms-version:
-      - '2020-02-10'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/filesystemcdea132c/directorycdea132c/filename?comp=snapshot
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:61468271-101e-00b3-7b99-be568c000000\nTime:2020-11-19T17:30:32.0492171Z</Message></Error>"
-    headers:
-      Content-Length:
-      - '252'
-      Content-Type:
-      - application/xml
-      Date:
-      - Thu, 19 Nov 2020 17:30:31 GMT
-      Server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - ConditionNotMet
-      x-ms-request-id:
-      - 61468271-101e-00b3-7b99-be568c000000
+      - 9b0def65-101e-0035-11c6-be9a35000000
       x-ms-version:
       - '2020-02-10'
     status:
