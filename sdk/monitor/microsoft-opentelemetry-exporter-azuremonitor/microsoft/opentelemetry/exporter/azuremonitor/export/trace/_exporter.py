@@ -33,7 +33,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     :param options: Exporter configuration options.
     :type options: ~microsoft.opentelemetry.exporter.azuremonitor.options.ExporterOptions
     """
-    
+
     def export(self, spans: Sequence[Span]) -> SpanExportResult:
         """Export data
         :param spans: Open Telemetry Spans to export.
