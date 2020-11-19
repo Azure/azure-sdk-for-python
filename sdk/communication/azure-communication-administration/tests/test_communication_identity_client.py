@@ -65,8 +65,3 @@ class CommunicationIdentityClientTest(CommunicationTestCase):
         identity_client.delete_user(user)
 
         assert user.identifier is not None
-
-
-if __name__ == "__main__":
-    import unittest
-    unittest.main()
