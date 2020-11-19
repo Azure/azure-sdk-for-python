@@ -116,10 +116,11 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         if self._paging_method.finished(self.continuation_token):
             raise StopIteration("End of paging")
         try:
-            self._response = self._paging_method.get_page(self.continuation_token, self._initial_request)
-        except TypeError:
-            # legacy doesn't support passing initial request into get_page
-            self._response = self._paging_method.get_page(self.continuation_token)
+            try:
+                self._response = self._paging_method.get_page(self.continuation_token, self._initial_request)
+            except TypeError:
+                # legacy doesn't support passing initial request into get_page
+                self._response = self._paging_method.get_page(self.continuation_token)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token
