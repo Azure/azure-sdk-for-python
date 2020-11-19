@@ -338,7 +338,12 @@ class SessionLockLostError(ServiceBusError):
 
 
 class MessageNotFoundError(ServiceBusError):
-    """The requested message was not found."""
+    """The requested message was not found.
+
+    Attempt to receive a message with a particular sequence number. This message isn't found.
+    Make sure the message hasn't been received already.
+    Check the deadletter queue to see if the message has been deadlettered.
+    """
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "The requested message was not found.")
         super(MessageNotFoundError, self).__init__(
@@ -350,7 +355,11 @@ class MessageNotFoundError(ServiceBusError):
 
 
 class MessagingEntityNotFoundError(ServiceBusError):
-    """A Service Bus resource cannot be found by the Service Bus service."""
+    """A Service Bus resource cannot be found by the Service Bus service.
+
+    Entity associated with the operation doesn't exist or it has been deleted.
+    Please make sure the entity exists.
+    """
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "A Service Bus resource cannot be found by the Service Bus service.")
         super(MessagingEntityNotFoundError, self).__init__(
@@ -389,6 +398,9 @@ class MessagingEntityAlreadyExistsError(ServiceBusError):
 class ServiceBusQuotaExceededError(ServiceBusError):
     """
     The quota applied to a Service Bus resource has been exceeded while interacting with the Azure Service Bus service.
+
+    The messaging entity has reached its maximum allowable size, or the maximum number of connections to a namespace
+    has been exceeded. Create space in the entity by receiving messages from the entity or its subqueues.
     """
     def __init__(self, **kwargs):
         message = kwargs.pop(
@@ -408,6 +420,9 @@ class ServiceBusQuotaExceededError(ServiceBusError):
 class ServiceBusServerBusyError(ServiceBusError):
     """
     The Azure Service Bus service reports that it is busy in response to a client request to perform an operation.
+
+    Service isn't able to process the request at this time. Client can wait for a period of time,
+    then retry the operation.
     """
     def __init__(self, **kwargs):
         message = kwargs.pop(
@@ -424,7 +439,13 @@ class ServiceBusServerBusyError(ServiceBusError):
 
 
 class ServiceBusCommunicationError(ServiceBusError):
-    """There was a general communications error encountered when interacting with the Azure Service Bus service."""
+    """There was a general communications error encountered when interacting with the Azure Service Bus service.
+
+    Client isn't able to establish a connection to Service Bus.
+    Make sure the supplied host name is correct and the host is reachable.
+    If your code runs in an environment with a firewall/proxy, ensure that the traffic to
+    the Service Bus domain/IP address and ports isn't blocked.
+    """
     def __init__(self, **kwargs):
         message = kwargs.pop(
             "message",
@@ -440,7 +461,11 @@ class ServiceBusCommunicationError(ServiceBusError):
 
 
 class SessionCannotBeLockedError(ServiceBusError):
-    """The requested session cannot be locked."""
+    """The requested session cannot be locked.
+
+    Attempt to connect to a session with a specific session ID, but the session is currently locked by another client.
+    Make sure the session is unlocked by other clients.
+    """
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "The requested session cannot be locked.")
         super(SessionCannotBeLockedError, self).__init__(
