@@ -14,8 +14,8 @@ from ._response_handlers import healthcare_result, analyze_result, prepare_resul
 
 
 async def healthcare_extract_page_data_async(doc_id_order, obj, response_headers, health_job_state): # pylint: disable=unused-argument
-    return health_job_state.next_link, \
-        prepare_result(healthcare_result)(doc_id_order, health_job_state.results, response_headers, lro=True)
+    return (health_job_state.next_link,
+        healthcare_result(doc_id_order, health_job_state.results, response_headers, lro=True))
 
 
 async def analyze_extract_page_data_async(doc_id_order, obj, response_headers, analyze_job_state):

@@ -43,7 +43,10 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class TestAsync(AsyncTextAnalyticsTest):
+class TestAnalyzeAsync(AsyncTextAnalyticsTest):
+
+    def _interval(self):
+        return None if self.is_live else 0
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -53,7 +56,7 @@ class TestAsync(AsyncTextAnalyticsTest):
     })
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = await client.begin_analyze("hello world")
+            response = await client.begin_analyze("hello world", polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -69,10 +72,13 @@ class TestAsync(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze(
                 docs,
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                show_stats=True
+                show_stats=True,
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_results = results_pages[0].key_phrase_extraction_results
@@ -107,10 +113,13 @@ class TestAsync(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze(
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
-                show_stats=True
+                show_stats=True,
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_results = results_pages[0].entities_recognition_results
@@ -146,10 +155,13 @@ class TestAsync(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze(
                 docs,
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                show_stats=True
+                show_stats=True,
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_results = results_pages[0].pii_entities_recognition_results
@@ -188,10 +200,13 @@ class TestAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze(
                 docs,
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             key_phrase_task_results = results_pages[0].key_phrase_extraction_results
@@ -225,10 +240,13 @@ class TestAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()]
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_results = results_pages[0].entities_recognition_results
@@ -263,10 +281,13 @@ class TestAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze(
                 docs,
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_results = results_pages[0].pii_entities_recognition_results
@@ -304,10 +325,13 @@ class TestAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze(
                 docs,
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             key_phrase_task_results = results_pages[0].key_phrase_extraction_results
@@ -334,7 +358,8 @@ class TestAsync(AsyncTextAnalyticsTest):
             async with client:
                 response = await (await client.begin_analyze(
                     docs,
-                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+                    key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                    polling_interval=self._interval()
                 )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -353,10 +378,13 @@ class TestAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()]
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_results = results_pages[0].entities_recognition_results
@@ -389,10 +417,13 @@ class TestAsync(AsyncTextAnalyticsTest):
         async with client:
             response = await (await client.begin_analyze(
                 docs,
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_results = results_pages[0].pii_entities_recognition_results
@@ -422,21 +453,6 @@ class TestAsync(AsyncTextAnalyticsTest):
         "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
         "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
     })
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
-    })
-    async def test_payload_too_large(self, client):
-        pass  # TODO: verify payload size limit
-
-    @GlobalTextAnalyticsAccountPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
-    })
     async def test_output_same_order_as_input_multiple_tasks(self, client):
         docs = [
             TextDocumentInput(id="1", text="one"),
@@ -451,10 +467,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -486,7 +505,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     ["This is written in English."],
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -502,7 +522,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     ["This is written in English."],
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -520,7 +541,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -541,7 +563,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -562,10 +585,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                 # at this moment this should cause all documents to be errors, which isn't correct behavior but I'm using it here to test document ordering with errors.  :)
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -604,10 +630,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="latest")],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="latest")],
-                show_stats=True
+                show_stats=True,
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -647,10 +676,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                language="en"
+                language="en",
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -686,10 +718,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                language=""
+                language="",
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -722,10 +757,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -766,10 +804,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                language="en"
+                language="en",
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -803,10 +844,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                language="en"
+                language="en",
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -842,10 +886,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                language="en"
+                language="en",
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -879,10 +926,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                language="en"
+                language="en",
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -916,10 +966,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -949,10 +1002,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 language="notalanguage",
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -981,10 +1037,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                   "text": "This should fail because we're passing in an invalid language hint"}],
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -1007,7 +1066,7 @@ class TestAsync(AsyncTextAnalyticsTest):
         text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential)
+        client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},
@@ -1018,7 +1077,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
             self.assertIsNotNone(response)
@@ -1029,7 +1089,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )).result()
 
             credential.update(text_analytics_account_key)  # Authenticate successfully again
@@ -1037,7 +1098,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
             self.assertIsNotNone(response)
 
@@ -1063,7 +1125,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )
 
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -1086,7 +1149,8 @@ class TestAsync(AsyncTextAnalyticsTest):
             async with client:
                 result = await (await client.begin_analyze(
                     docs,
-                    entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")]
+                    entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
+                    polling_interval=self._interval()
                 )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1104,10 +1168,14 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
+                polling_interval=self._interval()
             )).result()
 
-            results_pages = [p async for p in response]
+            results_pages = []
+            async for p in response:
+                results_pages.append(p)
+
             self.assertEqual(len(results_pages), 1)
 
             task_types = [
@@ -1139,7 +1207,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
+                    polling_interval=self._interval()
                 )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1156,7 +1225,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
@@ -1174,7 +1244,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
@@ -1187,7 +1258,7 @@ class TestAsync(AsyncTextAnalyticsTest):
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze(None)
+                await client.begin_analyze(None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1207,7 +1278,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1226,7 +1298,8 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                cls=callback
+                cls=callback,
+                polling_interval=self._interval()
             )).result()
             assert res == "cls result"
 
@@ -1247,10 +1320,14 @@ class TestAsync(AsyncTextAnalyticsTest):
                 entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-                show_stats=True
+                show_stats=True,
+                polling_interval=self._interval()
             )).result()
 
-            pages = [p async for p in result]
+            pages = []
+            async for p in result:
+                pages.append(p)
+                
             self.assertEqual(len(pages), 2)  # default page size is 20
 
             # self.assertIsNotNone(result.statistics)  # statistics not working at the moment, but a bug has been filed on the service to correct this.
@@ -1291,10 +1368,13 @@ class TestAsync(AsyncTextAnalyticsTest):
                 docs,
                 entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")], 
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval()
             )).result()
 
-            pages = [p async for p in result]
+            pages = []
+            async for p in result:
+                pages.append(p)
             self.assertEqual(len(pages), 2)  # default page size is 20
 
             task_types = [
@@ -1334,6 +1414,7 @@ class TestAsync(AsyncTextAnalyticsTest):
                     docs,
                     entities_recognition_tasks=[EntitiesRecognitionTask()],
                     key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                    pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                    polling_interval=self._interval()
                 )
         assert excinfo.value.status_code == 400

@@ -39,6 +39,8 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 class TestHealth(AsyncTextAnalyticsTest):
+    def _interval(self):
+        return None if self.is_live else 0
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -49,7 +51,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
             async with client:
-                response = await (await client.begin_analyze_healthcare("hello world")).result()
+                response = await (await client.begin_analyze_healthcare("hello world", polling_interval=self._interval())).result()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -62,7 +64,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "2", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs, show_stats=True)
+            poller = await client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval())
             response = await poller.result()
 
         self.assertIsNotNone(response.statistics)
@@ -86,7 +88,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = await (await client.begin_analyze_healthcare(docs)).result()
+            response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
 
         self.assertIsNone(response.statistics) # show_stats=False by default
 
@@ -110,7 +112,11 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list([r async for r in await(await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
+
 
         for i in range(2):
             self.assertIsNotNone(response[i].id)
@@ -131,7 +137,10 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "language": "en", "text": "Prescribed 100mg ibuprofen, taken twice daily."}]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
@@ -149,7 +158,10 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "language": "en", "text": ""}]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
@@ -166,7 +178,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs)
+                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
 
         assert excinfo.value.status_code == 400
 
@@ -194,7 +206,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         with pytest.raises(HttpResponseError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs)
+                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
 
         assert excinfo.value.status_code == 413
 
@@ -211,7 +223,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            result = await (await client.begin_analyze_healthcare(docs)).result()
+            result = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
 
         async for doc in result:
             doc_warnings = doc.warnings
@@ -233,7 +245,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         for idx, doc in enumerate(response):
             self.assertEqual(str(idx + 1), doc.id)
@@ -248,7 +263,8 @@ class TestHealth(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
                 response = await client.begin_analyze_healthcare(
-                    ["This is written in English."]
+                    ["This is written in English."],
+                    polling_interval=self._interval()
                 )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -261,7 +277,8 @@ class TestHealth(AsyncTextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             async with client:
                 response = await client.begin_analyze_healthcare(
-                    ["This is written in English."]
+                    ["This is written in English."],
+                    polling_interval=self._interval()
                 )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -275,7 +292,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         with self.assertRaises(TypeError):
             async with client:
-                response = await client.begin_analyze_healthcare(docs)
+                response = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -291,7 +308,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
         with self.assertRaises(TypeError):
             async with client:
-                response = await client.begin_analyze_healthcare(docs)
+                response = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -307,11 +324,13 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         expected_order = ["56", "0", "22", "19", "1"]
         actual_order = [x.id for x in response]
-        print(actual_order)
         for idx, resp in enumerate(response):
             self.assertEqual(resp.id, expected_order[idx])
 
@@ -332,7 +351,8 @@ class TestHealth(AsyncTextAnalyticsTest):
             response = await (await client.begin_analyze_healthcare(
                 docs,
                 show_stats=True,
-                model_version="2020-09-03"
+                model_version="2020-09-03",
+                polling_interval=self._interval()
             )).result()
 
         self.assertIsNotNone(response)
@@ -361,7 +381,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
+            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -381,7 +404,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="")).result()])
+            result = await(await client.begin_analyze_healthcare(docs, language="", polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -399,7 +425,10 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -419,7 +448,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
+            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -437,7 +469,10 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
+            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -456,7 +491,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         ]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
+            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -473,7 +511,10 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="en")).result()])
+            result = await(await client.begin_analyze_healthcare(docs, language="en", polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -492,7 +533,10 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
@@ -508,7 +552,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = ["This should fail because we're passing in an invalid language hint"]
 
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs, language="notalanguage")).result()])
+            result = await(await client.begin_analyze_healthcare(docs, language="notalanguage", polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
@@ -522,7 +569,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
@@ -539,15 +589,15 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            response = await (await client.begin_analyze_healthcare(docs)).result()
+            response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
             self.assertIsNotNone(response)
 
             credential.update("xxx")  # Make authentication fail
             with self.assertRaises(ClientAuthenticationError):
-                response = await (await client.begin_analyze_healthcare(docs)).result()
+                response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
 
             credential.update(text_analytics_account_key)  # Authenticate successfully again
-            response = await (await client.begin_analyze_healthcare(docs)).result()
+            response = await (await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
             self.assertIsNotNone(response)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -568,7 +618,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs)
+            poller = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
             self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                     VERSION, platform.python_version(), platform.platform()),
                     poller._polling_method._initial_response.http_request.headers["User-Agent"]
@@ -585,7 +635,10 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_document_attribute_error_no_result_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         # Attributes on DocumentError
         self.assertTrue(response[0].is_error)
@@ -612,7 +665,10 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_document_attribute_error_nonexistent_attribute(self, client):
         docs = [{"id": "1", "text": ""}]
         async with client:
-            response = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
         # Attribute not found on DocumentError or result obj, default behavior/message
         try:
@@ -634,7 +690,10 @@ class TestHealth(AsyncTextAnalyticsTest):
 
         try:
             async with client:
-                result = await (await client.begin_analyze_healthcare(docs, model_version="bad")).result()
+                result = await(await client.begin_analyze_healthcare(docs, model_version="bad", polling_interval=self._interval())).result()
+                response = []
+                async for r in result:
+                    response.append(r)
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "ModelVersionIncorrect")
             self.assertIsNotNone(err.error.message)
@@ -655,7 +714,10 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "3", "text": text}]
 
         async with client:
-            doc_errors = list([r async for r in await (await client.begin_analyze_healthcare(docs)).result()])
+            result = await(await client.begin_analyze_healthcare(docs, polling_interval=self._interval())).result()
+            doc_errors = []
+            async for r in result:
+                doc_errors.append(r)
         self.assertEqual(doc_errors[0].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[0].error.message)
         self.assertEqual(doc_errors[1].error.code, "UnsupportedLanguageCode")
@@ -673,7 +735,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs)
+                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -686,7 +748,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(docs)
+                await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -698,7 +760,7 @@ class TestHealth(AsyncTextAnalyticsTest):
     async def test_passing_none_docs(self, client):
         with pytest.raises(ValueError) as excinfo:
             async with client:
-                await client.begin_analyze_healthcare(None)
+                await client.begin_analyze_healthcare(None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -713,7 +775,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
         try:
             async with client:
-                result = await client.begin_analyze_healthcare(docs)
+                result = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
         except HttpResponseError as err:
             self.assertEqual(err.error.code, "InvalidDocument")
             self.assertIsNotNone(err.error.message)
@@ -731,7 +793,8 @@ class TestHealth(AsyncTextAnalyticsTest):
         async with client:
             res = await (await client.begin_analyze_healthcare(
                 documents=["Test passing cls to endpoint"],
-                cls=callback
+                cls=callback,
+                polling_interval=self._interval()
             )).result()
         assert res == "cls result"
 
@@ -749,9 +812,11 @@ class TestHealth(AsyncTextAnalyticsTest):
         # in the future but for now this test actually won't hit the pagination logic now.
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs, show_stats=True)
+            poller = await client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval())
             result = await poller.result()
-            response = [r async for r in result]
+            response = []
+            async for r in result:
+                response.append(r)
 
         self.assertEqual(len(docs), len(response))
         self.assertIsNotNone(result.statistics)
@@ -774,8 +839,10 @@ class TestHealth(AsyncTextAnalyticsTest):
         # in the future but for now this test actually won't hit the pagination logic now.
 
         async with client:
-            result = await (await client.begin_analyze_healthcare(docs, show_stats=True)).result()
-            response = [r async for r in result]
+            result = await (await client.begin_analyze_healthcare(docs, show_stats=True, polling_interval=self._interval())).result()
+            response = []
+            async for r in result:
+                response.append(r)
 
             self.assertEqual(len(docs), len(response))
             self.assertIsNotNone(result.statistics)
@@ -801,7 +868,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 10)))]
 
         async with client:
-            poller = await client.begin_analyze_healthcare(docs)
-            cancellation_result = await (await client.begin_cancel_analyze_healthcare(poller)).result()
+            poller = await client.begin_analyze_healthcare(docs, polling_interval=self._interval())
+            cancellation_result = await (await client.begin_cancel_analyze_healthcare(poller, polling_interval=self._interval())).result()
 
             self.assertIsNone(cancellation_result)

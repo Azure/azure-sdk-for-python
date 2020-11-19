@@ -812,14 +812,14 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = client.begin_analyze(
+        response = list(client.begin_analyze(
             docs,
             entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
             language="en",
             polling_interval=self._interval(),
-        ).result()
+        ).result())
 
 
         task_types = [
@@ -967,7 +967,7 @@ class TestAnalyze(TextAnalyticsTest):
         text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
-        client = TextAnalyticsClient(text_analytics_account, credential)
+        client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3)
 
         docs = [{"id": "1", "text": "I will go to the park."},
                 {"id": "2", "text": "I did not like the hotel we stayed at."},

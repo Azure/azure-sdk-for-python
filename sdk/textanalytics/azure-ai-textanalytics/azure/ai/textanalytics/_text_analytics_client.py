@@ -484,7 +484,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_cancel_analyze_healthcare(  # type: ignore
         self,
         poller,  # type: LROPoller[ItemPaged[AnalyzeHealthcareResultItem]]
-        **kwargs # pylint: disable=unused-argument
+        **kwargs
     ):
         # type: (...) -> LROPoller[None]
         """Cancel an existing health operation.
@@ -494,6 +494,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval) # pylint: disable=protected-access
         initial_response = getattr(poller._polling_method, "_initial_response") # pylint: disable=protected-access
         operation_location = initial_response.http_response.headers["Operation-Location"]
 
@@ -501,7 +502,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         job_id = urlparse(operation_location).path.split("/")[-1]
 
         try:
-            return self._client.begin_cancel_health_job(job_id, polling=TextAnalyticsLROPoller())
+            return self._client.begin_cancel_health_job(
+                job_id,
+                polling=TextAnalyticsLROPoller(timeout=polling_interval)
+            )
 
         except HttpResponseError as error:
             process_http_response_error(error)
