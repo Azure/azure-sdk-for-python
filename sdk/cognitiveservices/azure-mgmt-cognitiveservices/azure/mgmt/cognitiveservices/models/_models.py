@@ -16,16 +16,19 @@ from msrest.exceptions import HttpOperationError
 class Resource(Model):
     """Resource.
 
+    Common fields that are returned in the response for all Azure Resource
+    Manager resources.
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -49,19 +52,21 @@ class Resource(Model):
 
 
 class AzureEntityResource(Resource):
-    """The resource model definition for a Azure Resource Manager resource with an
-    etag.
+    """Entity Resource.
+
+    The resource model definition for an Azure Resource Manager resource with
+    an etag.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :ivar etag: Resource Etag.
     :vartype etag: str
@@ -451,6 +456,8 @@ class CognitiveServicesAccountProperties(Model):
     :param api_properties: The api properties for special APIs.
     :type api_properties:
      ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountApiProperties
+    :ivar date_created: Gets the date of cognitive services account creation.
+    :vartype date_created: str
     """
 
     _validation = {
@@ -458,6 +465,7 @@ class CognitiveServicesAccountProperties(Model):
         'endpoint': {'readonly': True},
         'internal_id': {'readonly': True},
         'capabilities': {'readonly': True},
+        'date_created': {'readonly': True},
     }
 
     _attribute_map = {
@@ -472,6 +480,7 @@ class CognitiveServicesAccountProperties(Model):
         'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
         'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
         'api_properties': {'key': 'apiProperties', 'type': 'CognitiveServicesAccountApiProperties'},
+        'date_created': {'key': 'dateCreated', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -487,6 +496,7 @@ class CognitiveServicesAccountProperties(Model):
         self.private_endpoint_connections = kwargs.get('private_endpoint_connections', None)
         self.public_network_access = kwargs.get('public_network_access', None)
         self.api_properties = kwargs.get('api_properties', None)
+        self.date_created = None
 
 
 class CognitiveServicesResourceAndSku(Model):
@@ -818,13 +828,13 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param properties: Resource properties.
     :type properties:
@@ -906,13 +916,13 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param properties: Resource properties.
     :type properties:
@@ -1022,19 +1032,21 @@ class PrivateLinkServiceConnectionState(Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
+    """Proxy Resource.
+
+    The resource model definition for a Azure Resource Manager proxy resource.
+    It will not have tags and a location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     """
 
@@ -1212,7 +1224,7 @@ class Sku(Model):
      creation, optional for update.
     :type name: str
     :ivar tier: Gets the sku tier. This is based on the SKU name. Possible
-     values include: 'Free', 'Standard', 'Premium'
+     values include: 'Free', 'Standard', 'Premium', 'Enterprise'
     :vartype tier: str or ~azure.mgmt.cognitiveservices.models.SkuTier
     """
 
@@ -1223,7 +1235,7 @@ class Sku(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'SkuTier'},
+        'tier': {'key': 'tier', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1253,20 +1265,23 @@ class SkuCapability(Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
+    """Tracked Resource.
+
+    The resource model definition for an Azure Resource Manager tracked top
+    level resource which has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource. Ex -
+    :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
     :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :ivar type: The type of the resource. E.g.
+     "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts"
     :vartype type: str
     :param tags: Resource tags.
     :type tags: dict[str, str]

@@ -17,6 +17,7 @@ class SkuTier(str, Enum):
     free = "Free"
     standard = "Standard"
     premium = "Premium"
+    enterprise = "Enterprise"
 
 
 class ProvisioningState(str, Enum):
