@@ -15,6 +15,8 @@ from ._auto_quota_increase_operations import AutoQuotaIncreaseOperations
 from ._reservation_operations import ReservationOperations
 from ._reservation_order_operations import ReservationOrderOperations
 from ._operation_operations import OperationOperations
+from ._calculate_exchange_operations import CalculateExchangeOperations
+from ._exchange_operations import ExchangeOperations
 from ._azure_reservation_api_operations import AzureReservationAPIOperationsMixin
 
 __all__ = [
@@ -24,5 +26,7 @@ __all__ = [
     'ReservationOperations',
     'ReservationOrderOperations',
     'OperationOperations',
+    'CalculateExchangeOperations',
+    'ExchangeOperations',
     'AzureReservationAPIOperationsMixin',
 ]

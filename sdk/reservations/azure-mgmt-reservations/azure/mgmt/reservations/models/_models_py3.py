@@ -154,6 +154,204 @@ class AutoQuotaIncreaseDetail(Model):
         self.support_ticket_action = support_ticket_action
 
 
+class AvailableScopeProperties(Model):
+    """AvailableScopeProperties.
+
+    :param properties:
+    :type properties:
+     ~azure.mgmt.reservations.models.SubscriptionScopeProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'SubscriptionScopeProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(AvailableScopeProperties, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class AvailableScopeRequest(Model):
+    """Available scope.
+
+    :param properties:
+    :type properties:
+     ~azure.mgmt.reservations.models.AvailableScopeRequestProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'AvailableScopeRequestProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(AvailableScopeRequest, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class AvailableScopeRequestProperties(Model):
+    """Available scope request properties.
+
+    :param scopes:
+    :type scopes: list[str]
+    """
+
+    _attribute_map = {
+        'scopes': {'key': 'scopes', 'type': '[str]'},
+    }
+
+    def __init__(self, *, scopes=None, **kwargs) -> None:
+        super(AvailableScopeRequestProperties, self).__init__(**kwargs)
+        self.scopes = scopes
+
+
+class BillingInformation(Model):
+    """billing information.
+
+    :param billing_currency_total_paid_amount:
+    :type billing_currency_total_paid_amount:
+     ~azure.mgmt.reservations.models.Price
+    :param billing_currency_prorated_amount:
+    :type billing_currency_prorated_amount:
+     ~azure.mgmt.reservations.models.Price
+    :param billing_currency_remaining_commitment_amount:
+    :type billing_currency_remaining_commitment_amount:
+     ~azure.mgmt.reservations.models.Price
+    """
+
+    _attribute_map = {
+        'billing_currency_total_paid_amount': {'key': 'billingCurrencyTotalPaidAmount', 'type': 'Price'},
+        'billing_currency_prorated_amount': {'key': 'billingCurrencyProratedAmount', 'type': 'Price'},
+        'billing_currency_remaining_commitment_amount': {'key': 'billingCurrencyRemainingCommitmentAmount', 'type': 'Price'},
+    }
+
+    def __init__(self, *, billing_currency_total_paid_amount=None, billing_currency_prorated_amount=None, billing_currency_remaining_commitment_amount=None, **kwargs) -> None:
+        super(BillingInformation, self).__init__(**kwargs)
+        self.billing_currency_total_paid_amount = billing_currency_total_paid_amount
+        self.billing_currency_prorated_amount = billing_currency_prorated_amount
+        self.billing_currency_remaining_commitment_amount = billing_currency_remaining_commitment_amount
+
+
+class CalculateExchangeOperationResultResponse(Model):
+    """CalculateExchange operation result.
+
+    :param id: It should match what is used to GET the operation result.
+    :type id: str
+    :param name: It must match the last segment of the id field, and will
+     typically be a GUID / system generated value.
+    :type name: str
+    :param status: Status of the operation. Possible values include:
+     'Succeeded', 'Failed', 'Cancelled', 'Pending'
+    :type status: str or
+     ~azure.mgmt.reservations.models.CalculateExchangeOperationResultStatus
+    :param properties:
+    :type properties:
+     ~azure.mgmt.reservations.models.CalculateExchangeResponseProperties
+    :param error:
+    :type error: ~azure.mgmt.reservations.models.OperationResultError
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'CalculateExchangeResponseProperties'},
+        'error': {'key': 'error', 'type': 'OperationResultError'},
+    }
+
+    def __init__(self, *, id: str=None, name: str=None, status=None, properties=None, error=None, **kwargs) -> None:
+        super(CalculateExchangeOperationResultResponse, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.status = status
+        self.properties = properties
+        self.error = error
+
+
+class CalculateExchangeRequest(Model):
+    """Calculate exchange request.
+
+    :param properties:
+    :type properties:
+     ~azure.mgmt.reservations.models.CalculateExchangeRequestProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'CalculateExchangeRequestProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(CalculateExchangeRequest, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class CalculateExchangeRequestProperties(Model):
+    """Calculate exchange request properties.
+
+    :param reservations_to_purchase: List of reservations that are being
+     purchased in this exchange.
+    :type reservations_to_purchase:
+     list[~azure.mgmt.reservations.models.PurchaseRequest]
+    :param reservations_to_exchange: List of reservations that are being
+     returned in this exchange.
+    :type reservations_to_exchange:
+     list[~azure.mgmt.reservations.models.ReservationToReturn]
+    """
+
+    _attribute_map = {
+        'reservations_to_purchase': {'key': 'reservationsToPurchase', 'type': '[PurchaseRequest]'},
+        'reservations_to_exchange': {'key': 'reservationsToExchange', 'type': '[ReservationToReturn]'},
+    }
+
+    def __init__(self, *, reservations_to_purchase=None, reservations_to_exchange=None, **kwargs) -> None:
+        super(CalculateExchangeRequestProperties, self).__init__(**kwargs)
+        self.reservations_to_purchase = reservations_to_purchase
+        self.reservations_to_exchange = reservations_to_exchange
+
+
+class CalculateExchangeResponseProperties(Model):
+    """CalculateExchange response properties.
+
+    :param session_id: Exchange session identifier
+    :type session_id: str
+    :param net_payable:
+    :type net_payable: ~azure.mgmt.reservations.models.Price
+    :param refunds_total:
+    :type refunds_total: ~azure.mgmt.reservations.models.Price
+    :param purchases_total:
+    :type purchases_total: ~azure.mgmt.reservations.models.Price
+    :param reservations_to_purchase: Details of the reservations being
+     purchased
+    :type reservations_to_purchase:
+     list[~azure.mgmt.reservations.models.ReservationToPurchaseCalculateExchange]
+    :param reservations_to_exchange: Details of the reservations being
+     returned
+    :type reservations_to_exchange:
+     list[~azure.mgmt.reservations.models.ReservationToExchange]
+    :param policy_result:
+    :type policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
+    """
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'net_payable': {'key': 'netPayable', 'type': 'Price'},
+        'refunds_total': {'key': 'refundsTotal', 'type': 'Price'},
+        'purchases_total': {'key': 'purchasesTotal', 'type': 'Price'},
+        'reservations_to_purchase': {'key': 'reservationsToPurchase', 'type': '[ReservationToPurchaseCalculateExchange]'},
+        'reservations_to_exchange': {'key': 'reservationsToExchange', 'type': '[ReservationToExchange]'},
+        'policy_result': {'key': 'policyResult', 'type': 'ExchangePolicyErrors'},
+    }
+
+    def __init__(self, *, session_id: str=None, net_payable=None, refunds_total=None, purchases_total=None, reservations_to_purchase=None, reservations_to_exchange=None, policy_result=None, **kwargs) -> None:
+        super(CalculateExchangeResponseProperties, self).__init__(**kwargs)
+        self.session_id = session_id
+        self.net_payable = net_payable
+        self.refunds_total = refunds_total
+        self.purchases_total = purchases_total
+        self.reservations_to_purchase = reservations_to_purchase
+        self.reservations_to_exchange = reservations_to_exchange
+        self.policy_result = policy_result
+
+
 class CalculatePriceResponse(Model):
     """CalculatePriceResponse.
 
@@ -475,6 +673,156 @@ class ExceptionResponseException(HttpOperationError):
         super(ExceptionResponseException, self).__init__(deserialize, response, 'ExceptionResponse', *args)
 
 
+class ExchangeOperationResultResponse(Model):
+    """Exchange operation result.
+
+    :param id: It should match what is used to GET the operation result.
+    :type id: str
+    :param name: It must match the last segment of the id field, and will
+     typically be a GUID / system generated value.
+    :type name: str
+    :param status: Status of the operation. Possible values include:
+     'Succeeded', 'Failed', 'Cancelled', 'PendingRefunds', 'PendingPurchases'
+    :type status: str or
+     ~azure.mgmt.reservations.models.ExchangeOperationResultStatus
+    :param properties:
+    :type properties:
+     ~azure.mgmt.reservations.models.ExchangeResponseProperties
+    :param error:
+    :type error: ~azure.mgmt.reservations.models.OperationResultError
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ExchangeResponseProperties'},
+        'error': {'key': 'error', 'type': 'OperationResultError'},
+    }
+
+    def __init__(self, *, id: str=None, name: str=None, status=None, properties=None, error=None, **kwargs) -> None:
+        super(ExchangeOperationResultResponse, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.status = status
+        self.properties = properties
+        self.error = error
+
+
+class ExchangePolicyError(Model):
+    """error details.
+
+    :param code:
+    :type code: str
+    :param message:
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ExchangePolicyError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class ExchangePolicyErrors(Model):
+    """Exchange policy errors.
+
+    :param policy_errors: Exchange Policy errors
+    :type policy_errors:
+     list[~azure.mgmt.reservations.models.ExchangePolicyError]
+    """
+
+    _attribute_map = {
+        'policy_errors': {'key': 'policyErrors', 'type': '[ExchangePolicyError]'},
+    }
+
+    def __init__(self, *, policy_errors=None, **kwargs) -> None:
+        super(ExchangePolicyErrors, self).__init__(**kwargs)
+        self.policy_errors = policy_errors
+
+
+class ExchangeRequest(Model):
+    """Exchange request.
+
+    :param properties:
+    :type properties:
+     ~azure.mgmt.reservations.models.ExchangeRequestProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'ExchangeRequestProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(ExchangeRequest, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class ExchangeRequestProperties(Model):
+    """Exchange request properties.
+
+    :param session_id: SessionId that was returned by CalculateExchange API.
+    :type session_id: str
+    """
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+    }
+
+    def __init__(self, *, session_id: str=None, **kwargs) -> None:
+        super(ExchangeRequestProperties, self).__init__(**kwargs)
+        self.session_id = session_id
+
+
+class ExchangeResponseProperties(Model):
+    """Exchange response properties.
+
+    :param session_id: Exchange session identifier
+    :type session_id: str
+    :param net_payable:
+    :type net_payable: ~azure.mgmt.reservations.models.Price
+    :param refunds_total:
+    :type refunds_total: ~azure.mgmt.reservations.models.Price
+    :param purchases_total:
+    :type purchases_total: ~azure.mgmt.reservations.models.Price
+    :param reservations_to_purchase: Details of the reservations being
+     purchased
+    :type reservations_to_purchase:
+     list[~azure.mgmt.reservations.models.ReservationToPurchaseExchange]
+    :param reservations_to_exchange: Details of the reservations being
+     returned
+    :type reservations_to_exchange:
+     list[~azure.mgmt.reservations.models.ReservationToReturnForExchange]
+    :param policy_result:
+    :type policy_result: ~azure.mgmt.reservations.models.ExchangePolicyErrors
+    """
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'net_payable': {'key': 'netPayable', 'type': 'Price'},
+        'refunds_total': {'key': 'refundsTotal', 'type': 'Price'},
+        'purchases_total': {'key': 'purchasesTotal', 'type': 'Price'},
+        'reservations_to_purchase': {'key': 'reservationsToPurchase', 'type': '[ReservationToPurchaseExchange]'},
+        'reservations_to_exchange': {'key': 'reservationsToExchange', 'type': '[ReservationToReturnForExchange]'},
+        'policy_result': {'key': 'policyResult', 'type': 'ExchangePolicyErrors'},
+    }
+
+    def __init__(self, *, session_id: str=None, net_payable=None, refunds_total=None, purchases_total=None, reservations_to_purchase=None, reservations_to_exchange=None, policy_result=None, **kwargs) -> None:
+        super(ExchangeResponseProperties, self).__init__(**kwargs)
+        self.session_id = session_id
+        self.net_payable = net_payable
+        self.refunds_total = refunds_total
+        self.purchases_total = purchases_total
+        self.reservations_to_purchase = reservations_to_purchase
+        self.reservations_to_exchange = reservations_to_exchange
+        self.policy_result = policy_result
+
+
 class ExtendedErrorInfo(Model):
     """ExtendedErrorInfo.
 
@@ -611,6 +959,30 @@ class OperationResponse(Model):
         self.name = name
         self.display = display
         self.origin = origin
+
+
+class OperationResultError(Model):
+    """Required if status == failed or status == canceled.
+
+    :param code: Required if status == failed or status == cancelled. If
+     status == failed, provide an invariant error code used for error
+     troubleshooting, aggregation, and analysis.
+    :type code: str
+    :param message: Required if status == failed. Localized. If status ==
+     failed, provide an actionable error message indicating what error
+     occurred, and what the user can do to address the issue.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(OperationResultError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
 
 
 class Patch(Model):
@@ -753,23 +1125,6 @@ class Price(Model):
         super(Price, self).__init__(**kwargs)
         self.currency_code = currency_code
         self.amount = amount
-
-
-class Properties(Model):
-    """Properties.
-
-    :param properties:
-    :type properties:
-     ~azure.mgmt.reservations.models.SubscriptionScopeProperties
-    """
-
-    _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'SubscriptionScopeProperties'},
-    }
-
-    def __init__(self, *, properties=None, **kwargs) -> None:
-        super(Properties, self).__init__(**kwargs)
-        self.properties = properties
 
 
 class PurchaseRequest(Model):
@@ -1567,6 +1922,134 @@ class ReservationSplitProperties(Model):
         super(ReservationSplitProperties, self).__init__(**kwargs)
         self.split_destinations = split_destinations
         self.split_source = split_source
+
+
+class ReservationToExchange(Model):
+    """Reservation refund details.
+
+    :param reservation_id: Fully qualified id of the Reservation being
+     returned.
+    :type reservation_id: str
+    :param quantity: Quantity to be returned
+    :type quantity: int
+    :param billing_refund_amount:
+    :type billing_refund_amount: ~azure.mgmt.reservations.models.Price
+    :param billing_information:
+    :type billing_information:
+     ~azure.mgmt.reservations.models.BillingInformation
+    """
+
+    _attribute_map = {
+        'reservation_id': {'key': 'reservationId', 'type': 'str'},
+        'quantity': {'key': 'quantity', 'type': 'int'},
+        'billing_refund_amount': {'key': 'billingRefundAmount', 'type': 'Price'},
+        'billing_information': {'key': 'billingInformation', 'type': 'BillingInformation'},
+    }
+
+    def __init__(self, *, reservation_id: str=None, quantity: int=None, billing_refund_amount=None, billing_information=None, **kwargs) -> None:
+        super(ReservationToExchange, self).__init__(**kwargs)
+        self.reservation_id = reservation_id
+        self.quantity = quantity
+        self.billing_refund_amount = billing_refund_amount
+        self.billing_information = billing_information
+
+
+class ReservationToPurchaseCalculateExchange(Model):
+    """Reservation purchase details.
+
+    :param billing_currency_total:
+    :type billing_currency_total: ~azure.mgmt.reservations.models.Price
+    """
+
+    _attribute_map = {
+        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
+    }
+
+    def __init__(self, *, billing_currency_total=None, **kwargs) -> None:
+        super(ReservationToPurchaseCalculateExchange, self).__init__(**kwargs)
+        self.billing_currency_total = billing_currency_total
+
+
+class ReservationToPurchaseExchange(Model):
+    """Reservation purchase details.
+
+    :param reservation_order_id: Fully qualified id of the ReservationOrder
+     being purchased
+    :type reservation_order_id: str
+    :param billing_currency_total:
+    :type billing_currency_total: ~azure.mgmt.reservations.models.Price
+    :param status: Possible values include: 'Succeeded', 'Failed',
+     'Cancelled', 'Pending'
+    :type status: str or ~azure.mgmt.reservations.models.OperationStatus
+    """
+
+    _attribute_map = {
+        'reservation_order_id': {'key': 'reservationOrderId', 'type': 'str'},
+        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'Price'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, *, reservation_order_id: str=None, billing_currency_total=None, status=None, **kwargs) -> None:
+        super(ReservationToPurchaseExchange, self).__init__(**kwargs)
+        self.reservation_order_id = reservation_order_id
+        self.billing_currency_total = billing_currency_total
+        self.status = status
+
+
+class ReservationToReturn(Model):
+    """Reservation to return.
+
+    :param reservation_id: Fully qualified identifier of the Reservation being
+     returned
+    :type reservation_id: str
+    :param quantity: Quantity to be returned. Must be greater than zero.
+    :type quantity: int
+    """
+
+    _attribute_map = {
+        'reservation_id': {'key': 'reservationId', 'type': 'str'},
+        'quantity': {'key': 'quantity', 'type': 'int'},
+    }
+
+    def __init__(self, *, reservation_id: str=None, quantity: int=None, **kwargs) -> None:
+        super(ReservationToReturn, self).__init__(**kwargs)
+        self.reservation_id = reservation_id
+        self.quantity = quantity
+
+
+class ReservationToReturnForExchange(Model):
+    """Reservation refund details.
+
+    :param reservation_id: Fully qualified id of the Reservation being
+     returned.
+    :type reservation_id: str
+    :param quantity: Quantity to be returned
+    :type quantity: int
+    :param billing_refund_amount:
+    :type billing_refund_amount: ~azure.mgmt.reservations.models.Price
+    :param billing_information:
+    :type billing_information:
+     ~azure.mgmt.reservations.models.BillingInformation
+    :param status: Possible values include: 'Succeeded', 'Failed',
+     'Cancelled', 'Pending'
+    :type status: str or ~azure.mgmt.reservations.models.OperationStatus
+    """
+
+    _attribute_map = {
+        'reservation_id': {'key': 'reservationId', 'type': 'str'},
+        'quantity': {'key': 'quantity', 'type': 'int'},
+        'billing_refund_amount': {'key': 'billingRefundAmount', 'type': 'Price'},
+        'billing_information': {'key': 'billingInformation', 'type': 'BillingInformation'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, *, reservation_id: str=None, quantity: int=None, billing_refund_amount=None, billing_information=None, status=None, **kwargs) -> None:
+        super(ReservationToReturnForExchange, self).__init__(**kwargs)
+        self.reservation_id = reservation_id
+        self.quantity = quantity
+        self.billing_refund_amount = billing_refund_amount
+        self.billing_information = billing_information
+        self.status = status
 
 
 class ResourceName(Model):
