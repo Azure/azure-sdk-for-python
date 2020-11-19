@@ -6,7 +6,7 @@ Modern programs, especially programs running in a cloud, generally have many com
 
 Use the client library for App Configuration to create and manage application configuration settings.
 
-## Prerequisites
+## Getting started
 
 * Python 2.7, or 3.5 or later is required to use this package.
 * You need an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.
@@ -18,8 +18,12 @@ After that, create the Configuration Store:
 ```Powershell
 az appconfig create --name <config-store-name> --resource-group <resource-group-name> --location eastus
 ```
+## Key Concepts
+## Examples
 
+## Troubleshooting
 
+## Next Steps
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
