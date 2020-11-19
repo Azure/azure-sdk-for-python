@@ -21,8 +21,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
             URIIdentityReplacer()])
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
-    @pytest.mark.live_test_only
+    @CommunicationServicePreparer()
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_user(self, connection_string):
@@ -33,8 +32,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert user.identifier is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
-    @pytest.mark.live_test_only
+    @CommunicationServicePreparer()
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_issue_token(self, connection_string):
@@ -47,8 +45,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
-    @pytest.mark.live_test_only
+    @CommunicationServicePreparer()
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_revoke_tokens(self, connection_string):
@@ -62,8 +59,7 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationTestCase):
         assert token_response.token is not None
 
     @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @CommunicationServicePreparer(use_cache=True)
-    @pytest.mark.live_test_only
+    @CommunicationServicePreparer()
     @pytest.mark.asyncio
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_delete_user(self, connection_string):
