@@ -500,8 +500,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :returns: File-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
         """
-        return await self._client.blob.create_snapshot(metadata=None, **kwargs) # type: ignore
-    
+        return await self._blob_client.create_snapshot(metadata, **kwargs) # type: ignore
+
     async def rename_file(self, new_name,  # type: str
                           **kwargs):
         # type: (**Any) -> DataLakeFileClient
