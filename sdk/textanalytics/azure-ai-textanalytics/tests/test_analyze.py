@@ -30,6 +30,9 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 
 class TestAnalyze(TextAnalyticsTest):
 
+    def _interval(self):
+        return None if self.is_live else 0
+
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -38,7 +41,7 @@ class TestAnalyze(TextAnalyticsTest):
     })
     def test_no_single_input(self, client):
         with self.assertRaises(TypeError):
-            response = client.begin_analyze("hello world")
+            response = client.begin_analyze("hello world", polling_interval=self._interval())
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
@@ -51,9 +54,10 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
         response = client.begin_analyze(
-            docs, 
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()], 
-            show_stats=True
+            docs,
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            show_stats=True,
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -84,9 +88,10 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "3", "language": "de", "text": "Microsoft wurde am 4. April 1975 von Bill Gates und Paul Allen gegründet."}]
 
         response = client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
-            show_stats=True
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
+            show_stats=True,
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -121,9 +126,10 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
 
         response = client.begin_analyze(
-            docs, 
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()], 
-            show_stats=True
+            docs,
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            show_stats=True,
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -163,8 +169,9 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = client.begin_analyze(
-            docs, 
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+            docs,
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -196,8 +203,9 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()]
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -232,8 +240,9 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = client.begin_analyze(
-            docs, 
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            docs,
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -272,8 +281,9 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = client.begin_analyze(
-            docs, 
-            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+            docs,
+            key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -301,8 +311,9 @@ class TestAnalyze(TextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             response = client.begin_analyze(
-                docs, 
-                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()]
+                docs,
+                key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
+                polling_interval=self._interval(),
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -319,8 +330,9 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()]
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -354,8 +366,9 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = client.begin_analyze(
-            docs, 
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            docs,
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -426,10 +439,11 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -461,9 +475,10 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_analyze(
                 ["This is written in English."],
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -476,9 +491,10 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_analyze(
                 ["This is written in English."],
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -493,9 +509,10 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -513,9 +530,10 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -531,10 +549,11 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         response = client.begin_analyze(
-            docs, 
+            docs,
             entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],  # at this moment this should cause all documents to be errors, which isn't correct behavior but I'm using it here to test document ordering with errors.  :)
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -571,11 +590,12 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "1", "text": ":D"}]
 
         response = client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="latest")],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="latest")],
-            show_stats=True
+            show_stats=True,
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -613,11 +633,12 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en"
+            language="en",
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -648,11 +669,12 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language=""
+            language="",
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -681,10 +703,11 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -720,11 +743,12 @@ class TestAnalyze(TextAnalyticsTest):
         ]
 
         response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en"
+            language="en",
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -753,11 +777,12 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en"
+            language="en",
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -787,13 +812,15 @@ class TestAnalyze(TextAnalyticsTest):
             TextDocumentInput(id="3", text="猫は幸せ"),
         ]
 
-        response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+        response = client.begin_analyze(
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en"
-        ).result())
+            language="en",
+            polling_interval=self._interval(),
+        ).result()
+
 
         task_types = [
             "entities_recognition_results",
@@ -821,11 +848,12 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            language="en"
+            language="en",
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -855,10 +883,11 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         response = list(client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -883,11 +912,12 @@ class TestAnalyze(TextAnalyticsTest):
     })
     def test_invalid_language_hint_method(self, client):
         response = list(client.begin_analyze(
-            ["This should fail because we're passing in an invalid language hint"], 
+            ["This should fail because we're passing in an invalid language hint"],
             language="notalanguage",
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -912,9 +942,10 @@ class TestAnalyze(TextAnalyticsTest):
     def test_invalid_language_hint_docs(self, client):
         response = list(client.begin_analyze(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}],
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result())
 
         task_types = [
@@ -944,9 +975,10 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
 
         self.assertIsNotNone(response)
@@ -955,17 +987,19 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(ClientAuthenticationError):
             response = client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             ).result()
 
         credential.update(text_analytics_account_key)  # Authenticate successfully again
         response = client.begin_analyze(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         ).result()
         self.assertIsNotNone(response)
 
@@ -987,10 +1021,11 @@ class TestAnalyze(TextAnalyticsTest):
                 {"id": "3", "text": "The restaurant had really good food."}]
 
         poller = client.begin_analyze(
-            docs, 
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            docs,
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+            polling_interval=self._interval(),
         )
 
         self.assertIn("azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
@@ -1012,7 +1047,8 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()]
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             )
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1027,7 +1063,8 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             result = client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")]
+                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
+                polling_interval=self._interval(),
             ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1041,9 +1078,10 @@ class TestAnalyze(TextAnalyticsTest):
 
         response = client.begin_analyze(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")], 
+            entities_recognition_tasks=[EntitiesRecognitionTask(model_version="latest")],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")]
+            pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
+            polling_interval=self._interval(),
         ).result()
 
         results_pages = list(response)
@@ -1074,9 +1112,10 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(HttpResponseError):
             response = client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")], 
+                entities_recognition_tasks=[EntitiesRecognitionTask(model_version="bad")],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask(model_version="bad")],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask(model_version="bad")],
+                polling_interval=self._interval(),
             ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1089,10 +1128,11 @@ class TestAnalyze(TextAnalyticsTest):
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             client.begin_analyze(
-                docs, 
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                docs,
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             )
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
@@ -1106,10 +1146,11 @@ class TestAnalyze(TextAnalyticsTest):
         docs = []
         with pytest.raises(ValueError) as excinfo:
             client.begin_analyze(
-                docs, 
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                docs,
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             )
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
@@ -1137,10 +1178,11 @@ class TestAnalyze(TextAnalyticsTest):
 
         with self.assertRaises(HttpResponseError):
             result = client.begin_analyze(
-                docs, 
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                docs,
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             ).result()
 
     @GlobalTextAnalyticsAccountPreparer()
@@ -1154,10 +1196,11 @@ class TestAnalyze(TextAnalyticsTest):
             return "cls result"
         res = client.begin_analyze(
             documents=["Test passing cls to endpoint"],
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            cls=callback
+            cls=callback,
+            polling_interval=self._interval(),
         ).result()
         assert res == "cls result"
 
@@ -1173,10 +1216,11 @@ class TestAnalyze(TextAnalyticsTest):
 
         result = client.begin_analyze(
             docs,
-            entities_recognition_tasks=[EntitiesRecognitionTask()], 
+            entities_recognition_tasks=[EntitiesRecognitionTask()],
             key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
             pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
-            show_stats=True
+            show_stats=True,
+            polling_interval=self._interval(),
         ).result()
 
         pages = list(result)
@@ -1217,13 +1261,13 @@ class TestAnalyze(TextAnalyticsTest):
         with pytest.raises(HttpResponseError) as excinfo:
             client.begin_analyze(
                 docs,
-                entities_recognition_tasks=[EntitiesRecognitionTask()], 
+                entities_recognition_tasks=[EntitiesRecognitionTask()],
                 key_phrase_extraction_tasks=[KeyPhraseExtractionTask()],
-                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()]
+                pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
+                polling_interval=self._interval(),
             )
         assert excinfo.value.status_code == 400
 
 
 
 
-    
