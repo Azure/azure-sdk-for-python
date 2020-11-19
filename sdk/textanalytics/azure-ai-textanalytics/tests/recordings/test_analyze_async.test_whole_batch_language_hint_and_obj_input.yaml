@@ -1,0 +1,109 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "1", "text": "I should take my cat to
+      the veterinarian.", "language": "en"}, {"id": "4", "text": "Este es un document
+      escrito en Espa\u00f1ol.", "language": "en"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b",
+      "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '583'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 074918b3-ff43-48ce-b515-c33b60987b67
+      date: Fri, 13 Nov 2020 22:33:08 GMT
+      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '37'
+    status:
+      code: 202
+      message: Accepted
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T22:33:09Z\",\"createdDateTime\":\"2020-11-13T22:33:08Z\",\"expirationDateTime\":\"2020-11-14T22:33:08Z\",\"status\":\"running\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T22:33:09Z\"},\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T22:33:09.1294725Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id: c6a01d22-9f2c-45cd-955e-7d3d505aca09
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 22:33:39 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '173'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T22:33:09Z\",\"createdDateTime\":\"2020-11-13T22:33:08Z\",\"expirationDateTime\":\"2020-11-14T22:33:08Z\",\"status\":\"running\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T22:33:09Z\"},\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T22:33:09.1294725Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id: 331ad821-64c1-42ef-877d-79f08eb3f82d
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 22:34:09 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '200'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T22:33:09Z\",\"createdDateTime\":\"2020-11-13T22:33:08Z\",\"expirationDateTime\":\"2020-11-14T22:33:08Z\",\"status\":\"succeeded\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T22:33:09Z\"},\"completed\":3,\"failed\":0,\"inProgress\":0,\"total\":3,\"entityRecognitionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T22:33:09.1294725Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\":\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"4\",\"entities\":[{\"text\":\"escrito
+        en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\":18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"entityRecognitionPiiTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T22:33:09.1294725Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"redactedText\":\"I
+        should take my cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"redactedText\":\"Este
+        es un document escrito en Espa\xF1ol.\",\"id\":\"4\",\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T22:33:09.1294725Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id: ae9beb5e-3f8b-4bd1-9493-639769a951f4
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 22:34:41 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '423'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/2ffc7bd8-be34-434b-b7f3-c7be65faf53e_637408224000000000
+version: 1

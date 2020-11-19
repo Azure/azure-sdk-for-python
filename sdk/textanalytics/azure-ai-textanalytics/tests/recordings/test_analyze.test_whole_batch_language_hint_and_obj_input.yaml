@@ -1,0 +1,227 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [{"parameters": {"model-version":
+      "latest", "stringIndexType": "TextElements_v8"}}], "entityRecognitionPiiTasks":
+      [{"parameters": {"model-version": "latest", "stringIndexType": "TextElements_v8"}}],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "1", "text": "I should take my cat to
+      the veterinarian.", "language": "en"}, {"id": "4", "text": "Este es un document
+      escrito en Espa\u00f1ol.", "language": "en"}, {"id": "3", "text": "\u732b\u306f\u5e78\u305b",
+      "language": "en"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '583'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 6eb80f1c-5a4e-4e44-94a6-58c64573a156
+      date:
+      - Fri, 13 Nov 2020 21:27:40 GMT
+      operation-location:
+      - https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '258'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\",\"createdDateTime\":\"2020-11-13T21:27:40Z\",\"expirationDateTime\":\"2020-11-14T21:27:40Z\",\"status\":\"running\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\"},\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - ac176852-9df0-4766-a24a-28a687b8a202
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 21:28:10 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '269'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\",\"createdDateTime\":\"2020-11-13T21:27:40Z\",\"expirationDateTime\":\"2020-11-14T21:27:40Z\",\"status\":\"running\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\"},\"completed\":1,\"failed\":0,\"inProgress\":2,\"total\":3,\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - ad150ccd-c616-4ba9-b267-79aaf93ee829
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 21:28:42 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '246'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\",\"createdDateTime\":\"2020-11-13T21:27:40Z\",\"expirationDateTime\":\"2020-11-14T21:27:40Z\",\"status\":\"running\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\"},\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\":\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"4\",\"entities\":[{\"text\":\"escrito
+        en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\":18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - d0ceaced-f11e-4ee8-a726-5965191a4428
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 21:29:12 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '427'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\",\"createdDateTime\":\"2020-11-13T21:27:40Z\",\"expirationDateTime\":\"2020-11-14T21:27:40Z\",\"status\":\"running\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\"},\"completed\":2,\"failed\":0,\"inProgress\":1,\"total\":3,\"entityRecognitionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\":\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"4\",\"entities\":[{\"text\":\"escrito
+        en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\":18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - 33e6c7ec-dc95-4e11-a69b-feef2e67fa5e
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 21:29:43 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '579'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000
+  response:
+    body:
+      string: "{\"jobId\":\"f81e306e-ab2e-4cc0-9381-aa5ba8e385d3_637408224000000000\",\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\",\"createdDateTime\":\"2020-11-13T21:27:40Z\",\"expirationDateTime\":\"2020-11-14T21:27:40Z\",\"status\":\"succeeded\",\"errors\":[],\"tasks\":{\"details\":{\"lastUpdateDateTime\":\"2020-11-13T21:27:41Z\"},\"completed\":3,\"failed\":0,\"inProgress\":0,\"total\":3,\"entityRecognitionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"entities\":[{\"text\":\"veterinarian\",\"category\":\"PersonType\",\"offset\":28,\"length\":12,\"confidenceScore\":0.8}],\"warnings\":[]},{\"id\":\"4\",\"entities\":[{\"text\":\"escrito
+        en Espa\xF1ol\",\"category\":\"Location\",\"offset\":20,\"length\":18,\"confidenceScore\":0.25}],\"warnings\":[]},{\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-04-01\"}}],\"entityRecognitionPiiTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"redactedText\":\"I
+        should take my cat to the veterinarian.\",\"id\":\"1\",\"entities\":[],\"warnings\":[]},{\"redactedText\":\"Este
+        es un document escrito en Espa\xF1ol.\",\"id\":\"4\",\"entities\":[],\"warnings\":[]},{\"redactedText\":\"\u732B\u306F\u5E78\u305B\",\"id\":\"3\",\"entities\":[],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}],\"keyPhraseExtractionTasks\":[{\"lastUpdateDateTime\":\"2020-11-13T21:27:41.9515308Z\",\"results\":{\"inTerminalState\":true,\"documents\":[{\"id\":\"1\",\"keyPhrases\":[\"cat\",\"veterinarian\"],\"warnings\":[]},{\"id\":\"4\",\"keyPhrases\":[\"Este
+        es\",\"document escrito en Espa\xF1ol\"],\"warnings\":[]},{\"id\":\"3\",\"keyPhrases\":[\"\u732B\u306F\u5E78\u305B\"],\"warnings\":[]}],\"errors\":[],\"modelVersion\":\"2020-07-01\"}}]}}"
+    headers:
+      apim-request-id:
+      - d6bfb1b4-4c07-4f25-a35a-2e01996755a6
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 13 Nov 2020 21:30:13 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '563'
+    status:
+      code: 200
+      message: OK
+version: 1

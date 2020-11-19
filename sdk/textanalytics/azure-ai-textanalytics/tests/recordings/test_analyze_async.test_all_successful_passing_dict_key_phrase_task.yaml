@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: '{"tasks": {"entityRecognitionTasks": [], "entityRecognitionPiiTasks": [],
+      "keyPhraseExtractionTasks": [{"parameters": {"model-version": "latest"}}]},
+      "analysisInput": {"documents": [{"id": "1", "text": "Microsoft was founded by
+      Bill Gates and Paul Allen", "language": "en"}, {"id": "2", "text": "Microsoft
+      fue fundado por Bill Gates y Paul Allen", "language": "es"}]}}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Content-Length:
+      - '368'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: cc3dac97-8947-460f-bfc3-807d910abc29
+      date: Fri, 13 Nov 2020 21:38:37 GMT
+      operation-location: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/aa0dce0c-90b8-416e-af5c-5eaca8b2a38b_637408224000000000
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '378'
+    status:
+      code: 202
+      message: Accepted
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.7.9 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/aa0dce0c-90b8-416e-af5c-5eaca8b2a38b_637408224000000000?showStats=True
+  response:
+    body:
+      string: '{"jobId":"aa0dce0c-90b8-416e-af5c-5eaca8b2a38b_637408224000000000","lastUpdateDateTime":"2020-11-13T21:38:38Z","createdDateTime":"2020-11-13T21:38:37Z","expirationDateTime":"2020-11-14T21:38:37Z","status":"succeeded","errors":[],"tasks":{"details":{"lastUpdateDateTime":"2020-11-13T21:38:38Z"},"completed":1,"failed":0,"inProgress":0,"total":1,"keyPhraseExtractionTasks":[{"lastUpdateDateTime":"2020-11-13T21:38:38.2172286Z","results":{"inTerminalState":true,"documents":[{"id":"1","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"warnings":[]},{"id":"2","keyPhrases":["Bill
+        Gates","Paul Allen","Microsoft"],"warnings":[]}],"errors":[],"modelVersion":"2020-07-01"}}]}}'
+    headers:
+      apim-request-id: d4291795-7c9b-4e0e-a9e4-f53cc9874ccb
+      content-type: application/json; charset=utf-8
+      date: Fri, 13 Nov 2020 21:39:09 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      transfer-encoding: chunked
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '227'
+    status:
+      code: 200
+      message: OK
+    url: https://textanalytics-westeurope.ppe.cognitiveservices.azure.com/text/analytics/v3.1-preview.3/analyze/jobs/aa0dce0c-90b8-416e-af5c-5eaca8b2a38b_637408224000000000?showStats=True
+version: 1
