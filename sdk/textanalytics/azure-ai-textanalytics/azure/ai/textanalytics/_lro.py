@@ -29,21 +29,6 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
 
 
 class TextAnalyticsLROPoller(LROBasePolling):
-    def __init__(self,
-        timeout=30,
-        lro_algorithms=None,
-        lro_options=None,
-        path_format_arguments=None,
-        **operation_config
-    ):
-
-        super(TextAnalyticsLROPoller, self).__init__(
-            timeout=timeout,
-            lro_algorithms=lro_algorithms,
-            lro_options=lro_options,
-            path_format_arguments=path_format_arguments,
-            **operation_config
-        )
 
     def finished(self):
         """Is this polling finished?
@@ -95,10 +80,10 @@ class TextAnalyticsLROPoller(LROBasePolling):
             self._delay()
             self.update_status()
 
-        if self._failed(self.status()):
+        if TextAnalyticsLROPoller._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
             self._pipeline_response = self.request_status(final_get_url)
-            self._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
+            TextAnalyticsLROPoller._raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
