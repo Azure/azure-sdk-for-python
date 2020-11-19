@@ -217,7 +217,6 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": "",
-        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
     })
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -231,7 +230,6 @@ class TestHealth(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": "xxxx",
-        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
     })
     async def test_bad_credentials(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -439,8 +437,6 @@ class TestHealth(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
-        "text_analytics_account_key": os.environ.get('AZURE_TEXT_ANALYTICS_KEY'),
-        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com",
         "default_language": "en"
     })
     async def test_client_passed_default_language_hint(self, client):
@@ -486,9 +482,6 @@ class TestHealth(AsyncTextAnalyticsTest):
 
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account, text_analytics_account_key):
-        text_analytics_account = "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
-        if self.is_live:
-            text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3)

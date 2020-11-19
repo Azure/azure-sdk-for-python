@@ -454,7 +454,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
         "text_analytics_account_key": "",
-        "text_analytics_account": "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
     })
     async def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -970,9 +969,6 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     async def test_rotate_subscription_key(self, resource_group, location, text_analytics_account,
                                            text_analytics_account_key):
-        text_analytics_account = "https://textanalytics-westeurope.ppe.cognitiveservices.azure.com"
-        if self.is_live:
-            text_analytics_account_key = os.environ.get('AZURE_TEXT_ANALYTICS_KEY')
 
         credential = AzureKeyCredential(text_analytics_account_key)
         client = TextAnalyticsClient(text_analytics_account, credential, api_version=TextAnalyticsApiVersion.V3_1_PREVIEW_3)
