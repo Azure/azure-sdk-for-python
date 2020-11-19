@@ -441,6 +441,7 @@ class TestAnalyze(TextAnalyticsTest):
             )
         response.wait()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_bad_document_input(self, client):

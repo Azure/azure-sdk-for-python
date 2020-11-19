@@ -241,6 +241,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_bad_document_input(self, client):
