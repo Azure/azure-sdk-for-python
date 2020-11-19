@@ -213,6 +213,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         for idx, doc in enumerate(response):
             self.assertEqual(str(idx + 1), doc.id)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -226,6 +227,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -309,6 +311,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             if not doc.is_error:
                 self.assertIsNotNone(doc.statistics)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_whole_batch_language_hint(self, client):
@@ -383,6 +386,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_whole_batch_language_hint_and_dict_input(self, client):
@@ -417,6 +421,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertFalse(response[0].is_error)
         self.assertFalse(response[1].is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
@@ -524,6 +529,7 @@ class TestHealth(AsyncTextAnalyticsTest):
 
             await poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_document_attribute_error_no_result_attribute(self, client):
@@ -569,6 +575,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
             )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_bad_model_version_error(self, client):
@@ -607,6 +614,7 @@ class TestHealth(AsyncTextAnalyticsTest):
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_not_passing_list_for_docs(self, client):
@@ -633,6 +641,7 @@ class TestHealth(AsyncTextAnalyticsTest):
                 await client.begin_analyze_healthcare(None, polling_interval=self._interval())
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_duplicate_ids_error(self, client):
@@ -660,6 +669,7 @@ class TestHealth(AsyncTextAnalyticsTest):
             )).result()
         assert res == "cls result"
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     async def test_multiple_pages_of_results_returned_successfully(self, client):

@@ -407,9 +407,11 @@ class TestAnalyze(TextAnalyticsTest):
             for idx, doc in enumerate(results):
                 self.assertEqual(str(idx + 1), doc.id)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
+        "text_analytics_account_key": "",
     })
     def test_empty_credential_class(self, client):
         with self.assertRaises(ClientAuthenticationError):
@@ -420,7 +422,9 @@ class TestAnalyze(TextAnalyticsTest):
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval(),
             )
+        response.wait()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -435,6 +439,7 @@ class TestAnalyze(TextAnalyticsTest):
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval(),
             )
+        response.wait()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
@@ -449,6 +454,7 @@ class TestAnalyze(TextAnalyticsTest):
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval(),
             )
+        response.wait()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
@@ -921,6 +927,7 @@ class TestAnalyze(TextAnalyticsTest):
 
         poller.result()  # need to call this before tearDown runs even though we don't need the response for the test.
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_empty_document_failure(self, client):

@@ -35,6 +35,7 @@ class TestHealth(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.begin_analyze_healthcare("hello world").result()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_all_successful_passing_dict(self, client):
@@ -51,6 +52,7 @@ class TestHealth(TextAnalyticsTest):
             self.assertIsNotNone(doc.entities)
             self.assertIsNotNone(doc.relations)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_all_successful_passing_text_document_input(self, client):
@@ -69,6 +71,7 @@ class TestHealth(TextAnalyticsTest):
             self.assertIsNotNone(doc.entities)
             self.assertIsNotNone(doc.relations)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_passing_only_string(self, client):
@@ -88,6 +91,7 @@ class TestHealth(TextAnalyticsTest):
 
         self.assertTrue(response[2].is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_input_with_some_errors(self, client):
@@ -99,6 +103,7 @@ class TestHealth(TextAnalyticsTest):
         self.assertTrue(response[0].is_error)
         self.assertTrue(response[1].is_error)
         self.assertFalse(response[2].is_error)
+
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
@@ -112,6 +117,7 @@ class TestHealth(TextAnalyticsTest):
         self.assertTrue(response[1].is_error)
         self.assertTrue(response[2].is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_too_many_documents(self, client):
@@ -174,6 +180,7 @@ class TestHealth(TextAnalyticsTest):
         for idx, doc in enumerate(response):
             self.assertEqual(str(idx + 1), doc.id)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -185,6 +192,7 @@ class TestHealth(TextAnalyticsTest):
                 polling_interval=self._interval()
             ).result()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -260,6 +268,7 @@ class TestHealth(TextAnalyticsTest):
             if not doc.is_error:
                 self.assertIsNotNone(doc.statistics)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_whole_batch_language_hint(self, client):
@@ -288,6 +297,7 @@ class TestHealth(TextAnalyticsTest):
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_per_item_dont_use_language_hint(self, client):
@@ -300,6 +310,7 @@ class TestHealth(TextAnalyticsTest):
         self.assertFalse(response[1].is_error)
         self.assertFalse(response[2].is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_whole_batch_language_hint_and_obj_input(self, client):
@@ -374,6 +385,7 @@ class TestHealth(TextAnalyticsTest):
         ).result())
         self.assertEqual(response[0].error.code, 'UnsupportedLanguageCode')
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_invalid_language_hint_docs(self, client):
@@ -442,6 +454,7 @@ class TestHealth(TextAnalyticsTest):
                 'InvalidDocument - Document text is empty.\n'
             )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_document_attribute_error_nonexistent_attribute(self, client):
@@ -489,6 +502,7 @@ class TestHealth(TextAnalyticsTest):
         self.assertEqual(doc_errors[2].error.code, "InvalidDocument")
         self.assertIsNotNone(doc_errors[2].error.message)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_not_passing_list_for_docs(self, client):
@@ -537,6 +551,7 @@ class TestHealth(TextAnalyticsTest):
         ).result()
         assert res == "cls result"
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
     def test_multiple_pages_of_results_returned_successfully(self, client):

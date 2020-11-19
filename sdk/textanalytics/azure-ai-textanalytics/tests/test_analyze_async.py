@@ -450,6 +450,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 for idx, doc in enumerate(results):
                     self.assertEqual(str(idx + 1), doc.id)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -466,6 +467,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
