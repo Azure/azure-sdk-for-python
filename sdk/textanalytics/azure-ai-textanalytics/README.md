@@ -206,7 +206,7 @@ The following section provides several code snippets covering some of the most c
 * [Extract Key Phrases](#extract-key-phrases "Extract key phrases")
 * [Detect Language](#detect-language "Detect language")
 * [Healthcare Analysis](#healthcare-analysis "Healthcare analysis")
-* [Batch Analysis](#analyze "Batch analysis")
+* [Batch Analysis](#batch-analysis "Batch analysis")
 
 ### Analyze sentiment
 [analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
@@ -458,8 +458,6 @@ for idx, doc in enumerate(docs):
         print("...Bidirectional: {}".format(relation.is_bidirectional))
     print("------------------------------------------")
 ```
-
-The returned response is a heterogeneous list of result and error objects [[ MORE HERE ]]
 
 Note: The Healthcare Analysis service is currently available only in API version v3.1-preview.3 in gated preview.
 
