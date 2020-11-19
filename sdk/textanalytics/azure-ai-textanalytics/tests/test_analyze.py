@@ -422,7 +422,6 @@ class TestAnalyze(TextAnalyticsTest):
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval(),
             )
-        response.wait()
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -439,7 +438,6 @@ class TestAnalyze(TextAnalyticsTest):
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval(),
             )
-        response.wait()
 
     @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
@@ -455,7 +453,6 @@ class TestAnalyze(TextAnalyticsTest):
                 pii_entities_recognition_tasks=[PiiEntitiesRecognitionTask()],
                 polling_interval=self._interval(),
             )
-        response.wait()
 
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={ "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3})
