@@ -92,22 +92,22 @@ class AnalyzeBatchInput(JobDescriptor, JobManifest):
         self.analysis_input = kwargs['analysis_input']
 
 
-class AnalyzePagination(msrest.serialization.Model):
-    """AnalyzePagination.
+class Pagination(msrest.serialization.Model):
+    """Pagination.
 
     :param next_link:
     :type next_link: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'next_link': {'key': '@nextLink', 'type': 'str'},
     }
 
     def __init__(
         self,
         **kwargs
     ):
-        super(AnalyzePagination, self).__init__(**kwargs)
+        super(Pagination, self).__init__(**kwargs)
         self.next_link = kwargs.get('next_link', None)
 
 
@@ -185,7 +185,7 @@ class JobMetadata(msrest.serialization.Model):
         self.status = kwargs['status']
 
 
-class AnalyzeJobState(JobMetadata, TasksState, AnalyzePagination):
+class AnalyzeJobState(JobMetadata, TasksState, Pagination):
     """AnalyzeJobState.
 
     All required parameters must be populated in order to send to Azure.
@@ -223,7 +223,7 @@ class AnalyzeJobState(JobMetadata, TasksState, AnalyzePagination):
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'next_link': {'key': '@nextLink', 'type': 'str'},
         'tasks': {'key': 'tasks', 'type': 'TasksStateTasks'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
         'display_name': {'key': 'displayName', 'type': 'str'},
@@ -1038,25 +1038,6 @@ class HealthcareEntityLink(msrest.serialization.Model):
         super(HealthcareEntityLink, self).__init__(**kwargs)
         self.data_source = kwargs['data_source']
         self.id = kwargs['id']
-
-
-class Pagination(msrest.serialization.Model):
-    """Pagination.
-
-    :param next_link:
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Pagination, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
 
 
 class HealthcareJobState(JobMetadata, Pagination):

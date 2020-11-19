@@ -9,7 +9,6 @@
 try:
     from ._models_py3 import AnalyzeBatchInput
     from ._models_py3 import AnalyzeJobState
-    from ._models_py3 import AnalyzePagination
     from ._models_py3 import AspectConfidenceScoreLabel
     from ._models_py3 import AspectRelation
     from ._models_py3 import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1
@@ -73,7 +72,6 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AnalyzeBatchInput  # type: ignore
     from ._models import AnalyzeJobState  # type: ignore
-    from ._models import AnalyzePagination  # type: ignore
     from ._models import AspectConfidenceScoreLabel  # type: ignore
     from ._models import AspectRelation  # type: ignore
     from ._models import Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1  # type: ignore
@@ -152,7 +150,6 @@ from ._text_analytics_client_enums import (
 __all__ = [
     'AnalyzeBatchInput',
     'AnalyzeJobState',
-    'AnalyzePagination',
     'AspectConfidenceScoreLabel',
     'AspectRelation',
     'Components15Gvwi3SchemasTasksstatePropertiesTasksPropertiesEntityrecognitiontasksItemsAllof1',
