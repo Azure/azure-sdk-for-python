@@ -15,7 +15,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class LogAnalyticsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,11 +49,11 @@ class LogAnalyticsOperations(object):
     def _export_request_rate_by_interval_initial(
         self,
         location,  # type: str
-        parameters,  # type: "models.RequestRateByIntervalInput"
+        parameters,  # type: "_models.RequestRateByIntervalInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.LogAnalyticsOperationResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
+        # type: (...) -> Optional["_models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LogAnalyticsOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -103,10 +103,10 @@ class LogAnalyticsOperations(object):
     def begin_export_request_rate_by_interval(
         self,
         location,  # type: str
-        parameters,  # type: "models.RequestRateByIntervalInput"
+        parameters,  # type: "_models.RequestRateByIntervalInput"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.LogAnalyticsOperationResult"]
+        # type: (...) -> LROPoller["_models.LogAnalyticsOperationResult"]
         """Export logs that show Api requests made by this subscription in the given time window to show
         throttling activities.
 
@@ -125,7 +125,7 @@ class LogAnalyticsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -149,7 +149,12 @@ class LogAnalyticsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -166,11 +171,11 @@ class LogAnalyticsOperations(object):
     def _export_throttled_requests_initial(
         self,
         location,  # type: str
-        parameters,  # type: "models.LogAnalyticsInputBase"
+        parameters,  # type: "_models.LogAnalyticsInputBase"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["models.LogAnalyticsOperationResult"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["models.LogAnalyticsOperationResult"]]
+        # type: (...) -> Optional["_models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LogAnalyticsOperationResult"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -220,10 +225,10 @@ class LogAnalyticsOperations(object):
     def begin_export_throttled_requests(
         self,
         location,  # type: str
-        parameters,  # type: "models.LogAnalyticsInputBase"
+        parameters,  # type: "_models.LogAnalyticsInputBase"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.LogAnalyticsOperationResult"]
+        # type: (...) -> LROPoller["_models.LogAnalyticsOperationResult"]
         """Export logs that show total throttled Api requests for this subscription in the given time
         window.
 
@@ -242,7 +247,7 @@ class LogAnalyticsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.LogAnalyticsOperationResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LogAnalyticsOperationResult"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -266,7 +271,12 @@ class LogAnalyticsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'},  **kwargs)
+        path_format_arguments = {
+            'location': self._serialize.url("location", location, 'str', pattern=r'^[-\w\._]+$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

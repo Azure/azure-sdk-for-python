@@ -15,9 +15,6 @@ from _shared.testcase import (
     BodyReplacerProcessor, ResponseReplacerProcessor
 )
 
-SKIP_PHONE_NUMBER_TESTS = True
-PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number infra for live tests not ready yet"
-
 class SMSClientTestAsync(AsyncCommunicationTestCase):
     def __init__(self, method_name):
         super(SMSClientTestAsync, self).__init__(method_name)
@@ -36,7 +33,6 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
 
     @AsyncCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
-    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
     async def test_send_sms_async(self):
 
         sms_client = SmsClient.from_connection_string(self.connection_str)

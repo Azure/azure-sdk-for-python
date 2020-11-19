@@ -128,8 +128,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message.to = 'to'
                 message.reply_to = 'reply_to'
                 sender.send_messages(message)
+
+            # Test that noop empty send works properly.
+            sender.send_messages([])
+            sender.send_messages(ServiceBusMessageBatch())
+            assert len(sender.schedule_messages([], utc_now())) == 0
+            sender.cancel_scheduled_messages([])
             sender.close()
 
+            # Then test expected failure modes.
             with pytest.raises(ValueError):
                 with sender:
                     raise AssertionError("Should raise ValueError")
@@ -145,6 +152,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
 
+            assert len(receiver.receive_deferred_messages([])) == 0
             with pytest.raises(ValueError):
                 receiver.receive_messages(max_wait_time=0)
 

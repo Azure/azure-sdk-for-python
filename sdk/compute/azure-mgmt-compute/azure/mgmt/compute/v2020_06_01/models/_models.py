@@ -620,66 +620,6 @@ class BootDiagnosticsInstanceView(msrest.serialization.Model):
         self.status = None
 
 
-class Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
-class ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
 class ComputeOperationListResult(msrest.serialization.Model):
     """The List Compute Operation operation response.
 
@@ -927,7 +867,7 @@ class DedicatedHost(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'sku': {'required': True},
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
+        'platform_fault_domain': {'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
@@ -1053,7 +993,7 @@ class DedicatedHostGroup(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'platform_fault_domain_count': {'maximum': 3, 'minimum': 1},
+        'platform_fault_domain_count': {'minimum': 1},
         'hosts': {'readonly': True},
         'instance_view': {'readonly': True},
     }
@@ -1159,7 +1099,7 @@ class DedicatedHostGroupUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain_count': {'maximum': 3, 'minimum': 1},
+        'platform_fault_domain_count': {'minimum': 1},
         'hosts': {'readonly': True},
         'instance_view': {'readonly': True},
     }
@@ -1317,7 +1257,7 @@ class DedicatedHostUpdate(UpdateResource):
     """
 
     _validation = {
-        'platform_fault_domain': {'maximum': 2, 'minimum': 0},
+        'platform_fault_domain': {'minimum': 0},
         'host_id': {'readonly': True},
         'virtual_machines': {'readonly': True},
         'provisioning_time': {'readonly': True},
@@ -4225,6 +4165,36 @@ class UsageName(msrest.serialization.Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class UserAssignedIdentitiesValue(msrest.serialization.Model):
+    """UserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class VaultCertificate(msrest.serialization.Model):
     """Describes a single certificate reference in a Key Vault, and where the certificate should reside on the VM.
 
@@ -4404,14 +4374,15 @@ class VirtualMachine(Resource):
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineInstanceView
     :param license_type: Specifies that the image or disk that is being used was licensed on-
-     premises. This element is only used for images that contain the Windows Server operating
-     system. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` Windows_Client
-     :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
-     a request for an update, the value must match the initial value. This value cannot be updated.
+     premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
+     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
+     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-
-     licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_ :code:`<br>`:code:`<br>`
-     Minimum api-version: 2015-06-15.
+     <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
+     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
+     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :type license_type: str
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier that is encoded and
      stored in all Azure IaaS VMs SMBIOS and can be read using platform BIOS commands.
@@ -5006,7 +4977,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
      Machine. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2020_06_01.models.Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.compute.v2020_06_01.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -5018,7 +4989,7 @@ class VirtualMachineIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components1H8M3EpSchemasVirtualmachineidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
     }
 
     def __init__(
@@ -5304,6 +5275,278 @@ class VirtualMachineReimageParameters(msrest.serialization.Model):
     ):
         super(VirtualMachineReimageParameters, self).__init__(**kwargs)
         self.temp_disk = kwargs.get('temp_disk', None)
+
+
+class VirtualMachineRunCommand(Resource):
+    """Describes a Virtual Machine run command.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param location: Required. Resource location.
+    :type location: str
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param source: The source of the run command script.
+    :type source: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandScriptSource
+    :param parameters: The parameters used by the script.
+    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param protected_parameters: The parameters used by the script.
+    :type protected_parameters:
+     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param async_execution: Optional. If set to true, provisioning will complete as soon as the
+     script starts and will not wait for script to complete.
+    :type async_execution: bool
+    :param run_as_user: Specifies the user account on the VM when executing the run command.
+    :type run_as_user: str
+    :param run_as_password: Specifies the user account password on the VM when executing the run
+     command.
+    :type run_as_password: str
+    :param timeout_in_seconds: The timeout in seconds to execute the run command.
+    :type timeout_in_seconds: int
+    :param output_blob_uri: Specifies the Azure storage blob where script output stream will be
+     uploaded.
+    :type output_blob_uri: str
+    :param error_blob_uri: Specifies the Azure storage blob where script error stream will be
+     uploaded.
+    :type error_blob_uri: str
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The virtual machine run command instance view.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandInstanceView
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'instance_view': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'source': {'key': 'properties.source', 'type': 'VirtualMachineRunCommandScriptSource'},
+        'parameters': {'key': 'properties.parameters', 'type': '[RunCommandInputParameter]'},
+        'protected_parameters': {'key': 'properties.protectedParameters', 'type': '[RunCommandInputParameter]'},
+        'async_execution': {'key': 'properties.asyncExecution', 'type': 'bool'},
+        'run_as_user': {'key': 'properties.runAsUser', 'type': 'str'},
+        'run_as_password': {'key': 'properties.runAsPassword', 'type': 'str'},
+        'timeout_in_seconds': {'key': 'properties.timeoutInSeconds', 'type': 'int'},
+        'output_blob_uri': {'key': 'properties.outputBlobUri', 'type': 'str'},
+        'error_blob_uri': {'key': 'properties.errorBlobUri', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineRunCommandInstanceView'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommand, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.protected_parameters = kwargs.get('protected_parameters', None)
+        self.async_execution = kwargs.get('async_execution', False)
+        self.run_as_user = kwargs.get('run_as_user', None)
+        self.run_as_password = kwargs.get('run_as_password', None)
+        self.timeout_in_seconds = kwargs.get('timeout_in_seconds', None)
+        self.output_blob_uri = kwargs.get('output_blob_uri', None)
+        self.error_blob_uri = kwargs.get('error_blob_uri', None)
+        self.provisioning_state = None
+        self.instance_view = None
+
+
+class VirtualMachineRunCommandInstanceView(msrest.serialization.Model):
+    """The instance view of a virtual machine run command.
+
+    :param execution_state: Script execution status. Possible values include: "Unknown", "Pending",
+     "Running", "Failed", "Succeeded", "TimedOut", "Canceled".
+    :type execution_state: str or ~azure.mgmt.compute.v2020_06_01.models.ExecutionState
+    :param execution_message: Communicate script configuration errors or execution messages.
+    :type execution_message: str
+    :param exit_code: Exit code returned from script execution.
+    :type exit_code: int
+    :param output: Script output stream.
+    :type output: str
+    :param error: Script error stream.
+    :type error: str
+    :param start_time: Script start time.
+    :type start_time: ~datetime.datetime
+    :param end_time: Script end time.
+    :type end_time: ~datetime.datetime
+    :param statuses: The resource status information.
+    :type statuses: list[~azure.mgmt.compute.v2020_06_01.models.InstanceViewStatus]
+    """
+
+    _attribute_map = {
+        'execution_state': {'key': 'executionState', 'type': 'str'},
+        'execution_message': {'key': 'executionMessage', 'type': 'str'},
+        'exit_code': {'key': 'exitCode', 'type': 'int'},
+        'output': {'key': 'output', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandInstanceView, self).__init__(**kwargs)
+        self.execution_state = kwargs.get('execution_state', None)
+        self.execution_message = kwargs.get('execution_message', None)
+        self.exit_code = kwargs.get('exit_code', None)
+        self.output = kwargs.get('output', None)
+        self.error = kwargs.get('error', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.statuses = kwargs.get('statuses', None)
+
+
+class VirtualMachineRunCommandScriptSource(msrest.serialization.Model):
+    """Describes the script sources for run command.
+
+    :param script: Specifies the script content to be executed on the VM.
+    :type script: str
+    :param script_uri: Specifies the script download location.
+    :type script_uri: str
+    :param command_id: Specifies a commandId of predefined built-in script.
+    :type command_id: str
+    """
+
+    _attribute_map = {
+        'script': {'key': 'script', 'type': 'str'},
+        'script_uri': {'key': 'scriptUri', 'type': 'str'},
+        'command_id': {'key': 'commandId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandScriptSource, self).__init__(**kwargs)
+        self.script = kwargs.get('script', None)
+        self.script_uri = kwargs.get('script_uri', None)
+        self.command_id = kwargs.get('command_id', None)
+
+
+class VirtualMachineRunCommandsListResult(msrest.serialization.Model):
+    """The List run command operation response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. The list of run commands.
+    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommand]
+    :param next_link: The uri to fetch the next page of run commands.
+    :type next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[VirtualMachineRunCommand]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandsListResult, self).__init__(**kwargs)
+        self.value = kwargs['value']
+        self.next_link = kwargs.get('next_link', None)
+
+
+class VirtualMachineRunCommandUpdate(UpdateResource):
+    """Describes a Virtual Machine run command.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param tags: A set of tags. Resource tags.
+    :type tags: dict[str, str]
+    :param source: The source of the run command script.
+    :type source: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandScriptSource
+    :param parameters: The parameters used by the script.
+    :type parameters: list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param protected_parameters: The parameters used by the script.
+    :type protected_parameters:
+     list[~azure.mgmt.compute.v2020_06_01.models.RunCommandInputParameter]
+    :param async_execution: Optional. If set to true, provisioning will complete as soon as the
+     script starts and will not wait for script to complete.
+    :type async_execution: bool
+    :param run_as_user: Specifies the user account on the VM when executing the run command.
+    :type run_as_user: str
+    :param run_as_password: Specifies the user account password on the VM when executing the run
+     command.
+    :type run_as_password: str
+    :param timeout_in_seconds: The timeout in seconds to execute the run command.
+    :type timeout_in_seconds: int
+    :param output_blob_uri: Specifies the Azure storage blob where script output stream will be
+     uploaded.
+    :type output_blob_uri: str
+    :param error_blob_uri: Specifies the Azure storage blob where script error stream will be
+     uploaded.
+    :type error_blob_uri: str
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The virtual machine run command instance view.
+    :vartype instance_view:
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineRunCommandInstanceView
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'instance_view': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'source': {'key': 'properties.source', 'type': 'VirtualMachineRunCommandScriptSource'},
+        'parameters': {'key': 'properties.parameters', 'type': '[RunCommandInputParameter]'},
+        'protected_parameters': {'key': 'properties.protectedParameters', 'type': '[RunCommandInputParameter]'},
+        'async_execution': {'key': 'properties.asyncExecution', 'type': 'bool'},
+        'run_as_user': {'key': 'properties.runAsUser', 'type': 'str'},
+        'run_as_password': {'key': 'properties.runAsPassword', 'type': 'str'},
+        'timeout_in_seconds': {'key': 'properties.timeoutInSeconds', 'type': 'int'},
+        'output_blob_uri': {'key': 'properties.outputBlobUri', 'type': 'str'},
+        'error_blob_uri': {'key': 'properties.errorBlobUri', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineRunCommandInstanceView'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineRunCommandUpdate, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.protected_parameters = kwargs.get('protected_parameters', None)
+        self.async_execution = kwargs.get('async_execution', False)
+        self.run_as_user = kwargs.get('run_as_user', None)
+        self.run_as_password = kwargs.get('run_as_password', None)
+        self.timeout_in_seconds = kwargs.get('timeout_in_seconds', None)
+        self.output_blob_uri = kwargs.get('output_blob_uri', None)
+        self.error_blob_uri = kwargs.get('error_blob_uri', None)
+        self.provisioning_state = None
+        self.instance_view = None
 
 
 class VirtualMachineScaleSet(Resource):
@@ -5754,7 +5997,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
      form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :type user_assigned_identities: dict[str,
-     ~azure.mgmt.compute.v2020_06_01.models.ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue]
     """
 
     _validation = {
@@ -5766,7 +6009,7 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         'principal_id': {'key': 'principalId', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ComponentsNj115SSchemasVirtualmachinescalesetidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue}'},
     }
 
     def __init__(
@@ -5778,6 +6021,36 @@ class VirtualMachineScaleSetIdentity(msrest.serialization.Model):
         self.tenant_id = None
         self.type = kwargs.get('type', None)
         self.user_assigned_identities = kwargs.get('user_assigned_identities', None)
+
+
+class VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue(msrest.serialization.Model):
+    """VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+        'client_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetIdentityUserAssignedIdentitiesValue, self).__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class VirtualMachineScaleSetInstanceView(msrest.serialization.Model):
@@ -7049,14 +7322,15 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :param license_type: Specifies that the image or disk that is being used was licensed on-
-     premises. This element is only used for images that contain the Windows Server operating
-     system. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` Windows_Client
-     :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
-     a request for an update, the value must match the initial value. This value cannot be updated.
+     premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
+     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
+     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-
-     licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_ :code:`<br>`:code:`<br>`
-     Minimum api-version: 2015-06-15.
+     <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
+     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
+     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :type license_type: str
     :ivar model_definition_applied: Specifies whether the model applied to the virtual machine is
      the model of the virtual machine scale set or the customized model for the virtual machine.
@@ -7139,6 +7413,106 @@ class VirtualMachineScaleSetVM(Resource):
         self.protection_policy = kwargs.get('protection_policy', None)
 
 
+class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
+    """Describes a VMSS VM Extension.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: The name of the extension.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param force_update_tag: How the extension handler should be forced to update even if the
+     extension configuration has not changed.
+    :type force_update_tag: str
+    :param publisher: The name of the extension handler publisher.
+    :type publisher: str
+    :param type_properties_type: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
+    :type type_properties_type: str
+    :param type_handler_version: Specifies the version of the script handler.
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+     version if one is available at deployment time. Once deployed, however, the extension will not
+     upgrade minor versions unless redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be automatically
+     upgraded by the platform if there is a newer version of the extension available.
+    :type enable_automatic_upgrade: bool
+    :param settings: Json formatted public settings for the extension.
+    :type settings: object
+    :param protected_settings: The extension can contain either protectedSettings or
+     protectedSettingsFromKeyVault or no protected settings at all.
+    :type protected_settings: object
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :param instance_view: The virtual machine extension instance view.
+    :type instance_view: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineExtensionInstanceView
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
+        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
+        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineExtensionInstanceView'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetVMExtension, self).__init__(**kwargs)
+        self.name = None
+        self.type = None
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.type_properties_type = kwargs.get('type_properties_type', None)
+        self.type_handler_version = kwargs.get('type_handler_version', None)
+        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
+        self.settings = kwargs.get('settings', None)
+        self.protected_settings = kwargs.get('protected_settings', None)
+        self.provisioning_state = None
+        self.instance_view = kwargs.get('instance_view', None)
+
+
+class VirtualMachineScaleSetVMExtensionsListResult(msrest.serialization.Model):
+    """The List VMSS VM Extension operation response.
+
+    :param value: The list of VMSS VM extensions.
+    :type value: list[~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetVMExtension]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[VirtualMachineScaleSetVMExtension]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetVMExtensionsListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class VirtualMachineScaleSetVMExtensionsSummary(msrest.serialization.Model):
     """Extensions summary for virtual machines of a virtual machine scale set.
 
@@ -7168,6 +7542,78 @@ class VirtualMachineScaleSetVMExtensionsSummary(msrest.serialization.Model):
         super(VirtualMachineScaleSetVMExtensionsSummary, self).__init__(**kwargs)
         self.name = None
         self.statuses_summary = None
+
+
+class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
+    """Describes a VMSS VM Extension.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: The name of the extension.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param force_update_tag: How the extension handler should be forced to update even if the
+     extension configuration has not changed.
+    :type force_update_tag: str
+    :param publisher: The name of the extension handler publisher.
+    :type publisher: str
+    :param type_properties_type: Specifies the type of the extension; an example is
+     "CustomScriptExtension".
+    :type type_properties_type: str
+    :param type_handler_version: Specifies the version of the script handler.
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+     version if one is available at deployment time. Once deployed, however, the extension will not
+     upgrade minor versions unless redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param enable_automatic_upgrade: Indicates whether the extension should be automatically
+     upgraded by the platform if there is a newer version of the extension available.
+    :type enable_automatic_upgrade: bool
+    :param settings: Json formatted public settings for the extension.
+    :type settings: object
+    :param protected_settings: The extension can contain either protectedSettings or
+     protectedSettingsFromKeyVault or no protected settings at all.
+    :type protected_settings: object
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'force_update_tag': {'key': 'properties.forceUpdateTag', 'type': 'str'},
+        'publisher': {'key': 'properties.publisher', 'type': 'str'},
+        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
+        'type_handler_version': {'key': 'properties.typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
+        'enable_automatic_upgrade': {'key': 'properties.enableAutomaticUpgrade', 'type': 'bool'},
+        'settings': {'key': 'properties.settings', 'type': 'object'},
+        'protected_settings': {'key': 'properties.protectedSettings', 'type': 'object'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(VirtualMachineScaleSetVMExtensionUpdate, self).__init__(**kwargs)
+        self.name = None
+        self.type = None
+        self.force_update_tag = kwargs.get('force_update_tag', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.type_properties_type = kwargs.get('type_properties_type', None)
+        self.type_handler_version = kwargs.get('type_handler_version', None)
+        self.auto_upgrade_minor_version = kwargs.get('auto_upgrade_minor_version', None)
+        self.enable_automatic_upgrade = kwargs.get('enable_automatic_upgrade', None)
+        self.settings = kwargs.get('settings', None)
+        self.protected_settings = kwargs.get('protected_settings', None)
 
 
 class VirtualMachineScaleSetVMInstanceIDs(msrest.serialization.Model):
@@ -7369,14 +7815,15 @@ class VirtualMachineScaleSetVMProfile(msrest.serialization.Model):
     :type extension_profile:
      ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineScaleSetExtensionProfile
     :param license_type: Specifies that the image or disk that is being used was licensed on-
-     premises. This element is only used for images that contain the Windows Server operating
-     system. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` Windows_Client
-     :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
-     a request for an update, the value must match the initial value. This value cannot be updated.
+     premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
+     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
+     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-
-     licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_ :code:`<br>`:code:`<br>`
-     Minimum api-version: 2015-06-15.
+     <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
+     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
+     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :type license_type: str
     :param priority: Specifies the priority for the virtual machines in the scale set.
      :code:`<br>`:code:`<br>`Minimum api-version: 2017-10-30-preview. Possible values include:
@@ -7728,14 +8175,15 @@ class VirtualMachineUpdate(UpdateResource):
     :ivar instance_view: The virtual machine instance view.
     :vartype instance_view: ~azure.mgmt.compute.v2020_06_01.models.VirtualMachineInstanceView
     :param license_type: Specifies that the image or disk that is being used was licensed on-
-     premises. This element is only used for images that contain the Windows Server operating
-     system. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` Windows_Client
-     :code:`<br>`:code:`<br>` Windows_Server :code:`<br>`:code:`<br>` If this element is included in
-     a request for an update, the value must match the initial value. This value cannot be updated.
+     premises. :code:`<br>`:code:`<br>` Possible values for Windows Server operating system are:
+     :code:`<br>`:code:`<br>` Windows_Client :code:`<br>`:code:`<br>` Windows_Server
+     :code:`<br>`:code:`<br>` Possible values for Linux Server operating system are:
+     :code:`<br>`:code:`<br>` RHEL_BYOS (for RHEL) :code:`<br>`:code:`<br>` SLES_BYOS (for SUSE)
      :code:`<br>`:code:`<br>` For more information, see `Azure Hybrid Use Benefit for Windows Server
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-hybrid-use-benefit-
-     licensing?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json>`_ :code:`<br>`:code:`<br>`
-     Minimum api-version: 2015-06-15.
+     <https://docs.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
+     :code:`<br>`:code:`<br>` `Azure Hybrid Use Benefit for Linux Server
+     <https://docs.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
+     :code:`<br>`:code:`<br>` Minimum api-version: 2015-06-15.
     :type license_type: str
     :ivar vm_id: Specifies the VM unique ID which is a 128-bits identifier that is encoded and
      stored in all Azure IaaS VMs SMBIOS and can be read using platform BIOS commands.

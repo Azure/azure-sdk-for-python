@@ -12,7 +12,7 @@ from ._base_handler_async import ServiceBusSharedKeyCredential, ServiceBusSASTok
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common._configuration import Configuration
-from .._common.utils import generate_dead_letter_entity_name
+from .._common.utils import generate_dead_letter_entity_name, strip_protocol_from_uri
 from .._common.constants import ServiceBusSubQueue
 from ._async_utils import create_authentication
 
@@ -66,7 +66,8 @@ class ServiceBusClient(object):
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        self.fully_qualified_namespace = fully_qualified_namespace
+        # If the user provided http:// or sb://, let's be polite and strip that.
+        self.fully_qualified_namespace = strip_protocol_from_uri(fully_qualified_namespace.strip())
         self._credential = credential
         self._config = Configuration(**kwargs)
         self._connection = None

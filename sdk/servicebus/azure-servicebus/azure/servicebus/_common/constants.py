@@ -120,7 +120,7 @@ class ServiceBusReceiveMode(str, Enum):
 
 # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
 ServiceBusToAMQPReceiveModeMap = {ServiceBusReceiveMode.PEEK_LOCK:constants.ReceiverSettleMode.PeekLock,
-                                   ServiceBusReceiveMode.RECEIVE_AND_DELETE:constants.ReceiverSettleMode.ReceiveAndDelete}
+                                ServiceBusReceiveMode.RECEIVE_AND_DELETE:constants.ReceiverSettleMode.ReceiveAndDelete}
 
 class ServiceBusSessionFilter(Enum):
     NEXT_AVAILABLE = 0
