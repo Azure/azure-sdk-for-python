@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_monitor_exporter_operations import AzureMonitorExporterOperationsMixin
+from ._azure_monitor_client_operations import AzureMonitorClientOperationsMixin
 
 __all__ = [
-    'AzureMonitorExporterOperationsMixin',
+    'AzureMonitorClientOperationsMixin',
 ]

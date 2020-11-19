@@ -47,15 +47,29 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 message = ServiceBusMessage(b"Sample topic message")
                 await sender.send_messages(message)
 
+            with pytest.raises(ValueError):
+                sb_client.get_subscription_receiver(
+                    topic_name=servicebus_topic.name,
+                    subscription_name=servicebus_subscription.name,
+                    max_wait_time=0
+                )
+
             async with sb_client.get_subscription_receiver(
                     topic_name=servicebus_topic.name,
                     subscription_name=servicebus_subscription.name,
                     max_wait_time=5
             ) as receiver:
+
+                with pytest.raises(ValueError):
+                    await receiver.receive_messages(max_wait_time=-1)
+
+                with pytest.raises(ValueError):
+                    await receiver.get_streaming_message_iter(max_wait_time=0)
+
                 count = 0
                 async for message in receiver:
                     count += 1
-                    await message.complete()
+                    await receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -87,7 +101,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     count += 1
-                    await message.complete()
+                    await receiver.complete_message(message)
             assert count == 1
 
     @pytest.mark.liveTest
@@ -122,7 +136,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                     for message in messages:
                         print_message(_logger, message)
                         count += 1
-                        await message.dead_letter(reason="Testing reason", error_description="Testing description")
+                        await receiver.dead_letter_message(message, reason="Testing reason", error_description="Testing description")
                     messages = await receiver.receive_messages()
 
                 assert count == 10
@@ -136,7 +150,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
-                    await message.complete()
+                    await receiver.complete_message(message)
                     count += 1
             assert count == 0
 
@@ -149,10 +163,10 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             ) as dl_receiver:
                 count = 0
                 async for message in dl_receiver:
-                    await message.complete()
+                    await dl_receiver.complete_message(message)
                     count += 1
                     assert message.dead_letter_reason == 'Testing reason'
                     assert message.dead_letter_error_description == 'Testing description'
-                    assert message.properties[b'DeadLetterReason'] == b'Testing reason'
-                    assert message.properties[b'DeadLetterErrorDescription'] == b'Testing description'
+                    assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
+                    assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10

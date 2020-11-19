@@ -10,7 +10,8 @@ import time
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import AuthenticationRequiredError, CredentialUnavailableError, InteractiveBrowserCredential
+from azure.identity import CredentialUnavailableError, InteractiveBrowserCredential
+from azure.identity._exceptions import AuthenticationRequiredError
 from azure.identity._internal import AuthCodeRedirectServer
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
@@ -34,6 +35,19 @@ except ImportError:  # python < 3.3
 
 
 WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
+
+
+def test_tenant_id_validation():
+    """The credential should raise ValueError when given an invalid tenant_id"""
+
+    valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}
+    for tenant in valid_ids:
+        InteractiveBrowserCredential(tenant_id=tenant)
+
+    invalid_ids = {"my tenant", "my_tenant", "/", "\\", '"my-tenant"', "'my-tenant'"}
+    for tenant in invalid_ids:
+        with pytest.raises(ValueError):
+            InteractiveBrowserCredential(tenant_id=tenant)
 
 
 def test_no_scopes():
@@ -82,7 +96,7 @@ def test_authenticate():
                 tenant_id=tenant_id,
                 transport=transport,
             )
-            record = credential.authenticate(scopes=(scope,))
+            record = credential._authenticate(scopes=(scope,))
 
     assert record.authority == environment
     assert record.home_account_id == object_id + "." + home_tenant
@@ -101,7 +115,7 @@ def test_disable_automatic_authentication():
     empty_cache = TokenCache()  # empty cache makes silent auth impossible
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
     credential = InteractiveBrowserCredential(
-        disable_automatic_authentication=True, transport=transport, _cache=empty_cache
+        _disable_automatic_authentication=True, transport=transport, _cache=empty_cache
     )
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential shouldn't try interactive authentication"))):
@@ -170,7 +184,7 @@ def test_interactive_credential(mock_open, redirect_url):
     expected_token = "access-token"
     expires_in = 3600
     authority = "authority"
-    tenant_id = "tenant_id"
+    tenant_id = "tenant-id"
     endpoint = "https://{}/{}".format(authority, tenant_id)
 
     transport = msal_validating_transport(

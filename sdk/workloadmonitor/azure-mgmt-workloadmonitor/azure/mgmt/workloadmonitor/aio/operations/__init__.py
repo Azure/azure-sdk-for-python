@@ -7,9 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._operations import Operations
-from ._monitors_operations import MonitorsOperations
+from ._health_monitors_operations import HealthMonitorsOperations
 
 __all__ = [
     'Operations',
-    'MonitorsOperations',
+    'HealthMonitorsOperations',
 ]

@@ -21,7 +21,7 @@ def message_processing(sb_client, queue_name, messages):
         try:
             with sb_client.get_queue_receiver(queue_name, max_wait_time=1, session_id=NEXT_AVAILABLE_SESSION) as receiver:
                 renewer = AutoLockRenewer()
-                renewer.register(receiver.session)
+                renewer.register(receiver, receiver.session)
                 receiver.session.set_state("OPEN")
                 for message in receiver:
                     messages.append(message)
@@ -33,7 +33,7 @@ def message_processing(sb_client, queue_name, messages):
                     print("Locked until: {}".format(message.locked_until_utc))
                     print("Lock Token: {}".format(message.lock_token))
                     print("Enqueued time: {}".format(message.enqueued_time_utc))
-                    message.complete()
+                    receiver.complete_message(message)
                     if str(message) == 'shutdown':
                         receiver.session.set_state("CLOSED")
                 renewer.close()

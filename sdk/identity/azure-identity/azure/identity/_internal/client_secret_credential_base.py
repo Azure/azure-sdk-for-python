@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from msal import TokenCache
 
+from . import validate_tenant_id
 from .persistent_cache import load_service_principal_cache
 
 try:
@@ -30,10 +31,11 @@ class ClientSecretCredentialBase(ABC):
             raise ValueError(
                 "tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')"
             )
+        validate_tenant_id(tenant_id)
 
-        enable_persistent_cache = kwargs.pop("enable_persistent_cache", False)
-        if enable_persistent_cache:
-            allow_unencrypted = kwargs.pop("allow_unencrypted_cache", False)
+        _enable_persistent_cache = kwargs.pop("_enable_persistent_cache", False)
+        if _enable_persistent_cache:
+            allow_unencrypted = kwargs.pop("_allow_unencrypted_cache", False)
             cache = load_service_principal_cache(allow_unencrypted)
         else:
             cache = TokenCache()

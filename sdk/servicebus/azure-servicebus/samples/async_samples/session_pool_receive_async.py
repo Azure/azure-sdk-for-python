@@ -23,7 +23,7 @@ async def message_processing(servicebus_client, queue_name):
         try:
             async with servicebus_client.get_queue_receiver(queue_name, max_wait_time=1, session_id=NEXT_AVAILABLE_SESSION) as receiver:
                 renewer = AutoLockRenewer()
-                renewer.register(receiver.session)
+                renewer.register(receiver, receiver.session)
                 await receiver.session.set_state("OPEN")
                 async for message in receiver:
                     print("Message: {}".format(message))
@@ -34,7 +34,7 @@ async def message_processing(servicebus_client, queue_name):
                     print("Locked until: {}".format(message.locked_until_utc))
                     print("Lock Token: {}".format(message.lock_token))
                     print("Enqueued time: {}".format(message.enqueued_time_utc))
-                    await message.complete()
+                    await receiver.complete_message(message)
                     if str(message) == 'shutdown':
                         await receiver.session.set_state("CLOSED")
                         break

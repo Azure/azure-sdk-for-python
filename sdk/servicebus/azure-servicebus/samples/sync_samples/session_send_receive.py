@@ -48,7 +48,7 @@ def receive_batch_message(receiver):
     received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
     for msg in received_msgs:
         print(str(msg))
-        msg.complete()
+        receiver.complete_message(msg)
         session.renew_lock()
     session.set_state("END")
     print("Session state:", session.get_state())

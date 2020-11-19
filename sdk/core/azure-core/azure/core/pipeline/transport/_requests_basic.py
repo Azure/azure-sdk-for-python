@@ -43,6 +43,7 @@ from ._base import (
     HttpResponse,
     _HttpResponseBase
 )
+from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 
 PipelineType = TypeVar("PipelineType")
 
@@ -213,7 +214,7 @@ class RequestsTransport(HttpTransport):
         """
         session.trust_env = self._use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
-        adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
+        adapter = BiggerBlockSizeHTTPAdapter(max_retries=disable_retries)
         for p in self._protocols:
             session.mount(p, adapter)
 

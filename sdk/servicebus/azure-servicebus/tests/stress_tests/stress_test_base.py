@@ -27,6 +27,7 @@ _logger = _build_logger("stress-test", logging.WARN)
 class ReceiveType:
     push="push"
     pull="pull"
+    none=None
 
 
 class StressTestResults(object):
@@ -55,7 +56,7 @@ class StressTestRunnerState(object):
     def __repr__(self):
         return str(vars(self))
 
-    def PopulateProcessStats(self):
+    def populate_process_stats(self):
         self.timestamp = datetime.utcnow()
         try:
             self.cpu_percent = psutil.cpu_percent()
@@ -79,6 +80,7 @@ class StressTestRunner:
                  receive_delay = 0,
                  should_complete_messages = True,
                  max_message_count = 1,
+                 send_session_id = None,
                  fail_on_exception = True):
         self.senders = senders
         self.receivers = receivers
@@ -92,6 +94,7 @@ class StressTestRunner:
         self.should_complete_messages = should_complete_messages
         self.max_message_count = max_message_count
         self.fail_on_exception = fail_on_exception
+        self.send_session_id = send_session_id
 
         # Because of pickle we need to create a state object and not just pass around ourselves.
         # If we ever require multiple runs of this one after another, just make Run() reset this.
@@ -106,72 +109,82 @@ class StressTestRunner:
 
 
     # Plugin functions the caller can override to further tailor the test.
-    def OnSend(self, state, sent_message):
-        '''Called on every successful send'''
+    def on_send(self, state, sent_message, sender):
+        '''Called on every successful send, per message'''
         pass
 
-    def OnReceive(self, state, received_message):
-        '''Called on every successful receive'''
+    def on_receive(self, state, received_message, receiver):
+        '''Called on every successful receive, per message'''
         pass
 
+    def on_receive_batch(self, state, batch, receiver):
+        '''Called on every successful receive, at the batch or iterator level rather than per-message'''
+        pass
 
-    def OnComplete(self, send_results=[], receive_results=[]):
+    def post_receive(self, state, receiver):
+        '''Called after completion of every successful receive'''
+        pass
+
+    def on_complete(self, send_results=[], receive_results=[]):
         '''Called on stress test run completion'''
         pass
 
 
-    def PreProcessMessage(self, message):
+    def pre_process_message(self, message):
         '''Allows user to transform the message before batching or sending it.'''
         pass
 
 
-    def PreProcessMessageBatch(self, message):
+    def pre_process_message_batch(self, message):
         '''Allows user to transform the batch before sending it.'''
         pass
 
 
-    def PreProcessMessageBody(self, payload):
+    def pre_process_message_body(self, payload):
         '''Allows user to transform message payload before sending it.'''
         return payload
 
 
-    def _ScheduleIntervalLogger(self, end_time, description="", interval_seconds=30):
-        def _doIntervalLogging():
+    def _schedule_interval_logger(self, end_time, description="", interval_seconds=30):
+        def _do_interval_logging():
             if end_time > datetime.utcnow() and not self._should_stop:
-                self._state.PopulateProcessStats()
+                self._state.populate_process_stats()
                 _logger.critical("{} RECURRENT STATUS:".format(description))
                 _logger.critical(self._state)
-                self._ScheduleIntervalLogger(end_time, description, interval_seconds)
+                self._schedule_interval_logger(end_time, description, interval_seconds)
 
-        t = threading.Timer(interval_seconds, _doIntervalLogging)
+        t = threading.Timer(interval_seconds, _do_interval_logging)
         t.start()
 
 
-    def _ConstructMessage(self):
+    def _construct_message(self):
         if self.send_batch_size != None:
             batch = ServiceBusMessageBatch()
             for _ in range(self.send_batch_size):
-                message = ServiceBusMessage(self.PreProcessMessageBody("a" * self.message_size))
-                self.PreProcessMessage(message)
+                message = ServiceBusMessage(self.pre_process_message_body("a" * self.message_size))
+                self.pre_process_message(message)
                 batch.add_message(message)
             self.PreProcessMessageBatch(batch)
             return batch
         else:
-            message = ServiceBusMessage(self.PreProcessMessageBody("a" * self.message_size))
-            self.PreProcessMessage(message)
+            message = ServiceBusMessage(self.pre_process_message_body("a" * self.message_size))
+            self.pre_process_message(message)
             return message
 
-    def _Send(self, sender, end_time):
-        self._ScheduleIntervalLogger(end_time, "Sender " + str(self))
+
+    def _send(self, sender, end_time):
+        self._schedule_interval_logger(end_time, "Sender " + str(self))
         try:
             _logger.info("STARTING SENDER")
             with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     _logger.info("SENDING")
                     try:
-                        message = self._ConstructMessage()
+                        message = self._construct_message()
+                        if self.send_session_id != None:
+                            message.session_id = self.send_session_id
                         sender.send_messages(message)
-                        self.OnSend(self._state, message)
+                        self.on_send(self._state, message, sender)
                     except Exception as e:
                         _logger.exception("Exception during send: {}".format(e))
                         self._state.exceptions.append(e)
@@ -186,8 +199,8 @@ class StressTestRunner:
             self._should_stop = True
             raise
 
-    def _Receive(self, receiver, end_time):
-        self._ScheduleIntervalLogger(end_time, "Receiver " + str(self))
+    def _receive(self, receiver, end_time):
+        self._schedule_interval_logger(end_time, "Receiver " + str(self))
         try:
             with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
@@ -199,10 +212,10 @@ class StressTestRunner:
                             batch = receiver.get_streaming_message_iter(max_wait_time=self.max_wait_time)
 
                         for message in batch:
-                            self.OnReceive(self._state, message)
+                            self.on_receive(self._state, message, receiver)
                             try:
                                 if self.should_complete_messages:
-                                    message.complete()
+                                    receiver.complete_message(message)
                             except MessageAlreadySettled: # It may have been settled in the plugin callback.
                                 pass
                             self._state.total_received += 1
@@ -210,6 +223,7 @@ class StressTestRunner:
                             if end_time <= datetime.utcnow():
                                 break
                             time.sleep(self.receive_delay)
+                        self.post_receive(self._state, receiver)
                     except Exception as e:
                         _logger.exception("Exception during receive: {}".format(e))
                         self._state.exceptions.append(e)
@@ -223,15 +237,15 @@ class StressTestRunner:
             raise
 
 
-    def Run(self):
+    def run(self):
         start_time = datetime.utcnow()
         end_time = start_time + (self._duration_override or self.duration)
         sent_messages = 0
         received_messages = 0
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as proc_pool:
             _logger.info("STARTING PROC POOL")
-            senders = [proc_pool.submit(self._Send, sender, end_time) for sender in self.senders]
-            receivers = [proc_pool.submit(self._Receive, receiver, end_time) for receiver in self.receivers]
+            senders = [proc_pool.submit(self._send, sender, end_time) for sender in self.senders]
+            receivers = [proc_pool.submit(self._receive, receiver, end_time) for receiver in self.receivers]
 
             result = StressTestResults()
             for each in concurrent.futures.as_completed(senders + receivers):

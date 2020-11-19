@@ -57,7 +57,7 @@ LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 RERUNS_DELAY = 60
 
-SLEEP_DELAY = 20
+SLEEP_DELAY = 30
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.

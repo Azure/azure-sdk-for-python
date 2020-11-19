@@ -15,6 +15,9 @@ class MonitorDomain(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     """
@@ -24,6 +27,7 @@ class MonitorDomain(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
     }
 
@@ -32,6 +36,7 @@ class MonitorDomain(msrest.serialization.Model):
         **kwargs
     ):
         super(MonitorDomain, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.version = kwargs.get('version', 2)
 
 
@@ -40,6 +45,9 @@ class AvailabilityData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param id: Required. Identifier of a test run. Use it to correlate steps of test run and
@@ -72,6 +80,7 @@ class AvailabilityData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -103,13 +112,16 @@ class MessageData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param message: Required. Trace message.
     :type message: str
     :param severity_level: Trace severity level. Possible values include: "Verbose", "Information",
      "Warning", "Error", "Critical".
-    :type severity_level: str or ~azure_monitor_exporter.models.SeverityLevel
+    :type severity_level: str or ~azure_monitor_client.models.SeverityLevel
     :param properties: Collection of custom properties.
     :type properties: dict[str, str]
     :param measurements: Collection of custom measurements.
@@ -122,6 +134,7 @@ class MessageData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'message': {'key': 'message', 'type': 'str'},
         'severity_level': {'key': 'severityLevel', 'type': 'str'},
@@ -151,7 +164,7 @@ class MetricDataPoint(msrest.serialization.Model):
     :type name: str
     :param data_point_type: Metric type. Single measurement or the aggregated value. Possible
      values include: "Measurement", "Aggregation".
-    :type data_point_type: str or ~azure_monitor_exporter.models.DataPointType
+    :type data_point_type: str or ~azure_monitor_client.models.DataPointType
     :param value: Required. Single value for measurement. Sum of individual measurements for the
      aggregation.
     :type value: float
@@ -203,12 +216,15 @@ class MetricsData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param metrics: Required. List of metrics. Only one metric in the list is currently supported
      by Application Insights storage. If multiple data points were sent only the first one will be
      used.
-    :type metrics: list[~azure_monitor_exporter.models.MetricDataPoint]
+    :type metrics: list[~azure_monitor_client.models.MetricDataPoint]
     :param properties: Collection of custom properties.
     :type properties: dict[str, str]
     """
@@ -219,6 +235,7 @@ class MetricsData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'metrics': {'key': 'metrics', 'type': '[MetricDataPoint]'},
         'properties': {'key': 'properties', 'type': '{str}'},
@@ -240,7 +257,7 @@ class MonitorBase(msrest.serialization.Model):
      this, this should be null.
     :type base_type: str
     :param base_data: The data payload for the telemetry request.
-    :type base_data: ~azure_monitor_exporter.models.MonitorDomain
+    :type base_data: ~azure_monitor_client.models.MonitorDomain
     """
 
     _attribute_map = {
@@ -262,6 +279,9 @@ class PageViewData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param id: Required. Identifier of a page view instance. Used for correlation between page view
@@ -294,6 +314,7 @@ class PageViewData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -323,6 +344,9 @@ class PageViewPerfData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param id: Required. Identifier of a page view instance. Used for correlation between page view
@@ -365,6 +389,7 @@ class PageViewPerfData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -402,6 +427,9 @@ class RemoteDependencyData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param id: Identifier of a dependency call instance. Used for correlation with the request
@@ -445,6 +473,7 @@ class RemoteDependencyData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -480,6 +509,9 @@ class RequestData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param id: Required. Identifier of a request call instance. Used for correlation between
@@ -520,6 +552,7 @@ class RequestData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
@@ -624,6 +657,9 @@ class TelemetryEventData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param name: Required. Event name. Keep it low cardinality to allow proper grouping and useful
@@ -641,6 +677,7 @@ class TelemetryEventData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
@@ -662,14 +699,17 @@ class TelemetryExceptionData(MonitorDomain):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :type additional_properties: dict[str, object]
     :param version: Required. Schema version.
     :type version: int
     :param exceptions: Required. Exception chain - list of inner exceptions.
-    :type exceptions: list[~azure_monitor_exporter.models.TelemetryExceptionDetails]
+    :type exceptions: list[~azure_monitor_client.models.TelemetryExceptionDetails]
     :param severity_level: Severity level. Mostly used to indicate exception severity level when it
      is reported by logging library. Possible values include: "Verbose", "Information", "Warning",
      "Error", "Critical".
-    :type severity_level: str or ~azure_monitor_exporter.models.SeverityLevel
+    :type severity_level: str or ~azure_monitor_client.models.SeverityLevel
     :param problem_id: Identifier of where the exception was thrown in code. Used for exceptions
      grouping. Typically a combination of exception type and a function from the call stack.
     :type problem_id: str
@@ -686,6 +726,7 @@ class TelemetryExceptionData(MonitorDomain):
     }
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'version': {'key': 'ver', 'type': 'int'},
         'exceptions': {'key': 'exceptions', 'type': '[TelemetryExceptionDetails]'},
         'severity_level': {'key': 'severityLevel', 'type': 'str'},
@@ -727,7 +768,7 @@ class TelemetryExceptionDetails(msrest.serialization.Model):
     :param stack: Text describing the stack. Either stack or parsedStack should have a value.
     :type stack: str
     :param parsed_stack: List of stack frames. Either stack or parsedStack should have a value.
-    :type parsed_stack: list[~azure_monitor_exporter.models.StackFrame]
+    :type parsed_stack: list[~azure_monitor_client.models.StackFrame]
     """
 
     _validation = {
@@ -777,7 +818,7 @@ class TelemetryItem(msrest.serialization.Model):
      number of decimal seconds digits provided are variable (and unspecified). Consumers should
      handle this, i.e. managed code consumers should not use format 'O' for parsing as it specifies
      a fixed length. Example: 2009-06-15T13:45:30.0000000Z.
-    :type time: str
+    :type time: ~datetime.datetime
     :param sample_rate: Sampling rate used in application. This telemetry item represents 1 /
      sampleRate actual telemetry items.
     :type sample_rate: float
@@ -789,7 +830,7 @@ class TelemetryItem(msrest.serialization.Model):
      information on available properties.
     :type tags: dict[str, str]
     :param data: Telemetry data item.
-    :type data: ~azure_monitor_exporter.models.MonitorBase
+    :type data: ~azure_monitor_client.models.MonitorBase
     """
 
     _validation = {
@@ -801,7 +842,7 @@ class TelemetryItem(msrest.serialization.Model):
     _attribute_map = {
         'version': {'key': 'ver', 'type': 'int'},
         'name': {'key': 'name', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'str'},
+        'time': {'key': 'time', 'type': 'iso-8601'},
         'sample_rate': {'key': 'sampleRate', 'type': 'float'},
         'sequence': {'key': 'seq', 'type': 'str'},
         'instrumentation_key': {'key': 'iKey', 'type': 'str'},
@@ -832,7 +873,7 @@ class TrackResponse(msrest.serialization.Model):
     :param items_accepted: The number of items accepted.
     :type items_accepted: int
     :param errors: An array of error detail objects.
-    :type errors: list[~azure_monitor_exporter.models.TelemetryErrorDetails]
+    :type errors: list[~azure_monitor_client.models.TelemetryErrorDetails]
     """
 
     _attribute_map = {

@@ -42,9 +42,6 @@ async def sample_create_data_feed_async():
         DataFeedOptions,
         DataFeedRollupSettings,
         DataFeedMissingDataPointFillSettings,
-        DataFeedGranularity,
-        DataFeedIngestionSettings,
-        DataFeed
     )
 
     service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
@@ -55,45 +52,41 @@ async def sample_create_data_feed_async():
 
     client = MetricsAdvisorAdministrationClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
-    data_feed = DataFeed(
-        name="My data feed",
-        source=SQLServerDataFeed(
-            connection_string=sql_server_connection_string,
-            query=query,
-        ),
-        granularity=DataFeedGranularity("Daily"),
-        schema=DataFeedSchema(
-            metrics=[
-                DataFeedMetric(name="cost", display_name="Cost"),
-                DataFeedMetric(name="revenue", display_name="Revenue")
-            ],
-            dimensions=[
-                DataFeedDimension(name="category", display_name="Category"),
-                DataFeedDimension(name="city", display_name="City")
-            ],
-            timestamp_column="Timestamp"
-        ),
-        ingestion_settings=DataFeedIngestionSettings(
-            ingestion_begin_time=datetime.datetime(2019, 10, 1)
-        ),
-        options=DataFeedOptions(
-            data_feed_description="cost/revenue data feed",
-            rollup_settings=DataFeedRollupSettings(
-                rollup_type="AutoRollup",
-                rollup_method="Sum",
-                rollup_identification_value="__CUSTOM_SUM__"
-            ),
-            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                fill_type="SmartFilling"
-            ),
-            access_mode="Private"
-        )
-    )
-
     async with client:
-        my_sql_data_feed = await client.create_data_feed(data_feed)
+        data_feed = await client.create_data_feed(
+            name="My data feed",
+            source=SQLServerDataFeed(
+                connection_string=sql_server_connection_string,
+                query=query,
+            ),
+            granularity="Daily",
+            schema=DataFeedSchema(
+                metrics=[
+                    DataFeedMetric(name="cost", display_name="Cost"),
+                    DataFeedMetric(name="revenue", display_name="Revenue")
+                ],
+                dimensions=[
+                    DataFeedDimension(name="category", display_name="Category"),
+                    DataFeedDimension(name="city", display_name="City")
+                ],
+                timestamp_column="Timestamp"
+            ),
+            ingestion_settings=datetime.datetime(2019, 10, 1),
+            options=DataFeedOptions(
+                data_feed_description="cost/revenue data feed",
+                rollup_settings=DataFeedRollupSettings(
+                    rollup_type="AutoRollup",
+                    rollup_method="Sum",
+                    rollup_identification_value="__CUSTOM_SUM__"
+                ),
+                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                    fill_type="SmartFilling"
+                ),
+                access_mode="Private"
+            )
+        )
 
-        return my_sql_data_feed
+        return data_feed
 
     # [END create_data_feed_async]
 

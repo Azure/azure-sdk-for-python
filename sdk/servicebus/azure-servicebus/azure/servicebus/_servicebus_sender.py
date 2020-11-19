@@ -27,8 +27,7 @@ from ._common.constants import (
     MGMT_REQUEST_MESSAGE,
     MGMT_REQUEST_MESSAGES,
     MGMT_REQUEST_MESSAGE_ID,
-    MGMT_REQUEST_PARTITION_KEY,
-    MGMT_REQUEST_VIA_PARTITION_KEY
+    MGMT_REQUEST_PARTITION_KEY
 )
 
 if TYPE_CHECKING:
@@ -76,8 +75,6 @@ class SenderMixin(object):
                 message_data[MGMT_REQUEST_SESSION_ID] = message.session_id
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
-            if message.via_partition_key:
-                message_data[MGMT_REQUEST_VIA_PARTITION_KEY] = message.via_partition_key
             message_data[MGMT_REQUEST_MESSAGE] = bytearray(message.message.encode_message())
             request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body
@@ -271,7 +268,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     @classmethod
-    def from_connection_string(
+    def _from_connection_string(
         cls,
         conn_str,
         **kwargs

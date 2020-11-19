@@ -19,8 +19,8 @@ CREDENTIAL = AzureKeyCredential(key="test_api_key")
 class TestSearchBatchingClientAsync(object):
     async def test_search_indexing_buffered_sender_kwargs(self):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
-            assert client.batch_size == 500
-            assert client._max_retry_count == 3
+            assert client._batch_action_count == 512
+            assert client._max_retries == 3
             assert client._auto_flush_interval == 60
             assert client._auto_flush
 
