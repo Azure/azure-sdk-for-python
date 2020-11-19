@@ -91,4 +91,96 @@ interactions:
       code: 201
       message: Created
     url: https://amandaadlscanary2.blob.core.windows.net/filesystemd72a183a/directoryd72a183a/filename?comp=snapshot
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - d0353e6d-2a1b-11eb-ad5d-c8348e5fffbf
+      x-ms-date:
+      - Thu, 19 Nov 2020 04:00:51 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a?resource=directory
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Thu, 19 Nov 2020 04:00:50 GMT
+      ETag: '"0x8D88C3FB484792A"'
+      Last-Modified: Thu, 19 Nov 2020 04:00:51 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 318a14df-301f-00b4-0428-be3aef000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a?resource=directory
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - d0725735-2a1b-11eb-b400-c8348e5fffbf
+      x-ms-date:
+      - Thu, 19 Nov 2020 04:00:51 GMT
+      x-ms-properties:
+      - ''
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a%2Ffilename?resource=file
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Thu, 19 Nov 2020 04:00:50 GMT
+      ETag: '"0x8D88C3FB4927E8D"'
+      Last-Modified: Thu, 19 Nov 2020 04:00:51 GMT
+      Server: Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 318a14e0-301f-00b4-0528-be3aef000000
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://amandaadlscanary2.dfs.core.windows.net/filesystemd72a183a/directoryd72a183a%2Ffilename?resource=file
+- request:
+    body: null
+    headers:
+      If-None-Match:
+      - '0x111111111111111'
+      User-Agent:
+      - azsdk-python-storage-dfs/12.2.0 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      x-ms-client-request-id:
+      - d07fca85-2a1b-11eb-96bf-c8348e5fffbf
+      x-ms-date:
+      - Thu, 19 Nov 2020 04:00:51 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystemd72a183a/directoryd72a183a/filename?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length: '0'
+      Date: Thu, 19 Nov 2020 04:00:51 GMT
+      ETag: '"0x8D88C3FB4927E8D"'
+      Last-Modified: Thu, 19 Nov 2020 04:00:51 GMT
+      Server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: 1deafd85-701e-00b5-5228-be6533000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-snapshot: '2020-11-19T04:00:51.4260997Z'
+      x-ms-version: '2020-02-10'
+    status:
+      code: 201
+      message: Created
+    url: https://amandaadlscanary2.blob.core.windows.net/filesystemd72a183a/directoryd72a183a/filename?comp=snapshot
 version: 1
