@@ -732,7 +732,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             documents=_validate_input(documents, "language", language)
         )
         show_stats = kwargs.pop("show_stats", False)
-        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval) # pylint: disable=protected-access
+        polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
 
         doc_id_order = [doc.get("id") for doc in docs.documents]
