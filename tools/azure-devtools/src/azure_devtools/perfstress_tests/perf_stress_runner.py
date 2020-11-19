@@ -9,16 +9,15 @@ import pkgutil
 import sys
 import threading
 
-from .PerfStressTest import PerfStressTest
-from .RepeatedTimer import RepeatedTimer
+from .perf_stress_test import PerfStressTest
+from .repeated_timer import RepeatedTimer
+
 
 class PerfStressRunner:
     def __init__(self, test_folder_path=None):
         if test_folder_path is None:
-            # Use folder of caller
-            frame = inspect.stack()[1]
-            filename = frame[0].f_code.co_filename
-            test_folder_path = os.path.dirname(filename)
+            # Use current working directory
+            test_folder_path = os.getcwd()
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(level=logging.INFO)
@@ -77,7 +76,6 @@ class PerfStressRunner:
 
         # Dynamically enumerate all python modules under the tests path for classes that implement PerfStressTest
         for loader, name, _ in pkgutil.walk_packages([test_folder_path]):
-
             try:
                 module = loader.find_module(name).load_module(name)
             except Exception as e:

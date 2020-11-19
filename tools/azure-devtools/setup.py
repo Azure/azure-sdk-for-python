@@ -49,8 +49,14 @@ setup(
     packages=[
         'azure_devtools',
         'azure_devtools.scenario_tests',
+        'azure_devtools.perfstress_tests',
         'azure_devtools.ci_tools',
     ],
+    entry_points={
+        'console_scripts': [
+            'perfstress = azure_devtools.perfstress_tests:run_perfstress_cmd',
+        ],
+    },
     extras_require={
         'ci_tools':[
             "PyGithub>=1.40", # Can Merge PR after 1.36, "requests" and tests after 1.40
