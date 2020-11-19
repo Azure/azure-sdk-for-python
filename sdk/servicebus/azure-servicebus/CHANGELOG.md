@@ -6,6 +6,7 @@
 
 * Setting `ServiceBusMessage.partition_key` to a value different than `session_id` on the message instance now raises `ValueError`.
 * `ServiceBusSender` and `ServiceBusReceiver` are no longer reusable and will raise `ValueError` when trying to operate on a closed handler.
+* `send_messages`, `schedule_messages`, `cancel_scheduled_messages` and `receive_deferred_messages` now performs a no-op rather than raising a `ValueError` if provided an empty list of messages or an empty batch.
 * Redesigned error hierarchy based on the service-defined error condition:
   - `MessageAlreadySettled` now inherits from `ValueError` instead of `ServiceBusMessageError` as it's a client-side validation.
   - Removed `NoActiveSession` which is now replaced by `OperationTimeoutError` as the client times out when trying to connect to any available session.
