@@ -43,6 +43,7 @@ class TestAnalyze(TextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = client.begin_analyze("hello world", polling_interval=self._interval())
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -76,6 +77,7 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIsNotNone(phrases.id)
             #self.assertIsNotNone(phrases.statistics)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -113,6 +115,7 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -268,6 +271,7 @@ class TestAnalyze(TextAnalyticsTest):
                 self.assertIsNotNone(entity.offset)
                 self.assertIsNotNone(entity.confidence_score)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -316,6 +320,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -352,6 +357,7 @@ class TestAnalyze(TextAnalyticsTest):
             self.assertIsNotNone(entity.offset)
             self.assertIsNotNone(entity.confidence_score)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -414,6 +420,7 @@ class TestAnalyze(TextAnalyticsTest):
         # TODO: reproduce a warnings scenario for implementation
         pass
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -568,6 +575,7 @@ class TestAnalyze(TextAnalyticsTest):
             for idx, resp in enumerate(results):
                 self.assertEqual(resp.id, in_order[idx])
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -646,6 +654,7 @@ class TestAnalyze(TextAnalyticsTest):
             for r in results:
                 self.assertFalse(r.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -756,6 +765,7 @@ class TestAnalyze(TextAnalyticsTest):
             for r in results:
                 self.assertFalse(r.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -790,6 +800,7 @@ class TestAnalyze(TextAnalyticsTest):
             for r in results:
                 self.assertFalse(r.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -861,6 +872,7 @@ class TestAnalyze(TextAnalyticsTest):
             for r in results:
                 self.assertFalse(r.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -924,6 +936,7 @@ class TestAnalyze(TextAnalyticsTest):
             for r in tasks[0].results:
                 self.assertTrue(r.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -1043,6 +1056,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -1059,6 +1073,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -1092,6 +1107,7 @@ class TestAnalyze(TextAnalyticsTest):
             for r in tasks[0].results:
                 self.assertTrue(r.is_error)  # This is not the optimal way to represent this failure.  We are discussing a solution with the service team.
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -1177,6 +1193,7 @@ class TestAnalyze(TextAnalyticsTest):
                 polling_interval=self._interval(),
             ).result()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,

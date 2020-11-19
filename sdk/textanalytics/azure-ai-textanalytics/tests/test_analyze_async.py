@@ -58,6 +58,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
         with self.assertRaises(TypeError):
             response = await client.begin_analyze("hello world", polling_interval=self._interval())
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -94,6 +95,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 self.assertIsNotNone(phrases.id)
             # self.assertIsNotNone(phrases.statistics)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -138,6 +140,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(entity.offset)
                     self.assertIsNotNone(entity.confidence_score)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -185,6 +188,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(entity.offset)
                     self.assertIsNotNone(entity.confidence_score)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -221,6 +225,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 self.assertIn("Microsoft", phrases.key_phrases)
                 self.assertIsNotNone(phrases.id)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -264,6 +269,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     self.assertIsNotNone(entity.offset)
                     self.assertIsNotNone(entity.confidence_score)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -545,6 +551,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -567,6 +574,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -657,6 +665,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
             # self.assertEqual(results.statistics.valid_document_count, 4)
             # self.assertEqual(results.statistics.erroneous_document_count, 1)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -741,6 +750,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 for r in results:
                     self.assertFalse(r.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -780,6 +790,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                 for r in results:
                     self.assertFalse(r.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -1154,6 +1165,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                     polling_interval=self._interval()
                 )).result()
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -1353,6 +1365,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         self.assertFalse(doc.is_error)
                     # self.assertIsNotNone(doc.statistics)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
@@ -1400,6 +1413,7 @@ class TestAnalyzeAsync(AsyncTextAnalyticsTest):
                         else:
                             self.assertFalse(doc.is_error)
 
+    @pytest.mark.playback_test_only
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={
         "api_version": TextAnalyticsApiVersion.V3_1_PREVIEW_3,
