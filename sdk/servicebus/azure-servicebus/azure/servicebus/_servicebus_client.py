@@ -216,7 +216,9 @@ class ServiceBusClient(object):
         :keyword Optional[Union[ServiceBusSubQueue, str]] sub_queue: If specified, the subqueue this receiver will
          connect to.
          This includes the DeadLetter and TransferDeadLetter queues, holds messages that can't be delivered to any
-         receiver or messages that can't be processed.  The default is None, meaning connect to the primary queue.
+         receiver or messages that can't be processed.
+         The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
+         enum or equivalent string values "deadletter" and "transferdeadletter".
         :keyword receive_mode: The receive_mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
@@ -331,7 +333,7 @@ class ServiceBusClient(object):
          This includes the DeadLetter and TransferDeadLetter queues, holds messages that can't be delivered to any
          receiver or messages that can't be processed.
          The default is None, meaning connect to the primary queue.  Can be assigned values from `ServiceBusSubQueue`
-         enum or equivalent string values "DeadLetter" and "TransferDeadLetter".
+         enum or equivalent string values "deadletter" and "transferdeadletter".
         :keyword receive_mode: The receive_mode with which messages will be retrieved from the entity. The two options
          are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
          lock period before they will be removed from the subscription. Messages received with ReceiveAndDelete
