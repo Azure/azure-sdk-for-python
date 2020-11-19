@@ -141,8 +141,9 @@ class BasicPagingMethod(PagingMethodABC):
         response = self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
 
         http_response = response.http_response
-        if not 200 <= http_response.status_code < 300:
-            map_error(status_code=http_response.status_code, response=http_response, error_map=self._error_map)
+        status_code = http_response.status_code
+        if status_code < 200 or status_code >= 300:
+            map_error(status_code=status_code, response=http_response, error_map=self._error_map)
             raise HttpResponseError(response=http_response)
 
         return response
