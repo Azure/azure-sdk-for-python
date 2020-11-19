@@ -231,7 +231,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.UnauthorizedAccessError: Indicates an access/rights related failure.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 

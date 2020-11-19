@@ -169,7 +169,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :rtype: ~azure.servicebus.ServiceBusSender
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
-        :raises ~azure.servicebus.UnauthorizedAccessError: Indicates an access/rights related failure.
+        :raises ~azure.servicebus.ServiceBusAuthorizationError: Indicates an access/rights related failure.
 
         .. admonition:: Example:
 

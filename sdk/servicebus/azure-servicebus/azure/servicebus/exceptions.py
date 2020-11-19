@@ -240,11 +240,11 @@ class ServiceBusAuthenticationError(ServiceBusError):
         )
 
 
-class UnauthorizedAccessError(ServiceBusError):
+class ServiceBusAuthorizationError(ServiceBusError):
     """An error occurred when authorizing the connection."""
     def __init__(self, **kwargs):
         message = kwargs.pop("message", "An error occurred when authorizing the connection.")
-        super(UnauthorizedAccessError, self).__init__(
+        super(ServiceBusAuthorizationError, self).__init__(
             message,
             retryable=True,
             shutdown_handler=True,
@@ -386,7 +386,7 @@ class MessagingEntityAlreadyExistsError(ServiceBusError):
         )
 
 
-class QuotaExceededError(ServiceBusError):
+class ServiceBusQuotaExceededError(ServiceBusError):
     """
     The quota applied to a Service Bus resource has been exceeded while interacting with the Azure Service Bus service.
     """
@@ -397,7 +397,7 @@ class QuotaExceededError(ServiceBusError):
             "interacting with the Azure Service Bus service."
         )
 
-        super(QuotaExceededError, self).__init__(
+        super(ServiceBusQuotaExceededError, self).__init__(
             message,
             retryable=False,
             shutdown_handler=False,
@@ -405,7 +405,7 @@ class QuotaExceededError(ServiceBusError):
         )
 
 
-class ServiceBusyError(ServiceBusError):
+class ServiceBusServerBusyError(ServiceBusError):
     """
     The Azure Service Bus service reports that it is busy in response to a client request to perform an operation.
     """
@@ -415,7 +415,7 @@ class ServiceBusyError(ServiceBusError):
             "The Azure Service Bus service reports that it is busy in response to a " +
             "client request to perform an operation."
         )
-        super(ServiceBusyError, self).__init__(
+        super(ServiceBusServerBusyError, self).__init__(
             message,
             retryable=False,
             shutdown_handler=False,
@@ -461,16 +461,16 @@ class AutoLockRenewTimeout(ServiceBusError):
 
 _ERROR_CODE_TO_ERROR_MAPPING = {
     AMQPErrorCodes.LinkMessageSizeExceeded: MessageSizeExceededError,
-    AMQPErrorCodes.ResourceLimitExceeded: QuotaExceededError,
-    AMQPErrorCodes.UnauthorizedAccess: UnauthorizedAccessError,
+    AMQPErrorCodes.ResourceLimitExceeded: ServiceBusQuotaExceededError,
+    AMQPErrorCodes.UnauthorizedAccess: ServiceBusAuthorizationError,
     AMQPErrorCodes.NotImplemented: ServiceBusError,
     AMQPErrorCodes.NotAllowed: ServiceBusError,
     ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
     ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
-    ERROR_CODE_AUTH_FAILED: UnauthorizedAccessError,
+    ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,
     ERROR_CODE_ENTITY_DISABLED: MessagingEntityDisabledError,
     ERROR_CODE_ENTITY_ALREADY_EXISTS: MessagingEntityAlreadyExistsError,
-    ERROR_CODE_SERVER_BUSY: ServiceBusyError,
+    ERROR_CODE_SERVER_BUSY: ServiceBusServerBusyError,
     ERROR_CODE_SESSION_CANNOT_BE_LOCKED: SessionCannotBeLockedError,
     ERROR_CODE_SESSION_LOCK_LOST: SessionLockLostError,
     ERROR_CODE_ARGUMENT_ERROR: ServiceBusError,
