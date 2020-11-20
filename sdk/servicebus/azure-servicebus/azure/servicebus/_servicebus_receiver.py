@@ -14,6 +14,7 @@ from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
 
+from .exceptions import ServiceBusError
 from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
 from ._common.message import ServiceBusReceivedMessage
@@ -42,7 +43,6 @@ from ._common.constants import (
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
-
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
 
@@ -294,7 +294,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 time.sleep(0.05)
             self._running = True
         except:
-            self.close()
+            self._close_handler()
             raise
 
         if self._auto_lock_renewer and self._session:
@@ -351,9 +351,25 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         dead_letter_reason=None,
         dead_letter_error_description=None
     ):
+        # pylint: disable=protected-access
+        self._check_live()
         if not isinstance(message, ServiceBusReceivedMessage):
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, settle_operation)
+
+        # The following condition check is a hot fix for settling a message received for non-session queue after
+        # lock expiration.
+        # uamqp doesn't have the ability to receive disposition result returned from the service after settlement,
+        # so there's no way we could tell whether a disposition succeeds or not and there's no error condition info.
+        # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
+        # subclasses in the future after we add the missing feature support in uamqp.
+        # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
+        if not self._session and message._lock_expired:
+            raise ServiceBusError(
+                message="The lock on the message lock has expired.",
+                error=message.auto_renew_error
+            )
+
         self._do_retryable_operation(
             self._settle_message,
             timeout=None,
@@ -362,7 +378,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             dead_letter_reason=dead_letter_reason,
             dead_letter_error_description=dead_letter_error_description
         )
-        message._settled = True  # pylint: disable=protected-access
+
+        message._settled = True
 
     def _settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
@@ -426,7 +443,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
-            mgmt_handlers.lock_renew_op,
+            mgmt_handlers.message_lock_renew_op,
             timeout=timeout
         )
 
@@ -476,6 +493,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :dedent: 4
                 :caption: Receive indefinitely from an iterator in streaming fashion.
         """
+        self._check_live()
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
         return self._iter_contextual_wrapper(max_wait_time)
@@ -515,11 +533,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 :caption: Receive messages from ServiceBus.
 
         """
+        self._check_live()
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
-        self._check_live()
         messages = self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
@@ -623,10 +641,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
             sequence_number = self._last_received_sequenced_number or 1
-        if int(max_message_count) < 1:
-            raise ValueError("count must be 1 or greater.")
-        if int(sequence_number) < 1:
-            raise ValueError("start_from must be 1 or greater.")
+        if int(max_message_count) < 0:
+            raise ValueError("max_message_count must be 1 or greater.")
 
         self._open()
         message = {
@@ -652,8 +668,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -676,8 +692,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -701,8 +717,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -729,8 +745,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :param Optional[str] error_description: The detailed error description for dead-lettering the message.
         :rtype: None
         :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired if message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageSettleFailed if message settle operation fails.
+        :raises: ~azure.servicebus.exceptions.SessionLockLostError if session lock has already expired.
+        :raises: ~azure.servicebus.exceptions.ServiceBusError when errors happen.
 
         .. admonition:: Example:
 
@@ -770,8 +786,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
-        :raises: ~azure.servicebus.exceptions.MessageLockExpired is message lock has already expired.
-        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled is message has already been settled.
+        :raises: ~azure.servicebus.exceptions.MessageAlreadySettled if the message has been settled.
+        :raises: ~azure.servicebus.exceptions.MessageLockLostError if message lock has already expired.
 
         .. admonition:: Example:
 
@@ -786,10 +802,13 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         # type: ignore
         try:
             if self.session:
-                raise TypeError("Session messages cannot be renewed. Please renew the session lock instead.")
+                raise TypeError(
+                    "Renewing message lock is an invalid operation when working with sessions."
+                    "Please renew the session lock instead."
+                )
         except AttributeError:
             pass
-
+        self._check_live()
         self._check_message_alive(message, MESSAGE_RENEW_LOCK)
         token = message.lock_token
         if not token:
