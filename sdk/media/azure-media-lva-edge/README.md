@@ -18,14 +18,14 @@ After that, create the Configuration Store:
 ```Powershell
 az appconfig create --name <config-store-name> --resource-group <resource-group-name> --location eastus
 ```
-## Key Concepts
+## Key concepts
 
 sample
 ## Examples
 sample
 ## Troubleshooting
 sample
-## Next Steps
+## Next steps
 
 sample
 ## Contributing
