@@ -34,6 +34,9 @@
   - Introduced `ServiceBusServerBusyError` which would be raised when the Azure Service Bus service reports that it is busy in response to a client request to perform an operation.
   - Introduced `ServiceBusCommunicationError` which would be raised when there was a general communications error encountered when interacting with the Azure Service Bus service.
   - Introduced `SessionCannotBeLockedError` which would be raised when the requested session cannot be locked.
+* `ServiceBusClient.get_queue/topic_sender` and `ServiceBusClient.get_queue/subscription_receiver` will now
+raise `ValueError` if the `queue_name` or `topic_name` does not match the `EntityPath` in the connection string used to construct the `ServiceBusClient`.
+
 
 **BugFixes**
 
