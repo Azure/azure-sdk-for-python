@@ -33,6 +33,10 @@ class CertificateCredential(ClientCredentialBase):
     :keyword bool send_certificate_chain: if True, the credential will send the public certificate chain in the x5c
           header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults
           to False.
+    :keyword bool enable_persistent_cache: if True, the credential will store tokens in a persistent cache. Defaults to
+          False.
+    :keyword bool allow_unencrypted_cache: if True, the credential will fall back to a plaintext cache when encryption
+          is unavailable. Default to False. Has no effect when `enable_persistent_cache` is False.
     """
 
     def __init__(self, tenant_id, client_id, certificate_path, **kwargs):

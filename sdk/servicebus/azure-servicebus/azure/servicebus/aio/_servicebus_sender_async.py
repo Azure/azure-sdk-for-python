@@ -165,7 +165,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         except:
-            await self.close()
+            await self._close_handler()
             raise
 
     async def _send(self, message, timeout=None, last_exception=None):
@@ -204,6 +204,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Schedule a message to be sent in future
         """
         # pylint: disable=protected-access
+        self._check_live()
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -211,6 +212,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(messages, ServiceBusMessage):
                 request_body = self._build_schedule_request(schedule_time_utc, send_span, messages)
             else:
+                if len(messages) == 0:
+                    return []  # No-op on empty list.
                 request_body = self._build_schedule_request(schedule_time_utc, send_span, *messages)
             if send_span:
                 await self._add_span_request_attributes(send_span)
@@ -242,6 +245,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Cancelling messages scheduled to be sent in future
         """
+        self._check_live()
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -249,6 +253,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             numbers = [types.AMQPLong(sequence_numbers)]
         else:
             numbers = [types.AMQPLong(s) for s in sequence_numbers]
+        if len(numbers) == 0:
+            return None # no-op on empty list.
         request_body = {MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(numbers)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
@@ -275,9 +281,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
-                :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
+                :class: ~azure.servicebus.exceptions.MessageSizeExceededError if the size of the message is over
                   service bus frame size limit.
-                :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
                 :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happen such as connection
                  error, authentication error, and any unexpected errors.
                  It's also the top-level root class of above errors.
@@ -292,6 +297,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        self._check_live()
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -312,8 +318,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     trace_message(message, send_span)
                     add_link_to_send(message, send_span)
             if isinstance(message, ServiceBusMessageBatch) and len(message) == 0:  # pylint: disable=len-as-condition
-                raise ValueError("A ServiceBusMessageBatch or list of ServiceBusMessage "
-                                 "must have at least one ServiceBusMessage")
+                return  # Short circuit noop if an empty list or batch is provided.
             if not isinstance(message, ServiceBusMessageBatch) and not isinstance(message, ServiceBusMessage):
                 raise TypeError("Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage> "
                                 "or lists of ServiceBusMessage.")
@@ -347,6 +352,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Create ServiceBusMessageBatch object within limited size
 
         """
+        self._check_live()
         if not self._max_message_size_on_link:
             await self._open_with_retry()
 

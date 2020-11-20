@@ -18,7 +18,6 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceivedMessage
 from azure.servicebus.exceptions import (
     ServiceBusError,
-    ServiceBusConnectionError,
     ServiceBusAuthenticationError,
     ServiceBusAuthorizationError
 )
@@ -134,7 +133,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                 sender.send_messages(ServiceBusMessage("test")) 
 
             # Now do the same but with direct connstr initialization.
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(ValueError):
                 with ServiceBusSender._from_connection_string(
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,
@@ -225,3 +224,42 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         #    assert len(client._handlers) == 0
         #    with client.get_queue_sender(servicebus_queue.name) as sender:
         #        sender.send_messages(ServiceBusMessage("foo"))
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_client_credential(self,
+                                   servicebus_queue,
+                                   servicebus_namespace,
+                                   servicebus_namespace_key_name,
+                                   servicebus_namespace_primary_key,
+                                   servicebus_namespace_connection_string,
+                                   **kwargs):
+        # This should "just work" to validate known-good.
+        credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+
+        client = ServiceBusClient(hostname, credential)
+        with client:
+            assert len(client._handlers) == 0
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("foo"))
+
+        hostname = "sb://{}.servicebus.windows.net".format(servicebus_namespace.name)
+
+        client = ServiceBusClient(hostname, credential)
+        with client:
+            assert len(client._handlers) == 0
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("foo"))
+
+        hostname = "https://{}.servicebus.windows.net \
+        ".format(servicebus_namespace.name)
+
+        client = ServiceBusClient(hostname, credential)
+        with client:
+            assert len(client._handlers) == 0
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("foo"))
