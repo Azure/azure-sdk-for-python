@@ -75,7 +75,7 @@ class ChatClient(object):
 
         self._client = AzureCommunicationChatService(
             self._endpoint,
-            authentication_policy=BearerTokenCredentialPolicy(self._credential, ""),
+            authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
