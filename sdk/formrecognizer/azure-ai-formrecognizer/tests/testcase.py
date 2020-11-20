@@ -12,6 +12,7 @@ import time
 import six
 import pytest
 import logging
+from collections import namedtuple
 from azure.core.credentials import AzureKeyCredential, AccessToken
 from azure.ai.formrecognizer._helpers import (
     adjust_value_type,
@@ -35,6 +36,15 @@ from azure_devtools.scenario_tests.utilities import is_text_payload
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 REGION = os.getenv('REGION', 'centraluseuap')
+ENDPOINT = os.getenv('ENDPOINT', 'None')
+NAME = os.getenv('NAME', 'None')
+RESOURCE_GROUP = os.getenv('RESOURCE_GROUP', 'None')
+
+
+ResourceGroup = namedtuple(
+    'ResourceGroup',
+    ['name']
+)
 
 
 class RequestBodyReplacer(RecordingProcessor):
@@ -97,6 +107,7 @@ class FormRecognizerTest(AzureTestCase):
 
     def __init__(self, method_name):
         super(FormRecognizerTest, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(AccessTokenReplacer())
         self.recording_processors.append(RequestBodyReplacer())
         self.configure_logging()
@@ -712,35 +723,46 @@ class GlobalClientPreparer(AzureMgmtPreparer):
 
 @pytest.fixture(scope="session")
 def form_recognizer_account():
-    test_case = AzureTestCase("__init__")
-    rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location=REGION)
-    form_recognizer_preparer = CognitiveServicesAccountPreparer(
-        random_name_enabled=True,
-        kind="formrecognizer",
-        name_prefix='pycog',
-        location=REGION
-    )
+    # temp allow an existing resource to be used instead of creating an FR resource on the fly
+    if ENDPOINT != "None":
+        FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = ENDPOINT
+        if REGION == "centraluseuap":
+            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("FORM_RECOGNIZER_PYTHON_CANARY_API_KEY")
+        else:
+            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("FORM_RECOGNIZER_PYTHON_API_KEY")
+        FormRecognizerTest._FORM_RECOGNIZER_NAME = NAME
+        FormRecognizerTest._RESOURCE_GROUP = ResourceGroup(name=RESOURCE_GROUP)
+        yield
+    else:
+        test_case = AzureTestCase("__init__")
+        rg_preparer = ResourceGroupPreparer(random_name_enabled=True, name_prefix='pycog', location=REGION)
+        form_recognizer_preparer = CognitiveServicesAccountPreparer(
+            random_name_enabled=True,
+            kind="formrecognizer",
+            name_prefix='pycog',
+            location=REGION
+        )
 
-    try:
-        rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
-        FormRecognizerTest._RESOURCE_GROUP = rg_kwargs['resource_group']
         try:
-            form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(
-                test_case, **rg_kwargs)
-            if test_case.is_live:
-                time.sleep(60)  # current ask until race condition bug fixed
-            FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
-            FormRecognizerTest._FORM_RECOGNIZER_NAME = form_recognizer_name
-            yield
-        finally:
-            form_recognizer_preparer.remove_resource(
-                form_recognizer_name,
-                resource_group=rg_kwargs['resource_group']
-            )
-            FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = None
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = None
+            rg_name, rg_kwargs = rg_preparer._prepare_create_resource(test_case)
+            FormRecognizerTest._RESOURCE_GROUP = rg_kwargs['resource_group']
+            try:
+                form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(
+                    test_case, **rg_kwargs)
+                if test_case.is_live:
+                    time.sleep(60)  # current ask until race condition bug fixed
+                FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
+                FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
+                FormRecognizerTest._FORM_RECOGNIZER_NAME = form_recognizer_name
+                yield
+            finally:
+                form_recognizer_preparer.remove_resource(
+                    form_recognizer_name,
+                    resource_group=rg_kwargs['resource_group']
+                )
+                FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = None
+                FormRecognizerTest._FORM_RECOGNIZER_KEY = None
 
-    finally:
-        rg_preparer.remove_resource(rg_name)
-        FormRecognizerTest._RESOURCE_GROUP = None
+        finally:
+            rg_preparer.remove_resource(rg_name)
+            FormRecognizerTest._RESOURCE_GROUP = None
