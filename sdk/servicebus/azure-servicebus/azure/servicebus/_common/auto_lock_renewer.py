@@ -178,9 +178,9 @@ class AutoLockRenewer(object):
             raise ServiceBusError("The AutoLockRenewer has already been shutdown. Please create a new instance for"
                                   " auto lock renewing.")
         if renewable.locked_until_utc is None:
-            raise ValueError("Only azure.servicebus.ServiceBusReceivedMessage objects in PeekLock receive mode may"
+            raise ValueError("Only azure.servicebus.ServiceBusReceivedMessage objects in PEEK_LOCK receive mode may"
                             "be lock-renewed.  (E.g. only messages received via receive() or the receiver iterator,"
-                            "not using ReceiveAndDelete receive mode, and not returned from Peek)")
+                            "not using RECEIVE_AND_DELETE receive mode, and not returned from Peek)")
 
         starttime = get_renewable_start_time(renewable)
 
