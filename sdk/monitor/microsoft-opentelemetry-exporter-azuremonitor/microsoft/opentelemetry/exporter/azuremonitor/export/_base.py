@@ -66,8 +66,7 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = map(
-                    lambda x: TelemetryItem(**x), blob.get())
+                envelopes = [TelemetryItem(**x) for x in blob.get()]
                 result = self._transmit(list(envelopes))
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
@@ -105,8 +104,7 @@ class BaseExporter:
                             envelopes[error.index] if error.index is None else "",
                         )
                 if resend_envelopes:
-                    envelopes_to_store = map(
-                        lambda x: x.as_dict(), resend_envelopes)
+                    envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                     self.storage.put(envelopes_to_store)
 
             except HttpResponseError as response_error:
