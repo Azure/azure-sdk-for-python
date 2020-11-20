@@ -33,11 +33,19 @@ from .constants import (
     ANNOTATION_SYMBOL_KEY_MAP,
     MESSAGE_PROPERTY_MAX_LENGTH
 )
+
+from .utils import (
+    utc_from_timestamp,
+    utc_now,
+    transform_messages_to_sendable_if_needed,
+    trace_message
+)
 from ..exceptions import MessageSizeExceededError
-from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
+
 if TYPE_CHECKING:
     from ..aio._servicebus_receiver_async import ServiceBusReceiver as AsyncServiceBusReceiver
     from .._servicebus_receiver import ServiceBusReceiver
+    from azure.core.tracing import AbstractSpan
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -483,14 +491,16 @@ class ServiceBusMessageBatch(object):
         return "ServiceBusMessageBatch({})".format(batch_repr)
 
     def __len__(self):
+        # type: () -> int
         return self._count
 
-    def _from_list(self, messages):
+    def _from_list(self, messages, parent_span=None):
+        # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
         for each in messages:
             if not isinstance(each, ServiceBusMessage):
-                raise TypeError("Only Message or an iterable object containing Message objects are accepted."
-                                "Received instead: {}".format(each.__class__.__name__))
-            self.add_message(each)
+                raise TypeError("Only ServiceBusMessage or an iterable object containing ServiceBusMessage "
+                                "objects are accepted. Received instead: {}".format(each.__class__.__name__))
+            self._add(each, parent_span)
 
     @property
     def max_size_in_bytes(self):
@@ -523,7 +533,13 @@ class ServiceBusMessageBatch(object):
         :rtype: None
         :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
+        return self._add(message)
+
+    def _add(self, message, parent_span=None):
+        # type: (ServiceBusMessage, AbstractSpan) -> None
+        """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_to_sendable_if_needed(message)
+        trace_message(message, parent_span) # parent_span is e.g. if built as part of a send operation.
         message_size = message.message.get_message_encoded_size()
 
         # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to

@@ -5,9 +5,10 @@
 # -------------------------------------------------------------------------
 import uuid
 import functools
-from typing import Optional, Callable
+from typing import Optional, Callable, TYPE_CHECKING
 
 from uamqp import Source
+
 from .message import ServiceBusReceivedMessage
 from .constants import (
     NEXT_AVAILABLE_SESSION,
@@ -28,7 +29,11 @@ from ..exceptions import (
     _ServiceBusErrorPolicy,
     MessageAlreadySettled
 )
-from .utils import utc_from_timestamp, utc_now
+from .utils import utc_from_timestamp, utc_now, trace_link_message
+
+if TYPE_CHECKING:
+    from azure.core.tracing import AbstractSpan
+    from .message import ServiceBusMessage
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -76,6 +81,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(message=received, receive_mode=self._receive_mode, receiver=self)
+        trace_link_message(message)
         self._last_received_sequenced_number = message.sequence_number
         return message
 
