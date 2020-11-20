@@ -9,11 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ManagedServicesClientConfiguration
-from ._managed_services_client import ManagedServicesClient
-__all__ = ['ManagedServicesClient', 'ManagedServicesClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class MultiFactorAuthProvider(str, Enum):
 
+    azure = "Azure"
+    none = "None"
+
+
+class ProvisioningState(str, Enum):
+
+    not_specified = "NotSpecified"
+    accepted = "Accepted"
+    running = "Running"
+    ready = "Ready"
+    creating = "Creating"
+    created = "Created"
+    deleting = "Deleting"
+    deleted = "Deleted"
+    canceled = "Canceled"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    updating = "Updating"
