@@ -804,7 +804,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             async with sb_client.get_queue_receiver(servicebus_queue.name,
                                               session_id=session_id,
-                                              receive_mode=ReceiveMode.ReceiveAndDelete,
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
                                               auto_lock_renewer=AutoLockRenewer()) as receiver:
                 assert receiver.receive_messages()
                 assert not failures

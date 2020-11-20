@@ -744,7 +744,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             auto_lock_renewer = AutoLockRenewer(on_lock_renew_failure=should_not_run)
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               session_id=session_id,
-                                              receive_mode=ReceiveMode.ReceiveAndDelete,
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
                                               auto_lock_renewer=auto_lock_renewer) as receiver:
             
                 assert receiver.receive_messages()
