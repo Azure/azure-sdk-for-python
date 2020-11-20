@@ -111,21 +111,11 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         return str(self.message)
 
     def _build_message(self, body):
-        def _validate_body_type(body, allow_none=False):
-            if not (isinstance(body, (six.string_types, six.binary_type)) or (body is None and allow_none)):
-                raise TypeError("ServiceBusMessage body must be a string, bytes, None, or a list of string or bytes "
-                                "elements. Got instead: {}".format(type(body) if allow_none else "[... {} ...]"
-                                                                                                 .format(type(body))))
+        if not (isinstance(body, (six.string_types, six.binary_type)) or (body is None)):
+            raise TypeError("ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(
+                type(body)))
 
-        if isinstance(body, list) and body:  # TODO: This only works for a list of bytes/strings
-            _validate_body_type(body[0])
-            self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
-            for more in body[1:]:
-                _validate_body_type(more)
-                self.message._body.append(more)  # pylint: disable=protected-access
-        else:
-            _validate_body_type(body, allow_none=True)
-            self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
+        self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
     def _set_message_annotations(self, key, value):
         if not self.message.annotations:
