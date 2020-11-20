@@ -26,11 +26,7 @@ from .constants import (
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
-    ServiceBusMessageError,
-    MessageAlreadySettled,
-    MessageLockExpired,
-    SessionLockExpired,
-    MessageSettleFailed
+    MessageAlreadySettled
 )
 from .utils import utc_from_timestamp, utc_now
 
@@ -86,15 +82,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = message.sequence_number
         return message
 
-    def _check_live(self):
-        """check whether the receiver is alive"""
-        # pylint: disable=protected-access
-        if self._shutdown.is_set():
-            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
-                             "create a new instance.")
-        if self._session and self._session._lock_expired:  # pylint: disable=protected-access
-            raise SessionLockExpired(error=self._session.auto_renew_error)
-
     def _get_source(self):
         # pylint: disable=protected-access
         if self._session:
@@ -107,21 +94,24 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _check_message_alive(self, message, action):
         # pylint: disable=no-member, protected-access
         if message._is_peeked_message:
-            raise MessageSettleFailed(action, ServiceBusMessageError("Messages received by peek can not be settled."))
-        if not self._running:
-            raise MessageSettleFailed(action, ServiceBusMessageError("Orphan message had no open connection."))
+            raise ValueError(
+                "The operation {} is not supported for peeked messages."
+                "Only messages received using receive methods in PeekLock mode can be settled.".format(action)
+            )
+
+        if self._receive_mode == ReceiveMode.ReceiveAndDelete:
+            raise ValueError(
+                "The operation {} is not supported in 'ReceiveAndDelete' receive mode.".format(action)
+            )
+
         if message._settled:
-            raise MessageAlreadySettled(action)
-        try:
-            if message._lock_expired:
-                raise MessageLockExpired(error=message.auto_renew_error)
-        except TypeError:
-            pass
-        try:
-            if self.session._lock_expired:
-                raise SessionLockExpired(error=self.session.auto_renew_error)
-        except AttributeError:
-            pass
+            raise MessageAlreadySettled(action=action)
+
+        if not self._running:
+            raise ValueError(
+                "Failed to {} the message as the handler has already been shutdown."
+                "Please use ServiceBusClient to create a new instance.".format(action)
+            )
 
     def _settle_message_via_receiver_link(
         self,

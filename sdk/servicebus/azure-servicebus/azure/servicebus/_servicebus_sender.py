@@ -55,7 +55,7 @@ class SenderMixin(object):
             if last_exception:
                 error = last_exception
             else:
-                error = OperationTimeoutError("Send operation timed out")
+                error = OperationTimeoutError(message="Send operation timed out")
             _LOGGER.info("%r send operation timed out. (%r)", self._name, error)
             raise error
         self._handler._msg_timeout = timeout * 1000  # type: ignore
@@ -217,7 +217,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or uamqp.constants.MAX_MESSAGE_LENGTH_BYTES
         except:
-            self.close()
+            self._close_handler()
             raise
 
     def _send(self, message, timeout=None, last_exception=None):
@@ -253,6 +253,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Schedule a message to be sent in future
         """
         # pylint: disable=protected-access
+        self._check_live()
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -291,6 +292,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Cancelling messages scheduled to be sent in future
         """
+        self._check_live()
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -323,9 +325,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :rtype: None
         :raises:
                 :class: ~azure.servicebus.exceptions.OperationTimeoutError if sending times out.
-                :class: ~azure.servicebus.exceptions.MessageContentTooLarge if the size of the message is over
+                :class: ~azure.servicebus.exceptions.MessageSizeExceededError if the size of the message is over
                   service bus frame size limit.
-                :class: ~azure.servicebus.exceptions.MessageSendFailed if the message fails to send
                 :class: ~azure.servicebus.exceptions.ServiceBusError when other errors happen such as connection
                  error, authentication error, and any unexpected errors.
                  It's also the top-level root class of above errors.
@@ -340,6 +341,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        self._check_live()
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -385,6 +387,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Create ServiceBusMessageBatch object within limited size
 
         """
+        self._check_live()
         if not self._max_message_size_on_link:
             self._open_with_retry()
 
