@@ -35,6 +35,25 @@ semantics with the sender or receiver lifetime.
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py ) |
 | `QueueClient.from_connection_string(idle_timeout=None)` | `ServiceBusClient.from_connection_string.get_queue_receiver(max_wait_time=None)` | [providing a timeout](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) |
 
+### Sub-client initialization
+
+In v0.50, to send or receive messages, a `QueueClient` would be created directly or from the `ServiceBusClient.get_queue` method,
+after which user would call `get_sender` or `get_receiver` methods. Alternatively, `azure.servicebus.send_handler.Sender` and `azure.servicebus.receive_handler.Receiver` were used.
+
+In v7.0, these are migrated to `ServiceBusSender` and `ServiceBusReceiver`. Note that these are internal sub-clients and should be initialized from the root `ServiceBusClient` as follows.
+
+```Python
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_sender(queue_name) as sender:
+        # Sending a single message
+        single_message = ServiceBusMessage("Single message")
+        sender.send_messages(single_message)
+
+with ServiceBusClient.from_connection_string(connstr) as client:
+    with client.get_queue_receiver(queue_name, max_wait_time=30) as receiver:
+        message = receiver.next()
+```
+
 ### Receiving messages
 
 | In v0.50 | Equivalent in v7 | Sample |
