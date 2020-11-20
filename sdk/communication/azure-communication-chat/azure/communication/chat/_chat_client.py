@@ -11,7 +11,6 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
 
 from ._chat_thread_client import ChatThreadClient
 from ._common import CommunicationUserCredentialPolicy
@@ -152,15 +151,18 @@ class ChatClient(object):
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
         create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants)
 
-        response, create_chat_thread_result = self._client.create_chat_thread(create_thread_request, cls=return_response, **kwargs)
+        response, create_chat_thread_result = self._client.create_chat_thread(
+            create_thread_request, cls=return_response, **kwargs)
         if response is not None:
             response_header = response.http_response.headers
-            if 'Azure-Acs-InvalidParticipants' in response_header.keys() and response_header['Azure-Acs-InvalidParticipants'] is not None:
+            if ('Azure-Acs-InvalidParticipants' in response_header.keys() and
+                response_header['Azure-Acs-InvalidParticipants'] is not None):
                 invalid_participant_and_reason_list = response_header['Azure-Acs-InvalidParticipants'].split('|')
                 errors = []
                 for invalid_participant_and_reason in invalid_participant_and_reason_list:
                     participant, reason = invalid_participant_and_reason.split(',', 1)
-                    errors.append('participant ' + participant + ' failed to join thread ' + create_chat_thread_result.id + ' return statue code ' + reason)
+                    errors.append('participant ' + participant + ' failed to join thread '
+                    + create_chat_thread_result.id + ' return statue code ' + reason)
                 raise ValueError(errors)
         return ChatThreadClient(
             endpoint=self._endpoint,
