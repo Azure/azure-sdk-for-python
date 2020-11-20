@@ -101,7 +101,7 @@ class BaseExporter:
                             "Data drop %s: %s %s.",
                             error.status_code,
                             error.message,
-                            envelopes[error.index] if error.index is None else "",
+Typo                            envelopes[error.index] if error.index is not None else "",
                         )
                 if resend_envelopes:
                     envelopes_to_store = [x.as_dict() for x in resend_envelopes]
