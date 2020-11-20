@@ -1995,20 +1995,20 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         message = ServiceBusMessage("body")
 
         with pytest.raises(AttributeError): # Note: If this is made read-writeable, this would be TypeError
-            message.raw_amqp_message.properties = {"properties":1}
+            message.amqp_annotated_message.properties = {"properties":1}
         # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
-        # message.raw_amqp_message.properties.subject = "subject"
+        # message.amqp_annotated_message.properties.subject = "subject"
         # 
-        # message.raw_amqp_message.application_properties = {b"application_properties":1}
+        # message.amqp_annotated_message.application_properties = {b"application_properties":1}
         # 
-        # message.raw_amqp_message.annotations = {b"annotations":2}
-        # message.raw_amqp_message.delivery_annotations = {b"delivery_annotations":3}
+        # message.amqp_annotated_message.annotations = {b"annotations":2}
+        # message.amqp_annotated_message.delivery_annotations = {b"delivery_annotations":3}
         # 
         # with pytest.raises(TypeError):
-        #     message.raw_amqp_message.header = {"header":4}
-        # message.raw_amqp_message.header.priority = 5
+        #     message.amqp_annotated_message.header = {"header":4}
+        # message.amqp_annotated_message.header.priority = 5
         # 
-        # message.raw_amqp_message.footer = {b"footer":6}
+        # message.amqp_annotated_message.footer = {b"footer":6}
 
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -2017,21 +2017,21 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message)
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     message = receiver.receive_messages()[0]
-                    assert message.raw_amqp_message.application_properties == None \
-                        and message.raw_amqp_message.annotations != None \
-                        and message.raw_amqp_message.delivery_annotations != None \
-                        and message.raw_amqp_message.footer == None \
-                        and message.raw_amqp_message.properties != None \
-                        and message.raw_amqp_message.header != None
+                    assert message.amqp_annotated_message.application_properties == None \
+                        and message.amqp_annotated_message.annotations != None \
+                        and message.amqp_annotated_message.delivery_annotations != None \
+                        and message.amqp_annotated_message.footer == None \
+                        and message.amqp_annotated_message.properties != None \
+                        and message.amqp_annotated_message.header != None
                     # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
                     #
-                    # assert message.raw_amqp_message.properties.subject == b"subject"
-                    # assert message.raw_amqp_message.application_properties[b"application_properties"] == 1
-                    # assert message.raw_amqp_message.annotations[b"annotations"] == 2
+                    # assert message.amqp_annotated_message.properties.subject == b"subject"
+                    # assert message.amqp_annotated_message.application_properties[b"application_properties"] == 1
+                    # assert message.amqp_annotated_message.annotations[b"annotations"] == 2
                     # # delivery_annotations and footer disabled pending uamqp bug https://github.com/Azure/azure-uamqp-python/issues/169
-                    # #assert message.raw_amqp_message.delivery_annotations[b"delivery_annotations"] == 3
-                    # assert message.raw_amqp_message.header.priority == 5
-                    # #assert message.raw_amqp_message.footer[b"footer"] == 6
+                    # #assert message.amqp_annotated_message.delivery_annotations[b"delivery_annotations"] == 3
+                    # assert message.amqp_annotated_message.header.priority == 5
+                    # #assert message.amqp_annotated_message.footer[b"footer"] == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

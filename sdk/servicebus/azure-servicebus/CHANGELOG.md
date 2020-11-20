@@ -7,7 +7,6 @@
 * `ServiceBusSender` and `ServiceBusReceiver` are no more reusable and will raise `ValueError` when trying to operate on a closed handler.
 * `ServiceBusMessage` will now raise a `TypeError` when provided an invalid body type.  Valid bodies are strings, bytes, and None.  Lists are no longer accepted, as they simply concatenated the contents prior.
 * `send_messages`, `schedule_messages`, `cancel_scheduled_messages` and `receive_deferred_messages` now performs a no-op rather than raising a `ValueError` if provided an empty list of messages or an empty batch.
-* `amqp_annotated_message` has been renamed to `raw_amqp_message` to normalize with other SDKs.
 
 **BugFixes**
 

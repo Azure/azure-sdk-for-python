@@ -62,7 +62,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     :keyword str reply_to: The address of an entity to send replies to.
     :keyword str reply_to_session_id: The session identifier augmenting the `reply_to` address.
 
-    :ivar AMQPAnnotatedMessage raw_amqp_message: Advanced use only.
+    :ivar AMQPAnnotatedMessage amqp_annotated_message: Advanced use only.
         The internal AMQP message payload that is sent or received.
 
     .. admonition:: Example:
@@ -104,8 +104,8 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             self.time_to_live = kwargs.pop("time_to_live", None)
             self.partition_key = kwargs.pop("partition_key", None)
 
-        # If message is the full message, raw_amqp_message is the "public facing interface" for what we expose.
-        self.raw_amqp_message = AMQPAnnotatedMessage(self.message) # type: AMQPAnnotatedMessage
+        # If message is the full message, amqp_annotated_message is the "public facing interface" for what we expose.
+        self.amqp_annotated_message = AMQPAnnotatedMessage(self.message) # type: AMQPAnnotatedMessage
 
     def __str__(self):
         return str(self.message)
