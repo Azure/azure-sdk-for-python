@@ -23,7 +23,8 @@ from .._common.constants import (
     ASSOCIATEDLINKPROPERTYNAME,
     CONTAINER_PREFIX, MANAGEMENT_PATH_SUFFIX)
 from ..exceptions import (
-    ServiceBusError,
+    ServiceBusConnectionError,
+    SessionLockLostError,
     OperationTimeoutError,
     _create_servicebus_exception
 )
@@ -109,29 +110,62 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         return ServiceBusSharedKeyCredential(policy, key)
 
     async def __aenter__(self):
+        if self._shutdown.is_set():
+            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
+                             "create a new instance.")
         await self._open_with_retry()
         return self
 
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _handle_exception(self, exception, **kwargs):
-        error, error_need_close_handler, error_need_raise = \
-            _create_servicebus_exception(_LOGGER, exception, self, **kwargs)
-        if error_need_close_handler:
+    async def _handle_exception(self, exception):
+        # pylint: disable=protected-access
+        error = _create_servicebus_exception(_LOGGER, exception)
+
+        try:
+            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
+            # the receiver should no longer be used and should create a new session receiver
+            # instance to receive from session. There are pitfalls WRT both next session IDs,
+            # and the diversity of session failure modes, that motivates us to disallow this.
+            if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
+                self._session._lock_lost = True
+                await self._close_handler()
+                raise error
+        except AttributeError:
+            pass
+
+        if error._shutdown_handler:
             await self._close_handler()
-        if error_need_raise:
+        if not error._retryable:
             raise error
 
         return error
 
-    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
+    def _check_live(self):
+        """check whether the handler is alive"""
         # pylint: disable=protected-access
         if self._shutdown.is_set():
             raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
                              "create a new instance.")
+        # The following client validation is for two purposes in a session receiver:
+        # 1. self._session._lock_lost is set when a session receiver encounters a connection error,
+        # once there's a connection error, we don't retry on the session entity and simply raise SessionlockLostError.
+        # 2. self._session._lock_expired is a hot fix as client validation for session lock expiration.
+        # Because currently uamqp doesn't have the ability to detect remote session lock lost.
+        # Usually the service would send a detach frame once a session lock gets expired, however, in the edge case
+        # when we drain messages in a queue and try to settle messages after lock expiration,
+        # we are not able to receive the detach frame by calling uamqp connection.work(),
+        # Eventually this should be a fix in the uamqp library.
+        # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
+        try:
+            if self._session and (self._session._lock_lost or self._session._lock_expired):
+                raise SessionLockLostError(error=self._session.auto_renew_error)
+        except AttributeError:
+            pass
 
+    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -148,7 +182,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             except StopAsyncIteration:
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = await self._handle_exception(exception, **kwargs)
+                last_exception = await self._handle_exception(exception)
                 if require_last_exception:
                     kwargs["last_exception"] = last_exception
                 retried_times += 1
@@ -243,7 +277,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 callback=callback)
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, compat.TimeoutException):
-                raise OperationTimeoutError("Management operation timed out.", error=exp)
+                raise OperationTimeoutError(error=exp)
             raise
 
     async def _mgmt_request_response_with_retry(self, mgmt_operation, message, callback, timeout=None, **kwargs):
