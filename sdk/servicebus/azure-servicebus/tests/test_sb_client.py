@@ -90,6 +90,11 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         with pytest.raises(ValueError):
             fake_client.get_subscription_receiver('topic', 'subscription')
 
+        fake_client.get_queue_sender('mockentity')
+        fake_client.get_queue_receiver('mockentity')
+        fake_client.get_topic_sender('mockentity')
+        fake_client.get_subscription_receiver('mockentity', 'subscription')
+
         fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
                    "SharedAccessKeyName=mock;SharedAccessKey=mock"
         fake_client = ServiceBusClient.from_connection_string(fake_str)
