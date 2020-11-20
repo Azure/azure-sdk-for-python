@@ -1723,3 +1723,32 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 message = await receiver.__anext__()
                 assert message.body is None
                 await receiver.complete_message(message)
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    async def test_async_queue_by_servicebus_client_enum_case_sensitivity(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        # Note: This test is currently intended to enforce case-sensitivity.  If we eventually upgrade to the Fancy Enums being used with new autorest,
+        # we may want to tweak this.
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE.value, 
+                                              max_wait_time=5) as receiver:
+                pass
+            with pytest.raises(ValueError):
+                async with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                  receive_mode=str.upper(ServiceBusReceiveMode.RECEIVE_AND_DELETE.value),
+                                                  max_wait_time=5) as receiver:
+                    raise Exception("Should not get here, should be case sensitive.")
+            async with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                              sub_queue=ServiceBusSubQueue.DEAD_LETTER.value,
+                                              max_wait_time=5) as receiver:
+                pass
+            with pytest.raises(ValueError):
+                async with sb_client.get_queue_receiver(servicebus_queue.name, 
+                                                  sub_queue=str.upper(ServiceBusSubQueue.DEAD_LETTER.value),
+                                                  max_wait_time=5) as receiver:
+                    raise Exception("Should not get here, should be case sensitive.")
