@@ -129,33 +129,27 @@ class LocalFileStorage:
         lease_deadline = _fmt(now)
         retention_deadline = _fmt(now - _seconds(self.retention_period))
         timeout_deadline = _fmt(now - _seconds(self.write_timeout))
-        for name in sorted(os.listdir(self.path)):
-            path = os.path.join(self.path, name)
-            if not os.path.isfile(path):
-                continue  # skip if not a file
-            if path.endswith(".tmp"):
-                if name < timeout_deadline:
-                    try:
+        try:
+            for name in sorted(os.listdir(self.path)):
+                path = os.path.join(self.path, name)
+                if not os.path.isfile(path):
+                    continue  # skip if not a file
+                if path.endswith(".tmp"):
+                    if name < timeout_deadline:
                         os.remove(path)  # TODO: log data loss
-                    except Exception:
-                        pass  # keep silent
-            if path.endswith(".lock"):
-                if path[path.rindex("@") + 1 : -5] > lease_deadline:
-                    continue  # under lease
-                new_path = path[: path.rindex("@")]
-                try:
+                if path.endswith(".lock"):
+                    if path[path.rindex("@") + 1: -5] > lease_deadline:
+                        continue  # under lease
+                    new_path = path[: path.rindex("@")]
                     os.rename(path, new_path)
-                except Exception:
-                    continue  # keep silent
-                path = new_path
-            if path.endswith(".blob"):
-                if name < retention_deadline:
-                    try:
+                    path = new_path
+                if path.endswith(".blob"):
+                    if name < retention_deadline:
                         os.remove(path)  # TODO: log data loss
-                    except Exception:
-                        pass  # keep silent
-                else:
-                    yield LocalFileBlob(path)
+                    else:
+                        yield LocalFileBlob(path)
+        except Exception:
+            pass  # keep silent
 
     def get(self):
         cursor = self.gets()
