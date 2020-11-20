@@ -5,9 +5,10 @@
 # -------------------------------------------------------------------------
 import uuid
 import functools
-from typing import Optional, Callable
+from typing import Optional, Callable, TYPE_CHECKING
 
 from uamqp import Source
+
 from .message import ServiceBusReceivedMessage
 from .constants import (
     NEXT_AVAILABLE_SESSION,
@@ -15,7 +16,7 @@ from .constants import (
     SESSION_LOCKED_UNTIL,
     DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
-    ReceiveMode,
+    ServiceBusReceiveMode,
     DEADLETTERNAME,
     RECEIVER_LINK_DEAD_LETTER_REASON,
     RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
@@ -26,13 +27,13 @@ from .constants import (
 )
 from ..exceptions import (
     _ServiceBusErrorPolicy,
-    ServiceBusMessageError,
-    MessageAlreadySettled,
-    MessageLockExpired,
-    SessionLockExpired,
-    MessageSettleFailed
+    MessageAlreadySettled
 )
-from .utils import utc_from_timestamp, utc_now
+from .utils import utc_from_timestamp, utc_now, trace_link_message
+
+if TYPE_CHECKING:
+    from azure.core.tracing import AbstractSpan
+    from .message import ServiceBusMessage
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -46,10 +47,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
         self._auth_uri = "sb://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
         self._entity_uri = "amqps://{}/{}".format(self.fully_qualified_namespace, self.entity_path)
-        self._receive_mode = kwargs.get("receive_mode", ReceiveMode.PeekLock)
-        # While we try to leave failures to the service, in this case the errors lower down the stack are less clear.
-        if not isinstance(self._receive_mode, ReceiveMode):
-            raise TypeError("Parameter 'receive_mode' must be of type ReceiveMode")
+        self._receive_mode = ServiceBusReceiveMode(kwargs.get("receive_mode", ServiceBusReceiveMode.PEEK_LOCK))
 
         self._session_id = kwargs.get("session_id")
         self._error_policy = _ServiceBusErrorPolicy(
@@ -76,24 +74,16 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
         self._auto_lock_renewer = kwargs.get("auto_lock_renewer", None)
         if self._auto_lock_renewer \
-                and self._receive_mode == ReceiveMode.ReceiveAndDelete \
+                and self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE \
                 and self._session_id is None:
-            raise ValueError("Messages received in ReceiveAndDelete receive mode cannot have their locks removed "
+            raise ValueError("Messages received in RECEIVE_AND_DELETE receive mode cannot have their locks removed "
                              "as they have been deleted, providing an AutoLockRenewer in this mode is invalid.")
 
     def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(message=received, receive_mode=self._receive_mode, receiver=self)
+        trace_link_message(message)
         self._last_received_sequenced_number = message.sequence_number
         return message
-
-    def _check_live(self):
-        """check whether the receiver is alive"""
-        # pylint: disable=protected-access
-        if self._shutdown.is_set():
-            raise ValueError("The handler has already been shutdown. Please use ServiceBusClient to "
-                             "create a new instance.")
-        if self._session and self._session._lock_expired:  # pylint: disable=protected-access
-            raise SessionLockExpired(error=self._session.auto_renew_error)
 
     def _get_source(self):
         # pylint: disable=protected-access
@@ -107,21 +97,24 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _check_message_alive(self, message, action):
         # pylint: disable=no-member, protected-access
         if message._is_peeked_message:
-            raise MessageSettleFailed(action, ServiceBusMessageError("Messages received by peek can not be settled."))
-        if not self._running:
-            raise MessageSettleFailed(action, ServiceBusMessageError("Orphan message had no open connection."))
+            raise ValueError(
+                "The operation {} is not supported for peeked messages."
+                "Only messages received using receive methods in PEEK_LOCK mode can be settled.".format(action)
+            )
+
+        if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+            raise ValueError(
+                "The operation {} is not supported in 'RECEIVE_AND_DELETE' receive mode.".format(action)
+            )
+
         if message._settled:
-            raise MessageAlreadySettled(action)
-        try:
-            if message._lock_expired:
-                raise MessageLockExpired(error=message.auto_renew_error)
-        except TypeError:
-            pass
-        try:
-            if self.session._lock_expired:
-                raise SessionLockExpired(error=self.session.auto_renew_error)
-        except AttributeError:
-            pass
+            raise MessageAlreadySettled(action=action)
+
+        if not self._running:
+            raise ValueError(
+                "Failed to {} the message as the handler has already been shutdown."
+                "Please use ServiceBusClient to create a new instance.".format(action)
+            )
 
     def _settle_message_via_receiver_link(
         self,
