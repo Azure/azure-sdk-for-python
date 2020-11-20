@@ -150,7 +150,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
             # If it is desired to halt receiving early, one can break out of the loop here safely.
 ```
 
-> **NOTE:** Any message received with `mode=PeekLock` (this is the default, with the alternative ReceiveAndDelete removing the message from the queue immediately on receipt)
+> **NOTE:** Any message received with `receive_mode=PeekLock` (this is the default, with the alternative ReceiveAndDelete removing the message from the queue immediately on receipt)
 > has a lock that must be renewed via `receiver.renew_message_lock` before it expires if processing would take longer than the lock duration.
 > See [AutoLockRenewer](#automatically-renew-message-or-session-locks) for a helper to perform this in the background automatically.
 > Lock duration is set in Azure on the queue or topic itself.

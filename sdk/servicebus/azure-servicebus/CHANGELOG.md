@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b9 (Unreleased)
+## 7.0.0 (Unreleased)
 
 **Breaking Changes**
 
