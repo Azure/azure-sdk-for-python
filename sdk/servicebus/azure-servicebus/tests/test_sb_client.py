@@ -153,7 +153,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
         with client:
             # Validate that the wrong queue with the right credentials fails.
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(ValueError):
                 with client.get_queue_sender(wrong_queue.name) as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
