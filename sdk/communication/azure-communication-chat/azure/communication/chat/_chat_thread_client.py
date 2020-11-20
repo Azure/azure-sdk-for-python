@@ -31,7 +31,6 @@ from ._models import (
 from ._utils import _to_utc_datetime # pylint: disable=unused-import
 from ._version import SDK_MONIKER
 
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union

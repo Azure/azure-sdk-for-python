@@ -15,7 +15,7 @@ from datetime import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.async_paging import AsyncItemPaged
 
 from .._shared.user_credential_async import CommunicationUserCredential
@@ -36,7 +36,6 @@ from .._models import (
 from .._shared.models import CommunicationUser
 from .._utils import _to_utc_datetime # pylint: disable=unused-import
 from .._version import SDK_MONIKER
-
 
 
 class ChatThreadClient(object):
@@ -97,7 +96,7 @@ class ChatThreadClient(object):
 
         self._client = AzureCommunicationChatService(
             endpoint,
-            authentication_policy=BearerTokenCredentialPolicy(self._credential),
+            authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 

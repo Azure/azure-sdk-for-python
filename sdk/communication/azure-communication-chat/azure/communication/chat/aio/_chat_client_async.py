@@ -15,7 +15,7 @@ from datetime import datetime
 import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
 
@@ -78,7 +78,7 @@ class ChatClient(object):
 
         self._client = AzureCommunicationChatService(
             self._endpoint,
-            authentication_policy=BearerTokenCredentialPolicy(self._credential),
+            authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
