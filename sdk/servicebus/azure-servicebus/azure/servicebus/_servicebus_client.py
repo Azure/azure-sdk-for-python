@@ -189,6 +189,13 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
+
+        if self._entity_name and queue_name != self._entity_name:
+            raise ValueError(
+                "The queue name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
         handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             queue_name=queue_name,
@@ -252,6 +259,13 @@ class ServiceBusClient(object):
 
 
         """
+
+        if self._entity_name and queue_name != self._entity_name:
+            raise ValueError(
+                "The queue name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
         sub_queue = kwargs.get('sub_queue', None)
         if sub_queue and kwargs.get('session_id'):
             raise ValueError(
@@ -302,6 +316,13 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusSender from ServiceBusClient.
 
         """
+
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
         handler = ServiceBusSender(
             fully_qualified_namespace=self.fully_qualified_namespace,
             topic_name=topic_name,
@@ -368,6 +389,13 @@ class ServiceBusClient(object):
 
         """
         # pylint: disable=protected-access
+
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+
         sub_queue = kwargs.get('sub_queue', None)
         if sub_queue and kwargs.get('session_id'):
             raise ValueError(
