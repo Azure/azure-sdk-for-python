@@ -94,7 +94,7 @@ response = client.get_foo_properties()
 | --- | --- |
 | pipeline | While `PipelineClient` will create a default pipeline. User can opt in to use their own pipeline by passing in a `Pipeline` object. If it is specified, the rest configurations will be ignored.  |
 | config | While `PipelineClient` will create a default `Configuration`. User can opt in to use their own configuration by passing in a `Configuration` object. If it is specified, it will be used to create `Pipeline` object. |
-| transport | While `PipelineClient` will create a default `RequestsTransport`. User can opt in to use their own transport by passing in a `RequestsTransport` object. If it is omitted, `PipelineClient` will honor other transport customization described in [Transport](#Transport). |
+| transport | While `PipelineClient` will create a default `RequestsTransport`. User can opt in to use their own transport by passing in a `RequestsTransport` object. If it is omitted, `PipelineClient` will honor other transport customization described in [Transport](#transport). |
 
 
 ### Transport
