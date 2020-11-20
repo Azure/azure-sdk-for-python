@@ -230,9 +230,7 @@ class OperatingSystemStateTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     SPECIALIZED = "Specialized"  #: Specialized image. Contains already provisioned OS Disk.
 
 class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This property allows you to specify the supported type of the OS that application is built for.
-    :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Windows**
-    :code:`<br>`:code:`<br>` **Linux**
+    """The operating system of the osDiskImage.
     """
 
     WINDOWS = "Windows"
