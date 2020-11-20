@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class FirewallRulesOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class FirewallRulesOperations(object):
         account_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.FirewallRuleListResult"]
+        # type: (...) -> Iterable["_models.FirewallRuleListResult"]
         """Lists the Data Lake Store firewall rules within the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -63,7 +63,7 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datalake.store.models.FirewallRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -129,7 +129,7 @@ class FirewallRulesOperations(object):
         end_ip_address,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FirewallRule"
+        # type: (...) -> "_models.FirewallRule"
         """Creates or updates the specified firewall rule. During update, the firewall rule with the
         specified name will be replaced with this new firewall rule.
 
@@ -150,13 +150,13 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.mgmt.datalake.store.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = models.CreateOrUpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
+        _parameters = _models.CreateOrUpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -206,7 +206,7 @@ class FirewallRulesOperations(object):
         firewall_rule_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FirewallRule"
+        # type: (...) -> "_models.FirewallRule"
         """Gets the specified Data Lake Store firewall rule.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -220,7 +220,7 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.mgmt.datalake.store.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -271,7 +271,7 @@ class FirewallRulesOperations(object):
         end_ip_address=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.FirewallRule"
+        # type: (...) -> "_models.FirewallRule"
         """Updates the specified firewall rule.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -291,13 +291,13 @@ class FirewallRulesOperations(object):
         :rtype: ~azure.mgmt.datalake.store.models.FirewallRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.FirewallRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FirewallRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = models.UpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
+        _parameters = _models.UpdateFirewallRuleParameters(start_ip_address=start_ip_address, end_ip_address=end_ip_address)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
