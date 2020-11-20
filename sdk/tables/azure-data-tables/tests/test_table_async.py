@@ -79,15 +79,14 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Act
         created = await ts.create_table(table_name=table_name)
-        with self.assertRaises(ResourceExistsError):
+        with pytest.raises(ResourceExistsError):
             await ts.create_table(table_name=table_name)
 
         name_filter = "TableName eq '{}'".format(table_name)
         existing = ts.query_tables(filter=name_filter)
 
         # Assert
-        self.assertIsInstance(created, TableClient)
-        # self.assertEqual(len(existing), 1)
+        assert isinstance(created,  TableClient)
         await ts.delete_table(table_name=table_name)
 
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -164,11 +163,11 @@ class TableTestAsync(AsyncTableTestCase):
 
         # Assert
         for table_item in tables:
-            self.assertIsInstance(table_item, TableItem)
+            assert isinstance(table_item,  TableItem)
 
-        self.assertIsNotNone(tables)
-        self.assertGreaterEqual(len(tables), 1)
-        self.assertIsNotNone(tables[0])
+        assert tables is not None
+        assert len(tables) >=  1
+        assert tables[0] is not None
         await ts.delete_table(table.table_name)
 
     # @pytest.mark.skip("pending")
@@ -187,12 +186,12 @@ class TableTestAsync(AsyncTableTestCase):
             tables.append(t)
 
         # Assert
-        self.assertIsNotNone(tables)
-        self.assertEqual(len(tables), 1)
+        assert tables is not None
+        assert len(tables) ==  1
         for table_item in tables:
-            self.assertIsInstance(table_item, TableItem)
-            self.assertIsNotNone(table_item.date)
-            self.assertIsNotNone(table_item.table_name)
+            assert isinstance(table_item,  TableItem)
+            assert table_item.date is not None
+            assert table_item.table_name is not None
         await ts.delete_table(table.table_name)
 
     @pytest.mark.skip("pending")
@@ -216,8 +215,8 @@ class TableTestAsync(AsyncTableTestCase):
         async for s in ts.list_tables(results_per_page=3).by_page():
             small_page.append(s)
 
-        self.assertEqual(len(small_page), 2)
-        self.assertGreaterEqual(len(big_page), 4)
+        assert len(small_page) ==  2
+        assert len(big_page) >=  4
 
     @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -250,9 +249,9 @@ class TableTestAsync(AsyncTableTestCase):
             tables2_len += 1
 
         # Assert
-        self.assertEqual(tables1_len, 2)
-        self.assertEqual(tables2_len, 2)
-        self.assertNotEqual(tables1, tables2)
+        assert tables1_len == 2
+        assert tables2_len == 2
+        assert tables1 != tables2
 
     # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -271,7 +270,7 @@ class TableTestAsync(AsyncTableTestCase):
         tables = []
         async for e in existing:
             tables.append(e)
-        self.assertEqual(tables, [])
+        assert tables ==  []
 
     # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
@@ -284,7 +283,7 @@ class TableTestAsync(AsyncTableTestCase):
         table_name = self._get_table_reference()
 
         # Act
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             await ts.delete_table(table_name)
 
         # Assert
@@ -304,7 +303,7 @@ class TableTestAsync(AsyncTableTestCase):
         table_name = u'啊齄丂狛狜'
 
         # Act
-        with self.assertRaises(ValueError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             await ts.create_table(table_name)
 
             assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
@@ -326,8 +325,8 @@ class TableTestAsync(AsyncTableTestCase):
             acl = await table.get_table_access_policy()
 
             # Assert
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 0)
+            assert acl is not None
+            assert len(acl) ==  0
         finally:
             await ts.delete_table(table.table_name)
 
@@ -350,8 +349,8 @@ class TableTestAsync(AsyncTableTestCase):
 
             # Assert
             acl = await table.get_table_access_policy()
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 0)
+            assert acl is not None
+            assert len(acl) ==  0
         finally:
             # self._delete_table(table)
             await ts.delete_table(table.table_name)
@@ -372,12 +371,12 @@ class TableTestAsync(AsyncTableTestCase):
             await table.set_table_access_policy(signed_identifiers={'empty': None})
             # Assert
             acl = await table.get_table_access_policy()
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 1)
-            self.assertIsNotNone(acl['empty'])
-            self.assertIsNone(acl['empty'].permission)
-            self.assertIsNone(acl['empty'].expiry)
-            self.assertIsNone(acl['empty'].start)
+            assert acl is not None
+            assert len(acl) ==  1
+            assert acl['empty'] is not None
+            assert acl['empty'].permission is None
+            assert acl['empty'].expiry is None
+            assert acl['empty'].start is None
         finally:
             # self._delete_table(table)
             await ts.delete_table(table.table_name)
@@ -405,9 +404,9 @@ class TableTestAsync(AsyncTableTestCase):
 
             # Assert
             acl = await  client.get_table_access_policy()
-            self.assertIsNotNone(acl)
-            self.assertEqual(len(acl), 1)
-            self.assertTrue('testid' in acl)
+            assert acl is not None
+            assert len(acl) ==  1
+            assert 'testid' in acl
         finally:
             await ts.delete_table(table.table_name)
 
@@ -428,7 +427,7 @@ class TableTestAsync(AsyncTableTestCase):
                 identifiers['id{}'.format(i)] = None
 
             # Assert
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 await table.set_table_access_policy(table_name=table.table_name, signed_identifiers=identifiers)
         finally:
             await ts.delete_table(table.table_name)
@@ -472,19 +471,15 @@ class TableTestAsync(AsyncTableTestCase):
             service = self.create_client_from_credential(TableServiceClient, token, account_url=account_url)
 
             # Act
-            # service = TableServiceClient(
-            #     self.account_url(storage_account, "table"),
-            #     credential=token,
-            # )
             sas_table = service.get_table_client(table.table_name)
             entities = []
             async for e in sas_table.list_entities():
                 entities.append(e)
 
             # Assert
-            self.assertEqual(len(entities), 2)
-            self.assertEqual(entities[0].text, u'hello')
-            self.assertEqual(entities[1].text, u'hello')
+            assert len(entities) ==  2
+            assert entities[0].text == u'hello'
+            assert entities[1].text == u'hello'
         finally:
             await self._delete_table(table=table, ts=tsc)
 
@@ -515,7 +510,7 @@ class TableTestAsync(AsyncTableTestCase):
         e = sys.exc_info()[0]
 
         # Assert
-        self.assertIsNone(e)
+        assert e is None
 
         await ts.delete_table(table)
         locale.setlocale(locale.LC_ALL, init_locale[0] or 'en_US')
