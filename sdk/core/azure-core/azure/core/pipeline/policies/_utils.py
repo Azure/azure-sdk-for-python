@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from requests.structures import CaseInsensitiveDict
 
 class _FixedOffset(datetime.tzinfo):
     """Fixed offset in minutes east from UTC.
@@ -80,6 +79,7 @@ def get_retry_after(response):
     :return: Value of Retry-After in seconds.
     :rtype: float or None
     """
+    from requests.structures import CaseInsensitiveDict
     headers = CaseInsensitiveDict(response.http_response.headers)
     retry_after = headers.get("retry-after")
     if retry_after:

@@ -30,8 +30,6 @@ import logging
 from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
 import urllib3 # type: ignore
 
-import requests
-
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
@@ -94,6 +92,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
+        import requests.exceptions
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
@@ -154,6 +153,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
+        import requests.exceptions
         loop = _get_running_loop()
         retry_active = True
         retry_total = 3

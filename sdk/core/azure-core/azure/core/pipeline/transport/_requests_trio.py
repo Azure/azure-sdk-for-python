@@ -30,8 +30,6 @@ from typing import Any, Callable, Union, Optional, AsyncIterator as AsyncIterato
 import trio
 import urllib3
 
-import requests
-
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
@@ -68,6 +66,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
+        import requests.exceptions
         retry_active = True
         retry_total = 3
         while retry_active:
@@ -165,6 +164,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
          Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
+        import requests.exceptions
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None

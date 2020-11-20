@@ -26,7 +26,6 @@
 
 import logging
 from .configuration import Configuration
-from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
     ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
@@ -97,6 +96,7 @@ class AsyncPipelineClient(PipelineClientBase):
         await self._pipeline.__aexit__()
 
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
+        from .pipeline import AsyncPipeline
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 

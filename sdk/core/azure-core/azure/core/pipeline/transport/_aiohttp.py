@@ -31,10 +31,6 @@ import asyncio
 import aiohttp
 from multidict import CIMultiDict
 
-from requests.exceptions import (
-    ChunkedEncodingError,
-    StreamConsumedError)
-
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
@@ -215,6 +211,10 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
+        from requests.exceptions import (
+            ChunkedEncodingError,
+            StreamConsumedError)
+
         retry_active = True
         retry_total = 3
         retry_interval = 1  # 1 second

@@ -68,9 +68,6 @@ from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 from azure.core.pipeline import (
     ABC,
     AbstractContextManager,
-    PipelineRequest,
-    PipelineResponse,
-    PipelineContext,
 )
 from .._tools import await_result as _await_result
 
@@ -615,6 +612,11 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
             import concurrent.futures
 
             def parse_responses(response):
+                from azure.core.pipeline import (
+                    PipelineRequest,
+                    PipelineResponse,
+                    PipelineContext,
+                )
                 http_request = response.request
                 context = PipelineContext(None)
                 pipeline_request = PipelineRequest(http_request, context)

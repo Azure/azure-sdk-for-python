@@ -32,9 +32,6 @@ from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
-    PipelineContext,
-    PipelineRequest,
-    PipelineResponse,
 )
 from .._tools_async import await_result as _await_result
 
@@ -81,6 +78,11 @@ class _PartGenerator(AsyncIterator):
         self._parts = None
 
     async def _parse_response(self):
+        from azure.core.pipeline import (
+            PipelineRequest,
+            PipelineResponse,
+            PipelineContext,
+        )
         responses = self._response._get_raw_parts(  # pylint: disable=protected-access
             http_response_type=AsyncHttpClientTransportResponse
         )

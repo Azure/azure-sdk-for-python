@@ -26,12 +26,7 @@
 
 import logging
 from .configuration import Configuration
-from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
-from .pipeline.policies import (
-    ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
-)
-from .pipeline.transport import RequestsTransport
 
 try:
     from typing import TYPE_CHECKING
@@ -98,6 +93,10 @@ class PipelineClient(PipelineClientBase):
         self.__exit__()
 
     def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
+        from .pipeline import Pipeline
+        from .pipeline.policies import (
+            ContentDecodePolicy, DistributedTracingPolicy, HttpLoggingPolicy, RequestIdPolicy
+        )
         transport = kwargs.get('transport')
         policies = kwargs.get('policies')
 
@@ -118,6 +117,7 @@ class PipelineClient(PipelineClientBase):
             ]
 
         if not transport:
+            from .pipeline.transport import RequestsTransport
             transport = RequestsTransport(**kwargs)
 
         return Pipeline(transport, policies)
