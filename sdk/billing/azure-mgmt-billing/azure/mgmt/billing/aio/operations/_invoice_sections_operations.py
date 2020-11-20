@@ -186,8 +186,7 @@ class InvoiceSectionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         invoice_section_name: str,
-        display_name: Optional[str] = None,
-        labels: Optional[Dict[str, str]] = None,
+        parameters: "_models.InvoiceSection",
         **kwargs
     ) -> Optional["_models.InvoiceSection"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.InvoiceSection"]]
@@ -195,8 +194,6 @@ class InvoiceSectionsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.InvoiceSection(display_name=display_name, labels=labels)
         api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -220,7 +217,7 @@ class InvoiceSectionsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'InvoiceSection')
+        body_content = self._serialize.body(parameters, 'InvoiceSection')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -251,8 +248,7 @@ class InvoiceSectionsOperations:
         billing_account_name: str,
         billing_profile_name: str,
         invoice_section_name: str,
-        display_name: Optional[str] = None,
-        labels: Optional[Dict[str, str]] = None,
+        parameters: "_models.InvoiceSection",
         **kwargs
     ) -> AsyncLROPoller["_models.InvoiceSection"]:
         """Creates or updates an invoice section. The operation is supported only for billing accounts
@@ -264,10 +260,8 @@ class InvoiceSectionsOperations:
         :type billing_profile_name: str
         :param invoice_section_name: The ID that uniquely identifies an invoice section.
         :type invoice_section_name: str
-        :param display_name: The name of the invoice section.
-        :type display_name: str
-        :param labels: Dictionary of metadata associated with the invoice section.
-        :type labels: dict[str, str]
+        :param parameters: The new or updated invoice section.
+        :type parameters: ~azure.mgmt.billing.models.InvoiceSection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -290,8 +284,7 @@ class InvoiceSectionsOperations:
                 billing_account_name=billing_account_name,
                 billing_profile_name=billing_profile_name,
                 invoice_section_name=invoice_section_name,
-                display_name=display_name,
-                labels=labels,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )

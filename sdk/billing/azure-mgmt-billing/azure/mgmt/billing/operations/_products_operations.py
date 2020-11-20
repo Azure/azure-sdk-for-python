@@ -506,7 +506,7 @@ class ProductsOperations(object):
         self,
         billing_account_name,  # type: str
         product_name,  # type: str
-        destination_invoice_section_id=None,  # type: Optional[str]
+        parameters,  # type: "_models.TransferProductRequestProperties"
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.Product"]
@@ -519,8 +519,8 @@ class ProductsOperations(object):
         :type billing_account_name: str
         :param product_name: The ID that uniquely identifies a product.
         :type product_name: str
-        :param destination_invoice_section_id: The destination invoice section id.
-        :type destination_invoice_section_id: str
+        :param parameters: Request parameters that are provided to the move product operation.
+        :type parameters: ~azure.mgmt.billing.models.TransferProductRequestProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Product, or the result of cls(response)
         :rtype: ~azure.mgmt.billing.models.Product or None
@@ -531,8 +531,6 @@ class ProductsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.TransferProductRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
         api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -555,7 +553,7 @@ class ProductsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TransferProductRequestProperties')
+        body_content = self._serialize.body(parameters, 'TransferProductRequestProperties')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -585,7 +583,7 @@ class ProductsOperations(object):
         self,
         billing_account_name,  # type: str
         product_name,  # type: str
-        destination_invoice_section_id=None,  # type: Optional[str]
+        parameters,  # type: "_models.TransferProductRequestProperties"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ValidateProductTransferEligibilityResult"
@@ -597,8 +595,9 @@ class ProductsOperations(object):
         :type billing_account_name: str
         :param product_name: The ID that uniquely identifies a product.
         :type product_name: str
-        :param destination_invoice_section_id: The destination invoice section id.
-        :type destination_invoice_section_id: str
+        :param parameters: Request parameters that are provided to the validate move eligibility
+         operation.
+        :type parameters: ~azure.mgmt.billing.models.TransferProductRequestProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateProductTransferEligibilityResult, or the result of cls(response)
         :rtype: ~azure.mgmt.billing.models.ValidateProductTransferEligibilityResult
@@ -609,8 +608,6 @@ class ProductsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.TransferProductRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
         api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -633,7 +630,7 @@ class ProductsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TransferProductRequestProperties')
+        body_content = self._serialize.body(parameters, 'TransferProductRequestProperties')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

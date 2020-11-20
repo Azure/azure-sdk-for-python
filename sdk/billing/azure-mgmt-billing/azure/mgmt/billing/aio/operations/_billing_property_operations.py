@@ -94,15 +94,16 @@ class BillingPropertyOperations:
 
     async def update(
         self,
-        cost_center: Optional[str] = None,
+        parameters: "_models.BillingProperty",
         **kwargs
     ) -> "_models.BillingProperty":
         """Updates the billing property of a subscription. Currently, cost center can be updated. The
         operation is supported only for billing accounts with agreement type Microsoft Customer
         Agreement.
 
-        :param cost_center: The cost center applied to the subscription.
-        :type cost_center: str
+        :param parameters: Request parameters that are provided to the update billing property
+         operation.
+        :type parameters: ~azure.mgmt.billing.models.BillingProperty
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BillingProperty, or the result of cls(response)
         :rtype: ~azure.mgmt.billing.models.BillingProperty
@@ -113,8 +114,6 @@ class BillingPropertyOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.BillingProperty(cost_center=cost_center)
         api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -136,7 +135,7 @@ class BillingPropertyOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'BillingProperty')
+        body_content = self._serialize.body(parameters, 'BillingProperty')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)

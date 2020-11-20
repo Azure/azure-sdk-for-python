@@ -479,7 +479,7 @@ class BillingSubscriptionsOperations(object):
     def _move_initial(
         self,
         billing_account_name,  # type: str
-        destination_invoice_section_id,  # type: str
+        parameters,  # type: "_models.TransferBillingSubscriptionRequestProperties"
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.BillingSubscription"]
@@ -488,8 +488,6 @@ class BillingSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
         api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -512,7 +510,7 @@ class BillingSubscriptionsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TransferBillingSubscriptionRequestProperties')
+        body_content = self._serialize.body(parameters, 'TransferBillingSubscriptionRequestProperties')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -541,7 +539,7 @@ class BillingSubscriptionsOperations(object):
     def begin_move(
         self,
         billing_account_name,  # type: str
-        destination_invoice_section_id,  # type: str
+        parameters,  # type: "_models.TransferBillingSubscriptionRequestProperties"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.BillingSubscription"]
@@ -551,8 +549,8 @@ class BillingSubscriptionsOperations(object):
 
         :param billing_account_name: The ID that uniquely identifies a billing account.
         :type billing_account_name: str
-        :param destination_invoice_section_id: The destination invoice section id.
-        :type destination_invoice_section_id: str
+        :param parameters: Request parameters that are provided to the move subscription operation.
+        :type parameters: ~azure.mgmt.billing.models.TransferBillingSubscriptionRequestProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: True for ARMPolling, False for no polling, or a
@@ -573,7 +571,7 @@ class BillingSubscriptionsOperations(object):
         if cont_token is None:
             raw_result = self._move_initial(
                 billing_account_name=billing_account_name,
-                destination_invoice_section_id=destination_invoice_section_id,
+                parameters=parameters,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -610,7 +608,7 @@ class BillingSubscriptionsOperations(object):
     def validate_move(
         self,
         billing_account_name,  # type: str
-        destination_invoice_section_id,  # type: str
+        parameters,  # type: "_models.TransferBillingSubscriptionRequestProperties"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ValidateSubscriptionTransferEligibilityResult"
@@ -619,8 +617,9 @@ class BillingSubscriptionsOperations(object):
 
         :param billing_account_name: The ID that uniquely identifies a billing account.
         :type billing_account_name: str
-        :param destination_invoice_section_id: The destination invoice section id.
-        :type destination_invoice_section_id: str
+        :param parameters: Request parameters that are provided to the validate move eligibility
+         operation.
+        :type parameters: ~azure.mgmt.billing.models.TransferBillingSubscriptionRequestProperties
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ValidateSubscriptionTransferEligibilityResult, or the result of cls(response)
         :rtype: ~azure.mgmt.billing.models.ValidateSubscriptionTransferEligibilityResult
@@ -631,8 +630,6 @@ class BillingSubscriptionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
         api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -655,7 +652,7 @@ class BillingSubscriptionsOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'TransferBillingSubscriptionRequestProperties')
+        body_content = self._serialize.body(parameters, 'TransferBillingSubscriptionRequestProperties')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)

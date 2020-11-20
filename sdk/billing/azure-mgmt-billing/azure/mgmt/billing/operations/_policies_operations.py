@@ -17,7 +17,7 @@ from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -236,7 +236,7 @@ class PoliciesOperations(object):
         self,
         billing_account_name,  # type: str
         customer_name,  # type: str
-        view_charges=None,  # type: Optional[Union[str, "_models.ViewCharges"]]
+        parameters,  # type: "_models.CustomerPolicy"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CustomerPolicy"
@@ -247,9 +247,8 @@ class PoliciesOperations(object):
         :type billing_account_name: str
         :param customer_name: The ID that uniquely identifies a customer.
         :type customer_name: str
-        :param view_charges: The policy that controls whether the users in customer's organization can
-         view charges at pay-as-you-go prices.
-        :type view_charges: str or ~azure.mgmt.billing.models.ViewCharges
+        :param parameters: Request parameters that are provided to the update policies operation.
+        :type parameters: ~azure.mgmt.billing.models.CustomerPolicy
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomerPolicy, or the result of cls(response)
         :rtype: ~azure.mgmt.billing.models.CustomerPolicy
@@ -260,8 +259,6 @@ class PoliciesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.CustomerPolicy(view_charges=view_charges)
         api_version = "2020-05-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -284,7 +281,7 @@ class PoliciesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'CustomerPolicy')
+        body_content = self._serialize.body(parameters, 'CustomerPolicy')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
