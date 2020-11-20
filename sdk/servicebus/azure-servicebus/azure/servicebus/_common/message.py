@@ -58,18 +58,18 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     :param body: The data to send in a single message.
     :type body: Optional[Union[str, bytes]]
 
-    :keyword dict application_properties: The user defined properties on the message.
-    :keyword str session_id: The session identifier of the message for a sessionful entity.
-    :keyword str message_id: The id to identify the message.
-    :keyword datetime.datetime scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
-    :keyword datetime.timedelta time_to_live: The life duration of a message.
-    :keyword str content_type: The content type descriptor.
-    :keyword str correlation_id: The correlation identifier.
-    :keyword str subject: The application specific subject, sometimes referred to as label.
-    :keyword str partition_key: The partition key for sending a message to a partitioned entity.
-    :keyword str to: The `to` address used for auto_forward chaining scenarios.
-    :keyword str reply_to: The address of an entity to send replies to.
-    :keyword str reply_to_session_id: The session identifier augmenting the `reply_to` address.
+    :keyword Optional[dict] application_properties: The user defined properties on the message.
+    :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
+    :keyword Optional[str] message_id: The id to identify the message.
+    :keyword Optional[datetime.datetime] scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
+    :keyword Optional[datetime.timedelta] time_to_live: The life duration of a message.
+    :keyword Optional[str] content_type: The content type descriptor.
+    :keyword Optional[str] correlation_id: The correlation identifier.
+    :keyword Optional[str] subject: The application specific subject, sometimes referred to as label.
+    :keyword Optional[str] partition_key: The partition key for sending a message to a partitioned entity.
+    :keyword Optional[str] to: The `to` address used for auto_forward chaining scenarios.
+    :keyword Optional[str] reply_to: The address of an entity to send replies to.
+    :keyword Optional[str] reply_to_session_id: The session identifier augmenting the `reply_to` address.
 
     :ivar AMQPAnnotatedMessage raw_amqp_message: Advanced use only.
         The internal AMQP message payload that is sent or received.
@@ -152,7 +152,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def session_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The session identifier of the message for a sessionful entity.
 
         For sessionful entities, this application-defined value specifies the session affiliation of the message.
@@ -178,7 +178,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def application_properties(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """The user defined properties on the message.
 
         :rtype: dict
@@ -296,7 +296,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def content_type(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The content type descriptor.
 
         Optionally describes the payload of the message, with a descriptor following the format of RFC2045, Section 5,
@@ -316,7 +316,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def correlation_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         # pylint: disable=line-too-long
         """The correlation identifier.
 
@@ -340,7 +340,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def subject(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The application specific subject, sometimes referred to as a label.
 
         This property enables the application to indicate the purpose of the message to the receiver in a standardized
@@ -360,7 +360,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def message_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The id to identify the message.
 
         The message identifier is an application-defined value that uniquely identifies the message and its payload.
@@ -386,7 +386,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def reply_to(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         # pylint: disable=line-too-long
         """The address of an entity to send replies to.
 
@@ -411,7 +411,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def reply_to_session_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         # pylint: disable=line-too-long
         """The session identifier augmenting the `reply_to` address.
 
@@ -440,7 +440,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def to(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """The `to` address.
 
         This property is reserved for future use in routing scenarios and presently ignored by the broker itself.
@@ -469,12 +469,13 @@ class ServiceBusMessageBatch(object):
     ServiceBusMessageBatch helps you create the maximum allowed size batch of `Message` to improve sending performance.
 
     Use the `add` method to add messages until the maximum batch size limit in bytes has been reached -
-    at which point a `ValueError` will be raised.
+    at which point a `MessageSizeExceededError` will be raised.
 
     **Please use the create_message_batch method of ServiceBusSender
     to create a ServiceBusMessageBatch object instead of instantiating a ServiceBusMessageBatch object directly.**
 
-    :param int max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can hold.
+    :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object
+     can hold.
     """
     def __init__(self, max_size_in_bytes=None):
         # type: (Optional[int]) -> None
@@ -526,7 +527,7 @@ class ServiceBusMessageBatch(object):
         """Try to add a single Message to the batch.
 
         The total size of an added message is the sum of its body, properties, etc.
-        If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
+        If this added size results in the batch exceeding the maximum batch size, a `MessageSizeExceededError` will
         be raised.
 
         :param message: The Message to be added to the batch.
@@ -838,7 +839,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def application_properties(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         Service specific application properties.
 
@@ -852,7 +853,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def annotations(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         Service specific message annotations. Keys in the dictionary
         must be `uamqp.types.AMQPSymbol` or `uamqp.types.AMQPuLong`.
@@ -867,7 +868,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def delivery_annotations(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         Delivery-specific non-standard properties at the head of the message.
         Delivery annotations convey information from the sending peer to the receiving peer.
@@ -897,7 +898,7 @@ class AMQPAnnotatedMessage(object):
 
     @property
     def footer(self):
-        # type: () -> dict
+        # type: () -> Optional[dict]
         """
         The message footer.
 

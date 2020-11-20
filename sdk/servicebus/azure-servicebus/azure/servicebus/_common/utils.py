@@ -45,7 +45,6 @@ from .constants import (
 if TYPE_CHECKING:
     from .message import ServiceBusReceivedMessage, ServiceBusMessage
     from azure.core.tracing import AbstractSpan
-    from .._servicebus_receiver import ServiceBusReceiver
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
 

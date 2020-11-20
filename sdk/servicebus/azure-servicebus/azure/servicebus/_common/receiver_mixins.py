@@ -31,10 +31,6 @@ from ..exceptions import (
 )
 from .utils import utc_from_timestamp, utc_now, trace_link_message
 
-if TYPE_CHECKING:
-    from azure.core.tracing import AbstractSpan
-    from .message import ServiceBusMessage
-
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):
