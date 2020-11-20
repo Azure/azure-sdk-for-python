@@ -750,7 +750,7 @@ def form_recognizer_account():
                 form_recognizer_name, form_recognizer_kwargs = form_recognizer_preparer._prepare_create_resource(
                     test_case, **rg_kwargs)
                 if test_case.is_live:
-                    time.sleep(60)  # current ask until race condition bug fixed
+                    time.sleep(600)  # current ask until race condition bug fixed
                 FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = form_recognizer_kwargs['cognitiveservices_account']
                 FormRecognizerTest._FORM_RECOGNIZER_KEY = form_recognizer_kwargs['cognitiveservices_account_key']
                 FormRecognizerTest._FORM_RECOGNIZER_NAME = form_recognizer_name
