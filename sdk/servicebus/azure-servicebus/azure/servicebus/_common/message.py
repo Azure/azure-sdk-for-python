@@ -11,6 +11,8 @@ import logging
 import copy
 from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any
 
+import six
+
 import uamqp.errors
 import uamqp.message
 from uamqp.constants import MessageState
@@ -54,7 +56,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     """A Service Bus Message.
 
     :param body: The data to send in a single message.
-    :type body: Union[str, bytes]
+    :type body: Optional[Union[str, bytes]]
 
     :keyword dict application_properties: The user defined properties on the message.
     :keyword str session_id: The session identifier of the message for a sessionful entity.
@@ -84,7 +86,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     """
 
     def __init__(self, body, **kwargs):
-        # type: (Union[str, bytes], Any) -> None
+        # type: (Optional[Union[str, bytes]], Any) -> None
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", 'UTF-8')
@@ -118,12 +120,11 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
         return str(self.message)
 
     def _build_message(self, body):
-        if isinstance(body, list) and body:  # TODO: This only works for a list of bytes/strings
-            self.message = uamqp.Message(body[0], properties=self._amqp_properties, header=self._amqp_header)
-            for more in body[1:]:
-                self.message._body.append(more)  # pylint: disable=protected-access
-        else:
-            self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
+        if not (isinstance(body, (six.string_types, six.binary_type)) or (body is None)):
+            raise TypeError("ServiceBusMessage body must be a string, bytes, or None.  Got instead: {}".format(
+                type(body)))
+
+        self.message = uamqp.Message(body, properties=self._amqp_properties, header=self._amqp_header)
 
     def _set_message_annotations(self, key, value):
         if not self.message.annotations:
@@ -286,7 +287,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
 
     @property
     def body(self):
-        # type: () -> Union[bytes, Iterable[bytes]]
+        # type: () -> Optional[Union[bytes, Iterable[bytes]]]
         """The body of the Message.
 
         :rtype: bytes or Iterable[bytes]
