@@ -459,7 +459,7 @@ for idx, doc in enumerate(docs):
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Analysis service is currently available only in API version v3.1-preview.3 in gated preview.
+Note: The Healthcare Analysis service is currently available only in API version v3.1-preview.3 in gated preview. Since this is a gated preview, AAD is not supported. More information [here](https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-for-health?tabs=ner#request-access-to-the-public-preview).
 
 ### Batch Analysis
 The example below demonstrates how to perform multiple analyses over one set of documents in a single request.  Currently batching is supported using any combination of the following Text Analytics APIs in a single request:
