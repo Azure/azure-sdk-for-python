@@ -113,11 +113,6 @@ class LocalFileStorage:
     # pylint: disable=unused-variable
     def _maintenance_routine(self):
         try:
-            if not os.path.isdir(self.path):
-                os.makedirs(self.path, exist_ok=True)
-        except Exception:
-            pass  # keep silent
-        try:
             # pylint: disable=unused-variable
             for blob in self.gets():
                 pass  # keep silent
@@ -160,6 +155,12 @@ class LocalFileStorage:
         return None
 
     def put(self, data, lease_period=0):
+        # Create path if it doesn't exist
+        try:
+            if not os.path.isdir(self.path):
+                os.makedirs(self.path, exist_ok=True)
+        except Exception:
+            pass  # keep silent
         if not self._check_storage_size():
             return None
         blob = LocalFileBlob(
