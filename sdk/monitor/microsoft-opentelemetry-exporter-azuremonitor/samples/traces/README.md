@@ -65,4 +65,4 @@ $ python server.py
 ## Explore the data
 
 After running the applications, data would be available in [Azure](
-https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview#where-do-i-see-my-telemetry)
+https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#where-do-i-see-my-telemetry)
