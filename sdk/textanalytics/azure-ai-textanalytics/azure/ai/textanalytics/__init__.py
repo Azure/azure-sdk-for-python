@@ -32,7 +32,17 @@ from ._models import (
     RecognizePiiEntitiesResult,
     PiiEntity,
     PiiEntityDomainType,
+    AnalyzeHealthcareResultItem,
+    HealthcareEntity,
+    HealthcareRelation,
+    HealthcareEntityLink,
+    EntitiesRecognitionTask,
+    PiiEntitiesRecognitionTask,
+    KeyPhraseExtractionTask,
+    TextAnalysisResult,
+    RequestStatistics
 )
+from._paging import AnalyzeHealthcareResult
 
 __all__ = [
     'TextAnalyticsApiVersion',
@@ -61,6 +71,16 @@ __all__ = [
     'RecognizePiiEntitiesResult',
     'PiiEntity',
     'PiiEntityDomainType',
+    'AnalyzeHealthcareResultItem',
+    'AnalyzeHealthcareResult',
+    'HealthcareEntity',
+    'HealthcareRelation',
+    'HealthcareEntityLink',
+    'EntitiesRecognitionTask',
+    'PiiEntitiesRecognitionTask',
+    'KeyPhraseExtractionTask',
+    'TextAnalysisResult',
+    'RequestStatistics'
 ]
 
 __version__ = VERSION
