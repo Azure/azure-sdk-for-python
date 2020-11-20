@@ -42,22 +42,27 @@ class TestBaseExporter(unittest.TestCase):
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         cls._base = BaseExporter()
         cls._base.storage.path = STORAGE_PATH
+        cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
 
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(TEST_FOLDER, True)
 
-    def setUp(self):
-        if os.path.exists(STORAGE_PATH):
-            for filename in os.listdir(STORAGE_PATH):
-                file_path = os.path.join(STORAGE_PATH, filename)
-                try:
-                    if os.path.isfile(file_path) or os.path.islink(file_path):
-                        os.unlink(file_path)
-                    elif os.path.isdir(file_path):
-                        shutil.rmtree(file_path, True)
-                except OSError as e:
-                    print("Failed to delete %s. Reason: %s" % (file_path, e))
+    def shutdown(self):
+        try:
+            # Clean storage
+            if os.path.exists(STORAGE_PATH):
+                for filename in os.listdir(STORAGE_PATH):
+                    file_path = os.path.join(STORAGE_PATH, filename)
+                    try:
+                        if os.path.isfile(file_path) or os.path.islink(file_path):
+                            os.unlink(file_path)
+                        elif os.path.isdir(file_path):
+                            shutil.rmtree(file_path, True)
+                    except OSError as e:
+                        print("Failed to delete %s. Reason: %s" % (file_path, e))
+        except Exception:
+            pass
 
     def test_constructor(self):
         """Test the constructor."""
@@ -78,35 +83,49 @@ class TestBaseExporter(unittest.TestCase):
         with self.assertRaises(TypeError):
             BaseExporter(something_else=6)
 
-    def test_transmission_nothing(self):
+    def test_transmit_from_storage(self):
+        envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
+        self._base.storage.put(envelopes_to_store)
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(200, "OK")
+            self._base._transmit_from_storage()
+        # Run storage process to check lease, retention and timeout and clean file if needed
+        self._base.storage.get()
+        # File no longer present
+        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+
+    def test_transmit_from_storage_failed_retryable(self):
+        envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
+        self._base.storage.put(envelopes_to_store)
+        # Timeout in HTTP request is a retryable case
+        with mock.patch("requests.Session.request", throw(requests.Timeout)):
+            self._base._transmit_from_storage()
+        # File would be locked for 1 second
+        self.assertIsNone(self._base.storage.get())
+        # File still present
+        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
+
+    def test_transmit_from_storage_failed_not_retryable(self):
+        envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
+        self._base.storage.put(envelopes_to_store)
+        with mock.patch("requests.Session.request") as post:
+            # Do not retry with internal server error responses
+            post.return_value = MockResponse(400, "{}")
+            self._base._transmit_from_storage()
+        self._base.storage.get()
+        # File no longer present
+        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+
+    def test_transmit_from_storage_nothing(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = None
             self._base._transmit_from_storage()
 
-    def test_transmit_request_timeout(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="Test", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
-        with mock.patch("requests.Session.request", throw(requests.Timeout)):
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
-
-    def test_transmit_request_exception(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="Test", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
-        with mock.patch("requests.Session.request", throw(Exception)):
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
-
     @mock.patch("requests.Session.request", return_value=mock.Mock())
-    def test_transmission_lease_failure(self, requests_mock):
+    def test_transmit_from_storage_lease_failure(self, requests_mock):
         requests_mock.return_value = MockResponse(200, "unknown")
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="Test", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
+        envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
+        self._base.storage.put(envelopes_to_store)
         with mock.patch(
             "microsoft.opentelemetry.exporter.azuremonitor._storage.LocalFileBlob.lease"
         ) as lease:  # noqa: E501
@@ -114,44 +133,38 @@ class TestBaseExporter(unittest.TestCase):
             self._base._transmit_from_storage()
         self.assertTrue(self._base.storage.get())
 
-    def test_transmission(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="Test", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(200, "OK")
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+    def test_transmit_request_timeout(self):
+        with mock.patch("requests.Session.request", throw(requests.Timeout)):
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmit_request_exception(self):
+        with mock.patch("requests.Session.request", throw(Exception)):
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_200(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="Test", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
         with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(200, "unknown")
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+            post.return_value = MockResponse(200, json.dumps(
+                {
+                    "itemsReceived": 1,
+                    "itemsAccepted": 1,
+                    "errors": [],
+                }
+            ), reason="OK", content="")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.SUCCESS)
 
     def test_transmission_206(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="Test", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(206, "unknown")
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_206_500(self):
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
-        envelopes_to_export = map(
-            lambda x: x.as_dict(),
-            tuple([TelemetryItem(name="Test", time=datetime.now()), TelemetryItem(
-                name="Test", time=datetime.now()), test_envelope]),
-        )
-        self._base.storage.put(envelopes_to_export)
+        custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
+        )), TelemetryItem(name="Test", time=datetime.now()), test_envelope]
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(
                 206,
@@ -170,8 +183,9 @@ class TestBaseExporter(unittest.TestCase):
                     }
                 ),
             )
-            self._base._transmit_from_storage()
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
+            result = self._base._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self._base.storage.get()
         self.assertEqual(
             self._base.storage.get().get()[0]["name"], "testEnvelope"
         )
@@ -193,8 +207,8 @@ class TestBaseExporter(unittest.TestCase):
                     }
                 ),
             )
-            self._base._transmit_from_storage()
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_206_bogus(self):
         envelopes_to_export = map(lambda x: x.as_dict(), tuple(
@@ -211,38 +225,44 @@ class TestBaseExporter(unittest.TestCase):
                     }
                 ),
             )
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_400(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="testEnvelope", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(400, "{}")
-            self._base._transmit_from_storage()
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+
+    def test_transmission_408(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(408, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_429(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(429, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_439(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="testEnvelope", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(439, "{}")
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_500(self):
-        envelopes_to_export = map(lambda x: x.as_dict(), tuple(
-            [TelemetryItem(name="testEnvelope", time=datetime.now())]))
-        self._base.storage.put(envelopes_to_export)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(500, "{}")
-            self._base._transmit_from_storage()
-        self.assertIsNone(self._base.storage.get())
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_503(self):
+        with mock.patch("requests.Session.request") as post:
+            post.return_value = MockResponse(503, "{}")
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_empty(self):
         status = self._base._transmit([])
@@ -265,7 +285,7 @@ class TestBaseExporter(unittest.TestCase):
 
 
 class MockResponse:
-    def __init__(self, status_code, text, headers={}, reason="test", content="test"):
+    def __init__(self, status_code, text, headers={}, reason="test", content="{}"):
         self.status_code = status_code
         self.text = text
         self.headers = headers

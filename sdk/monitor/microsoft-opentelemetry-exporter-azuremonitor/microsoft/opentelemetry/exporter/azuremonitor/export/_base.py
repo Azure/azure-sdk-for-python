@@ -106,6 +106,7 @@ class BaseExporter:
                 if resend_envelopes:
                     envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                     self.storage.put(envelopes_to_store)
+                    return ExportResult.FAILED_RETRYABLE
 
             except HttpResponseError as response_error:
                 if is_retryable_code(response_error.status_code):
