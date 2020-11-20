@@ -3,7 +3,6 @@ from azure.mgmt.botservice import AzureBotService
 from azure.mgmt.botservice.models import (
     Bot,
     BotProperties,
-    ErrorException,
     sku
 )
 

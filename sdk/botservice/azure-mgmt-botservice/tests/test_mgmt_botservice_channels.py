@@ -4,7 +4,6 @@ from azure.mgmt.botservice.models import (
     Bot,
     BotProperties,
     BotChannel,
-    ErrorException,
     sku
 )
 
