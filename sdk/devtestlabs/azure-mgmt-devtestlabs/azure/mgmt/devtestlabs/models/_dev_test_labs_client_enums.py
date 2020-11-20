@@ -50,7 +50,7 @@ class CustomImageOsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
 
 class EnableStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """If notifications are enabled for this schedule (i.e. Enabled, Disabled).
+    """Indicates if the artifact source is enabled (values: Enabled, Disabled).
     """
 
     ENABLED = "Enabled"

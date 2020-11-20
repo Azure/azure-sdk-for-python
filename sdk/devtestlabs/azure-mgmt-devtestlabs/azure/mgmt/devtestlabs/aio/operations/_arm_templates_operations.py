@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class ArmTemplatesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -51,7 +51,7 @@ class ArmTemplatesOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         **kwargs
-    ) -> AsyncIterable["models.ArmTemplateList"]:
+    ) -> AsyncIterable["_models.ArmTemplateList"]:
         """List azure resource manager templates in a given artifact source.
 
         :param resource_group_name: The name of the resource group.
@@ -74,7 +74,7 @@ class ArmTemplatesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devtestlabs.models.ArmTemplateList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmTemplateList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArmTemplateList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -148,7 +148,7 @@ class ArmTemplatesOperations:
         name: str,
         expand: Optional[str] = None,
         **kwargs
-    ) -> "models.ArmTemplate":
+    ) -> "_models.ArmTemplate":
         """Get azure resource manager template.
 
         :param resource_group_name: The name of the resource group.
@@ -166,7 +166,7 @@ class ArmTemplatesOperations:
         :rtype: ~azure.mgmt.devtestlabs.models.ArmTemplate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ArmTemplate"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ArmTemplate"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

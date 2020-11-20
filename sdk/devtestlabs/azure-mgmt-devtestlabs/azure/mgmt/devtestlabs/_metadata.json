@@ -1,0 +1,85 @@
+{
+    "chosen_version": "2018-09-15",
+    "total_api_version_list": ["2018-09-15"],
+    "client": {
+        "name": "DevTestLabsClient",
+        "filename": "_dev_test_labs_client",
+        "description": "The DevTest Labs Client.",
+        "base_url": "\u0027https://management.azure.com\u0027",
+        "custom_base_url": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": true
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The subscription ID.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential,  # type: \"AsyncTokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id,  # type: str",
+                "description": "The subscription ID.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id"
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_default_policy_type": "BearerTokenCredentialPolicy",
+        "credential_default_policy_type_has_async_version": true,
+        "credential_key_header_name": null
+    },
+    "operation_groups": {
+        "provider_operations": "ProviderOperationsOperations",
+        "labs": "LabsOperations",
+        "operations": "Operations",
+        "global_schedules": "GlobalSchedulesOperations",
+        "artifact_sources": "ArtifactSourcesOperations",
+        "arm_templates": "ArmTemplatesOperations",
+        "artifacts": "ArtifactsOperations",
+        "costs": "CostsOperations",
+        "custom_images": "CustomImagesOperations",
+        "formulas": "FormulasOperations",
+        "gallery_images": "GalleryImagesOperations",
+        "notification_channels": "NotificationChannelsOperations",
+        "policy_sets": "PolicySetsOperations",
+        "policies": "PoliciesOperations",
+        "schedules": "SchedulesOperations",
+        "service_runners": "ServiceRunnersOperations",
+        "users": "UsersOperations",
+        "disks": "DisksOperations",
+        "environments": "EnvironmentsOperations",
+        "secrets": "SecretsOperations",
+        "service_fabrics": "ServiceFabricsOperations",
+        "service_fabric_schedules": "ServiceFabricSchedulesOperations",
+        "virtual_machines": "VirtualMachinesOperations",
+        "virtual_machine_schedules": "VirtualMachineSchedulesOperations",
+        "virtual_networks": "VirtualNetworksOperations"
+    },
+    "operation_mixins": {
+    },
+    "sync_imports": "None",
+    "async_imports": "None"
+}
