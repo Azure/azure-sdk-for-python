@@ -727,9 +727,9 @@ def form_recognizer_account():
     if ENDPOINT != "None":
         FormRecognizerTest._FORM_RECOGNIZER_ACCOUNT = ENDPOINT
         if REGION == "centraluseuap":
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("FORM_RECOGNIZER_PYTHON_CANARY_API_KEY")
+            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("AZURE_FORM_RECOGNIZER_PYTHON_CANARY_API_KEY")
         else:
-            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("FORM_RECOGNIZER_PYTHON_API_KEY")
+            FormRecognizerTest._FORM_RECOGNIZER_KEY = os.getenv("AZURE_FORM_RECOGNIZER_PYTHON_API_KEY")
         FormRecognizerTest._FORM_RECOGNIZER_NAME = NAME
         FormRecognizerTest._RESOURCE_GROUP = ResourceGroup(name=RESOURCE_GROUP)
         yield
