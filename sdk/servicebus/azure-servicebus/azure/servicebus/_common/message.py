@@ -17,7 +17,7 @@ from uamqp.constants import MessageState
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
-    ReceiveMode,
+    ServiceBusReceiveMode,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
@@ -580,10 +580,10 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             :caption: Checking the properties on a received message.
 
     """
-    def __init__(self, message, receive_mode=ReceiveMode.PeekLock, **kwargs):
-        # type: (uamqp.message.Message, ReceiveMode, Any) -> None
+    def __init__(self, message, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, **kwargs):
+        # type: (uamqp.message.Message, Union[ServiceBusReceiveMode, str], Any) -> None
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
-        self._settled = (receive_mode == ReceiveMode.ReceiveAndDelete)
+        self._settled = (receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
@@ -763,7 +763,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         # type: () -> Optional[Union[uuid.UUID, str]]
         """
         The lock token for the current message serving as a reference to the lock that
-        is being held by the broker in PeekLock mode.
+        is being held by the broker in PEEK_LOCK mode.
 
         :rtype:  ~uuid.UUID or str
         """

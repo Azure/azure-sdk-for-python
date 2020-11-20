@@ -18,7 +18,6 @@ except ImportError:
     pass # If psutil isn't installed, simply does not capture process stats.
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusMessageBatch
-from azure.servicebus._common.constants import ReceiveMode
 from azure.servicebus.exceptions import MessageAlreadySettled
 
 from utilities import _build_logger

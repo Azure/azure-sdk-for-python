@@ -11,11 +11,11 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from azure.servicebus import ServiceBusMessage, ReceiveMode
+from azure.servicebus import ServiceBusMessage, ServiceBusReceiveMode
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
-from azure.servicebus._common.constants import SubQueue
+from azure.servicebus._common.constants import ServiceBusSubQueue
 
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
@@ -121,7 +121,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock,
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                 prefetch_count=10
             ) as receiver:
 
@@ -145,7 +145,7 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK
             ) as receiver:
                 count = 0
                 async for message in receiver:
@@ -157,9 +157,9 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
             async with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
                 subscription_name=servicebus_subscription.name,
-                sub_queue = SubQueue.DeadLetter,
+                sub_queue = ServiceBusSubQueue.DEAD_LETTER,
                 max_wait_time=5,
-                receive_mode=ReceiveMode.PeekLock
+                receive_mode=ServiceBusReceiveMode.PEEK_LOCK
             ) as dl_receiver:
                 count = 0
                 async for message in dl_receiver:
