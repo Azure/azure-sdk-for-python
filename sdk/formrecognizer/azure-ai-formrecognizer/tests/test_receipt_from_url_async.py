@@ -38,6 +38,7 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
     @pytest.mark.live_test_only
     @GlobalFormRecognizerAccountPreparer()
+    @pytest.mark.skip
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
