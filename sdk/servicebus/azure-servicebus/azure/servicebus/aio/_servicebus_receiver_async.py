@@ -41,7 +41,7 @@ from .._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
     SPAN_NAME_RECEIVE_DEFERRED,
-    SPAN_NAME_PEEK
+    SPAN_NAME_PEEK,
     ServiceBusToAMQPReceiveModeMap
 )
 from .._common import mgmt_handlers
