@@ -88,3 +88,28 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
+
+    def test_sb_client_bad_entity_async(self):
+        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
+                   "SharedAccessKeyName=mock;SharedAccessKey=mock;EntityPath=mockentity"
+        fake_client = ServiceBusClient.from_connection_string(fake_str)
+
+        with pytest.raises(ValueError):
+            fake_client.get_queue_sender('queue')
+
+        with pytest.raises(ValueError):
+            fake_client.get_queue_receiver('queue')
+
+        with pytest.raises(ValueError):
+            fake_client.get_topic_sender('topic')
+
+        with pytest.raises(ValueError):
+            fake_client.get_subscription_receiver('topic', 'subscription')
+
+        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
+                   "SharedAccessKeyName=mock;SharedAccessKey=mock"
+        fake_client = ServiceBusClient.from_connection_string(fake_str)
+        fake_client.get_queue_sender('queue')
+        fake_client.get_queue_receiver('queue')
+        fake_client.get_topic_sender('topic')
+        fake_client.get_subscription_receiver('topic', 'subscription')

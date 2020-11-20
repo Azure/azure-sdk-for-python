@@ -74,6 +74,30 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                 with client.get_queue_sender("invalid") as sender:
                     sender.send_messages(ServiceBusMessage("test"))
 
+        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
+                   "SharedAccessKeyName=mock;SharedAccessKey=mock;EntityPath=mockentity"
+        fake_client = ServiceBusClient.from_connection_string(fake_str)
+
+        with pytest.raises(ValueError):
+            fake_client.get_queue_sender('queue')
+
+        with pytest.raises(ValueError):
+            fake_client.get_queue_receiver('queue')
+
+        with pytest.raises(ValueError):
+            fake_client.get_topic_sender('topic')
+
+        with pytest.raises(ValueError):
+            fake_client.get_subscription_receiver('topic', 'subscription')
+
+        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
+                   "SharedAccessKeyName=mock;SharedAccessKey=mock"
+        fake_client = ServiceBusClient.from_connection_string(fake_str)
+        fake_client.get_queue_sender('queue')
+        fake_client.get_queue_receiver('queue')
+        fake_client.get_topic_sender('topic')
+        fake_client.get_subscription_receiver('topic', 'subscription')
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
