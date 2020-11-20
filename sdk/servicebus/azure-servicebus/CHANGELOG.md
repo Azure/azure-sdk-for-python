@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b9 (Unreleased)
+## 7.0.0 (2020-11-23)
 
 **New Features**
 
@@ -16,7 +16,7 @@
 * An improper `receive_mode` value will now raise `ValueError` instead of `TypeError` in line with supporting extensible enums.
 * Rename enum values `DeadLetter` to `DEAD_LETTER`, `TransferDeadLetter` to `TRANSFER_DEAD_LETTER`, `PeekLock` to `PEEK_LOCK` and `ReceiveAndDelete` to `RECEIVE_AND_DELETE` to conform to sdk guidelines going forward.
 * `send_messages`, `schedule_messages`, `cancel_scheduled_messages` and `receive_deferred_messages` now performs a no-op rather than raising a `ValueError` if provided an empty list of messages or an empty batch.
-* `amqp_annotated_message` has been renamed to `raw_amqp_message` to normalize with other SDKs.
+* `ServiceBusMessage.amqp_annotated_message` has been renamed to `ServiceBusMessage.raw_amqp_message` to normalize with other SDKs.
 * Redesigned error hierarchy based on the service-defined error condition:
   - `MessageAlreadySettled` now inherits from `ValueError` instead of `ServiceBusMessageError` as it's a client-side validation.
   - Removed `NoActiveSession` which is now replaced by `OperationTimeoutError` as the client times out when trying to connect to any available session.
@@ -36,7 +36,7 @@
   - Introduced `SessionCannotBeLockedError` which would be raised when the requested session cannot be locked.
 * `ServiceBusClient.get_queue/topic_sender` and `ServiceBusClient.get_queue/subscription_receiver` will now
 raise `ValueError` if the `queue_name` or `topic_name` does not match the `EntityPath` in the connection string used to construct the `ServiceBusClient`.
-
+* `get_streaming_message_iter` has been made internal for the time being to assess use patterns before comitting to back-compatibility; messages may still be iterated over in equivelent fashion by iterating on the receiver itself.
 
 **BugFixes**
 

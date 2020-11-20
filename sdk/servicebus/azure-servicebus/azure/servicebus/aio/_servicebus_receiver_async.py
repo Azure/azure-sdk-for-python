@@ -168,7 +168,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     return message
             finally:
                 if original_timeout:
-                    self.receiver._handler._timeout = original_timeout
+                    try:
+                        self.receiver._handler._timeout = original_timeout
+                    except AttributeError: # Handler may be disposed already.
+                        pass
+
 
     def __aiter__(self):
         return self._IterContextualWrapper(self)
@@ -479,7 +483,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         await super(ServiceBusReceiver, self).close()
         self._message_iter = None
 
-    def get_streaming_message_iter(
+    def _get_streaming_message_iter(
         self,
         max_wait_time: Optional[float] = None
     ) -> AsyncIterator[ServiceBusReceivedMessage]:
