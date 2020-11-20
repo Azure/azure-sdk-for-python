@@ -176,7 +176,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :rtype: Dict[str, object]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
-            digital twin with the provided ID or the component path is invalid.
+            digital twin with the provided ID or the component name is invalid.
         """
         return self._client.digital_twins.get_component(
             digital_twin_id,
@@ -207,7 +207,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is either no
-            digital twin with the provided ID or the component path is invalid.
+            digital twin with the provided ID or the component name is invalid.
         """
         options = None
         etag = kwargs.pop("etag", None)
@@ -438,7 +438,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
-            digital twin with the provided ID or the component path is invalid.
+            digital twin with the provided ID or the component name is invalid.
         """
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = datetime.now()
@@ -603,7 +603,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :param DigitalTwinsEventRoute event_route: The event route data.
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         :raises ~azure.core.exceptions.ServiceRequestError: The request is invalid.
         """
         return self._client.event_routes.add(
@@ -620,7 +620,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :param str event_route_id: The ID of the event route to delete.
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError
         :raises ~azure.core.exceptions.ResourceNotFoundError: There is no
             event route with the provided ID.
         """
