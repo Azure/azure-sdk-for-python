@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .accounts_operations import AccountsOperations
-from .firewall_rules_operations import FirewallRulesOperations
-from .virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .trusted_id_providers_operations import TrustedIdProvidersOperations
-from .operations import Operations
-from .locations_operations import LocationsOperations
+from ._accounts_operations import AccountsOperations
+from ._firewall_rules_operations import FirewallRulesOperations
+from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
+from ._trusted_id_providers_operations import TrustedIdProvidersOperations
+from ._operations import Operations
+from ._locations_operations import LocationsOperations
 
 __all__ = [
     'AccountsOperations',
