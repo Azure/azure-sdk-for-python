@@ -40,10 +40,12 @@ from .._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
+    SPAN_NAME_RECEIVE_DEFERRED,
+    SPAN_NAME_PEEK,
     ServiceBusToAMQPReceiveModeMap
 )
 from .._common import mgmt_handlers
-from .._common.utils import utc_from_timestamp
+from .._common.utils import trace_link_message, receive_trace_context_manager, utc_from_timestamp
 from ._async_utils import create_authentication, get_running_loop
 
 if TYPE_CHECKING:
@@ -160,7 +162,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 original_timeout = self.receiver._handler._timeout
                 self.receiver._handler._timeout = self.max_wait_time * 1000
             try:
-                return await self.receiver.__anext__()
+                with receive_trace_context_manager(self.receiver) as receive_span:
+                    message = await self.receiver._inner_anext()
+                    trace_link_message(message, receive_span)
+                    return message
             finally:
                 if original_timeout:
                     self.receiver._handler._timeout = original_timeout
@@ -168,7 +173,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._IterContextualWrapper(self)
 
-    async def __anext__(self):
+    async def _inner_anext(self):
+        # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
             try:
@@ -176,6 +182,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             except StopAsyncIteration:
                 self._message_iter = None
                 raise
+
+    async def __anext__(self):
+        with receive_trace_context_manager(self) as receive_span:
+            message = await self._inner_anext()
+            trace_link_message(message, receive_span)
+            return message
 
     async def _iter_next(self):
         await self._open()
@@ -536,18 +548,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
-        messages = await self._do_retryable_operation(
-            self._receive,
-            max_message_count=max_message_count,
-            timeout=max_wait_time,
-            operation_requires_timeout=True
-        )
-        if self._auto_lock_renewer \
-                and not self._session \
-                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
-            for message in messages:
-                self._auto_lock_renewer.register(self, message)
-        return messages
+        with receive_trace_context_manager(self) as receive_span:
+            messages = await self._do_retryable_operation(
+                self._receive,
+                max_message_count=max_message_count,
+                timeout=max_wait_time,
+                operation_requires_timeout=True
+            )
+            trace_link_message(messages, receive_span)
+            if self._auto_lock_renewer \
+                    and not self._session \
+                    and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+                for message in messages:
+                    self._auto_lock_renewer.register(self, message)
+            return messages
 
     async def receive_deferred_messages(
         self,
@@ -600,18 +614,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                                     receive_mode=self._receive_mode,
                                     message_type=ServiceBusReceivedMessage,
                                     receiver=self)
-        messages = await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
-            message,
-            handler,
-            timeout=timeout
-        )
-        if self._auto_lock_renewer \
-                and not self._session \
-                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
-            for message in messages:
-                self._auto_lock_renewer.register(self, message)
-        return messages
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_RECEIVE_DEFERRED) as receive_span:
+            messages = await self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
+                message,
+                handler,
+                timeout=timeout
+            )
+            trace_link_message(messages, receive_span)
+            if self._auto_lock_renewer \
+                    and not self._session \
+                    and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
+                for message in messages:
+                    self._auto_lock_renewer.register(self, message)
+            return messages
 
     async def peek_messages(self, max_message_count: int = 1, **kwargs: Any) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
@@ -653,13 +669,17 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         }
 
         self._populate_message_properties(message)
-        handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
-        return await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_PEEK_OPERATION,
-            message,
-            handler,
-            timeout=timeout
-        )
+
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK) as receive_span:
+            handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
+            messages = await self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_PEEK_OPERATION,
+                message,
+                handler,
+                timeout=timeout
+            )
+            trace_link_message(messages, receive_span)
+            return messages
 
     async def complete_message(self, message):
         """Complete the message.

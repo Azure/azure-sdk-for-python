@@ -34,7 +34,12 @@ from ._common.constants import (
     MANAGEMENT_PATH_SUFFIX,
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
-    ASSOCIATEDLINKPROPERTYNAME
+    ASSOCIATEDLINKPROPERTYNAME,
+    TRACE_NAMESPACE_PROPERTY,
+    TRACE_COMPONENT_PROPERTY,
+    TRACE_COMPONENT,
+    TRACE_PEER_ADDRESS_PROPERTY,
+    TRACE_BUS_DESTINATION_PROPERTY
 )
 
 if TYPE_CHECKING:
@@ -165,8 +170,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")
-        self._mgmt_target = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
-        self._mgmt_target = "{}{}".format(self._mgmt_target, MANAGEMENT_PATH_SUFFIX)
+        self._entity_path = self._entity_name + (("/Subscriptions/" + subscription_name) if subscription_name else '')
+        self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
         self._credential = credential
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
@@ -402,6 +407,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             operation_requires_timeout=True,
             **kwargs
         )
+
+    def _add_span_request_attributes(self, span):
+        span.add_attribute(TRACE_COMPONENT_PROPERTY, TRACE_COMPONENT)
+        span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE_PROPERTY)
+        span.add_attribute(TRACE_BUS_DESTINATION_PROPERTY, self._entity_path)
+        span.add_attribute(TRACE_PEER_ADDRESS_PROPERTY, self.fully_qualified_namespace)
 
     def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")

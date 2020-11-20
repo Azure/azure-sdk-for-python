@@ -16,10 +16,16 @@ from ._base_handler_async import BaseHandler
 from .._common.constants import (
     REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
     REQUEST_RESPONSE_CANCEL_SCHEDULED_MESSAGE_OPERATION,
-    MGMT_REQUEST_SEQUENCE_NUMBERS
+    MGMT_REQUEST_SEQUENCE_NUMBERS,
+    SPAN_NAME_SCHEDULE
 )
 from .._common import mgmt_handlers
-from .._common.utils import transform_messages_to_sendable_if_needed
+from .._common.utils import (
+    transform_messages_to_sendable_if_needed,
+    send_trace_context_manager,
+    trace_message,
+    add_link_to_send
+)
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
@@ -202,18 +208,21 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(messages, ServiceBusMessage):
-            request_body = self._build_schedule_request(schedule_time_utc, messages)
-        else:
-            if len(messages) == 0:
-                return [] # No-op on empty list.
-            request_body = self._build_schedule_request(schedule_time_utc, *messages)
-        return await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
-            request_body,
-            mgmt_handlers.schedule_op,
-            timeout=timeout
-        )
+        with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
+            if isinstance(messages, ServiceBusMessage):
+                request_body = self._build_schedule_request(schedule_time_utc, send_span, messages)
+            else:
+                if len(messages) == 0:
+                    return []  # No-op on empty list.
+                request_body = self._build_schedule_request(schedule_time_utc, send_span, *messages)
+            if send_span:
+                await self._add_span_request_attributes(send_span)
+            return await self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
+                request_body,
+                mgmt_handlers.schedule_op,
+                timeout=timeout
+            )
 
     async def cancel_scheduled_messages(self, sequence_numbers: Union[int, List[int]], **kwargs: Any) -> None:
         """
@@ -292,28 +301,38 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        message = transform_messages_to_sendable_if_needed(message)
-        try:
-            batch = await self.create_message_batch()
-            batch._from_list(message)  # pylint: disable=protected-access
-            message = batch
-        except TypeError:  # Message was not a list or generator.
-            pass
-        if isinstance(message, ServiceBusMessageBatch) and len(message) == 0:  # pylint: disable=len-as-condition
-            return # Short circuit noop if an empty list or batch is provided.
-        if not isinstance(message, ServiceBusMessageBatch) and not isinstance(message, ServiceBusMessage):
-            raise TypeError(
-                "Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage>"
-                " or lists of ServiceBusMessage."
-            )
 
-        await self._do_retryable_operation(
-            self._send,
-            message=message,
-            timeout=timeout,
-            operation_requires_timeout=True,
-            require_last_exception=True
-        )
+        with send_trace_context_manager() as send_span:
+            message = transform_messages_to_sendable_if_needed(message)
+            try:
+                for each_message in iter(message): # type: ignore # Ignore type (and below) as it will except if wrong.
+                    add_link_to_send(each_message, send_span)
+                batch = await self.create_message_batch()
+                batch._from_list(message, send_span) # type: ignore # pylint: disable=protected-access
+                message = batch
+            except TypeError:  # Message was not a list or generator.
+                if isinstance(message, ServiceBusMessageBatch):
+                    for batch_message in message.message._body_gen:  # pylint: disable=protected-access
+                        add_link_to_send(batch_message, send_span)
+                elif isinstance(message, ServiceBusMessage):
+                    trace_message(message, send_span)
+                    add_link_to_send(message, send_span)
+            if isinstance(message, ServiceBusMessageBatch) and len(message) == 0:  # pylint: disable=len-as-condition
+                return  # Short circuit noop if an empty list or batch is provided.
+            if not isinstance(message, ServiceBusMessageBatch) and not isinstance(message, ServiceBusMessage):
+                raise TypeError("Can only send azure.servicebus.<ServiceBusMessageBatch,ServiceBusMessage> "
+                                "or lists of ServiceBusMessage.")
+
+            if send_span:
+                await self._add_span_request_attributes(send_span)
+
+            await self._do_retryable_operation(
+                self._send,
+                message=message,
+                timeout=timeout,
+                operation_requires_timeout=True,
+                require_last_exception=True
+            )
 
     async def create_message_batch(self, max_size_in_bytes: int = None) -> ServiceBusMessageBatch:
         """Create a ServiceBusMessageBatch object with the max size of all content being constrained by

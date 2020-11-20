@@ -5,6 +5,7 @@
 **New Features**
 
 * `sub_queue` and `receive_mode` may now be passed in as a valid string (as defined by their respective enum type) as well as their enum form when constructing `ServiceBusReceiver`.
+* Added support for Distributed Tracing of send, receive, and schedule scenarios.
 
 **Breaking Changes**
 
