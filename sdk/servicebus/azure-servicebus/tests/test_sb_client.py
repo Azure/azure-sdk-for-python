@@ -18,7 +18,6 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus._common.message import ServiceBusMessage, ServiceBusReceivedMessage
 from azure.servicebus.exceptions import (
     ServiceBusError,
-    ServiceBusConnectionError,
     ServiceBusAuthenticationError,
     ServiceBusAuthorizationError
 )
@@ -134,7 +133,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
                 sender.send_messages(ServiceBusMessage("test")) 
 
             # Now do the same but with direct connstr initialization.
-            with pytest.raises(ServiceBusAuthenticationError):
+            with pytest.raises(ValueError):
                 with ServiceBusSender._from_connection_string(
                     servicebus_queue_authorization_rule_connection_string,
                     queue_name=wrong_queue.name,

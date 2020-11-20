@@ -30,9 +30,10 @@ from .constants import (
     PROPERTIES_DEAD_LETTER_ERROR_DESCRIPTION,
     ANNOTATION_SYMBOL_PARTITION_KEY,
     ANNOTATION_SYMBOL_SCHEDULED_ENQUEUE_TIME,
-    ANNOTATION_SYMBOL_KEY_MAP
+    ANNOTATION_SYMBOL_KEY_MAP,
+    MESSAGE_PROPERTY_MAX_LENGTH
 )
-from ..exceptions import MessageContentTooLarge
+from ..exceptions import MessageSizeExceededError
 from .utils import utc_from_timestamp, utc_now, transform_messages_to_sendable_if_needed
 if TYPE_CHECKING:
     from ..aio._servicebus_receiver_async import ServiceBusReceiver as AsyncServiceBusReceiver
@@ -161,6 +162,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @session_id.setter
     def session_id(self, value):
         # type: (str) -> None
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+
         self._amqp_properties.group_id = value
 
     @property
@@ -202,6 +206,13 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
     @partition_key.setter
     def partition_key(self, value):
         # type: (str) -> None
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("partition_key cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+
+        if value and value != self.session_id:
+            raise ValueError(
+                "partition_key:{} cannot be set to a different value than session_id:{}".format(value, self.session_id)
+            )
         self._set_message_annotations(_X_OPT_PARTITION_KEY, value)
 
     @property
@@ -290,9 +301,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.content_type
 
     @content_type.setter
-    def content_type(self, val):
+    def content_type(self, value):
         # type: (str) -> None
-        self._amqp_properties.content_type = val
+        self._amqp_properties.content_type = value
 
     @property
     def correlation_id(self):
@@ -314,9 +325,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, val):
+    def correlation_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.correlation_id = val
+        self._amqp_properties.correlation_id = value
 
     @property
     def subject(self):
@@ -334,9 +345,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.subject
 
     @subject.setter
-    def subject(self, val):
+    def subject(self, value):
         # type: (str) -> None
-        self._amqp_properties.subject = val
+        self._amqp_properties.subject = value
 
     @property
     def message_id(self):
@@ -357,9 +368,12 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.message_id
 
     @message_id.setter
-    def message_id(self, val):
+    def message_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.message_id = val
+        if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError("message_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
+
+        self._amqp_properties.message_id = value
 
     @property
     def reply_to(self):
@@ -382,9 +396,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.reply_to
 
     @reply_to.setter
-    def reply_to(self, val):
+    def reply_to(self, value):
         # type: (str) -> None
-        self._amqp_properties.reply_to = val
+        self._amqp_properties.reply_to = value
 
     @property
     def reply_to_session_id(self):
@@ -406,9 +420,14 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.reply_to_group_id
 
     @reply_to_session_id.setter
-    def reply_to_session_id(self, val):
+    def reply_to_session_id(self, value):
         # type: (str) -> None
-        self._amqp_properties.reply_to_group_id = val
+        if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
+            raise ValueError(
+                "reply_to_session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH)
+            )
+
+        self._amqp_properties.reply_to_group_id = value
 
     @property
     def to(self):
@@ -429,9 +448,9 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-public-methods,too-
             return self._amqp_properties.to
 
     @to.setter
-    def to(self, val):
+    def to(self, value):
         # type: (str) -> None
-        self._amqp_properties.to = val
+        self._amqp_properties.to = value
 
 
 class ServiceBusMessageBatch(object):
@@ -502,7 +521,7 @@ class ServiceBusMessageBatch(object):
         :param message: The Message to be added to the batch.
         :type message: ~azure.servicebus.ServiceBusMessage
         :rtype: None
-        :raises: :class: ~azure.servicebus.exceptions.MessageContentTooLarge, when exceeding the size limit.
+        :raises: :class: ~azure.servicebus.exceptions.MessageSizeExceededError, when exceeding the size limit.
         """
         message = transform_messages_to_sendable_if_needed(message)
         message_size = message.message.get_message_encoded_size()
@@ -516,8 +535,8 @@ class ServiceBusMessageBatch(object):
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise MessageContentTooLarge(
-                "ServiceBusMessageBatch has reached its size limit: {}".format(
+            raise MessageSizeExceededError(
+                message="ServiceBusMessageBatch has reached its size limit: {}".format(
                     self.max_size_in_bytes
                 )
             )
@@ -559,7 +578,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             raise TypeError("ServiceBusReceivedMessage requires a receiver to be initialized. " +
                             "This class should never be initialized by a user; " +
                             "for outgoing messages, the ServiceBusMessage class should be utilized instead.")
-        self._expiry = None # type: Optional[datetime.datetime]
+        self._expiry = None  # type: Optional[datetime.datetime]
 
     @property
     def _lock_expired(self):
@@ -573,7 +592,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         try:
             if self._receiver.session:  # type: ignore
                 raise TypeError("Session messages do not expire. Please use the Session expiry instead.")
-        except AttributeError: # Is not a session receiver
+        except AttributeError:  # Is not a session receiver
             pass
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True
