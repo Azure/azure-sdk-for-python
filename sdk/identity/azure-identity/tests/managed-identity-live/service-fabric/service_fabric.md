@@ -58,7 +58,7 @@ Create your key vault:
 az keyvault create -g $RESOURCE_GROUP -n $KEY_VAULT_NAME --sku standard --enabled-for-deployment true --enabled-for-template-deployment true
 ```
 
-After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://azure.portal.com/). You'll need to insert some of this certificate's properties into the cluster template later on.
+After creating the vault, [create a self-signed certificate](https://docs.microsoft.com/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault) in it using the [Azure Portal](https://portal.azure.com/). You'll need to insert some of this certificate's properties into the cluster template later on.
 
 ### Create an Azure Container Registry
 
@@ -138,7 +138,7 @@ Your Service Fabric cluster will target each application by referencing a `.sfpk
 
 If using an existing cluster, ensure your resource group has a storage account connected to your cluster. If you deployed a cluster using the template provided, two storage accounts were created but only one needs to store the `.sfpkg` files for the applications (the one with the name corresponding to `applicationDiagnosticsStorageAccountName` in the template). 
 
-Go to your resource group in the [Azure Portal](https://azure.portal.com) and click on the storage account. Go to the "Containers" page and create a new container named "apps" -- be sure the set the public access level to Blob.
+Go to your resource group in the [Azure Portal](https://portal.azure.com) and click on the storage account. Go to the "Containers" page and create a new container named "apps" -- be sure the set the public access level to Blob.
 
 Open the apps container and upload the `.sfpkg` files you created earlier in the walkthrough. The container should now contain `sfmitestsystem.sfpkg` and `sfmitestuser.sfpkg`. Keep this page open to complete the next step.
 
