@@ -104,6 +104,39 @@ semantics with the sender or receiver lifetime.
 |---|---|---|
 | `azure.servicebus.Message.user_properties` | `azure.servicebus.ServiceBusMessage.application_properties` | Some message properties have been renamed, e.g. accessing the application specific properties of a message. |
 
+## Working with Administration Client
+
+### Queue based changes
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.control_client.ServiceBusService.get_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_queue(queue_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.create_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_queue(queue_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.delete_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_queue(queue_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient.list_queues()` | |
+
+### Topic based changes
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.control_client.ServiceBusService.get_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_topic(topic_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.create_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_topic(topic_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.get_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_topic(topic_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.list_topics()` | `azure.servicebus.management.ServiceBusAdministrationClient.list_topics()` | |
+
+### Subscription based changes
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.control_client.ServiceBusService.get_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_subscription(topic_name, subscription_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.create_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_subscription(topic_name, subscription_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.delete_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_subscription(topic_name, subscription_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.list_subscriptions(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.list_subscriptions(topic_name)` | |
+
+### Rule based changes
+| In v0.50 | Equivalent in v7 | Sample |
+|---|---|---|
+| `azure.servicebus.control_client.ServiceBusService.get_rule(topic_name, subscription_name, rule_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_rule(topic_name, subscription_name, rule_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.create_rule(topic_name, subscription_name, rule_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_rule(topic_name, subscription_name, rule_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.delete_rule(topic_name, subscription_name, rule_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_rule(topic_name, subscription_name, rule_name)` | |
+| `azure.servicebus.control_client.ServiceBusService.list_rules(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.list_rules(topic_name, subscription_name)` | |
 
 ## Migration samples
 
