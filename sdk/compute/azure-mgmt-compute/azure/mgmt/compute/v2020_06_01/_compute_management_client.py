@@ -33,6 +33,7 @@ from .operations import VirtualMachineScaleSetVMExtensionsOperations
 from .operations import VirtualMachineScaleSetVMsOperations
 from .operations import LogAnalyticsOperations
 from .operations import VirtualMachineRunCommandsOperations
+from .operations import VirtualMachineScaleSetVMRunCommandsOperations
 from . import models
 
 
@@ -82,6 +83,8 @@ class ComputeManagementClient(SDKClient):
     :vartype log_analytics: azure.mgmt.compute.v2020_06_01.operations.LogAnalyticsOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommands operations
     :vartype virtual_machine_run_commands: azure.mgmt.compute.v2020_06_01.operations.VirtualMachineRunCommandsOperations
+    :ivar virtual_machine_scale_set_vm_run_commands: VirtualMachineScaleSetVMRunCommands operations
+    :vartype virtual_machine_scale_set_vm_run_commands: azure.mgmt.compute.v2020_06_01.operations.VirtualMachineScaleSetVMRunCommandsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -143,4 +146,6 @@ class ComputeManagementClient(SDKClient):
         self.log_analytics = LogAnalyticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machine_scale_set_vm_run_commands = VirtualMachineScaleSetVMRunCommandsOperations(
             self._client, self.config, self._serialize, self._deserialize)
