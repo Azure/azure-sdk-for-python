@@ -18,9 +18,9 @@ from azure.servicebus import (
     AutoLockRenewer,
     ServiceBusMessage,
     ServiceBusReceivedMessage,
-    ReceiveMode,
+    ServiceBusReceiveMode,
     NEXT_AVAILABLE_SESSION,
-    SubQueue
+    ServiceBusSubQueue
 )
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.exceptions import (
@@ -132,7 +132,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               session_id=session_id, 
-                                              receive_mode=ReceiveMode.ReceiveAndDelete, 
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, 
                                               max_wait_time=5) as receiver:
                 for message in receiver:
                     messages.append(message)
@@ -146,7 +146,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             time.sleep(30)
 
             messages = []
-            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, receive_mode=ReceiveMode.ReceiveAndDelete, max_wait_time=5) as session:
+            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=5) as session:
                 for message in session:
                     messages.append(message)
                 assert len(messages) == 0
@@ -256,7 +256,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               session_id=session_id, 
-                                              receive_mode=ReceiveMode.ReceiveAndDelete, 
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, 
                                               max_wait_time=5) as session:
                 for message in session:
                     messages.append(message)
@@ -345,7 +345,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
             count = 0
             with sb_client.get_queue_receiver(servicebus_queue.name, 
-                                              sub_queue=SubQueue.DeadLetter,
+                                              sub_queue=ServiceBusSubQueue.DEAD_LETTER,
                                               max_wait_time=5) as receiver:
                 for message in receiver:
                     count += 1
@@ -385,7 +385,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               session_id=session_id, 
                                               max_wait_time=5,
-                                              receive_mode=ReceiveMode.ReceiveAndDelete) as receiver:
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE) as receiver:
                 deferred = receiver.receive_deferred_messages(deferred_messages)
                 assert len(deferred) == 10
                 for message in deferred:
@@ -458,7 +458,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             assert count == 10
 
             with sb_client.get_queue_receiver(servicebus_queue.name,
-                                              sub_queue = SubQueue.DeadLetter,
+                                              sub_queue = ServiceBusSubQueue.DEAD_LETTER,
                                               max_wait_time=5) as receiver:
                 count = 0
                 for message in receiver:
@@ -601,7 +601,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
 
             renewer = AutoLockRenewer()
             messages = []
-            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=10) as receiver:
                 renewer.register(receiver,
                                  receiver.session,
                                  max_lock_renewal_duration=10,
@@ -642,7 +642,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             renewer._renew_period = 1
             session = None
 
-            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ReceiveMode.PeekLock, prefetch_count=10) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=10) as receiver:
                 session = receiver.session
                 renewer.register(receiver,
                                  session,
@@ -679,7 +679,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                               session_id=session_id,
                                               max_wait_time=5,
-                                              receive_mode=ReceiveMode.PeekLock,
+                                              receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                                               prefetch_count=10,
                                               auto_lock_renewer=renewer) as receiver:
                 print("Registered lock renew thread", receiver.session._locked_until_utc, utc_now())
@@ -721,7 +721,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                               session_id=session_id,
                                               max_wait_time=5,
-                                              receive_mode=ReceiveMode.PeekLock,
+                                              receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                                               prefetch_count=10,
                                               auto_lock_renewer=renewer) as receiver:
                 session = receiver.session
@@ -751,7 +751,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             auto_lock_renewer = AutoLockRenewer(on_lock_renew_failure=should_not_run)
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               session_id=session_id,
-                                              receive_mode=ReceiveMode.ReceiveAndDelete,
+                                              receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
                                               auto_lock_renewer=auto_lock_renewer) as receiver:
             
                 assert receiver.receive_messages()
@@ -980,7 +980,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                     receiver.set_state("SESSION {}".format(session_id))
 
-            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=5, receive_mode=ReceiveMode.PeekLock) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
                 current_sessions = receiver.list_sessions(updated_since=start_time)
                 assert len(current_sessions) == 5
                 assert current_sessions == sessions

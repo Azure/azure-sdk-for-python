@@ -24,7 +24,7 @@ from .._common.constants import (
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
-    ReceiveMode,
+    ServiceBusReceiveMode,
     MGMT_REQUEST_DISPOSITION_STATUS,
     MGMT_REQUEST_LOCK_TOKENS,
     MGMT_REQUEST_SEQUENCE_NUMBERS,
@@ -39,7 +39,8 @@ from .._common.constants import (
     MESSAGE_MGMT_SETTLEMENT_TERM_MAP,
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
-    MGMT_RESPONSE_MESSAGE_EXPIRATION
+    MGMT_RESPONSE_MESSAGE_EXPIRATION,
+    ServiceBusToAMQPReceiveModeMap
 )
 from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
@@ -80,12 +81,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-     are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-     lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+     are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+     lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
      will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
      if the client fails to process the message.
-     The default mode is PeekLock.
-    :paramtype receive_mode: ~azure.servicebus.ReceiveMode
+     The default mode is PEEK_LOCK.
+    :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
     :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the receiver
      will automatically stop receiving. The default value is None, meaning no timeout.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -182,7 +183,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
         message = self._build_message(uamqp_message)
-        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
+        if self._auto_lock_renewer \
+                and not self._session \
+                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
             self._auto_lock_renewer.register(self, message)
         return message
 
@@ -201,12 +204,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :keyword str subscription_name: The path of specific Service Bus Subscription under the
          specified Topic the client connects to.
         :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
-         are PeekLock and ReceiveAndDelete. Messages received with PeekLock must be settled within a given
-         lock period before they will be removed from the queue. Messages received with ReceiveAndDelete
+         are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
+         lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
          will be immediately removed from the queue, and cannot be subsequently abandoned or re-received
          if the client fails to process the message.
-         The default mode is PeekLock.
-        :paramtype receive_mode: ~azure.servicebus.ReceiveMode
+         The default mode is PEEK_LOCK.
+        :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
          receiver will automatically stop receiving. The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
@@ -261,8 +264,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             on_attach=self._on_attach,
             auto_complete=False,
             encoding=self._config.encoding,
-            receive_settle_mode=self._receive_mode.value,
-            send_settle_mode=SenderSettleMode.Settled if self._receive_mode == ReceiveMode.ReceiveAndDelete else None,
+            receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
+            send_settle_mode=SenderSettleMode.Settled \
+                if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE \
+                else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             keep_alive_interval=self._config.keep_alive,
@@ -537,7 +542,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=max_wait_time,
             operation_requires_timeout=True
         )
-        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
+        if self._auto_lock_renewer \
+                and not self._session \
+                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
             for message in messages:
                 self._auto_lock_renewer.register(self, message)
         return messages
@@ -577,10 +584,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if len(sequence_numbers) == 0:
             return [] # no-op on empty list.
         await self._open()
+        uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
-            receive_mode = self._receive_mode.value.value
+            receive_mode = uamqp_receive_mode.value.value
         except AttributeError:
-            receive_mode = int(self._receive_mode)
+            receive_mode = int(uamqp_receive_mode.value)
         message = {
             MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray([types.AMQPLong(s) for s in sequence_numbers]),
             MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode)
@@ -598,7 +606,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             handler,
             timeout=timeout
         )
-        if self._auto_lock_renewer and not self._session and self._receive_mode != ReceiveMode.ReceiveAndDelete:
+        if self._auto_lock_renewer \
+                and not self._session \
+                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE:
             for message in messages:
                 self._auto_lock_renewer.register(self, message)
         return messages
@@ -768,7 +778,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         In order to complete (or otherwise settle) the message, the lock must be maintained,
         and cannot already have expired; an expired lock cannot be renewed.
 
-        Messages received via ReceiveAndDelete mode are not locked, and therefore cannot be renewed.
+        Messages received via RECEIVE_AND_DELETE mode are not locked, and therefore cannot be renewed.
         This operation is only available for non-sessionful messages as well.
 
         :param message: The message to renew the lock for.

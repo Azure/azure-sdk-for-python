@@ -9,7 +9,7 @@ import uamqp
 from .message import ServiceBusReceivedMessage
 from ..exceptions import _handle_amqp_mgmt_error
 from .constants import (
-    ReceiveMode,
+    ServiceBusReceiveMode,
     MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
 )
 
@@ -72,7 +72,7 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
         message,
         description,
         receiver,
-        receive_mode=ReceiveMode.PeekLock,
+        receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
         message_type=ServiceBusReceivedMessage
 ):
     condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
