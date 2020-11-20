@@ -4,7 +4,7 @@ $packagePattern = "*.zip"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 $IndexHtmlLoc = "index.html"
-$AppTitle = "Azure SDK for Python"
+$AppTitle = "Python"
 
 function Get-python-PackageInfoFromRepo  ($pkgPath, $serviceDirectory, $pkgName)
 {
@@ -112,7 +112,8 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 }
 
 function Get-python-GithubIoDocIndex() {
-  Mutate-Files -appTitle $AppTitle -lang $Language -indexhtmlloc $IndexHtmlLoc
+  # Fill in language specific information using script.
+  Mutate-Files -appTitleLang $AppTitleLang -lang $Language -indexhtmlloc $IndexHtmlLoc
   # Fetch out all package metadata from csv file.
   $metadata = Get-CSVMetadata -MetadataUri $MetadataUri
   # Get the artifacts name from blob storage
