@@ -48,6 +48,7 @@ class BotServiceConnectionsTestCase(AzureMgmtTestCase):
         super(BotServiceConnectionsTestCase, self).tearDown()
 
 
+    @unittest.skip("skip")
     @ResourceGroupPreparer(name_prefix='python_conn')
     def test_bot_connection_operations(self, resource_group):
         self.resource_group_name = resource_group.name
@@ -103,6 +104,7 @@ class BotServiceConnectionsTestCase(AzureMgmtTestCase):
             )
 
 
+    @unittest.skip("skip")
     def test_bot_connection_serviceproviders(self):
         service_provider_responses = self.client.bot_connection.list_service_providers()
         self.assertTrue(len(service_provider_responses.value) > 0)
