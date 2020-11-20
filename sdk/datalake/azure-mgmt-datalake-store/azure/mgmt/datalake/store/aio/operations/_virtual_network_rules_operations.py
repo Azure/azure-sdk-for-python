@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -33,7 +33,7 @@ class VirtualNetworkRulesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -46,7 +46,7 @@ class VirtualNetworkRulesOperations:
         resource_group_name: str,
         account_name: str,
         **kwargs
-    ) -> AsyncIterable["models.VirtualNetworkRuleListResult"]:
+    ) -> AsyncIterable["_models.VirtualNetworkRuleListResult"]:
         """Lists the Data Lake Store virtual network rules within the specified Data Lake Store account.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -58,7 +58,7 @@ class VirtualNetworkRulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datalake.store.models.VirtualNetworkRuleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkRuleListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRuleListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class VirtualNetworkRulesOperations:
         virtual_network_rule_name: str,
         subnet_id: str,
         **kwargs
-    ) -> "models.VirtualNetworkRule":
+    ) -> "_models.VirtualNetworkRule":
         """Creates or updates the specified virtual network rule. During update, the virtual network rule
         with the specified name will be replaced with this new virtual network rule.
 
@@ -139,13 +139,13 @@ class VirtualNetworkRulesOperations:
         :rtype: ~azure.mgmt.datalake.store.models.VirtualNetworkRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = models.CreateOrUpdateVirtualNetworkRuleParameters(subnet_id=subnet_id)
+        _parameters = _models.CreateOrUpdateVirtualNetworkRuleParameters(subnet_id=subnet_id)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -194,7 +194,7 @@ class VirtualNetworkRulesOperations:
         account_name: str,
         virtual_network_rule_name: str,
         **kwargs
-    ) -> "models.VirtualNetworkRule":
+    ) -> "_models.VirtualNetworkRule":
         """Gets the specified Data Lake Store virtual network rule.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -208,7 +208,7 @@ class VirtualNetworkRulesOperations:
         :rtype: ~azure.mgmt.datalake.store.models.VirtualNetworkRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -257,7 +257,7 @@ class VirtualNetworkRulesOperations:
         virtual_network_rule_name: str,
         subnet_id: Optional[str] = None,
         **kwargs
-    ) -> "models.VirtualNetworkRule":
+    ) -> "_models.VirtualNetworkRule":
         """Updates the specified virtual network rule.
 
         :param resource_group_name: The name of the Azure resource group.
@@ -273,13 +273,13 @@ class VirtualNetworkRulesOperations:
         :rtype: ~azure.mgmt.datalake.store.models.VirtualNetworkRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VirtualNetworkRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VirtualNetworkRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = models.UpdateVirtualNetworkRuleParameters(subnet_id=subnet_id)
+        _parameters = _models.UpdateVirtualNetworkRuleParameters(subnet_id=subnet_id)
         api_version = "2016-11-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
