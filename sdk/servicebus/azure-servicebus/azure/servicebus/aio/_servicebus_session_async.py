@@ -27,7 +27,7 @@ class ServiceBusSession(BaseSession):
     """
     The ServiceBusSession is used for manage session states and lock renewal.
 
-    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    **Please use the property `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
 
     .. admonition:: Example:
@@ -45,8 +45,8 @@ class ServiceBusSession(BaseSession):
 
         Returns None if no state has been set.
 
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: str
 
         .. admonition:: Example:
@@ -76,8 +76,8 @@ class ServiceBusSession(BaseSession):
 
         :param state: The state value.
         :type state: Union[str, bytes, bytearray]
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: None
 
         .. admonition:: Example:
@@ -112,8 +112,8 @@ class ServiceBusSession(BaseSession):
         This operation can also be performed as a threaded background task by registering the session
         with an `azure.servicebus.aio.AutoLockRenewer` instance.
 
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime
 
