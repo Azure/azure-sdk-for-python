@@ -6,12 +6,12 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show managing rule entities under a ServiceBus Namespace, including
+Example to show managing rule entities under a ServiceBus Subscription, including
     - Create a rule
     - Get rule properties and runtime information
     - Update a rule
     - Delete a rule
-    - List rules under the given ServiceBus Namespace
+    - List rules under the given ServiceBus Subscription
 """
 
 # pylint: disable=C0111

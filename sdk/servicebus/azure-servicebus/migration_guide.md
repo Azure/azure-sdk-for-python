@@ -51,7 +51,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name, max_wait_time=30) as receiver:
-        message = receiver.next()
+        message = receiver.receive_messages()
 ```
 
 ### Receiving messages
@@ -109,7 +109,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient().create_queue(queue_name)` | [Create a queue](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) |
-| `azure.servicebus.control_client.ServiceBusService().list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient().list_queues()` | [List queues](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) |
+| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient().list_queues()` | [List queues](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) |
 
 ### Working with AutoLockRenewer
 | In v0.50 | Equivalent in v7 | Sample |
@@ -125,7 +125,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 ## Working with Administration Client
 
-The management related operations like creating, updating, deleting and listing queues, topics, sunscriptions or rules are to be done with the `ServiceBusAdministrationClient` which can be imported from the `azure.servicebus.management`. This replaces the `control_client` available in v0.50.
+The management related operations like creating, updating, deleting and listing queues, topics, sunscriptions or rules are to be done with the `ServiceBusAdministrationClient` which can be imported from the `azure.servicebus.management`. If one was relying on `control_client` available in v0.50, and cannot migrate to the `azure-mgmt-servicebus` package (or requires SAS based authentication for management), one would utilize this migration segment, otherwise, the aforementioned dedicated mgmt package should be used.
 
 ### Queue based changes
 | In v0.50 | Equivalent in v7 | Sample |
