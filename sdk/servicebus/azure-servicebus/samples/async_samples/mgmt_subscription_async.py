@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show managing subscription entities under a ServiceBus Subscription, including
+Example to show managing subscription entities under a ServiceBus namespace, including
     - Create a subscription
     - Get subscription properties and runtime information
     - Update a subscription
