@@ -192,7 +192,7 @@ async def example_send_and_receive_async():
     servicebus_receiver = await example_create_servicebus_receiver_async()
     # [START receive_forever_async]
     async with servicebus_receiver:
-        async for message in servicebus_receiver.get_streaming_message_iter():
+        async for message in servicebus_receiver:
             print(str(message))
             await servicebus_receiver.complete_message(message)
     # [END receive_forever_async]
