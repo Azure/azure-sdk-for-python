@@ -255,7 +255,7 @@ def example_send_and_receive_sync():
     servicebus_receiver = example_create_servicebus_receiver_sync()
     # [START receive_forever]
     with servicebus_receiver:
-        for message in servicebus_receiver.get_streaming_message_iter():
+        for message in servicebus_receiver:
             print(str(message))
             servicebus_receiver.complete_message(message)
     # [END receive_forever]

@@ -170,7 +170,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
                 break
             finally:
                 if original_timeout:
-                    self._handler._timeout = original_timeout
+                    try:
+                        self._handler._timeout = original_timeout
+                    except AttributeError: # Handler may be disposed already.
+                        pass
+
 
     def _inner_next(self):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
@@ -484,7 +488,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         super(ServiceBusReceiver, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
-    def get_streaming_message_iter(self, max_wait_time=None):
+    def _get_streaming_message_iter(self, max_wait_time=None):
         # type: (Optional[float]) -> Iterator[ServiceBusReceivedMessage]
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
