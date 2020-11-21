@@ -78,7 +78,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - List subscription
     - Get subscription properties
     - Get subscription runtime information
-- [mgmt_rule](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_rule_async.py)) - Examples to manage topic entities under a given servicebus namespace
+- [mgmt_rule](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_rule_async.py)) - Examples to manage rule entities under a given servicebus subscription
     - Create a rule
     - Delete a rule
     - Update a rule
