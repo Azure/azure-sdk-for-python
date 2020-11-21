@@ -19,7 +19,7 @@ from ..exceptions import AutoLockRenewTimeout, AutoLockRenewFailed, ServiceBusEr
 
 Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
 AsyncLockRenewFailureCallback = Callable[[Renewable,
-                                     Optional[Exception]], Awaitable[None]]
+                                          Optional[Exception]], Awaitable[None]]
 
 _log = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ class AutoLockRenewer:
      that is being registered. Default value is None (no callback).
     :type on_lock_renew_failure: Optional[LockRenewFailureCallback]
     :param loop: An async event loop.
-    :type loop: ~asyncio.AbstractEventLoop
+    :type loop: Optional[~asyncio.AbstractEventLoop]
 
     .. admonition:: Example:
 

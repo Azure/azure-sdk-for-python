@@ -49,7 +49,6 @@ from .._common.utils import trace_link_message, receive_trace_context_manager, u
 from ._async_utils import create_authentication, get_running_loop
 
 if TYPE_CHECKING:
-    from ._async_auto_lock_renewer import AutoLockRenewer
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -464,7 +463,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def session(self) -> ServiceBusSession:
         """
         Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
-        entities.
+        entities, it would return None if called on a non-sessionful receiver.
 
         :rtype: ~azure.servicebus.aio.ServiceBusSession
 
@@ -579,8 +578,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param Union[int, list[int]] sequence_numbers: A list of the sequence numbers of messages that have been
          deferred.
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -642,8 +641,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :param int max_message_count: The maximum number of messages to try and peek. The default
          value is 1.
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -807,8 +806,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         :param message: The message to renew the lock for.
         :type message: ~azure.servicebus.ServiceBusReceivedMessage
-        :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
-         greater than 0 if specified. The default value is None, meaning no timeout.
+        :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
+         The value must be greater than 0 if specified. The default value is None, meaning no timeout.
         :returns: The utc datetime the lock is set to expire at.
         :rtype: datetime.datetime
         :raises: TypeError if the message is sessionful.
