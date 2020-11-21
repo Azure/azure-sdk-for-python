@@ -20,7 +20,6 @@ from ._common.constants import ServiceBusSubQueue
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from ._common.auto_lock_renewer import AutoLockRenewer
 
 _LOGGER = logging.getLogger(__name__)
 

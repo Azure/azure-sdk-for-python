@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b9 (Unreleased)
+## 7.0.0 (2020-11-23)
 
 **New Features**
 
@@ -34,9 +34,13 @@
   - Introduced `ServiceBusServerBusyError` which would be raised when the Azure Service Bus service reports that it is busy in response to a client request to perform an operation.
   - Introduced `ServiceBusCommunicationError` which would be raised when there was a general communications error encountered when interacting with the Azure Service Bus service.
   - Introduced `SessionCannotBeLockedError` which would be raised when the requested session cannot be locked.
-* `ServiceBusClient.get_queue/topic_sender` and `ServiceBusClient.get_queue/subscription_receiver` will now
+* Introduced new client side validation on certain use cases:
+  - Setting `ServiceBusMessage.partition_key` different than `ServiceBusMessage.session_id` will raise `ValueError`.
+  - `ServiceBusClient.get_queue/topic_sender` and `ServiceBusClient.get_queue/subscription_receiver` will now
 raise `ValueError` if the `queue_name` or `topic_name` does not match the `EntityPath` in the connection string used to construct the `ServiceBusClient`.
-
+  - Settling a message that has been peeked will raise `ValueError`.
+  - Settling a message or renewing a lock on a message received in `RECEIVE_AND_DELETE` receive mode will raise `ValueError`.
+  - Setting `session_id`, `reply_to_session_id`, `message_id` and `partition_key` on `ServiceBusMessage` longer than 128 characters will raise `ValueError`.
 
 **BugFixes**
 

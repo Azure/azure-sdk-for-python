@@ -70,7 +70,7 @@ class ServiceBusSession(BaseSession):
     """
     The ServiceBusSession is used for manage session states and lock renewal.
 
-    **Please use the instance variable `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
+    **Please use the property `session` on the ServiceBusReceiver to get the corresponding ServiceBusSession
     object linked with the receiver instead of instantiating a ServiceBusSession object directly.**
 
     :ivar auto_renew_error: Error when AutoLockRenewer is used and it fails to renew the session lock.
