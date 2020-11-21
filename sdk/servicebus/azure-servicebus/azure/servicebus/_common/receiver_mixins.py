@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import uuid
 import functools
-from typing import Optional, Callable, TYPE_CHECKING
+from typing import Optional, Callable
 
 from uamqp import Source
 
