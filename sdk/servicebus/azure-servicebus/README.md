@@ -278,7 +278,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
         for msg in receiver:
             print(str(msg))
-            receiver.abandon_message(receiver)
+            receiver.abandon_message(msg)
 ```
 
 #### [DeadLetter][deadletter_reference]
@@ -338,7 +338,7 @@ renewer = AutoLockRenewer()
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name) as receiver:
         for msg in receiver.receive_messages():
-            renewer.register(receiver, msg, timeout=60)
+            renewer.register(receiver, msg, max_lock_renewal_duration=60)
             # Do your application logic here
             receiver.complete_message(msg)
 renewer.close()
