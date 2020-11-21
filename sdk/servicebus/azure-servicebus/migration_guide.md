@@ -125,7 +125,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 ## Working with Administration Client
 
-The management related operations like creating, updating, deleting and listing queues, topics, sunscriptions or rules are to be done with the `ServiceBusAdministrationClient` which can be imported from the `azure.servicebus.management`. If one was relying on `control_client` available in v0.50, and cannot migrate to the `azure-mgmt-servicebus` package (or requires SAS based authentication for management), one would utilize this migration segment, otherwise, the aforementioned dedicated mgmt package should be used.
+The management related operations like creating, updating, deleting and listing queues, topics, subscriptions or rules are to be done with the `ServiceBusAdministrationClient` which can be imported from the `azure.servicebus.management`. If one was relying on `control_client` available in v0.50, and cannot migrate to the `azure-mgmt-servicebus` package (or requires SAS based authentication for management), one would utilize this migration segment, otherwise, the aforementioned dedicated mgmt package should be used.
 
 ### Queue based changes
 | In v0.50 | Equivalent in v7 | Sample |
