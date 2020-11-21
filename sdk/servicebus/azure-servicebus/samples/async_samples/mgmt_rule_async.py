@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-Example to show managing rule entities under a ServiceBus Namespace, including
+Example to show managing rule entities under a ServiceBus Subscription, including
     - Create a rule
     - Get rule properties.
     - Update a rule
