@@ -36,7 +36,7 @@
   - Introduced `SessionCannotBeLockedError` which would be raised when the requested session cannot be locked.
 * `ServiceBusClient.get_queue/topic_sender` and `ServiceBusClient.get_queue/subscription_receiver` will now
 raise `ValueError` if the `queue_name` or `topic_name` does not match the `EntityPath` in the connection string used to construct the `ServiceBusClient`.
-* `get_streaming_message_iter` has been made internal for the time being to assess use patterns before comitting to back-compatibility; messages may still be iterated over in equivelent fashion by iterating on the receiver itself.
+* `ServiceBusReceiver.get_streaming_message_iter` has been made internal for the time being to assess use patterns before comitting to back-compatibility; messages may still be iterated over in equivelent fashion by iterating on the receiver itself.
 
 **BugFixes**
 

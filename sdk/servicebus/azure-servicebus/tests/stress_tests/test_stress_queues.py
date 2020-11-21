@@ -302,6 +302,8 @@ class ServiceBusQueueStressTests(AzureMgmtTestCase):
         assert(result.total_sent > 0)
         assert(result.total_received > 0)
 
+    # This test validates that all individual messages are received contiguously over a long time period.
+    # (e.g. not dropped for whatever reason, not sent, or not received)
     class DroppedMessageCheckerStressTestRunner(StressTestRunner):
         def on_receive(self, state, received_message, receiver):
             '''Called on every successful receive'''
