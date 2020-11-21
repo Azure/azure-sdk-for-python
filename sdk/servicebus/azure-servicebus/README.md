@@ -110,7 +110,7 @@ This example sends single message and array of messages to a queue that is assum
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -138,7 +138,7 @@ To receive from a queue, you can either perform an ad-hoc receive via `receiver.
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -163,7 +163,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -191,7 +191,7 @@ Sessions provide first-in-first-out and single-receiver semantics on top of a qu
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
@@ -218,7 +218,7 @@ and of how these differ from queues.
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 topic_name = os.environ['SERVICE_BUS_TOPIC_NAME']
 subscription_name = os.environ['SERVICE_BUS_SUBSCRIPTION_NAME']
 
@@ -253,7 +253,7 @@ Declares the message processing to be successfully completed, removing the messa
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -271,7 +271,7 @@ Abandon processing of the message for the time being, returning the message imme
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -289,7 +289,7 @@ Transfer the message from the primary queue into a special "dead-letter sub-queu
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -308,7 +308,7 @@ by setting it aside such that it must be received by sequence number in a call t
 from azure.servicebus import ServiceBusClient
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
@@ -330,7 +330,7 @@ It should be used as follows:
 from azure.servicebus import ServiceBusClient, AutoLockRenewer
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
 
 # Can also be called via "with AutoLockRenewer() as renewer" to automate closing.
@@ -350,7 +350,7 @@ renewer.close()
 from azure.servicebus import ServiceBusClient, AutoLockRenewer
 
 import os
-connstr = os.environ['SERVICE_BUS_CONN_STR']
+connstr = os.environ['SERVICE_BUS_CONNECTION_STR']
 session_queue_name = os.environ['SERVICE_BUS_SESSION_QUEUE_NAME']
 session_id = os.environ['SERVICE_BUS_SESSION_ID']
 
