@@ -5,6 +5,7 @@
 
 import os
 import tempfile
+import uuid
 
 from ._test_base_legacy import _LegacyShareTest
 
@@ -20,11 +21,14 @@ class LegacyDownloadToFileTest(_LegacyShareTest):
             directory_name=None,
             file_name=self.file_name,
             file=data)
-        self.temp_file = os.path.join(tempfile.gettempdir(), self.file_name)
 
-    async def GlobalCleanupAsync(self):
+    async def SetupAsync(self):
+        await super().SetupAsync()
+        self.temp_file = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
+
+    async def CleanupAsync(self):
         os.remove(self.temp_file)
-        await super().GlobalCleanupAsync()
+        await super().CleanupAsync()
 
     def Run(self):
         self.service_client.get_file_to_path(
