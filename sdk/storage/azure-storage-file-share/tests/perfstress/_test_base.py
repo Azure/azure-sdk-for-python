@@ -38,7 +38,6 @@ class _ServiceTest(PerfStressTest):
     def AddArguments(parser):
         super(_ServiceTest, _ServiceTest).AddArguments(parser)
         parser.add_argument('--max-range-size', nargs='?', type=int, help='Maximum size of file uploading in single HTTP PUT. Defaults to 4*1024*1024', default=4*1024*1024)
-        parser.add_argument('--max-connections', nargs='?', type=int, help='Maximum concurrent connection threads used for transfer.  Default is 1.', default=1)
         parser.add_argument('--service-client-per-instance', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
 
 
@@ -76,6 +75,13 @@ class _FileTest(_ShareTest):
             self.sharefile_client.delete_file()
         except ResourceNotFoundError:
             pass
+
+    async def GlobalCleanupAsync(self):
+        try:
+            self.sharefile_client.delete_file()
+        except ResourceNotFoundError:
+            pass
+        await super().GlobalCleanupAsync()
 
     async def CloseAsync(self):
         await self.async_sharefile_client.close()

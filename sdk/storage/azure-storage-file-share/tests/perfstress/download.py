@@ -11,18 +11,17 @@ class DownloadTest(_ShareTest):
         self.sharefile_client = self.share_client.get_file_client(file_name)
         self.async_sharefile_client = self.async_share_client.get_file_client(file_name)
 
-    # TODO: Use async client
     async def GlobalSetupAsync(self):
         await super().GlobalSetupAsync()
         data = b'a' * self.Arguments.size
-        self.sharefile_client.upload_file(data)
+        await self.async_sharefile_client.upload_file(data)
 
     def Run(self):
-        stream = self.sharefile_client.download_file(max_concurrency=self.Arguments.max_connections)
+        stream = self.sharefile_client.download_file(max_concurrency=self.Arguments.parallel)
         stream.readall()
 
     async def RunAsync(self):
-        stream = await self.async_sharefile_client.download_file(max_concurrency=self.Arguments.max_connections)
+        stream = await self.async_sharefile_client.download_file(max_concurrency=self.Arguments.parallel)
         await stream.readall()
 
     async def CloseAsync(self):
@@ -31,5 +30,5 @@ class DownloadTest(_ShareTest):
 
     @staticmethod
     def AddArguments(parser):
-        super(DownloadFileTest, DownloadFileTest).AddArguments(parser)
+        super(DownloadTest, DownloadTest).AddArguments(parser)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of files to download.  Default is 10240.', default=10240)

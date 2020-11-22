@@ -1,8 +1,9 @@
 import os
+import uuid
 
 from azure_devtools.perfstress_tests import PerfStressTest
 
-from azure.storage.fileshare import FileService
+from azure.storage.file import FileService
 
 class _LegacyServiceTest(PerfStressTest):
     service_client = None
@@ -28,5 +29,19 @@ class _LegacyServiceTest(PerfStressTest):
     def AddArguments(parser):
         super(_LegacyServiceTest, _LegacyServiceTest).AddArguments(parser)
         parser.add_argument('--max-range-size', nargs='?', type=int, help='Maximum size of file uploading in single HTTP PUT. Defaults to 4*1024*1024')
-        parser.add_argument('--max-connections', nargs='?', type=int, help='Maximum concurrent connection threads used for transfer.  Default is 1.')
         parser.add_argument('--service-client-per-instance', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+
+
+class _LegacyShareTest(_LegacyServiceTest):
+    share_name = "perfstress-legacy-" + str(uuid.uuid4())
+
+    def __init__(self, arguments):
+        super().__init__(arguments)
+
+    async def GlobalSetupAsync(self):
+        await super().GlobalSetupAsync()
+        self.service_client.create_share(self.share_name)
+
+    async def GlobalCleanupAsync(self):
+        self.service_client.delete_share(self.share_name)
+        await super().GlobalCleanupAsync()

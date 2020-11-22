@@ -12,20 +12,19 @@ class DownloadToFileTest(_ShareTest):
         self.sharefile_client = self.share_client.get_file_client(file_name)
         self.async_sharefile_client = self.async_share_client.get_file_client(file_name)
 
-    # TODO: Use async client
     async def GlobalSetupAsync(self):
         await super().GlobalSetupAsync()
         data = b'a' * self.Arguments.size
-        self.sharefile_client.upload_file(data)
+        await self.async_sharefile_client.upload_file(data)
 
     def Run(self):
         with tempfile.TemporaryFile() as fp:
-            stream = self.sharefile_client.download_file(max_concurrency=self.Arguments.max_connections)
+            stream = self.sharefile_client.download_file(max_concurrency=self.Arguments.parallel)
             stream.readinto(fp)
 
     async def RunAsync(self):
         with tempfile.TemporaryFile() as fp:
-            stream = await self.async_sharefile_client.download_file(max_concurrency=self.Arguments.max_connections)
+            stream = await self.async_sharefile_client.download_file(max_concurrency=self.Arguments.parallel)
             await stream.readinto(fp)
 
     async def CloseAsync(self):
