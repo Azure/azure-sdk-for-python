@@ -14,30 +14,29 @@ class LegacyUploadFromFileTest(_LegacyShareTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.file_name = "sharefiletest-" + str(uuid.uuid4())
-        self.data = b'a' * self.Arguments.size
+        self.data = b'a' * self.args.size
 
-    async def GlobalSetupAsync(self):
-        await super().GlobalSetupAsync()
+    async def global_setup(self):
+        await super().global_setup()
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             self.temp_file = temp_file.name
             temp_file.write(self.data)
 
-    async def GlobalCleanupAsync(self):
+    async def global_cleanup(self):
         os.remove(self.temp_file)
-        await super().GlobalCleanupAsync()
+        await super().global_cleanup()
 
-    def Run(self):
+    def run_sync(self):
         self.service_client.create_file_from_path(
             share_name=self.share_name,
             directory_name=None,
             file_name=self.file_name,
             local_file_path=self.temp_file)
 
-    async def RunAsync(self):
+    async def run_async(self):
         raise NotImplementedError("Async not supported for legacy tests.")
 
     @staticmethod
-    def AddArguments(parser):
-        super(LegacyUploadFromFileTest, LegacyUploadFromFileTest).AddArguments(parser)
+    def add_arguments(parser):
+        super(LegacyUploadFromFileTest, LegacyUploadFromFileTest).add_arguments(parser)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of blobs to upload.  Default is 10240.', default=10240)
-        parser.add_argument('--stream', action='store_true', help='Upload stream instead of byte array.', default=False)

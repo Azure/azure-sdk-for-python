@@ -21,4 +21,4 @@ __all__ = [
 def run_perfstress_cmd():
     main_loop = PerfStressRunner()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main_loop.RunAsync())
+    loop.run_until_complete(main_loop.start())

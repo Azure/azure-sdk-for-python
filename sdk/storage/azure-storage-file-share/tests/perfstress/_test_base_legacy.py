@@ -21,18 +21,18 @@ class _LegacyServiceTest(PerfStressTest):
         if not connection_string:
             raise Exception("Undefined environment variable AZURE_STORAGE_CONNECTION_STRING")
 
-        if not _LegacyServiceTest.service_client or self.Arguments.service_client_per_instance:
+        if not _LegacyServiceTest.service_client or self.args.service_client_per_instance:
             _LegacyServiceTest.service_client = FileService(connection_string=connection_string)
-            if self.Arguments.max_range_size:
-                _LegacyServiceTest.service_client.MAX_RANGE_SIZE = self.Arguments.max_range_size
+            if self.args.max_range_size:
+                _LegacyServiceTest.service_client.MAX_RANGE_SIZE = self.args.max_range_size
 
         self.service_client = _LegacyServiceTest.service_client
         self.async_service_client = None
 
 
     @staticmethod
-    def AddArguments(parser):
-        super(_LegacyServiceTest, _LegacyServiceTest).AddArguments(parser)
+    def add_arguments(parser):
+        super(_LegacyServiceTest, _LegacyServiceTest).add_arguments(parser)
         parser.add_argument('--max-range-size', nargs='?', type=int, help='Maximum size of file uploading in single HTTP PUT. Defaults to 4*1024*1024')
         parser.add_argument('--service-client-per-instance', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
 
@@ -43,10 +43,10 @@ class _LegacyShareTest(_LegacyServiceTest):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-    async def GlobalSetupAsync(self):
-        await super().GlobalSetupAsync()
+    async def global_setup(self):
+        await super().global_setup()
         self.service_client.create_share(self.share_name)
 
-    async def GlobalCleanupAsync(self):
+    async def global_cleanup(self):
         self.service_client.delete_share(self.share_name)
-        await super().GlobalCleanupAsync()
+        await super().global_cleanup()

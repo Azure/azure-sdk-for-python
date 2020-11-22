@@ -12,18 +12,18 @@ from azure_devtools.perfstress_tests import AsyncRandomStream
 class UploadTest(_FileTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.data = b'a' * self.Arguments.size
+        self.data = b'a' * self.args.size
 
-    def Run(self):
-        data = RandomStream(self.Arguments.size) if self.Arguments.stream else self.data
-        self.sharefile_client.upload_file(data, length=self.Arguments.size)
+    def run_sync(self):
+        data = RandomStream(self.args.size) if self.args.stream else self.data
+        self.sharefile_client.upload_file(data, length=self.args.size)
 
-    async def RunAsync(self):
-        data = AsyncRandomStream(self.Arguments.size) if self.Arguments.stream else self.data
-        await self.async_sharefile_client.upload_file(data, length=self.Arguments.size)
+    async def run_async(self):
+        data = AsyncRandomStream(self.args.size) if self.args.stream else self.data
+        await self.async_sharefile_client.upload_file(data, length=self.args.size)
 
     @staticmethod
-    def AddArguments(parser):
-        super(UploadTest, UploadTest).AddArguments(parser)
+    def add_arguments(parser):
+        super(UploadTest, UploadTest).add_arguments(parser)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of blobs to upload.  Default is 10240.', default=10240)
         parser.add_argument('--stream', action='store_true', help='Upload stream instead of byte array.', default=False)

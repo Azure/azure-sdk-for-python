@@ -15,26 +15,26 @@ class DownloadToFileTest(_ShareTest):
         self.sharefile_client = self.share_client.get_file_client(file_name)
         self.async_sharefile_client = self.async_share_client.get_file_client(file_name)
 
-    async def GlobalSetupAsync(self):
-        await super().GlobalSetupAsync()
-        data = b'a' * self.Arguments.size
+    async def global_setup(self):
+        await super().global_setup()
+        data = b'a' * self.args.size
         await self.async_sharefile_client.upload_file(data)
 
-    def Run(self):
+    def run_sync(self):
         with tempfile.TemporaryFile() as fp:
-            stream = self.sharefile_client.download_file(max_concurrency=self.Arguments.parallel)
+            stream = self.sharefile_client.download_file(max_concurrency=self.args.parallel)
             stream.readinto(fp)
 
-    async def RunAsync(self):
+    async def run_async(self):
         with tempfile.TemporaryFile() as fp:
-            stream = await self.async_sharefile_client.download_file(max_concurrency=self.Arguments.parallel)
+            stream = await self.async_sharefile_client.download_file(max_concurrency=self.args.parallel)
             await stream.readinto(fp)
 
-    async def CloseAsync(self):
+    async def close(self):
         await self.async_sharefile_client.close()
-        await super().CloseAsync()
+        await super().close()
 
     @staticmethod
-    def AddArguments(parser):
-        super(DownloadToFileTest, DownloadToFileTest).AddArguments(parser)
+    def add_arguments(parser):
+        super(DownloadToFileTest, DownloadToFileTest).add_arguments(parser)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of files to download.  Default is 10240.', default=10240)

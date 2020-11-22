@@ -30,11 +30,11 @@ class PerfStressRunner:
         self.logger.addHandler(handler)
 
         #NOTE: If you need to support registering multiple test locations, move this into Initialize, call lazily on Run, expose RegisterTestLocation function.
-        self._DiscoverTests(test_folder_path)
-        self._ParseArgs()
+        self._discover_tests(test_folder_path)
+        self._parse_args()
 
 
-    def _ParseArgs(self):
+    def _parse_args(self):
         # First, detect which test we're running.
         arg_parser = argparse.ArgumentParser(
             description='Python Perf Test Runner',
@@ -65,7 +65,7 @@ class PerfStressRunner:
         per_test_arg_parser.add_argument('--sync', action='store_true', help='Run tests in sync mode.  Default is False.', default=False)
 
         # Per-test args
-        self._test_class_to_run.AddArguments(per_test_arg_parser)
+        self._test_class_to_run.add_arguments(per_test_arg_parser)
         self.per_test_args = per_test_arg_parser.parse_args(sys.argv[2:])
 
         self.logger.info("")
@@ -75,7 +75,7 @@ class PerfStressRunner:
         self.logger.info("")
 
 
-    def _DiscoverTests(self, test_folder_path):
+    def _discover_tests(self, test_folder_path):
         self._test_classes = {}
 
         # Dynamically enumerate all python modules under the tests path for classes that implement PerfStressTest
@@ -94,7 +94,7 @@ class PerfStressRunner:
                     self._test_classes[name] = value
 
 
-    async def RunAsync(self):      
+    async def start(self):      
         self.logger.info("=== Setup ===")
        
         tests = []
@@ -103,54 +103,54 @@ class PerfStressRunner:
 
         try:
             try:
-                await tests[0].GlobalSetupAsync()
+                await tests[0].global_setup()
                 try:
-                    await asyncio.gather(*[test.SetupAsync() for test in tests])
+                    await asyncio.gather(*[test.setup() for test in tests])
 
                     self.logger.info("")
 
                     if self.per_test_args.warmup > 0:
-                        await self._RunTestsAsync(tests, self.per_test_args.warmup, "Warmup")
+                        await self._run_tests(tests, self.per_test_args.warmup, "Warmup")
 
                     for i in range(0, self.per_test_args.iterations):
                         title = "Test"
                         if self.per_test_args.iterations > 1:
                             title += " " + (i + 1)
-                        await self._RunTestsAsync(tests, self.per_test_args.duration, title)
+                        await self._run_tests(tests, self.per_test_args.duration, title)
                 except Exception as e:
                     print("Exception: " + str(e))
                 finally:
                     if not self.per_test_args.no_cleanup:
                         self.logger.info("=== Cleanup ===")
-                        await asyncio.gather(*[test.CleanupAsync() for test in tests])
+                        await asyncio.gather(*[test.cleanup() for test in tests])
             except Exception as e:
                 print("Exception: " + str(e))
             finally:
                 if not self.per_test_args.no_cleanup:
-                    await tests[0].GlobalCleanupAsync()
+                    await tests[0].global_cleanup()
         except Exception as e:
             print("Exception: " + str(e))
         finally:
-            await asyncio.gather(*[test.CloseAsync() for test in tests])
+            await asyncio.gather(*[test.close() for test in tests])
 
 
-    async def _RunTestsAsync(self, tests, duration, title):
+    async def _run_tests(self, tests, duration, title):
         self._completed_operations = [0] * len(tests)
         self._last_completion_times = [0] * len(tests)
         self._last_total_operations = -1
 
-        status_thread = RepeatedTimer(1, self._PrintStatus, title)
+        status_thread = RepeatedTimer(1, self._print_status, title)
 
         if self.per_test_args.sync:
             threads = []
             for id, test in enumerate(tests):
-                thread = threading.Thread(target=lambda: self.RunLoop(test, duration, id))
+                thread = threading.Thread(target=lambda: self._run_sync_loop(test, duration, id))
                 threads.append(thread)
                 thread.start()
             for thread in threads:
                 thread.join()
         else:
-            await asyncio.gather(*[self.RunLoopAsync(test, duration, id) for id, test in enumerate(tests)])
+            await asyncio.gather(*[self._run_async_loop(test, duration, id) for id, test in enumerate(tests)])
 
         status_thread.stop()
 
@@ -169,27 +169,27 @@ class PerfStressRunner:
         self.logger.info("")
 
 
-    def RunLoop(self, test, duration, id):
+    def _run_sync_loop(self, test, duration, id):
         start = time.time()
         runtime = 0
         while runtime < duration:
-            test.Run()
+            test.run_sync()
             runtime = time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
 
 
-    async def RunLoopAsync(self, test, duration, id):
+    async def _run_async_loop(self, test, duration, id):
         start = time.time()
         runtime = 0
         while runtime < duration:
-            await test.RunAsync()
+            await test.run_async()
             runtime = time.time() - start
             self._completed_operations[id] += 1
             self._last_completion_times[id] = runtime
 
 
-    def _PrintStatus(self, title):
+    def _print_status(self, title):
         if self._last_total_operations == -1:
             self._last_total_operations = 0
             self.logger.info("=== {} ===\nCurrent\t\tTotal".format(title))
