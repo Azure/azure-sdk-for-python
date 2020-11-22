@@ -1,10 +1,13 @@
-import os
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 import uuid
 
 from ._test_base_legacy import _LegacyShareTest
 
 from azure_devtools.perfstress_tests import RandomStream
-from azure_devtools.perfstress_tests import AsyncRandomStream
 
 
 class LegacyUploadTest(_LegacyShareTest):

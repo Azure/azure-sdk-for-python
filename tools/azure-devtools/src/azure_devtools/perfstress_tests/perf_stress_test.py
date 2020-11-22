@@ -1,5 +1,8 @@
-import random
-import string
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 
 class PerfStressTest:
     '''Base class for implementing a python perf test.  

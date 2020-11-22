@@ -1,8 +1,12 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 import argparse
 import asyncio
 import time
 import inspect
-import json
 import logging
 import os
 import pkgutil
