@@ -36,15 +36,17 @@ def send_batch_messages(sender):
     batch_message = sender.create_message_batch()
     for i in range(10):
         try:
-            batch_message.add_message(ServiceBusMessage("Data {}".format(i)))
-        except MessageSizeExceededError:
-            # The body provided to the ServiceBusMessage is too large.
-            # This must be handled at the application layer, by breaking up or condensing.
+            message = ServiceBusMessage("Data {}".format(i))
+        except TypeError:
+            # Message body is of an inappropriate type, must be string, bytes or None.
             continue
-        except ValueError:
+        try:
+            batch_message.add_message(message)
+        except MessageSizeExceededError:
             # ServiceBusMessageBatch object reaches max_size.
             # New ServiceBusMessageBatch object can be created here to send more data.
-            break
+            # This must be handled at the application layer, by breaking up or condensing.
+            continue
     last_error = None
     for _ in range(3): # Send retries
         try:
@@ -100,7 +102,6 @@ def receive_messages(receiver):
                     except ServiceBusError:
                         # Any other undefined service errors during settlement.  Can be transient, and can retry, but should be logged, and alerted on high volume.
                         continue
-                break
             return
         except ServiceBusAuthorizationError:
             # Permission based errors should be bubbled up.
