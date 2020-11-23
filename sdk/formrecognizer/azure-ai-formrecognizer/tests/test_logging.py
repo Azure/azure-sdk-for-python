@@ -32,7 +32,7 @@ class TestLogging(FormRecognizerTest):
         logger.addHandler(mock_handler)
         logger.setLevel(logging.INFO)
 
-        poller = client.begin_recognize_receipts_from_url(self.receipt_url_jpg)
+        poller = client.begin_recognize_invoices_from_url(self.receipt_url_jpg)
         result = poller.result()
 
         for message in mock_handler.messages:
