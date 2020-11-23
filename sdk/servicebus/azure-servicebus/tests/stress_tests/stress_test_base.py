@@ -18,7 +18,6 @@ except ImportError:
     pass # If psutil isn't installed, simply does not capture process stats.
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusMessageBatch
-from azure.servicebus._common.constants import ReceiveMode
 from azure.servicebus.exceptions import MessageAlreadySettled
 
 from utilities import _build_logger
@@ -208,7 +207,9 @@ class StressTestRunner:
                         if self.receive_type == ReceiveType.pull:
                             batch = receiver.receive_messages(max_message_count=self.max_message_count, max_wait_time=self.max_wait_time)
                         elif self.receive_type == ReceiveType.push:
-                            batch = receiver.get_streaming_message_iter(max_wait_time=self.max_wait_time)
+                            batch = receiver._get_streaming_message_iter(max_wait_time=self.max_wait_time)
+                        else:
+                            batch = []
 
                         for message in batch:
                             self.on_receive(self._state, message, receiver)

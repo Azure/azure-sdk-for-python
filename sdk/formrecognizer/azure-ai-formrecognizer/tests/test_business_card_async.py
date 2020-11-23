@@ -154,7 +154,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -175,7 +175,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         read_results = raw_response.analyze_result.read_results
         document_results = raw_response.analyze_result.document_results
 
-        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
+        self.assertFormFieldsTransformCorrect(business_card.fields, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
@@ -191,7 +191,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -214,7 +214,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         document_results = raw_response.analyze_result.document_results
         page_results = raw_response.analyze_result.page_results
 
-        self.assertBusinessCardTransformCorrect(business_card, actual, read_results)
+        self.assertFormFieldsTransformCorrect(business_card.fields, actual, read_results)
 
         # check page range
         self.assertEqual(business_card.page_range.first_page_number, document_results[0].page_range[0])
@@ -230,7 +230,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
 
         def callback(raw_response, _, headers):
             analyze_result = client._deserialize(AnalyzeOperationResult, raw_response)
-            extracted_business_card = prepare_prebuilt_models(analyze_result, business_card=True)
+            extracted_business_card = prepare_prebuilt_models(analyze_result)
             responses.append(analyze_result)
             responses.append(extracted_business_card)
 
@@ -257,7 +257,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         for i in range(len(returned_model)):
             business_card = returned_model[i]
             actual = document_results[i]
-            self.assertBusinessCardTransformCorrect(business_card, actual.fields, read_results)
+            self.assertFormFieldsTransformCorrect(business_card.fields, actual.fields, read_results)
             self.assertEqual(i + 1, business_card.page_range.first_page_number)
             self.assertEqual(i + 1, business_card.page_range.last_page_number)
 
@@ -295,7 +295,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -342,7 +342,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -385,7 +385,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("OtherPhones").value), 1)
         # self.assertEqual(business_card.fields.get("OtherPhones").value[0].value, "https://www.contoso.com/")
 
@@ -407,7 +407,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         self.assertEqual(len(business_card.fields.get("Websites").value), 1)
         self.assertEqual(business_card.fields.get("Websites").value[0].value, "https://www.contoso.com/")
 
-        # TODO: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
+        # FIXME: uncomment https://github.com/Azure/azure-sdk-for-python/issues/14300
         # self.assertEqual(len(business_card.fields.get("MobilePhones").value), 1)
         # self.assertEqual(business_card.fields.get("MobilePhones").value[0].value, "https://www.contoso.com/")
 
@@ -451,7 +451,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         async with client:
             initial_poller = await client.begin_recognize_business_cards(business_card)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_recognize_business_cards(business_card, continuation_token=cont_token)
+            poller = await client.begin_recognize_business_cards(None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error

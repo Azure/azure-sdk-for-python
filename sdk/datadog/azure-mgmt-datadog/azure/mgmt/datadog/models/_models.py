@@ -10,6 +10,116 @@ from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 
+class DatadogAgreementProperties(msrest.serialization.Model):
+    """Terms properties.
+
+    :param publisher: Publisher identifier string.
+    :type publisher: str
+    :param product: Product identifier string.
+    :type product: str
+    :param plan: Plan identifier string.
+    :type plan: str
+    :param license_text_link: Link to HTML with Microsoft and Publisher terms.
+    :type license_text_link: str
+    :param privacy_policy_link: Link to the privacy policy of the publisher.
+    :type privacy_policy_link: str
+    :param retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
+     if Accepted is false.
+    :type retrieve_datetime: ~datetime.datetime
+    :param signature: Terms signature.
+    :type signature: str
+    :param accepted: If any version of the terms have been accepted, otherwise false.
+    :type accepted: bool
+    """
+
+    _attribute_map = {
+        'publisher': {'key': 'publisher', 'type': 'str'},
+        'product': {'key': 'product', 'type': 'str'},
+        'plan': {'key': 'plan', 'type': 'str'},
+        'license_text_link': {'key': 'licenseTextLink', 'type': 'str'},
+        'privacy_policy_link': {'key': 'privacyPolicyLink', 'type': 'str'},
+        'retrieve_datetime': {'key': 'retrieveDatetime', 'type': 'iso-8601'},
+        'signature': {'key': 'signature', 'type': 'str'},
+        'accepted': {'key': 'accepted', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatadogAgreementProperties, self).__init__(**kwargs)
+        self.publisher = kwargs.get('publisher', None)
+        self.product = kwargs.get('product', None)
+        self.plan = kwargs.get('plan', None)
+        self.license_text_link = kwargs.get('license_text_link', None)
+        self.privacy_policy_link = kwargs.get('privacy_policy_link', None)
+        self.retrieve_datetime = kwargs.get('retrieve_datetime', None)
+        self.signature = kwargs.get('signature', None)
+        self.accepted = kwargs.get('accepted', None)
+
+
+class DatadogAgreementResource(msrest.serialization.Model):
+    """DatadogAgreementResource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: ARM id of the resource.
+    :vartype id: str
+    :ivar name: Name of the agreement.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param properties: Represents the properties of the resource.
+    :type properties: ~microsoft_datadog_client.models.DatadogAgreementProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DatadogAgreementProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatadogAgreementResource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.properties = kwargs.get('properties', None)
+
+
+class DatadogAgreementResourceListResponse(msrest.serialization.Model):
+    """Response of a list operation.
+
+    :param value: Results of a list operation.
+    :type value: list[~microsoft_datadog_client.models.DatadogAgreementResource]
+    :param next_link: Link to the next set of results, if any.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DatadogAgreementResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DatadogAgreementResourceListResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class DatadogApiKey(msrest.serialization.Model):
     """DatadogApiKey.
 
@@ -303,7 +413,7 @@ class DatadogMonitorResourceUpdateParameters(msrest.serialization.Model):
 
 
 class DatadogOrganizationProperties(msrest.serialization.Model):
-    """DatadogOrganizationProperties.
+    """Datadog organization properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -522,7 +632,7 @@ class IdentityProperties(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type:  Possible values include: "SystemAssigned", "UserAssigned".
+    :param type: Identity type. Possible values include: "SystemAssigned", "UserAssigned".
     :type type: str or ~microsoft_datadog_client.models.ManagedIdentityTypes
     """
 
@@ -808,10 +918,10 @@ class MonitorProperties(msrest.serialization.Model):
      values include: "Active", "Suspended".
     :type marketplace_subscription_status: str or
      ~microsoft_datadog_client.models.MarketplaceSubscriptionStatus
-    :param datadog_organization_properties:
+    :param datadog_organization_properties: Datadog organization properties.
     :type datadog_organization_properties:
      ~microsoft_datadog_client.models.DatadogOrganizationProperties
-    :param user_info:
+    :param user_info: User info.
     :type user_info: ~microsoft_datadog_client.models.UserInfo
     :ivar liftr_resource_category:  Possible values include: "Unknown", "MonitorLogs".
     :vartype liftr_resource_category: str or
@@ -995,7 +1105,7 @@ class ResourceSku(msrest.serialization.Model):
 
 
 class UserInfo(msrest.serialization.Model):
-    """UserInfo.
+    """User info.
 
     :param name: Name of the user.
     :type name: str
