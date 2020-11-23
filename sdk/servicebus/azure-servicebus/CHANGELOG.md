@@ -44,6 +44,7 @@ raise `ValueError` if the `queue_name` or `topic_name` does not match the `Entit
 
 **BugFixes**
 
+* `ServiceBusAdministrationClient.create_rule` by default now creates a `TrueRuleFilter` rule.
 * FQDNs and Connection strings are now supported even with strippable whitespace or protocol headers (e.g. 'sb://').
 * Using parameter `auto_lock_renewer` on a sessionful receiver alongside `ReceiveMode.ReceiveAndDelete` will no longer fail during receipt due to failure to register the message with the renewer.
 
