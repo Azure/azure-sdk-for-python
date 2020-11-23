@@ -1,21 +1,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
+import os
+import tempfile
 import typing
 from enum import Enum
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import ProxyPolicy, RetryPolicy
-
-from opentelemetry.sdk.metrics.export import MetricsExportResult
+from azure.core.pipeline.policies import RetryPolicy
 from opentelemetry.sdk.trace.export import SpanExportResult
 from microsoft.opentelemetry.exporter.azuremonitor._generated import AzureMonitorClient
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
+from microsoft.opentelemetry.exporter.azuremonitor.connection_string_parser import ConnectionStringParser
 from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
 from microsoft.opentelemetry.exporter.azuremonitor.storage import LocalFileStorage
 
 
 logger = logging.getLogger(__name__)
+
+TEMPDIR_PREFIX = "opentelemetry-python-"
 
 
 class ExportResult(Enum):
@@ -33,71 +36,34 @@ class BaseExporter:
     """
 
     def __init__(self, **options):
-        self._telemetry_processors = []
-        self.options = ExporterOptions(**options)
-        retry_policy = RetryPolicy(timeout=self.options.timeout)
-        proxy_policy = ProxyPolicy(proxies=self.options.proxies)
-        self.client = AzureMonitorClient(
-            self.options.endpoint, proxy_policy=proxy_policy, retry_policy=retry_policy)
-        self.storage = LocalFileStorage(
-            path=self.options.storage_path,
-            max_size=self.options.storage_max_size,
-            maintenance_period=self.options.storage_maintenance_period,
-            retention_period=self.options.storage_retention_period,
+        options = ExporterOptions(**options)
+        parsed_connection_string = ConnectionStringParser(
+            options.connection_string)
+
+        self._instrumentation_key = parsed_connection_string.instrumentation_key
+        self._timeout = 10.0  # networking timeout in seconds
+
+        temp_suffix = self._instrumentation_key or ""
+        default_storage_path = os.path.join(
+            tempfile.gettempdir(), TEMPDIR_PREFIX + temp_suffix
         )
-
-    def add_telemetry_processor(
-        self, processor: typing.Callable[..., any]
-    ) -> None:
-        """Adds telemetry processor to the collection.
-
-        Telemetry processors will be called one by one before telemetry
-        item is pushed for sending and in the order they were added.
-
-        Args:
-            processor: Processor to add
-        """
-        self._telemetry_processors.append(processor)
-
-    def clear_telemetry_processors(self) -> None:
-        """Removes all telemetry processors"""
-        self._telemetry_processors = []
-
-    def _apply_telemetry_processors(
-        self, envelopes: typing.List[TelemetryItem]
-    ) -> typing.List[TelemetryItem]:
-        """Applies all telemetry processors in the order they were added.
-
-        This function will return the list of envelopes to be exported after
-        each processor has been run sequentially. Individual processors can
-        throw exceptions and fail, but the applying of all telemetry processors
-        will proceed (not fast fail). Processors also return True if envelope
-        should be included for exporting, False otherwise.
-
-        Args:
-            envelopes: The envelopes to apply each processor to.
-        """
-        filtered_envelopes = []
-        for envelope in envelopes:
-            accepted = True
-            for processor in self._telemetry_processors:
-                try:
-                    if processor(envelope) is False:
-                        accepted = False
-                        break
-                except Exception as ex:
-                    logger.warning("Telemetry processor failed with: %s.", ex)
-            if accepted:
-                filtered_envelopes.append(envelope)
-        return filtered_envelopes
+        retry_policy = RetryPolicy(timeout=self._timeout)
+        self.client = AzureMonitorClient(
+            parsed_connection_string.endpoint, retry_policy=retry_policy)
+        self.storage = LocalFileStorage(
+            path=default_storage_path,
+            max_size=50 * 1024 * 1024,  # Maximum size in bytes.
+            maintenance_period=60,  # Maintenance interval in seconds.
+            retention_period=7 * 24 * 60 * 60,  # Retention period in seconds
+        )
 
     def _transmit_from_storage(self) -> None:
         for blob in self.storage.gets():
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
-            if blob.lease(self.options.timeout + 5):
+            if blob.lease(self._timeout + 5):
                 envelopes = blob.get()
-                result = self._transmit(envelopes)
+                result = self._transmit(list(envelopes))
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
                 else:
@@ -134,7 +100,9 @@ class BaseExporter:
                             envelopes[error.index],
                         )
                 if resend_envelopes:
-                    self.storage.put(resend_envelopes)
+                    envelopes_to_store = map(
+                        lambda x: x.as_dict(), resend_envelopes)
+                    self.storage.put(envelopes_to_store)
 
             except HttpResponseError as response_error:
                 if is_retryable_code(response_error.status_code):
@@ -173,15 +141,4 @@ def get_trace_export_result(result: ExportResult) -> SpanExportResult:
         ExportResult.FAILED_NOT_RETRYABLE,
     ):
         return SpanExportResult.FAILURE
-    return None
-
-
-def get_metrics_export_result(result: ExportResult) -> MetricsExportResult:
-    if result == ExportResult.SUCCESS:
-        return MetricsExportResult.SUCCESS
-    if result in (
-        ExportResult.FAILED_RETRYABLE,
-        ExportResult.FAILED_NOT_RETRYABLE,
-    ):
-        return MetricsExportResult.FAILURE
     return None

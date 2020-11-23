@@ -18,28 +18,28 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/receipt/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/receipt/analyze?includeTextDetails=false
   response:
     body:
-      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "0740b61e-d5a3-4e51-acb9-d7463f2e7f6c"},
+      string: '{"error": {"code": "BadArgument", "innerError": {"requestId": "f82a52be-58f7-4e3c-a6db-02b08933fb78"},
         "message": "Bad or unrecognizable request JSON or binary file."}}'
     headers:
       apim-request-id:
-      - 0740b61e-d5a3-4e51-acb9-d7463f2e7f6c
+      - f82a52be-58f7-4e3c-a6db-02b08933fb78
       content-length:
       - '161'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 14 Sep 2020 22:40:23 GMT
+      - Mon, 16 Nov 2020 19:09:11 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '6'
+      - '5'
     status:
       code: 400
       message: Bad Request

@@ -10,7 +10,7 @@ import uuid
 
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
 from azure.servicebus import ServiceBusMessage, NEXT_AVAILABLE_SESSION
-from azure.servicebus.exceptions import NoActiveSession
+from azure.servicebus.exceptions import OperationTimeoutError
 
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -39,8 +39,10 @@ async def message_processing(servicebus_client, queue_name):
                         await receiver.session.set_state("CLOSED")
                         break
                 await renewer.close()
-        except NoActiveSession:
-            print("There are no non-empty sessions remaining; exiting.  This may present as a UserError in the azure portal.")
+        except OperationTimeoutError:
+            print("If timeout occurs during connecting to a session,"
+                  "It indicates that there might be no non-empty sessions remaining; exiting."
+                  "This may present as a UserError in the azure portal metric.")
             return
 
 
