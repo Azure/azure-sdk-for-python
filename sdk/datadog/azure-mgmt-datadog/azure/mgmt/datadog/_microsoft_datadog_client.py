@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 from ._configuration import MicrosoftDatadogClientConfiguration
+from .operations import MarketplaceAgreementsOperations
 from .operations import ApiKeysOperations
 from .operations import HostsOperations
 from .operations import LinkedResourcesOperations
@@ -33,6 +34,8 @@ from . import models
 class MicrosoftDatadogClient(object):
     """MicrosoftDatadogClient.
 
+    :ivar marketplace_agreements: MarketplaceAgreementsOperations operations
+    :vartype marketplace_agreements: microsoft_datadog_client.operations.MarketplaceAgreementsOperations
     :ivar api_keys: ApiKeysOperations operations
     :vartype api_keys: microsoft_datadog_client.operations.ApiKeysOperations
     :ivar hosts: HostsOperations operations
@@ -74,8 +77,11 @@ class MicrosoftDatadogClient(object):
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
+        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
+        self.marketplace_agreements = MarketplaceAgreementsOperations(
+            self._client, self._config, self._serialize, self._deserialize)
         self.api_keys = ApiKeysOperations(
             self._client, self._config, self._serialize, self._deserialize)
         self.hosts = HostsOperations(
