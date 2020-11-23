@@ -1,3 +1,5 @@
+pip==20.2
+
 # requirements leveraged by ci for testing
 pytest==4.6.9; python_version == '2.7'
 pytest==5.4.2; python_version >= '3.5'

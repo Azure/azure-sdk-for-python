@@ -14,13 +14,12 @@ from opentelemetry.sdk.trace.export import SpanExportResult
 from microsoft.opentelemetry.exporter.azuremonitor.export import (
     BaseExporter,
     ExportResult,
-    get_metrics_export_result,
     get_trace_export_result,
 )
 from microsoft.opentelemetry.exporter.azuremonitor.options import ExporterOptions
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import MonitorBase, TelemetryItem
 
-TEST_FOLDER = os.path.abspath(".test")
+TEST_FOLDER = os.path.abspath(".test.base")
 STORAGE_PATH = os.path.join(TEST_FOLDER)
 
 
@@ -40,7 +39,8 @@ class TestBaseExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
-        cls._base = BaseExporter(storage_path=STORAGE_PATH)
+        cls._base = BaseExporter()
+        cls._base.storage.path=STORAGE_PATH
 
     @classmethod
     def tearDownClass(cls):
@@ -57,111 +57,26 @@ class TestBaseExporter(unittest.TestCase):
                         shutil.rmtree(file_path, True)
                 except OSError as e:
                     print("Failed to delete %s. Reason: %s" % (file_path, e))
-        self._base.clear_telemetry_processors()
 
     def test_constructor(self):
         """Test the constructor."""
         base = BaseExporter(
-            instrumentation_key="4321abcd-5678-4efa-8abc-1234567890ab",
-            proxies={"https": "https://test-proxy.com"},
-            storage_maintenance_period=2,
-            storage_max_size=3,
-            storage_path=os.path.join(TEST_FOLDER, self.id()),
-            storage_retention_period=4,
-            timeout=5,
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertIsInstance(base.options, ExporterOptions)
         self.assertEqual(
-            base.options.instrumentation_key,
+            base._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(
-            base.options.proxies, {"https": "https://test-proxy.com"},
-        )
-        self.assertEqual(base.options.storage_maintenance_period, 2)
-        self.assertEqual(base.options.storage_max_size, 3)
-        self.assertEqual(base.options.storage_retention_period, 4)
-        self.assertEqual(base.options.timeout, 5)
-        self.assertEqual(
-            base.options.storage_path, os.path.join(TEST_FOLDER, self.id())
-        )
+        self.assertEqual(base.storage.max_size, 52428800)
+        self.assertEqual(base.storage.maintenance_period, 60)
+        self.assertEqual(base.storage.retention_period, 604800)
+        self.assertEqual(base._timeout, 10)
+        
 
     def test_constructor_wrong_options(self):
         """Test the constructor with wrong options."""
         with self.assertRaises(TypeError):
             BaseExporter(something_else=6)
-
-    def test_telemetry_processor_add(self):
-        base = self._base
-        base.add_telemetry_processor(lambda: True)
-        self.assertEqual(len(base._telemetry_processors), 1)
-
-    def test_telemetry_processor_clear(self):
-        base = self._base
-        base.add_telemetry_processor(lambda: True)
-        self.assertEqual(len(base._telemetry_processors), 1)
-        base.clear_telemetry_processors()
-        self.assertEqual(len(base._telemetry_processors), 0)
-
-    def test_telemetry_processor_apply(self):
-        base = self._base
-
-        def callback_function(envelope):
-            envelope.data.base_type += "_world"
-
-        base.add_telemetry_processor(callback_function)
-        envelope = TelemetryItem(
-            name="", time="", data=MonitorBase(base_type="type1"))
-        base._apply_telemetry_processors([envelope])
-        self.assertEqual(envelope.data.base_type, "type1_world")
-
-    def test_telemetry_processor_apply_multiple(self):
-        base = self._base
-        base._telemetry_processors = []
-
-        def callback_function(envelope):
-            envelope.data.base_type += "_world"
-
-        def callback_function2(envelope):
-            envelope.data.base_type += "_world2"
-
-        base.add_telemetry_processor(callback_function)
-        base.add_telemetry_processor(callback_function2)
-        envelope = TelemetryItem(
-            name="", time="", data=MonitorBase(base_type="type1"))
-        base._apply_telemetry_processors([envelope])
-        self.assertEqual(envelope.data.base_type, "type1_world_world2")
-
-    def test_telemetry_processor_apply_exception(self):
-        base = self._base
-
-        def callback_function(envelope):
-            raise ValueError()
-
-        def callback_function2(envelope):
-            envelope.data.base_type += "_world2"
-
-        base.add_telemetry_processor(callback_function)
-        base.add_telemetry_processor(callback_function2)
-        envelope = TelemetryItem(
-            name="", time="", data=MonitorBase(base_type="type1"))
-        base._apply_telemetry_processors([envelope])
-        self.assertEqual(envelope.data.base_type, "type1_world2")
-
-    def test_telemetry_processor_apply_not_accepted(self):
-        base = self._base
-
-        def callback_function(envelope):
-            return envelope.data.base_type == "type2"
-
-        base.add_telemetry_processor(callback_function)
-        envelope = TelemetryItem(
-            name="", time="", data=MonitorBase(base_type="type1"))
-        envelope2 = TelemetryItem(
-            name="", time="", data=MonitorBase(base_type="type2"))
-        envelopes = base._apply_telemetry_processors([envelope, envelope2])
-        self.assertEqual(len(envelopes), 1)
-        self.assertEqual(envelopes[0].data.base_type, "type2")
 
     # def test_transmission_nothing(self):
     #     exporter = BaseExporter(
@@ -390,21 +305,6 @@ class TestBaseExporter(unittest.TestCase):
             SpanExportResult.FAILURE,
         )
         self.assertEqual(get_trace_export_result(None), None)
-
-    def test_get_metrics_export_result(self):
-        self.assertEqual(
-            get_metrics_export_result(ExportResult.SUCCESS),
-            MetricsExportResult.SUCCESS,
-        )
-        self.assertEqual(
-            get_metrics_export_result(ExportResult.FAILED_NOT_RETRYABLE),
-            MetricsExportResult.FAILURE,
-        )
-        self.assertEqual(
-            get_metrics_export_result(ExportResult.FAILED_RETRYABLE),
-            MetricsExportResult.FAILURE,
-        )
-        self.assertEqual(get_metrics_export_result(None), None)
 
 
 class MockResponse:

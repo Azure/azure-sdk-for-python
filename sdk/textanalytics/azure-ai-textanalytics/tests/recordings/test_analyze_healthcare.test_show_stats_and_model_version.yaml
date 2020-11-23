@@ -1,0 +1,79 @@
+interactions:
+- request:
+    body: '{"documents": [{"id": "56", "text": ":)", "language": "en"}, {"id": "0",
+      "text": ":(", "language": "en"}, {"id": "22", "text": "", "language": "en"},
+      {"id": "19", "text": ":P", "language": "en"}, {"id": "1", "text": ":D", "language":
+      "en"}]}'
+    headers:
+      Accept:
+      - application/json, text/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '241'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: POST
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs?model-version=2020-09-03&stringIndexType=UnicodeCodePoint
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 487e006e-21b4-4777-846d-f635c500aabe
+      date:
+      - Thu, 19 Nov 2020 21:28:52 GMT
+      operation-location:
+      - https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/c0d00c5b-5176-412b-b3f8-713d24bcbce4
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '107'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-textanalytics/5.1.0b3 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+    method: GET
+    uri: https://westus2.api.cognitive.microsoft.com/text/analytics/v3.1-preview.3/entities/health/jobs/c0d00c5b-5176-412b-b3f8-713d24bcbce4?showStats=True
+  response:
+    body:
+      string: '{"jobId":"c0d00c5b-5176-412b-b3f8-713d24bcbce4","lastUpdateDateTime":"2020-11-19T21:28:56Z","createdDateTime":"2020-11-19T21:28:52Z","expirationDateTime":"2020-11-20T21:28:52Z","status":"succeeded","errors":[],"results":{"statistics":{"documentsCount":5,"validDocumentsCount":4,"erroneousDocumentsCount":1,"transactionsCount":4},"documents":[{"id":"56","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"0","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"19","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]},{"id":"1","statistics":{"charactersCount":2,"transactionsCount":1},"entities":[],"relations":[],"warnings":[]}],"errors":[{"id":"22","error":{"code":"InvalidArgument","message":"Invalid
+        document in request.","innererror":{"code":"InvalidDocument","message":"Document
+        text is empty."}}}],"modelVersion":"2020-09-03"}}'
+    headers:
+      apim-request-id:
+      - 2ac8c932-e4a5-43f7-9a93-1c9d262a5c23
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Nov 2020 21:28:57 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '66'
+    status:
+      code: 200
+      message: OK
+version: 1

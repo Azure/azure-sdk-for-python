@@ -1,5 +1,6 @@
 parameters:
   ServiceDirectory: ''
+  Artifacts: []
   TestPipeline: false
   BeforePublishSteps: []
   TestMarkArgument: ''
@@ -92,6 +93,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -131,6 +133,7 @@ jobs:
           pwsh: true
           workingDirectory: $(Build.SourcesDirectory)
           filePath: eng/scripts/SetTestPipelineVersion.ps1
+          arguments: '-BuildID $(Build.BuildId)'
 
     - pwsh: |
         $toxenvvar = "whl,sdist"
