@@ -96,7 +96,7 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
     """This is the most common paging method. It uses the continuation token
     as the next link
     """
-    def __init__(self):
+    def __init__(self, **operation_config):
         self._client = None
         self._deserialize_output = None
         self._path_format_arguments = None
@@ -105,6 +105,8 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         self.did_a_call_already = False
         self._cls = None
         self._error_map = None
+        self._operation_config = operation_config
+        self._pipeline_response = None
 
     def initialize(
         self,
@@ -126,11 +128,18 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
+    def _reinject_request_id(self):
+        if "request_id" not in self._operation_config:
+            self._operation_config["request_id"] = self._pipeline_response.http_response.request.headers[
+                "x-ms-client-request-id"
+            ]
+
     def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:
         next_link = continuation_token
         next_link = self._client.format_url(next_link, **self._path_format_arguments)
         request = initial_request
         request.url = next_link
+        self._reinject_request_id()
 
         return request
 
@@ -140,15 +149,17 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
             self.did_a_call_already = True
         else:
             request = self.get_next_request(continuation_token, initial_request)
-        response = await self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
+        self._pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **self._operation_config
+        )
 
-        http_response = response.http_response
+        http_response = self._pipeline_response.http_response
         status_code = http_response.status_code
         if status_code < 200 or status_code >= 300:
             map_error(status_code=status_code, response=http_response, error_map=self._error_map)
             raise HttpResponseError(response=http_response)
 
-        return response
+        return self._pipeline_response
 
     def finished(self, continuation_token: Any) -> bool:
         return continuation_token is None and self.did_a_call_already
