@@ -121,7 +121,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 The management related operations like creating, updating, deleting and listing queues, topics, subscriptions or rules are to be done with the `ServiceBusAdministrationClient` which can be imported from the `azure.servicebus.management`. If one was relying on `control_client` available in v0.50, and cannot migrate to the `azure-mgmt-servicebus` package (or requires SAS based authentication for management), one would utilize this migration segment, otherwise, the aforementioned dedicated mgmt package should be used.
 
-### Queue based changes
+### Managing Queues
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `azure.servicebus.control_client.ServiceBusService.get_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_queue(queue_name)` | [get_queue](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py#L47) |
@@ -129,7 +129,7 @@ The management related operations like creating, updating, deleting and listing 
 | `azure.servicebus.control_client.ServiceBusService.delete_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_queue(queue_name)` | [delete_queue](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py#L33) |
 | `azure.servicebus.control_client.ServiceBusService.list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient.list_queues()` | [list_queues](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py#L40) |
 
-### Topic based changes
+### Managing Topics
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `azure.servicebus.control_client.ServiceBusService.get_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_topic(topic_name)` | [get_topic](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L47) |
@@ -137,7 +137,7 @@ The management related operations like creating, updating, deleting and listing 
 | `azure.servicebus.control_client.ServiceBusService.get_topic(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_topic(topic_name)` | [delete_topic](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L33) |
 | `azure.servicebus.control_client.ServiceBusService.list_topics()` | `azure.servicebus.management.ServiceBusAdministrationClient.list_topics()` | [list_topics](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L40) |
 
-### Subscription based changes
+### Managing Subscriptions
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `azure.servicebus.control_client.ServiceBusService.get_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_subscription(topic_name, subscription_name)` |  [get_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L48) |
@@ -145,7 +145,7 @@ The management related operations like creating, updating, deleting and listing 
 | `azure.servicebus.control_client.ServiceBusService.delete_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_subscription(topic_name, subscription_name)` |  [delete_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L34) |
 | `azure.servicebus.control_client.ServiceBusService.list_subscriptions(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.list_subscriptions(topic_name)` |  [list_subscriptions](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L41) |
 
-### Rule based changes
+### Managing Rules
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
 | `azure.servicebus.control_client.ServiceBusService.get_rule(topic_name, subscription_name, rule_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_rule(topic_name, subscription_name, rule_name)` | [get_rule](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py#L49) |
