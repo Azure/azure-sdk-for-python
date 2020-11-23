@@ -98,7 +98,7 @@ export AZURE_CLIENT_SECRET="random password"
 export AZURE_TENANT_ID="tenant id"
 ```
 
-Assign one of the applicable [App Configuration roles](https://github.com/Azure/AppConfiguration/blob/master/docs/REST/authorization/aad.md) to the service principal.
+Assign one of the applicable [App Configuration roles](https://docs.microsoft.com/azure/azure-app-configuration/rest-api-authorization-azure-ad) to the service principal.
 
 ##### Create a client
 Once the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and
@@ -144,7 +144,7 @@ etag : str
 
 The following sections provide several code snippets covering some of the most common Configuration Service tasks, including:
 
-* [Create a Configuration Setting](#create-a-configration-setting)
+* [Create a Configuration Setting](#create-a-configuration-setting)
 * [Get a Configuration Setting](#get-a-configuration-setting)
 * [Delete a Configuration Setting](#delete-a-configuration-setting)
 * [List Configuration Settings](#list-configuration-settings)

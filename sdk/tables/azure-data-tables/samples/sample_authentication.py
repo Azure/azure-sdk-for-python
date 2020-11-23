@@ -58,10 +58,9 @@ class TableAuthSamples(object):
     def authentication_by_shared_access_signature(self):
         # Instantiate a TableServiceClient using a connection string
         from azure.data.tables import TableServiceClient
-        table_service = TableServiceClient.from_connection_string(conn_str=self.connection_string)
 
-        # Create a SAS token to use for authentication of a client
         # [START auth_from_sas]
+        # Create a SAS token to use for authentication of a client
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
         print(self.account_name)
         sas_token = generate_account_sas(
@@ -74,7 +73,7 @@ class TableAuthSamples(object):
 
         token_auth_table_service = TableServiceClient(account_url=self.account_url, credential=sas_token)
 
-        properties = table_service.get_service_properties()
+        properties = token_auth_table_service.get_service_properties()
         print("Shared Access Signature: {}".format(properties))
         # [END auth_from_sas]
 

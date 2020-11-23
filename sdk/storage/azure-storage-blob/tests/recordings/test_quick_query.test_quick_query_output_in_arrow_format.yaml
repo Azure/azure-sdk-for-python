@@ -1,0 +1,217 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 20:58:27 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utqqcontainer9d4d1789?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      etag:
+      - '"0x8D856956EBF3C36"'
+      last-modified:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '100,200,300,400
+
+      300,400,500,600
+
+      '
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789
+  response:
+    body:
+      string: ''
+    headers:
+      content-md5:
+      - /hmKXD7m7tyfn12eEsFvyQ==
+      date:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      etag:
+      - '"0x8D856956ED0E86F"'
+      last-modified:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-content-crc64:
+      - Dn1U+tgM/4c=
+      x-ms-request-server-encrypted:
+      - 'false'
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueryRequest><QueryType>SQL</QueryType><Expression>SELECT _2 from BlobStorage
+      WHERE _1 &gt; 250</Expression><OutputSerialization><Format><Type>arrow</Type><ArrowConfiguration><Schema><Field><Type>decimal</Type><Name>abc</Name><Precision>4</Precision><Scale>2</Scale></Field></Schema></ArrowConfiguration></Format></OutputSerialization></QueryRequest>'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '390'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: POST
+    uri: https://storagename.blob.core.windows.net/utqqcontainer9d4d1789/csvfile9d4d1789?comp=query
+  response:
+    body:
+      string: !!binary |
+        T2JqAQIWYXZyby5zY2hlbWG+HlsKICB7CiAgICAidHlwZSI6ICJyZWNvcmQiLAogICAgIm5hbWUi
+        OiAiY29tLm1pY3Jvc29mdC5henVyZS5zdG9yYWdlLnF1ZXJ5QmxvYkNvbnRlbnRzLnJlc3VsdERh
+        dGEiLAogICAgImRvYyI6ICJIb2xkcyByZXN1bHQgZGF0YSBpbiB0aGUgZm9ybWF0IHNwZWNpZmll
+        ZCBmb3IgdGhpcyBxdWVyeSAoQ1NWLCBKU09OLCBldGMuKS4iLAogICAgImZpZWxkcyI6IFsKICAg
+        ICAgewogICAgICAgICJuYW1lIjogImRhdGEiLAogICAgICAgICJ0eXBlIjogImJ5dGVzIgogICAg
+        ICB9CiAgICBdCiAgfSwKICB7CiAgICAidHlwZSI6ICJyZWNvcmQiLAogICAgIm5hbWUiOiAiY29t
+        Lm1pY3Jvc29mdC5henVyZS5zdG9yYWdlLnF1ZXJ5QmxvYkNvbnRlbnRzLmVycm9yIiwKICAgICJk
+        b2MiOiAiQW4gZXJyb3IgdGhhdCBvY2N1cnJlZCB3aGlsZSBwcm9jZXNzaW5nIHRoZSBxdWVyeS4i
+        LAogICAgImZpZWxkcyI6IFsKICAgICAgewogICAgICAgICJuYW1lIjogImZhdGFsIiwKICAgICAg
+        ICAidHlwZSI6ICJib29sZWFuIiwKICAgICAgICAiZG9jIjogIklmIHRydWUsIHRoaXMgZXJyb3Ig
+        cHJldmVudHMgZnVydGhlciBxdWVyeSBwcm9jZXNzaW5nLiAgTW9yZSByZXN1bHQgZGF0YSBtYXkg
+        YmUgcmV0dXJuZWQsIGJ1dCB0aGVyZSBpcyBubyBndWFyYW50ZWUgdGhhdCBhbGwgb2YgdGhlIG9y
+        aWdpbmFsIGRhdGEgd2lsbCBiZSBwcm9jZXNzZWQuICBJZiBmYWxzZSwgdGhpcyBlcnJvciBkb2Vz
+        IG5vdCBwcmV2ZW50IGZ1cnRoZXIgcXVlcnkgcHJvY2Vzc2luZy4iCiAgICAgIH0sCiAgICAgIHsK
+        ICAgICAgICAibmFtZSI6ICJuYW1lIiwKICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAg
+        ICJkb2MiOiAiVGhlIG5hbWUgb2YgdGhlIGVycm9yIgogICAgICB9LAogICAgICB7CiAgICAgICAg
+        Im5hbWUiOiAiZGVzY3JpcHRpb24iLAogICAgICAgICJ0eXBlIjogInN0cmluZyIsCiAgICAgICAg
+        ImRvYyI6ICJBIGRlc2NyaXB0aW9uIG9mIHRoZSBlcnJvciIKICAgICAgfSwKICAgICAgewogICAg
+        ICAgICJuYW1lIjogInBvc2l0aW9uIiwKICAgICAgICAidHlwZSI6ICJsb25nIiwKICAgICAgICAi
+        ZG9jIjogIlRoZSBibG9iIG9mZnNldCBhdCB3aGljaCB0aGUgZXJyb3Igb2NjdXJyZWQiCiAgICAg
+        IH0KICAgIF0KICB9LAogIHsKICAgICJ0eXBlIjogInJlY29yZCIsCiAgICAibmFtZSI6ICJjb20u
+        bWljcm9zb2Z0LmF6dXJlLnN0b3JhZ2UucXVlcnlCbG9iQ29udGVudHMucHJvZ3Jlc3MiLAogICAg
+        ImRvYyI6ICJJbmZvcm1hdGlvbiBhYm91dCB0aGUgcHJvZ3Jlc3Mgb2YgdGhlIHF1ZXJ5IiwKICAg
+        ICJmaWVsZHMiOiBbCiAgICAgIHsKICAgICAgICAibmFtZSI6ICJieXRlc1NjYW5uZWQiLAogICAg
+        ICAgICJ0eXBlIjogImxvbmciLAogICAgICAgICJkb2MiOiAiVGhlIG51bWJlciBvZiBieXRlcyB0
+        aGF0IGhhdmUgYmVlbiBzY2FubmVkIgogICAgICB9LAogICAgICB7CiAgICAgICAgIm5hbWUiOiAi
+        dG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAgICAgICAgImRvYyI6ICJUaGUg
+        dG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4gdGhpcyBxdWVyeSIKICAgICAg
+        fQogICAgXQogIH0sCiAgewogICAgInR5cGUiOiAicmVjb3JkIiwKICAgICJuYW1lIjogImNvbS5t
+        aWNyb3NvZnQuYXp1cmUuc3RvcmFnZS5xdWVyeUJsb2JDb250ZW50cy5lbmQiLAogICAgImRvYyI6
+        ICJTZW50IGFzIHRoZSBmaW5hbCBtZXNzYWdlIG9mIHRoZSByZXNwb25zZSwgaW5kaWNhdGluZyB0
+        aGF0IGFsbCByZXN1bHRzIGhhdmUgYmVlbiBzZW50LiIsCiAgICAiZmllbGRzIjogWwogICAgICB7
+        CiAgICAgICAgIm5hbWUiOiAidG90YWxCeXRlcyIsCiAgICAgICAgInR5cGUiOiAibG9uZyIsCiAg
+        ICAgICAgImRvYyI6ICJUaGUgdG90YWwgbnVtYmVyIG9mIGJ5dGVzIHRvIGJlIHNjYW5uZWQgaW4g
+        dGhpcyBxdWVyeSIKICAgICAgfQogICAgXQogIH0KXQoAQmgjmNsu90Ck/YQ3d6WMowL2AwDwA///
+        //94AAAAEAAAAAAACgAMAAYABQAIAAoAAAAAAQMADAAAAAgACAAAAAQACAAAAAQAAAABAAAAFAAA
+        ABAAFAAIAAYABwAMAAAAEAAQAAAAAAABByQAAAAUAAAABAAAAAAAAAAIAAwABAAIAAgAAAAEAAAA
+        AgAAAAMAAABhYmMA/////3AAAAAQAAAAAAAKAA4ABgAFAAgACgAAAAADAwAQAAAAAAAKAAwAAAAE
+        AAgACgAAADAAAAAEAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA
+        AAAAAAAAAAAAAAAAAAAAAAAAQmgjmNsu90Ck/YQ3d6WMowLGAgDAAv////+IAAAAFAAAAAAAAAAM
+        ABYABgAFAAgADAAMAAAAAAMDABgAAAAQAAAAAAAAAAAACgAYAAwABAAIAAoAAAA8AAAAEAAAAAEA
+        AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAA
+        AAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAABCaCOY2y73QKT9hDd3pYyjAgYEQEBCaCOY2y73
+        QKT9hDd3pYyjAgQGQEJoI5jbLvdApP2EN3eljKM=
+    headers:
+      accept-ranges:
+      - bytes
+      content-type:
+      - avro/binary
+      date:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      etag:
+      - '"0x8D856956ED0E86F"'
+      last-modified:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.4.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      x-ms-version:
+      - '2020-02-10'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utqqcontainer9d4d1789?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Fri, 11 Sep 2020 20:58:28 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2020-02-10'
+    status:
+      code: 202
+      message: Accepted
+version: 1

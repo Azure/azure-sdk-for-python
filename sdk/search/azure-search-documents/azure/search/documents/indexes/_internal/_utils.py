@@ -454,7 +454,7 @@ def unpack_search_field(search_field):
     fields = [unpack_search_field(x) for x in search_field.fields] \
         if search_field.fields else None
     hidden = not search_field.retrievable if search_field.retrievable is not None else None
-    return _SearchField(
+    return SearchField(
         name=search_field.name,
         type=search_field.type,
         key=search_field.key,

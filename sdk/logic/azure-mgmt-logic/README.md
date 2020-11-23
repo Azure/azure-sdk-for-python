@@ -1,5 +1,5 @@
 ## Microsoft Azure SDK for Python
-
+                                    
 This is the Microsoft Azure Logic Apps Management Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs
@@ -32,11 +32,16 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 pip uninstall azure
 ```
 
-## Usage
+# Usage
 
-For code examples, see [Logic Apps
-Management](https://docs.microsoft.com/python/api/overview/azure/logic-apps)
-on docs.microsoft.com.
+
+To learn how to use this package, see the [quickstart guide](https://aka.ms/azsdk/python/mgmt)
+
+
+ 
+For docs and references, see [Python SDK References](https://docs.microsoft.com/python/api/overview/azure/)
+Code samples for this package can be found at [Logic Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com.
+Additional code samples for different Azure services are available at [Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
 ## Provide Feedback
 

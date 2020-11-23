@@ -17,8 +17,21 @@ Install the Azure Event Grid client library for Python with [pip][pip]:
 pip install azure-eventgrid
 ```
 
+* An existing Event Grid topic or domain is required. You can create the resource using [Azure Portal][azure_portal_create_EG_resource] or [Azure CLI][azure_cli_link]
+
+If you use Azure CLI, replace `<resource-group-name>` and `<resource-name>` with your own unique names.
+
 #### Create an Event Grid Topic
-You can create the resource using [Azure Portal][azure_portal_create_EG_resource]
+
+```
+az eventgrid topic --create --location <location> --resource-group <resource-group-name> --name <resource-name>
+```
+
+#### Create an Event Grid Domain
+
+```
+az eventgrid domain --create --location <location> --resource-group <resource-group-name> --name <resource-name>
+```
 
 ### Authenticate the client
 In order to interact with the Event Grid service, you will need to create an instance of a client.
@@ -56,9 +69,9 @@ Either a list or a single instance of CloudEvent/EventGridEvent/CustomEvent can 
 
 The following sections provide several code snippets covering some of the most common Event Grid tasks, including:
 
-* [Send an Event Grid Event](#send-an-eventgrid-event)
+* [Send an Event Grid Event](#send-an-event-grid-event)
 * [Send a Cloud Event](#send-a-cloud-event)
-* [Consume an eventgrid Event](#consume-an-eventgrid-event)
+* [Consume an eventgrid Event](#consume-an-event-grid-event)
 * [Consume a cloud Event](#consume-a-cloud-event)
 
 ### Send an Event Grid Event
@@ -136,8 +149,7 @@ eg_storage_dict = {
 deserialized_event = consumer.decode_eventgrid_event(eg_storage_dict)
 
 # both allow access to raw properties as strings
-time_string = deserialized_event.time
-time_string = deserialized_event["time"]
+time_string = deserialized_event.event_time
 ```
 
 ### Consume a Cloud Event
@@ -165,7 +177,6 @@ deserialized_event = consumer.decode_cloud_event(cloud_storage_dict)
 
 # both allow access to raw properties as strings
 time_string = deserialized_event.time
-time_string = deserialized_event["time"]
 ```
 
 ## Troubleshooting
@@ -217,10 +228,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
+[azure_cli_link]: https://pypi.org/project/azure-cli/
 [python-eg-src]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/
 [python-eg-pypi]: https://pypi.org/project/azure-eventgrid
 [python-eg-product-docs]: https://docs.microsoft.com/azure/event-grid/overview
-[python-eg-ref-docs]: https://aka.ms/azsdk/python/eventgrid/docs
+[python-eg-ref-docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventgrid/latest/index.html
 [python-eg-samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples
 [python-eg-changelog]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/CHANGELOG.md
 [pip]: https://pypi.org/project/pip/

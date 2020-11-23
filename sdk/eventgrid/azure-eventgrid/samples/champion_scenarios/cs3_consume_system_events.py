@@ -11,23 +11,18 @@ USAGE:
     python cs3_consume_system_events.py
 """
 import os
+import json
 from azure.eventgrid import EventGridConsumer
 
 consumer = EventGridConsumer()
 
+with open('./cs3_event_grid_event_system_event.json', 'r') as f:
+    eg_event_received_message = json.loads(f.read())
 # returns List[DeserializedEvent]
-deserialized_events = consumer.decode_eventgrid_event(service_bus_received_message)
+event = consumer.decode_eventgrid_event(eg_event_received_message)
 
-# EventGridEvent schema, Storage.BlobCreated event
-for event in deserialized_events:
+datetime_object = event.event_time
+print(datetime_object)
 
-    # both allow access to raw properties as strings
-    time_string = event.event_time
-    time_string = event["event_time"]
-
-    # model returns EventGridEvent object
-    event_grid_event = event.model
-
-    # all model properties are strongly typed
-    datetime_object = event.model.time
-    storage_blobcreated_object = event.model.data
+storage_blobcreated_object = event.data
+print(storage_blobcreated_object)

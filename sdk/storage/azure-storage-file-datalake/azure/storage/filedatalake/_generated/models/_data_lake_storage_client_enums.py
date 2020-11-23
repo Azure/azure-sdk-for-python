@@ -12,6 +12,21 @@
 from enum import Enum
 
 
+class PathSetAccessControlRecursiveMode(str, Enum):
+
+    set = "set"
+    modify = "modify"
+    remove = "remove"
+
+
+class PathExpiryOptions(str, Enum):
+
+    never_expire = "NeverExpire"
+    relative_to_creation = "RelativeToCreation"
+    relative_to_now = "RelativeToNow"
+    absolute = "Absolute"
+
+
 class PathResourceType(str, Enum):
 
     directory = "directory"
@@ -31,13 +46,6 @@ class PathUpdateAction(str, Enum):
     set_properties = "setProperties"
     set_access_control = "setAccessControl"
     set_access_control_recursive = "setAccessControlRecursive"
-
-
-class PathSetAccessControlRecursiveMode(str, Enum):
-
-    set = "set"
-    modify = "modify"
-    remove = "remove"
 
 
 class PathLeaseAction(str, Enum):

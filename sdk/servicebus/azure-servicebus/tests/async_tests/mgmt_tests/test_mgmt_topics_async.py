@@ -49,7 +49,7 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
         topic_name = "iweidk"
         try:
             await mgmt_service.create_topic(
-                name=topic_name,
+                topic_name=topic_name,
                 auto_delete_on_idle=datetime.timedelta(minutes=10),
                 default_message_time_to_live=datetime.timedelta(minutes=11),
                 duplicate_detection_history_time_window=datetime.timedelta(minutes=12),
@@ -177,13 +177,13 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtTestCase):
         assert len(topics) == 2
 
         description = await mgmt_service.get_topic('test_topic')
-        await mgmt_service.delete_topic(description)
+        await mgmt_service.delete_topic(description.name)
 
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         assert len(topics) == 1 and topics[0].name == 'txt/.-_123'
 
         description = await mgmt_service.get_topic('txt/.-_123')
-        await mgmt_service.delete_topic(description)
+        await mgmt_service.delete_topic(description.name)
 
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         assert len(topics) == 0

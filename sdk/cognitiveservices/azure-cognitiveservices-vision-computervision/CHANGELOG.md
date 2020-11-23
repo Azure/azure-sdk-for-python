@@ -1,5 +1,11 @@
 # Release History
 
+## 0.7.0 (2020-10-08)
+
+**Features**
+
+  - Supports 3.1 service version
+
 ## 0.6.0 (2020-05-18)
 
 **Features**

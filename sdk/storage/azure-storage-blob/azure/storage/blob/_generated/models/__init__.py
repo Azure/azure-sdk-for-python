@@ -12,6 +12,8 @@
 try:
     from ._models_py3 import AccessPolicy
     from ._models_py3 import AppendPositionAccessConditions
+    from ._models_py3 import ArrowConfiguration
+    from ._models_py3 import ArrowField
     from ._models_py3 import BlobFlatListSegment
     from ._models_py3 import BlobHierarchyListSegment
     from ._models_py3 import BlobHTTPHeaders
@@ -64,6 +66,8 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AccessPolicy
     from ._models import AppendPositionAccessConditions
+    from ._models import ArrowConfiguration
+    from ._models import ArrowField
     from ._models import BlobFlatListSegment
     from ._models import BlobHierarchyListSegment
     from ._models import BlobHTTPHeaders
@@ -145,6 +149,8 @@ from ._azure_blob_storage_enums import (
 __all__ = [
     'AccessPolicy',
     'AppendPositionAccessConditions',
+    'ArrowConfiguration',
+    'ArrowField',
     'BlobFlatListSegment',
     'BlobHierarchyListSegment',
     'BlobHTTPHeaders',

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b4 (2020-11-16)
+- Updated `azure-mgmt-communication` version.
+
+## 1.0.0b3 (2020-10-06)
+- Updated `azure-mgmt-communication` version.
+
 ## 1.0.0b2 (2020-09-22)
 
 This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).

@@ -210,6 +210,7 @@ class QueryFormatType(str, Enum):
 
     delimited = "delimited"
     json = "json"
+    arrow = "arrow"
 
 
 class AccessTierRequired(str, Enum):

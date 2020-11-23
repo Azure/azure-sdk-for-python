@@ -100,7 +100,7 @@ async def sample_list_feedback_async():
     client = MetricsAdvisorClient(service_endpoint,
                                   MetricsAdvisorKeyCredential(subscription_key, api_key))
 
-    results = client.list_feedbacks(metric_id=metric_id)
+    results = client.list_feedback(metric_id=metric_id)
     async for result in results:
         print("Type: {}; Id: {}".format(result.feedback_type, result.id))
     # [END list_feedback_async]

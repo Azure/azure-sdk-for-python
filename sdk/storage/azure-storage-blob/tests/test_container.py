@@ -742,7 +742,7 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                restored_ctn_client = bsc.undelete_container(container.name, container.version,
                                                               new_name="restored" + str(restored_version))
                 restored_version += 1
 
@@ -774,7 +774,7 @@ class StorageContainerTest(StorageTestCase):
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
                 with self.assertRaises(HttpResponseError):
-                    bsc._undelete_container(container.name, container.version,
+                    bsc.undelete_container(container.name, container.version,
                                             new_name=existing_container_client.container_name)
 
     @pytest.mark.live_test_only  # sas token is dynamically generated
@@ -804,7 +804,7 @@ class StorageContainerTest(StorageTestCase):
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
-                restored_ctn_client = bsc._undelete_container(container.name, container.version,
+                restored_ctn_client = bsc.undelete_container(container.name, container.version,
                                                               new_name="restored" + str(restored_version))
                 restored_version += 1
 
@@ -826,6 +826,20 @@ class StorageContainerTest(StorageTestCase):
         blobs = [b.name for b in container.list_blobs()]
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
+
+    @pytest.mark.playback_test_only
+    @GlobalStorageAccountPreparer()
+    def test_list_blobs_contains_last_access_time(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        blob_client = container.get_blob_client('blob1')
+        blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Archive)
+
+        # Act
+        for blob_properties in container.list_blobs():
+            self.assertIsInstance(blob_properties.last_accessed_on, datetime)
 
     @GlobalStorageAccountPreparer()
     def test_list_blobs_returns_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):

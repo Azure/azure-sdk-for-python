@@ -32,9 +32,8 @@ class AzureCliCredential(AsyncContextManager):
     async def get_token(self, *scopes, **kwargs):
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
-
-        This credential won't cache tokens. Every call invokes the Azure CLI.
+        This method is called automatically by Azure SDK clients. Applications calling this method directly must
+        also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`

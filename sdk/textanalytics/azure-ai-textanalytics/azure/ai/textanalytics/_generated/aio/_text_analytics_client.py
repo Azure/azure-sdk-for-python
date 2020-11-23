@@ -42,6 +42,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
      missing in profile.
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     DEFAULT_API_VERSION = 'v3.0'
@@ -63,12 +64,12 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     ) -> None:
         if api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
-        elif api_version == 'v3.1-preview.1':
-            base_url = '{Endpoint}/text/analytics/v3.1-preview.1'
         elif api_version == 'v3.1-preview.2':
             base_url = '{Endpoint}/text/analytics/v3.1-preview.2'
+        elif api_version == 'v3.1-preview.3':
+            base_url = '{Endpoint}/text/analytics/v3.1-preview.3'
         else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+            raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(TextAnalyticsClient, self).__init__(
@@ -85,19 +86,19 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         """Module depends on the API version:
 
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
-           * v3.1-preview.1: :mod:`v3_1_preview_1.models<azure.ai.textanalytics.v3_1_preview_1.models>`
            * v3.1-preview.2: :mod:`v3_1_preview_2.models<azure.ai.textanalytics.v3_1_preview_2.models>`
+           * v3.1-preview.3: :mod:`v3_1_preview_3.models<azure.ai.textanalytics.v3_1_preview_3.models>`
         """
         if api_version == 'v3.0':
             from ..v3_0 import models
             return models
-        elif api_version == 'v3.1-preview.1':
-            from ..v3_1_preview_1 import models
-            return models
         elif api_version == 'v3.1-preview.2':
             from ..v3_1_preview_2 import models
             return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        elif api_version == 'v3.1-preview.3':
+            from ..v3_1_preview_3 import models
+            return models
+        raise ValueError("API version {} is not available".format(api_version))
 
     async def close(self):
         await self._client.close()

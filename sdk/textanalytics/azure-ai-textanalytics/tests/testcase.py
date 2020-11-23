@@ -17,7 +17,7 @@ from devtools_testutils import (
 from devtools_testutils.cognitiveservices_testcase import CognitiveServicesAccountPreparer
 from azure_devtools.scenario_tests import ReplayableTest
 
-REGION = 'westcentralus'
+REGION = 'westus2'
 
 
 class FakeTokenCredential(object):
@@ -38,7 +38,7 @@ class TextAnalyticsTest(AzureTestCase):
         super(TextAnalyticsTest, self).__init__(method_name)
 
     def get_oauth_endpoint(self):
-        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT")
+        return self.get_settings_value("TEXT_ANALYTICS_ENDPOINT_STABLE")
 
     def generate_oauth_token(self):
         if self.is_live:

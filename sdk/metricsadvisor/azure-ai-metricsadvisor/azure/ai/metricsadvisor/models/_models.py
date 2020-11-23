@@ -59,13 +59,15 @@ from .._generated.models import (
     ElasticsearchParameter as _ElasticsearchParameter,
     DimensionGroupIdentity as _DimensionGroupIdentity,
     SeriesIdentity as _SeriesIdentity,
+    AnomalyAlertingConfiguration as _AnomalyAlertingConfiguration,
+    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
     AnomalyAlertingConfigurationPatch as _AnomalyAlertingConfigurationPatch,
     AnomalyDetectionConfigurationPatch as _AnomalyDetectionConfigurationPatch
 )
 
 if TYPE_CHECKING:
     from . import (
-        Severity,
+        AnomalySeverity,
         SnoozeScope,
         AnomalyDetectorDirection,
         DataFeedGranularityType
@@ -75,6 +77,7 @@ if TYPE_CHECKING:
         IncidentResult,
         RootCause,
     )
+    from .._metrics_advisor_administration_client import DataFeedSourceUnion
 
 
 class MetricAnomalyAlertScopeType(str, Enum):
@@ -168,6 +171,12 @@ class DataFeedGranularity(object):
         self.granularity_type = granularity_type
         self.custom_granularity_value = kwargs.get('custom_granularity_value', None)
 
+    def __repr__(self):
+        return "DataFeedGranularity(granularity_type={}, custom_granularity_value={})".format(
+            self.granularity_type,
+            self.custom_granularity_value
+        )[:1024]
+
     @classmethod
     def _from_generated(cls, granularity_name, granularity_amount):
         return cls(
@@ -196,11 +205,21 @@ class DataFeedIngestionSettings(object):
         self.ingestion_retry_delay = kwargs.get('ingestion_retry_delay', -1)
         self.stop_retry_after = kwargs.get('stop_retry_after', -1)
 
+    def __repr__(self):
+        return "DataFeedIngestionSettings(ingestion_begin_time={}, ingestion_start_offset={}, " \
+               "data_source_request_concurrency={}, ingestion_retry_delay={}, stop_retry_after={})".format(
+                    self.ingestion_begin_time,
+                    self.ingestion_start_offset,
+                    self.data_source_request_concurrency,
+                    self.ingestion_retry_delay,
+                    self.stop_retry_after,
+                )[:1024]
+
 
 class DataFeedOptions(object):
     """Data feed options.
 
-    :keyword list[str] admins: Data feed administrators.
+    :keyword list[str] admin_emails: Data feed administrator emails.
     :keyword str data_feed_description: Data feed description.
     :keyword missing_data_point_fill_settings: The fill missing point type and value.
     :paramtype missing_data_point_fill_settings:
@@ -208,20 +227,32 @@ class DataFeedOptions(object):
     :keyword rollup_settings: The rollup settings.
     :paramtype rollup_settings:
         ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
-    :keyword list[str] viewers: Data feed viewer.
+    :keyword list[str] viewer_emails: Data feed viewer emails.
     :keyword access_mode: Data feed access mode. Possible values include:
         "Private", "Public". Default value: "Private".
     :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
     :keyword str action_link_template: action link for alert.
     """
     def __init__(self, **kwargs):
-        self.admins = kwargs.get('admins', None)
+        self.admin_emails = kwargs.get('admin_emails', None)
         self.data_feed_description = kwargs.get('data_feed_description', None)
         self.missing_data_point_fill_settings = kwargs.get('missing_data_point_fill_settings', None)
         self.rollup_settings = kwargs.get('rollup_settings', None)
-        self.viewers = kwargs.get('viewers', None)
+        self.viewer_emails = kwargs.get('viewer_emails', None)
         self.access_mode = kwargs.get('access_mode', "Private")
         self.action_link_template = kwargs.get('action_link_template', None)
+
+    def __repr__(self):
+        return "DataFeedOptions(admin_emails={}, data_feed_description={}, missing_data_point_fill_settings={}, " \
+               "rollup_settings={}, viewer_emails={}, access_mode={}, action_link_template={})".format(
+                    self.admin_emails,
+                    self.data_feed_description,
+                    repr(self.missing_data_point_fill_settings),
+                    repr(self.rollup_settings),
+                    self.viewer_emails,
+                    self.access_mode,
+                    self.action_link_template
+                )[:1024]
 
 
 class DataFeedMissingDataPointFillSettings(object):
@@ -238,6 +269,12 @@ class DataFeedMissingDataPointFillSettings(object):
     def __init__(self, **kwargs):
         self.fill_type = kwargs.get('fill_type', "SmartFilling")
         self.custom_fill_value = kwargs.get('custom_fill_value', None)
+
+    def __repr__(self):
+        return "DataFeedMissingDataPointFillSettings(fill_type={}, custom_fill_value={})".format(
+                    self.fill_type,
+                    self.custom_fill_value,
+                )[:1024]
 
 
 class DataFeedRollupSettings(object):
@@ -258,22 +295,38 @@ class DataFeedRollupSettings(object):
         self.auto_rollup_group_by_column_names = kwargs.get('auto_rollup_group_by_column_names', None)
         self.rollup_method = kwargs.get('rollup_method', None)
 
+    def __repr__(self):
+        return "DataFeedRollupSettings(rollup_identification_value={}, rollup_type={}, " \
+               "auto_rollup_group_by_column_names={}, rollup_method={})".format(
+                    self.rollup_identification_value,
+                    self.rollup_type,
+                    self.auto_rollup_group_by_column_names,
+                    self.rollup_method
+                )[:1024]
+
 
 class DataFeedSchema(object):
     """Data feed schema
 
     :param metrics: List of metrics.
-    :type metrics: list[~azure.ai.metricsadvisor.models.Metric]
+    :type metrics: list[~azure.ai.metricsadvisor.models.DataFeedMetric]
     :keyword dimensions: List of dimension.
-    :paramtype dimensions: list[~azure.ai.metricsadvisor.models.Dimension]
+    :paramtype dimensions: list[~azure.ai.metricsadvisor.models.DataFeedDimension]
     :keyword str timestamp_column: User-defined timestamp column.
         If timestamp_column is None, start time of every time slice will be used as default value.
     """
     def __init__(self, metrics, **kwargs):
-        # type: (List[Metric], Any) -> None
+        # type: (List[DataFeedMetric], Any) -> None
         self.metrics = metrics
         self.dimensions = kwargs.get('dimensions', None)
         self.timestamp_column = kwargs.get('timestamp_column', None)
+
+    def __repr__(self):
+        return "DataFeedSchema(metrics={}, dimensions={}, timestamp_column={})".format(
+                    repr(self.metrics),
+                    repr(self.dimensions),
+                    self.timestamp_column,
+                )[:1024]
 
 
 class DataFeed(object):  # pylint:disable=too-many-instance-attributes
@@ -300,18 +353,42 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
         Default value: "Active".
     :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
     """
-    def __init__(self, **kwargs):
-        self.created_time = kwargs.get('created_time', None)
-        self.granularity = kwargs.get('granularity', None)
+    def __init__(
+        self, name,  # type: str
+        source,  # type: DataFeedSourceUnion
+        granularity,  # type: DataFeedGranularity
+        schema,  # type: DataFeedSchema
+        ingestion_settings,  # type: DataFeedIngestionSettings
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        self.name = name
+        self.granularity = granularity
+        self.ingestion_settings = ingestion_settings
+        self.schema = schema
+        self.source = source
         self.id = kwargs.get('id', None)
-        self.ingestion_settings = kwargs.get('ingestion_settings', None)
+        self.created_time = kwargs.get('created_time', None)
         self.is_admin = kwargs.get('is_admin', None)
         self.metric_ids = kwargs.get('metric_ids', None)
-        self.name = kwargs.get('name', None)
         self.options = kwargs.get('options', None)
-        self.schema = kwargs.get('schema', None)
-        self.source = kwargs.get('source', None)
         self.status = kwargs.get('status', None)
+
+    def __repr__(self):
+        return "DataFeed(created_time={}, granularity={}, id={}, ingestion_settings={}, is_admin={}, metric_ids={}, " \
+               "name={}, options={}, schema={}, source={}, status={})".format(
+                    self.created_time,
+                    repr(self.granularity),
+                    self.id,
+                    repr(self.ingestion_settings),
+                    self.is_admin,
+                    self.metric_ids,
+                    self.name,
+                    repr(self.options),
+                    repr(self.schema),
+                    repr(self.source),
+                    self.status
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, data_feed):
@@ -330,7 +407,7 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             metric_ids=[metric.metric_id for metric in data_feed.metrics],
             name=data_feed.data_feed_name,
             options=DataFeedOptions(
-                admins=data_feed.admins,
+                admin_emails=data_feed.admins,
                 data_feed_description=data_feed.data_feed_description,
                 missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
                     fill_type=data_feed.fill_missing_point_type,
@@ -342,13 +419,13 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
                     auto_rollup_group_by_column_names=data_feed.roll_up_columns,
                     rollup_method=data_feed.roll_up_method
                 ),
-                viewers=data_feed.viewers,
+                viewer_emails=data_feed.viewers,
                 access_mode=data_feed.view_mode,
                 action_link_template=data_feed.action_link_template
             ),
             schema=DataFeedSchema(
-                dimensions=[Dimension._from_generated(dim) for dim in data_feed.dimension],
-                metrics=[Metric._from_generated(metric) for metric in data_feed.metrics],
+                dimensions=[DataFeedDimension._from_generated(dim) for dim in data_feed.dimension],
+                metrics=[DataFeedMetric._from_generated(metric) for metric in data_feed.metrics],
                 timestamp_column=data_feed.timestamp_column
             ),
             source=DATA_FEED_TRANSFORM[data_feed.data_source_type]._from_generated(data_feed.data_source_parameter),
@@ -397,11 +474,11 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
             or self.options.missing_data_point_fill_settings.custom_fill_value
             if self.options and self.options.missing_data_point_fill_settings else None,
             viewers=kwargs.pop("viewers", None)
-            or self.options.viewers if self.options else None,
+            or self.options.viewer_emails if self.options else None,
             view_mode=kwargs.pop("viewMode", None)
             or self.options.access_mode if self.options else None,
             admins=kwargs.pop("admins", None)
-            or self.options.admins if self.options else None,
+            or self.options.admin_emails if self.options else None,
             status=kwargs.pop("status", None) or self.status,
             action_link_template=kwargs.pop("actionLinkTemplate", None)
             or self.options.action_link_template if self.options else None
@@ -424,6 +501,13 @@ class MetricAnomalyAlertScope(object):
         self.scope_type = scope_type
         self.series_group_in_scope = kwargs.get("series_group_in_scope", None)
         self.top_n_group_in_scope = kwargs.get("top_n_group_in_scope", None)
+
+    def __repr__(self):
+        return "MetricAnomalyAlertScope(scope_type={}, series_group_in_scope={}, top_n_group_in_scope={})".format(
+                    self.scope_type,
+                    self.series_group_in_scope,
+                    repr(self.top_n_group_in_scope)
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, config):
@@ -457,22 +541,35 @@ class TopNGroupScope(object):
         self.period = period
         self.min_top_count = min_top_count
 
+    def __repr__(self):
+        return "TopNGroupScope(top={}, period={}, min_top_count={})".format(
+                    self.top,
+                    self.period,
+                    self.min_top_count
+                )[:1024]
+
 
 class SeverityCondition(object):
     """SeverityCondition.
 
     :param min_alert_severity: Required. min alert severity. Possible values include: "Low",
      "Medium", "High".
-    :type min_alert_severity: str or ~azure.ai.metricsadvisor.models.Severity
+    :type min_alert_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     :param max_alert_severity: Required. max alert severity. Possible values include: "Low",
      "Medium", "High".
-    :type max_alert_severity: str or ~azure.ai.metricsadvisor.models.Severity
+    :type max_alert_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     """
 
     def __init__(self, min_alert_severity, max_alert_severity, **kwargs):  # pylint: disable=unused-argument
-        # type: (Union[str, Severity], Union[str, Severity], Any) -> None
+        # type: (Union[str, AnomalySeverity], Union[str, AnomalySeverity], Any) -> None
         self.min_alert_severity = min_alert_severity
         self.max_alert_severity = max_alert_severity
+
+    def __repr__(self):
+        return "SeverityCondition(min_alert_severity={}, max_alert_severity={})".format(
+                    self.min_alert_severity,
+                    self.max_alert_severity
+                )[:1024]
 
 
 class MetricAnomalyAlertSnoozeCondition(object):
@@ -492,6 +589,13 @@ class MetricAnomalyAlertSnoozeCondition(object):
         self.snooze_scope = snooze_scope
         self.only_for_successive = only_for_successive
 
+    def __repr__(self):
+        return "MetricAnomalyAlertSnoozeCondition(auto_snooze={}, snooze_scope={}, only_for_successive={})".format(
+                    self.auto_snooze,
+                    self.snooze_scope,
+                    self.only_for_successive
+                )[:1024]
+
 
 class MetricAnomalyAlertConditions(object):
     """MetricAnomalyAlertConditions
@@ -505,6 +609,12 @@ class MetricAnomalyAlertConditions(object):
     def __init__(self, **kwargs):
         self.metric_boundary_condition = kwargs.get("metric_boundary_condition", None)
         self.severity_condition = kwargs.get("severity_condition", None)
+
+    def __repr__(self):
+        return "MetricAnomalyAlertConditions(metric_boundary_condition={}, severity_condition={})".format(
+                    repr(self.metric_boundary_condition),
+                    repr(self.severity_condition)
+                )[:1024]
 
 
 class MetricBoundaryCondition(object):
@@ -528,6 +638,16 @@ class MetricBoundaryCondition(object):
         self.companion_metric_id = kwargs.get('companion_metric_id', None)
         self.trigger_for_missing = kwargs.get('trigger_for_missing', None)
 
+    def __repr__(self):
+        return "MetricBoundaryCondition(direction={}, lower={}, upper={}, companion_metric_id={}, " \
+               "trigger_for_missing={})".format(
+                    self.direction,
+                    self.lower,
+                    self.upper,
+                    self.companion_metric_id,
+                    self.trigger_for_missing
+                )[:1024]
+
 
 class MetricAlertConfiguration(object):
     """MetricAlertConfiguration.
@@ -550,6 +670,16 @@ class MetricAlertConfiguration(object):
         self.negation_operation = kwargs.get("negation_operation", None)
         self.alert_conditions = kwargs.get("alert_conditions", None)
         self.alert_snooze_condition = kwargs.get("alert_snooze_condition", None)
+
+    def __repr__(self):
+        return "MetricAlertConfiguration(detection_configuration_id={}, alert_scope={}, negation_operation={}, " \
+               "alert_conditions={}, alert_snooze_condition={})".format(
+                    self.detection_configuration_id,
+                    repr(self.alert_scope),
+                    self.negation_operation,
+                    repr(self.alert_conditions),
+                    repr(self.alert_snooze_condition)
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, config):
@@ -611,10 +741,13 @@ class MetricAlertConfiguration(object):
 class AnomalyAlertConfiguration(object):
     """AnomalyAlertConfiguration.
 
+    :param str name: Required. anomaly alert configuration name.
+    :param list[str] hook_ids: Required. hook unique ids.
+    :param metric_alert_configurations: Required. Anomaly alert configurations.
+    :type metric_alert_configurations:
+     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
     :ivar id: anomaly alert configuration unique id.
     :vartype id: str
-    :ivar name: Required. anomaly alert configuration name.
-    :vartype name: str
     :ivar description: anomaly alert configuration description.
     :vartype description: str
     :ivar cross_metrics_operator: cross metrics operator
@@ -622,19 +755,27 @@ class AnomalyAlertConfiguration(object):
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
-    :ivar hook_ids: Required. hook unique ids.
-    :vartype hook_ids: list[str]
-    :ivar metric_alert_configurations: Required. Anomaly alert configurations.
-    :vartype metric_alert_configurations:
-     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
+
     """
-    def __init__(self, **kwargs):
+    def __init__(self, name, metric_alert_configurations, hook_ids, **kwargs):
+        # type: (str, List[MetricAlertConfiguration], List[str], Any) -> None
+        self.name = name
+        self.hook_ids = hook_ids
+        self.metric_alert_configurations = metric_alert_configurations
         self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.cross_metrics_operator = kwargs.get('cross_metrics_operator', None)
-        self.hook_ids = kwargs.get('hook_ids', None)
-        self.metric_alert_configurations = kwargs.get('metric_alert_configurations', None)
+
+    def __repr__(self):
+        return "AnomalyAlertConfiguration(id={}, name={}, description={}, cross_metrics_operator={}, hook_ids={}, " \
+               "metric_alert_configurations={})".format(
+                    self.id,
+                    self.name,
+                    self.description,
+                    self.cross_metrics_operator,
+                    self.hook_ids,
+                    repr(self.metric_alert_configurations)
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, config):
@@ -648,6 +789,17 @@ class AnomalyAlertConfiguration(object):
                 MetricAlertConfiguration._from_generated(c)
                 for c in config.metric_alerting_configurations
             ]
+        )
+
+    def _to_generated(self):
+        return _AnomalyAlertingConfiguration(
+            name=self.name,
+            metric_alerting_configurations=[
+                config._to_generated() for config in self.metric_alert_configurations
+            ],
+            hook_ids=self.hook_ids,
+            cross_metrics_operator=self.cross_metrics_operator,
+            description=self.description
         )
 
     def _to_generated_patch(
@@ -672,13 +824,14 @@ class AnomalyAlertConfiguration(object):
 class AnomalyDetectionConfiguration(object):
     """AnomalyDetectionConfiguration.
 
-    :ivar str id: anomaly detection configuration unique id.
-    :ivar str name: Required. anomaly detection configuration name.
-    :ivar str description: anomaly detection configuration description.
-    :ivar str metric_id: Required. metric unique id.
-    :ivar whole_series_detection_condition: Required.
+
+    :param str name: Required. anomaly detection configuration name.
+    :param str metric_id: Required. metric unique id.
+    :param whole_series_detection_condition: Required.
         Conditions to detect anomalies in all time series of a metric.
-    :vartype whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
+    :type whole_series_detection_condition: ~azure.ai.metricsadvisor.models.MetricDetectionCondition
+    :ivar str description: anomaly detection configuration description.
+    :ivar str id: anomaly detection configuration unique id.
     :ivar series_group_detection_conditions: detection configuration for series group.
     :vartype series_group_detection_conditions:
         list[~azure.ai.metricsadvisor.models.MetricSeriesGroupDetectionCondition]
@@ -687,14 +840,28 @@ class AnomalyDetectionConfiguration(object):
         list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, name, metric_id, whole_series_detection_condition, **kwargs):
+        # type: (str, str, MetricDetectionCondition, Any) -> None
+        self.name = name
+        self.metric_id = metric_id
+        self.whole_series_detection_condition = whole_series_detection_condition
         self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
-        self.metric_id = kwargs.get('metric_id', None)
-        self.whole_series_detection_condition = kwargs.get('whole_series_detection_condition', None)
         self.series_group_detection_conditions = kwargs.get('series_group_detection_conditions', None)
         self.series_detection_conditions = kwargs.get('series_detection_conditions', None)
+
+    def __repr__(self):
+        return "AnomalyDetectionConfiguration(id={}, name={}, description={}, metric_id={}, " \
+               "whole_series_detection_condition={}, series_group_detection_conditions={}, " \
+               "series_detection_conditions={})".format(
+                    self.id,
+                    self.name,
+                    self.description,
+                    self.metric_id,
+                    repr(self.whole_series_detection_condition),
+                    repr(self.series_group_detection_conditions),
+                    repr(self.series_detection_conditions)
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, config):
@@ -714,6 +881,20 @@ class AnomalyDetectionConfiguration(object):
                 MetricSingleSeriesDetectionCondition._from_generated(conf)
                 for conf in config.series_override_configurations]
             if config.series_override_configurations else None,
+        )
+
+    def _to_generated(self):
+        return _AnomalyDetectionConfiguration(
+            name=self.name,
+            metric_id=self.metric_id,
+            description=self.description,
+            whole_metric_configuration=self.whole_series_detection_condition._to_generated(),
+            dimension_group_override_configurations=[
+                group._to_generated() for group in self.series_group_detection_conditions
+            ] if self.series_group_detection_conditions else None,
+            series_override_configurations=[
+                series._to_generated() for series in self.series_detection_conditions]
+            if self.series_detection_conditions else None,
         )
 
     def _to_generated_patch(
@@ -760,6 +941,16 @@ class AzureApplicationInsightsDataFeed(object):
         self.api_key = api_key
         self.query = query
 
+    def __repr__(self):
+        return "AzureApplicationInsightsDataFeed(data_source_type={}, azure_cloud={}, application_id={}, api_key={}, " \
+               "query={})".format(
+                    self.data_source_type,
+                    self.azure_cloud,
+                    self.application_id,
+                    self.api_key,
+                    self.query
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -795,6 +986,14 @@ class AzureBlobDataFeed(object):
         self.connection_string = connection_string
         self.container = container
         self.blob_template = blob_template
+
+    def __repr__(self):
+        return "AzureBlobDataFeed(data_source_type={}, connection_string={}, container={}, blob_template={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.container,
+                    self.blob_template
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -839,6 +1038,16 @@ class AzureCosmosDBDataFeed(object):
         self.database = database
         self.collection_id = collection_id
 
+    def __repr__(self):
+        return "AzureCosmosDBDataFeed(data_source_type={}, connection_string={}, sql_query={}, database={}, " \
+               "collection_id={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.sql_query,
+                    self.database,
+                    self.collection_id
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -872,6 +1081,13 @@ class AzureDataExplorerDataFeed(object):
         self.connection_string = connection_string
         self.query = query
 
+    def __repr__(self):
+        return "AzureDataExplorerDataFeed(data_source_type={}, connection_string={}, query={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.query
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -903,6 +1119,14 @@ class AzureTableDataFeed(object):
         self.connection_string = connection_string
         self.query = query
         self.table = table
+
+    def __repr__(self):
+        return "AzureTableDataFeed(data_source_type={}, connection_string={}, query={}, table={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.query,
+                    self.table
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -938,6 +1162,15 @@ class HttpRequestDataFeed(object):
         self.http_method = http_method
         self.http_header = kwargs.get("http_header", None)
         self.payload = kwargs.get("payload", None)
+
+    def __repr__(self):
+        return "HttpRequestDataFeed(data_source_type={}, url={}, http_method={}, http_header={}, payload={})".format(
+                    self.data_source_type,
+                    self.url,
+                    self.http_method,
+                    self.http_header,
+                    self.payload
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -988,6 +1221,17 @@ class InfluxDBDataFeed(object):
         self.password = password
         self.query = query
 
+    def __repr__(self):
+        return "InfluxDBDataFeed(data_source_type={}, connection_string={}, database={}, user_name={}, password={}, " \
+               "query={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.database,
+                    self.user_name,
+                    self.password,
+                    self.query
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -1023,6 +1267,13 @@ class MySqlDataFeed(object):
         self.connection_string = connection_string
         self.query = query
 
+    def __repr__(self):
+        return "MySqlDataFeed(data_source_type={}, connection_string={}, query={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.query
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -1052,6 +1303,13 @@ class PostgreSqlDataFeed(object):
         self.connection_string = connection_string
         self.query = query
 
+    def __repr__(self):
+        return "PostgreSqlDataFeed(data_source_type={}, connection_string={}, query={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.query
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -1080,6 +1338,13 @@ class SQLServerDataFeed(object):
         self.data_source_type = 'SqlServer'  # type: str
         self.connection_string = connection_string
         self.query = query
+
+    def __repr__(self):
+        return "SQLServerDataFeed(data_source_type={}, connection_string={}, query={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.query
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, source):
@@ -1127,6 +1392,17 @@ class AzureDataLakeStorageGen2DataFeed(object):
         self.directory_template = directory_template
         self.file_template = file_template
 
+    def __repr__(self):
+        return "AzureDataLakeStorageGen2DataFeed(data_source_type={}, account_name={}, account_key={}, " \
+               "file_system_name={}, directory_template={}, file_template={})".format(
+                    self.data_source_type,
+                    self.account_name,
+                    self.account_key,
+                    self.file_system_name,
+                    self.directory_template,
+                    self.file_template
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -1168,6 +1444,15 @@ class ElasticsearchDataFeed(object):
         self.auth_header = auth_header
         self.query = query
 
+    def __repr__(self):
+        return "ElasticsearchDataFeed(data_source_type={}, host={}, port={}, auth_header={}, query={})".format(
+                    self.data_source_type,
+                    self.host,
+                    self.port,
+                    self.auth_header,
+                    self.query
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -1204,6 +1489,14 @@ class MongoDBDataFeed(object):
         self.database = database
         self.command = command
 
+    def __repr__(self):
+        return "MongoDBDataFeed(data_source_type={}, connection_string={}, database={}, command={})".format(
+                    self.data_source_type,
+                    self.connection_string,
+                    self.database,
+                    self.command
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, source):
         return cls(
@@ -1220,44 +1513,67 @@ class MongoDBDataFeed(object):
         )
 
 
-class Hook(object):
-    """Hook.
+class NotificationHook(object):
+    """NotificationHook.
 
+    :param str name: Hook unique name.
     :ivar str description: Hook description.
     :ivar str external_link: Hook external link.
-    :ivar list[str] admins: Hook administrators.
-    :ivar str name: Hook unique name.
+    :ivar list[str] admin_emails: Hook administrator emails.
     :ivar str hook_type: Constant filled by server. Possible values include:
         "Webhook", "Email".
-    :ivar str hook_id: Hook unique id.
+    :ivar str id: Hook unique id.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, name, **kwargs):
         self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
+        self.name = name
         self.description = kwargs.get('description', None)
         self.external_link = kwargs.get('external_link', None)
-        self.admins = kwargs.get('admins', None)
+        self.admin_emails = kwargs.get('admin_emails', None)
         self.hook_type = None
 
+    def __repr__(self):
+        return "NotificationHook(id={}, name={}, description={}, external_link={}, admin_emails={}, " \
+               "hook_type={})".format(
+                    self.id,
+                    self.name,
+                    self.description,
+                    self.external_link,
+                    self.admin_emails,
+                    self.hook_type
+                )[:1024]
 
-class EmailHook(Hook):
-    """EmailHook.
 
+class EmailNotificationHook(NotificationHook):
+    """EmailNotificationHook.
+
+    :param str name: Hook unique name.
     :param list[str] emails_to_alert: Required. Email TO: list.
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
-    :ivar list[str] admins: Hook administrators.
-    :ivar str name: Hook unique name.
+    :ivar list[str] admin_emails: Hook administrator emails.
     :ivar str hook_type: Constant filled by server - "Email".
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, emails_to_alert, **kwargs):
-        # type: (List[str], Any) -> None
-        super(EmailHook, self).__init__(**kwargs)
+    def __init__(self, name, emails_to_alert, **kwargs):
+        # type: (str, List[str], Any) -> None
+        super(EmailNotificationHook, self).__init__(name, **kwargs)
         self.hook_type = 'Email'  # type: str
         self.emails_to_alert = emails_to_alert
+
+    def __repr__(self):
+        return "EmailNotificationHook(id={}, name={}, description={}, external_link={}, admins={}, hook_type={}, " \
+               "emails_to_alert={})".format(
+                    self.id,
+                    self.name,
+                    self.description,
+                    self.external_link,
+                    self.admin_emails,
+                    self.hook_type,
+                    self.emails_to_alert
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, hook):
@@ -1266,16 +1582,16 @@ class EmailHook(Hook):
             name=hook.hook_name,
             description=hook.description,
             external_link=hook.external_link,
-            admins=hook.admins,
+            admin_emails=hook.admins,
             id=hook.hook_id
         )
 
-    def _to_generated(self, name):
+    def _to_generated(self):
         return _EmailHookInfo(
-            hook_name=name,
+            hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
-            admins=self.admins,
+            admins=self.admin_emails,
             hook_parameter=_EmailHookParameter(
                 to_list=self.emails_to_alert
             )
@@ -1286,16 +1602,17 @@ class EmailHook(Hook):
             hook_name=name or self.name,
             description=description or self.description,
             external_link=external_link or self.external_link,
-            admins=self.admins,
+            admins=self.admin_emails,
             hook_parameter=_EmailHookParameter(
                 to_list=emails_to_alert or self.emails_to_alert
             )
         )
 
 
-class WebHook(Hook):
-    """WebHook.
+class WebNotificationHook(NotificationHook):
+    """WebNotificationHook.
 
+    :param str name: Hook unique name.
     :param str endpoint: Required. API address, will be called when alert is triggered, only support
         POST method via SSL.
     :keyword str username: basic authentication.
@@ -1304,21 +1621,36 @@ class WebHook(Hook):
     :keyword str certificate_password: client certificate password.
     :keyword str description: Hook description.
     :keyword str external_link: Hook external link.
-    :ivar list[str] admins: Hook administrators.
-    :ivar str name: Hook unique name.
+    :ivar list[str] admin_emails: Hook administrator emails.
     :ivar str hook_type: Constant filled by server - "Webhook".
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, endpoint, **kwargs):
-        # type: (str, Any) -> None
-        super(WebHook, self).__init__(**kwargs)
+    def __init__(self, name, endpoint, **kwargs):
+        # type: (str, str, Any) -> None
+        super(WebNotificationHook, self).__init__(name, **kwargs)
         self.hook_type = 'Webhook'  # type: str
         self.endpoint = endpoint
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.certificate_key = kwargs.get('certificate_key', None)
         self.certificate_password = kwargs.get('certificate_password', None)
+
+    def __repr__(self):
+        return "WebNotificationHook(id={}, name={}, description={}, external_link={}, admin_emails={}, hook_type={}, " \
+               "endpoint={}, username={}, password={}, certificate_key={}, certificate_password={})".format(
+                    self.id,
+                    self.name,
+                    self.description,
+                    self.external_link,
+                    self.admin_emails,
+                    self.hook_type,
+                    self.endpoint,
+                    self.username,
+                    self.password,
+                    self.certificate_key,
+                    self.certificate_password
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, hook):
@@ -1331,16 +1663,16 @@ class WebHook(Hook):
             name=hook.hook_name,
             description=hook.description,
             external_link=hook.external_link,
-            admins=hook.admins,
+            admin_emails=hook.admins,
             id=hook.hook_id
         )
 
-    def _to_generated(self, name):
+    def _to_generated(self):
         return _WebhookHookInfo(
-            hook_name=name,
+            hook_name=self.name,
             description=self.description,
             external_link=self.external_link,
-            admins=self.admins,
+            admins=self.admin_emails,
             hook_parameter=_WebhookHookParameter(
                 endpoint=self.endpoint,
                 username=self.username,
@@ -1364,7 +1696,7 @@ class WebHook(Hook):
             hook_name=name or self.name,
             description=description or self.description,
             external_link=external_link or self.external_link,
-            admins=self.admins,
+            admins=self.admin_emails,
             hook_parameter=_WebhookHookParameter(
                 endpoint=endpoint or self.endpoint,
                 username=username or self.username,
@@ -1396,6 +1728,15 @@ class MetricDetectionCondition(object):
         self.smart_detection_condition = kwargs.get('smart_detection_condition', None)
         self.hard_threshold_condition = kwargs.get('hard_threshold_condition', None)
         self.change_threshold_condition = kwargs.get('change_threshold_condition', None)
+
+    def __repr__(self):
+        return "MetricDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+               "hard_threshold_condition={}, change_threshold_condition={})".format(
+                    self.cross_conditions_operator,
+                    repr(self.smart_detection_condition),
+                    repr(self.hard_threshold_condition),
+                    repr(self.change_threshold_condition)
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, condition):
@@ -1452,6 +1793,16 @@ class ChangeThresholdCondition(object):
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
+    def __repr__(self):
+        return "ChangeThresholdCondition(change_percentage={}, shift_point={}, within_range={}, " \
+               "anomaly_detector_direction={}, suppress_condition={})".format(
+                    self.change_percentage,
+                    self.shift_point,
+                    self.within_range,
+                    self.anomaly_detector_direction,
+                    repr(self.suppress_condition)
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, condition):
         return cls(
@@ -1489,6 +1840,12 @@ class SuppressCondition(object):
         self.min_number = min_number
         self.min_ratio = min_ratio
 
+    def __repr__(self):
+        return "SuppressCondition(min_number={}, min_ratio={})".format(
+                    self.min_number,
+                    self.min_ratio
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, condition):
         return cls(
@@ -1520,6 +1877,13 @@ class SmartDetectionCondition(object):
         self.sensitivity = sensitivity
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
+
+    def __repr__(self):
+        return "SmartDetectionCondition(sensitivity={}, anomaly_detector_direction={}, suppress_condition={})".format(
+                    self.sensitivity,
+                    self.anomaly_detector_direction,
+                    repr(self.suppress_condition)
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, condition):
@@ -1564,6 +1928,15 @@ class HardThresholdCondition(object):
         self.lower_bound = kwargs.get('lower_bound', None)
         self.upper_bound = kwargs.get('upper_bound', None)
 
+    def __repr__(self):
+        return "HardThresholdCondition(anomaly_detector_direction={}, suppress_condition={}, lower_bound={}, " \
+               "upper_bound={})".format(
+                    self.anomaly_detector_direction,
+                    repr(self.suppress_condition),
+                    self.lower_bound,
+                    self.upper_bound
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, condition):
         return cls(
@@ -1607,6 +1980,16 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
         # type: (Dict[str, str], Any) -> None
         super(MetricSeriesGroupDetectionCondition, self).__init__(**kwargs)
         self.series_group_key = series_group_key
+
+    def __repr__(self):
+        return "MetricSeriesGroupDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+               "hard_threshold_condition={}, change_threshold_condition={}, series_group_key={})".format(
+                    self.cross_conditions_operator,
+                    repr(self.smart_detection_condition),
+                    repr(self.hard_threshold_condition),
+                    repr(self.change_threshold_condition),
+                    self.series_group_key
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, condition):
@@ -1654,6 +2037,16 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
         super(MetricSingleSeriesDetectionCondition, self).__init__(**kwargs)
         self.series_key = series_key
 
+    def __repr__(self):
+        return "MetricSingleSeriesDetectionCondition(cross_conditions_operator={}, smart_detection_condition={}, " \
+               "hard_threshold_condition={}, change_threshold_condition={}, series_key={})".format(
+                    self.cross_conditions_operator,
+                    repr(self.smart_detection_condition),
+                    repr(self.hard_threshold_condition),
+                    repr(self.change_threshold_condition),
+                    self.series_key
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, condition):
         return cls(
@@ -1677,8 +2070,8 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
         )
 
 
-class Metric(object):
-    """Metric.
+class DataFeedMetric(object):
+    """DataFeedMetric.
 
     :param name: Required. metric name.
     :type name: str
@@ -1697,6 +2090,14 @@ class Metric(object):
         self.display_name = kwargs.get('display_name', None)
         self.description = kwargs.get('description', None)
 
+    def __repr__(self):
+        return "DataFeedMetric(name={}, id={}, display_name={}, description={})".format(
+                    self.name,
+                    self.id,
+                    self.display_name,
+                    self.description
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, metric):
         return cls(
@@ -1714,8 +2115,8 @@ class Metric(object):
         )
 
 
-class Dimension(object):
-    """Dimension.
+class DataFeedDimension(object):
+    """DataFeedDimension.
 
     :param name: Required. dimension name.
     :type name: str
@@ -1727,6 +2128,12 @@ class Dimension(object):
         # type: (str, Any) -> None
         self.name = name
         self.display_name = kwargs.get('display_name', None)
+
+    def __repr__(self):
+        return "DataFeedDimension(name={}, display_name={})".format(
+                    self.name,
+                    self.display_name
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, dimension):
@@ -1757,6 +2164,12 @@ class DataFeedIngestionProgress(object):
         self.latest_success_timestamp = kwargs.get("latest_success_timestamp")
         self.latest_active_timestamp = kwargs.get("latest_active_timestamp")
 
+    def __repr__(self):
+        return "DataFeedIngestionProgress(latest_success_timestamp={}, latest_active_timestamp={})".format(
+                    self.latest_success_timestamp,
+                    self.latest_active_timestamp
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, resp):
         return cls(
@@ -1768,30 +2181,104 @@ class DataFeedIngestionProgress(object):
 class MetricSeriesData(object):
     """MetricSeriesData.
 
-    :ivar definition:
-    :vartype definition: ~azure.ai.metricsadvisor.models.MetricSeriesDefinition
-    :ivar timestamp_list: timestamps of the data related to this time series.
-    :vartype timestamp_list: list[~datetime.datetime]
-    :ivar value_list: values of the data related to this time series.
-    :vartype value_list: list[float]
+    :ivar metric_id: metric unique id.
+    :vartype metric_id: str
+    :ivar series_key: dimension name and value pair.
+    :vartype series_key: dict[str, str]
+    :ivar timestamps: timestamps of the data related to this time series.
+    :vartype timestamps: list[~datetime.datetime]
+    :ivar values: values of the data related to this time series.
+    :vartype values: list[float]
     """
 
     def __init__(self, **kwargs):
-        self.definition = kwargs.get('definition', None)
-        self.timestamp_list = kwargs.get('timestamp_list', None)
-        self.value_list = kwargs.get('value_list', None)
+        self.metric_id = kwargs.get('metric_id', None)
+        self.series_key = kwargs.get('series_key', None)
+        self.timestamps = kwargs.get('timestamps', None)
+        self.values = kwargs.get('values', None)
+
+    def __repr__(self):
+        return "MetricSeriesData(metric_id={}, series_key={}, timestamps={}, values={})".format(
+                    self.metric_id,
+                    self.series_key,
+                    self.timestamps,
+                    self.values
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, data):
         return cls(
-            definition=data.id,
-            timestamp_list=data.timestamp_list,
-            value_list=data.value_list
+            metric_id=data.id.metric_id,
+            series_key=data.id.dimension,
+            timestamps=data.timestamp_list,
+            values=data.value_list
         )
 
 
-class Alert(object):
-    """Alert
+class MetricEnrichedSeriesData(object):
+    """MetricEnrichedSeriesData.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param series_key: Required.
+    :type series_key: ~azure.ai.metricsadvisor.models.SeriesIdentity
+    :param timestamps: Required. timestamps of the series.
+    :type timestamps: list[~datetime.datetime]
+    :param values: Required. values of the series.
+    :type values: list[float]
+    :param is_anomaly: Required. whether points of the series are anomalies.
+    :type is_anomaly: list[bool]
+    :param periods: Required. period calculated on each point of the series.
+    :type periods: list[int]
+    :param expected_values: Required. expected values of the series given by smart detector.
+    :type expected_values: list[float]
+    :param lower_bounds: Required. lower boundary list of the series given by smart
+     detector.
+    :type lower_bounds: list[float]
+    :param upper_bounds: Required. upper boundary list of the series given by smart
+     detector.
+    :type upper_bounds: list[float]
+    """
+
+    def __init__(self, **kwargs):
+        self.series_key = kwargs.get("series_key", None)
+        self.timestamps = kwargs.get("timestamps", None)
+        self.values = kwargs.get("values", None)
+        self.is_anomaly = kwargs.get("is_anomaly", None)
+        self.periods = kwargs.get("periods", None)
+        self.expected_values = kwargs.get("expected_values", None)
+        self.lower_bounds = kwargs.get("lower_bounds", None)
+        self.upper_bounds = kwargs.get("upper_bounds", None)
+
+    def __repr__(self):
+        return "MetricEnrichedSeriesData(series_key={}, timestamps={}, values={}, is_anomaly={}, periods={}, " \
+               "expected_values={}, lower_bounds={}, upper_bounds={})".format(
+                    self.series_key,
+                    self.timestamps,
+                    self.values,
+                    self.is_anomaly,
+                    self.periods,
+                    self.expected_values,
+                    self.lower_bounds,
+                    self.upper_bounds
+                )[:1024]
+
+    @classmethod
+    def _from_generated(cls, data):
+        return cls(
+            series_key=data.series.dimension,
+            timestamps=data.timestamp_list,
+            values=data.value_list,
+            is_anomaly=data.is_anomaly_list,
+            periods=data.period_list,
+            expected_values=data.expected_value_list,
+            lower_bounds=data.lower_boundary_list,
+            upper_bounds=data.upper_boundary_list
+        )
+
+
+class AnomalyAlert(object):
+    """AnomalyAlert
 
     :ivar id: alert id.
     :vartype id: str
@@ -1808,6 +2295,14 @@ class Alert(object):
         self.timestamp = kwargs.get('timestamp', None)
         self.created_on = kwargs.get('created_on', None)
         self.modified_on = kwargs.get('modified_on', None)
+
+    def __repr__(self):
+        return "AnomalyAlert(id={}, timestamp={}, created_on={}, modified_on={})".format(
+                    self.id,
+                    self.timestamp,
+                    self.created_on,
+                    self.modified_on
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, alert):
@@ -1836,8 +2331,8 @@ DATA_FEED_TRANSFORM = {
 }
 
 
-class Anomaly(msrest.serialization.Model):
-    """Anomaly.
+class DataPointAnomaly(msrest.serialization.Model):
+    """DataPointAnomaly.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1855,21 +2350,12 @@ class Anomaly(msrest.serialization.Model):
     :ivar dimension: dimension specified for series.
     :vartype dimension: dict[str, str]
     :ivar severity: anomaly severity. Possible values include: "Low", "Medium", "High".
-    :vartype anomaly_severity: str or ~azure.ai.metricsadvisor.models.Severity
+    :vartype anomaly_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     :vartype severity: str
     :ivar status: anomaly status. only returned for alerting anomaly result. Possible
      values include: "Active", "Resolved".
     :vartype status: str
     """
-
-    _validation = {
-        'metric_id': {'readonly': True},
-        'detection_configuration_id': {'readonly': True},
-        'timestamp': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_time': {'readonly': True},
-        'dimension': {'readonly': True},
-    }
 
     _attribute_map = {
         'metric_id': {'key': 'metricId', 'type': 'str'},
@@ -1886,19 +2372,32 @@ class Anomaly(msrest.serialization.Model):
             self,
             **kwargs
     ):
-        super(Anomaly, self).__init__(**kwargs)
+        super(DataPointAnomaly, self).__init__(**kwargs)
         self.metric_id = kwargs.get('metric_id', None)
         self.detection_configuration_id = kwargs.get('detection_configuration_id', None)
         self.timestamp = kwargs.get('timestamp', None)
-        self.created_on = kwargs.get('created_time', None)
+        self.created_on = kwargs.get('created_on', None)
         self.modified_time = kwargs.get('modified_time', None)
         self.dimension = kwargs.get('dimension', None)
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
 
+    def __repr__(self):
+        return "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_on={}, " \
+               "modified_time={}, dimension={}, severity={}, status={})".format(
+                    self.metric_id,
+                    self.detection_configuration_id,
+                    self.timestamp,
+                    self.created_on,
+                    self.modified_time,
+                    self.dimension,
+                    self.severity,
+                    self.status
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, anomaly_result):
-        # type: (AnomalyResult) -> Union[Anomaly, None]
+        # type: (AnomalyResult) -> Union[DataPointAnomaly, None]
         if not anomaly_result:
             return None
         severity = None
@@ -1919,8 +2418,8 @@ class Anomaly(msrest.serialization.Model):
         )
 
 
-class Incident(msrest.serialization.Model):
-    """Incident.
+class AnomalyIncident(msrest.serialization.Model):
+    """AnomalyIncident.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1939,19 +2438,11 @@ class Incident(msrest.serialization.Model):
     :type dimension_key: dict[str, str]
     :ivar severity: max severity of latest anomalies in the incident. Possible values include:
      "Low", "Medium", "High".
-    :vartype severity: str or ~azure.ai.metricsadvisor.models.Severity
+    :vartype severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     :ivar status: incident status
      only return for alerting incident result. Possible values include: "Active", "Resolved".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.IncidentPropertyIncidentStatus
+    :vartype status: str or ~azure.ai.metricsadvisor.models.AnomalyIncidentStatus
     """
-
-    _validation = {
-        'metric_id': {'readonly': True},
-        'detection_configuration_id': {'readonly': True},
-        'id': {'readonly': True},
-        'start_time': {'readonly': True},
-        'last_time': {'readonly': True},
-    }
 
     _attribute_map = {
         'metric_id': {'key': 'metricId', 'type': 'str'},
@@ -1968,19 +2459,32 @@ class Incident(msrest.serialization.Model):
             self,
             **kwargs
     ):
-        super(Incident, self).__init__(**kwargs)
+        super(AnomalyIncident, self).__init__(**kwargs)
         self.metric_id = kwargs.get('metric_id', None)
         self.detection_configuration_id = kwargs.get('detection_configuration_id', None)
-        self.incident_id = kwargs.get('incident_id', None)
+        self.id = kwargs.get('id', None)
         self.start_time = kwargs.get('start_time', None)
         self.last_time = kwargs.get('last_time', None)
         self.dimension_key = kwargs.get('dimension_key', None)
         self.severity = kwargs.get('severity', None)
         self.status = kwargs.get('status', None)
 
+    def __repr__(self):
+        return "AnomalyIncident(metric_id={}, detection_configuration_id={}, id={}, start_time={}, last_time={}, " \
+               "dimension_key={}, severity={}, status={})".format(
+                    self.metric_id,
+                    self.detection_configuration_id,
+                    self.id,
+                    self.start_time,
+                    self.last_time,
+                    self.dimension_key,
+                    self.severity,
+                    self.status
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, incident_result):
-        # type: (IncidentResult) -> Union[Incident, None]
+        # type: (IncidentResult) -> Union[AnomalyIncident, None]
         if not incident_result:
             return None
         dimension_key = incident_result.root_node.dimension if incident_result.root_node else None
@@ -1992,7 +2496,7 @@ class Incident(msrest.serialization.Model):
         return cls(
             metric_id=incident_result.metric_id,
             detection_configuration_id=incident_result.anomaly_detection_configuration_id,
-            incident_id=incident_result.incident_id,
+            id=incident_result.incident_id,
             start_time=incident_result.start_time,
             last_time=incident_result.last_time,
             dimension_key=dimension_key,
@@ -2015,12 +2519,6 @@ class IncidentRootCause(msrest.serialization.Model):
     :vartype description: str
     """
 
-    _validation = {
-        'path': {'readonly': True},
-        'score': {'readonly': True},
-        'description': {'readonly': True},
-    }
-
     _attribute_map = {
         'dimension_key': {'key': 'dimensionKey', 'type': '{str}'},
         'path': {'key': 'path', 'type': '[str]'},
@@ -2037,6 +2535,14 @@ class IncidentRootCause(msrest.serialization.Model):
         self.path = kwargs.get('path', None)
         self.score = kwargs.get('score', None)
         self.description = kwargs.get('description', None)
+
+    def __repr__(self):
+        return "IncidentRootCause(dimension_key={}, path={}, score={}, description={})".format(
+                    self.dimension_key,
+                    self.path,
+                    self.score,
+                    self.description
+                )[:1024]
 
     @classmethod
     def _from_generated(cls, root_cause):
@@ -2086,18 +2592,6 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
      ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
     """
 
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
@@ -2135,6 +2629,23 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
         self.anomaly_detection_configuration_id = kwargs.get('anomaly_detection_configuration_id', None)
         self.anomaly_detection_configuration_snapshot = kwargs.get('anomaly_detection_configuration_snapshot', None)
 
+    def __repr__(self):
+        return "AnomalyFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, " \
+               "dimension_key={}, start_time={}, end_time={}, value={}, anomaly_detection_configuration_id={}, " \
+               "anomaly_detection_configuration_snapshot={})".format(
+                    self.feedback_type,
+                    self.id,
+                    self.created_time,
+                    self.user_principal,
+                    self.metric_id,
+                    self.dimension_key,
+                    self.start_time,
+                    self.end_time,
+                    self.value,
+                    self.anomaly_detection_configuration_id,
+                    self.anomaly_detection_configuration_snapshot
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, anomaly_feedback):
         # type: (_AnomalyFeedback) -> Union[AnomalyFeedback, None]
@@ -2160,9 +2671,6 @@ class AnomalyFeedback(msrest.serialization.Model):  # pylint:disable=too-many-in
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = AnomalyFeedbackValue(anomaly_value=self.value)
         return _AnomalyFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             start_time=self.start_time,
@@ -2201,18 +2709,6 @@ class ChangePointFeedback(msrest.serialization.Model):
     :type value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
     """
 
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
@@ -2245,6 +2741,20 @@ class ChangePointFeedback(msrest.serialization.Model):
         self.end_time = end_time
         self.value = value
 
+    def __repr__(self):
+        return "ChangePointFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, " \
+               "dimension_key={}, start_time={}, end_time={}, value={})".format(
+                    self.feedback_type,
+                    self.id,
+                    self.created_time,
+                    self.user_principal,
+                    self.metric_id,
+                    self.dimension_key,
+                    self.start_time,
+                    self.end_time,
+                    self.value
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, change_point_feedback):
         # type: (_ChangePointFeedback) -> Union[ChangePointFeedback, None]
@@ -2268,9 +2778,6 @@ class ChangePointFeedback(msrest.serialization.Model):
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = ChangePointFeedbackValue(change_point_value=self.value)
         return _ChangePointFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             start_time=self.start_time,
@@ -2307,16 +2814,6 @@ class CommentFeedback(msrest.serialization.Model):
     :type value: str
     """
 
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'value': {'required': True},
-    }
-
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
@@ -2349,6 +2846,20 @@ class CommentFeedback(msrest.serialization.Model):
         self.end_time = end_time
         self.value = value
 
+    def __repr__(self):
+        return "CommentFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, " \
+               "dimension_key={}, start_time={}, end_time={}, value={})".format(
+                    self.feedback_type,
+                    self.id,
+                    self.created_time,
+                    self.user_principal,
+                    self.metric_id,
+                    self.dimension_key,
+                    self.start_time,
+                    self.end_time,
+                    self.value
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, comment_feedback):
         # type: (_CommentFeedback) -> Union[CommentFeedback, None]
@@ -2372,9 +2883,6 @@ class CommentFeedback(msrest.serialization.Model):
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = CommentFeedbackValue(comment_value=self.value)
         return _CommentFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             start_time=self.start_time,
@@ -2409,17 +2917,6 @@ class PeriodFeedback(msrest.serialization.Model):
     :type period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
     """
 
-    _validation = {
-        'feedback_type': {'required': True},
-        'id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_key': {'required': True},
-        'value': {'required': True},
-        'period_type': {'required': True},
-    }
-
     _attribute_map = {
         'feedback_type': {'key': 'feedbackType', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
@@ -2449,6 +2946,19 @@ class PeriodFeedback(msrest.serialization.Model):
         self.value = value
         self.period_type = period_type
 
+    def __repr__(self):
+        return "PeriodFeedback(feedback_type={}, id={}, created_time={}, user_principal={}, metric_id={}, " \
+               "dimension_key={}, value={}, period_type={})".format(
+                    self.feedback_type,
+                    self.id,
+                    self.created_time,
+                    self.user_principal,
+                    self.metric_id,
+                    self.dimension_key,
+                    self.value,
+                    self.period_type
+                )[:1024]
+
     @classmethod
     def _from_generated(cls, period_feedback):
         # type: (_PeriodFeedback) -> Union[PeriodFeedback, None]
@@ -2472,9 +2982,6 @@ class PeriodFeedback(msrest.serialization.Model):
         dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
         value = PeriodFeedbackValue(period_type=self.period_type, period_value=self.value)
         return _PeriodFeedback(
-            feedback_id=self.id,
-            created_time=self.created_time,
-            user_principal=self.user_principal,
             metric_id=self.metric_id,
             dimension_filter=dimension_filter,
             value=value,

@@ -15,11 +15,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:08:57 GMT
+      - Sat, 07 Nov 2020 01:41:12 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:08:57 GMT
+      - Sat, 07 Nov 2020 01:41:12 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -31,9 +31,9 @@ interactions:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 01 Oct 2020 01:08:57 GMT
+      - Sat, 07 Nov 2020 01:41:15 GMT
       etag:
-      - W/"datetime'2020-10-01T01%3A08%3A57.8318343Z'"
+      - W/"datetime'2020-11-07T01%3A41%3A14.9770759Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable10b51963')
       server:
@@ -44,17 +44,17 @@ interactions:
       code: 201
       message: Ok
 - request:
-    body: '{"PartitionKey": "pk10b51963", "PartitionKey@odata.type": "Edm.String",
-      "RowKey": "rk10b51963", "RowKey@odata.type": "Edm.String", "EmptyByte": "",
-      "EmptyByte@odata.type": "Edm.String", "EmptyUnicode": "", "EmptyUnicode@odata.type":
-      "Edm.String", "SpacesOnlyByte": "   ", "SpacesOnlyByte@odata.type": "Edm.String",
-      "SpacesOnlyUnicode": "   ", "SpacesOnlyUnicode@odata.type": "Edm.String", "SpacesBeforeByte":
-      "   Text", "SpacesBeforeByte@odata.type": "Edm.String", "SpacesBeforeUnicode":
-      "   Text", "SpacesBeforeUnicode@odata.type": "Edm.String", "SpacesAfterByte":
-      "Text   ", "SpacesAfterByte@odata.type": "Edm.String", "SpacesAfterUnicode":
-      "Text   ", "SpacesAfterUnicode@odata.type": "Edm.String", "SpacesBeforeAndAfterByte":
-      "   Text   ", "SpacesBeforeAndAfterByte@odata.type": "Edm.String", "SpacesBeforeAndAfterUnicode":
-      "   Text   ", "SpacesBeforeAndAfterUnicode@odata.type": "Edm.String"}'
+    body: '{"PartitionKey": "pk10b51963", "SpacesOnlyUnicode": "   ", "SpacesBeforeByte":
+      "ICAgVGV4dA==", "SpacesBeforeUnicode@odata.type": "Edm.String", "SpacesAfterByte":
+      "VGV4dCAgIA==", "RowKey": "rk10b51963", "SpacesAfterUnicode@odata.type": "Edm.String",
+      "SpacesBeforeAndAfterUnicode@odata.type": "Edm.String", "SpacesBeforeAndAfterUnicode":
+      "   Text   ", "SpacesOnlyByte": "ICAg", "SpacesAfterByte@odata.type": "Edm.Binary",
+      "SpacesBeforeAndAfterByte": "ICAgVGV4dCAgIA==", "SpacesBeforeAndAfterByte@odata.type":
+      "Edm.Binary", "EmptyByte@odata.type": "Edm.Binary", "EmptyUnicode@odata.type":
+      "Edm.String", "SpacesAfterUnicode": "Text   ", "EmptyUnicode": "", "RowKey@odata.type":
+      "Edm.String", "SpacesOnlyUnicode@odata.type": "Edm.String", "SpacesOnlyByte@odata.type":
+      "Edm.Binary", "EmptyByte": "", "PartitionKey@odata.type": "Edm.String", "SpacesBeforeUnicode":
+      "   Text", "SpacesBeforeByte@odata.type": "Edm.Binary"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -63,31 +63,31 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '896'
+      - '913'
       Content-Type:
       - application/json;odata=nometadata
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
     uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable10b51963
   response:
     body:
-      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable10b51963/$metadata#uttable10b51963/@Element","odata.etag":"W/\"datetime''2020-10-01T01%3A08%3A58.3143431Z''\"","PartitionKey":"pk10b51963","RowKey":"rk10b51963","EmptyByte":"","EmptyUnicode":"","SpacesOnlyByte":"   ","SpacesOnlyUnicode":"   ","SpacesBeforeByte":"   Text","SpacesBeforeUnicode":"   Text","SpacesAfterByte":"Text   ","SpacesAfterUnicode":"Text   ","SpacesBeforeAndAfterByte":"   Text   ","SpacesBeforeAndAfterUnicode":"   Text   ","Timestamp":"2020-10-01T01:08:58.3143431Z"}'
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable10b51963/$metadata#uttable10b51963/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A41%3A15.4705415Z''\"","PartitionKey":"pk10b51963","SpacesOnlyUnicode":"   ","SpacesBeforeByte@odata.type":"Edm.Binary","SpacesBeforeByte":"ICAgVGV4dA==","SpacesAfterByte@odata.type":"Edm.Binary","SpacesAfterByte":"VGV4dCAgIA==","RowKey":"rk10b51963","SpacesBeforeAndAfterUnicode":"   Text   ","SpacesOnlyByte@odata.type":"Edm.Binary","SpacesOnlyByte":"ICAg","SpacesBeforeAndAfterByte@odata.type":"Edm.Binary","SpacesBeforeAndAfterByte":"ICAgVGV4dCAgIA==","SpacesAfterUnicode":"Text   ","EmptyUnicode":"","EmptyByte@odata.type":"Edm.Binary","EmptyByte":"","SpacesBeforeUnicode":"   Text","Timestamp":"2020-11-07T01:41:15.4705415Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 01 Oct 2020 01:08:57 GMT
+      - Sat, 07 Nov 2020 01:41:15 GMT
       etag:
-      - W/"datetime'2020-10-01T01%3A08%3A58.3143431Z'"
+      - W/"datetime'2020-11-07T01%3A41%3A15.4705415Z'"
       location:
       - https://tablestestcosmosname.table.cosmos.azure.com/uttable10b51963(PartitionKey='pk10b51963',RowKey='rk10b51963')
       server:
@@ -109,25 +109,25 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable10b51963(PartitionKey='pk10b51963',RowKey='rk10b51963')
   response:
     body:
-      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable10b51963/$metadata#uttable10b51963/@Element","odata.etag":"W/\"datetime''2020-10-01T01%3A08%3A58.3143431Z''\"","PartitionKey":"pk10b51963","RowKey":"rk10b51963","EmptyByte":"","EmptyUnicode":"","SpacesOnlyByte":"   ","SpacesOnlyUnicode":"   ","SpacesBeforeByte":"   Text","SpacesBeforeUnicode":"   Text","SpacesAfterByte":"Text   ","SpacesAfterUnicode":"Text   ","SpacesBeforeAndAfterByte":"   Text   ","SpacesBeforeAndAfterUnicode":"   Text   ","Timestamp":"2020-10-01T01:08:58.3143431Z"}'
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable10b51963/$metadata#uttable10b51963/@Element","odata.etag":"W/\"datetime''2020-11-07T01%3A41%3A15.4705415Z''\"","PartitionKey":"pk10b51963","SpacesOnlyUnicode":"   ","SpacesBeforeByte@odata.type":"Edm.Binary","SpacesBeforeByte":"ICAgVGV4dA==","SpacesAfterByte@odata.type":"Edm.Binary","SpacesAfterByte":"VGV4dCAgIA==","RowKey":"rk10b51963","SpacesBeforeAndAfterUnicode":"   Text   ","SpacesOnlyByte@odata.type":"Edm.Binary","SpacesOnlyByte":"ICAg","SpacesBeforeAndAfterByte@odata.type":"Edm.Binary","SpacesBeforeAndAfterByte":"ICAgVGV4dCAgIA==","SpacesAfterUnicode":"Text   ","EmptyUnicode":"","EmptyByte@odata.type":"Edm.Binary","EmptyByte":"","SpacesBeforeUnicode":"   Text","Timestamp":"2020-11-07T01:41:15.4705415Z"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 01 Oct 2020 01:08:57 GMT
+      - Sat, 07 Nov 2020 01:41:15 GMT
       etag:
-      - W/"datetime'2020-10-01T01%3A08%3A58.3143431Z'"
+      - W/"datetime'2020-11-07T01%3A41%3A15.4705415Z'"
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -147,11 +147,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:14 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:14 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -163,7 +163,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 01 Oct 2020 01:08:57 GMT
+      - Sat, 07 Nov 2020 01:41:15 GMT
       server:
       - Microsoft-HTTPAPI/2.0
     status:
@@ -181,23 +181,23 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:15 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:08:58 GMT
+      - Sat, 07 Nov 2020 01:41:15 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
   response:
     body:
-      string: '{"value":[{"TableName":"listtable33a8d15b3"},{"TableName":"listtable13a8d15b3"},{"TableName":"listtable0d2351374"},{"TableName":"pytableasync52bb107b"},{"TableName":"listtable23a8d15b3"},{"TableName":"listtable2d2351374"},{"TableName":"listtable03a8d15b3"},{"TableName":"listtable3d2351374"},{"TableName":"listtable1d2351374"}],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
+      string: '{"value":[],"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables"}'
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       date:
-      - Thu, 01 Oct 2020 01:08:57 GMT
+      - Sat, 07 Nov 2020 01:41:15 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       transfer-encoding:

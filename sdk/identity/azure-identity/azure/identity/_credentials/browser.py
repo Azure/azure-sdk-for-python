@@ -9,7 +9,7 @@ import webbrowser
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._constants import AZURE_CLI_CLIENT_ID
+from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
 
 try:
@@ -27,7 +27,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
     there with the authorization code flow. Azure Active Directory documentation describes this flow in more detail:
-    https://docs.microsoft.com/en-us/azure/active-directory/develop/v1-protocols-oauth-code
+    https://docs.microsoft.com/azure/active-directory/develop/v1-protocols-oauth-code
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
@@ -55,7 +55,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         self._redirect_uri = kwargs.pop("redirect_uri", None)
         self._timeout = kwargs.pop("timeout", 300)
         self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
-        client_id = kwargs.pop("client_id", AZURE_CLI_CLIENT_ID)
+        client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions

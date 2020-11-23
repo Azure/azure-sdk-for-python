@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 from .._exceptions import CredentialUnavailableError
 from .._constants import AZURE_VSCODE_CLIENT_ID
+from .._internal import validate_tenant_id
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token
 
@@ -38,6 +39,7 @@ class VisualStudioCodeCredential(object):
         self._refresh_token = None
         self._client = kwargs.pop("_client", None)
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
+        validate_tenant_id(self._tenant_id)
         if not self._client:
             self._client = AadClient(self._tenant_id, AZURE_VSCODE_CLIENT_ID, **kwargs)
 
@@ -46,7 +48,7 @@ class VisualStudioCodeCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :rtype: :class:`azure.core.credentials.AccessToken`

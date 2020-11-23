@@ -13,6 +13,14 @@ def convert_dfs_url_to_blob_url(dfs_account_url):
     return dfs_account_url.replace('.dfs.', '.blob.', 1)
 
 
+def convert_datetime_to_rfc1123(date):
+    weekday = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][date.weekday()]
+    month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+             "Oct", "Nov", "Dec"][date.month - 1]
+    return "%s, %02d %s %04d %02d:%02d:%02d GMT" % (weekday, date.day, month,
+                                                    date.year, date.hour, date.minute, date.second)
+
+
 def add_metadata_headers(metadata=None):
     # type: (Optional[Dict[str, str]]) -> str
     headers = list()

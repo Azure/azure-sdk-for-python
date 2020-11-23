@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from ._models import FileProperties
+from ._deserialize import from_blob_properties
 
 
 class StorageStreamDownloader(object):
@@ -23,7 +22,7 @@ class StorageStreamDownloader(object):
     def __init__(self, downloader):
         self._downloader = downloader
         self.name = self._downloader.name
-        self.properties = FileProperties._from_blob_properties(self._downloader.properties)  # pylint: disable=protected-access
+        self.properties = from_blob_properties(self._downloader.properties)  # pylint: disable=protected-access
         self.size = self._downloader.size
 
     def __len__(self):

@@ -25,13 +25,17 @@ from ._models import (
     Metrics,
     RetentionPolicy,
     CorsRule,
+    ShareSmbSettings,
+    SmbMultichannel,
+    ShareProtocolSettings,
     AccessPolicy,
     FileSasPermissions,
     ShareSasPermissions,
     ContentSettings,
     NTFSAttributes)
 from ._generated.models import (
-    HandleItem
+    HandleItem,
+    ShareAccessTier
 )
 
 __version__ = VERSION
@@ -52,6 +56,10 @@ __all__ = [
     'Metrics',
     'RetentionPolicy',
     'CorsRule',
+    'ShareSmbSettings',
+    'ShareAccessTier',
+    'SmbMultichannel',
+    'ShareProtocolSettings',
     'AccessPolicy',
     'FileSasPermissions',
     'ShareSasPermissions',

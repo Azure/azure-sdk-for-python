@@ -11,6 +11,7 @@ from ._generated.models import (
 )
 
 from ._generated.v3_0 import models as _v3_0_models
+from ._generated.v3_1_preview_3 import models as _v3_1_preview_3_models
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -72,7 +73,7 @@ class PiiEntityDomainType(str, Enum):
 
 class DetectedLanguage(DictMixin):
     """DetectedLanguage contains the predicted language found in text,
-    its confidence score, and ISO 639-1 representation.
+    its confidence score, and its ISO 639-1 representation.
 
     :ivar name: Long name of a detected language (e.g. English,
         French).
@@ -115,7 +116,7 @@ class RecognizeEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -151,7 +152,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -181,6 +182,69 @@ class RecognizePiiEntitiesResult(DictMixin):
             )[:1024]
 
 
+class AnalyzeHealthcareResultItem(DictMixin):
+    """
+    AnalyzeHealthcareResultItem contains the Healthcare entities and relations from a
+    particular document.
+
+    :ivar str id: Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document.
+    :ivar entities: Identified Healthcare entities in the document.
+    :vartype entities:
+        list[~azure.ai.textanalytics.HealthcareEntity]
+    :ivar relations: A list of detected relations between recognized entities.
+    :vartype relations:
+        list[~azure.ai.textanalytics.HealthcareRelation]
+    :ivar warnings: Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If show_stats=true was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics:
+        ~azure.ai.textanalytics.TextDocumentStatistics
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a AnalyzeHealthcareResult.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.relations = kwargs.get("relations", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.is_error = False
+
+    @classmethod
+    def _from_generated(cls, healthcare_result):
+        entities = [HealthcareEntity._from_generated(e) for e in healthcare_result.entities] # pylint: disable=protected-access
+        relations = []
+        if healthcare_result.relations:
+            for r in healthcare_result.relations:
+                _, source_idx = _get_indices(r.source)
+                _, target_idx = _get_indices(r.target)
+                relations.append(HealthcareRelation._from_generated(r, entities[source_idx], entities[target_idx])) # pylint: disable=protected-access
+
+        return cls(
+            id=healthcare_result.id,
+            entities=entities,
+            relations=relations,
+            warnings=healthcare_result.warnings,
+            statistics=healthcare_result.statistics
+        )
+
+    def __repr__(self):
+        return "AnalyzeHealthcareResultItem(id={}, entities={}, relations={}, warnings={}, statistics={}, \
+        is_error={})".format(
+            self.id,
+            self.entities,
+            self.relations,
+            self.warnings,
+            self.statistics,
+            self.is_error
+        )[:1024]
+
+
 class DetectLanguageResult(DictMixin):
     """DetectLanguageResult is a result object which contains
     the detected language of a particular document.
@@ -194,7 +258,7 @@ class DetectLanguageResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -266,6 +330,7 @@ class CategorizedEntity(DictMixin):
             self.confidence_score
         )[:1024]
 
+
 class PiiEntity(DictMixin):
     """PiiEntity contains information about a Personally Identifiable
     Information (PII) entity found in text.
@@ -309,6 +374,106 @@ class PiiEntity(DictMixin):
                 self.confidence_score
             )[:1024]
         )
+
+
+class HealthcareEntity(DictMixin):
+    """HealthcareEntity contains information about a Healthcare entity found in text.
+
+        :ivar str text: Entity text as appears in the request.
+        :ivar str category: Entity category, such as Dosage or MedicationName, etc.
+        :ivar str subcategory: Entity subcategory.  # TODO: add subcategory examples
+        :ivar int offset: The Healthcare entity text offset from the start of the document.
+        :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
+            entity.
+        :ivar links: A collection of entity references in known data sources.
+        :vartype links: list[~azure.ai.textanalytics.HealthcareEntityLink]
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
+        self.category = kwargs.get("category", None)
+        self.subcategory = kwargs.get("subcategory", None)
+        self.offset = kwargs.get("offset", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
+        self.links = kwargs.get("links", [])
+
+    @classmethod
+    def _from_generated(cls, healthcare_entity):
+        return cls(
+            text=healthcare_entity.text,
+            category=healthcare_entity.category,
+            subcategory=healthcare_entity.subcategory,
+            offset=healthcare_entity.offset,
+            confidence_score=healthcare_entity.confidence_score,
+            links=[
+                HealthcareEntityLink(id=l.id, data_source=l.data_source) for l in healthcare_entity.links
+            ] if healthcare_entity.links else None
+        )
+
+    def __repr__(self):
+        return "HealthcareEntity(text={}, category={}, subcategory={}, offset={}, confidence_score={},\
+        links={})".format(
+            self.text,
+            self.category,
+            self.subcategory,
+            self.offset,
+            self.confidence_score,
+            repr(self.links)
+        )[:1024]
+
+
+class HealthcareRelation(DictMixin):
+    """
+    HealthcareRelation contains information describing a relationship between two entities found in text.
+
+    :ivar str type: The type of relation, such as DosageOfMedication or FrequencyOfMedication, etc.
+    :ivar bool is_bidirectional: Boolean value indicating that the relationship between the two entities is
+        bidirectional.  If true the relation between the entities is bidirectional, otherwise directionality
+        is source to target.
+    :ivar source: A reference to an extracted Healthcare entity representing the source of the relation.
+    :vartype source: ~azure.ai.textanalytics.HealthcareEntity
+    :ivar target: A reference to an extracted Healthcare entity representing the target of the relation.
+    :vartype target: ~azure.ai.textanalytics.HealthcareEntity
+    """
+
+    def __init__(self, **kwargs):
+        self.relation_type = kwargs.get("relation_type", None)
+        self.is_bidirectional = kwargs.get("is_bidirectional", None)
+        self.source = kwargs.get("source", None)
+        self.target = kwargs.get("target", None)
+
+    @classmethod
+    def _from_generated(cls, healthcare_relation, source_entity, target_entity):
+        return cls(
+            relation_type=healthcare_relation.relation_type,
+            is_bidirectional=healthcare_relation.bidirectional,
+            source=source_entity,
+            target=target_entity
+        )
+
+    def __repr__(self):
+        return "HealthcareRelation(relation_type={}, is_bidirectional={}, source={}, target={})".format(
+            self.relation_type,
+            self.is_bidirectional,
+            repr(self.source),
+            repr(self.target)
+        )[:1024]
+
+
+class HealthcareEntityLink(DictMixin):
+    """
+    HealthcareEntityLink contains information representing an entity reference in a known data source.
+
+    :ivar str id: ID of the entity in the given source catalog.
+    :ivar str data_source: The entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.data_source = kwargs.get("data_source", None)
+
+    def __repr__(self):
+        return "HealthcareEntityLink(id={}, data_source={})".format(self.id, self.data_source)[:1024]
 
 
 class TextAnalyticsError(DictMixin):
@@ -393,7 +558,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -427,7 +592,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -463,7 +628,7 @@ class AnalyzeSentimentResult(DictMixin):
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
+    :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics:
         ~azure.ai.textanalytics.TextDocumentStatistics
@@ -701,7 +866,7 @@ class LinkedEntityMatch(DictMixin):
         )[:1024]
 
 
-class TextDocumentInput(MultiLanguageInput):
+class TextDocumentInput(DictMixin, MultiLanguageInput):
     """The input document to be analyzed by the service.
 
     :ivar id: Required. A unique, non-empty document identifier.
@@ -781,8 +946,8 @@ class SentenceSentiment(DictMixin):
     :ivar int offset: The sentence offset from the start of the document. Returned
         in unicode code points. Only returned for API versions v3.1-preview and up.
     :ivar mined_opinions: The list of opinions mined from this sentence.
-        For example in "The food is good, but the service is bad", we would
-        mind these two opinions "food is good", "service is bad". Only returned
+        For example in the sentence "The food is good, but the service is bad", we would
+        mine the two opinions "food is good" and "service is bad". Only returned
         if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
         api version is v3.1-preview and up.
     :vartype mined_opinions:
@@ -997,3 +1162,179 @@ class SentimentConfidenceScores(DictMixin):
     def __repr__(self):
         return "SentimentConfidenceScores(positive={}, neutral={}, negative={})" \
             .format(self.positive, self.neutral, self.negative)[:1024]
+
+
+class EntitiesRecognitionTask(DictMixin):
+    """EntitiesRecognitionTask encapsulates the parameters for starting a long-running Entities Recognition operation.
+
+    :ivar str model_version: The model version to use for the analysis.
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", "latest")
+
+    def __repr__(self, **kwargs):
+        return "EntitiesRecognitionTask(model_version={})" \
+            .format(self.model_version)[:1024]
+
+    def to_generated(self):
+        return _v3_1_preview_3_models.EntitiesTask(
+            parameters=_v3_1_preview_3_models.EntitiesTaskParameters(
+                model_version=self.model_version
+            )
+        )
+
+
+class EntitiesRecognitionTaskResult(DictMixin):
+    """EntitiesRecognitionTaskResult contains the results of a single Entities Recognition task,
+        including additional task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.RecognizeEntitiesResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "EntitiesRecognitionTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class PiiEntitiesRecognitionTask(DictMixin):
+    """PiiEntitiesRecognitionTask encapsulates the parameters for starting a
+    long-running PII Entities Recognition operation.
+
+    :ivar str model_version: The model version to use for the analysis.
+    :ivar str domain: An optional string to set the PII domain to include only a
+    subset of the entity categories. Possible values include 'PHI' or None.
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", "latest")
+        self.domain = kwargs.get("domain", None)
+
+    def __repr__(self, **kwargs):
+        return "PiiEntitiesRecognitionTask(model_version={}, domain={})" \
+            .format(self.model_version, self.domain)[:1024]
+
+    def to_generated(self):
+        return _v3_1_preview_3_models.PiiTask(
+            parameters=_v3_1_preview_3_models.PiiTaskParameters(
+                model_version=self.model_version,
+                domain=self.domain
+            )
+        )
+
+
+class PiiEntitiesRecognitionTaskResult(DictMixin):
+    """PiiEntitiesRecognitionTaskResult contains the results of a single PII Entities Recognition task,
+        including additional task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "PiiEntitiesRecognitionTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class KeyPhraseExtractionTask(DictMixin):
+    """KeyPhraseExtractionTask encapsulates the parameters for starting a long-running Key Phrase Extraction operation.
+
+    :ivar str model_version: The model version to use for the analysis.
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", "latest")
+
+    def __repr__(self, **kwargs):
+        return "KeyPhraseExtractionTask(model_version={})" \
+            .format(self.model_version)[:1024]
+
+    def to_generated(self):
+        return _v3_1_preview_3_models.KeyPhrasesTask(
+            parameters=_v3_1_preview_3_models.KeyPhrasesTaskParameters(
+                model_version=self.model_version
+            )
+        )
+
+
+class KeyPhraseExtractionTaskResult(DictMixin):
+    """KeyPhraseExtractionTaskResult contains the results of a single Key Phrase Extraction task, including additional
+        task metadata.
+
+    :ivar str name: The name of the task.
+    :ivar results: The results of the analysis.
+    :vartype results: list[~azure.ai.textanalytics.ExtractKeyPhrasesResult]
+    """
+
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", None)
+        self.results = kwargs.get("results", [])
+
+    def __repr__(self, **kwargs):
+        return "KeyPhraseExtractionTaskResult(name={}, results={})" \
+            .format(self.name, repr(self.results))[:1024]
+
+
+class TextAnalysisResult(DictMixin):
+    """TextAnalysisResult contains the results of multiple text analyses performed on a batch of documents.
+
+    :ivar entities_recognition_results: A list of objects containing results for all Entity Recognition tasks
+        included in the analysis.
+    :vartype entities_recognition_results: list[~azure.ai.textanalytics.EntitiesRecognitionTaskResult]
+    :ivar pii_entities_recognition_results: A list of objects containing results for all PII Entity Recognition
+        tasks included in the analysis.
+    :vartype pii_entities_recogition_results: list[~azure.ai.textanalytics.PiiEntitiesRecognitionTaskResult]
+    :ivar key_phrase_extraction_results: A list of objects containing results for all Key Phrase Extraction tasks
+        included in the analysis.
+    :vartype key_phrase_extraction_results: list[~azure.ai.textanalytics.KeyPhraseExtractionTaskResult]
+    """
+    def __init__(self, **kwargs):
+        self.entities_recognition_results = kwargs.get("entities_recognition_results", [])
+        self.pii_entities_recognition_results = kwargs.get("pii_entities_recognition_results", [])
+        self.key_phrase_extraction_results = kwargs.get("key_phrase_extraction_results", [])
+
+    def __repr__(self):
+        return "TextAnalysisResult(entities_recognition_results={}, pii_entities_recognition_results={}, \
+            key_phrase_extraction_results={})" \
+            .format(
+                repr(self.entities_recognition_results),
+                repr(self.pii_entities_recognition_results),
+                repr(self.key_phrase_extraction_results)
+            )[:1024]
+
+
+class RequestStatistics(DictMixin):
+    def __init__(self, **kwargs):
+        self.documents_count = kwargs.get("documents_count")
+        self.valid_documents_count = kwargs.get("valid_documents_count")
+        self.erroneous_documents_count = kwargs.get("erroneous_documents_count")
+        self.transactions_count = kwargs.get("transactions_count")
+
+    @classmethod
+    def _from_generated(cls, request_statistics):
+        return cls(
+            documents_count=request_statistics.documents_count,
+            valid_documents_count=request_statistics.valid_documents_count,
+            erroneous_documents_count=request_statistics.erroneous_documents_count,
+            transactions_count=request_statistics.transactions_count
+        )
+
+    def __repr__(self, **kwargs):
+        return "RequestStatistics(documents_count={}, valid_documents_count={}, erroneous_documents_count={}, \
+            transactions_count={}".format(
+                self.documents_count,
+                self.valid_documents_count,
+                self.erroneous_documents_count,
+                self.transactions_count
+            )[:1024]

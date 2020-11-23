@@ -105,10 +105,35 @@ class FileSamples(object):
             # Delete the share
             share.delete_share()
 
+    def acquire_file_lease(self):
+        # Instantiate the ShareClient from a connection string
+        from azure.storage.fileshare import ShareClient
+        share = ShareClient.from_connection_string(self.connection_string, "filesamples3")
+
+        # Create the share
+        share.create_share()
+
+        try:
+            # Get a file client and upload a file
+            source_file = share.get_file_client("sourcefile")
+
+            # [START acquire_and_release_lease_on_file]
+            source_file.create_file(1024)
+            lease = source_file.acquire_lease()
+            source_file.upload_file(b'hello world', lease=lease)
+
+            lease.release()
+            # [END acquire_and_release_lease_on_file]
+
+        finally:
+            # Delete the share
+            share.delete_share()
+
 
 if __name__ == '__main__':
     sample = FileSamples()
     sample.simple_file_operations()
     sample.copy_file_from_url()
+    sample.acquire_file_lease()
 
 

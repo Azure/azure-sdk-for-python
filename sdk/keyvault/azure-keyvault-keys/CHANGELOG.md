@@ -1,9 +1,18 @@
 # Release History
 
-## 4.2.1 (Unreleased)
+## 4.3.1 (Unreleased)
+### Added
+- Added method `parse_key_vault_key_id` that parses out a full ID returned by Key Vault, so users can easily
+access the key's `name`, `vault_url`, and `version`.
+
+
+## 4.3.0 (2020-10-06)
+### Changed
+- `CryptographyClient` can perform decrypt and sign operations locally
+  ([#9754](https://github.com/Azure/azure-sdk-for-python/issues/9754))
+
 ### Fixed
 - Correct typing for async paging methods
-
 
 ## 4.2.0 (2020-08-11)
 ### Fixed

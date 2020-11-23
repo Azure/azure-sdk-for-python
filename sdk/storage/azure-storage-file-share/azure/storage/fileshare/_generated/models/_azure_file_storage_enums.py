@@ -82,32 +82,6 @@ class StorageErrorCode(str, Enum):
     feature_version_mismatch = "FeatureVersionMismatch"
 
 
-class PermissionCopyModeType(str, Enum):
-
-    source = "source"
-    override = "override"
-
-
-class DeleteSnapshotsOptionType(str, Enum):
-
-    include = "include"
-
-
-class ListSharesIncludeType(str, Enum):
-
-    snapshots = "snapshots"
-    metadata = "metadata"
-    deleted = "deleted"
-
-
-class CopyStatusType(str, Enum):
-
-    pending = "pending"
-    success = "success"
-    aborted = "aborted"
-    failed = "failed"
-
-
 class LeaseDurationType(str, Enum):
 
     infinite = "infinite"
@@ -127,6 +101,40 @@ class LeaseStatusType(str, Enum):
 
     locked = "locked"
     unlocked = "unlocked"
+
+
+class ShareAccessTier(str, Enum):
+
+    transaction_optimized = "TransactionOptimized"
+    hot = "Hot"
+    cool = "Cool"
+
+
+class PermissionCopyModeType(str, Enum):
+
+    source = "source"
+    override = "override"
+
+
+class DeleteSnapshotsOptionType(str, Enum):
+
+    include = "include"
+    include_leased = "include-leased"
+
+
+class ListSharesIncludeType(str, Enum):
+
+    snapshots = "snapshots"
+    metadata = "metadata"
+    deleted = "deleted"
+
+
+class CopyStatusType(str, Enum):
+
+    pending = "pending"
+    success = "success"
+    aborted = "aborted"
+    failed = "failed"
 
 
 class FileRangeWriteType(str, Enum):

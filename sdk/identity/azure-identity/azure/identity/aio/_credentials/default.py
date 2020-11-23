@@ -110,7 +110,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     async def get_token(self, *scopes: str, **kwargs: "Any"):
         """Asynchronously request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a

@@ -12,7 +12,7 @@ Example to show sending message through http proxy to a Service Bus Queue.
 # pylint: disable=C0111
 
 import os
-from azure.servicebus import ServiceBusClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
@@ -27,7 +27,7 @@ HTTP_PROXY = {
 
 
 def send_single_message(sender):
-    message = Message("Single Message")
+    message = ServiceBusMessage("Single Message")
     sender.send_messages(message)
 
 

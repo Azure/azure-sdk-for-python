@@ -9,7 +9,7 @@ import logging
 import pytest
 
 from azure.servicebus.aio import ServiceBusClient
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer
@@ -87,4 +87,34 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         async with client:
             assert len(client._handlers) == 0
             async with client.get_queue_sender(servicebus_queue.name) as sender:
-                await sender.send_messages(Message("foo"))
+                await sender.send_messages(ServiceBusMessage("foo"))
+
+    def test_sb_client_bad_entity_async(self):
+        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
+                   "SharedAccessKeyName=mock;SharedAccessKey=mock;EntityPath=mockentity"
+        fake_client = ServiceBusClient.from_connection_string(fake_str)
+
+        with pytest.raises(ValueError):
+            fake_client.get_queue_sender('queue')
+
+        with pytest.raises(ValueError):
+            fake_client.get_queue_receiver('queue')
+
+        with pytest.raises(ValueError):
+            fake_client.get_topic_sender('topic')
+
+        with pytest.raises(ValueError):
+            fake_client.get_subscription_receiver('topic', 'subscription')
+
+        fake_client.get_queue_sender('mockentity')
+        fake_client.get_queue_receiver('mockentity')
+        fake_client.get_topic_sender('mockentity')
+        fake_client.get_subscription_receiver('mockentity', 'subscription')
+
+        fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
+                   "SharedAccessKeyName=mock;SharedAccessKey=mock"
+        fake_client = ServiceBusClient.from_connection_string(fake_str)
+        fake_client.get_queue_sender('queue')
+        fake_client.get_queue_receiver('queue')
+        fake_client.get_topic_sender('topic')
+        fake_client.get_subscription_receiver('topic', 'subscription')

@@ -1,6 +1,24 @@
 # Release History
-## 12.1.3 (Unreleased)
+## 12.2.1 (Unreleased)
 
+
+## 12.2.0 (2020-11-10)
+**Stable release of preview features**
+- Preview feature set/update/remove access control recursively.
+- Preview feature `set_file_expiry` on DataLakeFileClient.
+- Preview feature generating directory level sas.
+
+**Fixes**
+- Fixed session closure of filesystem (#14497)
+
+**Notes**
+- Updated dependency `azure-core` from  azure-core<2.0.0,>=1.6.0 to azure-core<2.0.0,>=1.9.0
+
+## 12.2.0b1 (2020-10-02)
+**New Features**
+- Added support for recursive set/update/remove Access Control on a path and sub-paths.
+- Added support for setting an expiry on files where the file gets deleted once it expires.
+- Added support to generate directory SAS and added support to specify additional user ids and correlation ids for user delegation SAS.
 
 ## 12.1.2 (2020-09-10)
 **Fixes**

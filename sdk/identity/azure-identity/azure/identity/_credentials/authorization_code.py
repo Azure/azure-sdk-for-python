@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class AuthorizationCodeCredential(object):
     """Authenticates by redeeming an authorization code previously obtained from Azure Active Directory.
 
-    See https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
+    See https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow for more information
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its 'directory' ID.
@@ -44,7 +44,7 @@ class AuthorizationCodeCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         The first time this method is called, the credential will redeem its authorization code. On subsequent calls
         the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon

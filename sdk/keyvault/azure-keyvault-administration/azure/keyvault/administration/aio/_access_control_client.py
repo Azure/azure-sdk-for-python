@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -11,6 +12,7 @@ from .._models import KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from .._internal import AsyncKeyVaultClientBase
 
 if TYPE_CHECKING:
+    # pylint:disable=ungrouped-imports
     from typing import Any, Union
     from uuid import UUID
     from azure.core.async_paging import AsyncItemPaged
@@ -29,23 +31,18 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def create_role_assignment(
-        self,
-        role_scope: "Union[str, KeyVaultRoleScope]",
-        role_assignment_name: "Union[str, UUID]",
-        role_definition_id: str,
-        principal_id: str,
-        **kwargs: "Any"
+        self, role_scope: "Union[str, KeyVaultRoleScope]", role_definition_id: str, principal_id: str, **kwargs: "Any"
     ) -> KeyVaultRoleAssignment:
         """Create a role assignment.
 
         :param role_scope: scope the role assignment will apply over. :class:`KeyVaultRoleScope` defines common broad
             scopes. Specify a narrower scope as a string.
         :type role_scope: str or KeyVaultRoleScope
-        :param role_assignment_name: a name for the role assignment. Must be a UUID.
-        :type role_assignment_name: str or uuid.UUID
         :param str role_definition_id: ID of the role's definition
         :param str principal_id: Azure Active Directory object ID of the principal which will be assigned the role. The
             principal can be a user, service principal, or security group.
+        :keyword role_assignment_name: a name for the role assignment. Must be a UUID.
+        :type role_assignment_name: str or uuid.UUID
         :rtype: KeyVaultRoleAssignment
         """
         create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
@@ -56,7 +53,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         assignment = await self._client.role_assignments.create(
             vault_base_url=self._vault_url,
             scope=role_scope,
-            role_assignment_name=role_assignment_name,
+            role_assignment_name=kwargs.pop("role_assignment_name", None) or uuid4(),
             parameters=create_parameters,
             **kwargs
         )

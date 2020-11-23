@@ -705,7 +705,7 @@ class TestAnalyzeSentiment(AsyncTextAnalyticsTest):
     @GlobalTextAnalyticsAccountPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     async def test_opinion_mining_v3(self, client):
-        with pytest.raises(NotImplementedError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
         assert "'show_opinion_mining' is only available for API version v3.1-preview and up" in str(excinfo.value)

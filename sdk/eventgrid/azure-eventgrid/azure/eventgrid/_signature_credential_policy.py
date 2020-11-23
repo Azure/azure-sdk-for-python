@@ -4,9 +4,14 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from typing import Any, TYPE_CHECKING
 import six
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+
+if TYPE_CHECKING:
+    from ._shared_access_signature_credential import EventGridSharedAccessSignatureCredential
+
 
 class EventGridSharedAccessSignatureCredentialPolicy(SansIOHTTPPolicy):
     """Adds a token header for the provided credential.

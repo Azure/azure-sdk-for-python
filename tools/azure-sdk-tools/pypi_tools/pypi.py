@@ -1,6 +1,4 @@
-from typing import Optional
-
-from packaging.version import parse as Version, InvalidVersion
+from packaging.version import parse as Version
 
 import requests
 

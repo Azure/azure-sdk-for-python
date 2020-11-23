@@ -21,8 +21,9 @@ from ._upload_helper import upload_datalake_file
 from ._generated.models import StorageErrorException
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
-from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers
-from ._deserialize import process_storage_error
+from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
+    convert_datetime_to_rfc1123
+from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
 
 
@@ -246,8 +247,31 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        blob_properties = self._get_path_properties(**kwargs)
-        return FileProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+
+    def set_file_expiry(self, expiry_options,  # type: str
+                        expires_on=None,   # type: Optional[Union[datetime, int]]
+                        **kwargs):
+        # type: (str, Optional[Union[datetime, int]], **Any) -> None
+        """Sets the time a file will expire and be deleted.
+
+        :param str expiry_options:
+            Required. Indicates mode of the expiry time.
+            Possible values include: 'NeverExpire', 'RelativeToCreation', 'RelativeToNow', 'Absolute'
+        :param datetime or int expires_on:
+            The time to set the file to expiry.
+            When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
+            If the type of expires_on is datetime, it should be in UTC time.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        try:
+            expires_on = convert_datetime_to_rfc1123(expires_on)
+        except AttributeError:
+            expires_on = str(expires_on)
+        self._datalake_client_for_blob_operation.path \
+            .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -637,7 +661,7 @@ class DataLakeFileClient(PathClient):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_file_sas = new_path_and_token[1] or self._query_str.strip('?')
@@ -671,7 +695,7 @@ class DataLakeFileClient(PathClient):
         :param str query_expression:
             Required. a query statement.
             eg. Select * from DataLakeStorage
-        :keyword Callable[Exception] on_error:
+        :keyword Callable[~azure.storage.filedatalake.DataLakeFileQueryError] on_error:
             A function to be called on any processing errors returned by the service.
         :keyword file_format:
             Optional. Defines the serialization of the data currently stored in the file. The default is to
@@ -684,7 +708,8 @@ class DataLakeFileClient(PathClient):
             as it is represented in the file. By providing an output format, the file data will be reformatted
             according to that profile. This value can be a DelimitedTextDialect or a DelimitedJsonDialect.
         :paramtype output_format:
-            ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect
+            ~azure.storage.filedatalake.DelimitedTextDialect, ~azure.storage.filedatalake.DelimitedJsonDialect
+            or list[~azure.storage.filedatalake.ArrowDialect]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.

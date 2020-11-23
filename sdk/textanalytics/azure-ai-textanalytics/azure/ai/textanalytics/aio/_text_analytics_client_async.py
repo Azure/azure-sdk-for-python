@@ -12,6 +12,9 @@ from typing import (  # pylint: disable=unused-import
     Dict,
     TYPE_CHECKING
 )
+from functools import partial
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from ._base_client_async import AsyncTextAnalyticsClientBase
@@ -24,7 +27,9 @@ from .._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
+    _get_deserialize
 )
+from .._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -35,7 +40,14 @@ from .._models import (
     AnalyzeSentimentResult,
     DocumentError,
     RecognizePiiEntitiesResult,
+    AnalyzeHealthcareResultItem,
+    EntitiesRecognitionTask,
+    PiiEntitiesRecognitionTask,
+    KeyPhraseExtractionTask,
+    TextAnalysisResult
 )
+from .._lro import TextAnalyticsOperationResourcePolling
+from .._async_lro import TextAnalyticsAsyncLROPollingMethod
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -99,6 +111,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
+        self._deserialize = _get_deserialize()
 
     @distributed_trace_async
     async def detect_language(  # type: ignore
@@ -123,7 +136,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :type documents:
             list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or
             list[dict[str, str]]
-        :keyword str country_hint: A country hint for the entire batch. Accepts two
+        :keyword str country_hint: Country of origin hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
             "US". If you don't want to use a country hint, pass the string "none".
@@ -131,7 +144,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
         :keyword bool show_stats: If set to true, response will contain document
-            level statistics.
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.DetectLanguageResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -195,7 +208,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -261,7 +275,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'PHI', will only return entities in the Protected Healthcare Information domain.
             See https://aka.ms/tanerpii for more information.
@@ -271,7 +286,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             were passed in.
         :rtype: list[~azure.ai.textanalytics.RecognizePiiEntitiesResult,
             ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. admonition:: Example:
 
@@ -300,9 +315,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 cls=kwargs.pop("cls", pii_entities_result),
                 **kwargs
             )
-        except NotImplementedError as error:
-            if "APIVersion v3.0 is not available" in str(error):
-                raise NotImplementedError(
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'entities_recognition_pii'" in str(error):
+                raise ValueError(
                     "'recognize_pii_entities' endpoint is only available for API version v3.1-preview and up"
                 )
             raise error
@@ -341,7 +356,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.RecognizeLinkedEntitiesResult`
             and :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
             were passed in.
@@ -408,7 +424,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         :return: The combined list of :class:`~azure.ai.textanalytics.ExtractKeyPhrasesResult` and
             :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents were
             passed in.
@@ -447,7 +464,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
-        """Analyze sentiment for a batch of documents.
+        """Analyze sentiment for a batch of documents. Turn on opinion mining with `show_opinion_mining`.
 
         Returns a sentiment prediction, as well as sentiment scores for
         each sentiment class (Positive, Negative, and Neutral) for the document
@@ -478,7 +495,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
-        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
         .. versionadded:: v3.1-preview
             The *show_opinion_mining* parameter.
         :return: The combined list of :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` and
@@ -519,9 +537,245 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             )
         except TypeError as error:
             if "opinion_mining" in str(error):
-                raise NotImplementedError(
+                raise ValueError(
                     "'show_opinion_mining' is only available for API version v3.1-preview and up"
                 )
             raise error
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    def _healthcare_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
+        healthcare_result = self._deserialize(
+            self._client.models(api_version="v3.1-preview.3").HealthcareJobState,
+            raw_response
+        )
+        return healthcare_paged_result(
+            doc_id_order,
+            self._client.health_status,
+            raw_response,
+            healthcare_result,
+            headers,
+            show_stats=show_stats
+        )
+
+    @distributed_trace_async
+    async def begin_analyze_healthcare(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        **kwargs  # type: Any
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResultItem]]
+        """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
+
+        Entities are associated with references that can be found in existing knowledge bases,
+        such as UMLS, CHV, MSH, etc.
+
+        Relations are comprised of a pair of entities and a directional relationship.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a list[:class:`~azure.ai.textanalytics.AnalyzeHealthcareResultItem`].
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_analyze_healthcare_async.py
+                :start-after: [START analyze_healthcare_async]
+                :end-before: [END analyze_healthcare_async]
+                :language: python
+                :dedent: 8
+                :caption: Analyze healthcare entities in a batch of documents.
+        """
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = _validate_input(documents, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", 5)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        doc_id_order = [doc.get("id") for doc in docs]
+
+        try:
+            return await self._client.begin_health(
+                docs,
+                model_version=model_version,
+                string_index_type=self._string_code_unit,
+                cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
+                polling=TextAnalyticsAsyncLROPollingMethod(
+                    timeout=polling_interval,
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_health'" in str(error):
+                raise ValueError(
+                    "'begin_analyze_healthcare' endpoint is only available for API version v3.1-preview and up"
+                )
+            raise error
+
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    async def begin_cancel_analyze_healthcare( # type: ignore
+        self,
+        poller,  # type: AsyncLROPoller[AsyncItemPaged[AnalyzeHealthcareResultItem]]
+        **kwargs
+    ):
+        # type: (...) -> AsyncLROPoller[None]
+        """Cancel an existing health operation.
+
+        :param poller: The LRO poller object associated with the health operation.
+        :return: An instance of an LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        """
+        polling_interval = kwargs.pop("polling_interval", 5) # pylint: disable=protected-access
+
+        initial_response = getattr(poller._polling_method, "_initial_response") # pylint: disable=protected-access
+        operation_location = initial_response.http_response.headers["Operation-Location"]
+
+        from urllib.parse import urlparse
+        job_id = urlparse(operation_location).path.split("/")[-1]
+
+        try:
+            return await self._client.begin_cancel_health_job(
+                job_id,
+                polling=TextAnalyticsAsyncLROPollingMethod(timeout=polling_interval)
+            )
+
+        except HttpResponseError as error:
+            process_http_response_error(error)
+
+    def _analyze_result_callback(self, doc_id_order, raw_response, _, headers, show_stats=False):
+        analyze_result = self._deserialize(
+            self._client.models(api_version="v3.1-preview.3").AnalyzeJobState,
+            raw_response
+        )
+        return analyze_paged_result(
+            doc_id_order,
+            self._client.analyze_status,
+            raw_response,
+            analyze_result,
+            headers,
+            show_stats=show_stats
+        )
+
+    @distributed_trace_async
+    async def begin_analyze(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        entities_recognition_tasks=None,  # type: List[EntitiesRecognitionTask]
+        pii_entities_recognition_tasks=None,  # type: List[PiiEntitiesRecognitionTask]
+        key_phrase_extraction_tasks=None,  # type: List[KeyPhraseExtractionTask]
+        **kwargs  # type: Any
+    ):  # type: (...) -> AsyncLROPoller[AsyncItemPaged[TextAnalysisResult]]
+        """Start a long-running operation to perform a variety of text analysis tasks over a batch of documents.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
+            list[dict[str, str]]
+        :param tasks: A list of tasks to include in the analysis.  Each task object encapsulates the parameters
+            used for the particular task type.
+        :type tasks: list[Union[~azure.ai.textanalytics.EntitiesRecognitionTask,
+            ~azure.ai.textanalytics.PiiEntitiesRecognitionTask, ~azure.ai.textanalytics.EntityLinkingTask,
+            ~azure.ai.textanalytics.KeyPhraseExtractionTask, ~azure.ai.textanalytics.SentimentAnalysisTask]]
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 30 seconds.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return an instance of TextAnalysisResult.
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_analyze_async.py
+                :start-after: [START analyze_async]
+                :end-before: [END analyze_async]
+                :language: python
+                :dedent: 8
+                :caption: Start a long-running operation to perform a variety of text analysis tasks over
+                    a batch of documents.
+        """
+
+        display_name = kwargs.pop("display_name", None)
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = self._client.models(api_version="v3.1-preview.3").MultiLanguageBatchInput(
+            documents=_validate_input(documents, "language", language)
+        )
+        show_stats = kwargs.pop("show_stats", False)
+        polling_interval = kwargs.pop("polling_interval", 5)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        doc_id_order = [doc.get("id") for doc in docs.documents]
+
+        try:
+            analyze_tasks = self._client.models(api_version='v3.1-preview.3').JobManifestTasks(
+                entity_recognition_tasks=[
+                    t.to_generated() for t in entities_recognition_tasks
+                ] if entities_recognition_tasks else [],
+                entity_recognition_pii_tasks=[
+                    t.to_generated() for t in pii_entities_recognition_tasks
+                ] if pii_entities_recognition_tasks else [],
+                key_phrase_extraction_tasks=[
+                    t.to_generated() for t in key_phrase_extraction_tasks
+                ] if key_phrase_extraction_tasks else []
+            )
+            analyze_body = self._client.models(api_version='v3.1-preview.3').AnalyzeBatchInput(
+                display_name=display_name,
+                tasks=analyze_tasks,
+                analysis_input=docs
+            )
+            return await self._client.begin_analyze(
+                body=analyze_body,
+                cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
+                polling=TextAnalyticsAsyncLROPollingMethod(
+                    timeout=polling_interval,
+                    lro_algorithms=[
+                        TextAnalyticsOperationResourcePolling(show_stats=show_stats)
+                    ],
+                    **kwargs),
+                continuation_token=continuation_token,
+                **kwargs
+            )
+
+        except ValueError as error:
+            if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
+                raise ValueError(
+                    "'begin_analyze' endpoint is only available for API version v3.1-preview and up"
+                )
+            raise error
+
         except HttpResponseError as error:
             process_http_response_error(error)

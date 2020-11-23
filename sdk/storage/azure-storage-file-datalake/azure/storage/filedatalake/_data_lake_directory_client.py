@@ -3,13 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 try:
     from urllib.parse import quote, unquote
 except ImportError:
     from urllib2 import quote, unquote # type: ignore
-
-from ._shared.base_client import parse_connection_str
+from azure.core.pipeline import Pipeline
+from ._deserialize import deserialize_dir_properties
+from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient
 from ._models import DirectoryProperties
 from ._path_client import PathClient
@@ -236,8 +236,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file/directory.
         """
-        blob_properties = self._get_path_properties(**kwargs)
-        return DirectoryProperties._from_blob_properties(blob_properties)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
 
     def rename_directory(self, new_name,  # type: str
                          **kwargs):
@@ -306,7 +305,7 @@ class DataLakeDirectoryClient(PathClient):
         """
         new_name = new_name.strip('/')
         new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].split('?')
+        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
         new_path = new_path_and_token[0]
         try:
             new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')
@@ -507,6 +506,10 @@ class DataLakeDirectoryClient(PathClient):
         except AttributeError:
             file_path = self.path_name + '/' + file
 
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
@@ -533,6 +536,10 @@ class DataLakeDirectoryClient(PathClient):
         except AttributeError:
             subdir_path = self.path_name + '/' + sub_directory
 
+        _pipeline = Pipeline(
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,

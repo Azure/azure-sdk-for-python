@@ -53,14 +53,7 @@ class ManagedIdentityCredential(object):
     def __init__(self, **kwargs):
         # type: (**Any) -> None
         self._credential = None
-        if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT) and os.environ.get(
-                EnvironmentVariables.IDENTITY_HEADER
-        ):
-            _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
-            from .app_service import AppServiceCredential
-
-            self._credential = AppServiceCredential(**kwargs)
-        elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
                 _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
                 from .app_service import AppServiceCredential
@@ -69,6 +62,20 @@ class ManagedIdentityCredential(object):
             else:
                 _LOGGER.info("%s will use MSI", self.__class__.__name__)
                 self._credential = MsiCredential(**kwargs)
+        elif os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
+            if (
+                os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
+                and os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT)
+            ):
+                _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+                from .service_fabric import ServiceFabricCredential
+
+                self._credential = ServiceFabricCredential(**kwargs)
+            elif os.environ.get(EnvironmentVariables.IMDS_ENDPOINT):
+                _LOGGER.info("%s will use Azure Arc managed identity", self.__class__.__name__)
+                from .azure_arc import AzureArcCredential
+
+                self._credential = AzureArcCredential(**kwargs)
         else:
             _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(**kwargs)
@@ -78,7 +85,7 @@ class ManagedIdentityCredential(object):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -161,7 +168,7 @@ class ImdsCredential(_ManagedIdentityBase):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -241,7 +248,7 @@ class MsiCredential(_ManagedIdentityBase):
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
 
-        .. note:: This method is called by Azure SDK clients. It isn't intended for use in application code.
+        This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
         :rtype: :class:`azure.core.credentials.AccessToken`

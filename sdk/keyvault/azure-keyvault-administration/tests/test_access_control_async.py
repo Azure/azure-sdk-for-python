@@ -71,7 +71,7 @@ class AccessControlTests(KeyVaultTestCase):
         principal_id = self.get_service_principal_id()
         name = self.get_replayable_uuid("some-uuid")
 
-        created = await client.create_role_assignment(scope, name, definition.id, principal_id)
+        created = await client.create_role_assignment(scope, definition.id, principal_id, role_assignment_name=name)
         assert created.name == name
         assert created.principal_id == principal_id
         assert created.role_definition_id == definition.id

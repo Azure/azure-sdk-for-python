@@ -149,6 +149,19 @@ def generate_file_system_sas(
     :keyword str content_type:
         Response header value for Content-Type when resource is accessed
         using this shared access signature.
+    :keyword str preauthorized_agent_object_id:
+        The AAD object ID of a user assumed to be authorized by the owner of the user delegation key to perform
+        the action granted by the SAS token. The service will validate the SAS token and ensure that the owner of the
+        user delegation key has the required permissions before granting access but no additional permission check for
+        the agent object id will be performed.
+    :keyword str agent_object_id:
+        The AAD object ID of a user assumed to be unauthorized by the owner of the user delegation key to
+        perform the action granted by the SAS token. The service will validate the SAS token and ensure that the owner
+        of the user delegation key has the required permissions before granting access and the service will perform an
+        additional POSIX ACL check to determine if this user is authorized to perform the requested operation.
+    :keyword str correlation_id:
+        The correlation id to correlate the storage audit logs with the audit logs used by the principal
+        generating and distributing the SAS.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
@@ -238,9 +251,23 @@ def generate_directory_sas(
     :keyword str content_type:
         Response header value for Content-Type when resource is accessed
         using this shared access signature.
+    :keyword str preauthorized_agent_object_id:
+        The AAD object ID of a user assumed to be authorized by the owner of the user delegation key to perform
+        the action granted by the SAS token. The service will validate the SAS token and ensure that the owner of the
+        user delegation key has the required permissions before granting access but no additional permission check for
+        the agent object id will be performed.
+    :keyword str agent_object_id:
+        The AAD object ID of a user assumed to be unauthorized by the owner of the user delegation key to
+        perform the action granted by the SAS token. The service will validate the SAS token and ensure that the owner
+        of the user delegation key has the required permissions before granting access and the service will perform an
+        additional POSIX ACL check to determine if this user is authorized to perform the requested operation.
+    :keyword str correlation_id:
+        The correlation id to correlate the storage audit logs with the audit logs used by the principal
+        generating and distributing the SAS.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    depth = len(directory_name.strip("/").split("/"))
     return generate_blob_sas(
         account_name=account_name,
         container_name=file_system_name,
@@ -249,6 +276,8 @@ def generate_directory_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
+        sdd=depth,
+        is_directory=True,
         **kwargs)
 
 
@@ -331,6 +360,19 @@ def generate_file_sas(
     :keyword str content_type:
         Response header value for Content-Type when resource is accessed
         using this shared access signature.
+    :keyword str preauthorized_agent_object_id:
+        The AAD object ID of a user assumed to be authorized by the owner of the user delegation key to perform
+        the action granted by the SAS token. The service will validate the SAS token and ensure that the owner of the
+        user delegation key has the required permissions before granting access but no additional permission check for
+        the agent object id will be performed.
+    :keyword str agent_object_id:
+        The AAD object ID of a user assumed to be unauthorized by the owner of the user delegation key to
+        perform the action granted by the SAS token. The service will validate the SAS token and ensure that the owner
+        of the user delegation key has the required permissions before granting access and the service will perform an
+        additional POSIX ACL check to determine if this user is authorized to perform the requested operation.
+    :keyword str correlation_id:
+        The correlation id to correlate the storage audit logs with the audit logs used by the principal
+        generating and distributing the SAS. This can only be used when to generate sas with delegation key.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """

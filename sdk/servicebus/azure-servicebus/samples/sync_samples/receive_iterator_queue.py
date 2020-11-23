@@ -24,6 +24,6 @@ with servicebus_client:
     with receiver:
         for msg in receiver:
             print(str(msg))
-            msg.complete()
+            receiver.complete_message(msg)
 
 print("Receive is done.")

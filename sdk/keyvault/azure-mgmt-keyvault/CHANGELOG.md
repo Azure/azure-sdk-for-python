@@ -1,5 +1,15 @@
 # Release History
 
+## 8.0.0 (2020-09-29)
+
+**Features**
+
+  - Model ManagedHsmProperties has a new parameter hsm_uri
+
+**Breaking changes**
+
+  - Model ManagedHsmProperties no longer has parameter hsm_pool_uri
+
 ## 7.0.0 (2020-09-15)
 
 - Release as a stable version

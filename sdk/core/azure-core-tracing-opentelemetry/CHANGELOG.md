@@ -1,6 +1,9 @@
 
 # Release History
 
+## 1.0.0b8 (Unreleased)
+
+
 ## 1.0.0b7 (2020-10-05)
 
 - Pinned opentelemetry-api to version 0.13b0

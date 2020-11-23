@@ -1,5 +1,7 @@
 parameters:
   ServiceDirectory: ''
+  Artifacts: []
+  TestPipeline: false
   BeforePublishSteps: []
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
@@ -39,6 +41,11 @@ parameters:
       PythonVersion: 'pypy3'
       CoverageArg: '--disablecov'
       RunForPR: false
+    Linux_Python39:
+      OSVmImage: 'ubuntu-18.04'
+      PythonVersion: '3.9.0'
+      CoverageArg: ''
+      RunForPR: true
   AdditionalTestMatrix: []
   DevFeedName: 'public/azure-sdk-for-python'
 
@@ -57,6 +64,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: ${{ parameters.BuildDocs }}
+        TestPipeline: ${{ parameters.TestPipeline }}
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
@@ -70,9 +78,13 @@ jobs:
       vmImage: 'ubuntu-18.04'
 
     steps:
-    - template: ../../../common/pipelines/templates/steps/verify-links.yml
+    - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
-        Directory: "sdk/${{ parameters.ServiceDirectory }}"
+        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: ''
+          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
+        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+          Directory: sdk/${{ parameters.ServiceDirectory }}
         CheckLinkGuidance: $true
 
     - template: ../steps/analyze.yml
@@ -81,6 +93,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Test'
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
@@ -112,13 +125,15 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-    - task: PowerShell@2
-      displayName: Prep template pipeline for release
-      condition: and(succeeded(),eq(variables['TestPipeline'],'true'))
-      inputs:
-        pwsh: true
-        workingDirectory: $(Build.SourcesDirectory)
-        filePath: eng/scripts/SetTestPipelineVersion.ps1
+    - ${{if eq(parameters.TestPipeline, 'true')}}:
+      - task: PowerShell@2
+        displayName: Prep template pipeline for release
+        condition: succeeded()
+        inputs:
+          pwsh: true
+          workingDirectory: $(Build.SourcesDirectory)
+          filePath: eng/scripts/SetTestPipelineVersion.ps1
+          arguments: '-BuildID $(Build.BuildId)'
 
     - pwsh: |
         $toxenvvar = "whl,sdist"

@@ -1,6 +1,14 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
+## 2.0.0b5 (Unreleased)
+
+
+## 2.0.0b4 (2020-11-11)
+
+  **Bug Fixes**
+  - `TypeError` is raised when bytes are passed to an `EventGridEvent`.
+
+## 2.0.0b3 (2020-10-05)
 
   **Feature**
   - Added support for Keyvault Event Types

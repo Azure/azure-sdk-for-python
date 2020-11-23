@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+import functools
 import inspect
+import logging
 import os.path
 import sys
 import zlib
@@ -20,10 +22,16 @@ from azure_devtools.scenario_tests import (
     AuthenticationMetadataFilter, OAuthRequestResponsesFilter
 )
 from azure_devtools.scenario_tests.config import TestConfig
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from .config import TEST_SETTING_FILENAME
 from . import mgmt_settings_fake as fake_settings
 
+try:
+    # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
+    from .fake_async_credential import AsyncFakeCredential
+except SyntaxError:
+    pass
 
 class HttpStatusCode(object):
     OK = 200
@@ -182,17 +190,20 @@ class AzureTestCase(ReplayableTest):
     def tearDown(self):
         return super(AzureTestCase, self).tearDown()
 
-    def create_basic_client(self, client_class, **kwargs):
+    def get_credential(self, client_class, **kwargs):
 
         tenant_id = os.environ.get("AZURE_TENANT_ID", None)
         client_id = os.environ.get("AZURE_CLIENT_ID", None)
         secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+        is_async = kwargs.pop("is_async", False)
 
         if tenant_id and client_id and secret and self.is_live:
             if _is_autorest_v3(client_class):
                 # Create azure-identity class
                 from azure.identity import ClientSecretCredential
-                credentials = ClientSecretCredential(
+                if is_async:
+                    from azure.identity.aio import ClientSecretCredential
+                return ClientSecretCredential(
                     tenant_id=tenant_id,
                     client_id=client_id,
                     client_secret=secret
@@ -200,30 +211,37 @@ class AzureTestCase(ReplayableTest):
             else:
                 # Create msrestazure class
                 from msrestazure.azure_active_directory import ServicePrincipalCredentials
-                credentials = ServicePrincipalCredentials(
+                return ServicePrincipalCredentials(
                     tenant=tenant_id,
                     client_id=client_id,
                     secret=secret
                 )
         else:
             if _is_autorest_v3(client_class):
-                credentials = self.settings.get_azure_core_credentials()
+                if is_async:
+                    if self.is_live:
+                        raise ValueError("Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET")
+                    return AsyncFakeCredential()
+                else:
+                    return self.settings.get_azure_core_credentials()
             else:
-                credentials = self.settings.get_credentials()
+                return self.settings.get_credentials()
+
+    def create_client_from_credential(self, client_class, credential, **kwargs):
 
         # Real client creation
-        # FIXME decide what is the final argument for that
+        # TODO decide what is the final argument for that
         # if self.is_playback():
         #     kwargs.setdefault("polling_interval", 0)
         if _is_autorest_v3(client_class):
             kwargs.setdefault("logging_enable", True)
             client = client_class(
-                credential=credentials,
+                credential=credential,
                 **kwargs
             )
         else:
             client = client_class(
-                credentials=credentials,
+                credentials=credential,
                 **kwargs
             )
 
@@ -238,6 +256,17 @@ class AzureTestCase(ReplayableTest):
                 client.config.long_running_operation_timeout = 0
             client.config.enable_http_logger = True
         return client
+
+    def create_basic_client(self, client_class, **kwargs):
+        """ DO NOT USE ME ANYMORE."""
+        logger = logging.getLogger()
+        logger.warning(
+            "'create_basic_client' will be deprecated in the future. It is recommended that you use \
+                'get_credential' and 'create_client_from_credential' to create your client."
+        )
+
+        credentials = self.get_credential(client_class)
+        return self.create_client_from_credential(client_class, credentials, **kwargs)
 
     def create_random_name(self, name):
         return get_resource_name(name, self.qualified_test_name.encode())
@@ -262,3 +291,21 @@ class AzureTestCase(ReplayableTest):
         If prefix is a blank string, use the fully qualified test name instead.
         This is what legacy tests do for resource groups."""
         return self.get_resource_name(prefix or self.qualified_test_name.replace('.', '_'))
+
+    @staticmethod
+    def await_prepared_test(test_fn):
+        """Synchronous wrapper for async test methods. Used to avoid making changes
+        upstream to AbstractPreparer (which doesn't await the functions it wraps)
+        """
+
+        if sys.version_info < (3, 5):
+            raise ImportError("Async wrapper is not needed for Python 2.7 code.")
+
+        import asyncio
+        @functools.wraps(test_fn)
+        def run(test_class_instance, *args, **kwargs):
+            trim_kwargs_from_test_function(test_fn, kwargs)
+            loop = asyncio.get_event_loop()
+            return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
+
+        return run

@@ -25,7 +25,7 @@ class SMSClientTestAsync(AsyncCommunicationTestCase):
         if self.is_playback():
             self.phone_number = "+18000005555"
         else:
-            self.phone_number = os.getenv("PHONE_NUMBER")
+            self.phone_number = os.getenv("AZURE_COMMUNICATION_SERVICE_PHONE_NUMBER")
 
         self.recording_processors.extend([
             BodyReplacerProcessor(keys=["to", "from", "messageId"]),

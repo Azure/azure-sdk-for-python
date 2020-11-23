@@ -241,3 +241,22 @@ def serialize_rule_key_values(entry_ele, rule_descripiton):
             .find(constants.RULE_PARAMETERS_TAG)
         if sql_action_parameters_ele:
             serialize_key_values(sql_action_parameters_ele, rule_descripiton.action.parameters)
+
+
+# Helper functions for common parameter validation errors in the client.
+def _validate_entity_name_type(entity_name, display_name='entity name'):
+    # type: (str, str) -> None
+    if not isinstance(entity_name, str):
+        raise TypeError("{} must be a string, not {}".format(display_name, type(entity_name)))
+
+def _validate_topic_and_subscription_types(topic_name, subscription_name):
+    # type: (str, str) -> None
+    if not isinstance(topic_name, str) or not isinstance(subscription_name, str):
+        raise TypeError("topic name and subscription name must be strings, not {} and {}".format(
+            type(topic_name), type(subscription_name)))
+
+def _validate_topic_subscription_and_rule_types(topic_name, subscription_name, rule_name):
+    # type: (str, str, str) -> None
+    if not isinstance(topic_name, str) or not isinstance(subscription_name, str) or not isinstance(rule_name, str):
+        raise TypeError("topic name, subscription name and rule name must be strings, not {} {} and {}".format(
+            type(topic_name), type(subscription_name), type(rule_name)))

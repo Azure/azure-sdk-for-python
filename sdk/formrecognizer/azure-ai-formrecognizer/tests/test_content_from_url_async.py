@@ -11,6 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_content_result
 from azure.ai.formrecognizer.aio import FormRecognizerClient
+from azure.ai.formrecognizer import FormRecognizerApiVersion
 from testcase import GlobalFormRecognizerAccountPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from testcase import GlobalClientPreparer as _GlobalClientPreparer
@@ -103,7 +104,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 2)
+        self.assertEqual(layout.tables[0].row_count, 3)
         self.assertEqual(layout.tables[0].column_count, 6)
         self.assertEqual(layout.tables[0].page_number, 1)
 
@@ -139,10 +140,10 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 4)
-        self.assertEqual(layout.tables[0].column_count, 3)
-        self.assertEqual(layout.tables[1].row_count, 6)
-        self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].row_count, 5)
+        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[1].row_count, 4)
+        self.assertEqual(layout.tables[1].column_count, 2)
         self.assertEqual(layout.tables[0].page_number, 1)
         self.assertEqual(layout.tables[1].page_number, 1)
 
@@ -185,7 +186,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             initial_poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
             cont_token = initial_poller.continuation_token()
 
-            poller = await client.begin_recognize_content_from_url(self.form_url_jpg, continuation_token=cont_token)
+            poller = await client.begin_recognize_content_from_url(None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
@@ -200,8 +201,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertEqual(len(layout.tables), 2)
-        self.assertEqual(layout.tables[0].row_count, 30)
-        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[0].row_count, 29)
+        self.assertEqual(layout.tables[0].column_count, 4)
         self.assertEqual(layout.tables[0].page_number, 1)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 5)
@@ -209,7 +210,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         layout = result[1]
         self.assertEqual(len(layout.tables), 1)
         self.assertEqual(layout.page_number, 2)
-        self.assertEqual(layout.tables[0].row_count, 24)
+        self.assertEqual(layout.tables[0].row_count, 23)
         self.assertEqual(layout.tables[0].column_count, 5)
         self.assertEqual(layout.tables[0].page_number, 2)
         self.assertFormPagesHasValues(result)
@@ -235,3 +236,146 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_selection_marks(self, client):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    async def test_content_selection_marks_v2(self, client):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_specify_pages(self, client):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1"])
+            result = await poller.result()
+            assert len(result) == 1
+
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1", "3"])
+            result = await poller.result()
+            assert len(result) == 2
+
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1-2"])
+            result = await poller.result()
+            assert len(result) == 2
+
+            poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1-2", "3"])
+            result = await poller.result()
+            assert len(result) == 3
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_language_specified(self, client):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
+            assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+            await poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_language_error(self, client):
+        async with client:
+            with pytest.raises(HttpResponseError) as e:
+                await client.begin_recognize_content_from_url(self.form_url_jpg, language="not a language")
+            assert "NotSupportedLanguage" == e.value.error.code
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    async def test_content_language_v2(self, client):
+        async with client:
+            with pytest.raises(ValueError) as e:
+                await client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
+            assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="german")
+    async def test_content_language_german(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="de")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="chinese_simplified")
+    async def test_content_language_chinese_simplified(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="zh-Hans")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="dutch")
+    async def test_content_language_dutch(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="nl")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="french")
+    async def test_content_language_french(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="fr")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="italian")
+    async def test_content_language_italian(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="it")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="portuguese")
+    async def test_content_language_portuguese(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="pt")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(language="spanish")
+    async def test_content_language_spanish(self, client, language_form):
+        async with client:
+            poller = await client.begin_recognize_content_from_url(language_form, language="es")
+            result = await poller.result()
+        self.assertEqual(len(result), 1)
+        layout = result[0]
+        self.assertEqual(layout.page_number, 1)
+        self.assertFormPagesHasValues(result)

@@ -29,6 +29,8 @@ from .._serialize import get_api_version
 from .._share_client import ShareClient as ShareClientBase
 from ._directory_client_async import ShareDirectoryClient
 from ._file_client_async import ShareFileClient
+from ..aio._lease_async import ShareLeaseClient
+
 
 if TYPE_CHECKING:
     from .._models import ShareProperties, AccessPolicy
@@ -126,6 +128,44 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
 
+    @distributed_trace_async()
+    async def _acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
+        # type: (int, Optional[str], **Any) -> ShareLeaseClient
+        """Requests a new lease.
+
+        If the share does not have an active lease, the Share
+        Service creates a lease on the share and returns a new lease.
+
+        .. versionadded:: 12.6.0
+
+        :param int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
+        :param str lease_id:
+            Proposed lease ID, in a GUID string format. The Share Service
+            returns 400 (Invalid request) if the proposed lease ID is not
+            in the correct format.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: A ShareLeaseClient object.
+        :rtype: ~azure.storage.fileshare.ShareLeaseClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share.py
+                :start-after: [START acquire_lease_on_share]
+                :end-before: [END acquire_lease_on_share]
+                :language: python
+                :dedent: 8
+                :caption: Acquiring a lease on a share.
+        """
+        kwargs['lease_duration'] = lease_duration
+        lease = ShareLeaseClient(self, lease_id=lease_id)  # type: ignore
+        await lease.acquire(**kwargs)
+        return lease
+
     @distributed_trace_async
     async def create_share(self, **kwargs):
         # type: (Any) -> Dict[str, Any]
@@ -136,6 +176,13 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Name-value pairs associated with the share as metadata.
         :keyword int quota:
             The quota to be allotted.
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+
+            .. versionadded:: 12.6.0
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Share-updated property dict (Etag and last modified).
@@ -152,6 +199,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """
         metadata = kwargs.pop('metadata', None)
         quota = kwargs.pop('quota', None)
+        access_tier = kwargs.pop('access_tier', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
@@ -161,6 +209,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 timeout=timeout,
                 metadata=metadata,
                 quota=quota,
+                access_tier=access_tier,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -225,8 +274,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Indicates if snapshots are to be deleted.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/file_samples_share_async.py
@@ -307,9 +354,52 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.share.set_quota( # type: ignore
+            return await self._client.share.set_properties( # type: ignore
                 timeout=timeout,
                 quota=quota,
+                access_tier=None,
+                cls=return_response_headers,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    async def set_share_properties(self, **kwargs):
+        # type: (Any) ->  Dict[str, Any]
+        """Sets the share properties.
+
+        .. versionadded:: 12.6.0
+
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', and 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :keyword int quota:
+            Specifies the maximum size of the share, in gigabytes.
+            Must be greater than 0, and less than or equal to 5TB.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Share-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share_async.py
+                :start-after: [START set_share_properties]
+                :end-before: [END set_share_properties]
+                :language: python
+                :dedent: 16
+                :caption: Sets the share properties.
+        """
+        timeout = kwargs.pop('timeout', None)
+        access_tier = kwargs.pop('access_tier', None)
+        quota = kwargs.pop('quota', None)
+        if all(parameter is None for parameter in [access_tier, quota]):
+            raise ValueError("set_share_properties should be called with at least one parameter.")
+        try:
+            return await self._client.share.set_properties( # type: ignore
+                timeout=timeout,
+                quota=quota,
+                access_tier=access_tier,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:

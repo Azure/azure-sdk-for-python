@@ -36,6 +36,7 @@ except (SyntaxError, ImportError):
     from ._models import StorageError, StorageErrorException
     from ._models import StorageErrorError
 from ._data_lake_storage_client_enums import (
+    PathExpiryOptions,
     PathGetPropertiesAction,
     PathLeaseAction,
     PathRenameMode,
@@ -57,10 +58,11 @@ __all__ = [
     'SourceModifiedAccessConditions',
     'StorageError', 'StorageErrorException',
     'StorageErrorError',
+    'PathSetAccessControlRecursiveMode',
+    'PathExpiryOptions',
     'PathResourceType',
     'PathRenameMode',
     'PathUpdateAction',
-    'PathSetAccessControlRecursiveMode',
     'PathLeaseAction',
     'PathGetPropertiesAction',
 ]
