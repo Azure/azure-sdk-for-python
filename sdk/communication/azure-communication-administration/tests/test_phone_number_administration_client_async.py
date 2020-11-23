@@ -303,17 +303,14 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
     @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
-    async def test_create_search(self):
-        searchOptions = CreateSearchOptions(
-            area_code=self.area_code_for_reservation,
-            description="testreservation20200014",
-            display_name="testreservation20200014",
-            phone_plan_ids=[self.phone_plan_id],
-            quantity=1
-        )
+    async def test_reserve_phone_numbers(self):
         async with self._phone_number_administration_client:
             poller = await self._phone_number_administration_client.begin_reserve_phone_numbers(
-                options=searchOptions
+                area_code=self.area_code_for_reservation,
+                description="testreservation20200014",
+                display_name="testreservation20200014",
+                phone_plan_ids=[self.phone_plan_id],
+                quantity=1
             )
             result = await poller.result()
         assert result

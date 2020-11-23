@@ -249,7 +249,7 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
 
     @pytest.mark.live_test_only
     @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
-    def test_create_search(self):
+    def test_reserve_phone_numbers(self):
         poller = self._phone_number_administration_client.begin_reserve_phone_numbers(
             area_code=self.area_code_for_reservation,
             description="testreservation20200014",
