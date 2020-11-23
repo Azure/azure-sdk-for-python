@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -58,7 +57,8 @@ class WorkspaceAadAdminsOperations(object):
         :return: WorkspaceAadAdminInfo or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.synapse.models.WorkspaceAadAdminInfo or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -88,9 +88,7 @@ class WorkspaceAadAdminsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorContractException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -235,7 +233,7 @@ class WorkspaceAadAdminsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 202, 204]:
             raise models.ErrorContractException(self._deserialize, response)
 
         if raw:

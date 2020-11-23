@@ -105,7 +105,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/metadataSync/config'}
 
     def create(
-            self, resource_group_name, workspace_name, sql_pool_name, enabled=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, sql_pool_name, enabled=None, sync_interval_in_minutes=None, custom_headers=None, raw=False, **operation_config):
         """Set SQL pool metadata sync config.
 
         Set the metadata sync configuration for a SQL pool.
@@ -120,6 +120,8 @@ class SqlPoolMetadataSyncConfigsOperations(object):
         :param enabled: Indicates whether the metadata sync is enabled or
          disabled
         :type enabled: bool
+        :param sync_interval_in_minutes: The Sync Interval in minutes.
+        :type sync_interval_in_minutes: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -131,7 +133,7 @@ class SqlPoolMetadataSyncConfigsOperations(object):
         :raises:
          :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
-        metadata_sync_configuration = models.MetadataSyncConfig(enabled=enabled)
+        metadata_sync_configuration = models.MetadataSyncConfig(enabled=enabled, sync_interval_in_minutes=sync_interval_in_minutes)
 
         # Construct URL
         url = self.create.metadata['url']
