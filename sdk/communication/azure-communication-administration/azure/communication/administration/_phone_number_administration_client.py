@@ -499,14 +499,14 @@ class PhoneNumberAdministrationClient(object):
         if 'location_options' in kwargs:
             reservation_options.location_options = kwargs.pop('location_options')
 
-        create_reservation_response = self._phone_number_administration_client.\
+        create_reservation_poller = self._phone_number_administration_client.\
             phone_number_administration.create_search(
                 body=reservation_options,
                 **kwargs
         )
 
         initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id=create_reservation_response.search_id
+            search_id=create_reservation_poller.search_id
         )
         return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
                          initial_response=initial_state,
