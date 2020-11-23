@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING
 from six import add_metaclass
 
 from .exceptions import (
-    HttpResponseError, ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError, map_error
+    ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError
 )
 
 if TYPE_CHECKING:
@@ -54,13 +54,7 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_page(self, continuation_token):
-        # type: (Any, HttpRequest) -> HttpResponse
-        """Gets next page
-        """
-        raise NotImplementedError("This method needs to be implemented")
-
-    def finished(self, continuation_token):
+    def finished(self, did_a_call_already, continuation_token):
         # type: (Any) -> bool
         """When paging is finished
         """
@@ -87,12 +81,6 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def extract_data(self, pipeline_response):
-        # type: (HttpResponse) -> Tuple[Any, Iterable[ReturnType]]
-        """Return the continuation token and current list of elements to PageIterator
-        """
-        raise NotImplementedError("This method needs to be implemented")
-
 
 class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-attributes
     """This is the most common paging method. It uses the continuation token
@@ -104,13 +92,11 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._deserialize_output = None
         self._item_name = None
         self._next_link_name = None
-        self.did_a_call_already = False
         self._cls = None
         self._error_map = None
         self._next_request_partial = None
         self._initial_request = None
         self._operation_config = operation_config
-        self._pipeline_response = None
 
     def initialize(self, client, deserialize_output, next_link_name, **kwargs):
         # type: (PipelineClient, Callable, str, Any) -> None
@@ -135,42 +121,16 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
-    def _reinject_request_id(self):
-        if "request_id" not in self._operation_config:
-            self._operation_config["request_id"] = self._pipeline_response.http_response.request.headers[
-                "x-ms-client-request-id"
-            ]
-
     def get_next_request(self, continuation_token):
         # type: (Any, HttpRequest) -> HttpRequest
-        self._reinject_request_id()
         try:
             return self._next_request_partial(continuation_token)
         except TypeError:
             return self._next_request_partial()
 
-    def get_page(self, continuation_token):
-        # type: (Any, HttpRequest) -> HttpResponse
-        if not self.did_a_call_already:
-            request = self._initial_request
-            self.did_a_call_already = True
-        else:
-            request = self.get_next_request(continuation_token)
-        self._pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **self._operation_config
-        )
-
-        http_response = self._pipeline_response.http_response
-        status_code = http_response.status_code
-        if status_code < 200 or status_code >= 300:
-            map_error(status_code=status_code, response=http_response, error_map=self._error_map)
-            raise HttpResponseError(response=http_response)
-
-        return self._pipeline_response
-
-    def finished(self, continuation_token):
+    def finished(self, did_a_call_already, continuation_token):
         # type: (Any) -> bool
-        return continuation_token is None and self.did_a_call_already
+        return did_a_call_already and not continuation_token
 
     def get_list_elements(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Iterable[ReturnType]
@@ -197,14 +157,6 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
                 )
             )
         return getattr(deserialized, self._next_link_name)
-
-    def extract_data(self, pipeline_response):
-        # type: (HttpResponse) -> Tuple[Any, Iterable[ReturnType]]
-        deserialized = self._deserialize_output(pipeline_response)
-        list_of_elem = self.get_list_elements(pipeline_response, deserialized)  # type: Iterable[ReturnType]
-        list_of_elem = self.mutate_list(pipeline_response, list_of_elem)
-        continuation_token = self.get_continuation_token(pipeline_response, deserialized)
-        return continuation_token, list_of_elem
 
 
 class PagingMethodWithInitialResponse(BasicPagingMethod):
@@ -241,27 +193,8 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
 
     def get_next_request(self, continuation_token):
         # type: (Any, HttpRequest) -> HttpRequest
-        super(PagingMethodWithInitialResponse, self)._reinject_request_id()
         if self._next_request_partial:
             return super(PagingMethodWithInitialResponse, self).get_next_request(continuation_token)
         request = self._initial_response.http_response.request
         request.url = continuation_token
         return request
-
-    def get_page(self, continuation_token):
-        # type: (Any, HttpRequest) -> HttpResponse
-        if not self.did_a_call_already:
-            self.did_a_call_already = True
-            return self._initial_response
-        request = self.get_next_request(continuation_token)
-        self._pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **self._operation_config
-        )
-
-        http_response = self._pipeline_response.http_response
-        status_code = http_response.status_code
-        if status_code < 200 or status_code >= 300:
-            map_error(status_code=status_code, response=http_response, error_map=self._error_map)
-            raise HttpResponseError(response=http_response)
-
-        return self._pipeline_response

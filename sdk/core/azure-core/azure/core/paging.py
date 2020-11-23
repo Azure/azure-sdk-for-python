@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import itertools
+import functools
 from typing import (  # pylint: disable=unused-import
     Callable,
     Optional,
@@ -34,7 +35,7 @@ from typing import (  # pylint: disable=unused-import
 )
 import logging
 
-from .exceptions import AzureError
+from .exceptions import AzureError, map_error, HttpResponseError
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,28 +43,35 @@ _LOGGER = logging.getLogger(__name__)
 ReturnType = TypeVar("ReturnType")
 ResponseType = TypeVar("ResponseType")
 
-class _LegacyPagingMethod:
-    def __init__(self, get_next, extract_data):
-        if not (get_next and extract_data):
-            raise ValueError(
-                "You are using the legacy version of paging, but haven't provided both a get_next "
-                "and extract_data. Preferably switch to the new paging with PagingMethod, but if "
-                "not, please pass in the missing callback."
-            )
-        self._get_next = get_next  # type: Callable[[Optional[str]], ResponseType]
-        self.extract_data = extract_data  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
-        self.did_a_call_already = False
+def _extract_data(pipeline_response, paging_method):
+    deserialized = paging_method._deserialize_output(pipeline_response)  # pylint: disable=protected-access
+    list_of_elem = paging_method.get_list_elements(pipeline_response, deserialized)  # type: Iterable[ReturnType]
+    list_of_elem = paging_method.mutate_list(pipeline_response, list_of_elem)
+    continuation_token = paging_method.get_continuation_token(pipeline_response, deserialized)
+    return continuation_token, list_of_elem
 
-    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
-        # to pass mypy
-        pass
+def _get_page(continuation_token, paging_method, initial_response):
+    if not continuation_token:
+        if initial_response:
+            return initial_response
+        request = paging_method._initial_request  # pylint: disable=protected-access
+    else:
+        request = paging_method.get_next_request(continuation_token)
 
-    def finished(self, continuation_token):
-        return continuation_token is None and self.did_a_call_already
+    response = paging_method._client._pipeline.run(  # pylint: disable=protected-access
+        request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
+    )
 
-    def get_page(self, continuation_token):  # pylint: disable=unused-argument
-        self.did_a_call_already = True
-        return self._get_next(continuation_token)
+    http_response = response.http_response
+    status_code = http_response.status_code
+    if status_code < 200 or status_code >= 300:
+        map_error(status_code=status_code, response=http_response, error_map=paging_method._error_map)  # pylint: disable=protected-access
+        error = HttpResponseError(response=http_response)
+        error.continuation_token = continuation_token
+        raise error
+    if "request_id" not in paging_method._operation_config:  # pylint: disable=protected-access
+        paging_method._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]  # pylint: disable=protected-access
+    return response
 
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
@@ -84,17 +92,31 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
             if paging_method:
                 raise ValueError(
                     "You can't pass in both a paging method and a callback for get_next or extract_data. "
-                    "We recomment you only pass in a paging method, since passing in callbacks is legacy."
+                    "We recommend you only pass in a paging method, since passing in callbacks is legacy."
                 )
-            self._paging_method = _LegacyPagingMethod(get_next, extract_data)
-        else:
-            self._paging_method = paging_method
-            self._paging_method.initialize(**kwargs)
+            if not get_next and extract_data:
+                raise ValueError(
+                    "If you are passing in callbacks (this is legacy), you have to pass in callbacks for both "
+                    "get_next and extract_data. We recommend you just pass in a paging method instead though."
+                )
+        self._extract_data = extract_data or functools.partial(_extract_data, paging_method=paging_method)
+        self._get_page = get_next or functools.partial(
+            _get_page, paging_method=paging_method, initial_response=kwargs.get("initial_response")
+        )
+        self._paging_method = paging_method
 
+        if self._paging_method:
+            self._paging_method.initialize(**kwargs)
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
+        self._did_a_call_already = False
+        self._operation_config = kwargs
 
+    def _finished(self, did_a_call_already, continuation_token):
+        if self._paging_method:
+            return self._paging_method.finished(did_a_call_already, continuation_token)
+        return did_a_call_already and not continuation_token
 
     def __iter__(self):
         """Return 'self'."""
@@ -102,17 +124,16 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
 
     def __next__(self):
         # type: () -> Iterator[ReturnType]
-        if self._paging_method.finished(self.continuation_token):
+        if self._finished(self._did_a_call_already, self.continuation_token):
             raise StopIteration("End of paging")
         try:
-            self._response = self._paging_method.get_page(self.continuation_token)
+            self._response = self._get_page(self.continuation_token)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token
             raise
-
-        self.continuation_token, self._current_page = self._paging_method.extract_data(self._response)
-
+        self._did_a_call_already = True
+        self.continuation_token, self._current_page = self._extract_data(self._response)
         return iter(self._current_page)
 
     next = __next__  # Python 2 compatibility.

@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 import collections.abc
 import logging
+import functools
 from typing import (
     Iterable,
     AsyncIterator,
@@ -34,9 +35,9 @@ from typing import (
     Optional,
     Awaitable,
 )
-from .paging import _LegacyPagingMethod
+from .pipeline._tools_async import await_result as _await_result
 
-from .exceptions import AzureError
+from .exceptions import AzureError, map_error, HttpResponseError
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,6 +49,36 @@ __all__ = [
     "AsyncPageIterator",
     "AsyncItemPaged"
 ]
+
+def _extract_data(pipeline_response, paging_method):
+    deserialized = paging_method._deserialize_output(pipeline_response)  # pylint: disable=protected-access
+    list_of_elem = paging_method.get_list_elements(pipeline_response, deserialized)  # type: Iterable[ReturnType]
+    list_of_elem = paging_method.mutate_list(pipeline_response, list_of_elem)
+    continuation_token = paging_method.get_continuation_token(pipeline_response, deserialized)
+    return continuation_token, AsyncList(list_of_elem)
+
+async def _get_page(continuation_token, paging_method, initial_response):
+    if not continuation_token:
+        if initial_response:
+            return initial_response
+        request = paging_method._initial_request  # pylint: disable=protected-access
+    else:
+        request = paging_method.get_next_request(continuation_token)
+
+    response = await paging_method._client._pipeline.run(  # pylint: disable=protected-access
+        request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
+    )
+
+    http_response = response.http_response
+    status_code = http_response.status_code
+    if status_code < 200 or status_code >= 300:
+        map_error(status_code=status_code, response=http_response, error_map=paging_method._error_map)  # pylint: disable=protected-access
+        error = HttpResponseError(response=http_response)
+        error.continuation_token = continuation_token
+        raise error
+    if "request_id" not in paging_method._operation_config:  # pylint: disable=protected-access
+        paging_method._operation_config["request_id"] = response.http_response.request.headers["x-ms-client-request-id"]  # pylint: disable=protected-access
+    return response
 
 class AsyncList(AsyncIterator[ReturnType]):
     def __init__(self, iterable: Iterable[ReturnType]) -> None:
@@ -92,36 +123,46 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
             if paging_method:
                 raise ValueError(
                     "You can't pass in both a paging method and a callback for get_next or extract_data. "
-                    "We recomment you only pass in a paging method, since passing in callbacks is legacy."
+                    "We recommend you only pass in a paging method, since passing in callbacks is legacy."
                 )
-            self._paging_method = _LegacyPagingMethod(get_next, extract_data)
-        else:
-            self._paging_method = paging_method
-            self._paging_method.initialize(**kwargs)
+            if not get_next and extract_data:
+                raise ValueError(
+                    "If you are passing in callbacks (this is legacy), you have to pass in callbacks for both "
+                    "get_next and extract_data. We recommend you just pass in a paging method instead though."
+                )
+        self._extract_data = extract_data or functools.partial(_extract_data, paging_method=paging_method)
+        self._get_page = get_next or functools.partial(
+            _get_page, paging_method=paging_method, initial_response=kwargs.get("initial_response")
+        )
+        self._paging_method = paging_method
 
+        if self._paging_method:
+            self._paging_method.initialize(**kwargs)
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
+        self._did_a_call_already = False
+        self._operation_config = kwargs
 
+    def _finished(self, did_a_call_already, continuation_token):
+        if self._paging_method:
+            return self._paging_method.finished(did_a_call_already, continuation_token)
+        return did_a_call_already and not continuation_token
 
     async def __anext__(self):
-        if self._paging_method.finished(self.continuation_token):
+        if self._finished(self._did_a_call_already, self.continuation_token):
             raise StopAsyncIteration("End of paging")
         try:
-            self._response = await self._paging_method.get_page(self.continuation_token)
+            self._response = await self._get_page(self.continuation_token)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token
             raise
+        self._did_a_call_already = True
+        self.continuation_token, self._current_page = await _await_result(self._extract_data, self._response)
 
-        self.continuation_token, self._current_page = await self._paging_method.extract_data(
-            self._response
-        )
-
-        # If current_page was a sync list, wrap it async-like
         if isinstance(self._current_page, collections.abc.Iterable):
             self._current_page = AsyncList(self._current_page)
-
         return self._current_page
 
 
