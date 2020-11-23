@@ -6,7 +6,7 @@
 # ------------------------------------
 from typing import Dict, List
 
-from azure.communication.administration._phonenumber._generated.models import ReleaseStatus
+from azure.communication.administration._phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -454,10 +454,21 @@ class PhoneNumberAdministrationClient(object):
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberReservation]
         """Begins creating a phone number search to reserve phone numbers.
-        Caller must provide either options, or continuation_token keywords to use the method.
-        If both options and continuation_token are specified, only continuation_token will be used to
-        restart a poller from a saved state, and keyword options will be ignored.
-        :keyword azure.communication.administration.CreateSearchOptions options: reservation options.
+        Caller must provide one of the following:
+         (1) all of keywords display_name, description, phone_plan_ids, area_code, quantity if all the phone plans
+         to reserve are toll-free plans.
+         (2) all of keywords display_name, description, phone_plan_ids, area_code, quantity, location_options
+         if at least one phone plan to reserve is not toll-free plans.
+         (3) only keyword continuation_token to restart a poller from a saved state.
+        If both continuation_token and other keywords are specified, only continuation_token will be used to
+        restart a poller from a saved state, and other keywords will be ignored.
+        :keyword str display_name: display name of the search.
+        :keyword str description: description of the search.
+        :keyword list[str] phone_plan_ids: the plan subtype ids from which to create the search.
+        :keyword str area_code: the area code from which to create the search.
+        :keyword int quantity: the quantity of phone numbers to request.
+        :keyword list[~azure.communication.administration.models.LocationOptionsDetails] location_options:
+            the location options of the search.
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.administration.PhoneNumberReservation]
         """
@@ -480,18 +491,31 @@ class PhoneNumberAdministrationClient(object):
                 client=self._phone_number_administration_client.phone_number_administration
             )
 
-        if "options" not in kwargs:
-            raise ValueError("Either kwarg 'options' or 'continuation_token' needs to be specified")
+        required_kwargs = ['display_name', 'description', 'phone_plan_ids', 'area_code', 'quantity']
+        for required_kwarg in required_kwargs:
+            if required_kwarg not in kwargs:
+                raise ValueError("Either kwarg 'continuation_token', or a set of kwargs " +
+                                 "'display_name', 'description', 'phone_plan_ids', "
+                                 "'area_code', 'quantity' needs to be specified")
 
-        reservation_options = kwargs.pop('options')  # type: str
+        reservation_options = CreateSearchOptions(
+                display_name=kwargs.pop('display_name'),
+                description=kwargs.pop('description'),
+                phone_plan_ids=kwargs.pop('phone_plan_ids'),
+                area_code=kwargs.pop('area_code'),
+                quantity=kwargs.pop('quantity')
+            )
 
-        create_search_response = await self._phone_number_administration_client.\
+        if 'location_options' in kwargs:
+            reservation_options.location_options = kwargs.pop('location_options')
+
+        create_reservation_response = self._phone_number_administration_client.\
             phone_number_administration.create_search(
                 body=reservation_options,
                 **kwargs
-            )
+        )
         initial_state = await self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id=create_search_response.search_id
+            search_id=create_reservation_response.search_id
         )
         return AsyncLROPoller(client=self._phone_number_administration_client.phone_number_administration,
                          initial_response=initial_state,
