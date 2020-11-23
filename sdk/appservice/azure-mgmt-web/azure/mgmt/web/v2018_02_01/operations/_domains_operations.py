@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class DomainsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,10 +49,10 @@ class DomainsOperations(object):
 
     def check_availability(
         self,
-        identifier,  # type: "models.NameIdentifier"
+        identifier,  # type: "_models.NameIdentifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DomainAvailablilityCheckResult"
+        # type: (...) -> "_models.DomainAvailablilityCheckResult"
         """Check if a domain is available for registration.
 
         Check if a domain is available for registration.
@@ -64,7 +64,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainAvailablilityCheckResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainAvailablilityCheckResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainAvailablilityCheckResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -98,7 +98,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainAvailablilityCheckResult', pipeline_response)
@@ -113,7 +113,7 @@ class DomainsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DomainCollection"]
+        # type: (...) -> Iterable["_models.DomainCollection"]
         """Get all domains in a subscription.
 
         Get all domains in a subscription.
@@ -123,7 +123,7 @@ class DomainsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2018_02_01.models.DomainCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -168,7 +168,7 @@ class DomainsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -183,7 +183,7 @@ class DomainsOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DomainControlCenterSsoRequest"
+        # type: (...) -> "_models.DomainControlCenterSsoRequest"
         """Generate a single sign-on request for the domain management portal.
 
         Generate a single sign-on request for the domain management portal.
@@ -193,7 +193,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainControlCenterSsoRequest
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainControlCenterSsoRequest"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainControlCenterSsoRequest"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -222,7 +222,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainControlCenterSsoRequest', pipeline_response)
@@ -235,10 +235,10 @@ class DomainsOperations(object):
 
     def list_recommendations(
         self,
-        parameters,  # type: "models.DomainRecommendationSearchParameters"
+        parameters,  # type: "_models.DomainRecommendationSearchParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.NameIdentifierCollection"]
+        # type: (...) -> Iterable["_models.NameIdentifierCollection"]
         """Get domain name recommendations based on keywords.
 
         Get domain name recommendations based on keywords.
@@ -250,7 +250,7 @@ class DomainsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2018_02_01.models.NameIdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.NameIdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.NameIdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -303,7 +303,7 @@ class DomainsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -319,7 +319,7 @@ class DomainsOperations(object):
         resource_group_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DomainCollection"]
+        # type: (...) -> Iterable["_models.DomainCollection"]
         """Get all domains in a resource group.
 
         Get all domains in a resource group.
@@ -331,7 +331,7 @@ class DomainsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2018_02_01.models.DomainCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -377,7 +377,7 @@ class DomainsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -394,7 +394,7 @@ class DomainsOperations(object):
         domain_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Domain"
+        # type: (...) -> "_models.Domain"
         """Get a domain.
 
         Get a domain.
@@ -408,7 +408,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.Domain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -439,7 +439,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Domain', pipeline_response)
@@ -454,11 +454,11 @@ class DomainsOperations(object):
         self,
         resource_group_name,  # type: str
         domain_name,  # type: str
-        domain,  # type: "models.Domain"
+        domain,  # type: "_models.Domain"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Domain"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        # type: (...) -> "_models.Domain"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -494,7 +494,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -513,10 +513,10 @@ class DomainsOperations(object):
         self,
         resource_group_name,  # type: str
         domain_name,  # type: str
-        domain,  # type: "models.Domain"
+        domain,  # type: "_models.Domain"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.Domain"]
+        # type: (...) -> LROPoller["_models.Domain"]
         """Creates or updates a domain.
 
         Creates or updates a domain.
@@ -538,7 +538,7 @@ class DomainsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -563,7 +563,13 @@ class DomainsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+[^\.]$'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str', pattern=r'[a-zA-Z0-9][a-zA-Z0-9\.-]+'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -643,10 +649,10 @@ class DomainsOperations(object):
         self,
         resource_group_name,  # type: str
         domain_name,  # type: str
-        domain,  # type: "models.DomainPatchResource"
+        domain,  # type: "_models.DomainPatchResource"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.Domain"
+        # type: (...) -> "_models.Domain"
         """Creates or updates a domain.
 
         Creates or updates a domain.
@@ -662,7 +668,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.Domain
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.Domain"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Domain"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -698,7 +704,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
@@ -719,7 +725,7 @@ class DomainsOperations(object):
         domain_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.DomainOwnershipIdentifierCollection"]
+        # type: (...) -> Iterable["_models.DomainOwnershipIdentifierCollection"]
         """Lists domain ownership identifiers.
 
         Lists domain ownership identifiers.
@@ -733,7 +739,7 @@ class DomainsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -780,7 +786,7 @@ class DomainsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -798,7 +804,7 @@ class DomainsOperations(object):
         name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DomainOwnershipIdentifier"
+        # type: (...) -> "_models.DomainOwnershipIdentifier"
         """Get ownership identifier for domain.
 
         Get ownership identifier for domain.
@@ -814,7 +820,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -846,7 +852,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainOwnershipIdentifier', pipeline_response)
@@ -862,10 +868,10 @@ class DomainsOperations(object):
         resource_group_name,  # type: str
         domain_name,  # type: str
         name,  # type: str
-        domain_ownership_identifier,  # type: "models.DomainOwnershipIdentifier"
+        domain_ownership_identifier,  # type: "_models.DomainOwnershipIdentifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DomainOwnershipIdentifier"
+        # type: (...) -> "_models.DomainOwnershipIdentifier"
         """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -884,7 +890,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -921,7 +927,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainOwnershipIdentifier', pipeline_response)
@@ -997,10 +1003,10 @@ class DomainsOperations(object):
         resource_group_name,  # type: str
         domain_name,  # type: str
         name,  # type: str
-        domain_ownership_identifier,  # type: "models.DomainOwnershipIdentifier"
+        domain_ownership_identifier,  # type: "_models.DomainOwnershipIdentifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DomainOwnershipIdentifier"
+        # type: (...) -> "_models.DomainOwnershipIdentifier"
         """Creates an ownership identifier for a domain or updates identifier details for an existing identifer.
 
         Creates an ownership identifier for a domain or updates identifier details for an existing
@@ -1019,7 +1025,7 @@ class DomainsOperations(object):
         :rtype: ~azure.mgmt.web.v2018_02_01.models.DomainOwnershipIdentifier
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DomainOwnershipIdentifier"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainOwnershipIdentifier"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1056,7 +1062,7 @@ class DomainsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DomainOwnershipIdentifier', pipeline_response)
