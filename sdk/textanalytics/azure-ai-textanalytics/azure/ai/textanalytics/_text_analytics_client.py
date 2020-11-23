@@ -33,7 +33,7 @@ from ._response_handlers import (
     analyze_paged_result,
     _get_deserialize
 )
-from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod, TextAnalyticsOperationState
+from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsOperationState
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -463,11 +463,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 model_version=model_version,
                 string_index_type=self._string_code_unit,
                 cls=kwargs.pop("cls", partial(self._healthcare_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPollingMethod(
+                polling=LROBasePolling(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
                     ],
+                    operation_state=TextAnalyticsOperationState(),
                     **kwargs),
                 continuation_token=continuation_token,
                 **kwargs
