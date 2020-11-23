@@ -67,13 +67,13 @@ jobs:
             displayName: Create resource group and environment variable for tests
 
           # figure out what's up with the create resource group above
-        - template: ../../../common/TestResources/deploy-test-resources.yml
-          parameters:
-            Location: ${{ coalesce(parameters.Location, cloudConfig.value.Location, 'westus2') }}
-            ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-            SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
-            ArmTemplateParameters: ${{ cloudConfig.value.ArmTemplateParameters }}
-            # AdditionalParameters: $ {{ parameters.AdditionalTestArgs }}
+        - ${{ if eq(parameters['AllocateResourceGroup'], 'false') }}:
+          - template: ../../../common/TestResources/deploy-test-resources.yml
+            parameters:
+              Location: ${{ coalesce(parameters.Location, cloudConfig.value.Location, 'westus2') }}
+              ServiceDirectory: '${{ parameters.ServiceDirectory }}'
+              SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
+              ArmTemplateParameters: ${{ coalesce(cloudConfig.value.ArmTemplateParameters, '@{}') }}
 
         - template: ../steps/build-test.yml
           parameters:
@@ -99,7 +99,8 @@ jobs:
             displayName: Delete resource group
             condition: ne(variables['AZURE_RESOURCEGROUP_NAME'], '')
 
-        - template: /eng/common/TestResources/remove-test-resources.yml
-          parameters:
-            ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-            SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
+        - ${{ if eq(parameters['AllocateResourceGroup'], 'false') }}:
+          - template: /eng/common/TestResources/remove-test-resources.yml
+            parameters:
+              ServiceDirectory: '${{ parameters.ServiceDirectory }}'
+              SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
