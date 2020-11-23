@@ -129,7 +129,7 @@ class ItemPaged(Iterator[ReturnType]):
         # cb to extract data, and cb to format next link
         self._args = args
         self._kwargs = kwargs
-        self._internal_page_iterator = None
+        self._page_iterator = None
         self._page_iterator_class = self._kwargs.pop(
             "page_iterator_class", PageIterator
         )
@@ -156,8 +156,8 @@ class ItemPaged(Iterator[ReturnType]):
         return self
 
     def __next__(self):
-        if self._internal_page_iterator is None:
-            self._internal_page_iterator = itertools.chain.from_iterable(self.by_page())
-        return next(self._internal_page_iterator)
+        if self._page_iterator is None:
+            self._page_iterator = itertools.chain.from_iterable(self.by_page())
+        return next(self._page_iterator)
 
     next = __next__  # Python 2 compatibility.

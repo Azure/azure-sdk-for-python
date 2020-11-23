@@ -94,12 +94,12 @@ class PagingMethodABC():
         raise NotImplementedError("This method needs to be implemented")
 
 
-class BasicPagingMethod(PagingMethodABC):
+class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-attributes
     """This is the most common paging method. It uses the continuation token
     as the next link
     """
 
-    def __init__(self):
+    def __init__(self, **operation_config):
         self._client = None
         self._deserialize_output = None
         self._item_name = None
@@ -109,6 +109,8 @@ class BasicPagingMethod(PagingMethodABC):
         self._error_map = None
         self._next_request_partial = None
         self._initial_request = None
+        self._operation_config = operation_config
+        self._pipeline_response = None
 
     def initialize(self, client, deserialize_output, next_link_name, **kwargs):
         # type: (PipelineClient, Callable, str, Any) -> None
@@ -133,8 +135,15 @@ class BasicPagingMethod(PagingMethodABC):
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
+    def _reinject_request_id(self):
+        if "request_id" not in self._operation_config:
+            self._operation_config["request_id"] = self._pipeline_response.http_response.request.headers[
+                "x-ms-client-request-id"
+            ]
+
     def get_next_request(self, continuation_token):
         # type: (Any, HttpRequest) -> HttpRequest
+        self._reinject_request_id()
         try:
             return self._next_request_partial(continuation_token)
         except TypeError:
@@ -147,15 +156,17 @@ class BasicPagingMethod(PagingMethodABC):
             self.did_a_call_already = True
         else:
             request = self.get_next_request(continuation_token)
-        response = self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
+        self._pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **self._operation_config
+        )
 
-        http_response = response.http_response
+        http_response = self._pipeline_response.http_response
         status_code = http_response.status_code
         if status_code < 200 or status_code >= 300:
             map_error(status_code=status_code, response=http_response, error_map=self._error_map)
             raise HttpResponseError(response=http_response)
 
-        return response
+        return self._pipeline_response
 
     def finished(self, continuation_token):
         # type: (Any) -> bool
@@ -230,6 +241,7 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
 
     def get_next_request(self, continuation_token):
         # type: (Any, HttpRequest) -> HttpRequest
+        super(PagingMethodWithInitialResponse, self)._reinject_request_id()
         if self._next_request_partial:
             return super(PagingMethodWithInitialResponse, self).get_next_request(continuation_token)
         request = self._initial_response.http_response.request
@@ -242,12 +254,14 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
             self.did_a_call_already = True
             return self._initial_response
         request = self.get_next_request(continuation_token)
-        response = self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
+        self._pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **self._operation_config
+        )
 
-        http_response = response.http_response
+        http_response = self._pipeline_response.http_response
         status_code = http_response.status_code
         if status_code < 200 or status_code >= 300:
             map_error(status_code=status_code, response=http_response, error_map=self._error_map)
             raise HttpResponseError(response=http_response)
 
-        return response
+        return self._pipeline_response
