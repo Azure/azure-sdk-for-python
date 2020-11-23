@@ -15,7 +15,8 @@ from typing import (  # pylint: disable=unused-import
 from functools import partial
 from six.moves.urllib.parse import urlparse
 from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller, LROBasePolling
+from azure.core.polling import LROPoller
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
