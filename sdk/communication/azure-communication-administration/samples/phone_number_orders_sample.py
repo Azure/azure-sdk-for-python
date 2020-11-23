@@ -73,7 +73,7 @@ def get_reservation_by_id():
 
 def begin_reserve_phone_numbers():
     # [START begin_reserve_phone_numbers]
-    reserve_phone_numbers_response = phone_number_administration_client.begin_reserve_phone_numbers(
+    reserve_phone_numbers_poller = phone_number_administration_client.begin_reserve_phone_numbers(
         area_code=area_code_for_reservation,
         description="testreservation20200014",
         display_name="testreservation20200014",
@@ -82,7 +82,7 @@ def begin_reserve_phone_numbers():
     )
     # [END begin_reserve_phone_numbers]
     print('reserve phone numbers status:')
-    print(reserve_phone_numbers_response.status())
+    print(reserve_phone_numbers_poller.status())
 
 
 def cancel_reservation():
