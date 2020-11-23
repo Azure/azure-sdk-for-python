@@ -13,12 +13,12 @@ Use the Service Bus client library for Python to communicate between application
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/CHANGELOG.md)
 
-> **NOTE**: This document has instructions, links and code snippets for the newly-released GA version of the `azure-servicebus` package.
-> The prior preview version (0.50) has different APIs and is now deprecated. Please view the resources below for if historical references are needed, but migration is recommended.
+> **NOTE**: This document has instructions, references, and code snippets for the latest version of the `azure-servicebus` package.
+> This package is replacing the preview version (`azure-servicebus==0.53`) which is no longer maintained. 
+> Please view the links below for reference if needed; however, migrating to the latest version using the [migration guide][migration_guide] is recommended.
 
 [V0.50 Source code][0_50_source] | [V0.50 Package (PyPi)][0_50_pypi] | [V0.50 API reference documentation][0_50_api_docs] | [V0.50 Product documentation][0_50_product_docs] | [V0.50 Samples][0_50_samples] | [V0.50 Changelog][0_50_changelog]
 
-We also provide a migration guide for users familiar with the existing package that would like to try the preview: [migration guide to move from Service Bus V0.50 to Service Bus V7 Preview][migration_guide]
 
 ## Getting started
 
