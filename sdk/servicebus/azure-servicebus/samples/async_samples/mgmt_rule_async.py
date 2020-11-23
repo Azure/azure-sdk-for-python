@@ -18,7 +18,6 @@ Example to show managing rule entities under a ServiceBus Subscription, includin
 
 import os
 import asyncio
-from azure.servicebus.management import TrueRuleFilter
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -29,7 +28,7 @@ RULE_NAME = "sb_mgmt_demo_rule"
 
 async def create_rule(servicebus_mgmt_client):
     print("-- Create Rule")
-    await servicebus_mgmt_client.create_rule(TOPIC_NAME, SUBSCRIPTION_NAME, RULE_NAME, filter=TrueRuleFilter())
+    await servicebus_mgmt_client.create_rule(TOPIC_NAME, SUBSCRIPTION_NAME, RULE_NAME)
     print("Rule {} is created.".format(RULE_NAME))
     print("")
 

@@ -17,7 +17,7 @@ Example to show managing rule entities under a ServiceBus Subscription, includin
 # pylint: disable=C0111
 
 import os
-from azure.servicebus.management import ServiceBusAdministrationClient, TrueRuleFilter
+from azure.servicebus.management import ServiceBusAdministrationClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
 TOPIC_NAME = "sb_mgmt_demo_topic"
@@ -27,7 +27,7 @@ RULE_NAME = "sb_mgmt_demo_rule"
 
 def create_rule(servicebus_mgmt_client):
     print("-- Create Rule")
-    servicebus_mgmt_client.create_rule(TOPIC_NAME, SUBSCRIPTION_NAME, RULE_NAME, filter=TrueRuleFilter())
+    servicebus_mgmt_client.create_rule(TOPIC_NAME, SUBSCRIPTION_NAME, RULE_NAME)
     print("Rule {} is created.".format(RULE_NAME))
     print("")
 

@@ -191,7 +191,7 @@ with queue_client.get_receiver(idle_timeout=1, mode=ReceiveSettleMode.PeekLock, 
 
 Becomes this in v7:
 ```python
-with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, receive_mode=ReceiveMode.PeekLock) as client:
+with ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, receive_mode=ServiceBusReceiveMode.PeekLock) as client:
 
     with client.get_queue_receiver(queue_name=QUEUE_NAME) as receiver:
         batch = receiver.receive_messages(max_message_count=10, max_wait_time=5)
