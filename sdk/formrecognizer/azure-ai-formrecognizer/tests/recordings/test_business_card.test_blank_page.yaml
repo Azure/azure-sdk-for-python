@@ -464,27 +464,27 @@ interactions:
       Content-Type:
       - application/pdf
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyze?includeTextDetails=false
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyze?includeTextDetails=false
   response:
     body:
       string: ''
     headers:
       apim-request-id:
-      - 0e4fb86f-73cc-4b1d-8c60-f063c19f3481
+      - 6e6713af-77fc-4c55-a6c6-3f1501081068
       content-length:
       - '0'
       date:
-      - Tue, 06 Oct 2020 18:57:08 GMT
+      - Wed, 11 Nov 2020 17:49:42 GMT
       operation-location:
-      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyzeResults/0e4fb86f-73cc-4b1d-8c60-f063c19f3481
+      - https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyzeResults/6e6713af-77fc-4c55-a6c6-3f1501081068
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '162'
+      - '52'
     status:
       code: 202
       message: Accepted
@@ -498,31 +498,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.8.5 (macOS-10.13.6-x86_64-i386-64bit)
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/prebuilt/businessCard/analyzeResults/0e4fb86f-73cc-4b1d-8c60-f063c19f3481
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/businessCard/analyzeResults/6e6713af-77fc-4c55-a6c6-3f1501081068
   response:
     body:
-      string: '{"status": "succeeded", "createdDateTime": "2020-10-06T18:57:08Z",
-        "lastUpdatedDateTime": "2020-10-06T18:57:12Z", "analyzeResult": {"version":
-        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.4967, "height":
-        10.9967, "unit": "inch"}], "documentResults": [{"docType": "prebuilt:businesscard",
+      string: '{"status": "succeeded", "createdDateTime": "2020-11-11T17:49:42Z",
+        "lastUpdatedDateTime": "2020-11-11T17:49:46Z", "analyzeResult": {"version":
+        "2.1.0", "readResults": [{"page": 1, "angle": 0, "width": 8.5, "height": 11,
+        "unit": "inch"}], "documentResults": [{"docType": "prebuilt:businesscard",
         "pageRange": [1, 1], "fields": {}}]}}'
     headers:
       apim-request-id:
-      - 9f0c028e-acfe-43b6-8c66-55e0aefa199b
+      - 2bbf38ba-1732-4960-8713-ef7e25d9c079
       content-length:
-      - '313'
+      - '305'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 06 Oct 2020 18:57:13 GMT
+      - Wed, 11 Nov 2020 17:49:47 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '168'
+      - '17'
     status:
       code: 200
       message: OK

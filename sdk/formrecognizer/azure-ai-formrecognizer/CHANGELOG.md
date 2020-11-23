@@ -7,7 +7,9 @@ This version of the SDK defaults to the latest supported API version, which curr
 **New features**
 
 - New methods `begin_recognize_business_cards` and `begin_recognize_business_cards_from_url` introduced to the SDK. Use these
-methods to recognize data from business cards.
+methods to recognize data from business cards
+- New methods `begin_recognize_invoices` and `begin_recognize_invoices_from_url` introduced to the SDK. Use these
+methods to recognize data from invoices
 - Recognize receipt methods now take keyword argument `locale` to optionally indicate the locale of the receipt for
 improved results
 - Added ability to create a composed model from the `FormTrainingClient` by calling method `begin_create_composed_model()`
@@ -21,6 +23,13 @@ also be populated with any selection marks found on the page
 - Added model type `CustomFormModelProperties` that includes information like if a model is a composed model
 - Added property `model_id` to `CustomFormSubmodel` and `TrainingDocumentInfo`
 - Added properties `model_id` and `form_type_confidence` to `RecognizedForm`
+- `appearance` property added to `FormLine` to indicate the style of extracted text - like "handwriting" or "other"
+- Added keyword argument `pages` to `begin_recognize_content` and `begin_recognize_content_from_url` to specify the page
+numbers to analyze
+- Added property `bounding_box` to `FormTable`
+- Content-type `image/bmp` now supported by recognize content and prebuilt models
+- Added keyword argument `language` to `begin_recognize_content` and `begin_recognize_content_from_url` to specify
+which language to process document in
 
 **Dependency updates**
 

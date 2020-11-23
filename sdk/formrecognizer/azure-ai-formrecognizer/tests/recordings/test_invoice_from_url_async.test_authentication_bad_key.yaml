@@ -1,0 +1,27 @@
+interactions:
+- request:
+    body: 'b''{"source": "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/master/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/forms/Invoice_1.tiff"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '164'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-formrecognizer/3.1.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://centraluseuap.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+  response:
+    body:
+      string: '{"error": {"code": "401", "message": "Access denied due to invalid
+        subscription key or wrong API endpoint. Make sure to provide a valid key for
+        an active subscription and use a correct regional API endpoint for your resource."}}'
+    headers:
+      content-length: '224'
+      date: Fri, 30 Oct 2020 01:12:51 GMT
+    status:
+      code: 401
+      message: PermissionDenied
+    url: https://centraluseuap.api.cognitive.microsoft.com//formrecognizer/v2.1-preview.2/prebuilt/invoice/analyze?includeTextDetails=false
+version: 1
