@@ -98,7 +98,7 @@ To the show the code snippets for the change:
 
 .. code:: python
 
-    import azure.mmgt.compute
+    import azure.mgmt.compute
     from azure.identity import ClientSecretCredential
 
     credential = ClientSecretCredential(
