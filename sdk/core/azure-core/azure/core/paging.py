@@ -61,7 +61,7 @@ class _LegacyPagingMethod:
     def finished(self, continuation_token):
         return continuation_token is None and self.did_a_call_already
 
-    def get_page(self, continuation_token, initial_request):  # pylint: disable=unused-argument
+    def get_page(self, continuation_token):  # pylint: disable=unused-argument
         self.did_a_call_already = True
         return self._get_next(continuation_token)
 
@@ -105,7 +105,7 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         if self._paging_method.finished(self.continuation_token):
             raise StopIteration("End of paging")
         try:
-            self._response = self._paging_method.get_page(self.continuation_token, self._initial_request)
+            self._response = self._paging_method.get_page(self.continuation_token)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token

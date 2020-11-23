@@ -88,11 +88,6 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
          list of ReturnType
         :param str continuation_token: The continuation token needed by get_next
         """
-        self._initial_request = kwargs.pop("initial_request", None)
-        self._initial_response = kwargs.pop("initial_response", None)
-        if self._initial_response:
-            self._initial_request = self._initial_response.http_response.request
-
         if get_next or extract_data:
             if paging_method:
                 raise ValueError(
@@ -101,22 +96,19 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
                 )
             self._paging_method = _LegacyPagingMethod(get_next, extract_data)
         else:
-            if not self._initial_request and not self._initial_response:
-                raise ValueError(
-                    "You must either supply the initial request the paging method must call, or provide "
-                    "the initial response"
-                )
             self._paging_method = paging_method
             self._paging_method.initialize(**kwargs)
+
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]
+
 
     async def __anext__(self):
         if self._paging_method.finished(self.continuation_token):
             raise StopAsyncIteration("End of paging")
         try:
-            self._response = await self._paging_method.get_page(self.continuation_token, self._initial_request)
+            self._response = await self._paging_method.get_page(self.continuation_token)
         except AzureError as error:
             if not error.continuation_token:
                 error.continuation_token = self.continuation_token

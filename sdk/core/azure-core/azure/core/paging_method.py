@@ -107,18 +107,19 @@ class BasicPagingMethod(PagingMethodABC):
         self.did_a_call_already = False
         self._cls = None
         self._error_map = None
-        self._prepare_next_request = None
+        self._next_request_partial = None
         self._initial_request = None
 
     def initialize(self, client, deserialize_output, next_link_name, **kwargs):
         # type: (PipelineClient, Callable, str, Any) -> None
         try:
             self._initial_request = kwargs.pop("initial_request")
-            self._prepare_next_request = kwargs.pop("prepare_next_request")
+            self._next_request_partial = kwargs.pop("next_request_partial")
         except KeyError as e:
             raise TypeError(
-                "BasicPagingMethod is missing required keyword-only arg "
-                f"{str(e).strip("KeyError: ")}"
+                "BasicPagingMethod is missing required keyword-only arg {}".format(
+                    str(e).replace("KeyError: ", "")
+                )
             )
         self._client = client
         self._deserialize_output = deserialize_output
@@ -135,11 +136,9 @@ class BasicPagingMethod(PagingMethodABC):
     def get_next_request(self, continuation_token):
         # type: (Any, HttpRequest) -> HttpRequest
         try:
-            return self._prepare_next_request(continuation_token)
+            return self._next_request_partial(continuation_token)
         except TypeError:
-            return self._prepare_next_request()
-
-        return request
+            return self._next_request_partial()
 
     def get_page(self, continuation_token):
         # type: (Any, HttpRequest) -> HttpResponse
@@ -198,7 +197,9 @@ class BasicPagingMethod(PagingMethodABC):
 
 
 class PagingMethodWithInitialResponse(BasicPagingMethod):
-    """Use this paging method if the swagger defines a different next operation
+    """Use this paging method if we start paging before user starts iterating.
+    Currently only scenario is LRO + paging, where the final response of the LRO operation
+    is the initial page.
     """
 
     def __init__(self):
@@ -214,6 +215,7 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
                 "PagingMethodWithInitialResponse is missing required keyword-only arg "
                 "'initial_response'"
             )
+        self._next_request_partial = kwargs.pop("next_request_partial", None)
         self._client = client
         self._deserialize_output = deserialize_output
         self._next_link_name = next_link_name
@@ -228,16 +230,24 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
 
     def get_next_request(self, continuation_token):
         # type: (Any, HttpRequest) -> HttpRequest
-        """Next request partial functions will either take in the token or not
-        (we're not able to pass in multiple tokens). In the generated code, we
-        make sure that the token input param is the first in the list, so all we
-        have to do is pass in the token to the next request partial function.
+        if self._next_request_partial:
+            return super(PagingMethodWithInitialResponse, self).get_next_request(continuation_token)
+        request = self._initial_response.http_response.request
+        request.url = continuation_token
+        return request
 
-        However, next calls don't have to take the token, which is why we call
-        the next request in a try-catch error.
-        """
-        # different next operations either take in the token or not
-        # in generated code, we make sure the parameter that takes in the
-        # token is the first one, so all we have to do is pass in the token to the call
-        #
+    def get_page(self, continuation_token):
+        # type: (Any, HttpRequest) -> HttpResponse
+        if not self.did_a_call_already:
+            self.did_a_call_already = True
+            return self._initial_response
+        request = self.get_next_request(continuation_token)
+        response = self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
 
+        http_response = response.http_response
+        status_code = http_response.status_code
+        if status_code < 200 or status_code >= 300:
+            map_error(status_code=status_code, response=http_response, error_map=self._error_map)
+            raise HttpResponseError(response=http_response)
+
+        return response

@@ -47,12 +47,12 @@ class AsyncPagingMethodABC(metaclass=ABCMeta):
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:
+    def get_next_request(self, continuation_token: Any) -> HttpRequest:
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    async def get_page(self, continuation_token: Any, initial_request: HttpRequest) -> HttpResponse:
+    async def get_page(self, continuation_token: Any) -> HttpResponse:
         """Gets next page
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -99,12 +99,13 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
     def __init__(self):
         self._client = None
         self._deserialize_output = None
-        self._path_format_arguments = None
         self._item_name = None
         self._next_link_name = None
         self.did_a_call_already = False
         self._cls = None
         self._error_map = None
+        self._next_request_partial = None
+        self._initial_request = None
 
     def initialize(
         self,
@@ -113,11 +114,20 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         next_link_name: str,
         **kwargs
     ) -> None:
+
+        try:
+            self._initial_request = kwargs.pop("initial_request")
+            self._next_request_partial = kwargs.pop("next_request_partial")
+        except KeyError as e:
+            raise TypeError(
+                "AsyncBasicPagingMethod is missing required keyword-only arg {}".format(
+                    str(e).replace("KeyError: ", "")
+                )
+            )
         self._client = client
         self._deserialize_output = deserialize_output
         self._next_link_name = next_link_name
 
-        self._path_format_arguments = kwargs.pop("path_format_arguments", {})
         self._item_name = kwargs.pop("item_name", "value")
         self._cls = kwargs.pop("_cls", None)
 
@@ -126,20 +136,18 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
-    def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:
-        next_link = continuation_token
-        next_link = self._client.format_url(next_link, **self._path_format_arguments)
-        request = initial_request
-        request.url = next_link
+    def get_next_request(self, continuation_token: Any) -> HttpRequest:
+        try:
+            return self._next_request_partial(continuation_token)
+        except TypeError:
+            return self._next_request_partial()
 
-        return request
-
-    async def get_page(self, continuation_token: Any, initial_request: HttpRequest) -> HttpResponse:
+    async def get_page(self, continuation_token: Any) -> HttpResponse:
         if not self.did_a_call_already:
-            request = initial_request
+            request = self._initial_request
             self.did_a_call_already = True
         else:
-            request = self.get_next_request(continuation_token, initial_request)
+            request = self.get_next_request(continuation_token)
         response = await self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
 
         http_response = response.http_response
@@ -193,13 +201,13 @@ class AsyncBasicPagingMethod(AsyncPagingMethodABC):
         return continuation_token, AsyncList(list_of_elem)
 
 
-class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
+class AsyncPagingMethodWithInitialResponse(AsyncBasicPagingMethod):
     """Use this paging method if the swagger defines a different next operation
     """
 
     def __init__(self):
-        super(AsyncDifferentNextOperationPagingMethod, self).__init__()
-        self._prepare_next_request = None
+        super(AsyncPagingMethodWithInitialResponse, self).__init__()
+        self._initial_response = None
 
     def initialize(
         self,
@@ -208,31 +216,45 @@ class AsyncDifferentNextOperationPagingMethod(AsyncBasicPagingMethod):
         next_link_name: str,
         **kwargs
     ) -> None:
-        super(AsyncDifferentNextOperationPagingMethod, self).initialize(
-            client, deserialize_output, next_link_name, **kwargs
-        )
         try:
-            self._prepare_next_request = kwargs.pop("prepare_next_request")
+            self._initial_response = kwargs.pop("initial_response")
         except KeyError:
             raise TypeError(
-                "AsyncDifferentNextOperationPagingMethod is missing required keyword-only arg "
-                "'prepare_next_request'"
+                "AsyncPagingMethodWithInitialResponse is missing required keyword-only arg "
+                "'initial_response'"
             )
+        self._next_request_partial = kwargs.pop("next_request_partial", None)
+        self._client = client
+        self._deserialize_output = deserialize_output
+        self._next_link_name = next_link_name
 
-    def get_next_request(self, continuation_token: Any, initial_request: HttpRequest) -> HttpRequest:
-        """Next request partial functions will either take in the token or not
-        (we're not able to pass in multiple tokens). in the generated code, we
-        make sure that the token input param is the first in the list, so all we
-        have to do is pass in the token to the next request partial function.
+        self._item_name = kwargs.pop("item_name", "value")
+        self._cls = kwargs.pop("_cls", None)
 
-        However, next calls don't have to take the token, which is why we call
-        the next request in a try-catch error.
-        """
-        # different next operations either take in the token or not
-        # in generated code, we make sure the parameter that takes in the
-        # token is the first one, so all we have to do is pass in the token to the call
-        #
-        try:
-            return self._prepare_next_request(continuation_token)
-        except TypeError:
-            return self._prepare_next_request()
+        self._error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        self._error_map.update(kwargs.pop('error_map', {}))
+
+    def get_next_request(self, continuation_token: Any) -> HttpRequest:
+        if self._next_request_partial:
+            return super(AsyncPagingMethodWithInitialResponse, self).get_next_request(continuation_token)
+        request = self._initial_response.http_response.request
+        request.url = continuation_token
+        return request
+
+    async def get_page(self, continuation_token):
+        # type: (Any, HttpRequest) -> HttpResponse
+        if not self.did_a_call_already:
+            self.did_a_call_already = True
+            return self._initial_response
+        request = self.get_next_request(continuation_token)
+        response = await self._client._pipeline.run(request, stream=False)  # pylint: disable=protected-access
+
+        http_response = response.http_response
+        status_code = http_response.status_code
+        if status_code < 200 or status_code >= 300:
+            map_error(status_code=status_code, response=http_response, error_map=self._error_map)
+            raise HttpResponseError(response=http_response)
+
+        return response
