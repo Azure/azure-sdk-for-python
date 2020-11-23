@@ -13,8 +13,8 @@ Use the Service Bus client library for Python to communicate between application
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/CHANGELOG.md)
 
-> **NOTE**: This document has instructions, links and code snippets for the **preview** of the next version of the `azure-servicebus` package
-> which has different APIs than the current version (0.50). Please view the resources below for references on the existing library.
+> **NOTE**: This document has instructions, links and code snippets for the newly-released GA version of the `azure-servicebus` package.
+> The prior preview version (0.50) has different APIs and is now deprecated. Please view the resources below for if historical references are needed, but migration is recommended.
 
 [V0.50 Source code][0_50_source] | [V0.50 Package (PyPi)][0_50_pypi] | [V0.50 API reference documentation][0_50_api_docs] | [V0.50 Product documentation][0_50_product_docs] | [V0.50 Samples][0_50_samples] | [V0.50 Changelog][0_50_changelog]
 
@@ -241,7 +241,7 @@ When receiving from a queue, you have multiple actions you can take on the messa
 
 > **NOTE**: You can only settle `ServiceBusReceivedMessage` objects which are received in `ServiceBusReceiveMode.PEEK_LOCK` mode (this is the default).
 > `ServiceBusReceiveMode.RECEIVE_AND_DELETE` mode removes the message from the queue on receipt.  `ServiceBusReceivedMessage` messages
-> returned from `peek_messages()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.  Sessionful messages have a similar limitation.
+> returned from `peek_messages()` cannot be settled, as the message lock is not taken like it is in the aforementioned receive methods.
 
 If the message has a lock as mentioned above, settlement will fail if the message lock has expired.  
 If processing would take longer than the lock duration, it must be maintained via `receiver.renew_message_lock` before it expires.
@@ -370,7 +370,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 renewer.close()
 ```
 
-If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed.
+If for any reason auto-renewal has been interrupted or failed, this can be observed via the `auto_renew_error` property on the object being renewed, or by having passed a callback to the `on_lock_renew_failure` parameter on renewer initialization.
 It would also manifest when trying to take action (such as completing a message) on the specified object.
 
 ## Troubleshooting

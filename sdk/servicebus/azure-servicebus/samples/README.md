@@ -57,14 +57,14 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - Automatically renew lock on message received from non-sessionful entity
     - Automatically renew lock on the session of sessionful entity
     - Configure a callback to be triggered on auto lock renew failures.
-- [mgmt_queue](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_queue_async.py)) - Examples to manage queue entities under a given servicebus namespace
+- [mgmt_queue.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_queue_async.py)) - Examples to manage queue entities under a given servicebus namespace
     - Create a queue
     - Delete a queue
     - Update a queue
     - List queues
     - Get queue properties
     - Get queue runtime information
-
+- [failure_and_recovery.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/failure_and_recovery.py)
 
 ## Prerequisites
 - Python 2.7, 3.5 or later.
