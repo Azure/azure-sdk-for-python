@@ -31,7 +31,7 @@ semantics with the sender or receiver lifetime.
 
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/sample_code_servicebus.py ) |
+| `ServiceBusClient.from_connection_string()`    | `ServiceBusClient.from_connection_string()` | [using credential](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/authenticate_client_connstr.py ) |
 | `QueueClient.from_connection_string()`    | `ServiceBusClient.from_connection_string().get_queue_<sender/receiver>()` | [client initialization](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/send_queue.py ) |
 | `QueueClient.from_connection_string(idle_timeout=None)` | `ServiceBusClient.from_connection_string.get_queue_receiver(max_wait_time=None)` | [providing a timeout](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/session_pool_receive.py) |
 
@@ -51,7 +51,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     with client.get_queue_receiver(queue_name, max_wait_time=30) as receiver:
-        message = receiver.receive_messages()
+        messages = receiver.receive_messages()
 ```
 
 ### Receiving messages
@@ -105,12 +105,6 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 | `session.locked_until < datetime.now()`| `session.locked_until_utc < datetime.utcnow()`| All datetimes are now UTC and named as such|
 | `message.scheduled_enqueue_time < datetime.now()`| `message.scheduled_enqueue_time_utc < datetime.utcnow()`| UTC Datetime normalization applies across all objects and datetime fields|
 
-### Managing queues
-| In v0.50 | Equivalent in v7 | Sample |
-|---|---|---|
-| `azure.servicebus.control_client.ServiceBusService().create_queue(queue_name)` | `azure.servicebus.management.ServiceBusAdministrationClient().create_queue(queue_name)` | [Create a queue](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) |
-| `azure.servicebus.ServiceBusClient().list_queues()` | `azure.servicebus.management.ServiceBusAdministrationClient().list_queues()` | [List queues](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_queue.py) |
-
 ### Working with AutoLockRenewer
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
@@ -146,10 +140,10 @@ The management related operations like creating, updating, deleting and listing 
 ### Subscription based changes
 | In v0.50 | Equivalent in v7 | Sample |
 |---|---|---|
-| `azure.servicebus.control_client.ServiceBusService.get_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_subscription(topic_name, subscription_name)` |  [get_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L47) |
-| `azure.servicebus.control_client.ServiceBusService.create_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_subscription(topic_name, subscription_name)` |  [create_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L26) |
-| `azure.servicebus.control_client.ServiceBusService.delete_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_subscription(topic_name, subscription_name)` |  [delete_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L33) |
-| `azure.servicebus.control_client.ServiceBusService.list_subscriptions(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.list_subscriptions(topic_name)` |  [list_subscriptions](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py#L40) |
+| `azure.servicebus.control_client.ServiceBusService.get_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.get_subscription(topic_name, subscription_name)` |  [get_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L48) |
+| `azure.servicebus.control_client.ServiceBusService.create_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.create_subscription(topic_name, subscription_name)` |  [create_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L27) |
+| `azure.servicebus.control_client.ServiceBusService.delete_subscription(topic_name, subscription_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.delete_subscription(topic_name, subscription_name)` |  [delete_subscription](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L34) |
+| `azure.servicebus.control_client.ServiceBusService.list_subscriptions(topic_name)` | `azure.servicebus.management.ServiceBusAdministrationClient.list_subscriptions(topic_name)` |  [list_subscriptions](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py#L41) |
 
 ### Rule based changes
 | In v0.50 | Equivalent in v7 | Sample |
