@@ -1,5 +1,8 @@
 # Release History
 
+## 12.0.0b4 (Unreleased)
+
+
 ## 12.0.0b3 (2020-11-12)
 * Add support for transactional batching of entity operations.
 * Fixed deserialization bug in `list_tables` and `query_tables` where `TableItem.table_name` was an object instead of a string.

@@ -1,5 +1,9 @@
 # Release History
-## 1.0.0b3 (Unreleased) 
+
+## 1.0.0b4 (Unreleased)
+
+
+## 1.0.0b3 (2020-11-16)
 
 **Breaking Changes**
 

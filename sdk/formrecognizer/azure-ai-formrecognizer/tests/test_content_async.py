@@ -191,7 +191,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 2)
+        self.assertEqual(layout.tables[0].row_count, 3)
         self.assertEqual(layout.tables[0].column_count, 6)
         self.assertEqual(layout.tables[0].page_number, 1)
 
@@ -233,10 +233,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
-        self.assertEqual(layout.tables[0].row_count, 4)
-        self.assertEqual(layout.tables[0].column_count, 3)
-        self.assertEqual(layout.tables[1].row_count, 6)
-        self.assertEqual(layout.tables[1].column_count, 4)
+        self.assertEqual(layout.tables[0].row_count, 5)
+        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[1].row_count, 4)
+        self.assertEqual(layout.tables[1].column_count, 2)
         self.assertEqual(layout.tables[0].page_number, 1)
         self.assertEqual(layout.tables[1].page_number, 1)
 
@@ -286,7 +286,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         async with client:
             initial_poller = await client.begin_recognize_content(myfile)
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_recognize_content(myfile, continuation_token=cont_token)
+            poller = await client.begin_recognize_content(None, continuation_token=cont_token)
             result = await poller.result()
             self.assertIsNotNone(result)
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
@@ -304,8 +304,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertEqual(len(layout.tables), 2)
-        self.assertEqual(layout.tables[0].row_count, 30)
-        self.assertEqual(layout.tables[0].column_count, 5)
+        self.assertEqual(layout.tables[0].row_count, 29)
+        self.assertEqual(layout.tables[0].column_count, 4)
         self.assertEqual(layout.tables[0].page_number, 1)
         self.assertEqual(layout.tables[1].row_count, 6)
         self.assertEqual(layout.tables[1].column_count, 5)
@@ -313,7 +313,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[1]
         self.assertEqual(len(layout.tables), 1)
         self.assertEqual(layout.page_number, 2)
-        self.assertEqual(layout.tables[0].row_count, 24)
+        self.assertEqual(layout.tables[0].row_count, 23)
         self.assertEqual(layout.tables[0].column_count, 5)
         self.assertEqual(layout.tables[0].page_number, 2)
         self.assertFormPagesHasValues(result)
@@ -369,3 +369,56 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         layout = result[0]
         self.assertEqual(layout.page_number, 1)
         self.assertFormPagesHasValues(result)
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_specify_pages(self, client):
+        with open(self.multipage_invoice_pdf, "rb") as fd:
+            myform = fd.read()
+
+        async with client:
+            poller = await client.begin_recognize_content(myform, pages=["1"])
+            result = await poller.result()
+            assert len(result) == 1
+
+            poller = await client.begin_recognize_content(myform, pages=["1", "3"])
+            result = await poller.result()
+            assert len(result) == 2
+
+            poller = await client.begin_recognize_content(myform, pages=["1-2"])
+            result = await poller.result()
+            assert len(result) == 2
+
+            poller = await client.begin_recognize_content(myform, pages=["1-2", "3"])
+            result = await poller.result()
+            assert len(result) == 3
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_language_specified(self, client):
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        async with client:
+            poller = await client.begin_recognize_content(myfile, language="de")
+            assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
+            await poller.wait()
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer()
+    async def test_content_language_error(self, client):
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        async with client:
+            with pytest.raises(HttpResponseError) as e:
+                await client.begin_recognize_content(myfile, language="not a language")
+            assert "NotSupportedLanguage" == e.value.error.code
+
+    @GlobalFormRecognizerAccountPreparer()
+    @GlobalClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    async def test_content_language_v2(self, client):
+        with open(self.form_jpg, "rb") as fd:
+            myfile = fd.read()
+        async with client:
+            with pytest.raises(ValueError) as e:
+                await client.begin_recognize_content(myfile, language="en")
+            assert "'language' is only available for API version V2_1_PREVIEW and up" in str(e.value)

@@ -324,7 +324,7 @@ class TestCustomForms(FormRecognizerTest):
         self.assertEqual(recognized_form[0].page_range.last_page_number, page_results[0].page)
         self.assertEqual(recognized_form[0].form_type_confidence, 1.0)
         self.assertIsNotNone(recognized_form[0].model_id)
-        self.assertLabeledFormFieldDictTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
+        self.assertFormFieldsTransformCorrect(recognized_form[0].fields, actual_fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, multipage=True)
@@ -365,7 +365,7 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.form_type, "custom:"+model.model_id)
             self.assertEqual(form.form_type_confidence, 1.0)
             self.assertEqual(form.model_id, model.model_id)
-            self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
+            self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True)
@@ -385,7 +385,7 @@ class TestCustomForms(FormRecognizerTest):
         cont_token = initial_poller.continuation_token()
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            None,
             continuation_token=cont_token
         )
         result = poller.result()
@@ -470,7 +470,7 @@ class TestCustomForms(FormRecognizerTest):
             self.assertEqual(form.form_type, "custom:"+model.model_id)
             self.assertEqual(form.form_type_confidence, 1.0)
             self.assertEqual(form.model_id, model.model_id)
-            self.assertLabeledFormFieldDictTransformCorrect(form.fields, actual.fields, read_results)
+            self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @GlobalFormRecognizerAccountPreparer()
     @GlobalClientPreparer(training=True, selection_marks=True)

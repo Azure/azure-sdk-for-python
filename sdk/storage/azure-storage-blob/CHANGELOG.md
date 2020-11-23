@@ -1,5 +1,8 @@
 # Release History
 
+## 12.6.1 (Unreleased)
+
+
 ## 12.6.0 (2020-11-10)
 **Stable release of preview features**
 - Preview feature `ArrowDialect` as output format of `query_blob`

@@ -16,7 +16,7 @@ from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -39,7 +39,7 @@ class GalleryApplicationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -52,11 +52,11 @@ class GalleryApplicationsOperations(object):
         resource_group_name,  # type: str
         gallery_name,  # type: str
         gallery_application_name,  # type: str
-        gallery_application,  # type: "models.GalleryApplication"
+        gallery_application,  # type: "_models.GalleryApplication"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.GalleryApplication"
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryApplication"]
+        # type: (...) -> "_models.GalleryApplication"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryApplication"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -115,10 +115,10 @@ class GalleryApplicationsOperations(object):
         resource_group_name,  # type: str
         gallery_name,  # type: str
         gallery_application_name,  # type: str
-        gallery_application,  # type: "models.GalleryApplication"
+        gallery_application,  # type: "_models.GalleryApplication"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["models.GalleryApplication"]
+        # type: (...) -> LROPoller["_models.GalleryApplication"]
         """Create or update a gallery Application Definition.
 
         :param resource_group_name: The name of the resource group.
@@ -144,7 +144,7 @@ class GalleryApplicationsOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryApplication"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryApplication"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -170,7 +170,14 @@ class GalleryApplicationsOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryApplicationName': self._serialize.url("gallery_application_name", gallery_application_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -191,7 +198,7 @@ class GalleryApplicationsOperations(object):
         gallery_application_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.GalleryApplication"
+        # type: (...) -> "_models.GalleryApplication"
         """Retrieves information about a gallery Application Definition.
 
         :param resource_group_name: The name of the resource group.
@@ -207,7 +214,7 @@ class GalleryApplicationsOperations(object):
         :rtype: ~azure.mgmt.compute.v2019_03_01.models.GalleryApplication
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryApplication"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryApplication"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -346,7 +353,14 @@ class GalleryApplicationsOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        if polling is True: polling_method = ARMPolling(lro_delay,  **kwargs)
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'galleryName': self._serialize.url("gallery_name", gallery_name, 'str'),
+            'galleryApplicationName': self._serialize.url("gallery_application_name", gallery_application_name, 'str'),
+        }
+
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -366,7 +380,7 @@ class GalleryApplicationsOperations(object):
         gallery_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.GalleryApplicationList"]
+        # type: (...) -> Iterable["_models.GalleryApplicationList"]
         """List gallery Application Definitions in a gallery.
 
         :param resource_group_name: The name of the resource group.
@@ -379,7 +393,7 @@ class GalleryApplicationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.v2019_03_01.models.GalleryApplicationList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GalleryApplicationList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GalleryApplicationList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

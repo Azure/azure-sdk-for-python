@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import DatadogAgreementProperties
+    from ._models_py3 import DatadogAgreementResource
+    from ._models_py3 import DatadogAgreementResourceListResponse
     from ._models_py3 import DatadogApiKey
     from ._models_py3 import DatadogApiKeyListResponse
     from ._models_py3 import DatadogHost
@@ -43,6 +46,9 @@ try:
     from ._models_py3 import ResourceSku
     from ._models_py3 import UserInfo
 except (SyntaxError, ImportError):
+    from ._models import DatadogAgreementProperties  # type: ignore
+    from ._models import DatadogAgreementResource  # type: ignore
+    from ._models import DatadogAgreementResourceListResponse  # type: ignore
     from ._models import DatadogApiKey  # type: ignore
     from ._models import DatadogApiKeyListResponse  # type: ignore
     from ._models import DatadogHost  # type: ignore
@@ -90,6 +96,9 @@ from ._microsoft_datadog_client_enums import (
 )
 
 __all__ = [
+    'DatadogAgreementProperties',
+    'DatadogAgreementResource',
+    'DatadogAgreementResourceListResponse',
     'DatadogApiKey',
     'DatadogApiKeyListResponse',
     'DatadogHost',

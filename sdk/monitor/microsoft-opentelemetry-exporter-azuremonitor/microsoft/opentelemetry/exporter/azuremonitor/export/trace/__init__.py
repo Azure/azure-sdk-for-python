@@ -8,7 +8,6 @@ from urllib.parse import urlparse
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import Span, SpanKind
-from opentelemetry.trace.status import StatusCanonicalCode
 
 from microsoft.opentelemetry.exporter.azuremonitor import utils
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import (
@@ -26,24 +25,18 @@ from microsoft.opentelemetry.exporter.azuremonitor.export import (
 logger = logging.getLogger(__name__)
 
 
-class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
+class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor span exporter for OpenTelemetry.
-
-    Args:
-        options: :doc:`export.options` to allow configuration for the exporter
     """
-
-    def __init__(self, **options):
-        super().__init__(**options)
-        self.add_telemetry_processor(indicate_processed_by_metric_extractors)
 
     def export(self, spans: Sequence[Span]) -> SpanExportResult:
         envelopes = [self._span_to_envelope(span) for span in spans]
-        envelopes = self._apply_telemetry_processors(envelopes)
         try:
             result = self._transmit(envelopes)
             if result == ExportResult.FAILED_RETRYABLE:
-                self.storage.put(envelopes, result)
+                envelopes_to_store = map(
+                        lambda x: x.as_dict(), envelopes)
+                self.storage.put(envelopes_to_store, result)
             if result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
@@ -56,7 +49,7 @@ class AzureMonitorSpanExporter(BaseExporter, SpanExporter):
         if not span:
             return None
         envelope = convert_span_to_envelope(span)
-        envelope.instrumentation_key = self.options.instrumentation_key
+        envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
 
@@ -78,75 +71,119 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = "Microsoft.ApplicationInsights.Request"
         data = RequestData(
+            name=span.name,
             id="{:016x}".format(span.context.span_id),
             duration=utils.ns_to_duration(span.end_time - span.start_time),
-            response_code=str(span.status.canonical_code.value),
-            success=span.status.canonical_code
-            == StatusCanonicalCode.OK,  # Modify based off attributes or Status
+            response_code=str(span.status.status_code.value),
+            success=span.status.is_ok,
             properties={},
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
-        if "http.method" in span.attributes:
-            data.name = span.attributes["http.method"]
+        if "http.method" in span.attributes: # HTTP
             if "http.route" in span.attributes:
-                data.name = data.name + " " + span.attributes["http.route"]
-                envelope.tags["ai.operation.name"] = data.name
-                data.properties["request.name"] = data.name
+                envelope.tags["ai.operation.name"] = span.attributes["http.route"]
             elif "http.path" in span.attributes:
-                data.properties["request.name"] = (
-                    data.name + " " + span.attributes["http.path"]
-                )
-        if "http.url" in span.attributes:
-            data.url = span.attributes["http.url"]
-            data.properties["request.url"] = span.attributes["http.url"]
-        if "http.status_code" in span.attributes:
-            status_code = span.attributes["http.status_code"]
-            data.response_code = str(status_code)
-            data.success = 200 <= status_code < 400
+                envelope.tags["ai.operation.name"] = span.attributes["http.path"]
+            else:
+                envelope.tags["ai.operation.name"] = span.name
+
+            if "http.url" in span.attributes:
+                data.url = span.attributes["http.url"]
+                data.properties["request.url"] = span.attributes["http.url"]
+            if "http.status_code" in span.attributes:
+                status_code = span.attributes["http.status_code"]
+                data.response_code = str(status_code)
+        elif "messaging.system" in span.attributes: # Messaging
+            envelope.tags["ai.operation.name"] = span.name
+
+            if "messaging.destination" in span.attributes:
+                if "net.peer.name" in span.attributes:
+                    data.properties["source"] = "{}/{}".format(
+                        span.attributes["net.peer.name"],
+                        span.attributes["messaging.destination"],
+                    )
+                elif "net.peer.ip" in span.attributes:
+                    data.properties["source"] = "{}/{}".format(
+                        span.attributes["net.peer.ip"],
+                        span.attributes["messaging.destination"],
+                    )
+                else:
+                    data.properties["source"] = span.attributes["messaging.destination"]
     else:
         envelope.name = "Microsoft.ApplicationInsights.RemoteDependency"
         data = RemoteDependencyData(
             name=span.name,
             id="{:016x}".format(span.context.span_id),
-            result_code=str(span.status.canonical_code.value),
+            result_code=str(span.status.status_code.value),
             duration=utils.ns_to_duration(span.end_time - span.start_time),
-            success=span.status.canonical_code
-            == StatusCanonicalCode.OK,  # Modify based off attributes or Status
+            success=span.status.is_ok,
             properties={},
         )
         envelope.data = MonitorBase(
             base_data=data, base_type="RemoteDependencyData"
         )
         if span.kind in (SpanKind.CLIENT, SpanKind.PRODUCER):
-            if (
-                "component" in span.attributes
-                and span.attributes["component"] == "http"
-            ):
-                # TODO: check other component types (e.g. db)
+            if "http.method" in span.attributes: # HTTP
                 data.type = "HTTP"
-            if "http.url" in span.attributes:
-                url = span.attributes["http.url"]
-                # data is the url
-                data.data = url
-                parse_url = urlparse(url)
-                # TODO: error handling, probably put scheme as well
-                # target matches authority (host:port)
-                data.target = parse_url.netloc
-                if "http.method" in span.attributes:
-                    # name is METHOD/path
-                    data.name = (
-                        span.attributes["http.method"] + "/" + parse_url.path
+                if "net.peer.port" in span.attributes:
+                    name = ""
+                    if "net.peer.name" in span.attributes:
+                        name = span.attributes["net.peer.name"]
+                    elif "net.peer.ip" in span.attributes:
+                        name = str(span.attributes["net.peer.ip"])
+                    data.target = "{}:{}".format(
+                        name,
+                        str(span.attributes["net.peer.port"]),
                     )
-            if "http.status_code" in span.attributes:
-                status_code = span.attributes["http.status_code"]
-                data.result_code = str(status_code)
-                data.success = 200 <= status_code < 400
+                elif "http.url" in span.attributes:
+                    url = span.attributes["http.url"]
+                    # data is the url
+                    data.data = url
+                    parse_url = urlparse(url)
+                    # target matches authority (host:port)
+                    data.target = parse_url.netloc
+                if "http.status_code" in span.attributes:
+                    status_code = span.attributes["http.status_code"]
+                    data.result_code = str(status_code)
+            elif "db.system" in span.attributes: # Database
+                data.type = span.attributes["db.system"]
+                # data is the full statement
+                if "db.statement" in span.attributes:
+                    data.data = span.attributes["db.statement"]
+                if "db.name" in span.attributes:
+                    data.target = span.attributes["db.name"]
+                else:
+                    data.target = span.attributes["db.system"]
+            elif "rpc.system" in span.attributes: # Rpc
+                data.type = "rpc.system"
+                if "rpc.service" in span.attributes:
+                    data.target = span.attributes["rpc.service"]
+                else:
+                    data.target = span.attributes["rpc.system"]
+            elif "messaging.system" in span.attributes: # Messaging
+                data.type = "Queue Message | {}" \
+                    .format(span.attributes["messaging.system"])
+                if "net.peer.ip" in span.attributes and \
+                    "messaging.destination" in span.attributes:
+                    data.target = "{}/{}".format(
+                        span.attributes["net.peer.ip"],
+                        span.attributes["messaging.destination"]
+                    )
+                else:
+                    data.target = span.attributes["messaging.system"]
+            else:
+                # TODO: Azure specific types
+                data.type = "N/A"
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
             data.success = True
     for key in span.attributes:
-        # This removes redundant data from ApplicationInsights
-        if key.startswith("http."):
+        # Remove Opentelemetry related span attributes from custom dimensions
+        if key.startswith("http.") or \
+            key.startswith("db.") or \
+            key.startswith("rpc.") or \
+            key.startswith("net.") or \
+            key.startswith("messaging."):
             continue
         data.properties[key] = span.attributes[key]
     if span.links:
@@ -158,12 +195,3 @@ def convert_span_to_envelope(span: Span) -> TelemetryItem:
         data.properties["_MS.links"] = json.dumps(links)
     # TODO: tracestate, tags
     return envelope
-
-
-def indicate_processed_by_metric_extractors(envelope):
-    name = "Requests"
-    if envelope.data.base_type == "RemoteDependencyData":
-        name = "Dependencies"
-    envelope.data.base_data.properties["_MS.ProcessedByMetricExtractors"] = (
-        "(Name:'" + name + "',Ver:'1.1')"
-    )
