@@ -11,6 +11,8 @@ from threading import Lock
 from itertools import islice
 from math import ceil
 
+import os
+import errno
 import six
 
 from azure.core.tracing.common import with_current_context
@@ -136,6 +138,9 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         # Stream management
         self.stream_start = stream.tell() if parallel else None
         self.stream_lock = Lock() if parallel else None
+        self.page_blob_use_seek_data = isinstance(
+            self, PageBlobChunkUploader) and not padder and not encryptor and stream.seekable() and hasattr(
+            os, 'SEEK_DATA')
 
         # Progress feedback
         self.progress_total = 0
@@ -154,6 +159,14 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         while True:
             data = b""
             read_size = self.chunk_size
+            if self.page_blob_use_seek_data:
+                try:
+                    index = self.stream.seek(index, os.SEEK_DATA)
+                except OSError as e:
+                    if e.errno == errno.ENXIO:
+                        # no more data available
+                        break
+                    raise
 
             # Buffer until we either reach the end of the stream or get a whole chunk.
             while True:
