@@ -432,6 +432,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         self,
         digital_twin_id: str,
         payload: object,
+        message_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin, which is then consumed by
@@ -439,18 +440,17 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
         :param str digital_twin_id: The Id of the digital twin
         :param object payload: The telemetry payload to be sent
-        :keyword str message_id: The message ID. If not specified, a UUID will be generated.
+        :param str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID.
         """
-        message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = datetime.now()
         return await self._client.digital_twins.send_telemetry(
             digital_twin_id,
-            message_id=message_id,
+            message_id=message_id or str(uuid.uuid4()),
             telemetry=payload,
             telemetry_source_time=timestamp,
             **kwargs
@@ -462,6 +462,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         digital_twin_id: str,
         component_name: str,
         payload: object,
+        message_id: Optional[str] = None,
         **kwargs
     ) -> None:
         """Publish telemetry from a digital twin's component, which is then consumed by
@@ -470,19 +471,18 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
         :param object payload: The telemetry payload to be sent.
-        :keyword str message_id: The message ID. If not specified, a UUID will be generated.
+        :param str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID or the component path is invalid.
         """
-        message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = datetime.now()
         return await self._client.digital_twins.send_component_telemetry(
             digital_twin_id,
             component_name,
-            message_id=message_id,
+            message_id=message_id or str(uuid.uuid4()),
             telemetry=payload,
             telemetry_source_time=timestamp,
             **kwargs
@@ -511,7 +511,6 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_models(
         self,
-        *,
         dependencies_for: Optional[List[str]] = None,
         **kwargs
     ) -> AsyncItemPaged[DigitalTwinsModelData]:
