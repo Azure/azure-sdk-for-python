@@ -509,7 +509,7 @@ class PhoneNumberAdministrationClient(object):
         if 'location_options' in kwargs:
             reservation_options.location_options = kwargs.pop('location_options')
 
-        create_reservation_response = self._phone_number_administration_client.\
+        create_reservation_response = await self._phone_number_administration_client.\
             phone_number_administration.create_search(
                 body=reservation_options,
                 **kwargs
