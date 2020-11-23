@@ -64,6 +64,26 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/master/sd
     - List queues
     - Get queue properties
     - Get queue runtime information
+- [mgmt_topic](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_topic.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_topic_async.py)) - Examples to manage topic entities under a given servicebus namespace:
+    - Create a topic
+    - Delete a topic
+    - Update a topic
+    - List topic
+    - Get topic properties
+    - Get topic runtime information
+- [mgmt_subscription](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_subscription.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_subscription_async.py)) - Examples to manage subscription entities under a given servicebus namespace:
+    - Create a subscription
+    - Delete a subscription
+    - Update a subscription
+    - List subscription
+    - Get subscription properties
+    - Get subscription runtime information
+- [mgmt_rule](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/mgmt_rule.py) ([async_version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/async_samples/mgmt_rule_async.py)) - Examples to manage rule entities under a given servicebus subscription:
+    - Create a rule
+    - Delete a rule
+    - Update a rule
+    - List rule
+    - Get rule properties
 - [failure_and_recovery.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/samples/sync_samples/failure_and_recovery.py) - A demonstration of potential failure modes from an end-to-end send receive flow, as well as possible recovery patterns.
 
 ## Prerequisites
