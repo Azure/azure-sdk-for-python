@@ -15,7 +15,7 @@ from typing import (  # pylint: disable=unused-import
 from functools import partial
 from six.moves.urllib.parse import urlparse
 from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
+from azure.core.polling import LROPoller, LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase
@@ -32,7 +32,7 @@ from ._response_handlers import (
     analyze_paged_result,
     _get_deserialize
 )
-from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod
+from ._lro import TextAnalyticsOperationResourcePolling, TextAnalyticsLROPollingMethod, TextAnalyticsOperationState
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -757,11 +757,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             return self._client.begin_analyze(
                 body=analyze_body,
                 cls=kwargs.pop("cls", partial(self._analyze_result_callback, doc_id_order, show_stats=show_stats)),
-                polling=TextAnalyticsLROPollingMethod(
+                polling=LROBasePolling(
                     timeout=polling_interval,
                     lro_algorithms=[
                         TextAnalyticsOperationResourcePolling(show_stats=show_stats)
                     ],
+                    operation_state=TextAnalyticsOperationState(),
                     **kwargs),
                 continuation_token=continuation_token,
                 **kwargs

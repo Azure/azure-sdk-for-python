@@ -71,6 +71,57 @@ def _succeeded(status):
     return str(status).lower() in _SUCCEEDED
 
 
+class OperationState(ABC):
+    @abc.abstractproperty
+    def finished(self):
+        # type: () -> list(str)
+        raise NotImplementedError()
+
+    @abc.abstractproperty
+    def failed(self):
+        # type: () -> list(str)
+        raise NotImplementedError()
+
+    @abc.abstractproperty
+    def succeeded(self):
+        # type: () -> list(str)
+        raise NotImplementedError()
+
+    def has_finished(self, status):
+        if hasattr(status, "value"):
+            status = status.value
+        return str(status).lower() in self.finished
+
+    def has_failed(self, status):
+        if hasattr(status, "value"):
+            status = status.value
+        return str(status).lower() in self.failed
+
+    def has_succeeded(self, status):
+        if hasattr(status, "value"):
+            status = status.value
+        return str(status).lower() in self.succeeded
+
+
+class DefaultOperationState(OperationState):
+    def __init__(self):
+        self._finished = frozenset(["succeeded", "canceled", "failed"])
+        self._failed = frozenset(["canceled", "failed"])
+        self._succeeded = frozenset(["succeeded"])
+
+    @property
+    def finished(self):
+        return self._finished
+
+    @property
+    def failed(self):
+        return self._failed
+    
+    @property
+    def succeeded(self):
+        return self._succeeded
+
+
 class BadStatus(Exception):
     pass
 
@@ -377,6 +428,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         lro_algorithms=None,
         lro_options=None,
         path_format_arguments=None,
+        operation_state=None,
         **operation_config
     ):
         self._lro_algorithms = lro_algorithms or [
@@ -395,6 +447,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         self._lro_options = lro_options
         self._path_format_arguments = path_format_arguments
         self._status = None
+        self._operation_state = DefaultOperationState() if not operation_state else operation_state
 
     def status(self):
         """Return the current status as a string.
@@ -410,7 +463,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         """Is this polling finished?
         :rtype: bool
         """
-        return _finished(self.status())
+        return self._operation_state.has_finished(self.status())
 
     def resource(self):
         """Return the built resource.
@@ -517,7 +570,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             self._delay()
             self.update_status()
 
-        if _failed(self.status()):
+        if self._operation_state.has_failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
