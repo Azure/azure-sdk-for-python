@@ -151,7 +151,11 @@ class RecommendationsOperations(object):
         """Obtains cached recommendations for a subscription. The recommendations
         are generated or computed by invoking generateRecommendations.
 
-        :param filter: The filter to apply to the recommendations.
+        :param filter: The filter to apply to the recommendations.<br>Filter
+         can be applied to properties ['ResourceId', 'ResourceGroup',
+         'RecommendationTypeGuid', '[Category](#category)'] with operators
+         ['eq', 'and', 'or'].<br>Example:<br>- $filter=Category eq 'Cost' and
+         ResourceGroup eq 'MyResourceGroup'
         :type filter: str
         :param top: The number of recommendations per page if a paged version
          of this API is being used.

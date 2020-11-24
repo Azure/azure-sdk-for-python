@@ -55,9 +55,8 @@ class SuppressionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SuppressionContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.advisor.models.SuppressionContract or
-         ~msrest.pipeline.ClientRawResponse
+        :return: object or ClientRawResponse if raw=true
+        :rtype: object or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
@@ -87,7 +86,7 @@ class SuppressionsOperations(object):
         request = self._client.get(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -95,6 +94,8 @@ class SuppressionsOperations(object):
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('SuppressionContract', response)
+        if response.status_code == 404:
+            deserialized = self._deserialize('ARMErrorResponseBody', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
