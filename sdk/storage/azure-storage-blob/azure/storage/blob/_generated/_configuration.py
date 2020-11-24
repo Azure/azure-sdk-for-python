@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-VERSION = "unknown"
+from .version import VERSION
 
 class AzureBlobStorageConfiguration(Configuration):
     """Configuration for AzureBlobStorage.
