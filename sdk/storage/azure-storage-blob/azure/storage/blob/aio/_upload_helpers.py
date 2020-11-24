@@ -21,8 +21,8 @@ from .._shared.uploads_async import (
     PageBlobChunkUploader,
     AppendBlobChunkUploader)
 from .._shared.encryption import generate_blob_encryption_data, encrypt_blob
+from ._models import StorageErrorException
 from .._generated.models import (
-    StorageErrorException,
     BlockLookupList,
     AppendPositionAccessConditions,
     ModifiedAccessConditions,

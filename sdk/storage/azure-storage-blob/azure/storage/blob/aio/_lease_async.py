@@ -13,9 +13,7 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._generated.models import (
-    StorageErrorException,
-    LeaseAccessConditions)
+from ._models import StorageErrorException
 from .._serialize import get_modify_conditions
 from .._lease import BlobLeaseClient as LeaseClientBase
 

@@ -32,15 +32,14 @@ from ._shared.response_handlers import (
     return_response_headers,
     return_headers_and_deserialized)
 from ._generated import AzureBlobStorage, VERSION
-from ._generated.models import (
-    StorageErrorException,
-    SignedIdentifier)
+from ._generated.models import SignedIdentifier
 from ._deserialize import deserialize_container_properties
 from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
-    BlobType)
+    BlobType,
+    StorageErrorException)
 from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged
 from ._lease import BlobLeaseClient
 from ._blob_client import BlobClient
