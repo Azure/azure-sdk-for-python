@@ -14,14 +14,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:50 GMT
+      - Tue, 24 Nov 2020 02:08:20 GMT
     method: POST
-    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/enableautoscale?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -31,13 +31,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:22 GMT
       etag:
-      - '0x8D886769EE98E71'
+      - '0x8D8901DD102EBC9'
       last-modified:
-      - Wed, 11 Nov 2020 19:18:50 GMT
+      - Tue, 24 Nov 2020 02:08:20 GMT
       request-id:
-      - 6993ed70-a4a4-4054-aa30-2730ddc37cb2
+      - 495349f2-798a-442b-a114-a10d846a1185
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -63,18 +63,18 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
     method: POST
-    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/evaluateautoscale?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\"\
-        ,\"timestamp\":\"2020-11-11T19:18:52.040233Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun\"\
+        ,\"timestamp\":\"2020-11-24T02:08:23.1092298Z\",\"results\":\"$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue\"\
         \r\n}"
     headers:
       content-type:
@@ -84,9 +84,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:22 GMT
       request-id:
-      - b9d7308b-8e91-485d-a07f-4ed8b1fd6c2e
+      - c0d15f4f-b953-4fa4-8b29-d6591ff0dd4e
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -110,14 +110,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
     method: POST
-    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/disableautoscale?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -127,13 +127,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:22 GMT
       etag:
-      - '0x8D886769FFA3E30'
+      - '0x8D8901DD26EE675'
       last-modified:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
       request-id:
-      - c2984321-5639-4431-b8da-d08d3c36d014
+      - 98c97d7a-5a24-4d8c-ae82-c2f99221175a
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -155,23 +155,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
     method: GET
-    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
         ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\"\
-        ,\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D886769FFA3E30\",\"lastModified\":\"2020-11-11T19:18:52.116536Z\"\
-        ,\"creationTime\":\"2020-11-11T19:18:50.3294577Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-11T19:18:50.3294577Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2020-11-11T19:18:52.1365381Z\"\
+        ,\"url\":\"https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
+        ,\"eTag\":\"0x8D8901DD26EE675\",\"lastModified\":\"2020-11-24T02:08:23.1859829Z\"\
+        ,\"creationTime\":\"2020-11-24T02:08:20.8006089Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T02:08:20.8006089Z\",\"allocationState\"\
+        :\"steady\",\"allocationStateTransitionTime\":\"2020-11-24T02:08:23.209983Z\"\
         ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
         :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
         :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\"\
@@ -187,13 +187,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:22 GMT
       etag:
-      - '0x8D886769FFA3E30'
+      - '0x8D8901DD26EE675'
       last-modified:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
       request-id:
-      - e6500738-1af6-4463-9784-6a7d3bbba98c
+      - 5e3a8676-03c4-4825-9595-0339079f9279
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -219,14 +219,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
     method: POST
-    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/resize?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -236,13 +236,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
       etag:
-      - '0x8D88676A0173D38'
+      - '0x8D8901DD28CA813'
       last-modified:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
       request-id:
-      - 4f55f705-6491-42e3-9bfc-0b6d4403f6d8
+      - 4f03e22a-d037-4ef3-bd57-e0d54dbbfba8
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -266,14 +266,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
     method: POST
-    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64/stopresize?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -283,13 +283,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
       etag:
-      - '0x8D88676A0173D38'
+      - '0x8D8901DD28CA813'
       last-modified:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
       request-id:
-      - 7f5e01ed-3df7-4b9f-a7e8-e2b74a9e23f7
+      - e6abe20e-cc4b-4f63-a47f-0077ce619d34
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -311,23 +311,83 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
     method: GET
-    uri: https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
         ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\"\
-        ,\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
-        ,\"eTag\":\"0x8D88676A0173D38\",\"lastModified\":\"2020-11-11T19:18:52.3065656Z\"\
-        ,\"creationTime\":\"2020-11-11T19:18:50.3294577Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-11T19:18:50.3294577Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2020-11-11T19:18:52.470559Z\"\
+        ,\"url\":\"https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
+        ,\"eTag\":\"0x8D8901DD28CA813\",\"lastModified\":\"2020-11-24T02:08:23.3809939Z\"\
+        ,\"creationTime\":\"2020-11-24T02:08:20.8006089Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T02:08:20.8006089Z\",\"allocationState\"\
+        :\"stopping\",\"allocationStateTransitionTime\":\"2020-11-24T02:08:23.4879986Z\"\
+        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
+        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
+        :2,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\"\
+        :[\r\n    {\r\n      \"name\":\"task-user\",\"elevationLevel\":\"admin\"\r\
+        \n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n    \"\
+        nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n   \
+        \ \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\"\
+        ,\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n    },\"nodeAgentSKUId\"\
+        :\"batch.node.ubuntu 16.04\"\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 02:08:23 GMT
+      etag:
+      - '0x8D8901DD28CA813'
+      last-modified:
+      - Tue, 24 Nov 2020 02:08:23 GMT
+      request-id:
+      - 91ba745b-6a5f-43fa-9fda-20d627c7cf4a
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 02:08:28 GMT
+    method: GET
+    uri: https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
+        ,\"id\":\"test_batch_test_batch_scale_poolse2690d64\",\"displayName\":\"test_pool\"\
+        ,\"url\":\"https://batch.westcentralus.batch.azure.com/pools/test_batch_test_batch_scale_poolse2690d64\"\
+        ,\"eTag\":\"0x8D8901DD28CA813\",\"lastModified\":\"2020-11-24T02:08:23.3809939Z\"\
+        ,\"creationTime\":\"2020-11-24T02:08:20.8006089Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T02:08:20.8006089Z\",\"allocationState\"\
+        :\"steady\",\"allocationStateTransitionTime\":\"2020-11-24T02:08:23.6122185Z\"\
         ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
         :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
         :2,\"resizeErrors\":[\r\n    {\r\n      \"code\":\"ResizeStopped\",\"message\"\
@@ -345,13 +405,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:51 GMT
+      - Tue, 24 Nov 2020 02:08:28 GMT
       etag:
-      - '0x8D88676A0173D38'
+      - '0x8D8901DD28CA813'
       last-modified:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:23 GMT
       request-id:
-      - face8b06-73e7-49b0-8384-72bcf633dc51
+      - c787c060-8025-4cb4-b387-24187164afb3
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -373,22 +433,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:52 GMT
+      - Tue, 24 Nov 2020 02:08:28 GMT
     method: GET
-    uri: https://batche2690d64.westcentralus.batch.azure.com/lifetimepoolstats?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/lifetimepoolstats?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#poolstats/@Element\"\
-        ,\"url\":\"https://batche2690d64.westcentralus.batch.azure.com/lifetimepoolstats\"\
-        ,\"usageStats\":{\r\n    \"startTime\":\"2020-11-11T19:18:32.8553193Z\",\"\
-        lastUpdateTime\":\"2020-11-11T19:18:32.8553193Z\",\"dedicatedCoreTime\":\"\
-        PT0S\"\r\n  },\"resourceStats\":{\r\n    \"startTime\":\"2020-11-11T19:18:32.8553193Z\"\
-        ,\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2020-11-11T19:18:32.8553193Z\"\
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#poolstats/@Element\"\
+        ,\"url\":\"https://batch.westcentralus.batch.azure.com/lifetimepoolstats\"\
+        ,\"usageStats\":{\r\n    \"startTime\":\"2020-11-24T02:08:03.4582204Z\",\"\
+        lastUpdateTime\":\"2020-11-24T02:08:03.4582204Z\",\"dedicatedCoreTime\":\"\
+        PT0S\"\r\n  },\"resourceStats\":{\r\n    \"startTime\":\"2020-11-24T02:08:03.4582204Z\"\
+        ,\"diskReadIOps\":\"0\",\"diskWriteIOps\":\"0\",\"lastUpdateTime\":\"2020-11-24T02:08:03.4582204Z\"\
         ,\"avgCPUPercentage\":0.0,\"avgMemoryGiB\":0.0,\"peakMemoryGiB\":0.0,\"avgDiskGiB\"\
         :0.0,\"peakDiskGiB\":0.0,\"diskReadGiB\":0.0,\"diskWriteGiB\":0.0,\"networkReadGiB\"\
         :0.0,\"networkWriteGiB\":0.0\r\n  }\r\n}"
@@ -398,9 +458,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:53 GMT
+      - Tue, 24 Nov 2020 02:08:28 GMT
       request-id:
-      - a28ee368-b2f1-4261-a58f-ebb09657df84
+      - 9eca81b6-8920-476c-91cb-1ffa9b38b10b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -422,17 +482,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.6-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
         azure-batch/9.0.1 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Wed, 11 Nov 2020 19:18:53 GMT
+      - Tue, 24 Nov 2020 02:08:29 GMT
     method: GET
-    uri: https://batche2690d64.westcentralus.batch.azure.com/poolusagemetrics?api-version=2020-09-01.12.0
+    uri: https://batch.westcentralus.batch.azure.com/poolusagemetrics?api-version=2020-09-01.12.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batche2690d64.westcentralus.batch.azure.com/$metadata#poolusagemetrics\"\
+      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#poolusagemetrics\"\
         ,\"value\":[\r\n    \r\n  ]\r\n}"
     headers:
       content-type:
@@ -440,9 +500,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Wed, 11 Nov 2020 19:18:53 GMT
+      - Tue, 24 Nov 2020 02:08:28 GMT
       request-id:
-      - 4d69280e-05ca-49c1-a7ee-bbe6ed2f03a5
+      - 04d52607-226a-4f5e-a21a-c6ff871cecbb
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

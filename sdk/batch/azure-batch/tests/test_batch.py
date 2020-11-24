@@ -24,7 +24,9 @@ from batch_preparers import (
 from devtools_testutils import (
     AzureMgmtTestCase,
     ResourceGroupPreparer,
-    StorageAccountPreparer
+    StorageAccountPreparer,
+    CachedResourceGroupPreparer,
+    CachedStorageAccountPreparer
 )
 
 
@@ -647,7 +649,7 @@ class BatchTest(AzureMgmtTestCase):
         response = client.pool.remove_nodes(batch_pool.name, options)
         self.assertIsNone(response)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
     @PoolPreparer(location=AZURE_LOCATION, size=1, config='paas')
     def test_batch_compute_node_user(self, batch_pool, **kwargs):

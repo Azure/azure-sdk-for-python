@@ -14,26 +14,397 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:43:52 GMT
     method: GET
     uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
+        :\"2020-11-24T01:43:48.1228289Z\",\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\"\
+        ,\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
+        runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"\
+        endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n          {\r\
+        \n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\"\
+        :\"52.148.30.4\",\"publicFQDN\":\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
+        \      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 01:43:52 GMT
+      request-id:
+      - 77544fd7-f271-46d5-aacd-f1a926d1c2e1
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 01:44:02 GMT
+    method: GET
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
+        :\"2020-11-24T01:43:59.163573Z\",\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\"\
+        ,\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
+        runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"\
+        endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n          {\r\
+        \n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\"\
+        :\"52.148.30.4\",\"publicFQDN\":\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
+        \      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 01:44:02 GMT
+      request-id:
+      - e03f7a6c-36f4-455a-9d53-410d39356fdc
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 01:44:12 GMT
+    method: GET
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
+        :\"2020-11-24T01:43:59.163573Z\",\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\"\
+        ,\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
+        runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"\
+        endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n          {\r\
+        \n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\"\
+        :\"52.148.30.4\",\"publicFQDN\":\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
+        \      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 01:44:12 GMT
+      request-id:
+      - cc365cea-432b-4bac-960d-d7c71864e60e
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 01:44:23 GMT
+    method: GET
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
+        :\"2020-11-24T01:43:59.163573Z\",\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\"\
+        ,\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
+        runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"\
+        endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n          {\r\
+        \n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\"\
+        :\"52.148.30.4\",\"publicFQDN\":\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
+        \      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 01:44:23 GMT
+      request-id:
+      - 9c6a8a22-2820-446e-b136-05284f231509
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 01:44:33 GMT
+    method: GET
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
+        :\"2020-11-24T01:43:59.163573Z\",\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\"\
+        ,\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
+        runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"\
+        endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n          {\r\
+        \n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\"\
+        :\"52.148.30.4\",\"publicFQDN\":\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
+        \      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 01:44:33 GMT
+      request-id:
+      - cc4bf3b8-f506-4668-8e2d-4c8a83412627
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 01:44:43 GMT
+    method: GET
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
+        :\"2020-11-24T01:43:59.163573Z\",\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\"\
+        ,\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
+        runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"\
+        endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n          {\r\
+        \n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\"\
+        :\"52.148.30.4\",\"publicFQDN\":\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
+        \      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 01:44:42 GMT
+      request-id:
+      - 1dc09424-1f31-4252-8133-5456ef1adca8
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 01:44:53 GMT
+    method: GET
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
+        :\"2020-11-24T01:43:59.163573Z\",\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\"\
+        ,\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
+        runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"\
+        endpointConfiguration\":{\r\n        \"inboundEndpoints\":[\r\n          {\r\
+        \n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\"\
+        :\"52.148.30.4\",\"publicFQDN\":\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
+        \      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Tue, 24 Nov 2020 01:44:53 GMT
+      request-id:
+      - 52241b23-3751-436a-a9ec-1be5911c27b2
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
+        azure-batch/9.0.1 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Tue, 24 Nov 2020 01:45:03 GMT
+    method: GET
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes?api-version=2020-09-01.12.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#nodes\"\
+        ,\"value\":[\r\n    {\r\n      \"id\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
         ,\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\"\
-        :\"2020-11-23T21:23:12.313859Z\",\"lastBootTime\":\"2020-11-23T21:23:11.804939Z\"\
-        ,\"allocationTime\":\"2020-11-23T21:22:44.3296377Z\",\"ipAddress\":\"10.0.0.4\"\
-        ,\"affinityId\":\"TVM:tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d\"\
+        :\"2020-11-24T01:44:53.612329Z\",\"lastBootTime\":\"2020-11-24T01:44:52.843741Z\"\
+        ,\"allocationTime\":\"2020-11-24T01:43:48.1228289Z\",\"ipAddress\":\"10.0.0.4\"\
+        ,\"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
         ,\"vmSize\":\"standard_a1\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"\
         runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\"\
         :[\r\n        \r\n      ],\"isDedicated\":true,\"endpointConfiguration\":{\r\
         \n        \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"\
-        SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.253.143.107\",\"\
-        publicFQDN\":\"dns1a3e2e53-eaa0-4006-b993-f5c5afae01a5-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
+        SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"52.148.30.4\",\"publicFQDN\"\
+        :\"dns333b8fea-efba-4441-b7c6-1d51c6468821-azurebatch-cloudservice.westcentralus.cloudapp.azure.com\"\
         ,\"frontendPort\":50000,\"backendPort\":22\r\n          }\r\n        ]\r\n\
-        \      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2020-11-23T21:23:11.804939Z\"\
+        \      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2020-11-24T01:44:52.843741Z\"\
         ,\"version\":\"1.8.7\"\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -41,9 +412,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:23:55 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
       request-id:
-      - 06e320dc-dda7-4cbb-8904-005dd217daeb
+      - bdd1071a-b3f9-43f4-99ae-8734c7cd9f52
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -74,7 +445,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
     method: POST
     uri: https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks?api-version=2020-09-01.12.0
   response:
@@ -86,15 +457,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
       etag:
-      - '0x8D89006D982EEEF'
+      - '0x8D8901A90329FA5'
       last-modified:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
       location:
       - https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task
       request-id:
-      - a38f419a-319b-4181-a75c-01b7fb6e6ca1
+      - 69c95519-4b9a-4782-a99c-d0776ce3beba
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -121,16 +492,16 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
     method: GET
     uri: https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task?api-version=2020-09-01.12.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#tasks/@Element\"\
         ,\"id\":\"test_task\",\"url\":\"https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task\"\
-        ,\"eTag\":\"0x8D89006D982EEEF\",\"creationTime\":\"2020-11-23T23:23:56.6365423Z\"\
-        ,\"lastModified\":\"2020-11-23T23:23:56.6365423Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-23T23:23:56.6365423Z\",\"commandLine\":\"\
+        ,\"eTag\":\"0x8D8901A90329FA5\",\"creationTime\":\"2020-11-24T01:45:03.5711397Z\"\
+        ,\"lastModified\":\"2020-11-24T01:45:03.5711397Z\",\"state\":\"active\",\"\
+        stateTransitionTime\":\"2020-11-24T01:45:03.5711397Z\",\"commandLine\":\"\
         cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n    \"autoUser\":{\r\
         \n      \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n    }\r\n  },\"\
         constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
@@ -143,13 +514,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
       etag:
-      - '0x8D89006D982EEEF'
+      - '0x8D8901A90329FA5'
       last-modified:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
       request-id:
-      - ff635e2c-7a13-419f-a9f9-d25b551b7863
+      - 20704f21-1a16-425a-8d04-f97a8d036fb0
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -176,32 +547,32 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:01 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
     method: GET
     uri: https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task?api-version=2020-09-01.12.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#tasks/@Element\"\
         ,\"id\":\"test_task\",\"url\":\"https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task\"\
-        ,\"eTag\":\"0x8D89006D982EEEF\",\"creationTime\":\"2020-11-23T23:23:56.6365423Z\"\
-        ,\"lastModified\":\"2020-11-23T23:23:56.6365423Z\",\"state\":\"completed\"\
-        ,\"stateTransitionTime\":\"2020-11-23T23:23:57.666447Z\",\"previousState\"\
-        :\"running\",\"previousStateTransitionTime\":\"2020-11-23T23:23:57.484605Z\"\
+        ,\"eTag\":\"0x8D8901A90329FA5\",\"creationTime\":\"2020-11-24T01:45:03.5711397Z\"\
+        ,\"lastModified\":\"2020-11-24T01:45:03.5711397Z\",\"state\":\"completed\"\
+        ,\"stateTransitionTime\":\"2020-11-24T01:45:06.874524Z\",\"previousState\"\
+        :\"running\",\"previousStateTransitionTime\":\"2020-11-24T01:45:06.699501Z\"\
         ,\"commandLine\":\"cmd /c \\\"echo hello world\\\"\",\"userIdentity\":{\r\n\
         \    \"autoUser\":{\r\n      \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\
         \r\n    }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\"\
         ,\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n  },\"requiredSlots\"\
-        :1,\"executionInfo\":{\r\n    \"startTime\":\"2020-11-23T23:23:57.597786Z\"\
-        ,\"endTime\":\"2020-11-23T23:23:57.666447Z\",\"failureInfo\":{\r\n      \"\
+        :1,\"executionInfo\":{\r\n    \"startTime\":\"2020-11-24T01:45:06.764794Z\"\
+        ,\"endTime\":\"2020-11-24T01:45:06.874524Z\",\"failureInfo\":{\r\n      \"\
         category\":\"UserError\",\"code\":\"CommandProgramNotFound\",\"message\":\"\
         The specified command program is not found\",\"details\":[\r\n        {\r\n\
         \          \"name\":\"Message\",\"value\":\"The system cannot find the file\
         \ specified\"\r\n        }\r\n      ]\r\n    },\"result\":\"failure\",\"retryCount\"\
-        :0,\"requeueCount\":0\r\n  },\"nodeInfo\":{\r\n    \"affinityId\":\"TVM:tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d\"\
-        ,\"nodeUrl\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d\"\
-        ,\"poolId\":\"test_batch_test_batch_files98930ae3\",\"nodeId\":\"tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d\"\
+        :0,\"requeueCount\":0\r\n  },\"nodeInfo\":{\r\n    \"affinityId\":\"TVM:tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"nodeUrl\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
+        ,\"poolId\":\"test_batch_test_batch_files98930ae3\",\"nodeId\":\"tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d\"\
         ,\"taskRootDirectory\":\"workitems/batch98930ae3/job-1/test_task\",\"taskRootDirectoryUrl\"\
-        :\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3/job-1/test_task\"\
+        :\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3/job-1/test_task\"\
         \r\n  }\r\n}"
     headers:
       content-type:
@@ -209,13 +580,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:01 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       etag:
-      - '0x8D89006D982EEEF'
+      - '0x8D8901A90329FA5'
       last-modified:
-      - Mon, 23 Nov 2020 23:23:56 GMT
+      - Tue, 24 Nov 2020 01:45:03 GMT
       request-id:
-      - d0784749-d3de-4131-8060-f66b3deeab39
+      - 663a0441-0398-4c96-a95e-4be0acba8dda
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -242,43 +613,42 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:01 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
     method: GET
-    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files?recursive=true&api-version=2020-09-01.12.0
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files?recursive=true&api-version=2020-09-01.12.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch4.westcentralus.batch.azure.com/$metadata#files\"\
-        ,\"value\":[\r\n    {\r\n      \"name\":\"shared\",\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/shared\"\
+        ,\"value\":[\r\n    {\r\n      \"name\":\"volatile\",\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/volatile\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems\",\"url\":\"\
-        https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems\"\
-        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"fsmounts\",\"url\":\"\
-        https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/fsmounts\"\
-        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"volatile\",\"url\":\"\
-        https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/volatile\"\
+        https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"startup\",\"url\":\"\
-        https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/startup\"\
+        https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/startup\"\
+        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"fsmounts\",\"url\":\"\
+        https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/fsmounts\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"applications\",\"url\"\
-        :\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/applications\"\
-        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3\"\
+        :\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/applications\"\
+        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"shared\",\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/shared\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"volatile/startup\",\"\
-        url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/volatile/startup\"\
+        url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/volatile/startup\"\
+        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3/job-1\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3/job-1\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1/test_task\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3/job-1/test_task\"\
-        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1/test_task/wd\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3/job-1/test_task/wd\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3/job-1/test_task\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1/test_task/stdout.txt\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3/job-1/test_task/stdout.txt\"\
-        ,\"isDirectory\":false,\"properties\":{\r\n        \"lastModified\":\"2020-11-23T23:23:57.609389Z\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3/job-1/test_task/stdout.txt\"\
+        ,\"isDirectory\":false,\"properties\":{\r\n        \"lastModified\":\"2020-11-24T01:45:06.778439Z\"\
         ,\"contentLength\":\"0\",\"contentType\":\"text/plain\",\"fileMode\":\"0o100644\"\
-        \r\n      }\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1/test_task/stderr.txt\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3/job-1/test_task/stderr.txt\"\
-        ,\"isDirectory\":false,\"properties\":{\r\n        \"lastModified\":\"2020-11-23T23:23:57.609389Z\"\
+        \r\n      }\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1/test_task/wd\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3/job-1/test_task/wd\"\
+        ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1/test_task/stderr.txt\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3/job-1/test_task/stderr.txt\"\
+        ,\"isDirectory\":false,\"properties\":{\r\n        \"lastModified\":\"2020-11-24T01:45:06.778439Z\"\
         ,\"contentLength\":\"0\",\"contentType\":\"text/plain\",\"fileMode\":\"0o100644\"\
         \r\n      }\r\n    },{\r\n      \"name\":\"workitems/batch98930ae3/job-1/test_task/certs\"\
-        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems/batch98930ae3/job-1/test_task/certs\"\
+        ,\"url\":\"https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems/batch98930ae3/job-1/test_task/certs\"\
         ,\"isDirectory\":true\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -286,9 +656,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:01 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       request-id:
-      - faa23772-1df0-4b51-abd0-530f662bf2f4
+      - 5b5fb05b-01b4-4312-9713-fcb5375aede4
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -315,9 +685,9 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:09 GMT
     method: HEAD
-    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-09-01.12.0
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -329,17 +699,17 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:01 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       last-modified:
-      - Mon, 23 Nov 2020 23:23:57 GMT
+      - Tue, 24 Nov 2020 01:45:06 GMT
       ocp-batch-file-isdirectory:
       - 'False'
       ocp-batch-file-mode:
       - 0o100644
       ocp-batch-file-url:
-      - https%3A%2F%2Fbatch498930ae3.westcentralus.batch.azure.com%2Fpools%2Ftest_batch_test_batch_files98930ae3%2Fnodes%2Ftvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d%2Ffiles%2Fworkitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt
+      - https%3A%2F%2Fbatch498930ae3.westcentralus.batch.azure.com%2Fpools%2Ftest_batch_test_batch_files98930ae3%2Fnodes%2Ftvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d%2Ffiles%2Fworkitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt
       request-id:
-      - 8cee9789-6bf8-41e9-b0d4-5adcdb2319c7
+      - 34f07dbf-7f21-4ab2-a186-8b9a15fa6170
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -364,9 +734,9 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:09 GMT
     method: GET
-    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-09-01.12.0
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -376,17 +746,17 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       last-modified:
-      - Mon, 23 Nov 2020 23:23:57 GMT
+      - Tue, 24 Nov 2020 01:45:06 GMT
       ocp-batch-file-isdirectory:
       - 'False'
       ocp-batch-file-mode:
       - 0o100644
       ocp-batch-file-url:
-      - https%3A%2F%2Fbatch498930ae3.westcentralus.batch.azure.com%2Fpools%2Ftest_batch_test_batch_files98930ae3%2Fnodes%2Ftvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d%2Ffiles%2Fworkitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt
+      - https%3A%2F%2Fbatch498930ae3.westcentralus.batch.azure.com%2Fpools%2Ftest_batch_test_batch_files98930ae3%2Fnodes%2Ftvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d%2Ffiles%2Fworkitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt
       request-id:
-      - f850d6b7-d5a5-4193-b28d-854a22a78b8b
+      - 74a9a449-c273-46a9-8b91-28d67d04728f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -415,9 +785,9 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:09 GMT
     method: DELETE
-    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_2e2e73c938d23ef3fc82564e5eb018c0be6c7fdeb07d94fd540051e30c79a73c_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-09-01.12.0
+    uri: https://batch4.westcentralus.batch.azure.com/pools/test_batch_test_batch_files98930ae3/nodes/tvmps_6687e15e524e7260f590077681121d4142b2cc0e799e1c4c1845284595b13b05_d/files/workitems%2Fbatch98930ae3%2Fjob-1%2Ftest_task%2Fstdout.txt?api-version=2020-09-01.12.0
   response:
     body:
       string: ''
@@ -425,9 +795,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       request-id:
-      - 91e034cb-877d-4e19-8af3-19daf83e795a
+      - 9c67af2f-ce45-4a22-a3ba-7fd1ffba1a86
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -454,7 +824,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:09 GMT
     method: GET
     uri: https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files?api-version=2020-09-01.12.0
   response:
@@ -463,7 +833,7 @@ interactions:
         ,\"value\":[\r\n    {\r\n      \"name\":\"wd\",\"url\":\"https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/wd\"\
         ,\"isDirectory\":true\r\n    },{\r\n      \"name\":\"stderr.txt\",\"url\"\
         :\"https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt\"\
-        ,\"isDirectory\":false,\"properties\":{\r\n        \"lastModified\":\"2020-11-23T23:23:57.609389Z\"\
+        ,\"isDirectory\":false,\"properties\":{\r\n        \"lastModified\":\"2020-11-24T01:45:06.778439Z\"\
         ,\"contentLength\":\"0\",\"contentType\":\"text/plain\",\"fileMode\":\"0o100644\"\
         \r\n      }\r\n    },{\r\n      \"name\":\"certs\",\"url\":\"https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/certs\"\
         ,\"isDirectory\":true\r\n    }\r\n  ]\r\n}"
@@ -473,9 +843,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       request-id:
-      - 525ec3a6-a867-4a97-8519-42163abe87b7
+      - 353aa0a8-a161-45b4-9141-79256c1f8273
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -502,7 +872,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:09 GMT
     method: HEAD
     uri: https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2020-09-01.12.0
   response:
@@ -516,9 +886,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       last-modified:
-      - Mon, 23 Nov 2020 23:23:57 GMT
+      - Tue, 24 Nov 2020 01:45:06 GMT
       ocp-batch-file-isdirectory:
       - 'False'
       ocp-batch-file-mode:
@@ -526,7 +896,7 @@ interactions:
       ocp-batch-file-url:
       - https%3A%2F%2Fbatch498930ae3.westcentralus.batch.azure.com%2Fjobs%2Fbatch98930ae3%2Ftasks%2Ftest_task%2Ffiles%2Fstderr.txt
       request-id:
-      - fe960f83-4807-4fb6-9901-5d579455d6ff
+      - 03311df3-5a72-4920-880a-0b558b431fbf
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -551,7 +921,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:09 GMT
     method: GET
     uri: https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2020-09-01.12.0
   response:
@@ -563,9 +933,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       last-modified:
-      - Mon, 23 Nov 2020 23:23:57 GMT
+      - Tue, 24 Nov 2020 01:45:06 GMT
       ocp-batch-file-isdirectory:
       - 'False'
       ocp-batch-file-mode:
@@ -573,7 +943,7 @@ interactions:
       ocp-batch-file-url:
       - https%3A%2F%2Fbatch498930ae3.westcentralus.batch.azure.com%2Fjobs%2Fbatch98930ae3%2Ftasks%2Ftest_task%2Ffiles%2Fstderr.txt
       request-id:
-      - d69a37b5-6f97-4db3-b299-d2da7e897c6b
+      - d48f2a95-876b-4d38-be33-4db8584160b2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -602,7 +972,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:09 GMT
     method: DELETE
     uri: https://batch4.westcentralus.batch.azure.com/jobs/batch98930ae3/tasks/test_task/files/stderr.txt?api-version=2020-09-01.12.0
   response:
@@ -612,9 +982,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 23 Nov 2020 23:24:02 GMT
+      - Tue, 24 Nov 2020 01:45:08 GMT
       request-id:
-      - f1bf066d-bce3-4d49-a449-9d0cfa987bda
+      - e319eca7-aeef-427f-bcb4-f82cb97cbc45
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

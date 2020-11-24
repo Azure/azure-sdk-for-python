@@ -42,6 +42,7 @@ class AccountPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
         self.creds_parameter = 'credentials'
         self.parameter_name_for_location='location'
+        self.resource_moniker=name_prefix
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -100,6 +101,11 @@ class AccountPreparer(AzureMgmtPreparer):
                 keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
+
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
 
         else:
             self.resource = FakeAccount(
