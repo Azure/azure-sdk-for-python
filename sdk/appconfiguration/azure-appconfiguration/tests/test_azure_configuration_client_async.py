@@ -35,20 +35,41 @@ import functools
 
 AppConfigPreparer = functools.partial(PowerShellPreparer, 'appconfiguration', appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=")
 
-class AppConfigurationClientTest(AzureMgmtTestCase):
-    def __init__(self, method_name):
-        super(AppConfigurationClientTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-        if self.is_playback():
-            connection_str = "Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=bgyvBgwsQIw0s8myrqJJI3nLrj81M/kzSgSuP4BBoVg="
-        else:
-            connection_str = os.getenv('APPCONFIGURATION_CONNECTION_STRING')
-        app_config_client = AzureAppConfigurationClient.from_connection_string(connection_str)
-        self.app_config_client = AzureAppConfigurationClientProxy(app_config_client)
+def _add_for_test(client, kv):
+    exist = bool(
+        list(
+            client.list_configuration_settings(
+                key_filter=kv.key, label_filter=kv.label
+            )
+        )
+    )
+    if exist:
+        _delete_from_test(client, kv.key, kv.label)
+    return client.add_configuration_setting(kv)
 
-    def setUp(self):
-        super(AppConfigurationClientTest, self).setUp()
-        self.test_config_setting = self._add_for_test(
+def _delete_from_test(client, key, label):
+    try:
+        client.delete_configuration_setting(key=key, label=label)
+    except AzureError:
+        logging.debug(
+            "Error occurred removing configuration setting %s %s during unit test"
+            % (key, label)
+        )
+
+def app_config_decorator(func, **kwargs):
+
+    @AppConfigPreparer()
+    def wrapper(*args, **kwargs):
+        appconfiguration_connection_string = kwargs.pop("appconfiguration_connection_string")
+        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
+        client = AzureAppConfigurationClientProxy(client)
+
+        kwargs['client'] = client
+        kwargs['appconfiguration_connection_string'] = appconfiguration_connection_string
+
+        # Do setUp on client
+        test_config_setting = _add_for_test(
+            client,
             ConfigurationSetting(
                 key=KEY,
                 label=LABEL,
@@ -57,7 +78,8 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
                 tags={"tag1": "tag1", "tag2": "tag2"},
             )
         )
-        self.test_config_setting_no_label = self._add_for_test(
+        test_config_setting_no_label = _add_for_test(
+            client,
             ConfigurationSetting(
                 key=KEY,
                 label=None,
@@ -66,44 +88,41 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
                 tags={"tag1": "tag1", "tag2": "tag2"},
             )
         )
-        self.to_delete = [self.test_config_setting, self.test_config_setting_no_label]
+        to_delete = [test_config_setting, test_config_setting_no_label]
 
-    def tearDown(self):
-        super(AppConfigurationClientTest, self).tearDown()
-        for item in self.to_delete:
-            self.app_config_client.delete_configuration_setting(
+        kwargs['test_config_setting'] = test_config_setting
+        kwargs['test_config_setting_no_label'] = test_config_setting_no_label
+
+        func(*args, **kwargs)
+
+        # do tearDown on client
+        for item in to_delete:
+            client.delete_configuration_setting(
                 key=item.key, label=item.label
             )
 
-    def _add_for_test(self, kv):
-        exist = bool(
-            list(
-                self.app_config_client.list_configuration_settings(
-                    key_filter=kv.key, label_filter=kv.label
-                )
-            )
+    return wrapper
+
+class AppConfigurationClientTest(AzureMgmtTestCase):
+    def __init__(self, method_name):
+        super(AppConfigurationClientTest, self).__init__(method_name)
+        self.vcr.match_on = ["path", "method", "query"]
+
+    def setUp(self):
+        super(AppConfigurationClientTest, self).setUp()
+
+    def tearDown(self):
+        super(AppConfigurationClientTest, self).tearDown()
+
+    def _delete_setting(self, client, item):
+        client.delete_configuration_setting(
+            key=item.key, label=item.label
         )
-        if exist:
-            self._delete_from_test(kv.key, kv.label)
-        return self.app_config_client.add_configuration_setting(kv)
-
-    def _delete_from_test(self, key, label):
-        try:
-            self.app_config_client.delete_configuration_setting(key=key, label=label)
-        except AzureError:
-            logging.debug(
-                "Error occurred removing configuration setting %s %s during unit test"
-                % (key, label)
-            )
-
-    def _set_config_client(self, conn_str):
-        app_config_client = AzureAppConfigurationClient.from_connection_string(conn_str)
-        self.app_config_client = AzureAppConfigurationClientProxy(app_config_client)
 
     # method: add_configuration_setting
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_add_configuration_setting(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
+    def test_add_configuration_setting(self, appconfiguration_connection_string, client):
         kv = ConfigurationSetting(
             key=KEY + "_ADD",
             label=LABEL,
@@ -111,8 +130,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             content_type=TEST_CONTENT_TYPE,
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
-        created_kv = self.app_config_client.add_configuration_setting(kv)
-        self.to_delete.append(created_kv)
+        created_kv = client.add_configuration_setting(kv)
         assert (
             created_kv.label == kv.label
             and kv.value == kv.value
@@ -124,26 +142,29 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             and created_kv.last_modified is not None
             and created_kv.read_only is False
         )
+        self._delete_setting(client, created_kv)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_add_existing_configuration_setting(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
+    def test_add_existing_configuration_setting(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
         with pytest.raises(ResourceExistsError):
-            self.app_config_client.add_configuration_setting(
+            client.add_configuration_setting(
                 ConfigurationSetting(
-                    key=self.test_config_setting.key,
-                    lable=self.test_config_setting.label,
+                    key=test_config_setting.key,
+                    lable=test_config_setting.label,
                 )
             )
 
     # method: set_configuration_setting
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_set_existing_configuration_setting_label_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_set_kv = self.test_config_setting
+    def test_set_existing_configuration_setting_label_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_set_kv = test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
-        set_kv = self.app_config_client.set_configuration_setting(to_set_kv)
+        set_kv = client.set_configuration_setting(to_set_kv)
         assert (
             to_set_kv.key == set_kv.key
             and to_set_kv.label == to_set_kv.label
@@ -153,19 +174,21 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             and to_set_kv.etag != set_kv.etag
         )
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_set_kv = self.test_config_setting
+    def test_set_existing_configuration_setting_label_wrong_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_set_kv = test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
         to_set_kv.etag = "wrong etag"
         with pytest.raises(ResourceModifiedError):
-            self.app_config_client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
+            client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_set_configuration_setting_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
+    def test_set_configuration_setting_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
         kv = ConfigurationSetting(
             key=KEY + "_SET",
             label=LABEL,
@@ -175,11 +198,12 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         kv.etag = "random etag"
         with pytest.raises(ResourceModifiedError):
-            self.app_config_client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
+            client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_set_configuration_setting_no_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
+    def test_set_configuration_setting_no_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
         to_set_kv = ConfigurationSetting(
             key=KEY + "_SET",
             label=LABEL,
@@ -187,8 +211,8 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             content_type=TEST_CONTENT_TYPE,
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
-        set_kv = self.app_config_client.set_configuration_setting(to_set_kv)
-        self.to_delete.append(to_set_kv)
+        set_kv = client.set_configuration_setting(to_set_kv)
+        self._delete_setting(client, to_set_kv)
         assert (
             to_set_kv.key == set_kv.key
             and to_set_kv.label == set_kv.label
@@ -199,11 +223,12 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
 
     # method: get_configuration_setting
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_get_configuration_setting_no_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        compare_kv = self.test_config_setting_no_label
-        fetched_kv = self.app_config_client.get_configuration_setting(compare_kv.key)
+    def test_get_configuration_setting_no_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        compare_kv = test_config_setting_no_label
+        fetched_kv = client.get_configuration_setting(compare_kv.key)
         assert (
             fetched_kv.key == compare_kv.key
             and fetched_kv.value == compare_kv.value
@@ -212,11 +237,12 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         assert fetched_kv.label is None
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_get_configuration_setting_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        compare_kv = self.test_config_setting
-        fetched_kv = self.app_config_client.get_configuration_setting(
+    def test_get_configuration_setting_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        compare_kv = test_config_setting
+        fetched_kv = client.get_configuration_setting(
             compare_kv.key, compare_kv.label
         )
         assert (
@@ -227,145 +253,159 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         assert fetched_kv.label is not None
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_get_non_existing_configuration_setting(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        compare_kv = self.test_config_setting
+    def test_get_non_existing_configuration_setting(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        compare_kv = test_config_setting
         with pytest.raises(ResourceNotFoundError):
-            self.app_config_client.get_configuration_setting(
+            client.get_configuration_setting(
                 compare_kv.key, compare_kv.label + "a"
             )
 
     # method: delete_configuration_setting
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_delete_with_key_no_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_delete_kv = self.test_config_setting_no_label
-        self.app_config_client.delete_configuration_setting(to_delete_kv.key)
-        self.to_delete.remove(to_delete_kv)
+    def test_delete_with_key_no_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_delete_kv = test_config_setting_no_label
+        client.delete_configuration_setting(to_delete_kv.key)
+        self._delete_setting(client, to_delete_kv)
         with pytest.raises(ResourceNotFoundError):
-            self.app_config_client.get_configuration_setting(to_delete_kv.key)
+            client.get_configuration_setting(to_delete_kv.key)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_delete_with_key_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_delete_kv = self.test_config_setting
-        self.app_config_client.delete_configuration_setting(
+    def test_delete_with_key_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_delete_kv = test_config_setting
+        client.delete_configuration_setting(
             to_delete_kv.key, label=to_delete_kv.label
         )
-        self.to_delete.remove(to_delete_kv)
+        self._delete_setting(client, to_delete_kv)
         with pytest.raises(ResourceNotFoundError):
-            self.app_config_client.get_configuration_setting(
+            client.get_configuration_setting(
                 to_delete_kv.key, label=to_delete_kv.label
             )
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_delete_non_existing(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        deleted_kv = self.app_config_client.delete_configuration_setting(
+    def test_delete_non_existing(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        deleted_kv = client.delete_configuration_setting(
             "not_exist_" + KEY
         )
         assert deleted_kv is None
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_delete_correct_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_delete_kv = self.test_config_setting_no_label
-        deleted_kv = self.app_config_client.delete_configuration_setting(
+    def test_delete_correct_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_delete_kv = test_config_setting_no_label
+        deleted_kv = client.delete_configuration_setting(
             to_delete_kv.key, etag=to_delete_kv.etag
         )
-        self.to_delete.remove(to_delete_kv)
+        self._delete_setting(client, to_delete_kv)
         assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
-            self.app_config_client.get_configuration_setting(to_delete_kv.key)
+            client.get_configuration_setting(to_delete_kv.key)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_delete_wrong_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_delete_kv = self.test_config_setting_no_label
+    def test_delete_wrong_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_delete_kv = test_config_setting_no_label
         with pytest.raises(ResourceModifiedError):
-            self.app_config_client.delete_configuration_setting(
+            client.delete_configuration_setting(
                 to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
             )
 
     # method: list_configuration_settings
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_key_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_configuration_settings(
+    def test_list_configuration_settings_key_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_configuration_settings(
             label_filter=LABEL, key_filter=KEY
         )
         assert len(items) == 1
         assert all(x.key == KEY and x.label == LABEL for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_only_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_configuration_settings(label_filter=LABEL)
+    def test_list_configuration_settings_only_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_configuration_settings(label_filter=LABEL)
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_only_key(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_configuration_settings(key_filter=KEY)
+    def test_list_configuration_settings_only_key(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_configuration_settings(key_filter=KEY)
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_configuration_settings(
+    def test_list_configuration_settings_fields(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_configuration_settings(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         )
         assert len(items) == 1
         assert all(x.key and not x.label and x.content_type for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
+    def test_list_configuration_settings_reserved_chars(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
         resered_char_kv = ConfigurationSetting(
             key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE
         )
-        resered_char_kv = self.app_config_client.add_configuration_setting(
+        resered_char_kv = client.add_configuration_setting(
             resered_char_kv
         )
-        self.to_delete.append(resered_char_kv)
+        self._delete_setting(client, resered_char_kv)
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
-        items = self.app_config_client.list_configuration_settings(
+        items = client.list_configuration_settings(
             label_filter=escaped_label
         )
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
 
     @pytest.mark.skip("Bad Request")
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_contains(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_configuration_settings(
+    def test_list_configuration_settings_contains(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_configuration_settings(
             label_filter="*" + LABEL + "*"
         )
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_list_kv = self.test_config_setting
+    def test_list_configuration_settings_correct_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_list_kv = test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
-        items = self.app_config_client.list_configuration_settings(
+        items = client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         )
         assert len(items) == 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_multi_pages(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
+    def test_list_configuration_settings_multi_pages(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
             delete_me = [
-                self.app_config_client.add_configuration_setting(
+                client.add_configuration_setting(
                     ConfigurationSetting(
                         key="multi_" + str(i) + KEY_UUID,
                         label="multi_label_" + str(i),
@@ -376,13 +416,13 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             ]
         except ResourceExistsError:
             pass
-        items = self.app_config_client.list_configuration_settings(key_filter="multi_*")
+        items = client.list_configuration_settings(key_filter="multi_*")
         assert len(list(items)) > PAGE_SIZE
 
         # Remove the configuration settings
         try:
             [
-                self.app_config_client.delete_configuration_setting(
+                client.delete_configuration_setting(
                     key="multi_" + str(i) + KEY_UUID, label="multi_label_" + str(i)
                 )
                 for i in range(PAGE_SIZE + 1)
@@ -390,100 +430,110 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         except AzureError:
             pass
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_null_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_configuration_settings(label_filter="\0")
+    def test_list_configuration_settings_null_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_configuration_settings(label_filter="\0")
         assert len(list(items)) > 0
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        exclude_today = self.app_config_client.list_configuration_settings(
+    def test_list_configuration_settings_only_accepttime(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        exclude_today = client.list_configuration_settings(
             accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
-        all_inclusive = self.app_config_client.list_configuration_settings()
+        all_inclusive = client.list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
 
     # method: list_revisions
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_revisions_key_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_list1 = self.test_config_setting
-        items = self.app_config_client.list_revisions(
+    def test_list_revisions_key_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_list1 = test_config_setting
+        items = client.list_revisions(
             label_filter=to_list1.label, key_filter=to_list1.key
         )
         assert len(items) >= 2
         assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_revisions_only_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_revisions(label_filter=LABEL)
+    def test_list_revisions_only_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_revisions(label_filter=LABEL)
         assert len(items) >= 1
         assert all(x.label == LABEL for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_revisions_key_no_label(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_revisions(key_filter=KEY)
+    def test_list_revisions_key_no_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_revisions(key_filter=KEY)
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_revisions_fields(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        items = self.app_config_client.list_revisions(
+    def test_list_revisions_fields(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        items = client.list_revisions(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
         )
         assert all(x.key and not x.label and x.content_type and not x.tags and not x.etag for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_list_revisions_correct_etag(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_list_kv = self.test_config_setting
+    def test_list_revisions_correct_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_list_kv = test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
-        items = self.app_config_client.list_revisions(
+        items = client.list_revisions(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         )
         assert len(items) >= 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_read_only(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        kv = self.test_config_setting_no_label
-        read_only_kv = self.app_config_client.set_read_only(kv)
+    def test_read_only(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        kv = test_config_setting_no_label
+        read_only_kv = client.set_read_only(kv)
         assert read_only_kv.read_only
-        readable_kv = self.app_config_client.set_read_only(read_only_kv, False)
+        readable_kv = client.set_read_only(read_only_kv, False)
         assert not readable_kv.read_only
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_delete_read_only(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_delete_kv = self.test_config_setting_no_label
-        read_only_kv = self.app_config_client.set_read_only(to_delete_kv)
+    def test_delete_read_only(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_delete_kv = test_config_setting_no_label
+        read_only_kv = client.set_read_only(to_delete_kv)
         with pytest.raises(ResourceReadOnlyError):
-            self.app_config_client.delete_configuration_setting(to_delete_kv.key)
-        self.app_config_client.set_read_only(read_only_kv, False)
-        self.app_config_client.delete_configuration_setting(to_delete_kv.key)
-        self.to_delete.remove(to_delete_kv)
+            client.delete_configuration_setting(to_delete_kv.key)
+        client.set_read_only(read_only_kv, False)
+        client.delete_configuration_setting(to_delete_kv.key)
+        self._delete_setting(client, to_delete_kv)
         with pytest.raises(ResourceNotFoundError):
-            self.app_config_client.get_configuration_setting(to_delete_kv.key)
+            client.get_configuration_setting(to_delete_kv.key)
 
+    @app_config_decorator
     @AppConfigPreparer()
-    def test_set_read_only(self, appconfiguration_connection_string):
-        self._set_config_client(appconfiguration_connection_string)
-        to_set_kv = self.test_config_setting
+    def test_set_read_only(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
+        # self._set_config_client(appconfiguration_connection_string)
+        to_set_kv = test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
-        read_only_kv = self.app_config_client.set_read_only(to_set_kv)
+        read_only_kv = client.set_read_only(to_set_kv)
         with pytest.raises(ResourceReadOnlyError):
-            self.app_config_client.set_configuration_setting(read_only_kv)
-        readable_kv = self.app_config_client.set_read_only(read_only_kv, False)
+            client.set_configuration_setting(read_only_kv)
+        readable_kv = client.set_read_only(read_only_kv, False)
         readable_kv.value = to_set_kv.value
         readable_kv.tags = to_set_kv.tags
-        set_kv = self.app_config_client.set_configuration_setting(readable_kv)
+        set_kv = client.set_configuration_setting(readable_kv)
         assert (
                 to_set_kv.key == set_kv.key
                 and to_set_kv.label == to_set_kv.label
@@ -494,4 +544,4 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
         set_kv.etag = "bad"
         with pytest.raises(ResourceModifiedError):
-            self.app_config_client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
+            client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)

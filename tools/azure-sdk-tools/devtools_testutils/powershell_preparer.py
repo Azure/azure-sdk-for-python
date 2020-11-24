@@ -77,5 +77,3 @@ class PowerShellPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         pass
-
-SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")

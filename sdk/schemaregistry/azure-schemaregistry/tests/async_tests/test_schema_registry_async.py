@@ -27,10 +27,12 @@ from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from schemaregistry_preparer import SchemaRegistryPreparer
-from devtools_testutils import AzureTestCase, SchemaRegistryPowerShellPreparer
+from devtools_testutils import AzureTestCase, PowerShellPreparer
 from devtools_testutils.azure_testcase import _is_autorest_v3
 
 from azure.core.credentials import AccessToken
+
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
 
 class SchemaRegistryAsyncTests(AzureTestCase):
 
