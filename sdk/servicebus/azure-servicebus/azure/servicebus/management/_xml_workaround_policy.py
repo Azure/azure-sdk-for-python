@@ -14,12 +14,12 @@ class ServiceBusXMLWorkaroundPolicy(SansIOHTTPPolicy):
     in the following xml. This workaround is to remove it.
 
     <ns0:content type="application/xml">
-                <ns1:RuleDescription>
-                        <ns1:Filter xsi:type="CorrelationFilter">
-                                <ns1:CorrelationId>1</ns1:CorrelationId>
-                                <ns1:MessageId>1</ns1:MessageId>
+        <ns1:RuleDescription>
+            <ns1:Filter xsi:type="CorrelationFilter">
+                <ns1:CorrelationId>1</ns1:CorrelationId>
+                <ns1:MessageId>1</ns1:MessageId>
             ...
-        </ns0:content>
+    </ns0:content>
     """
 
     def on_request(self, request):
