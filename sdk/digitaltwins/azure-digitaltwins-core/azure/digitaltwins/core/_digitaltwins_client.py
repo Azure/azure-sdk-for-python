@@ -7,16 +7,18 @@
 import uuid
 from datetime import datetime
 from typing import Dict, List, Any, TYPE_CHECKING
+
+from msrest import Serializer
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
-from ._version import SDK_MONIKER
 
+from ._version import SDK_MONIKER
 from ._utils import (
     prep_if_match,
     prep_if_none_match
 )
-
 from ._generated.models import (
     QuerySpecification,
     DigitalTwinsAddOptions,
@@ -393,30 +395,26 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
-    def publish_telemetry(
-            self,
-            digital_twin_id,
-            payload,
-            message_id=None,
-            **kwargs):
-        # type: (str, object, Optional[str], **Any) -> None
+    def publish_telemetry(self, digital_twin_id, telemetry, **kwargs):
+        # type: (str, object, **Any) -> None
         """Publish telemetry from a digital twin, which is then consumed by
         one or many destination endpoints (subscribers) defined under.
 
         :param str digital_twin_id: The ID of the digital twin
-        :param object payload: The telemetry payload to be sent
-        :param str message_id: The message ID. If not specified, a UUID will be generated.
+        :param object telemetry: The telemetry data to be sent
+        :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID.
         """
-        timestamp = datetime.now()
+        message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
+        timestamp = Serializer.serialize_iso(datetime.utcnow())
         return self._client.digital_twins.send_telemetry(
             digital_twin_id,
-            message_id=message_id or str(uuid.uuid4()),
-            telemetry=payload,
+            message_id=message_id,
+            telemetry=telemetry,
             telemetry_source_time=timestamp,
             **kwargs
         )
@@ -426,30 +424,30 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         self,
         digital_twin_id,
         component_name,
-        payload,
-        message_id=None,
+        telemetry,
         **kwargs
     ):
-        # type: (str, str, object, Optional[str], **Any) -> None
+        # type: (str, str, object, **Any) -> None
         """Publish telemetry from a digital twin's component, which is then consumed by
         one or many destination endpoints (subscribers) defined under.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
-        :param object payload: The telemetry payload to be sent.
-        :param str message_id: The message ID. If not specified, a UUID will be generated.
+        :param object telemetry: The telemetry data to be sent.
+        :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID or the component name is invalid.
         """
-        timestamp = datetime.now()
+        message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
+        timestamp = Serializer.serialize_iso(datetime.utcnow())
         return self._client.digital_twins.send_component_telemetry(
             digital_twin_id,
             component_name,
-            message_id=message_id or str(uuid.uuid4()),
-            telemetry=payload,
+            message_id=message_id,
+            telemetry=telemetry,
             telemetry_source_time=timestamp,
             **kwargs
         )
