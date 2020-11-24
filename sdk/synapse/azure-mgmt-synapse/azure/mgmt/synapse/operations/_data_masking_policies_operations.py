@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class SqlPoolTablesOperations(object):
-    """SqlPoolTablesOperations operations.
+class DataMaskingPoliciesOperations(object):
+    """DataMaskingPoliciesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -26,6 +26,7 @@ class SqlPoolTablesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar api_version: The API version to use for this operation. Constant value: "2019-06-01-preview".
+    :ivar data_masking_policy_name: The name of the data masking policy for which the masking rule applies. Constant value: "Default".
     """
 
     models = models
@@ -36,14 +37,13 @@ class SqlPoolTablesOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.api_version = "2019-06-01-preview"
+        self.data_masking_policy_name = "Default"
 
         self.config = config
 
-    def list_by_schema(
-            self, resource_group_name, workspace_name, sql_pool_name, schema_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets tables of a given schema in a SQL pool.
-
-        Gets tables of a given schema in a SQL pool.
+    def create_or_update(
+            self, resource_group_name, workspace_name, sql_pool_name, data_masking_state, exempt_principals=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a Sql pool data masking policy.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -52,82 +52,79 @@ class SqlPoolTablesOperations(object):
         :type workspace_name: str
         :param sql_pool_name: SQL pool name
         :type sql_pool_name: str
-        :param schema_name: The name of the schema.
-        :type schema_name: str
-        :param filter: An OData filter expression that filters elements in the
-         collection.
-        :type filter: str
+        :param data_masking_state: The state of the data masking policy.
+         Possible values include: 'Disabled', 'Enabled'
+        :type data_masking_state: str or
+         ~azure.mgmt.synapse.models.DataMaskingState
+        :param exempt_principals: The list of the exempt principals. Specifies
+         the semicolon-separated list of database users for which the data
+         masking policy does not apply. The specified users receive data
+         results without masking for all of the database queries.
+        :type exempt_principals: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlPoolTable
-        :rtype:
-         ~azure.mgmt.synapse.models.SqlPoolTablePaged[~azure.mgmt.synapse.models.SqlPoolTable]
+        :return: DataMaskingPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.DataMaskingPolicy or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def prepare_request(next_link=None):
-            if not next_link:
-                # Construct URL
-                url = self.list_by_schema.metadata['url']
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-                    'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
-                    'schemaName': self._serialize.url("schema_name", schema_name, 'str')
-                }
-                url = self._client.format_url(url, **path_format_arguments)
+        parameters = models.DataMaskingPolicy(data_masking_state=data_masking_state, exempt_principals=exempt_principals)
 
-                # Construct parameters
-                query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+        # Construct URL
+        url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
+            'dataMaskingPolicyName': self._serialize.url("self.data_masking_policy_name", self.data_masking_policy_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
-            else:
-                url = next_link
-                query_parameters = {}
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
-            # Construct headers
-            header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-            # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            return request
+        # Construct body
+        body_content = self._serialize.body(parameters, 'DataMaskingPolicy')
 
-        def internal_paging(next_link=None):
-            request = prepare_request(next_link)
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
-            response = self._client.send(request, stream=False, **operation_config)
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
-            if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('DataMaskingPolicy', response)
 
-            return response
-
-        # Deserialize response
-        header_dict = None
         if raw:
-            header_dict = {}
-        deserialized = models.SqlPoolTablePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
 
         return deserialized
-    list_by_schema.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/schemas/{schemaName}/tables'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/dataMaskingPolicies/{dataMaskingPolicyName}'}
 
     def get(
-            self, resource_group_name, workspace_name, sql_pool_name, schema_name, table_name, custom_headers=None, raw=False, **operation_config):
-        """Get Sql pool table.
+            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a Sql pool data masking policy.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
@@ -136,17 +133,13 @@ class SqlPoolTablesOperations(object):
         :type workspace_name: str
         :param sql_pool_name: SQL pool name
         :type sql_pool_name: str
-        :param schema_name: The name of the schema.
-        :type schema_name: str
-        :param table_name: The name of the table.
-        :type table_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlPoolTable or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.SqlPoolTable or
+        :return: DataMaskingPolicy or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.DataMaskingPolicy or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -157,8 +150,7 @@ class SqlPoolTablesOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
             'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
-            'schemaName': self._serialize.url("schema_name", schema_name, 'str'),
-            'tableName': self._serialize.url("table_name", table_name, 'str')
+            'dataMaskingPolicyName': self._serialize.url("self.data_masking_policy_name", self.data_masking_policy_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -187,11 +179,11 @@ class SqlPoolTablesOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlPoolTable', response)
+            deserialized = self._deserialize('DataMaskingPolicy', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/schemas/{schemaName}/tables/{tableName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/dataMaskingPolicies/{dataMaskingPolicyName}'}

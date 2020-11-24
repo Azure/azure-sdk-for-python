@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -62,7 +61,8 @@ class SqlPoolsOperations(object):
         :return: SqlPool or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.synapse.models.SqlPool or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -93,9 +93,7 @@ class SqlPoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorContractException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -131,7 +129,8 @@ class SqlPoolsOperations(object):
         :return: SqlPool or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.synapse.models.SqlPool or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -166,9 +165,7 @@ class SqlPoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorContractException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -405,7 +402,8 @@ class SqlPoolsOperations(object):
         :return: An iterator like instance of SqlPool
         :rtype:
          ~azure.mgmt.synapse.models.SqlPoolPaged[~azure.mgmt.synapse.models.SqlPool]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -446,9 +444,7 @@ class SqlPoolsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorContractException(self._deserialize, response)
 
             return response
 
@@ -493,9 +489,7 @@ class SqlPoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorContractException(self._deserialize, response)
 
         deserialized = None
 
@@ -530,7 +524,8 @@ class SqlPoolsOperations(object):
          ClientRawResponse<object> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         raw_result = self._pause_initial(
             resource_group_name=resource_group_name,
@@ -591,9 +586,7 @@ class SqlPoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorContractException(self._deserialize, response)
 
         deserialized = None
 
@@ -628,7 +621,8 @@ class SqlPoolsOperations(object):
          ClientRawResponse<object> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[object] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[object]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
         raw_result = self._resume_initial(
             resource_group_name=resource_group_name,
@@ -656,70 +650,3 @@ class SqlPoolsOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     resume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/resume'}
-
-    def rename(
-            self, resource_group_name, workspace_name, sql_pool_name, id, custom_headers=None, raw=False, **operation_config):
-        """Rename a SQL pool.
-
-        Rename a SQL pool.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param id: The target ID for the resource
-        :type id: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        parameters = models.ResourceMoveDefinition(id=id)
-
-        # Construct URL
-        url = self.rename.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(parameters, 'ResourceMoveDefinition')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    rename.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/move'}

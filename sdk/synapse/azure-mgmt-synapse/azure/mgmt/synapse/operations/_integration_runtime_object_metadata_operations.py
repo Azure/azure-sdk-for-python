@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -39,7 +41,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
 
         self.config = config
 
-    def get(
+    def list(
             self, resource_group_name, workspace_name, integration_runtime_name, metadata_path=None, custom_headers=None, raw=False, **operation_config):
         """Get integration runtime object metadata.
 
@@ -48,7 +50,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace
+        :param workspace_name: The name of the workspace.
         :type workspace_name: str
         :param integration_runtime_name: Integration runtime name
         :type integration_runtime_name: str
@@ -70,7 +72,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
             get_metadata_request = models.GetSsisObjectMetadataRequest(metadata_path=metadata_path)
 
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -118,32 +120,11 @@ class IntegrationRuntimeObjectMetadataOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/getObjectMetadata'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/getObjectMetadata'}
 
-    def refresh(
+
+    def _refresh_initial(
             self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, **operation_config):
-        """Refresh integration runtime object metadata.
-
-        Refresh the object metadata in an integration runtime.
-
-        :param resource_group_name: The name of the resource group. The name
-         is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
-        :param integration_runtime_name: Integration runtime name
-        :type integration_runtime_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: SsisObjectMetadataStatusResponse or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.synapse.models.SsisObjectMetadataStatusResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
         # Construct URL
         url = self.refresh.metadata['url']
         path_format_arguments = {
@@ -178,6 +159,7 @@ class IntegrationRuntimeObjectMetadataOperations(object):
             raise exp
 
         deserialized = None
+
         if response.status_code == 200:
             deserialized = self._deserialize('SsisObjectMetadataStatusResponse', response)
 
@@ -186,4 +168,57 @@ class IntegrationRuntimeObjectMetadataOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def refresh(
+            self, resource_group_name, workspace_name, integration_runtime_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Refresh integration runtime object metadata.
+
+        Refresh the object metadata in an integration runtime.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace.
+        :type workspace_name: str
+        :param integration_runtime_name: Integration runtime name
+        :type integration_runtime_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         SsisObjectMetadataStatusResponse or
+         ClientRawResponse<SsisObjectMetadataStatusResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.synapse.models.SsisObjectMetadataStatusResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.synapse.models.SsisObjectMetadataStatusResponse]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._refresh_initial(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            integration_runtime_name=integration_runtime_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('SsisObjectMetadataStatusResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     refresh.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/integrationRuntimes/{integrationRuntimeName}/refreshObjectMetadata'}

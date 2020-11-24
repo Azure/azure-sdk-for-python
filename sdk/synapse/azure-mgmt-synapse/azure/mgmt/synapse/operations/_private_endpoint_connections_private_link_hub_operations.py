@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class SqlPoolUsagesOperations(object):
-    """SqlPoolUsagesOperations operations.
+class PrivateEndpointConnectionsPrivateLinkHubOperations(object):
+    """PrivateEndpointConnectionsPrivateLinkHubOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,26 +39,23 @@ class SqlPoolUsagesOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Gets SQL pool usages.
-
-        Gets SQL pool usages.
+            self, resource_group_name, private_link_hub_name, custom_headers=None, raw=False, **operation_config):
+        """Get all PrivateEndpointConnections in the PrivateLinkHub.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace
-        :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
+        :param private_link_hub_name: Name of the privateLinkHub
+        :type private_link_hub_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlPoolUsage
+        :return: An iterator like instance of
+         PrivateEndpointConnectionForPrivateLinkHub
         :rtype:
-         ~azure.mgmt.synapse.models.SqlPoolUsagePaged[~azure.mgmt.synapse.models.SqlPoolUsage]
+         ~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHubPaged[~azure.mgmt.synapse.models.PrivateEndpointConnectionForPrivateLinkHub]
         :raises:
          :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
         """
@@ -69,8 +66,7 @@ class SqlPoolUsagesOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-                    'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+                    'privateLinkHubName': self._serialize.url("private_link_hub_name", private_link_hub_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -110,7 +106,7 @@ class SqlPoolUsagesOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.SqlPoolUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.PrivateEndpointConnectionForPrivateLinkHubPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/usages'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/privateLinkHubs/{privateLinkHubName}/privateEndpointConnections'}

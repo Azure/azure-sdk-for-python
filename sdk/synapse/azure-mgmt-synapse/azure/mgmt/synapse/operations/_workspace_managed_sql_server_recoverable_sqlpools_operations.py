@@ -11,12 +11,13 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class SqlPoolReplicationLinksOperations(object):
-    """SqlPoolReplicationLinksOperations operations.
+class WorkspaceManagedSqlServerRecoverableSqlpoolsOperations(object):
+    """WorkspaceManagedSqlServerRecoverableSqlpoolsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,28 +40,25 @@ class SqlPoolReplicationLinksOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, workspace_name, sql_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Get SQL pool replication links.
+            self, resource_group_name, workspace_name, custom_headers=None, raw=False, **operation_config):
+        """Get list of recoverable sql pools for the server.
 
-        Lists a Sql pool's replication links.
+        Get list of recoverable sql pools for workspace managed sql server.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of ReplicationLink
+        :return: An iterator like instance of RecoverableSqlPool
         :rtype:
-         ~azure.mgmt.synapse.models.ReplicationLinkPaged[~azure.mgmt.synapse.models.ReplicationLink]
-        :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+         ~azure.mgmt.synapse.models.RecoverableSqlPoolPaged[~azure.mgmt.synapse.models.RecoverableSqlPool]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -69,8 +67,7 @@ class SqlPoolReplicationLinksOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-                    'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str')
+                    'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -102,7 +99,9 @@ class SqlPoolReplicationLinksOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorContractException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -110,45 +109,41 @@ class SqlPoolReplicationLinksOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ReplicationLinkPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.RecoverableSqlPoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/replicationLinks'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlpools'}
 
-    def get_by_name(
-            self, resource_group_name, workspace_name, sql_pool_name, link_id, custom_headers=None, raw=False, **operation_config):
-        """Get SQL pool replication link by name.
+    def get(
+            self, resource_group_name, workspace_name, sql_compute_name, custom_headers=None, raw=False, **operation_config):
+        """Get recoverable sql pools for the server.
 
-        Get SQL pool replication link by name.
+        Get recoverable sql pools for workspace managed sql server.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
         :param workspace_name: The name of the workspace
         :type workspace_name: str
-        :param sql_pool_name: SQL pool name
-        :type sql_pool_name: str
-        :param link_id: The ID of the replication link.
-        :type link_id: str
+        :param sql_compute_name: The name of the sql compute
+        :type sql_compute_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ReplicationLink or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.synapse.models.ReplicationLink or
+        :return: RecoverableSqlPool or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.synapse.models.RecoverableSqlPool or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorContractException<azure.mgmt.synapse.models.ErrorContractException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_by_name.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
-            'sqlPoolName': self._serialize.url("sql_pool_name", sql_pool_name, 'str'),
-            'linkId': self._serialize.url("link_id", link_id, 'str')
+            'sqlComputeName': self._serialize.url("sql_compute_name", sql_compute_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -171,15 +166,17 @@ class SqlPoolReplicationLinksOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorContractException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('ReplicationLink', response)
+            deserialized = self._deserialize('RecoverableSqlPool', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/sqlPools/{sqlPoolName}/replicationLinks/{linkId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/recoverableSqlPools/{sqlComputeName}'}
