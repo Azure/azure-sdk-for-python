@@ -483,8 +483,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
         :paramtype tags: dict(str, str)
         :keyword bytearray source_content_md5:
-            Specify the md5 calculated for the range of
-            bytes that must be read from the upload source.
+            Specify the md5 that is used to verify the integrity of the source bytes.
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
