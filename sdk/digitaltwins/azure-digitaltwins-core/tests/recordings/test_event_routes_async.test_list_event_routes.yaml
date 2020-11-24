@@ -19,5 +19,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/eventroutes?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/eventroutes?api-version=2020-10-31
 version: 1

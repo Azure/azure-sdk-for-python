@@ -25,7 +25,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18?api-version=2020-10-31
 - request:
     body: '{"ComponentTelemetry1": 5}'
     headers:
@@ -53,5 +53,5 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18/telemetry?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-451d1a18/telemetry?api-version=2020-10-31
 version: 1

@@ -25,5 +25,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:NonExistingModel;1?api-version=2020-10-31
 version: 1

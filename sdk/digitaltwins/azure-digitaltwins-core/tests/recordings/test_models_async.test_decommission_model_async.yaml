@@ -21,7 +21,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: '[{"@id": "dtmi:com:samples:ComponentModeld17b1365;1", "@type": "Interface",
       "@context": "dtmi:dtdl:context;2", "displayName": "Component1", "contents":
@@ -49,7 +49,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -70,7 +70,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: '[{"op": "replace", "path": "/decommissioned", "value": true}]'
     headers:
@@ -94,7 +94,7 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -115,5 +115,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld17b1365;1?includeModelDefinition=false&api-version=2020-10-31
 version: 1

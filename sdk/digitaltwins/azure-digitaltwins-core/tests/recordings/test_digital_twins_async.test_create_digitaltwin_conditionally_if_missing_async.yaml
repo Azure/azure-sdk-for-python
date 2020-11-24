@@ -19,7 +19,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -39,7 +39,7 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:samples:DTTestBuilding;1?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:samples:DTTestBuilding;1?api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -60,7 +60,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: '[{"@id": "dtmi:samples:DTTestBuilding;1", "@type": "Interface", "@context":
       "dtmi:dtdl:context;2", "displayName": "Building", "contents": [{"@type": "Property",
@@ -88,7 +88,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -108,7 +108,7 @@ interactions:
     status:
       code: 204
       message: No Content
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-18fd20ab?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-18fd20ab?api-version=2020-10-31
 - request:
     body: '{"$metadata": {"$model": "dtmi:samples:DTTestBuilding;1"}, "AverageTemperature":
       68, "TemperatureUnit": "Celsius"}'
@@ -137,7 +137,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-18fd20ab?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-18fd20ab?api-version=2020-10-31
 - request:
     body: '{"$metadata": {"$model": "dtmi:samples:DTTestBuilding;1"}, "AverageTemperature":
       68, "TemperatureUnit": "Celsius"}'
@@ -167,5 +167,5 @@ interactions:
     status:
       code: 412
       message: Precondition Failed
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-18fd20ab?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-18fd20ab?api-version=2020-10-31
 version: 1

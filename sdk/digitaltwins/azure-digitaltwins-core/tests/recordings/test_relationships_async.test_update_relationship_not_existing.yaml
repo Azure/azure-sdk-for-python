@@ -26,7 +26,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTRelationshipTestsBuildingTwin/relationships/foo?api-version=2020-10-31
 - request:
     body: '[{"op": "replace", "path": "/Property1", "value": 42}]'
     headers:
@@ -54,5 +54,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/relationships/BuildingHasFloor?api-version=2020-10-31
 version: 1

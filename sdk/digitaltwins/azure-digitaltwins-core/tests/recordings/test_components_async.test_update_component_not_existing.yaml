@@ -25,7 +25,7 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2020-10-31
 - request:
     body: '[{"op": "replace", "path": "/ComponentProp1", "value": "value2"}]'
     headers:
@@ -53,5 +53,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2020-10-31
 version: 1

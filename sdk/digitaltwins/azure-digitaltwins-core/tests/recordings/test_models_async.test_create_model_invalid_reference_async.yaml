@@ -21,7 +21,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld5c11823;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModeld5c11823;1?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -44,7 +44,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModeld5c11823;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModeld5c11823;1?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: '[{"@id": "dtmi:com:samples:TempModeld5c11823;1", "@type": "Interface",
       "@context": "dtmi:dtdl:context;2", "displayName": "TempModel", "contents": [{"@type":
@@ -76,5 +76,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
 version: 1

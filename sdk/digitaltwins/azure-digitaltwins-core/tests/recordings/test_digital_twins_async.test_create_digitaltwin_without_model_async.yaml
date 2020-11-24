@@ -25,5 +25,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ca641c2f?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ca641c2f?api-version=2020-10-31
 version: 1

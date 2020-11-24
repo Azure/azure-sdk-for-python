@@ -21,7 +21,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:TempModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -44,7 +44,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: '[{"@id": "dtmi:com:samples:TempModelcaf1499;1", "@type": "Interface", "@context":
       "dtmi:dtdl:context;2", "displayName": "TempModel", "contents": [{"@type": "Property",
@@ -72,7 +72,7 @@ interactions:
     status:
       code: 201
       message: Created
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
 - request:
     body: '[{"@id": "dtmi:com:samples:ComponentModelcaf1499;1", "@type": "Interface",
       "@context": "dtmi:dtdl:context;2", "displayName": "Component1", "contents":
@@ -106,7 +106,7 @@ interactions:
     status:
       code: 409
       message: Conflict
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
 - request:
     body: null
     headers:
@@ -129,5 +129,5 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModelcaf1499;1?includeModelDefinition=false&api-version=2020-10-31
 version: 1

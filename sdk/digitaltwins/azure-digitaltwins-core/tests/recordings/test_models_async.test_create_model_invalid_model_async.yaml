@@ -21,7 +21,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi:com:samples:ComponentModel77db1685;1?includeModelDefinition=false&api-version=2020-10-31
 - request:
     body: '[{"@context": "dtmi:dtdl:context;2", "displayName": "TempModel", "contents":
       [{"@type": "Property", "name": "Prop1", "schema": "string"}, {"@type": "Component",
@@ -53,5 +53,5 @@ interactions:
     status:
       code: 400
       message: Bad Request
-    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
+    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
 version: 1
