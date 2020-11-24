@@ -71,7 +71,7 @@ jobs:
         - ${{ if eq(parameters['AllocateResourceGroup'], 'false') }}:
           - template: ../../../common/TestResources/deploy-test-resources.yml
             parameters:
-              Location: ${{ coalesce(parameters.Location, cloudConfig.value.Location, 'westus2') }}
+              Location: ${{ coalesce(parameters.Location, cloudConfig.value.Location) }}
               ServiceDirectory: '${{ parameters.ServiceDirectory }}'
               SubscriptionConfiguration: ${{ cloudConfig.value.SubscriptionConfiguration }}
               ArmTemplateParameters: ${{ coalesce(cloudConfig.value.ArmTemplateParameters, '@{}') }}

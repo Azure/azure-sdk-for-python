@@ -1,7 +1,6 @@
 parameters:
   ServiceDirectory: not-set
   ArmTemplateParameters: '@{}'
-  AdditionalParameters: '@{}'
   DeleteAfterHours: 8
   Location: ''
   SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -52,7 +51,7 @@ steps:
         -Location '${{ parameters.Location }}' `
         -DeleteAfterHours '${{ parameters.DeleteAfterHours }}' `
         @subscriptionConfiguration `
-        -AdditionalParameters ${{ parameters.AdditionalParameters }} `
+        -AdditionalParameters ${{ parameters.ArmTemplateParameters }} `
         -CI `
         -Force `
         -Verbose | Out-Null
