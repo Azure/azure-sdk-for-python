@@ -101,6 +101,10 @@ class AccountPreparer(AzureMgmtPreparer):
                 keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
+            self.test_class_instance.scrubber.register_name_pair(
+                name,
+                self.resource_moniker
+            )
         else:
             self.resource = FakeAccount(
                 name=name,
