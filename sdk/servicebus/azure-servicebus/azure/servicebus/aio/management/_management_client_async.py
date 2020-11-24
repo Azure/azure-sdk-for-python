@@ -31,14 +31,13 @@ from ...management._generated.aio._service_bus_management_client_async import Se
 from ...management import _constants as constants
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 from ...management._models import QueueRuntimeProperties, QueueProperties, TopicProperties, TopicRuntimeProperties, \
-    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties
+    SubscriptionProperties, SubscriptionRuntimeProperties, RuleProperties, NamespaceProperties, TrueRuleFilter
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
 from ...management._model_workaround import avoid_timedelta_overflow
 from ._utils import extract_data_template, extract_rule_data_template, get_next_template
 from ...management._utils import deserialize_rule_key_values, serialize_rule_key_values, \
     _validate_entity_name_type, _validate_topic_and_subscription_types, _validate_topic_subscription_and_rule_types
-
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential  # pylint:disable=ungrouped-imports
@@ -801,7 +800,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
          will own the to-be-created rule.
         :param rule_name: Name of the rule.
         :type rule_name: str
-        :keyword filter: The filter of the rule.
+        :keyword filter: The filter of the rule. The default value is ~azure.servicebus.management.TrueRuleFilter
         :type filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
          ~azure.servicebus.management.SqlRuleFilter]
         :keyword action: The action of the rule.
@@ -813,7 +812,7 @@ class ServiceBusAdministrationClient:  #pylint:disable=too-many-public-methods
 
         rule = RuleProperties(
             rule_name,
-            filter=kwargs.pop("filter", None),
+            filter=kwargs.pop("filter", TrueRuleFilter()),
             action=kwargs.pop("action", None),
             created_at_utc=None
         )
