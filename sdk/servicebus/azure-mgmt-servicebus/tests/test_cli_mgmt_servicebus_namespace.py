@@ -31,6 +31,10 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.servicebus.ServiceBusManagementClient
         )
+        self.mgmt_client2017 = self.create_mgmt_client(
+            azure.mgmt.servicebus.ServiceBusManagementClient,
+            api_version="2017-04-01"
+        )
     
 
         if self.is_live:
@@ -68,7 +72,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
         RESOURCE_GROUP = resource_group.name
-        NAMESPACE_NAME = "myNamespacexxyyzzy"
+        NAMESPACE_NAME = "myNamespacexxyyzzxyx"
         AUTHORIZATION_RULE_NAME = "myAuthorizationRule"
         VIRTUAL_NETWORK_NAME = "myVirtualNetwork"
         SUBNET_NAME = "mySubnet"
@@ -157,11 +161,6 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         # /Namespaces/get/NameSpaceAuthorizationRuleListAll[get]
 #--------------------------------------------------------------------------
         result = self.mgmt_client.namespaces.list_authorization_rules(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME)
-
-#--------------------------------------------------------------------------
-        # /Namespaces/get/NameSpaceNetworkRuleSetList[get]
-#--------------------------------------------------------------------------
-        result = self.mgmt_client.namespaces.list_network_rule_sets(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME)
 
 #--------------------------------------------------------------------------
         # /Namespaces/get/NameSpaceGet[get]
@@ -258,11 +257,11 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
     def test_migration_configs(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
-        NAMESPACE_NAME = "myNamespacexxyyzzykk"
-        NAMESPACE_NAME_PRIMARY = "myNamespacexxyyzzykksecond"
+        NAMESPACE_NAME = "myNamespacexxyyzzxyyma"
+        NAMESPACE_NAME_PRIMARY = "myNamespacexxyyzzykksecondm"
         AUTHORIZATION_RULE_NAME = "myAuthorizationRule"
         CONFIG_NAME = "$default"
-        POST_MIGRATION_NAME = "postmigrationxxxy"
+        POST_MIGRATION_NAME = "postmigrationxxxky"
 
 #--------------------------------------------------------------------------
         # /Namespaces/put/NameSpaceCreate[put] Standard
@@ -380,12 +379,13 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
             if not str(e).startswith("(ResourceNotFound)"):
                 raise e
 
+    @unittest.skip("unsupport.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_disaster_recovery_configs(self, resource_group):
 
         RESOURCE_GROUP = resource_group.name
-        NAMESPACE_NAME = "myNamespacexxyyzzzy"
-        NAMESPACE_NAME_PRIMARY = "myNamespacexxyyzzzysecond"
+        NAMESPACE_NAME = "myNamespacexxyyzzxyyab"
+        NAMESPACE_NAME_PRIMARY = "myNamespacexxyyzzzyasecond"
         AUTHORIZATION_RULE_NAME = "myAuthorizationRule"
         ALIAS = "mydisasterrecovercf"
 
@@ -440,7 +440,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         BODY = {
           "name": "sdk-DisasterRecovery-9474"
         }
-        result = self.mgmt_client.disaster_recovery_configs.check_name_availability(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, parameters=BODY)
+        result = self.mgmt_client2017.disaster_recovery_configs.check_name_availability(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, parameters=BODY)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/put/SBAliasCreate[put]
@@ -448,17 +448,17 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         BODY = {
           "partner_namespace": second_namespace.id,
         }
-        result = self.mgmt_client.disaster_recovery_configs.create_or_update(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS, parameters=BODY)
+        result = self.mgmt_client2017.disaster_recovery_configs.create_or_update(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS, parameters=BODY)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/get/SBAliasGet[get]
 #--------------------------------------------------------------------------
-        dr_config = self.mgmt_client.disaster_recovery_configs.get(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
+        dr_config = self.mgmt_client2017.disaster_recovery_configs.get(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
         if self.is_live:
             count = 0
             while dr_config.provisioning_state != "Succeeded":
                 time.sleep(30)
-                dr_config = self.mgmt_client.disaster_recovery_configs.get(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
+                dr_config = self.mgmt_client2017.disaster_recovery_configs.get(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
                 count += 1
                 if count>10:
                     break
@@ -466,32 +466,32 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/get/DisasterRecoveryConfigsAuthorizationRuleGet[get]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.disaster_recovery_configs.get_authorization_rule(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS, authorization_rule_name=AUTHORIZATION_RULE_NAME)
+        result = self.mgmt_client2017.disaster_recovery_configs.get_authorization_rule(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS, authorization_rule_name=AUTHORIZATION_RULE_NAME)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/get/NameSpaceAuthorizationRuleListAll[get]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.disaster_recovery_configs.list_authorization_rules(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
+        result = self.mgmt_client2017.disaster_recovery_configs.list_authorization_rules(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/get/SBAliasList[get]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.disaster_recovery_configs.list(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME)
+        result = self.mgmt_client2017.disaster_recovery_configs.list(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/post/DisasterRecoveryConfigsAuthorizationRuleListKey[post]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.disaster_recovery_configs.list_keys(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS, authorization_rule_name=AUTHORIZATION_RULE_NAME)
+        result = self.mgmt_client2017.disaster_recovery_configs.list_keys(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS, authorization_rule_name=AUTHORIZATION_RULE_NAME)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/post/SBEHAliasBreakPairing[post]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.disaster_recovery_configs.break_pairing(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
+        result = self.mgmt_client2017.disaster_recovery_configs.break_pairing(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/post/SBAliasFailOver[post]
 #--------------------------------------------------------------------------
-        result = self.mgmt_client.disaster_recovery_configs.fail_over(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME_PRIMARY, alias=ALIAS)
+        result = self.mgmt_client2017.disaster_recovery_configs.fail_over(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME_PRIMARY, alias=ALIAS)
 
 #--------------------------------------------------------------------------
         # /DisasterRecoveryConfigs/delete/SBAliasDelete[delete]
@@ -499,7 +499,7 @@ class MgmtServiceBusTest(AzureMgmtTestCase):
         count = 0
         while count<10:
             try:
-                result = self.mgmt_client.disaster_recovery_configs.delete(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
+                result = self.mgmt_client2017.disaster_recovery_configs.delete(resource_group_name=RESOURCE_GROUP, namespace_name=NAMESPACE_NAME, alias=ALIAS)
             except HttpResponseError as e:
                 time.sleep(30)
                 count += 1
