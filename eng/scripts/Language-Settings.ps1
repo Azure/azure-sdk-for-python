@@ -120,6 +120,11 @@ function Get-python-GithubIoDocIndex() {
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python"
 }
 
+
+function PopulateVersionProperty($pkgDef, $object){
+  
+}
+
 # Updates a python CI configuration json.
 # For "latest", the version attribute is cleared, as default behavior is to pull latest "non-preview".
 # For "preview", we update to >= the target releasing package version.
@@ -134,6 +139,7 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
   $allJson  = Get-Content $pkgJsonLoc | ConvertFrom-Json
   $visibleInCI = @{}
 
+  # walk all our json, create an index so we can update in place if necessary
   for ($i=0; $i -lt $allJson.packages.Length; $i++) {
     $pkgDef = $allJson.packages[$i]
 
@@ -153,11 +159,6 @@ function Update-python-CIConfig($pkgs, $ciRepo, $locationInDocRepo, $monikerId=$
         }
 
         $existingPackageDef.package_info.version = ">=$($releasingPkg.PackageVersion)"
-      }
-      else {
-        if ($def.version) {
-          $def.PSObject.Properties.Remove('version')  
-        }
       }
     }
     else {
