@@ -75,7 +75,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         """Create or update a digital twin.
 
         :param str digital_twin_id: The ID of the digital twin.
-        :param Dict[str, object] digital_twin:
+        :param Dict[str,object] digital_twin:
             Dictionary containing the twin to create or update.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
@@ -84,7 +84,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
             according to the `match_condition`.
         :return: Dictionary containing the created or updated twin.
         :rtype: Dict[str, object]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceExistsError: If the digital twin already exists.
         """
         options = None
@@ -104,10 +104,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
     @distributed_trace
     def update_digital_twin(self, digital_twin_id, json_patch, **kwargs):
         # type: (str, List[Dict[str, object]], **Any) -> None
-        """Update a digital twin using a json patch.
+        """Update a digital twin using a JSON patch.
 
         :param str digital_twin_id: The ID of the digital twin.
-        :param List[Dict[str, object]] json_patch: An update specification described by JSON Patch.
+        :param List[Dict[str,object]] json_patch: An update specification described by JSON Patch.
             Updates to property values and $model elements may happen in the same request.
             Operations are limited to `add`, `replace` and `remove`.
         :keyword ~azure.core.MatchConditions match_condition:
@@ -197,7 +197,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The component being updated.
-        :param List[Dict[str, object]] json_patch: An update specification described by JSON Patch.
+        :param List[Dict[str,object]] json_patch: An update specification described by JSON Patch.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
         :keyword str etag:
@@ -250,7 +250,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to retrieve.
-        :param Dict[str, object] relationship: Dictionary containing the relationship.
+        :param Dict[str,object] relationship: Dictionary containing the relationship.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
         :keyword str etag:
@@ -290,7 +290,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str relationship_id: The ID of the relationship to retrieve.
-        :param List[Dict[str, object]] json_patch: JSON Patch description of the update
+        :param List[Dict[str,object]] json_patch: JSON Patch description of the update
             to the relationship properties.
         :keyword ~azure.core.MatchConditions match_condition:
             The condition under which to perform the operation.
@@ -382,7 +382,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
         :param str digital_twin_id: The ID of the digital twin.
         :return: An iterator like instance of either Relationship.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.IncomingRelationship]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.IncomingRelationship]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID.
@@ -396,17 +396,16 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
     def publish_telemetry(self, digital_twin_id, payload, **kwargs):
         # type: (str, object, **Any) -> None
         """Publish telemetry from a digital twin, which is then consumed by
-           one or many destination endpoints (subscribers) defined under.
+        one or many destination endpoints (subscribers) defined under.
 
-        :param str digital_twin_id: The Id of the digital twin
+        :param str digital_twin_id: The ID of the digital twin
         :param object payload: The telemetry payload to be sent
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        :raises :class: `~azure.core.exceptions.ServiceRequestError`: If the request is invalid.
-        :raises :class: `~azure.core.exceptions.ResourceNotFoundError`: If there is no
-            digital twin with the provided id.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
+            digital twin with the provided ID.
         """
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
         timestamp = datetime.now()
@@ -428,15 +427,15 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
     ):
         # type: (str, str, object, **Any) -> None
         """Publish telemetry from a digital twin's component, which is then consumed by
-            one or many destination endpoints (subscribers) defined under.
+        one or many destination endpoints (subscribers) defined under.
 
-        :param str digital_twin_id: The Id of the digital twin.
+        :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
         :param object payload: The telemetry payload to be sent.
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             digital twin with the provided ID or the component name is invalid.
         """
@@ -460,7 +459,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :keyword bool include_model_definition: Include the model definition
             as part of the result. The default value is False.
         :return: The model data.
-        :rtype: ~azure.digitaltwins.DigitalTwinsModelData
+        :rtype: ~azure.digitaltwins.core.DigitalTwinsModelData
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: If there is no
             model with the provided ID.
@@ -484,7 +483,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :keyword int results_per_page: The maximum number of items to retrieve per request.
             The server may choose to return less than the requested max.
         :return: An iterator instance of list of model data.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.DigitalTwinsModelData]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         include_model_definition = kwargs.pop('include_model_definition', False)
@@ -508,7 +507,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :param List[Dict[str,object]] model_list: The set of models to create.
             Each dict corresponds to exactly one model.
         :return: The list of created models.
-        :rtype: List[~azure.digitaltwins.DigitalTwinsModelData]
+        :rtype: List[~azure.digitaltwins.core.DigitalTwinsModelData]
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceExistsError: One or more of
             the provided models already exist.
@@ -528,7 +527,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: There is no model
-            with the provided id.
+            with the provided ID.
         """
         json_patch = [{'op': 'replace', 'path': '/decommissioned', 'value': True}]
         return self._client.digital_twin_models.update(
@@ -547,7 +546,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: There is no model
-            with the provided id.
+            with the provided ID.
         :raises ~azure.core.exceptions.ResourceExistsError: There are dependencies
             on the model that prevent it from being deleted.
         """
@@ -600,11 +599,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         """Create or update an event route.
 
         :param str event_route_id: The ID of the event route to create or update.
-        :param DigitalTwinsEventRoute event_route: The event route data.
+        :param ~azure.digitaltwins.core.DigitalTwinsEventRoute event_route: The event route data.
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
-        :raises ~azure.core.exceptions.ServiceRequestError: The request is invalid.
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._client.event_routes.add(
             event_route_id,
@@ -620,7 +618,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         :param str event_route_id: The ID of the event route to delete.
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         :raises ~azure.core.exceptions.ResourceNotFoundError: There is no
             event route with the provided ID.
         """
@@ -636,11 +634,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
         Note: that there may be a delay between before changes in your instance are reflected in queries.
         For more details on query limitations, see
-        https://docs.microsoft.com/en-us/azure/digital-twins/how-to-query-graph#query-limitations
+        https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitations
 
         :param str query_expression: The query expression to execute.
         :return: An iterable of query results.
-        :rtype: ~azure.core.ItemPaged[Dict[str, object]]
+        :rtype: ~azure.core.paging.ItemPaged[Dict[str, object]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         def extract_data(deserialized):
