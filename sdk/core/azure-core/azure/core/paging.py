@@ -56,7 +56,7 @@ def _get_page(continuation_token, paging_method, initial_response):
             return initial_response
         request = paging_method._initial_request  # pylint: disable=protected-access
     else:
-        request = paging_method.get_next_request(continuation_token)
+        request = paging_method.get_next_request(continuation_token, paging_method._next_request_partial)  # pylint: disable=protected-access
 
     response = paging_method._client._pipeline.run(  # pylint: disable=protected-access
         request, stream=False, **paging_method._operation_config  # pylint: disable=protected-access
@@ -99,14 +99,14 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
                     "If you are passing in callbacks (this is legacy), you have to pass in callbacks for both "
                     "get_next and extract_data. We recommend you just pass in a paging method instead though."
                 )
-        self._extract_data = extract_data or functools.partial(_extract_data, paging_method=paging_method)
-        self._get_page = get_next or functools.partial(
-            _get_page, paging_method=paging_method, initial_response=kwargs.get("initial_response")
-        )
         self._paging_method = paging_method
-
         if self._paging_method:
             self._paging_method.initialize(**kwargs)
+        self._extract_data = extract_data or functools.partial(_extract_data, paging_method=self._paging_method)
+        self._get_page = get_next or functools.partial(
+            _get_page, paging_method=self._paging_method, initial_response=kwargs.get("initial_response")
+        )
+
         self.continuation_token = continuation_token
         self._response = None  # type: Optional[ResponseType]
         self._current_page = None  # type: Optional[Iterable[ReturnType]]

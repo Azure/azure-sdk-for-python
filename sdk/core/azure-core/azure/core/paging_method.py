@@ -48,7 +48,7 @@ class PagingMethodABC():
         """
         raise NotImplementedError("This method needs to be implemented")
 
-    def get_next_request(self, continuation_token):
+    def get_next_request(self, continuation_token, next_request_partial=None):
         # type: (Any, HttpRequest) -> HttpRequest
         """Gets parameters to make next request
         """
@@ -119,12 +119,12 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
-    def get_next_request(self, continuation_token):
+    def get_next_request(self, continuation_token, next_request_partial=None):
         # type: (Any, HttpRequest) -> HttpRequest
         try:
-            return self._next_request_partial(continuation_token)
+            return next_request_partial(continuation_token)
         except TypeError:
-            return self._next_request_partial()
+            return next_request_partial()
 
     def finished(self, did_a_call_already, continuation_token):
         # type: (Any) -> bool
@@ -190,10 +190,10 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         }
         self._error_map.update(kwargs.pop('error_map', {}))
 
-    def get_next_request(self, continuation_token):
+    def get_next_request(self, continuation_token, next_request_partial=None):
         # type: (Any, HttpRequest) -> HttpRequest
-        if self._next_request_partial:
-            return super(PagingMethodWithInitialResponse, self).get_next_request(continuation_token)
+        if next_request_partial:
+            return next_request_partial(continuation_token)
         request = self._initial_response.http_response.request
         request.url = continuation_token
         return request
