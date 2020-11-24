@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -27,15 +28,13 @@ from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
-from .._models import ContainerProperties, StorageErrorException
+from .._models import ContainerProperties
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._serialize import get_api_version
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.pipeline.transport import HttpTransport
-    from azure.core.pipeline.policies import HTTPPolicy
     from .._shared.models import AccountSasPermissions, ResourceTypes, UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
@@ -145,7 +144,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             user_delegation_key = await self._client.service.get_user_delegation_key(key_info=key_info,
                                                                                      timeout=timeout,
                                                                                      **kwargs)  # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
         return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
@@ -172,7 +171,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         """
         try:
             return await self._client.service.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -215,7 +214,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             stats = await self._client.service.get_statistics( # type: ignore
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -243,7 +242,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -321,7 +320,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         timeout = kwargs.pop('timeout', None)
         try:
             await self._client.service.set_properties(props, timeout=timeout, **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -550,7 +549,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                                                       deleted_container_version=deleted_container_version,
                                                       timeout=kwargs.pop('timeout', None), **kwargs)
             return container
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def get_container_client(self, container):

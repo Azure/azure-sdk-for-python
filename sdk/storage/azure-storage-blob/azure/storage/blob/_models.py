@@ -23,22 +23,6 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 from azure.core.exceptions import HttpResponseError
 
 
-class StorageErrorException(HttpResponseError):
-    """Server response with exception of type: 'StorageError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, response, deserialize, *args):
-
-        model_name = 'StorageError'
-        self.error = deserialize(model_name, response)
-        if self.error is None:
-            self.error = deserialize.dependencies[model_name]()
-        super(StorageErrorException, self).__init__(response=response)
-
-
 class BlobType(str, Enum):
 
     BlockBlob = "BlockBlob"
@@ -413,7 +397,7 @@ class ContainerPropertiesPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
@@ -636,7 +620,7 @@ class FilteredBlobPaged(PageIterator):
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):

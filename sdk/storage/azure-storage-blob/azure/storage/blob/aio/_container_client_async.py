@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
@@ -30,7 +31,7 @@ from .._generated.models import SignedIdentifier
 from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
-from .._models import ContainerProperties, BlobType, BlobProperties, StorageErrorException  # pylint: disable=unused-import
+from .._models import ContainerProperties, BlobType, BlobProperties  # pylint: disable=unused-import
 from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
 from ._lease_async import BlobLeaseClient
 from ._blob_client_async import BlobClient
@@ -163,7 +164,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -219,7 +220,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -291,7 +292,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         try:
             return await self._client.container.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -327,7 +328,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 lease_access_conditions=access_conditions,
                 cls=deserialize_container_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         response.name = self.container_name
         return response # type: ignore
@@ -384,7 +385,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
@@ -420,7 +421,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 lease_access_conditions=access_conditions,
                 cls=return_headers_and_deserialized,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return {
             'public_access': response.get('blob_public_access'),
@@ -499,7 +500,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace

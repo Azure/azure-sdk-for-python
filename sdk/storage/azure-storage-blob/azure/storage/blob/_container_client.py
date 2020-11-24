@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -20,6 +21,7 @@ except ImportError:
 import six
 
 from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -38,8 +40,7 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
-    BlobType,
-    StorageErrorException)
+    BlobType)
 from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged
 from ._lease import BlobLeaseClient
 from ._blob_client import BlobClient
@@ -283,7 +284,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -339,7 +340,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -411,7 +412,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         try:
             return self._client.container.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -447,7 +448,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 lease_access_conditions=access_conditions,
                 cls=deserialize_container_properties,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         response.name = self.container_name
         return response # type: ignore
@@ -514,7 +515,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -550,7 +551,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 lease_access_conditions=access_conditions,
                 cls=return_headers_and_deserialized,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
         return {
             'public_access': response.get('blob_public_access'),
@@ -628,7 +629,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 **kwargs)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
