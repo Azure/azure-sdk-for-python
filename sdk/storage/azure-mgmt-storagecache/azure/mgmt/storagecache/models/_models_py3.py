@@ -19,19 +19,34 @@ class ApiOperation(Model):
 
     :param display: The object that represents the operation.
     :type display: ~azure.mgmt.storagecache.models.ApiOperationDisplay
+    :param origin: Origin of the operation.
+    :type origin: str
+    :param is_data_action: The flag that indicates whether the operation
+     applies to data plane.
+    :type is_data_action: bool
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
+    :param service_specification: Specification of the all the metrics
+     provided for a resource type.
+    :type service_specification:
+     ~azure.mgmt.storagecache.models.ApiOperationPropertiesServiceSpecification
     """
 
     _attribute_map = {
         'display': {'key': 'display', 'type': 'ApiOperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
+        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ApiOperationPropertiesServiceSpecification'},
     }
 
-    def __init__(self, *, display=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, display=None, origin: str=None, is_data_action: bool=None, name: str=None, service_specification=None, **kwargs) -> None:
         super(ApiOperation, self).__init__(**kwargs)
         self.display = display
+        self.origin = origin
+        self.is_data_action = is_data_action
         self.name = name
+        self.service_specification = service_specification
 
 
 class ApiOperationDisplay(Model):
@@ -43,19 +58,76 @@ class ApiOperationDisplay(Model):
     :type provider: str
     :param resource: Resource on which the operation is performed: Cache, etc.
     :type resource: str
+    :param description: The description of the operation
+    :type description: str
     """
 
     _attribute_map = {
         'operation': {'key': 'operation', 'type': 'str'},
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, operation: str=None, provider: str=None, resource: str=None, **kwargs) -> None:
+    def __init__(self, *, operation: str=None, provider: str=None, resource: str=None, description: str=None, **kwargs) -> None:
         super(ApiOperationDisplay, self).__init__(**kwargs)
         self.operation = operation
         self.provider = provider
         self.resource = resource
+        self.description = description
+
+
+class ApiOperationPropertiesServiceSpecification(Model):
+    """Specification of the all the metrics provided for a resource type.
+
+    :param metric_specifications: Details about operations related to metrics.
+    :type metric_specifications:
+     list[~azure.mgmt.storagecache.models.MetricSpecification]
+    """
+
+    _attribute_map = {
+        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+    }
+
+    def __init__(self, *, metric_specifications=None, **kwargs) -> None:
+        super(ApiOperationPropertiesServiceSpecification, self).__init__(**kwargs)
+        self.metric_specifications = metric_specifications
+
+
+class AscOperation(Model):
+    """The status of operation.
+
+    :param id: The operation Id.
+    :type id: str
+    :param name: The operation name.
+    :type name: str
+    :param start_time: The start time of the operation.
+    :type start_time: str
+    :param end_time: The end time of the operation.
+    :type end_time: str
+    :param status: The status of the operation.
+    :type status: str
+    :param error: The error detail of the operation if any.
+    :type error: ~azure.mgmt.storagecache.models.ErrorResponse
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'end_time': {'key': 'endTime', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
+    }
+
+    def __init__(self, *, id: str=None, name: str=None, start_time: str=None, end_time: str=None, status: str=None, error=None, **kwargs) -> None:
+        super(AscOperation, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.start_time = start_time
+        self.end_time = end_time
+        self.status = status
+        self.error = error
 
 
 class Cache(Model):
@@ -77,6 +149,8 @@ class Cache(Model):
     :vartype type: str
     :param identity: The identity of the cache, if configured.
     :type identity: ~azure.mgmt.storagecache.models.CacheIdentity
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
     :param cache_size_gb: The size of this Cache, in GB.
     :type cache_size_gb: int
     :ivar health: Health of the Cache.
@@ -111,6 +185,7 @@ class Cache(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'health': {'readonly': True},
         'mount_addresses': {'readonly': True},
     }
@@ -122,6 +197,7 @@ class Cache(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'CacheIdentity'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'cache_size_gb': {'key': 'properties.cacheSizeGB', 'type': 'int'},
         'health': {'key': 'properties.health', 'type': 'CacheHealth'},
         'mount_addresses': {'key': 'properties.mountAddresses', 'type': '[str]'},
@@ -142,6 +218,7 @@ class Cache(Model):
         self.name = None
         self.type = None
         self.identity = identity
+        self.system_data = None
         self.cache_size_gb = cache_size_gb
         self.health = None
         self.mount_addresses = None
@@ -368,8 +445,6 @@ class StorageTargetProperties(Model):
     :param junctions: List of Cache namespace junctions to target for
      namespace associations.
     :type junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
-    :param target_type: Type of the Storage Target.
-    :type target_type: str
     :param provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
      Possible values include: 'Succeeded', 'Failed', 'Cancelled', 'Creating',
@@ -382,37 +457,35 @@ class StorageTargetProperties(Model):
     :type clfs: ~azure.mgmt.storagecache.models.ClfsTarget
     :param unknown: Properties when targetType is unknown.
     :type unknown: ~azure.mgmt.storagecache.models.UnknownTarget
-    :param target_base_type: Required. Constant filled by server.
-    :type target_base_type: str
+    :param target_type: Required. Constant filled by server.
+    :type target_type: str
     """
 
     _validation = {
-        'target_base_type': {'required': True},
+        'target_type': {'required': True},
     }
 
     _attribute_map = {
         'junctions': {'key': 'junctions', 'type': '[NamespaceJunction]'},
-        'target_type': {'key': 'targetType', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'nfs3': {'key': 'nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'unknown', 'type': 'UnknownTarget'},
-        'target_base_type': {'key': 'targetBaseType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'target_base_type': {'nfs3': 'Nfs3TargetProperties', 'clfs': 'ClfsTargetProperties', 'unknown': 'UnknownTargetProperties'}
+        'target_type': {'nfs3': 'Nfs3TargetProperties', 'clfs': 'ClfsTargetProperties', 'unknown': 'UnknownTargetProperties'}
     }
 
-    def __init__(self, *, junctions=None, target_type: str=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
+    def __init__(self, *, junctions=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
         super(StorageTargetProperties, self).__init__(**kwargs)
         self.junctions = junctions
-        self.target_type = target_type
         self.provisioning_state = provisioning_state
         self.nfs3 = nfs3
         self.clfs = clfs
         self.unknown = unknown
-        self.target_base_type = None
+        self.target_type = None
 
 
 class ClfsTargetProperties(StorageTargetProperties):
@@ -423,8 +496,6 @@ class ClfsTargetProperties(StorageTargetProperties):
     :param junctions: List of Cache namespace junctions to target for
      namespace associations.
     :type junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
-    :param target_type: Type of the Storage Target.
-    :type target_type: str
     :param provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
      Possible values include: 'Succeeded', 'Failed', 'Cancelled', 'Creating',
@@ -437,27 +508,26 @@ class ClfsTargetProperties(StorageTargetProperties):
     :type clfs: ~azure.mgmt.storagecache.models.ClfsTarget
     :param unknown: Properties when targetType is unknown.
     :type unknown: ~azure.mgmt.storagecache.models.UnknownTarget
-    :param target_base_type: Required. Constant filled by server.
-    :type target_base_type: str
+    :param target_type: Required. Constant filled by server.
+    :type target_type: str
     """
 
     _validation = {
-        'target_base_type': {'required': True},
+        'target_type': {'required': True},
     }
 
     _attribute_map = {
         'junctions': {'key': 'junctions', 'type': '[NamespaceJunction]'},
-        'target_type': {'key': 'targetType', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'nfs3': {'key': 'nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'unknown', 'type': 'UnknownTarget'},
-        'target_base_type': {'key': 'targetBaseType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
     }
 
-    def __init__(self, *, junctions=None, target_type: str=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
-        super(ClfsTargetProperties, self).__init__(junctions=junctions, target_type=target_type, provisioning_state=provisioning_state, nfs3=nfs3, clfs=clfs, unknown=unknown, **kwargs)
-        self.target_base_type = 'clfs'
+    def __init__(self, *, junctions=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
+        super(ClfsTargetProperties, self).__init__(junctions=junctions, provisioning_state=provisioning_state, nfs3=nfs3, clfs=clfs, unknown=unknown, **kwargs)
+        self.target_type = 'clfs'
 
 
 class CloudError(Model):
@@ -519,6 +589,26 @@ class CloudErrorBody(Model):
         self.target = target
 
 
+class ErrorResponse(Model):
+    """Describes the format of Error response.
+
+    :param code: Error code
+    :type code: str
+    :param message: Error message indicating why the operation failed.
+    :type message: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
 class KeyVaultKeyReference(Model):
     """Describes a reference to Key Vault Key.
 
@@ -563,6 +653,79 @@ class KeyVaultKeyReferenceSourceVault(Model):
     def __init__(self, *, id: str=None, **kwargs) -> None:
         super(KeyVaultKeyReferenceSourceVault, self).__init__(**kwargs)
         self.id = id
+
+
+class MetricDimension(Model):
+    """Specifications of the Dimension of metrics.
+
+    :param name: Name of the dimension
+    :type name: str
+    :param display_name: Localized friendly display name of the dimension
+    :type display_name: str
+    :param internal_name: Internal name of the dimension.
+    :type internal_name: str
+    :param to_be_exported_for_shoebox: To be exported to shoe box.
+    :type to_be_exported_for_shoebox: bool
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'internal_name': {'key': 'internalName', 'type': 'str'},
+        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+    }
+
+    def __init__(self, *, name: str=None, display_name: str=None, internal_name: str=None, to_be_exported_for_shoebox: bool=None, **kwargs) -> None:
+        super(MetricDimension, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.internal_name = internal_name
+        self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
+
+
+class MetricSpecification(Model):
+    """Details about operation related to metrics.
+
+    :param name: The name of the metric.
+    :type name: str
+    :param display_name: Localized display name of the metric.
+    :type display_name: str
+    :param display_description: The description of the metric.
+    :type display_description: str
+    :param unit: The unit that the metric is measured in.
+    :type unit: str
+    :param aggregation_type: The type of metric aggregation.
+    :type aggregation_type: str
+    :param supported_aggregation_types: Support metric aggregation type.
+    :type supported_aggregation_types: list[str or
+     ~azure.mgmt.storagecache.models.MetricAggregationType]
+    :param metric_class: Type of metrics.
+    :type metric_class: str
+    :param dimensions: Dimensions of the metric
+    :type dimensions: list[~azure.mgmt.storagecache.models.MetricDimension]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'display_description': {'key': 'displayDescription', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
+        'metric_class': {'key': 'metricClass', 'type': 'str'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+    }
+
+    def __init__(self, *, name: str=None, display_name: str=None, display_description: str=None, unit: str=None, aggregation_type: str=None, supported_aggregation_types=None, metric_class: str=None, dimensions=None, **kwargs) -> None:
+        super(MetricSpecification, self).__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.aggregation_type = aggregation_type
+        self.supported_aggregation_types = supported_aggregation_types
+        self.metric_class = metric_class
+        self.dimensions = dimensions
 
 
 class NamespaceJunction(Model):
@@ -623,8 +786,6 @@ class Nfs3TargetProperties(StorageTargetProperties):
     :param junctions: List of Cache namespace junctions to target for
      namespace associations.
     :type junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
-    :param target_type: Type of the Storage Target.
-    :type target_type: str
     :param provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
      Possible values include: 'Succeeded', 'Failed', 'Cancelled', 'Creating',
@@ -637,27 +798,26 @@ class Nfs3TargetProperties(StorageTargetProperties):
     :type clfs: ~azure.mgmt.storagecache.models.ClfsTarget
     :param unknown: Properties when targetType is unknown.
     :type unknown: ~azure.mgmt.storagecache.models.UnknownTarget
-    :param target_base_type: Required. Constant filled by server.
-    :type target_base_type: str
+    :param target_type: Required. Constant filled by server.
+    :type target_type: str
     """
 
     _validation = {
-        'target_base_type': {'required': True},
+        'target_type': {'required': True},
     }
 
     _attribute_map = {
         'junctions': {'key': 'junctions', 'type': '[NamespaceJunction]'},
-        'target_type': {'key': 'targetType', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'nfs3': {'key': 'nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'unknown', 'type': 'UnknownTarget'},
-        'target_base_type': {'key': 'targetBaseType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
     }
 
-    def __init__(self, *, junctions=None, target_type: str=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
-        super(Nfs3TargetProperties, self).__init__(junctions=junctions, target_type=target_type, provisioning_state=provisioning_state, nfs3=nfs3, clfs=clfs, unknown=unknown, **kwargs)
-        self.target_base_type = 'nfs3'
+    def __init__(self, *, junctions=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
+        super(Nfs3TargetProperties, self).__init__(junctions=junctions, provisioning_state=provisioning_state, nfs3=nfs3, clfs=clfs, unknown=unknown, **kwargs)
+        self.target_type = 'nfs3'
 
 
 class ResourceSku(Model):
@@ -803,18 +963,26 @@ class StorageTargetResource(Model):
     :ivar type: Type of the Storage Target;
      Microsoft.StorageCache/Cache/StorageTarget
     :vartype type: str
+    :ivar location: Region name string.
+    :vartype location: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
     """
 
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
     }
 
     def __init__(self, **kwargs) -> None:
@@ -822,6 +990,8 @@ class StorageTargetResource(Model):
         self.name = None
         self.id = None
         self.type = None
+        self.location = None
+        self.system_data = None
 
 
 class StorageTarget(StorageTargetResource):
@@ -837,11 +1007,13 @@ class StorageTarget(StorageTargetResource):
     :ivar type: Type of the Storage Target;
      Microsoft.StorageCache/Cache/StorageTarget
     :vartype type: str
+    :ivar location: Region name string.
+    :vartype location: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
     :param junctions: List of Cache namespace junctions to target for
      namespace associations.
     :type junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
-    :param target_type: Type of the Storage Target.
-    :type target_type: str
     :param provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
      Possible values include: 'Succeeded', 'Failed', 'Cancelled', 'Creating',
@@ -860,28 +1032,72 @@ class StorageTarget(StorageTargetResource):
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'location': {'readonly': True},
+        'system_data': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'junctions': {'key': 'properties.junctions', 'type': '[NamespaceJunction]'},
-        'target_type': {'key': 'properties.targetType', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'nfs3': {'key': 'properties.nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'properties.clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'properties.unknown', 'type': 'UnknownTarget'},
     }
 
-    def __init__(self, *, junctions=None, target_type: str=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
+    def __init__(self, *, junctions=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
         super(StorageTarget, self).__init__(**kwargs)
         self.junctions = junctions
-        self.target_type = target_type
         self.provisioning_state = provisioning_state
         self.nfs3 = nfs3
         self.clfs = clfs
         self.unknown = unknown
+
+
+class SystemData(Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource.
+     Possible values include: 'User', 'Application', 'ManagedIdentity', 'Key'
+    :type created_by_type: str or
+     ~azure.mgmt.storagecache.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the
+     resource. Possible values include: 'User', 'Application',
+     'ManagedIdentity', 'Key'
+    :type last_modified_by_type: str or
+     ~azure.mgmt.storagecache.models.CreatedByType
+    :param last_modified_at: The type of identity that last modified the
+     resource.
+    :type last_modified_at: datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, *, created_by: str=None, created_by_type=None, created_at=None, last_modified_by: str=None, last_modified_by_type=None, last_modified_at=None, **kwargs) -> None:
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class UnknownTarget(Model):
@@ -909,8 +1125,6 @@ class UnknownTargetProperties(StorageTargetProperties):
     :param junctions: List of Cache namespace junctions to target for
      namespace associations.
     :type junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
-    :param target_type: Type of the Storage Target.
-    :type target_type: str
     :param provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
      Possible values include: 'Succeeded', 'Failed', 'Cancelled', 'Creating',
@@ -923,27 +1137,26 @@ class UnknownTargetProperties(StorageTargetProperties):
     :type clfs: ~azure.mgmt.storagecache.models.ClfsTarget
     :param unknown: Properties when targetType is unknown.
     :type unknown: ~azure.mgmt.storagecache.models.UnknownTarget
-    :param target_base_type: Required. Constant filled by server.
-    :type target_base_type: str
+    :param target_type: Required. Constant filled by server.
+    :type target_type: str
     """
 
     _validation = {
-        'target_base_type': {'required': True},
+        'target_type': {'required': True},
     }
 
     _attribute_map = {
         'junctions': {'key': 'junctions', 'type': '[NamespaceJunction]'},
-        'target_type': {'key': 'targetType', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'nfs3': {'key': 'nfs3', 'type': 'Nfs3Target'},
         'clfs': {'key': 'clfs', 'type': 'ClfsTarget'},
         'unknown': {'key': 'unknown', 'type': 'UnknownTarget'},
-        'target_base_type': {'key': 'targetBaseType', 'type': 'str'},
+        'target_type': {'key': 'targetType', 'type': 'str'},
     }
 
-    def __init__(self, *, junctions=None, target_type: str=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
-        super(UnknownTargetProperties, self).__init__(junctions=junctions, target_type=target_type, provisioning_state=provisioning_state, nfs3=nfs3, clfs=clfs, unknown=unknown, **kwargs)
-        self.target_base_type = 'unknown'
+    def __init__(self, *, junctions=None, provisioning_state=None, nfs3=None, clfs=None, unknown=None, **kwargs) -> None:
+        super(UnknownTargetProperties, self).__init__(junctions=junctions, provisioning_state=provisioning_state, nfs3=nfs3, clfs=clfs, unknown=unknown, **kwargs)
+        self.target_type = 'unknown'
 
 
 class UsageModel(Model):

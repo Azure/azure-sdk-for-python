@@ -12,10 +12,29 @@
 from enum import Enum
 
 
+class MetricAggregationType(str, Enum):
+
+    not_specified = "NotSpecified"
+    none = "None"
+    average = "Average"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+    count = "Count"
+
+
 class CacheIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
     none = "None"
+
+
+class CreatedByType(str, Enum):
+
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
 
 
 class HealthStateType(str, Enum):
@@ -45,13 +64,6 @@ class FirmwareStatusType(str, Enum):
 
     available = "available"
     unavailable = "unavailable"
-
-
-class StorageTargetType(str, Enum):
-
-    nfs3 = "nfs3"
-    clfs = "clfs"
-    unknown = "unknown"
 
 
 class ReasonCode(str, Enum):
