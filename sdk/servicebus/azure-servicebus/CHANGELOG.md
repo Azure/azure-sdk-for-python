@@ -2,6 +2,8 @@
 
 ## 7.0.0 (2020-11-23)
 
+> **Note:** This is the GA release of the `azure-servicebus` package, rolling out the official API surface area constructed over the prior preview releases.  Users migrating from `v0.50` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/migration_guide.md).
+
 **New Features**
 
 * `sub_queue` and `receive_mode` may now be passed in as a valid string (as defined by their respective enum type) as well as their enum form when constructing `ServiceBusReceiver`.
