@@ -8,7 +8,11 @@ import logging
 import uamqp
 
 from .._base_handler import _parse_conn_str
-from ._base_handler_async import ServiceBusSharedKeyCredential, ServiceBusSASTokenCredential, BaseHandler
+from ._base_handler_async import (
+    ServiceBusSharedKeyCredential,
+    ServiceBusSASTokenCredential,
+    BaseHandler,
+)
 from ._servicebus_sender_async import ServiceBusSender
 from ._servicebus_receiver_async import ServiceBusReceiver
 from .._common._configuration import Configuration
@@ -60,6 +64,7 @@ class ServiceBusClient(object):
             :caption: Create a new instance of the ServiceBusClient.
 
     """
+
     def __init__(
         self,
         fully_qualified_namespace: str,
@@ -67,7 +72,9 @@ class ServiceBusClient(object):
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace = strip_protocol_from_uri(fully_qualified_namespace.strip())
+        self.fully_qualified_namespace = strip_protocol_from_uri(
+            fully_qualified_namespace.strip()
+        )
         self._credential = credential
         self._config = Configuration(**kwargs)
         self._connection = None
@@ -93,15 +100,11 @@ class ServiceBusClient(object):
         self._connection = uamqp.ConnectionAsync(
             hostname=self.fully_qualified_namespace,
             sasl=auth,
-            debug=self._config.logging_enable
+            debug=self._config.logging_enable,
         )
 
     @classmethod
-    def from_connection_string(
-        cls,
-        conn_str: str,
-        **kwargs: Any
-    ) -> "ServiceBusClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusClient":
         """
         Create a ServiceBusClient from a connection string.
 
@@ -131,7 +134,9 @@ class ServiceBusClient(object):
                 :caption: Create a new instance of the ServiceBusClient from connection string.
 
         """
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
+            conn_str
+        )
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif policy and key:
@@ -257,8 +262,8 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        sub_queue = kwargs.get('sub_queue', None)
-        if sub_queue and kwargs.get('session_id'):
+        sub_queue = kwargs.get("sub_queue", None)
+        if sub_queue and kwargs.get("session_id"):
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful queue, "
@@ -267,10 +272,15 @@ class ServiceBusClient(object):
         try:
             queue_name = generate_dead_letter_entity_name(
                 queue_name=queue_name,
-                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER)
+                transfer_deadletter=(
+                    ServiceBusSubQueue(sub_queue)
+                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
+                ),
             )
         except ValueError:
-            if sub_queue: # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+            if (
+                sub_queue
+            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
                 raise
         handler = ServiceBusReceiver(
             fully_qualified_namespace=self.fully_qualified_namespace,
@@ -329,7 +339,9 @@ class ServiceBusClient(object):
         self._handlers.append(handler)
         return handler
 
-    def get_subscription_receiver(self, topic_name: str, subscription_name: str, **kwargs: Any) -> ServiceBusReceiver:
+    def get_subscription_receiver(
+        self, topic_name: str, subscription_name: str, **kwargs: Any
+    ) -> ServiceBusReceiver:
         """Get ServiceBusReceiver for the specific subscription under the topic.
 
         :param str topic_name: The name of specific Service Bus Topic the client connects to.
@@ -384,8 +396,8 @@ class ServiceBusClient(object):
                 "the connection string used to construct the ServiceBusClient."
             )
 
-        sub_queue = kwargs.get('sub_queue', None)
-        if sub_queue and kwargs.get('session_id'):
+        sub_queue = kwargs.get("sub_queue", None)
+        if sub_queue and kwargs.get("session_id"):
             raise ValueError(
                 "session_id and sub_queue can not be specified simultaneously. "
                 "To connect to the sub queue of a sessionful subscription, "
@@ -395,7 +407,10 @@ class ServiceBusClient(object):
             entity_name = generate_dead_letter_entity_name(
                 topic_name=topic_name,
                 subscription_name=subscription_name,
-                transfer_deadletter=(ServiceBusSubQueue(sub_queue) == ServiceBusSubQueue.TRANSFER_DEAD_LETTER)
+                transfer_deadletter=(
+                    ServiceBusSubQueue(sub_queue)
+                    == ServiceBusSubQueue.TRANSFER_DEAD_LETTER
+                ),
             )
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
@@ -412,7 +427,9 @@ class ServiceBusClient(object):
                 **kwargs
             )
         except ValueError:
-            if sub_queue: # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
+            if (
+                sub_queue
+            ):  # If we got here and sub_queue is defined, it's an incorrect value or something unrelated.
                 raise
             handler = ServiceBusReceiver(
                 fully_qualified_namespace=self.fully_qualified_namespace,
