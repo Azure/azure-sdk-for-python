@@ -42,7 +42,7 @@ class PagingMethodABC():
 
     # making requests
 
-    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+    def initialize(self, client, deserialize_output, **kwargs):
         # type: (PipelineClient, Callable, str, Any) -> None
         """Gets parameters to make next request
         """
@@ -59,7 +59,6 @@ class PagingMethodABC():
         """When paging is finished
         """
         raise NotImplementedError("This method needs to be implemented")
-
 
     # extracting data from response
 
@@ -91,14 +90,14 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._client = None
         self._deserialize_output = None
         self._item_name = None
-        self._next_link_name = None
+        self._continuation_token_location = None
         self._cls = None
         self._error_map = None
         self._next_request_partial = None
         self._initial_request = None
         self._operation_config = operation_config
 
-    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+    def initialize(self, client, deserialize_output, **kwargs):
         # type: (PipelineClient, Callable, str, Any) -> None
         try:
             self._initial_request = kwargs.pop("initial_request")
@@ -111,10 +110,9 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
             )
         self._client = client
         self._deserialize_output = deserialize_output
-        self._next_link_name = next_link_name
-
         self._item_name = kwargs.pop("item_name", "value")
         self._cls = kwargs.pop("_cls", None)
+        self._continuation_token_location = kwargs.pop("continuation_token_location")
 
         self._error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -148,15 +146,15 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
 
     def get_continuation_token(self, pipeline_response, deserialized):
         # type: (HttpResponse, ResponseType) -> Any
-        if not self._next_link_name:
+        if not self._continuation_token_location:
             return None
-        if not hasattr(deserialized, self._next_link_name):
+        if not hasattr(deserialized, self._continuation_token_location):
             raise ValueError(
                 "The response object does not have property '{}' to extract continuation token from".format(
-                    self._next_link_name
+                    self._continuation_token_location
                 )
             )
-        return getattr(deserialized, self._next_link_name)
+        return getattr(deserialized, self._continuation_token_location)
 
 
 class PagingMethodWithInitialResponse(BasicPagingMethod):
@@ -169,19 +167,20 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         super(PagingMethodWithInitialResponse, self).__init__()
         self._initial_response = None
 
-    def initialize(self, client, deserialize_output, next_link_name, **kwargs):
+    def initialize(self, client, deserialize_output, **kwargs):
         # type: (PipelineClient, Callable, str, Any) -> None
         try:
             self._initial_response = kwargs.pop("initial_response")
-        except KeyError:
+            self._continuation_token_location = kwargs.pop("continuation_token_location")
+        except KeyError as e:
             raise TypeError(
-                "PagingMethodWithInitialResponse is missing required keyword-only arg "
-                "'initial_response'"
+                "PagingMethodWithInitialResponse is missing required keyword-only arg {}".format(
+                    str(e).replace("KeyError: ", "")
+                )
             )
         self._next_request_partial = kwargs.pop("next_request_partial", None)
         self._client = client
         self._deserialize_output = deserialize_output
-        self._next_link_name = next_link_name
 
         self._item_name = kwargs.pop("item_name", "value")
         self._cls = kwargs.pop("_cls", None)
