@@ -280,8 +280,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     @app_config_decorator
     @AppConfigPreparer()
     def test_delete_non_existing(self, client, appconfiguration_connection_string):
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        deleted_kv = self.app_config_client.delete_configuration_setting(
+        deleted_kv = client.delete_configuration_setting(
             "not_exist_" + KEY
         )
         assert deleted_kv is None
@@ -310,8 +309,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     @app_config_decorator
     @AppConfigPreparer()
     def test_list_configuration_settings_key_label(self, client, appconfiguration_connection_string):
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        items = list(self.app_config_client.list_configuration_settings(
+        items = list(client.list_configuration_settings(
             label_filter=LABEL, key_filter=KEY
         ))
         assert len(items) == 1
@@ -320,8 +318,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     @app_config_decorator
     @AppConfigPreparer()
     def test_list_configuration_settings_only_label(self, client, appconfiguration_connection_string):
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        items = list(self.app_config_client.list_configuration_settings(label_filter=LABEL))
+        items = list(client.list_configuration_settings(label_filter=LABEL))
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
 
@@ -384,11 +381,10 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     @app_config_decorator
     @AppConfigPreparer()
     def test_list_configuration_settings_multi_pages(self, client, appconfiguration_connection_string):
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
             delete_me = [
-                self.app_config_client.add_configuration_setting(
+                client.add_configuration_setting(
                     ConfigurationSetting(
                         key="multi_" + str(i) + KEY_UUID,
                         label="multi_label_" + str(i),
@@ -399,13 +395,13 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             ]
         except ResourceExistsError:
             pass
-        items = self.app_config_client.list_configuration_settings(key_filter="multi_*")
+        items = client.list_configuration_settings(key_filter="multi_*")
         assert len(list(items)) > PAGE_SIZE
 
         # Remove the configuration settings
         try:
             [
-                self.app_config_client.delete_configuration_setting(
+                client.delete_configuration_setting(
                     key="multi_" + str(i) + KEY_UUID, label="multi_label_" + str(i)
                 )
                 for i in range(PAGE_SIZE + 1)
@@ -416,18 +412,16 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     @app_config_decorator
     @AppConfigPreparer()
     def test_list_configuration_settings_null_label(self, client, appconfiguration_connection_string):
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        items = self.app_config_client.list_configuration_settings(label_filter="\0")
+        items = client.list_configuration_settings(label_filter="\0")
         assert len(list(items)) > 0
 
     @app_config_decorator
     @AppConfigPreparer()
     def test_list_configuration_settings_only_accepttime(self, client, appconfiguration_connection_string):
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        exclude_today = self.app_config_client.list_configuration_settings(
+        exclude_today = client.list_configuration_settings(
             accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
-        all_inclusive = self.app_config_client.list_configuration_settings()
+        all_inclusive = client.list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
 
     # method: list_revisions
@@ -444,8 +438,7 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
     @app_config_decorator
     @AppConfigPreparer()
     def test_list_revisions_only_label(self, client, appconfiguration_connection_string):
-        self.app_config_client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        items = list(self.app_config_client.list_revisions(label_filter=LABEL))
+        items = list(client.list_revisions(label_filter=LABEL))
         assert len(items) >= 1
         assert all(x.label == LABEL for x in items)
 
