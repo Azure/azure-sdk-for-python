@@ -87,11 +87,15 @@ async def begin_reserve_phone_numbers():
         quantity=1
     )
     async with phone_number_administration_client:
-        reserve_phone_numbers_response = await phone_number_administration_client.begin_reserve_phone_numbers(
-            options=reservationOptions
+        reserve_phone_numbers_poller = await phone_number_administration_client.begin_reserve_phone_numbers(
+            area_code=area_code_for_reservation,
+            description="testreservation20200014",
+            display_name="testreservation20200014",
+            phone_plan_ids=[phone_plan_id],
+            quantity=1
         )
         print('reserve phone numbers status:')
-        print(reserve_phone_numbers_response.status())
+        print(reserve_phone_numbers_poller.status())
     # [END begin_reserve_phone_numbers]
 
 

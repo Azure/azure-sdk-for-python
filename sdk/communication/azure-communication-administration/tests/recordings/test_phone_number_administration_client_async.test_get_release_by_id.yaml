@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 27 Oct 2020 17:31:07 GMT
+      - Mon, 23 Nov 2020 22:14:57 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -18,10 +18,10 @@ interactions:
       "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Oct 2020 17:31:07 GMT
-      ms-cv: Pqw2ZS1cvUuIH/lwcBJ4Bw.0
+      date: Mon, 23 Nov 2020 22:14:57 GMT
+      ms-cv: thMMTFXbZEKNJWphHbZokg.0
       transfer-encoding: chunked
-      x-processing-time: 549ms
+      x-processing-time: 469ms
     status:
       code: 200
       message: OK
