@@ -35,7 +35,6 @@ from ._generated.models import ( # pylint: disable=unused-import
     BlockLookupList,
     AppendPositionAccessConditions,
     SequenceNumberAccessConditions,
-    StorageErrorException,
     QueryRequest,
     CpkInfo)
 from ._serialize import (
@@ -53,7 +52,7 @@ from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
+from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, StorageErrorException
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
 
