@@ -53,8 +53,8 @@ class ServiceBusSASTokenCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     async def get_token(
-        self, *scopes: str, **kwargs: Any
-    ) -> AccessToken:  # pylint:disable=unused-argument
+        self, *scopes: str, **kwargs: Any  # pylint:disable=unused-argument
+    ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
         """
@@ -74,8 +74,8 @@ class ServiceBusSharedKeyCredential(object):
         self.token_type = TOKEN_TYPE_SASTOKEN
 
     async def get_token(
-        self, *scopes: str, **kwargs: Any
-    ) -> AccessToken:  # pylint:disable=unused-argument
+        self, *scopes: str, **kwargs: Any  # pylint:disable=unused-argument
+    ) -> AccessToken:
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -321,9 +321,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
 
     async def _add_span_request_attributes(self, span):
-        return BaseHandlerSync._add_span_request_attributes(
+        return BaseHandlerSync._add_span_request_attributes(  # pylint: disable=protected-access
             self, span
-        )  # pylint: disable=protected-access
+        )
 
     async def _open(self):  # pylint: disable=no-self-use
         raise ValueError("Subclass should override the method.")
