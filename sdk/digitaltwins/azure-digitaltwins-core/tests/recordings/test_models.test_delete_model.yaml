@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelb2580bd4%3B1?includeModelDefinition=false&api-version=2020-10-31
   response:
@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 01:22:14 GMT
+      - Tue, 24 Nov 2020 21:09:41 GMT
       strict-transport-security:
       - max-age=2592000
     status:
@@ -46,19 +46,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModelb2580bd4;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-08T01:22:16.4839173+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModelb2580bd4;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:41.7129637+00:00"}]'
     headers:
       content-length:
       - '175'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 01:22:16 GMT
+      - Tue, 24 Nov 2020 21:09:41 GMT
       strict-transport-security:
       - max-age=2592000
     status:
@@ -68,7 +68,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -76,7 +76,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: DELETE
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelb2580bd4%3B1?api-version=2020-10-31
   response:
@@ -86,7 +86,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Sun, 08 Nov 2020 01:22:16 GMT
+      - Tue, 24 Nov 2020 21:09:41 GMT
       strict-transport-security:
       - max-age=2592000
     status:
@@ -102,7 +102,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModelb2580bd4%3B1?includeModelDefinition=false&api-version=2020-10-31
   response:
@@ -116,7 +116,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 01:22:18 GMT
+      - Tue, 24 Nov 2020 21:09:41 GMT
       strict-transport-security:
       - max-age=2592000
     status:

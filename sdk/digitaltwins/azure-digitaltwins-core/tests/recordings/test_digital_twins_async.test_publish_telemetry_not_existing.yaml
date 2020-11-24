@@ -2,16 +2,18 @@ interactions:
 - request:
     body: '{"ComponentTelemetry1": 5}'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '26'
       Content-Type:
       - application/json
       Message-Id:
-      - 46e24010-c1a3-49b7-87a7-c23c2a0903f7
+      - ab4c48ac-b495-4fb8-bbd3-c0a52421ef70
       Telemetry-Source-Time:
-      - '2020-11-09 20:45:45.080404'
+      - '2020-11-25 10:07:33.346096'
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/telemetry?api-version=2020-10-31
   response:
@@ -23,10 +25,10 @@ interactions:
     headers:
       content-length: '256'
       content-type: application/json; charset=utf-8
-      date: Mon, 09 Nov 2020 07:45:49 GMT
+      date: Tue, 24 Nov 2020 21:07:34 GMT
       strict-transport-security: max-age=2592000
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/telemetry?api-version=2020-10-31
+    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/foo/telemetry?api-version=2020-10-31
 version: 1

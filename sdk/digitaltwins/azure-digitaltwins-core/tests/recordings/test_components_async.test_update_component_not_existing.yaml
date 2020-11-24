@@ -2,12 +2,14 @@ interactions:
 - request:
     body: '[{"op": "replace", "path": "/ComponentProp1", "value": "value2"}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '65'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2020-10-31
   response:
@@ -18,21 +20,23 @@ interactions:
     headers:
       content-length: '213'
       content-type: application/json; charset=utf-8
-      date: Sun, 08 Nov 2020 20:34:36 GMT
+      date: Tue, 24 Nov 2020 21:05:32 GMT
       strict-transport-security: max-age=2592000
     status:
       code: 400
       message: Bad Request
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2020-10-31
+    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component2?api-version=2020-10-31
 - request:
     body: '[{"op": "replace", "path": "/ComponentProp1", "value": "value2"}]'
     headers:
+      Accept:
+      - application/json
       Content-Length:
       - '65'
       Content-Type:
       - application/json-patch+json
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2020-10-31
   response:
@@ -44,10 +48,10 @@ interactions:
     headers:
       content-length: '256'
       content-type: application/json; charset=utf-8
-      date: Sun, 08 Nov 2020 20:34:36 GMT
+      date: Tue, 24 Nov 2020 21:05:32 GMT
       strict-transport-security: max-age=2592000
     status:
       code: 404
       message: Not Found
-    url: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2020-10-31
+    url: https://antischdigitaltwins.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component2?api-version=2020-10-31
 version: 1
