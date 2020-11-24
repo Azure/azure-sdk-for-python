@@ -17,6 +17,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import functools
 import pytest
 import uuid
 import avro
@@ -29,8 +30,9 @@ from azure.schemaregistry.serializer.avroserializer._avro_serializer import Avro
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
-from devtools_testutils import AzureTestCase, SchemaRegistryPowerShellPreparer
+from devtools_testutils import AzureTestCase, PowerShellPreparer
 
+SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_endpoint="fake_resource.servicebus.windows.net", schemaregistry_group="fakegroup")
 
 class SchemaRegistryAvroSerializerTests(AzureTestCase):
 
