@@ -79,7 +79,7 @@ setup(
         'azure.ai',
     ]),
     install_requires=[
-        "azure-core<2.0.0,>=1.6.0",
+        "azure-core<2.0.0,>=1.8.2",
         "msrest>=0.6.12",
         'six>=1.6',
         'azure-common~=1.1',
