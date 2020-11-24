@@ -20,14 +20,14 @@ from .._deserialize import get_page_ranges_result, parse_tags
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
 from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, CpkInfo
+from .._generated.models import CpkInfo
 from .._deserialize import deserialize_blob_properties
 from .._blob_client import BlobClient as BlobClientBase
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
     upload_page_blob)
-from .._models import BlobType, BlobBlock, BlobProperties
+from .._models import BlobType, BlobBlock, BlobProperties, StorageErrorException
 from ._lease_async import BlobLeaseClient
 from ._download_async import StorageStreamDownloader
 

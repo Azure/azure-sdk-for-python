@@ -20,7 +20,23 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import StorageErrorException
+from azure.core.exceptions import HttpResponseError
+
+
+class StorageErrorException(HttpResponseError):
+    """Server response with exception of type: 'StorageError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, response, deserialize, *args):
+
+        model_name = 'StorageError'
+        self.error = deserialize(model_name, response)
+        if self.error is None:
+            self.error = deserialize.dependencies[model_name]()
+        super(StorageErrorException, self).__init__(response=response)
 
 
 class BlobType(str, Enum):

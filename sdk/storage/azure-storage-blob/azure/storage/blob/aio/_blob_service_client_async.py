@@ -23,11 +23,11 @@ from .._shared.parser import _to_utc_datetime
 from .._shared.response_handlers import parse_to_internal_user_delegation_key
 from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
+from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from ._container_client_async import ContainerClient
 from ._blob_client_async import BlobClient
-from .._models import ContainerProperties
+from .._models import ContainerProperties, StorageErrorException
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._serialize import get_api_version
 from ._models import ContainerPropertiesPaged, FilteredBlobPaged

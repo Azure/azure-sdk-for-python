@@ -7,8 +7,8 @@
 
 from azure.core.paging import PageIterator, ItemPaged
 from azure.storage.blob._deserialize import get_blob_properties_from_generated_code
-from ._generated.models import StorageErrorException, BlobItemInternal, BlobPrefix as GenBlobPrefix
-from ._models import BlobProperties
+from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
+from ._models import BlobProperties, StorageErrorException
 from ._shared.models import DictMixin
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
