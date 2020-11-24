@@ -1,5 +1,8 @@
 # Release History
 
+## 7.0.1 (Unreleased)
+
+
 ## 7.0.0 (2020-11-23)
 
 > **Note:** This is the GA release of the `azure-servicebus` package, rolling out the official API surface area constructed over the prior preview releases.  Users migrating from `v0.50` are advised to view the [migration guide](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/servicebus/azure-servicebus/migration_guide.md).
