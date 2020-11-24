@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 27 Oct 2020 17:31:12 GMT
+      - Mon, 23 Nov 2020 22:15:03 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
@@ -20,10 +20,10 @@ interactions:
     body: '{"releaseId": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Oct 2020 17:31:13 GMT
-      ms-cv: N6ZeEAxBDkyPJ7+68bjr9g.0
+      date: Mon, 23 Nov 2020 22:15:03 GMT
+      ms-cv: C+e6Bsl04EOYzASUKe+jWA.0
       transfer-encoding: chunked
-      x-processing-time: 867ms
+      x-processing-time: 719ms
     status:
       code: 200
       message: OK
@@ -34,22 +34,22 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 27 Oct 2020 17:31:13 GMT
+      - Mon, 23 Nov 2020 22:15:04 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/02b73a14-5409-454e-8cde-4fb94beec54c?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/ffff1f34-bcdd-42c3-8281-d7dc9b79264d?api-version=2020-07-20-preview1
   response:
-    body: '{"releaseId": "sanitized", "createdAt": "2020-10-27T17:31:13.0251029+00:00",
+    body: '{"releaseId": "sanitized", "createdAt": "2020-11-23T22:15:03.8078455+00:00",
       "status": "Pending", "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Oct 2020 17:31:13 GMT
-      ms-cv: ZCL7Ia9Vj0awyznSUKmUsA.0
+      date: Mon, 23 Nov 2020 22:15:03 GMT
+      ms-cv: v8ERLmL2JUqitcrp28xrxg.0
       transfer-encoding: chunked
-      x-processing-time: 231ms
+      x-processing-time: 191ms
     status:
       code: 200
       message: OK
@@ -60,22 +60,22 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 27 Oct 2020 17:31:13 GMT
+      - Mon, 23 Nov 2020 22:15:04 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/02b73a14-5409-454e-8cde-4fb94beec54c?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/ffff1f34-bcdd-42c3-8281-d7dc9b79264d?api-version=2020-07-20-preview1
   response:
-    body: '{"releaseId": "sanitized", "createdAt": "2020-10-27T17:31:13.0251029+00:00",
+    body: '{"releaseId": "sanitized", "createdAt": "2020-11-23T22:15:03.8078455+00:00",
       "status": "Pending", "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Oct 2020 17:31:13 GMT
-      ms-cv: bEqHnELM+EOGHXngc6PUxw.0
+      date: Mon, 23 Nov 2020 22:15:04 GMT
+      ms-cv: nFuzE/NYDEOntsaMNmdJSw.0
       transfer-encoding: chunked
-      x-processing-time: 200ms
+      x-processing-time: 288ms
     status:
       code: 200
       message: OK
@@ -86,23 +86,24 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 27 Oct 2020 17:31:19 GMT
+      - Mon, 23 Nov 2020 22:15:10 GMT
       User-Agent:
       - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/02b73a14-5409-454e-8cde-4fb94beec54c?api-version=2020-07-20-preview1
+    uri: https://sanitized.communication.azure.com/administration/phonenumbers/releases/ffff1f34-bcdd-42c3-8281-d7dc9b79264d?api-version=2020-07-20-preview1
   response:
-    body: '{"releaseId": "sanitized", "createdAt": "2020-10-27T17:31:13.0251029+00:00",
+    body: '{"releaseId": "sanitized", "createdAt": "2020-11-23T22:15:03.8078455+00:00",
       "status": "Failed", "errorMessage": "Unknown exception in BeginReleaseQueueProcessor
-      : No acquired numbers to process", "phoneNumberReleaseStatusDetails": "sanitized"}'
+      : Cannot Process Order since phone number(s) do not belong to tenant:ec53533e-7d3b-4ad0-bf10-7222b049eb8e",
+      "phoneNumberReleaseStatusDetails": "sanitized"}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 27 Oct 2020 17:31:19 GMT
-      ms-cv: tZNeP1unLUKFFtFVJnmXhg.0
+      date: Mon, 23 Nov 2020 22:15:09 GMT
+      ms-cv: qpn1QSP33kO2OqJnvbwHew.0
       transfer-encoding: chunked
-      x-processing-time: 200ms
+      x-processing-time: 195ms
     status:
       code: 200
       message: OK
