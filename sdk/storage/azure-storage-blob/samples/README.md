@@ -81,7 +81,7 @@ get and set access policies:
 * [blob_samples_proxy_configuration.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/blob_samples_proxy_configuration.py) - Examples to work with a proxy.
     * Work with a proxy using the storage account.
 
-* [forecasting_in_vs_code_with_blob.py](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/forecasting_in_vs_code_with_blob.ipynb) - An end-to-end sample and writeup on leveraging blobs as part of an Azure data infrastructure.
+* [forecasting_in_vs_code_with_blob.ipynb](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob/samples/forecasting_in_vs_code_with_blob.ipynb) - An end-to-end sample and writeup on leveraging blobs as part of an Azure data infrastructure.
     * Integrate blob with other Azure Services such as App Insights, and utilize it as a tool for data experimentation.
 
 ## Prerequisites
