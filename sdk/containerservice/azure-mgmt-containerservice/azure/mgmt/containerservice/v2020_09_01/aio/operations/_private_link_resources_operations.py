@@ -13,7 +13,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models
+from ... import models as _models
 
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -32,7 +32,7 @@ class PrivateLinkResourcesOperations:
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
@@ -45,7 +45,7 @@ class PrivateLinkResourcesOperations:
         resource_group_name: str,
         resource_name: str,
         **kwargs
-    ) -> "models.PrivateLinkResourcesListResult":
+    ) -> "_models.PrivateLinkResourcesListResult":
         """Gets a list of private link resources in the specified managed cluster.
 
         Gets a list of private link resources in the specified managed cluster. The operation returns
@@ -60,7 +60,7 @@ class PrivateLinkResourcesOperations:
         :rtype: ~azure.mgmt.containerservice.v2020_09_01.models.PrivateLinkResourcesListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PrivateLinkResourcesListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourcesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
