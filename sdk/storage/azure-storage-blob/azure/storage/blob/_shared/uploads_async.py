@@ -293,7 +293,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             content_range = 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
             computed_md5 = None
             self.response_headers = await self.service.upload_pages(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 transactional_content_md5=computed_md5,
                 range=content_range,
