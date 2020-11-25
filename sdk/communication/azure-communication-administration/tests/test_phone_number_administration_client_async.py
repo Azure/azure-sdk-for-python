@@ -16,7 +16,7 @@ from phone_number_testcase_async import AsyncPhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
 import os
 
-SKIP_PHONE_NUMBER_TESTS = True
+SKIP_PHONE_NUMBER_TESTS = False
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
 class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
@@ -335,3 +335,14 @@ class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTest
             )
             result = await poller.result()
         assert result
+
+    @AsyncPhoneNumberCommunicationTestCase.await_prepared_test
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    async def test_list_reservations(self):
+        async with self._phone_number_administration_client:
+            pages = self._phone_number_administration_client.list_all_reservations()
+            items = []
+            async for item in pages:
+                items.append(item)
+        assert len(items) > 0

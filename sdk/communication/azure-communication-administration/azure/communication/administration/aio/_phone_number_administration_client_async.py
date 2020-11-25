@@ -523,7 +523,7 @@ class PhoneNumberAdministrationClient(object):
                          polling_method=reservation_polling)
 
     @distributed_trace
-    def list_all_searches(
+    def list_all_reservations(
             self,
             **kwargs  # type: Any
     ):
