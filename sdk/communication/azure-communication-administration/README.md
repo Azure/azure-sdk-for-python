@@ -139,7 +139,7 @@ poller = phone_number_administration_client.begin_reserve_phone_numbers(
 )
 ```
 
-### Get Reservation by id
+### Get Reservation By Id
 ```python
 phone_number_administration_client = PhoneNumberAdministrationClient.from_connection_string(connection_str)
 
