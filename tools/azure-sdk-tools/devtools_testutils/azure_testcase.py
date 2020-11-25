@@ -295,7 +295,11 @@ class AzureTestCase(ReplayableTest):
     @staticmethod
     def await_prepared_test(test_fn):
         """Synchronous wrapper for async test methods. Used to avoid making changes
-        upstream to AbstractPreparer (which doesn't await the functions it wraps)
+        upstream to AbstractPreparer, which only awaits async tests that use preparers.
+        (Add @AzureTestCase.await_prepared_test decorator to async tests without preparers)
+
+        # Note: this will only be needed so long as we maintain unittest.TestCase in our
+        test-class inheritance chain.
         """
 
         if sys.version_info < (3, 5):
