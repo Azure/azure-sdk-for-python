@@ -16,10 +16,8 @@ The Azure Data Tables SDK can access an Azure Storage or CosmosDB account.
     * an [Azure Cosmos Account][azure_cosmos_account].
 
 #### Create account
-If you wish to create a new storage account, you can use [Azure Portal][azure_portal_create_account],
-[Azure PowerShell][azure_powershell_create_account], or [Azure CLI][azure_cli_create_account]:
-
-If you wish to create a new cosmos storage account, you can use [Azure Cosmos DB][azure_cli_create_cosmos].
+* To create a new storage account, you can use [Azure Portal][azure_portal_create_account], [Azure PowerShell][azure_powershell_create_account], or [Azure CLI][azure_cli_create_account]:
+* To create a new cosmos storage account, you can use the [Azure CLI][azure_cli_create_cosmos] or [Azure Portal][azure_portal_create_cosmos].
 
 ### Install the package
 Install the Azure Data Tables client library for Python with [pip][pip_link]:
@@ -78,9 +76,6 @@ az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
     service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
-The connection string to your account can be found in the Azure Portal under the "Access Keys" section or by running the following CLI command:
-
-
 ##### Creating the client from a SAS token
 To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()`
    functions to create a sas token for the account or table:
@@ -119,11 +114,9 @@ use of a dedicated client object.
 ### Clients
 Two different clients are provided to interact with the various components of the Table Service:
 1. **`TableServiceClient`** -
-    * Interacts with the Azure account itself
-    * Allows you to acquire preconfigured client instances to access the tables within.
-    * Provides operations to retrieve and configure the account
+    * Get and set account setting
     * Query, create, and delete tables within the account.
-    * To perform operations on a specific table, retrieve a client using the `get_table_client` method.
+    * Get a `TableClient` to access a specific table using the `get_table_client` method.
 2. **`TableClient`** -
     * Interacts with a specific table (which need not exist yet).
     * Provides operations to create or delete a table
@@ -145,7 +138,7 @@ entity = {
 * **Update** - Update an entity's information by either merging or replacing the existing entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
     * `UpdateMode.REPLACE` will replace the existing entity with the given one, deleting any existing properties not included in the submitted entity
-* **Query** - Query existing entities in a table based off of the QueryOptions (OData).
+* **Query** - Query existing entities in a table using [OData syntax][odata_syntax]
 * **Get** - Get a specific entity from a table by partition and row key.
 * **Upsert** - Merge or replace an entity in a table, or if the entity does not exist, inserts the entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
@@ -167,8 +160,7 @@ Create a table in your account and get a `TableClient` to perform operations on 
 from azure.data.tables import TableServiceClient
 table_service_client = TableServiceClient.from_connection_string(conn_str="<connection_string>")
 table_name = "myTable
-table_service_client.create_table(table_name=table_name)
-table_client = table_service_client.get_table_client(table_name=table_name)
+table_client = table_service_client.create_table(table_name=table_name)
 ```
 
 ### Creating entities
@@ -178,9 +170,12 @@ Create entities in the table. The properties
 from azure.data.tables import TableServiceClient
 from datetime import datetime
 
+PRODUCT_ID = '001234'
+PRODUCT_NAME = 'RedMarker
+
 my_entity = {
-    'PartitionKey': 'product_name',
-    'RowKey': 'product_id'
+    'PartitionKey': PRODUCT_NAME,
+    'RowKey': PRODUCT_ID,
     'Stock': 15,
     'Price': 9.99,
     'Comments': "great product",
@@ -341,7 +336,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [pip_link]:https://pypi.org/project/pip/
 
 [azure_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
-[azure_cli_create_cosmos]:https://docs.microsoft.com/en-us/azure/cosmos-db/scripts/cli/table/create?toc=/cli/azure/toc.json
+[azure_cli_create_cosmos]:https://docs.microsoft.com/en-us/azure/cosmos-db/scripts/cli/table/create
+[azure_portal_create_cosmos]:https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal
 [azure_portal_create_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
 [azure_powershell_create_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell
 [azure_cli_create_account]: https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli
@@ -353,6 +349,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [azure_sas_token]:https://docs.microsoft.com/azure/storage/common/storage-sas-overview
 [azure_shared_key]:https://docs.microsoft.com/rest/api/storageservices/authorize-with-shared-key
 
+[odata_syntax]:https://docs.microsoft.com/en-us/azure/search/search-query-odata-select
 
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
