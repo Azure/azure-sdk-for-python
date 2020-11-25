@@ -1,5 +1,8 @@
 # Release History
 
+## 6.0.1 (Unreleased)
+
+
 ## 6.0.0 (2020-11-23)
 
 **Features**
