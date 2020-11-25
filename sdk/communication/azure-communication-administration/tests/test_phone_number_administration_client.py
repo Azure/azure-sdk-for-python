@@ -274,3 +274,9 @@ class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):
             reservation_id=self.reservation_id_to_purchase
         )
         assert poller.result()
+
+    @pytest.mark.live_test_only
+    @pytest.mark.skipif(SKIP_PHONE_NUMBER_TESTS, reason=PHONE_NUMBER_TEST_SKIP_REASON)
+    def test_list_reservations(self):
+        pages = self._phone_number_administration_client.list_all_reservations()
+        assert pages.next()
