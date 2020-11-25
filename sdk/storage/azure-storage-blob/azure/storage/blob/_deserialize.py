@@ -64,7 +64,7 @@ def deserialize_ors_policies(policy_dictionary):
 def deserialize_blob_stream(response, obj, headers):
     blob_properties = deserialize_blob_properties(response, obj, headers)
     obj.properties = blob_properties
-    return response.location_mode, obj
+    return response.http_response.location_mode, obj
 
 
 def deserialize_container_properties(response, obj, headers):
