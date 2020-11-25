@@ -19,15 +19,15 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PUT
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup?api-version=2019-12-01
   response:
     body:
-      string: '{"properties":{"sku":"Standard","provisioningState":"Pending","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Pending"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"6111b0bd-9c9a-4f07-8c1b-6d01f26b0ee6","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
+      string: '{"properties":{"sku":"Standard","provisioningState":"Pending","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Pending"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"7f092f04-42fd-4373-88e2-fbd93d5fcc8a","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
       cache-control:
       - no-cache
       content-length:
@@ -35,7 +35,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:26:46 GMT
+      - Wed, 25 Nov 2020 06:07:23 GMT
       expires:
       - '-1'
       pragma:
@@ -49,7 +49,7 @@ interactions:
       x-ms-ratelimit-remaining-subscription-resource-requests-pt5m:
       - '99'
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1199'
     status:
       code: 201
       message: Created
@@ -63,12 +63,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -77,7 +77,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:27:17 GMT
+      - Wed, 25 Nov 2020 06:07:55 GMT
       expires:
       - '-1'
       pragma:
@@ -103,12 +103,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -117,7 +117,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:27:48 GMT
+      - Wed, 25 Nov 2020 06:08:26 GMT
       expires:
       - '-1'
       pragma:
@@ -143,12 +143,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -157,7 +157,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:28:19 GMT
+      - Wed, 25 Nov 2020 06:08:57 GMT
       expires:
       - '-1'
       pragma:
@@ -183,12 +183,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -197,7 +197,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:28:49 GMT
+      - Wed, 25 Nov 2020 06:09:27 GMT
       expires:
       - '-1'
       pragma:
@@ -223,12 +223,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -237,7 +237,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:29:19 GMT
+      - Wed, 25 Nov 2020 06:09:57 GMT
       expires:
       - '-1'
       pragma:
@@ -263,12 +263,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -277,7 +277,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:29:50 GMT
+      - Wed, 25 Nov 2020 06:10:27 GMT
       expires:
       - '-1'
       pragma:
@@ -303,12 +303,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -317,7 +317,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:30:20 GMT
+      - Wed, 25 Nov 2020 06:10:59 GMT
       expires:
       - '-1'
       pragma:
@@ -343,12 +343,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -357,7 +357,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:30:50 GMT
+      - Wed, 25 Nov 2020 06:11:29 GMT
       expires:
       - '-1'
       pragma:
@@ -383,12 +383,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -397,7 +397,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:31:21 GMT
+      - Wed, 25 Nov 2020 06:11:59 GMT
       expires:
       - '-1'
       pragma:
@@ -423,12 +423,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -437,7 +437,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:31:51 GMT
+      - Wed, 25 Nov 2020 06:12:29 GMT
       expires:
       - '-1'
       pragma:
@@ -463,12 +463,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -477,7 +477,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:32:22 GMT
+      - Wed, 25 Nov 2020 06:12:59 GMT
       expires:
       - '-1'
       pragma:
@@ -503,12 +503,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -517,7 +517,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:32:53 GMT
+      - Wed, 25 Nov 2020 06:13:31 GMT
       expires:
       - '-1'
       pragma:
@@ -543,12 +543,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -557,7 +557,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:33:23 GMT
+      - Wed, 25 Nov 2020 06:14:02 GMT
       expires:
       - '-1'
       pragma:
@@ -583,12 +583,52 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Creating","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Pending","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '311'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Nov 2020 06:14:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Creating","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -597,7 +637,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:33:53 GMT
+      - Wed, 25 Nov 2020 06:15:02 GMT
       expires:
       - '-1'
       pragma:
@@ -623,12 +663,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Creating","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Creating","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -637,7 +677,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:34:25 GMT
+      - Wed, 25 Nov 2020 06:15:33 GMT
       expires:
       - '-1'
       pragma:
@@ -663,12 +703,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Creating","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[]}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Creating","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
     headers:
       cache-control:
       - no-cache
@@ -677,7 +717,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:34:55 GMT
+      - Wed, 25 Nov 2020 06:16:04 GMT
       expires:
       - '-1'
       pragma:
@@ -703,15 +743,55 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a475d927-6317-47df-b549-0c40a7676bc2?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Succeeded","startTime":"2020-08-18T09:26:45.2833638Z","properties":{"events":[{"count":1,"firstTimestamp":"2020-08-18T09:34:58Z","lastTimestamp":"2020-08-18T09:34:58Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:06Z","lastTimestamp":"2020-08-18T09:35:06Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Started","message":"Started
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Creating","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '312'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 25 Nov 2020 06:16:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/a0fcc730-e486-4c46-b67f-2ceed9ae903f?api-version=2018-06-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Succeeded","startTime":"2020-11-25T06:07:22.5657219Z","properties":{"events":[{"count":1,"firstTimestamp":"2020-11-25T06:16:39Z","lastTimestamp":"2020-11-25T06:16:39Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Started","message":"Started
         container","type":"Normal"}]}}'
     headers:
       cache-control:
@@ -721,7 +801,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:35:25 GMT
+      - Wed, 25 Nov 2020 06:17:04 GMT
       expires:
       - '-1'
       pragma:
@@ -747,16 +827,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup?api-version=2019-12-01
   response:
     body:
-      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Running","startTime":"2020-08-18T09:35:07Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-08-18T09:34:58Z","lastTimestamp":"2020-08-18T09:34:58Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:06Z","lastTimestamp":"2020-08-18T09:35:06Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Started","message":"Started
-        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Running"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"6111b0bd-9c9a-4f07-8c1b-6d01f26b0ee6","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
+      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Running","startTime":"2020-11-25T06:16:47Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-11-25T06:16:39Z","lastTimestamp":"2020-11-25T06:16:39Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Started","message":"Started
+        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Running"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"7f092f04-42fd-4373-88e2-fbd93d5fcc8a","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
     headers:
       cache-control:
       - no-cache
@@ -765,7 +845,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:35:26 GMT
+      - Wed, 25 Nov 2020 06:17:05 GMT
       expires:
       - '-1'
       pragma:
@@ -791,7 +871,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup/containers/my-container/logs?api-version=2019-12-01&tail=10
   response:
@@ -811,7 +891,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:35:27 GMT
+      - Wed, 25 Nov 2020 06:17:05 GMT
       expires:
       - '-1'
       pragma:
@@ -837,16 +917,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup?api-version=2019-12-01
   response:
     body:
-      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Running","startTime":"2020-08-18T09:35:07Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-08-18T09:34:58Z","lastTimestamp":"2020-08-18T09:34:58Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:06Z","lastTimestamp":"2020-08-18T09:35:06Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Started","message":"Started
-        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Running"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"6111b0bd-9c9a-4f07-8c1b-6d01f26b0ee6","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
+      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Running","startTime":"2020-11-25T06:16:47Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-11-25T06:16:39Z","lastTimestamp":"2020-11-25T06:16:39Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Started","message":"Started
+        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Running"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"7f092f04-42fd-4373-88e2-fbd93d5fcc8a","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
     headers:
       cache-control:
       - no-cache
@@ -855,7 +935,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:35:27 GMT
+      - Wed, 25 Nov 2020 06:17:06 GMT
       expires:
       - '-1'
       pragma:
@@ -881,16 +961,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup?api-version=2019-12-01
   response:
     body:
-      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Running","startTime":"2020-08-18T09:35:07Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-08-18T09:34:58Z","lastTimestamp":"2020-08-18T09:34:58Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:06Z","lastTimestamp":"2020-08-18T09:35:06Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Started","message":"Started
-        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Running"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"6111b0bd-9c9a-4f07-8c1b-6d01f26b0ee6","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
+      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Running","startTime":"2020-11-25T06:16:47Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-11-25T06:16:39Z","lastTimestamp":"2020-11-25T06:16:39Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Started","message":"Started
+        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Running"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"7f092f04-42fd-4373-88e2-fbd93d5fcc8a","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus"}'
     headers:
       cache-control:
       - no-cache
@@ -899,7 +979,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:35:28 GMT
+      - Wed, 25 Nov 2020 06:17:06 GMT
       expires:
       - '-1'
       pragma:
@@ -929,12 +1009,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup/containers/my-container/exec?api-version=2019-12-01
   response:
     body:
-      string: '{"webSocketUri":"wss://bridge-linux-87.eastus.management.azurecontainer.io/exec/caas-80ff4c550f6e406395867373e9de8a88/bridge-f0db53bdaa6d8bfa?rows=12&cols=12&api-version=2018-02-01-preview","password":"kdS0XrrwpTh8g_kL-eeat1dv0a8G9JIGYUxucWYbC4s[[EOM]]"}'
+      string: '{"webSocketUri":"wss://bridge-linux-87.eastus.management.azurecontainer.io/exec/caas-bdfd9bfc043e485f942a5b586428f166/bridge-f0db53bdaa6d8bfa?rows=12&cols=12&api-version=2018-02-01-preview","password":"eolElunX_hceYRc34AlF9Puo-TJXnNhNn846aPRQBIE[[EOM]]"}'
     headers:
       cache-control:
       - no-cache
@@ -943,7 +1023,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:35:28 GMT
+      - Wed, 25 Nov 2020 06:17:06 GMT
       expires:
       - '-1'
       pragma:
@@ -965,7 +1045,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -973,7 +1053,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup/restart?api-version=2019-12-01
   response:
@@ -981,11 +1061,11 @@ interactions:
       string: ''
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/c426a214-923e-4ce0-a105-c5f1c0f0427a?api-version=2018-06-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/d495b81c-324c-49c5-bd1d-d9977a1b472d?api-version=2018-06-01
       cache-control:
       - no-cache
       date:
-      - Tue, 18 Aug 2020 09:35:29 GMT
+      - Wed, 25 Nov 2020 06:17:07 GMT
       expires:
       - '-1'
       pragma:
@@ -1009,19 +1089,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/c426a214-923e-4ce0-a105-c5f1c0f0427a?api-version=2018-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerInstance/locations/eastus/operations/d495b81c-324c-49c5-bd1d-d9977a1b472d?api-version=2018-06-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Succeeded","startTime":"2020-08-18T09:35:29.9907744Z","properties":{"events":[{"count":1,"firstTimestamp":"2020-08-18T09:34:58Z","lastTimestamp":"2020-08-18T09:34:58Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:06Z","lastTimestamp":"2020-08-18T09:35:06Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Started","message":"Started
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Started","message":"Started
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","status":"Succeeded","startTime":"2020-11-25T06:17:07.8302141Z","properties":{"events":[{"count":1,"firstTimestamp":"2020-11-25T06:16:39Z","lastTimestamp":"2020-11-25T06:16:39Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Started","message":"Started
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:09Z","lastTimestamp":"2020-11-25T06:17:09Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:09Z","lastTimestamp":"2020-11-25T06:17:09Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:09Z","lastTimestamp":"2020-11-25T06:17:09Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:10Z","lastTimestamp":"2020-11-25T06:17:10Z","name":"Started","message":"Started
         container","type":"Normal"}]}}'
     headers:
       cache-control:
@@ -1031,7 +1111,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:35:59 GMT
+      - Wed, 25 Nov 2020 06:17:37 GMT
       expires:
       - '-1'
       pragma:
@@ -1051,7 +1131,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1059,7 +1139,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup/start?api-version=2019-12-01
   response:
@@ -1069,7 +1149,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 18 Aug 2020 09:36:01 GMT
+      - Wed, 25 Nov 2020 06:17:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1087,7 +1167,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1095,7 +1175,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup/stop?api-version=2019-12-01
   response:
@@ -1105,7 +1185,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-      - Tue, 18 Aug 2020 09:36:02 GMT
+      - Wed, 25 Nov 2020 06:17:38 GMT
       expires:
       - '-1'
       pragma:
@@ -1133,30 +1213,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: PATCH
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup?api-version=2019-12-01
   response:
     body:
-      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Terminated","finishTime":"2020-08-18T09:36:03.1750901Z","detailStatus":"Container
-        stopped per client request"},"previousState":{"state":"Running","startTime":"2020-08-18T09:35:31Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-08-18T09:34:58Z","lastTimestamp":"2020-08-18T09:34:58Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:06Z","lastTimestamp":"2020-08-18T09:35:06Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Started","message":"Started
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Started","message":"Started
-        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Stopped"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"6111b0bd-9c9a-4f07-8c1b-6d01f26b0ee6","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus","tags":{"tag1key":"tag1Value","tag2key":"tag2Value"}}'
+      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Stopped"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"7f092f04-42fd-4373-88e2-fbd93d5fcc8a","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus","tags":{"tag1key":"tag1Value","tag2key":"tag2Value"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '2630'
+      - '1082'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:36:07 GMT
+      - Wed, 25 Nov 2020 06:17:43 GMT
       expires:
       - '-1'
       pragma:
@@ -1170,7 +1241,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1197'
+      - '1198'
     status:
       code: 200
       message: OK
@@ -1186,21 +1257,21 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-mgmt-containerinstance/1.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
+      - azsdk-python-mgmt-containerinstance/7.0.0 Python/3.6.9 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic)
     method: DELETE
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup?api-version=2019-12-01
   response:
     body:
-      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Terminated","finishTime":"2020-08-18T09:36:03.1750901Z","detailStatus":"Container
-        stopped per client request"},"previousState":{"state":"Running","startTime":"2020-08-18T09:35:31Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-08-18T09:34:58Z","lastTimestamp":"2020-08-18T09:34:58Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:06Z","lastTimestamp":"2020-08-18T09:35:06Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:07Z","lastTimestamp":"2020-08-18T09:35:07Z","name":"Started","message":"Started
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Pulling","message":"pulling
-        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Pulled","message":"Successfully
-        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Created","message":"Created
-        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-08-18T09:35:31Z","lastTimestamp":"2020-08-18T09:35:31Z","name":"Started","message":"Started
-        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Stopped"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"6111b0bd-9c9a-4f07-8c1b-6d01f26b0ee6","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus","tags":{"tag1key":"tag1Value","tag2key":"tag2Value"}}'
+      string: '{"properties":{"sku":"Standard","provisioningState":"Succeeded","containers":[{"name":"my-container","properties":{"image":"nginx","command":[],"ports":[{"port":80}],"environmentVariables":[],"instanceView":{"restartCount":0,"currentState":{"state":"Terminated","finishTime":"2020-11-25T06:17:42.6875654Z","detailStatus":"Container
+        stopped per client request"},"previousState":{"state":"Running","startTime":"2020-11-25T06:17:10Z","detailStatus":""},"events":[{"count":1,"firstTimestamp":"2020-11-25T06:16:39Z","lastTimestamp":"2020-11-25T06:16:39Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:16:47Z","lastTimestamp":"2020-11-25T06:16:47Z","name":"Started","message":"Started
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:09Z","lastTimestamp":"2020-11-25T06:17:09Z","name":"Pulling","message":"pulling
+        image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:09Z","lastTimestamp":"2020-11-25T06:17:09Z","name":"Pulled","message":"Successfully
+        pulled image \"nginx\"","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:09Z","lastTimestamp":"2020-11-25T06:17:09Z","name":"Created","message":"Created
+        container","type":"Normal"},{"count":1,"firstTimestamp":"2020-11-25T06:17:10Z","lastTimestamp":"2020-11-25T06:17:10Z","name":"Started","message":"Started
+        container","type":"Normal"}]},"resources":{"requests":{"memoryInGB":1.5,"cpu":1.0,"gpu":{"count":1,"sku":"K80"}}},"volumeMounts":[{"name":"empty-volume","mountPath":"/mnt/mydir"}]}}],"initContainers":[],"restartPolicy":"OnFailure","osType":"Linux","volumes":[{"name":"empty-volume","emptyDir":{}}],"instanceView":{"events":[],"state":"Stopped"},"diagnostics":{"logAnalytics":{"workspaceId":"workspaceid"}}},"identity":{"principalId":"7f092f04-42fd-4373-88e2-fbd93d5fcc8a","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.ContainerInstance/containerGroups/myContainerGroup","name":"myContainerGroup","type":"Microsoft.ContainerInstance/containerGroups","location":"eastus","tags":{"tag1key":"tag1Value","tag2key":"tag2Value"}}'
     headers:
       cache-control:
       - no-cache
@@ -1209,7 +1280,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 18 Aug 2020 09:36:10 GMT
+      - Wed, 25 Nov 2020 06:17:48 GMT
       expires:
       - '-1'
       pragma:
