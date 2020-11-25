@@ -41,7 +41,7 @@ from azure.data.tables import TableServiceClient
 service = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net/", credential=credential)
 ```
 
-For more information about table service URL's and how to configure custom domain names for Azure Storage check out the [official documentation](azure_portal_account_url)
+For more information about table service URL's and how to configure custom domain names for Azure Storage check out the [official documentation][azure_portal_account_url]
 
 #### Types of credentials
 The `credential` parameter may be provided in a number of different forms, depending on the type of authorization you wish to use. The Tables library supports the following authorizations:
@@ -138,7 +138,7 @@ entity = {
 * **Update** - Update an entity's information by either merging or replacing the existing entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
     * `UpdateMode.REPLACE` will replace the existing entity with the given one, deleting any existing properties not included in the submitted entity
-* **Query** - Query existing entities in a table using OData filters.
+* **Query** - Query existing entities in a table using [OData filters][odata_syntax].
 * **Get** - Get a specific entity from a table by partition and row key.
 * **Upsert** - Merge or replace an entity in a table, or if the entity does not exist, inserts the entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
@@ -336,8 +336,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [pip_link]:https://pypi.org/project/pip/
 
 [azure_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
-[azure_cli_create_cosmos]:https://docs.microsoft.com/en-us/azure/cosmos-db/scripts/cli/table/create
-[azure_portal_create_cosmos]:https://docs.microsoft.com/en-us/azure/cosmos-db/create-cosmosdb-resources-portal
+[azure_cli_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/scripts/cli/table/create
+[azure_portal_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
 [azure_portal_create_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
 [azure_powershell_create_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell
 [azure_cli_create_account]: https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli
@@ -349,7 +349,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [azure_sas_token]:https://docs.microsoft.com/azure/storage/common/storage-sas-overview
 [azure_shared_key]:https://docs.microsoft.com/rest/api/storageservices/authorize-with-shared-key
 
-[odata_syntax]:https://docs.microsoft.com/en-us/azure/search/search-query-odata-select
+[odata_syntax]:https://docs.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators
 
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
