@@ -138,7 +138,7 @@ entity = {
 * **Update** - Update an entity's information by either merging or replacing the existing entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
     * `UpdateMode.REPLACE` will replace the existing entity with the given one, deleting any existing properties not included in the submitted entity
-* **Query** - Query existing entities in a table using [OData syntax][odata_syntax]
+* **Query** - Query existing entities in a table using OData filters.
 * **Get** - Get a specific entity from a table by partition and row key.
 * **Upsert** - Merge or replace an entity in a table, or if the entity does not exist, inserts the entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
