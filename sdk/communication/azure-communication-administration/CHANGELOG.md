@@ -11,6 +11,7 @@ Caller must provide one of the following:
  (2) all of keywords `display_name`, `description`, `phone_plan_ids`, `area_code`, `quantity`, `location_options`
  if at least one phone plan to reserve is not toll-free plans.
  (3) only keyword `continuation_token` to restart a poller from a saved state.
+-  `list_all_orders` renamed to `list_all_reservations`.
 
 ## 1.0.0b3 (2020-11-16)
 
