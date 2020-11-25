@@ -349,7 +349,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [azure_sas_token]:https://docs.microsoft.com/azure/storage/common/storage-sas-overview
 [azure_shared_key]:https://docs.microsoft.com/rest/api/storageservices/authorize-with-shared-key
 
-[odata_syntax]:https://docs.microsoft.com/rest/api/storageservices/querying-tables-and-entities#supported-comparison-operators
+[odata_syntax]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/README.md#writing-filters
 
 [azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/README.md
