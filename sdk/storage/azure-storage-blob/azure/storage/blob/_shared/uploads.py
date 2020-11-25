@@ -312,7 +312,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
     def _upload_chunk(self, chunk_offset, chunk_data):
         if self.current_length is None:
             self.response_headers = self.service.append_block(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
@@ -324,7 +324,7 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             self.request_options['append_position_access_conditions'].append_position = \
                 self.current_length + chunk_offset
             self.response_headers = self.service.append_block(
-                chunk_data,
+                body=chunk_data,
                 content_length=len(chunk_data),
                 cls=return_response_headers,
                 data_stream_total=self.total_size,

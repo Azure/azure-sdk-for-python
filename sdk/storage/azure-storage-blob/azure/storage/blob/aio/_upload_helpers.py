@@ -67,7 +67,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals
                 encryption_data, data = encrypt_blob(data, encryption_options['key'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
             return await client.upload(
-                data,
+                body=data,
                 content_length=adjusted_count,
                 blob_http_headers=blob_headers,
                 headers=headers,
