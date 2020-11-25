@@ -62,7 +62,11 @@ class ChatThreadClientTest(CommunicationTestCase):
             self.identity_client.delete_user(self.new_user)
             self.chat_client.delete_chat_thread(self.thread_id)
 
-    def _create_thread(self):
+    def _create_thread(
+            self,
+            multiple_participants=False,  # type: Optional[bool]
+            **kwargs
+    ):
         # create chat thread, and ChatThreadClient
         topic = "test topic"
         share_history_time = datetime.utcnow()
@@ -149,12 +153,27 @@ class ChatThreadClientTest(CommunicationTestCase):
         if self.is_live:
             time.sleep(2)
 
-        chat_thread_participants = self.chat_thread_client.list_participants()
+        # add another participant
+        share_history_time = datetime.utcnow()
+        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        new_participant = ChatThreadParticipant(
+            user=self.new_user,
+            display_name='name',
+            share_history_time=share_history_time)
+
+        self.chat_thread_client.add_participant(new_participant)
+
+        # fetch list of participants
+        chat_thread_participants = self.chat_thread_client.list_participants(results_per_page=1, skip=1)
+
+        participant_count = 0
 
         for chat_thread_participant_page in chat_thread_participants.by_page():
             li = list(chat_thread_participant_page)
-            assert len(li) == 1
-            li[0].user.id = self.user.identifier
+            assert len(li) <= 1
+            participant_count += len(li)
+            li[0].user.id = self.user.identifier  # TODO: Chat: What is the purpose of this statement?
+        assert participant_count == 1
 
     @pytest.mark.live_test_only
     def test_add_participant(self):

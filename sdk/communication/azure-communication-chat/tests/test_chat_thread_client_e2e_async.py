@@ -196,7 +196,17 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                chat_thread_participants = self.chat_thread_client.list_participants()
+                # add another participant
+                share_history_time = datetime.utcnow()
+                share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+                new_participant = ChatThreadParticipant(
+                    user=self.new_user,
+                    display_name='name',
+                    share_history_time=share_history_time)
+
+                await self.chat_thread_client.add_participant(new_participant)
+
+                chat_thread_participants = self.chat_thread_client.list_participants(results_per_page=1, skip=1)
 
                 items = []
                 async for item in chat_thread_participants:
