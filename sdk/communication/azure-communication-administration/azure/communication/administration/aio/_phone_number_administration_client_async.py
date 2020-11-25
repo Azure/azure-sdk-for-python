@@ -528,7 +528,7 @@ class PhoneNumberAdministrationClient(object):
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[PhoneNumberEntities]
-        """Gets a list of all searches.
+        """Gets a list of all reservations.
 
         :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
         The default is 0.
