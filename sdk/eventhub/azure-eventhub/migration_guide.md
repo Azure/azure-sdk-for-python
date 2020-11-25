@@ -132,7 +132,12 @@ your program when receiving events.
 In V5, `EventHubConsumerClient` allows you to do the same with the `receive()` method if you
 pass a `CheckpointStore` to the constructor.
 
-> **Note:** V1 checkpoints are not compatible with V5 checkpoints.  If pointed at the same blob, consumption will begin at the first message.  Checkpoint json in the respective blobs can be manually converted (per-partition) if needed.
+> **Note:** V1 checkpoints are not compatible with V5 checkpoints.
+If pointed at the same blob, consumption will begin at the first message.
+V1 checkpoint json in the respective blobs can be manually converted (per-partition) if needed.
+In V1 checkpoints (sequence_number and offset) are stored in the format of json along with ownership information
+as the content of the blob, while in V5, checkpoints are kept in the metadata which is composed of name-value pairs of a blob.
+Please check [update_checkpoint](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_blobstoragecs.py#L231-L250) in V5 for implementation detail.
 
 So in V1:
 ```python
