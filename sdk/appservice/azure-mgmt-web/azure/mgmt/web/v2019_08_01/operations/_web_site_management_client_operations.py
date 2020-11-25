@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,7 +29,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.User"
+        # type: (...) -> "_models.User"
         """Gets publishing user.
 
         Description for Gets publishing user.
@@ -39,7 +39,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.User
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -64,7 +64,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -77,10 +77,10 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def update_publishing_user(
         self,
-        user_details,  # type: "models.User"
+        user_details,  # type: "_models.User"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.User"
+        # type: (...) -> "_models.User"
         """Updates publishing user.
 
         Description for Updates publishing user.
@@ -92,7 +92,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.User
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -122,7 +122,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('User', pipeline_response)
@@ -137,7 +137,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.SourceControlCollection"]
+        # type: (...) -> Iterable["_models.SourceControlCollection"]
         """Gets the source controls available for Azure websites.
 
         Description for Gets the source controls available for Azure websites.
@@ -147,7 +147,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.SourceControlCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControlCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControlCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -188,7 +188,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -204,7 +204,7 @@ class WebSiteManagementClientOperationsMixin(object):
         source_control_type,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SourceControl"
+        # type: (...) -> "_models.SourceControl"
         """Gets source control token.
 
         Description for Gets source control token.
@@ -216,7 +216,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -245,7 +245,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControl', pipeline_response)
@@ -259,10 +259,10 @@ class WebSiteManagementClientOperationsMixin(object):
     def update_source_control(
         self,
         source_control_type,  # type: str
-        request_message,  # type: "models.SourceControl"
+        request_message,  # type: "_models.SourceControl"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SourceControl"
+        # type: (...) -> "_models.SourceControl"
         """Updates source control token.
 
         Description for Updates source control token.
@@ -276,7 +276,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SourceControl
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SourceControl"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SourceControl"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -310,7 +310,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SourceControl', pipeline_response)
@@ -327,7 +327,7 @@ class WebSiteManagementClientOperationsMixin(object):
         os_type=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.BillingMeterCollection"]
+        # type: (...) -> Iterable["_models.BillingMeterCollection"]
         """Gets a list of meters for a given location.
 
         Description for Gets a list of meters for a given location.
@@ -341,7 +341,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.BillingMeterCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.BillingMeterCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BillingMeterCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -390,7 +390,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -404,11 +404,11 @@ class WebSiteManagementClientOperationsMixin(object):
     def check_name_availability(
         self,
         name,  # type: str
-        type,  # type: Union[str, "models.CheckNameResourceTypes"]
+        type,  # type: Union[str, "_models.CheckNameResourceTypes"]
         is_fqdn=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ResourceNameAvailability"
+        # type: (...) -> "_models.ResourceNameAvailability"
         """Check if a resource name is available.
 
         Description for Check if a resource name is available.
@@ -424,13 +424,13 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ResourceNameAvailability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ResourceNameAvailability"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceNameAvailability"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _request = models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
+        _request = _models.ResourceNameAvailabilityRequest(name=name, type=type, is_fqdn=is_fqdn)
         api_version = "2019-08-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
@@ -460,7 +460,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ResourceNameAvailability', pipeline_response)
@@ -475,7 +475,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.DeploymentLocations"
+        # type: (...) -> "_models.DeploymentLocations"
         """Gets list of available geo regions plus ministamps.
 
         Description for Gets list of available geo regions plus ministamps.
@@ -485,7 +485,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.DeploymentLocations
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.DeploymentLocations"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DeploymentLocations"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -514,7 +514,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('DeploymentLocations', pipeline_response)
@@ -527,13 +527,13 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_geo_regions(
         self,
-        sku=None,  # type: Optional[Union[str, "models.SkuName"]]
+        sku=None,  # type: Optional[Union[str, "_models.SkuName"]]
         linux_workers_enabled=None,  # type: Optional[bool]
         xenon_workers_enabled=None,  # type: Optional[bool]
         linux_dynamic_workers_enabled=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.GeoRegionCollection"]
+        # type: (...) -> Iterable["_models.GeoRegionCollection"]
         """Get a list of available geographical regions.
 
         Description for Get a list of available geographical regions.
@@ -554,7 +554,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.GeoRegionCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.GeoRegionCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.GeoRegionCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -607,7 +607,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -620,10 +620,10 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def list_site_identifiers_assigned_to_host_name(
         self,
-        name_identifier,  # type: "models.NameIdentifier"
+        name_identifier,  # type: "_models.NameIdentifier"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.IdentifierCollection"]
+        # type: (...) -> Iterable["_models.IdentifierCollection"]
         """List all apps that are assigned to a hostname.
 
         Description for List all apps that are assigned to a hostname.
@@ -635,7 +635,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.IdentifierCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.IdentifierCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.IdentifierCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -688,7 +688,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -703,7 +703,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.PremierAddOnOfferCollection"]
+        # type: (...) -> Iterable["_models.PremierAddOnOfferCollection"]
         """List all premier add-on offers.
 
         Description for List all premier add-on offers.
@@ -713,7 +713,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2019_08_01.models.PremierAddOnOfferCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.PremierAddOnOfferCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PremierAddOnOfferCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -758,7 +758,7 @@ class WebSiteManagementClientOperationsMixin(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.DefaultErrorResponse, response)
+                error = self._deserialize(_models.DefaultErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -773,7 +773,7 @@ class WebSiteManagementClientOperationsMixin(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.SkuInfos"
+        # type: (...) -> "_models.SkuInfos"
         """List all SKUs.
 
         Description for List all SKUs.
@@ -783,7 +783,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.SkuInfos
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.SkuInfos"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SkuInfos"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -812,7 +812,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('SkuInfos', pipeline_response)
@@ -825,10 +825,10 @@ class WebSiteManagementClientOperationsMixin(object):
 
     def verify_hosting_environment_vnet(
         self,
-        parameters,  # type: "models.VnetParameters"
+        parameters,  # type: "_models.VnetParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.VnetValidationFailureDetails"
+        # type: (...) -> "_models.VnetValidationFailureDetails"
         """Verifies if this VNET is compatible with an App Service Environment by analyzing the Network Security Group rules.
 
         Description for Verifies if this VNET is compatible with an App Service Environment by
@@ -841,7 +841,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.VnetValidationFailureDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.VnetValidationFailureDetails"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VnetValidationFailureDetails"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -875,7 +875,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('VnetValidationFailureDetails', pipeline_response)
@@ -889,7 +889,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def move(
         self,
         resource_group_name,  # type: str
-        move_resource_envelope,  # type: "models.CsmMoveResourceEnvelope"
+        move_resource_envelope,  # type: "_models.CsmMoveResourceEnvelope"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -941,7 +941,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -952,10 +952,10 @@ class WebSiteManagementClientOperationsMixin(object):
     def validate(
         self,
         resource_group_name,  # type: str
-        validate_request,  # type: "models.ValidateRequest"
+        validate_request,  # type: "_models.ValidateRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.ValidateResponse"
+        # type: (...) -> "_models.ValidateResponse"
         """Validate if a resource can be created.
 
         Description for Validate if a resource can be created.
@@ -969,7 +969,7 @@ class WebSiteManagementClientOperationsMixin(object):
         :rtype: ~azure.mgmt.web.v2019_08_01.models.ValidateResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.ValidateResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ValidateResponse"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1004,7 +1004,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ValidateResponse', pipeline_response)
@@ -1018,7 +1018,7 @@ class WebSiteManagementClientOperationsMixin(object):
     def validate_move(
         self,
         resource_group_name,  # type: str
-        move_resource_envelope,  # type: "models.CsmMoveResourceEnvelope"
+        move_resource_envelope,  # type: "_models.CsmMoveResourceEnvelope"
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -1070,7 +1070,7 @@ class WebSiteManagementClientOperationsMixin(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.DefaultErrorResponse, response)
+            error = self._deserialize(_models.DefaultErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
