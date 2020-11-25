@@ -7,9 +7,11 @@ import functools
 import logging
 import json
 
+from azure.core.exceptions import ResourceExistsError
 from azure_devtools.scenario_tests import RecordingProcessor
 from azure.keyvault.certificates import (
     AdministratorContact,
+    ApiVersion,
     CertificateContact,
     CertificatePolicyAction,
     CertificatePolicy,
@@ -20,10 +22,9 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
-    ApiVersion,
+    parse_key_vault_certificate_id
 )
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer, KeyVaultPreparer
 import pytest
 
@@ -78,7 +79,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(pending_cert_operation)
         self.assertIsNotNone(pending_cert_operation.csr)
         self.assertEqual(original_cert_policy.issuer_name, pending_cert_operation.issuer_name)
-        pending_id = parse_vault_id(pending_cert_operation.id)
+        pending_id = parse_key_vault_certificate_id(pending_cert_operation.id)
         self.assertEqual(pending_id.vault_url.strip("/"), vault.strip("/"))
         self.assertEqual(pending_id.name, cert_name)
 
@@ -254,9 +255,10 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = await self._import_common_certificate(client=client, cert_name=cert_name)
-                parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name
-                expected[cid.strip("/")] = cert_bundle
+                # Going to remove the ID from the last '/' onwards. This is because list_properties_of_certificates
+                # doesn't return the version in the ID
+                cid = "/".join(cert_bundle.id.split("/")[:-1])
+                expected[cid] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
                     error_count += 1
@@ -283,9 +285,7 @@ class CertificateClientTests(KeyVaultTestCase):
             error_count = 0
             try:
                 cert_bundle = await self._import_common_certificate(client=client, cert_name=cert_name)
-                parsed_id = parse_vault_id(url=cert_bundle.id)
-                cid = parsed_id.vault_url + "/" + parsed_id.collection + "/" + parsed_id.name + "/" + parsed_id.version
-                expected[cid.strip("/")] = cert_bundle
+                expected[cert_bundle.id.strip("/")] = cert_bundle
             except Exception as ex:
                 if hasattr(ex, "message") and "Throttled" in ex.message:
                     error_count += 1
@@ -356,7 +356,7 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted_certificates = client.list_deleted_certificates()
         deleted = []
         async for c in deleted_certificates:
-            deleted.append(parse_vault_id(url=c.id).name)
+            deleted.append(parse_key_vault_certificate_id(source_id=c.id).name)
         self.assertTrue(all(c in deleted for c in certs.keys()))
 
         # recover select certificates
@@ -374,7 +374,7 @@ class CertificateClientTests(KeyVaultTestCase):
         deleted_certificates = client.list_deleted_certificates()
         deleted = []
         async for c in deleted_certificates:
-            deleted.append(parse_vault_id(url=c.id).name)
+            deleted.append(parse_key_vault_certificate_id(source_id=c.id).name)
         self.assertTrue(not any(c in deleted for c in certs.keys()))
 
         # validate the recovered certificates
@@ -493,7 +493,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual((await client.get_certificate_operation(certificate_name=cert_name)).csr, pending_version_csr)
 
     @ResourceGroupPreparer(random_name_enabled=True)
-    @KeyVaultPreparer(enable_soft_delete=False)
+    @KeyVaultPreparer()
     @KeyVaultClientPreparer()
     async def test_backup_restore(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
@@ -509,8 +509,14 @@ class CertificateClientTests(KeyVaultTestCase):
         # delete the certificate
         await client.delete_certificate(certificate_name=cert_name)
 
+        # purge the certificate
+        await client.purge_deleted_certificate(certificate_name=cert_name)
+
         # restore certificate
-        restored_certificate = await client.restore_certificate_backup(backup=certificate_backup)
+        restore_function = functools.partial(client.restore_certificate_backup, certificate_backup)
+        restored_certificate = await self._poll_until_no_exception(
+            restore_function, expected_exception=ResourceExistsError
+        )
         self._validate_certificate_bundle(cert=restored_certificate, cert_name=cert_name, cert_policy=policy)
 
     @ResourceGroupPreparer(random_name_enabled=True)

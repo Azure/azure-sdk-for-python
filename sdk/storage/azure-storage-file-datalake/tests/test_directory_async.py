@@ -15,11 +15,10 @@ from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, \
-    ResourceModifiedError, ServiceRequestError
+    ResourceModifiedError, ServiceRequestError, AzureError
 from azure.storage.filedatalake import ContentSettings, DirectorySasPermissions, generate_file_system_sas, \
     FileSystemSasPermissions
 from azure.storage.filedatalake import generate_directory_sas
-from azure.storage.filedatalake._models import DataLakeAclChangeFailedError
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient
 from azure.storage.filedatalake import AccessControlChangeResult, AccessControlChangeCounters
 
@@ -404,12 +403,12 @@ class DirectoryTest(StorageTestCase):
                 raise ServiceRequestError("network problem")
         acl = 'user::rwx,group::r-x,other::rwx'
 
-        with self.assertRaises(DataLakeAclChangeFailedError) as acl_error:
+        with self.assertRaises(AzureError) as acl_error:
             await directory_client.set_access_control_recursive(acl=acl, batch_size=2, max_batches=2,
                                                                 raw_response_hook=callback, retry_total=0)
-            self.assertIsNotNone(acl_error.exception.continuation)
-            self.assertEqual(acl_error.exception.message, "network problem")
-            self.assertIsInstance(acl_error.exception.error, ServiceRequestError)
+        self.assertIsNotNone(acl_error.exception.continuation_token)
+        self.assertEqual(acl_error.exception.message, "network problem")
+        self.assertIsInstance(acl_error.exception, ServiceRequestError)
 
     @record
     def test_set_access_control_recursive_in_batches_async(self):

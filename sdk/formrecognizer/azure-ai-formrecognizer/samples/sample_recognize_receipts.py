@@ -10,7 +10,7 @@
 FILE: sample_recognize_receipts.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize and extract common fields from US receipts,
+    This sample demonstrates how to recognize and extract common fields from receipts,
     using a pre-trained receipt model. For a suggested approach to extracting information
     from receipts, see sample_strongly_typed_recognized_form.py.
 

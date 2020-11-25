@@ -50,6 +50,59 @@ class BoundingBox(Model):
         self.height = kwargs.get('height', None)
 
 
+class CreateProjectOptions(Model):
+    """Options used for createProject.
+
+    :param export_model_container_uri: The uri to the Azure Storage container
+     that will be used to store exported models.
+    :type export_model_container_uri: str
+    :param notification_queue_uri: The uri to the Azure Storage queue that
+     will be used to send project-related notifications. See <a
+     href="https://go.microsoft.com/fwlink/?linkid=2144149">Storage
+     notifications</a> documentation for setup and message format.
+    :type notification_queue_uri: str
+    """
+
+    _attribute_map = {
+        'export_model_container_uri': {'key': 'exportModelContainerUri', 'type': 'str'},
+        'notification_queue_uri': {'key': 'notificationQueueUri', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CreateProjectOptions, self).__init__(**kwargs)
+        self.export_model_container_uri = kwargs.get('export_model_container_uri', None)
+        self.notification_queue_uri = kwargs.get('notification_queue_uri', None)
+
+
+class CustomBaseModelInfo(Model):
+    """CustomBaseModelInfo.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param project_id: Required. Project Id of the previously trained project
+     to be used for current iteration's training.
+    :type project_id: str
+    :param iteration_id: Required. Iteration Id of the previously trained
+     project to be used for current iteration's training.
+    :type iteration_id: str
+    """
+
+    _validation = {
+        'project_id': {'required': True},
+        'iteration_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'project_id': {'key': 'projectId', 'type': 'str'},
+        'iteration_id': {'key': 'iterationId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomBaseModelInfo, self).__init__(**kwargs)
+        self.project_id = kwargs.get('project_id', None)
+        self.iteration_id = kwargs.get('iteration_id', None)
+
+
 class CustomVisionError(Model):
     """CustomVisionError.
 
@@ -84,7 +137,8 @@ class CustomVisionError(Model):
      'BadRequestNotLimitedTrial', 'BadRequestImageBatch',
      'BadRequestImageStream', 'BadRequestImageUrl', 'BadRequestImageFormat',
      'BadRequestImageSizeBytes', 'BadRequestImageDimensions',
-     'BadRequestImageExceededCount', 'BadRequestTrainingNotNeeded',
+     'BadRequestImageAspectRatio', 'BadRequestImageExceededCount',
+     'BadRequestTrainingNotNeeded',
      'BadRequestTrainingNotNeededButTrainingPipelineUpdated',
      'BadRequestTrainingValidationFailed',
      'BadRequestClassificationTrainingValidationFailed',
@@ -94,9 +148,13 @@ class CustomVisionError(Model):
      'BadRequestTrainingAlreadyInProgress',
      'BadRequestDetectionTrainingNotAllowNegativeTag',
      'BadRequestInvalidEmailAddress',
+     'BadRequestRetiredDomainNotSupportedForTraining',
      'BadRequestDomainNotSupportedForAdvancedTraining',
      'BadRequestExportPlatformNotSupportedForAdvancedTraining',
      'BadRequestReservedBudgetInHoursNotEnoughForAdvancedTraining',
+     'BadRequestCustomBaseModelIterationStatusNotCompleted',
+     'BadRequestCustomBaseModelDomainNotCompatible',
+     'BadRequestCustomBaseModelArchitectureRetired',
      'BadRequestExportValidationFailed', 'BadRequestExportAlreadyInProgress',
      'BadRequestPredictionIdsMissing', 'BadRequestPredictionIdsExceededCount',
      'BadRequestPredictionTagsExceededCount',
@@ -106,8 +164,8 @@ class CustomVisionError(Model):
      'BadRequestInvalidImportToken', 'BadRequestExportWhileTraining',
      'BadRequestImageMetadataKey', 'BadRequestImageMetadataValue',
      'BadRequestOperationNotSupported', 'BadRequestInvalidArtifactUri',
-     'BadRequestCustomerManagedKeyRevoked', 'BadRequestInvalid',
-     'UnsupportedMediaType', 'Forbidden', 'ForbiddenUser',
+     'BadRequestCustomerManagedKeyRevoked', 'BadRequestInvalidUri',
+     'BadRequestInvalid', 'UnsupportedMediaType', 'Forbidden', 'ForbiddenUser',
      'ForbiddenUserResource', 'ForbiddenUserSignupDisabled',
      'ForbiddenUserSignupAllowanceExceeded', 'ForbiddenUserDoesNotExist',
      'ForbiddenUserDisabled', 'ForbiddenUserInsufficientCapability',
@@ -128,7 +186,7 @@ class CustomVisionError(Model):
      'ErrorPredictionServiceUnavailable', 'ErrorPredictionModelNotFound',
      'ErrorPredictionModelNotCached', 'ErrorPrediction',
      'ErrorPredictionStorage', 'ErrorRegionProposal', 'ErrorUnknownBaseModel',
-     'ErrorInvalid'
+     'ErrorServerTimeOut', 'ErrorInvalid'
     :type code: str or
      ~azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorCodes
     :param message: Required. A message explaining the error reported by the
@@ -165,22 +223,33 @@ class CustomVisionErrorException(HttpOperationError):
 
 
 class Domain(Model):
-    """Domain.
+    """Domains are used as the starting point for your project. Each domain is
+    optimized for specific types of images. Domains with compact in their name
+    can be exported. For more information visit the <a
+    href="https://go.microsoft.com/fwlink/?linkid=2117014">domain
+    documentation</a>.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id:
+    :ivar id: Domain id.
     :vartype id: str
-    :ivar name:
+    :ivar name: Name of the domain, describing the types of images used to
+     train it.
     :vartype name: str
-    :ivar type: Possible values include: 'Classification', 'ObjectDetection'
+    :ivar type: Domain type: Classification or ObjectDetection. Possible
+     values include: 'Classification', 'ObjectDetection'
     :vartype type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.DomainType
-    :ivar exportable:
+    :ivar exportable: Indicating if the domain is exportable.
     :vartype exportable: bool
-    :ivar enabled:
+    :ivar enabled: Indicating if the domain is enabled.
     :vartype enabled: bool
+    :ivar exportable_platforms: Platforms that the domain can be exported to.
+    :vartype exportable_platforms: list[str]
+    :ivar model_information: Model information.
+    :vartype model_information:
+     ~azure.cognitiveservices.vision.customvision.training.models.ModelInformation
     """
 
     _validation = {
@@ -189,6 +258,8 @@ class Domain(Model):
         'type': {'readonly': True},
         'exportable': {'readonly': True},
         'enabled': {'readonly': True},
+        'exportable_platforms': {'readonly': True},
+        'model_information': {'readonly': True},
     }
 
     _attribute_map = {
@@ -197,6 +268,8 @@ class Domain(Model):
         'type': {'key': 'type', 'type': 'str'},
         'exportable': {'key': 'exportable', 'type': 'bool'},
         'enabled': {'key': 'enabled', 'type': 'bool'},
+        'exportable_platforms': {'key': 'exportablePlatforms', 'type': '[str]'},
+        'model_information': {'key': 'modelInformation', 'type': 'ModelInformation'},
     }
 
     def __init__(self, **kwargs):
@@ -206,6 +279,8 @@ class Domain(Model):
         self.type = None
         self.exportable = None
         self.enabled = None
+        self.exportable_platforms = None
+        self.model_information = None
 
 
 class Export(Model):
@@ -215,7 +290,7 @@ class Export(Model):
     sending a request.
 
     :ivar platform: Platform of the export. Possible values include: 'CoreML',
-     'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
+     'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK', 'OpenVino'
     :vartype platform: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatform
     :ivar status: Status of the export. Possible values include: 'Exporting',
@@ -353,7 +428,8 @@ class ImageCreateResult(Model):
      'OKDuplicate', 'ErrorSource', 'ErrorImageFormat', 'ErrorImageSize',
      'ErrorStorage', 'ErrorLimitExceed', 'ErrorTagLimitExceed',
      'ErrorRegionLimitExceed', 'ErrorUnknown',
-     'ErrorNegativeAndRegularTagOnSameImage'
+     'ErrorNegativeAndRegularTagOnSameImage', 'ErrorImageDimensions',
+     'ErrorInvalidTag'
     :vartype status: str or
      ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateStatus
     :ivar image: The image.
@@ -418,9 +494,9 @@ class ImageFileCreateBatch(Model):
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageFileCreateEntry]
     :param tag_ids:
     :type tag_ids: list[str]
-    :param metadata: The metadata of image. Limited to 50 key-value pairs per
-     image. The length of key is limited to 256. The length of value is limited
-     to 512.
+    :param metadata: The metadata of image. Limited to 10 key-value pairs per
+     image. The length of key is limited to 128. The length of value is limited
+     to 256.
     :type metadata: dict[str, str]
     """
 
@@ -474,9 +550,9 @@ class ImageIdCreateBatch(Model):
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageIdCreateEntry]
     :param tag_ids:
     :type tag_ids: list[str]
-    :param metadata: The metadata of image. Limited to 50 key-value pairs per
-     image. The length of key is limited to 256. The length of value is limited
-     to 512.
+    :param metadata: The metadata of image. Limited to 10 key-value pairs per
+     image. The length of key is limited to 128. The length of value is limited
+     to 256.
     :type metadata: dict[str, str]
     """
 
@@ -582,22 +658,26 @@ class ImagePerformance(Model):
     :ivar predictions:
     :vartype predictions:
      list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
-    :ivar id:
+    :ivar id: Id of the image.
     :vartype id: str
-    :ivar created:
+    :ivar created: Date the image was created.
     :vartype created: datetime
-    :ivar width:
+    :ivar width: Width of the image.
     :vartype width: int
-    :ivar height:
+    :ivar height: Height of the image.
     :vartype height: int
-    :ivar image_uri:
+    :ivar image_uri: The URI to the image used for training. If VNET feature
+     is enabled this will be a relative path to be used with GetArtifact,
+     otherwise this will be an absolute URI to the resource.
     :vartype image_uri: str
-    :ivar thumbnail_uri:
+    :ivar thumbnail_uri: The URI to the thumbnail of the original image. If
+     VNET feature is enabled this will be a relative path to be used with
+     GetArtifact, otherwise this will be an absolute URI to the resource.
     :vartype thumbnail_uri: str
-    :ivar tags:
+    :ivar tags: Tags associated with this image.
     :vartype tags:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageTag]
-    :ivar regions:
+    :ivar regions: Regions associated with this image.
     :vartype regions:
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageRegion]
     """
@@ -1080,9 +1160,9 @@ class ImageUrlCreateBatch(Model):
      list[~azure.cognitiveservices.vision.customvision.training.models.ImageUrlCreateEntry]
     :param tag_ids:
     :type tag_ids: list[str]
-    :param metadata: The metadata of image. Limited to 50 key-value pairs per
-     image. The length of key is limited to 256. The length of value is limited
-     to 512.
+    :param metadata: The metadata of image. Limited to 10 key-value pairs per
+     image. The length of key is limited to 128. The length of value is limited
+     to 256.
     :type metadata: dict[str, str]
     """
 
@@ -1178,6 +1258,15 @@ class Iteration(Model):
     :ivar original_publish_resource_id: Resource Provider Id this iteration
      was originally published to.
     :vartype original_publish_resource_id: str
+    :ivar custom_base_model_info: Information of the previously trained
+     iteration which provides the base model for current iteration's training.
+     Default value of null specifies that no previously trained iteration will
+     be used for incremental learning.
+    :vartype custom_base_model_info:
+     ~azure.cognitiveservices.vision.customvision.training.models.CustomBaseModelInfo
+    :ivar training_error_details: Training error details, when training fails.
+     Value is null when training succeeds.
+    :vartype training_error_details: str
     """
 
     _validation = {
@@ -1197,6 +1286,8 @@ class Iteration(Model):
         'training_time_in_minutes': {'readonly': True},
         'publish_name': {'readonly': True},
         'original_publish_resource_id': {'readonly': True},
+        'custom_base_model_info': {'readonly': True},
+        'training_error_details': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1216,6 +1307,8 @@ class Iteration(Model):
         'training_time_in_minutes': {'key': 'trainingTimeInMinutes', 'type': 'int'},
         'publish_name': {'key': 'publishName', 'type': 'str'},
         'original_publish_resource_id': {'key': 'originalPublishResourceId', 'type': 'str'},
+        'custom_base_model_info': {'key': 'customBaseModelInfo', 'type': 'CustomBaseModelInfo'},
+        'training_error_details': {'key': 'trainingErrorDetails', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1236,6 +1329,8 @@ class Iteration(Model):
         self.training_time_in_minutes = None
         self.publish_name = None
         self.original_publish_resource_id = None
+        self.custom_base_model_info = None
+        self.training_error_details = None
 
 
 class IterationPerformance(Model):
@@ -1287,6 +1382,34 @@ class IterationPerformance(Model):
         self.recall = None
         self.recall_std_deviation = None
         self.average_precision = None
+
+
+class ModelInformation(Model):
+    """Model information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param estimated_model_size_in_megabytes: Estimation of the exported FP32
+     Onnx model size (2 tags) in megabytes. This information is not present if
+     the model cannot be exported.
+    :type estimated_model_size_in_megabytes: int
+    :param description: Required. Model description.
+    :type description: str
+    """
+
+    _validation = {
+        'description': {'required': True},
+    }
+
+    _attribute_map = {
+        'estimated_model_size_in_megabytes': {'key': 'estimatedModelSizeInMegabytes', 'type': 'int'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ModelInformation, self).__init__(**kwargs)
+        self.estimated_model_size_in_megabytes = kwargs.get('estimated_model_size_in_megabytes', None)
+        self.description = kwargs.get('description', None)
 
 
 class Prediction(Model):
@@ -1585,11 +1708,21 @@ class ProjectSettings(Model):
      settings.
     :type image_processing_settings:
      ~azure.cognitiveservices.vision.customvision.training.models.ImageProcessingSettings
+    :ivar export_model_container_uri: The uri to the Azure Storage container
+     that will be used to store exported models.
+    :vartype export_model_container_uri: str
+    :ivar notification_queue_uri: The uri to the Azure Storage queue that will
+     be used to send project-related notifications. See <a
+     href="https://go.microsoft.com/fwlink/?linkid=2144149">Storage
+     notifications</a> documentation for setup and message format.
+    :vartype notification_queue_uri: str
     """
 
     _validation = {
         'use_negative_set': {'readonly': True},
         'detection_parameters': {'readonly': True},
+        'export_model_container_uri': {'readonly': True},
+        'notification_queue_uri': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1599,6 +1732,8 @@ class ProjectSettings(Model):
         'use_negative_set': {'key': 'useNegativeSet', 'type': 'bool'},
         'detection_parameters': {'key': 'detectionParameters', 'type': 'str'},
         'image_processing_settings': {'key': 'imageProcessingSettings', 'type': 'ImageProcessingSettings'},
+        'export_model_container_uri': {'key': 'exportModelContainerUri', 'type': 'str'},
+        'notification_queue_uri': {'key': 'notificationQueueUri', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1609,6 +1744,8 @@ class ProjectSettings(Model):
         self.use_negative_set = None
         self.detection_parameters = None
         self.image_processing_settings = kwargs.get('image_processing_settings', None)
+        self.export_model_container_uri = None
+        self.notification_queue_uri = None
 
 
 class Region(Model):
@@ -2093,12 +2230,18 @@ class TrainingParameters(Model):
     :param selected_tags: List of tags selected for this training session,
      other tags in the project will be ignored.
     :type selected_tags: list[str]
+    :param custom_base_model_info: Information of the previously trained
+     iteration which provides the base model for current iteration's training.
+    :type custom_base_model_info:
+     ~azure.cognitiveservices.vision.customvision.training.models.CustomBaseModelInfo
     """
 
     _attribute_map = {
         'selected_tags': {'key': 'selectedTags', 'type': '[str]'},
+        'custom_base_model_info': {'key': 'customBaseModelInfo', 'type': 'CustomBaseModelInfo'},
     }
 
     def __init__(self, **kwargs):
         super(TrainingParameters, self).__init__(**kwargs)
         self.selected_tags = kwargs.get('selected_tags', None)
+        self.custom_base_model_info = kwargs.get('custom_base_model_info', None)

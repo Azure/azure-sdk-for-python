@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: 'b''{"phoneNumber": "+1area_code_for_search4866306"}'''
+    body: 'b''{"phoneNumber": "+1area_code_for_reservation4501240"}'''
     headers:
       Accept:
       - application/json
@@ -9,51 +9,22 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Mon, 28 Sep 2020 23:36:26 GMT
+      - Mon, 23 Nov 2020 22:14:53 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
-    method: POST
-    uri: https://sanitized.communication.azure.com/administration/phonenumbers/numberconfiguration?api-version=2020-07-20-preview1
-  response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Mon, 28 Sep 2020 23:36:35 GMT
-      ms-cv: qMAd5RJcGUScTUQawpDqaA.0
-      x-processing-time: 9353ms
-    status:
-      code: 500
-      message: Internal Server Error
-    url: https://sanitized.communication.azure.com/administration/phonenumbers/numberconfiguration?api-version=2020-07-20-preview1
-- request:
-    body: 'b''{"phoneNumber": "+1area_code_for_search4866306"}'''
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '31'
-      Content-Type:
-      - application/json
-      Date:
-      - Mon, 28 Sep 2020 23:36:35 GMT
-      User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: POST
     uri: https://sanitized.communication.azure.com/administration/phonenumbers/numberconfiguration?api-version=2020-07-20-preview1
   response:
     body: '{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
-      "ApplicationId", "azurePstnTargetId": "AzurePstnTargetId"}}'
+      "ApplicationId", "azurePstnTargetId": "85c9239f-0b81-47e6-b25e-95ccaf48581f"}}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Sep 2020 23:36:40 GMT
-      ms-cv: oSC8jj4poEK70ADvTtkOAA.0
+      date: Mon, 23 Nov 2020 22:14:54 GMT
+      ms-cv: FuDCzDwaikSDMeCKWEIxeQ.0
       transfer-encoding: chunked
-      x-processing-time: 5461ms
+      x-processing-time: 343ms
     status:
       code: 200
       message: OK

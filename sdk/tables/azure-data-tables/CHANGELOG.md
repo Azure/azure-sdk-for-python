@@ -1,6 +1,15 @@
 # Release History
 
-## 12.0.0b2 (Unreleased)
+## 12.0.0b4 (Unreleased)
+
+
+## 12.0.0b3 (2020-11-12)
+* Add support for transactional batching of entity operations.
+* Fixed deserialization bug in `list_tables` and `query_tables` where `TableItem.table_name` was an object instead of a string.
+* Fixed issue where unrecognized entity data fields were silently ignored. They will now raise a `TypeError`.
+* Fixed issue where query filter parameters were being ignored (#15094)
+
+## 12.0.0b2 (2020-10-07)
 * Adds support for Enumerable types by converting the Enum to a string before sending to the service
 
 ## 12.0.0b1 (2020-09-08)

@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 28 Sep 2020 20:52:34 GMT
+      - Mon, 23 Nov 2020 22:11:20 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -32,34 +32,34 @@ interactions:
       {"name": "AZ", "value": "AZ", "locationOptions": [{"labelId": "city", "labelName":
       "City", "options": [{"name": "Phoenix", "value": "NOAM-US-AZ-PH", "locationOptions":
       []}]}]}, {"name": "CA", "value": "CA", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Concord", "value": "NOAM-US-CA-CO",
-      "locationOptions": []}, {"name": "Fresno", "value": "NOAM-US-CA-FR", "locationOptions":
-      []}, {"name": "Irvine", "value": "NOAM-US-CA-IR", "locationOptions": []}, {"name":
-      "Los Angeles", "value": "NOAM-US-CA-LA", "locationOptions": []}, {"name": "Riverside",
-      "value": "NOAM-US-CA-RI", "locationOptions": []}, {"name": "Sacramento", "value":
-      "NOAM-US-CA-SA", "locationOptions": []}, {"name": "Salinas", "value": "NOAM-US-CA-SL",
-      "locationOptions": []}, {"name": "San Diego", "value": "NOAM-US-CA-SD", "locationOptions":
-      []}, {"name": "San Francisco", "value": "NOAM-US-CA-SF", "locationOptions":
-      []}, {"name": "San Jose", "value": "NOAM-US-CA-SJ", "locationOptions": []},
-      {"name": "Santa Barbara", "value": "NOAM-US-CA-SB", "locationOptions": []},
-      {"name": "Santa Clarita", "value": "NOAM-US-CA-SC", "locationOptions": []},
-      {"name": "Santa Rosa", "value": "NOAM-US-CA-SR", "locationOptions": []}, {"name":
-      "Stockton", "value": "NOAM-US-CA-ST", "locationOptions": []}]}]}, {"name": "CL",
-      "value": "CL", "locationOptions": [{"labelId": "city", "labelName": "City",
-      "options": [{"name": "Washington DC", "value": "NOAM-US-CL-DC", "locationOptions":
-      []}]}]}, {"name": "CO", "value": "CO", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Denver", "value": "NOAM-US-CO-DE",
-      "locationOptions": []}, {"name": "Grand Junction", "value": "NOAM-US-CO-GJ",
-      "locationOptions": []}, {"name": "Pueblo", "value": "NOAM-US-CO-PU", "locationOptions":
-      []}]}]}, {"name": "CT", "value": "CT", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Bridgeport", "value": "NOAM-US-CT-BR",
-      "locationOptions": []}, {"name": "Hartford", "value": "NOAM-US-CT-HA", "locationOptions":
+      "labelName": "City", "options": [{"name": "Anaheim", "value": "NOAM-US-CA-AN",
+      "locationOptions": []}, {"name": "Burbank", "value": "NOAM-US-CA-BU", "locationOptions":
+      []}, {"name": "Fresno", "value": "NOAM-US-CA-FR", "locationOptions": []}, {"name":
+      "Irvine", "value": "NOAM-US-CA-IR", "locationOptions": []}, {"name": "Los Angeles",
+      "value": "NOAM-US-CA-LA", "locationOptions": []}, {"name": "Riverside", "value":
+      "NOAM-US-CA-RI", "locationOptions": []}, {"name": "Sacramento", "value": "NOAM-US-CA-SA",
+      "locationOptions": []}, {"name": "Salinas", "value": "NOAM-US-CA-SL", "locationOptions":
+      []}, {"name": "San Diego", "value": "NOAM-US-CA-SD", "locationOptions": []},
+      {"name": "San Jose", "value": "NOAM-US-CA-SJ", "locationOptions": []}, {"name":
+      "Santa Barbara", "value": "NOAM-US-CA-SB", "locationOptions": []}, {"name":
+      "Santa Clarita", "value": "NOAM-US-CA-SC", "locationOptions": []}, {"name":
+      "Santa Rosa", "value": "NOAM-US-CA-SR", "locationOptions": []}, {"name": "Stockton",
+      "value": "NOAM-US-CA-ST", "locationOptions": []}]}]}, {"name": "CL", "value":
+      "CL", "locationOptions": [{"labelId": "city", "labelName": "City", "options":
+      [{"name": "Washington DC", "value": "NOAM-US-CL-DC", "locationOptions": []}]}]},
+      {"name": "CO", "value": "CO", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Denver", "value": "NOAM-US-CO-DE", "locationOptions":
+      []}, {"name": "Grand Junction", "value": "NOAM-US-CO-GJ", "locationOptions":
+      []}, {"name": "Pueblo", "value": "NOAM-US-CO-PU", "locationOptions": []}]}]},
+      {"name": "CT", "value": "CT", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Bridgeport", "value": "NOAM-US-CT-BR", "locationOptions":
       []}]}]}, {"name": "DE", "value": "DE", "locationOptions": [{"labelId": "city",
       "labelName": "City", "options": [{"name": "Wilmington", "value": "NOAM-US-DE-WI",
       "locationOptions": []}]}]}, {"name": "FL", "value": "FL", "locationOptions":
       [{"labelId": "city", "labelName": "City", "options": [{"name": "Cape Coral",
       "value": "NOAM-US-FL-CC", "locationOptions": []}, {"name": "Daytona Beach",
-      "value": "NOAM-US-FL-DB", "locationOptions": []}, {"name": "Gainesville", "value":
+      "value": "NOAM-US-FL-DB", "locationOptions": []}, {"name": "Fort Lauderdale",
+      "value": "NOAM-US-FL-FL", "locationOptions": []}, {"name": "Gainesville", "value":
       "NOAM-US-FL-GA", "locationOptions": []}, {"name": "Jacksonville", "value": "NOAM-US-FL-JA",
       "locationOptions": []}, {"name": "Lakeland", "value": "NOAM-US-FL-LA", "locationOptions":
       []}, {"name": "Miami", "value": "NOAM-US-FL-MI", "locationOptions": []}, {"name":
@@ -110,12 +110,13 @@ interactions:
       {"name": "New Orleans", "value": "NOAM-US-LA-NO", "locationOptions": []}, {"name":
       "Shreveport", "value": "NOAM-US-LA-SH", "locationOptions": []}]}]}, {"name":
       "MA", "value": "MA", "locationOptions": [{"labelId": "city", "labelName": "City",
-      "options": [{"name": "Chicopee", "value": "NOAM-US-MA-CH", "locationOptions":
-      []}]}]}, {"name": "MD", "value": "MD", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Bethesda", "value": "NOAM-US-MD-BE",
-      "locationOptions": []}]}]}, {"name": "ME", "value": "ME", "locationOptions":
-      [{"labelId": "city", "labelName": "City", "options": [{"name": "Portland", "value":
-      "NOAM-US-ME-PO", "locationOptions": []}]}]}, {"name": "MI", "value": "MI", "locationOptions":
+      "options": [{"name": "Boston", "value": "NOAM-US-MA-BO", "locationOptions":
+      []}, {"name": "Chicopee", "value": "NOAM-US-MA-CH", "locationOptions": []}]}]},
+      {"name": "MD", "value": "MD", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Baltimore", "value": "NOAM-US-MD-BA", "locationOptions":
+      []}]}]}, {"name": "ME", "value": "ME", "locationOptions": [{"labelId": "city",
+      "labelName": "City", "options": [{"name": "Portland", "value": "NOAM-US-ME-PO",
+      "locationOptions": []}]}]}, {"name": "MI", "value": "MI", "locationOptions":
       [{"labelId": "city", "labelName": "City", "options": [{"name": "Detroit", "value":
       "NOAM-US-MI-DE", "locationOptions": []}, {"name": "Flint", "value": "NOAM-US-MI-FL",
       "locationOptions": []}, {"name": "Grand Rapids", "value": "NOAM-US-MI-GP", "locationOptions":
@@ -124,19 +125,16 @@ interactions:
       "value": "NOAM-US-MI-SA", "locationOptions": []}, {"name": "Sault Ste Marie",
       "value": "NOAM-US-MI-SS", "locationOptions": []}, {"name": "Troy", "value":
       "NOAM-US-MI-TR", "locationOptions": []}]}]}, {"name": "MN", "value": "MN", "locationOptions":
-      [{"labelId": "city", "labelName": "City", "options": [{"name": "Alexandria",
-      "value": "NOAM-US-MN-AL", "locationOptions": []}, {"name": "Duluth", "value":
+      [{"labelId": "city", "labelName": "City", "options": [{"name": "Duluth", "value":
       "NOAM-US-MN-DU", "locationOptions": []}, {"name": "Minneapolis", "value": "NOAM-US-MN-MI",
-      "locationOptions": []}, {"name": "St. Paul", "value": "NOAM-US-MN-SP", "locationOptions":
-      []}]}]}, {"name": "MO", "value": "MO", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Columbia", "value": "NOAM-US-MO-CO",
-      "locationOptions": []}, {"name": "Kansas City", "value": "NOAM-US-MO-KS", "locationOptions":
-      []}, {"name": "Marshall", "value": "NOAM-US-MO-MA", "locationOptions": []},
-      {"name": "Springfield", "value": "NOAM-US-MO-SP", "locationOptions": []}, {"name":
-      "St. Charles", "value": "NOAM-US-MO-SC", "locationOptions": []}, {"name": "St.
-      Louis", "value": "NOAM-US-MO-SL", "locationOptions": []}]}]}, {"name": "MS",
-      "value": "MS", "locationOptions": [{"labelId": "city", "labelName": "City",
-      "options": [{"name": "Biloxi", "value": "NOAM-US-MS-BI", "locationOptions":
+      "locationOptions": []}]}]}, {"name": "MO", "value": "MO", "locationOptions":
+      [{"labelId": "city", "labelName": "City", "options": [{"name": "Kansas City",
+      "value": "NOAM-US-MO-KS", "locationOptions": []}, {"name": "Marshall", "value":
+      "NOAM-US-MO-MA", "locationOptions": []}, {"name": "Springfield", "value": "NOAM-US-MO-SP",
+      "locationOptions": []}, {"name": "St. Charles", "value": "NOAM-US-MO-SC", "locationOptions":
+      []}, {"name": "St. Louis", "value": "NOAM-US-MO-SL", "locationOptions": []}]}]},
+      {"name": "MS", "value": "MS", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Biloxi", "value": "NOAM-US-MS-BI", "locationOptions":
       []}, {"name": "Jackson", "value": "NOAM-US-MS-JA", "locationOptions": []}, {"name":
       "Starkville", "value": "NOAM-US-MS-ST", "locationOptions": []}]}]}, {"name":
       "MT", "value": "MT", "locationOptions": [{"labelId": "city", "labelName": "City",
@@ -152,25 +150,25 @@ interactions:
       {"name": "NJ", "value": "NJ", "locationOptions": [{"labelId": "city", "labelName":
       "City", "options": [{"name": "Atlantic City", "value": "NOAM-US-NJ-AC", "locationOptions":
       []}, {"name": "Camden", "value": "NOAM-US-NJ-CA", "locationOptions": []}, {"name":
-      "Newark", "value": "NOAM-US-NJ-NE", "locationOptions": []}]}]}, {"name": "NM",
-      "value": "NM", "locationOptions": [{"labelId": "city", "labelName": "City",
-      "options": [{"name": "Las Cruces", "value": "NOAM-US-NM-LC", "locationOptions":
-      []}]}]}, {"name": "NV", "value": "NV", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Las Vegas", "value": "NOAM-US-NV-LV",
-      "locationOptions": []}, {"name": "Reno", "value": "NOAM-US-NV-RE", "locationOptions":
-      []}]}]}, {"name": "NY", "value": "NY", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Albany", "value": "NOAM-US-NY-AL",
-      "locationOptions": []}, {"name": "Brentwood", "value": "NOAM-US-NY-BR", "locationOptions":
+      "Elizabeth", "value": "NOAM-US-NJ-EL", "locationOptions": []}, {"name": "Jersey
+      City", "value": "NOAM-US-NJ-JC", "locationOptions": []}, {"name": "Newark",
+      "value": "NOAM-US-NJ-NE", "locationOptions": []}]}]}, {"name": "NM", "value":
+      "NM", "locationOptions": [{"labelId": "city", "labelName": "City", "options":
+      [{"name": "Las Cruces", "value": "NOAM-US-NM-LC", "locationOptions": []}]}]},
+      {"name": "NV", "value": "NV", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Las Vegas", "value": "NOAM-US-NV-LV", "locationOptions":
+      []}, {"name": "Reno", "value": "NOAM-US-NV-RE", "locationOptions": []}]}]},
+      {"name": "NY", "value": "NY", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Albany", "value": "NOAM-US-NY-AL", "locationOptions":
       []}, {"name": "Elmira", "value": "NOAM-US-NY-EL", "locationOptions": []}, {"name":
-      "Hempstead", "value": "NOAM-US-NY-HE", "locationOptions": []}, {"name": "Kingston",
-      "value": "NOAM-US-NY-KI", "locationOptions": []}, {"name": "New York City",
-      "value": "NOAM-US-NY-NY", "locationOptions": []}, {"name": "Niagara Falls",
-      "value": "NOAM-US-NY-NF", "locationOptions": []}, {"name": "Rochester", "value":
-      "NOAM-US-NY-RO", "locationOptions": []}, {"name": "Syracuse", "value": "NOAM-US-NY-SY",
-      "locationOptions": []}, {"name": "Yonkers", "value": "NOAM-US-NY-YO", "locationOptions":
-      []}]}]}, {"name": "OH", "value": "OH", "locationOptions": [{"labelId": "city",
-      "labelName": "City", "options": [{"name": "Akron", "value": "NOAM-US-OH-AK",
-      "locationOptions": []}, {"name": "Cincinnati", "value": "NOAM-US-OH-CI", "locationOptions":
+      "Kingston", "value": "NOAM-US-NY-KI", "locationOptions": []}, {"name": "New
+      York City", "value": "NOAM-US-NY-NY", "locationOptions": []}, {"name": "Niagara
+      Falls", "value": "NOAM-US-NY-NF", "locationOptions": []}, {"name": "Rochester",
+      "value": "NOAM-US-NY-RO", "locationOptions": []}, {"name": "Syracuse", "value":
+      "NOAM-US-NY-SY", "locationOptions": []}]}]}, {"name": "OH", "value": "OH", "locationOptions":
+      [{"labelId": "city", "labelName": "City", "options": [{"name": "Akron", "value":
+      "NOAM-US-OH-AK", "locationOptions": []}, {"name": "Cincinnati", "value": "NOAM-US-OH-CI",
+      "locationOptions": []}, {"name": "Cleveland", "value": "NOAM-US-OH-CL", "locationOptions":
       []}, {"name": "Columbus", "value": "NOAM-US-OH-CO", "locationOptions": []},
       {"name": "Dayton", "value": "NOAM-US-OH-DA", "locationOptions": []}, {"name":
       "Toledo", "value": "NOAM-US-OH-TO", "locationOptions": []}]}]}, {"name": "OK",
@@ -200,50 +198,52 @@ interactions:
       "Knoxville", "value": "NOAM-US-TN-KN", "locationOptions": []}, {"name": "Memphis",
       "value": "NOAM-US-TN-ME", "locationOptions": []}, {"name": "Nashville", "value":
       "NOAM-US-TN-NA", "locationOptions": []}]}]}, {"name": "TX", "value": "TX", "locationOptions":
-      [{"labelId": "city", "labelName": "City", "options": [{"name": "Austin", "value":
-      "NOAM-US-TX-AU", "locationOptions": []}, {"name": "Corpus Christi", "value":
-      "NOAM-US-TX-CC", "locationOptions": []}, {"name": "Denton", "value": "NOAM-US-TX-DE",
-      "locationOptions": []}, {"name": "El Paso", "value": "NOAM-US-TX-EP", "locationOptions":
-      []}, {"name": "Fort Worth", "value": "NOAM-US-TX-FW", "locationOptions": []},
-      {"name": "Galveston", "value": "NOAM-US-TX-GA", "locationOptions": []}, {"name":
-      "Houston", "value": "NOAM-US-TX-HO", "locationOptions": []}, {"name": "Lubbock",
-      "value": "NOAM-US-TX-LU", "locationOptions": []}, {"name": "Odessa", "value":
-      "NOAM-US-TX-OD", "locationOptions": []}, {"name": "Tyler", "value": "NOAM-US-TX-TY",
-      "locationOptions": []}]}]}, {"name": "UT", "value": "UT", "locationOptions":
-      [{"labelId": "city", "labelName": "City", "options": [{"name": "Salt Lake City",
-      "value": "NOAM-US-UT-SL", "locationOptions": []}, {"name": "St. George", "value":
-      "NOAM-US-UT-SG", "locationOptions": []}]}]}, {"name": "VA", "value": "VA", "locationOptions":
-      [{"labelId": "city", "labelName": "City", "options": [{"name": "Lynchburg",
-      "value": "NOAM-US-VA-LY", "locationOptions": []}, {"name": "Richmond", "value":
-      "NOAM-US-VA-RI", "locationOptions": []}, {"name": "Virginia Beach", "value":
-      "NOAM-US-VA-VB", "locationOptions": []}]}]}, {"name": "VT", "value": "VT", "locationOptions":
-      [{"labelId": "city", "labelName": "City", "options": [{"name": "Bennington",
-      "value": "NOAM-US-VT-BE", "locationOptions": []}, {"name": "Brattleboro", "value":
-      "NOAM-US-VT-BR", "locationOptions": []}, {"name": "Burlington", "value": "NOAM-US-VT-BU",
-      "locationOptions": []}, {"name": "Middlebury", "value": "NOAM-US-VT-MB", "locationOptions":
-      []}, {"name": "Montpelier", "value": "NOAM-US-VT-MP", "locationOptions": []},
-      {"name": "Newport", "value": "NOAM-US-VT-NE", "locationOptions": []}]}]}, {"name":
-      "WI", "value": "WI", "locationOptions": [{"labelId": "city", "labelName": "City",
-      "options": [{"name": "Green Bay", "value": "NOAM-US-WI-GB", "locationOptions":
-      []}, {"name": "Kenosha", "value": "NOAM-US-WI-KE", "locationOptions": []}, {"name":
-      "Madison", "value": "NOAM-US-WI-MA", "locationOptions": []}, {"name": "Milwaukee",
-      "value": "NOAM-US-WI-MI", "locationOptions": []}]}]}, {"name": "WV", "value":
-      "WV", "locationOptions": [{"labelId": "city", "labelName": "City", "options":
-      [{"name": "Charleston", "value": "NOAM-US-WV-CH", "locationOptions": []}]}]},
-      {"name": "WY", "value": "WY", "locationOptions": [{"labelId": "city", "labelName":
-      "City", "options": [{"name": "Laramie", "value": "NOAM-US-WY-LA", "locationOptions":
-      []}]}]}]}}'
+      [{"labelId": "city", "labelName": "City", "options": [{"name": "Abilene", "value":
+      "NOAM-US-TX-AB", "locationOptions": []}, {"name": "Austin", "value": "NOAM-US-TX-AU",
+      "locationOptions": []}, {"name": "Bryan", "value": "NOAM-US-TX-BR", "locationOptions":
+      []}, {"name": "Corpus Christi", "value": "NOAM-US-TX-CC", "locationOptions":
+      []}, {"name": "Dallas", "value": "NOAM-US-TX-DA", "locationOptions": []}, {"name":
+      "Denton", "value": "NOAM-US-TX-DE", "locationOptions": []}, {"name": "El Paso",
+      "value": "NOAM-US-TX-EP", "locationOptions": []}, {"name": "Fort Worth", "value":
+      "NOAM-US-TX-FW", "locationOptions": []}, {"name": "Galveston", "value": "NOAM-US-TX-GA",
+      "locationOptions": []}, {"name": "Houston", "value": "NOAM-US-TX-HO", "locationOptions":
+      []}, {"name": "Huntsville", "value": "NOAM-US-TX-HU", "locationOptions": []},
+      {"name": "Lubbock", "value": "NOAM-US-TX-LU", "locationOptions": []}, {"name":
+      "Tyler", "value": "NOAM-US-TX-TY", "locationOptions": []}]}]}, {"name": "UT",
+      "value": "UT", "locationOptions": [{"labelId": "city", "labelName": "City",
+      "options": [{"name": "Salt Lake City", "value": "NOAM-US-UT-SL", "locationOptions":
+      []}, {"name": "St. George", "value": "NOAM-US-UT-SG", "locationOptions": []}]}]},
+      {"name": "VA", "value": "VA", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Lynchburg", "value": "NOAM-US-VA-LY", "locationOptions":
+      []}, {"name": "Richmond", "value": "NOAM-US-VA-RI", "locationOptions": []},
+      {"name": "Virginia Beach", "value": "NOAM-US-VA-VB", "locationOptions": []}]}]},
+      {"name": "VT", "value": "VT", "locationOptions": [{"labelId": "city", "labelName":
+      "City", "options": [{"name": "Bennington", "value": "NOAM-US-VT-BE", "locationOptions":
+      []}, {"name": "Brattleboro", "value": "NOAM-US-VT-BR", "locationOptions": []},
+      {"name": "Burlington", "value": "NOAM-US-VT-BU", "locationOptions": []}, {"name":
+      "Middlebury", "value": "NOAM-US-VT-MB", "locationOptions": []}, {"name": "Montpelier",
+      "value": "NOAM-US-VT-MP", "locationOptions": []}, {"name": "Newport", "value":
+      "NOAM-US-VT-NE", "locationOptions": []}]}]}, {"name": "WI", "value": "WI", "locationOptions":
+      [{"labelId": "city", "labelName": "City", "options": [{"name": "Green Bay",
+      "value": "NOAM-US-WI-GB", "locationOptions": []}, {"name": "Kenosha", "value":
+      "NOAM-US-WI-KE", "locationOptions": []}, {"name": "Madison", "value": "NOAM-US-WI-MA",
+      "locationOptions": []}, {"name": "Milwaukee", "value": "NOAM-US-WI-MI", "locationOptions":
+      []}]}]}, {"name": "WV", "value": "WV", "locationOptions": [{"labelId": "city",
+      "labelName": "City", "options": [{"name": "Charleston", "value": "NOAM-US-WV-CH",
+      "locationOptions": []}]}]}, {"name": "WY", "value": "WY", "locationOptions":
+      [{"labelId": "city", "labelName": "City", "options": [{"name": "Laramie", "value":
+      "NOAM-US-WY-LA", "locationOptions": []}]}]}]}}'
     headers:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Sep 2020 20:52:34 GMT
+      - Mon, 23 Nov 2020 22:11:20 GMT
       ms-cv:
-      - TCixofN+fEuJbhQiyFlpQw.0
+      - dFVVFMtfcEKwq/v6c+upYg.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 787ms
+      - 634ms
     status:
       code: 200
       message: OK

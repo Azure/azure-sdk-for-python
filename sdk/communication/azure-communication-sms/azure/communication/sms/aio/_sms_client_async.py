@@ -8,7 +8,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import SendMessageRequest
 from azure.communication.sms._generated.models import SendSmsResponse
 
-from .._generated.aio._azure_communication_sms_service_async import AzureCommunicationSMSService
+from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
 from .._shared.policy import HMACCredentialsPolicy
 from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER

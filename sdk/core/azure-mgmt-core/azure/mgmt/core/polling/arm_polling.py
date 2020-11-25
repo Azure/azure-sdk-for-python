@@ -105,7 +105,7 @@ class BodyContentPolling(LongRunningOperation):
         """Answer if this polling method could be used.
         """
         response = pipeline_response.http_response
-        return response.request.method == "PUT"
+        return response.request.method in ["PUT", "PATCH"]
 
     def get_polling_url(self):
         # type: () -> str

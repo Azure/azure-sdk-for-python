@@ -773,6 +773,12 @@ class ShareProperties(Model):
     :type deleted_time: datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
+    :param access_tier:
+    :type access_tier: str
+    :param access_tier_change_time:
+    :type access_tier_change_time: datetime
+    :param access_tier_transition_state:
+    :type access_tier_transition_state: str
     :param lease_status: Possible values include: 'locked', 'unlocked'
     :type lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
     :param lease_state: Possible values include: 'available', 'leased',
@@ -799,6 +805,9 @@ class ShareProperties(Model):
         'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123', 'xml': {'name': 'NextAllowedQuotaDowngradeTime'}},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123', 'xml': {'name': 'DeletedTime'}},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int', 'xml': {'name': 'RemainingRetentionDays'}},
+        'access_tier': {'key': 'AccessTier', 'type': 'str', 'xml': {'name': 'AccessTier'}},
+        'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
+        'access_tier_transition_state': {'key': 'AccessTierTransitionState', 'type': 'str', 'xml': {'name': 'AccessTierTransitionState'}},
         'lease_status': {'key': 'LeaseStatus', 'type': 'LeaseStatusType', 'xml': {'name': 'LeaseStatus'}},
         'lease_state': {'key': 'LeaseState', 'type': 'LeaseStateType', 'xml': {'name': 'LeaseState'}},
         'lease_duration': {'key': 'LeaseDuration', 'type': 'LeaseDurationType', 'xml': {'name': 'LeaseDuration'}},
@@ -806,7 +815,7 @@ class ShareProperties(Model):
     _xml_map = {
     }
 
-    def __init__(self, *, last_modified, etag: str, quota: int, provisioned_iops: int=None, provisioned_ingress_mbps: int=None, provisioned_egress_mbps: int=None, next_allowed_quota_downgrade_time=None, deleted_time=None, remaining_retention_days: int=None, lease_status=None, lease_state=None, lease_duration=None, **kwargs) -> None:
+    def __init__(self, *, last_modified, etag: str, quota: int, provisioned_iops: int=None, provisioned_ingress_mbps: int=None, provisioned_egress_mbps: int=None, next_allowed_quota_downgrade_time=None, deleted_time=None, remaining_retention_days: int=None, access_tier: str=None, access_tier_change_time=None, access_tier_transition_state: str=None, lease_status=None, lease_state=None, lease_duration=None, **kwargs) -> None:
         super(ShareProperties, self).__init__(**kwargs)
         self.last_modified = last_modified
         self.etag = etag
@@ -817,6 +826,9 @@ class ShareProperties(Model):
         self.next_allowed_quota_downgrade_time = next_allowed_quota_downgrade_time
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
+        self.access_tier = access_tier
+        self.access_tier_change_time = access_tier_change_time
+        self.access_tier_transition_state = access_tier_transition_state
         self.lease_status = lease_status
         self.lease_state = lease_state
         self.lease_duration = lease_duration

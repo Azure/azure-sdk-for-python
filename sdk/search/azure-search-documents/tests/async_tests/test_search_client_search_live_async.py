@@ -60,6 +60,23 @@ class SearchClientTestAsync(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(random_name_enabled=True)
     @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_get_search_simple_with_top(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchClient(
+            endpoint, index_name, AzureKeyCredential(api_key)
+        )
+        async with client:
+            results = []
+            async for x in await client.search(search_text="hotel", top=3):
+                results.append(x)
+            assert len(results) == 3
+
+            results = []
+            async for x in await client.search(search_text="motel", top=3):
+                results.append(x)
+            assert len(results) == 2
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
     async def test_get_search_filter(self, api_key, endpoint, index_name, **kwargs):
         client = SearchClient(
             endpoint, index_name, AzureKeyCredential(api_key)
@@ -72,6 +89,36 @@ class SearchClientTestAsync(AzureMgmtTestCase):
                     search_text="WiFi",
                     filter="category eq 'Budget'",
                     select=",".join(select),
+                    order_by="hotelName desc"
+            ):
+                results.append(x)
+            assert [x["hotelName"] for x in results] == sorted(
+                [x["hotelName"] for x in results], reverse=True
+            )
+            expected = {
+                "category",
+                "hotelName",
+                "description",
+                "@search.score",
+                "@search.highlights",
+            }
+            assert all(set(x) == expected for x in results)
+            assert all(x["category"] == "Budget" for x in results)
+
+    @ResourceGroupPreparer(random_name_enabled=True)
+    @SearchServicePreparer(schema=SCHEMA, index_batch=BATCH)
+    async def test_get_search_filter_array(self, api_key, endpoint, index_name, **kwargs):
+        client = SearchClient(
+            endpoint, index_name, AzureKeyCredential(api_key)
+        )
+
+        async with client:
+            results = []
+            select = ("hotelName", "category", "description")
+            async for x in await client.search(
+                    search_text="WiFi",
+                    filter="category eq 'Budget'",
+                    select=select,
                     order_by="hotelName desc"
             ):
                 results.append(x)

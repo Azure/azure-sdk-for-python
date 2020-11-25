@@ -9,9 +9,9 @@ jobs:
         Linux_Python35:
           OSVmImage: 'ubuntu-18.04'
           PythonVersion: '3.5'
-        Linux_Python38:
+        Linux_Python39:
           OSVmImage: 'ubuntu-18.04'
-          PythonVersion: '3.8'
+          PythonVersion: '3.9.0'
         Windows_Python27:
           OSVmImage: 'windows-2019'
           PythonVersion: '2.7'

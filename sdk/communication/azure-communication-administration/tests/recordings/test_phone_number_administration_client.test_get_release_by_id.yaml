@@ -9,9 +9,9 @@ interactions:
       Connection:
       - keep-alive
       Date:
-      - Mon, 28 Sep 2020 20:52:35 GMT
+      - Mon, 23 Nov 2020 22:11:21 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -24,13 +24,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 28 Sep 2020 20:52:35 GMT
+      - Mon, 23 Nov 2020 22:11:20 GMT
       ms-cv:
-      - aDDYFuvWA0C5m8vxbQZa7g.0
+      - iHfbGOpIvUmr6FaCORS7IA.0
       transfer-encoding:
       - chunked
       x-processing-time:
-      - 350ms
+      - 189ms
     status:
       code: 200
       message: OK

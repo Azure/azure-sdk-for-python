@@ -1,5 +1,11 @@
 # Release History
 
+## 4.3.1 (Unreleased)
+### Added
+- Added method `parse_key_vault_key_id` that parses out a full ID returned by Key Vault, so users can easily
+access the key's `name`, `vault_url`, and `version`.
+
+
 ## 4.3.0 (2020-10-06)
 ### Changed
 - `CryptographyClient` can perform decrypt and sign operations locally

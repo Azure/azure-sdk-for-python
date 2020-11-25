@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: 'b''{"pstnConfiguration": {"callbackUrl": "https://callbackurl", "applicationId":
-      "ApplicationId", "azurePstnTargetId": "AzurePstnTargetId"}, "phoneNumber": "+1area_code_for_search4864953"}'''
+      "ApplicationId"}, "phoneNumber": "+1area_code_for_reservation4501240"}'''
     headers:
       Accept:
       - '*/*'
@@ -10,13 +10,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '168'
+      - '126'
       Content-Type:
       - application/json
       Date:
-      - Mon, 28 Sep 2020 20:52:31 GMT
+      - Mon, 23 Nov 2020 22:11:17 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -28,12 +28,12 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 28 Sep 2020 20:52:31 GMT
+      - Mon, 23 Nov 2020 22:11:18 GMT
       ms-cv:
-      - WNXx3LNakU6tV8xeGv33uA.0
+      - G9imTJyYkkSUmuTD6LmwNg.0
       x-processing-time:
-      - 337ms
+      - 886ms
     status:
-      code: 202
-      message: Accepted
+      code: 200
+      message: OK
 version: 1

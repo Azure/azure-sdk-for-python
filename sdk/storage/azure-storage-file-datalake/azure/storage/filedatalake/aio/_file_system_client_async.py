@@ -13,6 +13,7 @@ from typing import (  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace
 
+from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -24,7 +25,7 @@ from ._models import PathPropertiesPaged
 from ._data_lake_lease_async import DataLakeLeaseClient
 from .._file_system_client import FileSystemClient as FileSystemClientBase
 from .._generated.aio import DataLakeStorageClient
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client_async import AsyncTransportWrapper, AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._models import FileSystemProperties, PublicAccess
 
@@ -698,10 +699,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             directory_name = directory.name
         except AttributeError:
             directory_name = directory
-
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
-                                       _configuration=self._config, _pipeline=self._pipeline,
+                                       _configuration=self._config, _pipeline=_pipeline,
                                        _hosts=self._hosts,
                                        require_encryption=self.require_encryption,
                                        key_encryption_key=self.key_encryption_key,
@@ -736,10 +740,13 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             file_path = file_path.name
         except AttributeError:
             pass
-
+        _pipeline = AsyncPipeline(
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
+            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+        )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline,
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function, loop=self._loop)

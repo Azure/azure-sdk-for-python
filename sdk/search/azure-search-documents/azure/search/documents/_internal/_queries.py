@@ -99,3 +99,16 @@ class SuggestQuery(_QueryBase):
     _request_type = SuggestRequest
 
     __doc__ = SuggestRequest.__doc__
+
+    def select(self, *fields):
+        # type: (*str) -> None
+        """Update the `select` property for the search results.
+
+        :param fields: An list of fields for the query result to return.
+        :type expression: str
+        :raises: ValueError
+        """
+        if not fields:
+            raise ValueError("At least one field must be provided")
+
+        self._request.select = ",".join(fields)

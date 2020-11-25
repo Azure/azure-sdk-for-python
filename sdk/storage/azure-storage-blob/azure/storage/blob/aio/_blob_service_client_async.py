@@ -304,6 +304,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :dedent: 12
                 :caption: Setting service properties for the blob service.
         """
+        if all(parameter is None for parameter in [
+                    analytics_logging, hour_metrics, minute_metrics, cors,
+                    target_version, delete_retention_policy, static_website]):
+            raise ValueError("set_service_properties should be called with at least one parameter")
+
         props = StorageServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,

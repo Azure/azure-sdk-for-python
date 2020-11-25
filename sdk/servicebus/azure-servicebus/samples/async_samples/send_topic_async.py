@@ -13,7 +13,7 @@ Example to show sending message(s) to a Service Bus Topic asynchronously.
 
 import os
 import asyncio
-from azure.servicebus import Message
+from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
@@ -21,23 +21,23 @@ TOPIC_NAME = os.environ["SERVICE_BUS_TOPIC_NAME"]
 
 
 async def send_single_message(sender):
-    message = Message("Single Message")
+    message = ServiceBusMessage("Single Message")
     await sender.send_messages(message)
 
 
 async def send_a_list_of_messages(sender):
-    messages = [Message("Message in list") for _ in range(10)]
+    messages = [ServiceBusMessage("Message in list") for _ in range(10)]
     await sender.send_messages(messages)
 
 
 async def send_batch_message(sender):
-    batch_message = await sender.create_batch()
+    batch_message = await sender.create_message_batch()
     for _ in range(10):
         try:
-            batch_message.add(Message("Message inside a BatchMessage"))
+            batch_message.add_message(ServiceBusMessage("Message inside a ServiceBusMessageBatch"))
         except ValueError:
-            # BatchMessage object reaches max_size.
-            # New BatchMessage object can be created here to send more data.
+            # ServiceBusMessageBatch object reaches max_size.
+            # New ServiceBusMessageBatch object can be created here to send more data.
             break
     await sender.send_messages(batch_message)
 

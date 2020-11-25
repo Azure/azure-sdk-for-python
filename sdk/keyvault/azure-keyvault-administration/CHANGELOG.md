@@ -1,5 +1,8 @@
 # Release History
 
+## 4.0.0b3 (Unreleased)
+
+
 ## 4.0.0b2 (2020-10-06)
 ### Added
 - `KeyVaultBackupClient.get_backup_status` and `.get_restore_status` enable

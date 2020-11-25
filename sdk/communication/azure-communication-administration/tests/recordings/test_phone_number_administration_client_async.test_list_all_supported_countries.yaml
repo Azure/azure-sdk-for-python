@@ -5,23 +5,22 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Mon, 28 Sep 2020 23:36:45 GMT
+      - Mon, 23 Nov 2020 22:15:00 GMT
       User-Agent:
-      - azsdk-python-communication-administration/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-administration/1.0.0b2 Python/3.6.9 (Linux-5.4.0-48-generic-x86_64-with-Ubuntu-18.04-bionic)
       x-ms-return-client-request-id:
       - 'true'
     method: GET
     uri: https://sanitized.communication.azure.com/administration/phonenumbers/countries?locale=en-US&skip=0&take=100&api-version=2020-07-20-preview1
   response:
-    body: '{"countries": [{"localizedName": "Australia", "countryCode": "AU"}, {"localizedName":
-      "Japan", "countryCode": "JP"}, {"localizedName": "United States", "countryCode":
-      "US"}], "nextLink": null}'
+    body: '{"countries": [{"localizedName": "Canada", "countryCode": "CA"}, {"localizedName":
+      "United States", "countryCode": "US"}], "nextLink": null}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Mon, 28 Sep 2020 23:36:46 GMT
-      ms-cv: CVi9HTPzcEeEqH7obRf9tA.0
+      date: Mon, 23 Nov 2020 22:14:59 GMT
+      ms-cv: 7tEvn8UWqEiFscQy1auozg.0
       transfer-encoding: chunked
-      x-processing-time: 901ms
+      x-processing-time: 488ms
     status:
       code: 200
       message: OK

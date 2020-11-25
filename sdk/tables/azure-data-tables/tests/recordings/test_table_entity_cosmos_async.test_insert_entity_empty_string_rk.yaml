@@ -11,11 +11,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:23:33 GMT
+      - Sat, 07 Nov 2020 02:07:41 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:23:33 GMT
+      - Sat, 07 Nov 2020 02:07:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -25,18 +25,18 @@ interactions:
       string: '{"TableName":"uttable7e0e1b32","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
     headers:
       content-type: application/json;odata=minimalmetadata
-      date: Thu, 01 Oct 2020 01:23:34 GMT
-      etag: W/"datetime'2020-10-01T01%3A23%3A34.0388359Z'"
+      date: Sat, 07 Nov 2020 02:07:43 GMT
+      etag: W/"datetime'2020-11-07T02%3A07%3A43.1388167Z'"
       location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable7e0e1b32')
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 201
       message: Ok
-    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/Tables
 - request:
-    body: '{"PartitionKey": "pk", "PartitionKey@odata.type": "Edm.String", "RowKey":
-      "", "RowKey@odata.type": "Edm.String"}'
+    body: '{"PartitionKey": "pk", "RowKey@odata.type": "Edm.String", "RowKey": "",
+      "PartitionKey@odata.type": "Edm.String"}'
     headers:
       Accept:
       - application/json;odata=minimalmetadata
@@ -47,11 +47,11 @@ interactions:
       DataServiceVersion:
       - '3.0'
       Date:
-      - Thu, 01 Oct 2020 01:23:34 GMT
+      - Sat, 07 Nov 2020 02:07:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:23:34 GMT
+      - Sat, 07 Nov 2020 02:07:42 GMT
       x-ms-version:
       - '2019-02-02'
     method: POST
@@ -59,28 +59,28 @@ interactions:
   response:
     body:
       string: "{\"odata.error\":{\"code\":\"PropertiesNeedValue\",\"message\":{\"lang\":\"en-us\",\"value\":\"PartitionKey/RowKey
-        cannot be empty\\r\\nActivityId: b934daaf-0384-11eb-8aca-58961df361d1, documentdb-dotnet-sdk/2.11.0
-        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:b934daaf-0384-11eb-8aca-58961df361d1\\n\"}}}\r\n"
+        cannot be empty\\r\\nActivityId: 05048e9c-209e-11eb-87c4-58961df361d1, documentdb-dotnet-sdk/2.11.0
+        Host/64-bit MicrosoftWindowsNT/6.2.9200.0\\nRequestID:05048e9c-209e-11eb-87c4-58961df361d1\\n\"}}}\r\n"
     headers:
       content-type: application/json;odata=fullmetadata
-      date: Thu, 01 Oct 2020 01:23:34 GMT
+      date: Sat, 07 Nov 2020 02:07:43 GMT
       server: Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
-    url: https://tablestestcosmosname.table.cosmos.azure.com/uttable7e0e1b32
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/uttable7e0e1b32
 - request:
     body: null
     headers:
       Accept:
       - application/json
       Date:
-      - Thu, 01 Oct 2020 01:23:34 GMT
+      - Sat, 07 Nov 2020 02:07:42 GMT
       User-Agent:
-      - azsdk-python-data-tables/12.0.0b2 Python/3.8.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-data-tables/12.0.0b3 Python/3.5.3 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Thu, 01 Oct 2020 01:23:34 GMT
+      - Sat, 07 Nov 2020 02:07:42 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -90,10 +90,10 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 01 Oct 2020 01:23:34 GMT
+      date: Sat, 07 Nov 2020 02:07:43 GMT
       server: Microsoft-HTTPAPI/2.0
     status:
       code: 204
       message: No Content
-    url: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable7e0e1b32')
+    url: https://tablestestussw52mubjcwms.table.cosmos.azure.com/Tables('uttable7e0e1b32')
 version: 1

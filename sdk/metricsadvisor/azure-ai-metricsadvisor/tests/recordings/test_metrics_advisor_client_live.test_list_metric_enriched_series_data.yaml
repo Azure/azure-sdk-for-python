@@ -1,7 +1,7 @@
 interactions:
 - request:
-    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-09-09T00:00:00.000Z",
-      "series": [{"dimension": {"city": "city"}}]}'
+    body: '{"startTime": "2020-01-01T00:00:00.000Z", "endTime": "2020-10-21T00:00:00.000Z",
+      "series": [{"dimension": {"dimension_name": "Los Angeles"}}]}'
     headers:
       Accept:
       - application/json
@@ -10,33 +10,33 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '125'
+      - '132'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-metricsadvisor/1.0.0b1 Python/3.8.5 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-metricsadvisor/1.0.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://anuchan-cg-metric-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/series/query
+    uri: https://js-metrics-advisor.cognitiveservices.azure.com/metricsadvisor/v1.0/enrichment/anomalyDetection/configurations/anomaly_detection_configuration_id/series/query
   response:
     body:
-      string: '{"value":[{"series":{"dimension":{"city":"city"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
+      string: '{"value":[{"series":{"dimension":{"dimension_name":"Los Angeles"}},"timestampList":[],"valueList":[],"isAnomalyList":[],"periodList":[],"expectedValueList":[],"lowerBoundaryList":[],"upperBoundaryList":[]}]}'
     headers:
       apim-request-id:
-      - 524c68e3-cd44-4c61-a893-725f62a2cb04
+      - c05435ee-b0c8-491d-b715-adb76182e685
       content-length:
-      - '190'
+      - '197'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Sep 2020 16:54:12 GMT
+      - Mon, 26 Oct 2020 17:37:37 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '199'
+      - '363'
       x-request-id:
-      - 524c68e3-cd44-4c61-a893-725f62a2cb04
+      - c05435ee-b0c8-491d-b715-adb76182e685
     status:
       code: 200
       message: OK

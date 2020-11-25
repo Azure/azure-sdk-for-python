@@ -78,6 +78,7 @@ from ._azure_file_storage_enums import (
     LeaseStatusType,
     ListSharesIncludeType,
     PermissionCopyModeType,
+    ShareAccessTier,
     StorageErrorCode,
 )
 
@@ -115,6 +116,7 @@ __all__ = [
     'LeaseDurationType',
     'LeaseStateType',
     'LeaseStatusType',
+    'ShareAccessTier',
     'PermissionCopyModeType',
     'DeleteSnapshotsOptionType',
     'ListSharesIncludeType',

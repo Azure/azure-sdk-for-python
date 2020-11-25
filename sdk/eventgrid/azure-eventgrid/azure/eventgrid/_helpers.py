@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from typing import TYPE_CHECKING, Any
 import hashlib
 import hmac
 import base64
+import six
 try:
     from urllib.parse import quote
 except ImportError:
@@ -16,8 +18,11 @@ from ._shared_access_signature_credential import EventGridSharedAccessSignatureC
 from ._signature_credential_policy import EventGridSharedAccessSignatureCredentialPolicy
 from . import _constants as constants
 
+if TYPE_CHECKING:
+    from datetime import datetime
+
 def generate_shared_access_signature(topic_hostname, shared_access_key, expiration_date_utc, **kwargs):
-    # type: (str, str, datetime.Datetime, Any) -> str
+    # type: (str, str, datetime, Any) -> str
     """ Helper method to generate shared access signature given hostname, key, and expiration date.
         :param str topic_hostname: The topic endpoint to send the events to.
             Similar to <YOUR-TOPIC-NAME>.<YOUR-REGION-NAME>-1.eventgrid.azure.net
@@ -82,9 +87,19 @@ def _get_authentication_policy(credential):
     return authentication_policy
 
 def _is_cloud_event(event):
-    # type: dict -> bool
+    # type: (Any) -> bool
     required = ('id', 'source', 'specversion', 'type')
     try:
         return all([_ in event for _ in required]) and event['specversion'] == "1.0"
     except TypeError:
         return False
+
+def _eventgrid_data_typecheck(event):
+    try:
+        data = event.get('data')
+    except AttributeError:
+        data = event.data
+
+    if isinstance(data, six.binary_type):
+        raise TypeError("Data in EventGridEvent cannot be bytes. Please refer to"\
+            "https://docs.microsoft.com/en-us/azure/event-grid/event-schema")
