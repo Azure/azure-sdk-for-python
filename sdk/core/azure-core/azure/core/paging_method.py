@@ -32,7 +32,7 @@ from .exceptions import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Iterable, Tuple
+    from typing import Any, Callable, Iterable, Tuple, Optional
     from .paging import ResponseType, ReturnType
     from ._pipeline_client import PipelineClient
     from .pipeline.transport import HttpRequest, HttpResponse
@@ -43,19 +43,19 @@ class PagingMethodABC():
     # making requests
 
     def initialize(self, client, deserialize_output, **kwargs):
-        # type: (PipelineClient, Callable, str, Any) -> None
+        # type: (PipelineClient, Callable, Any) -> None
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
     def get_next_request(self, continuation_token, next_request_partial=None):
-        # type: (Any, HttpRequest) -> HttpRequest
+        # type: (Any, Optional[Callable]) -> HttpRequest
         """Gets parameters to make next request
         """
         raise NotImplementedError("This method needs to be implemented")
 
     def finished(self, did_a_call_already, continuation_token):
-        # type: (Any) -> bool
+        # type: (bool, Any) -> bool
         """When paging is finished
         """
         raise NotImplementedError("This method needs to be implemented")
@@ -98,7 +98,7 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._operation_config = operation_config
 
     def initialize(self, client, deserialize_output, **kwargs):
-        # type: (PipelineClient, Callable, str, Any) -> None
+        # type: (PipelineClient, Callable, Any) -> None
         try:
             self._initial_request = kwargs.pop("initial_request")
             self._next_request_partial = kwargs.pop("next_request_partial")
@@ -120,14 +120,15 @@ class BasicPagingMethod(PagingMethodABC):  # pylint: disable=too-many-instance-a
         self._error_map.update(kwargs.pop('error_map', {}))
 
     def get_next_request(self, continuation_token, next_request_partial=None):
-        # type: (Any, HttpRequest) -> HttpRequest
-        try:
-            return next_request_partial(continuation_token)
-        except TypeError:
-            return next_request_partial()
+        # type: (Any, Optional[Callable]) -> HttpRequest
+        if not next_request_partial:
+            raise TypeError(
+                "You need to pass in a callback for next request that takes in a continuation token"
+            )
+        return next_request_partial(continuation_token)
 
     def finished(self, did_a_call_already, continuation_token):
-        # type: (Any) -> bool
+        # type: (bool, Any) -> bool
         return did_a_call_already and not continuation_token
 
     def get_list_elements(self, pipeline_response, deserialized):
@@ -166,9 +167,10 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
     def __init__(self):
         super(PagingMethodWithInitialResponse, self).__init__()
         self._initial_response = None
+        self._path_format_arguments = None
 
     def initialize(self, client, deserialize_output, **kwargs):
-        # type: (PipelineClient, Callable, str, Any) -> None
+        # type: (PipelineClient, Callable, Any) -> None
         try:
             self._initial_response = kwargs.pop("initial_response")
             self._continuation_token_location = kwargs.pop("continuation_token_location")
@@ -181,6 +183,7 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         self._next_request_partial = kwargs.pop("next_request_partial", None)
         self._client = client
         self._deserialize_output = deserialize_output
+        self._path_format_arguments = kwargs.pop("path_format_arguments", {})
 
         self._item_name = kwargs.pop("item_name", "value")
         self._cls = kwargs.pop("_cls", None)
@@ -191,9 +194,9 @@ class PagingMethodWithInitialResponse(BasicPagingMethod):
         self._error_map.update(kwargs.pop('error_map', {}))
 
     def get_next_request(self, continuation_token, next_request_partial=None):
-        # type: (Any, HttpRequest) -> HttpRequest
+        # type: (Any, Optional[Callable]) -> HttpRequest
         if next_request_partial:
             return next_request_partial(continuation_token)
         request = self._initial_response.http_response.request
-        request.url = continuation_token
+        request.url = self._client.format_url(continuation_token, **self._path_format_arguments)
         return request
