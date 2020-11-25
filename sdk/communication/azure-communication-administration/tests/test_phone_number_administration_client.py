@@ -16,7 +16,7 @@ from phone_number_helper import PhoneNumberUriReplacer
 from phone_number_testcase import PhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor
 
-SKIP_PHONE_NUMBER_TESTS = False
+SKIP_PHONE_NUMBER_TESTS = True
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
 class PhoneNumberAdministrationClientTest(PhoneNumberCommunicationTestCase):

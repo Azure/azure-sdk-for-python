@@ -16,7 +16,7 @@ from phone_number_testcase_async import AsyncPhoneNumberCommunicationTestCase
 from _shared.testcase import BodyReplacerProcessor, ResponseReplacerProcessor
 import os
 
-SKIP_PHONE_NUMBER_TESTS = False
+SKIP_PHONE_NUMBER_TESTS = True
 PHONE_NUMBER_TEST_SKIP_REASON= "Phone Number Administration live tests infra not ready yet"
 
 class PhoneNumberAdministrationClientTestAsync(AsyncPhoneNumberCommunicationTestCase):
