@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class RoleAssignmentsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -55,7 +55,7 @@ class RoleAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RoleAssignmentListResult"]
+        # type: (...) -> Iterable["_models.RoleAssignmentListResult"]
         """Gets role assignments for a resource.
 
         :param resource_group_name: The name of the resource group.
@@ -77,7 +77,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -145,7 +145,7 @@ class RoleAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RoleAssignmentListResult"]
+        # type: (...) -> Iterable["_models.RoleAssignmentListResult"]
         """Gets role assignments for a resource group.
 
         :param resource_group_name: The name of the resource group.
@@ -159,7 +159,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -223,7 +223,7 @@ class RoleAssignmentsOperations(object):
         role_assignment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Deletes a role assignment.
 
         :param scope: The scope of the role assignment to delete.
@@ -235,7 +235,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -279,10 +279,10 @@ class RoleAssignmentsOperations(object):
         self,
         scope,  # type: str
         role_assignment_name,  # type: str
-        parameters,  # type: "models.RoleAssignmentCreateParameters"
+        parameters,  # type: "_models.RoleAssignmentCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Creates a role assignment.
 
         :param scope: The scope of the role assignment to create. The scope can be any REST resource
@@ -301,7 +301,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -352,7 +352,7 @@ class RoleAssignmentsOperations(object):
         role_assignment_name,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Get the specified role assignment.
 
         :param scope: The scope of the role assignment.
@@ -364,7 +364,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -409,7 +409,7 @@ class RoleAssignmentsOperations(object):
         role_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Deletes a role assignment.
 
         :param role_id: The ID of the role assignment to delete.
@@ -419,7 +419,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -461,10 +461,10 @@ class RoleAssignmentsOperations(object):
     def create_by_id(
         self,
         role_id,  # type: str
-        parameters,  # type: "models.RoleAssignmentCreateParameters"
+        parameters,  # type: "_models.RoleAssignmentCreateParameters"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Creates a role assignment by ID.
 
         :param role_id: The ID of the role assignment to create.
@@ -476,7 +476,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -525,7 +525,7 @@ class RoleAssignmentsOperations(object):
         role_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RoleAssignment"
+        # type: (...) -> "_models.RoleAssignment"
         """Gets a role assignment by ID.
 
         :param role_id: The ID of the role assignment to get.
@@ -535,7 +535,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignment
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignment"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignment"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -579,7 +579,7 @@ class RoleAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RoleAssignmentListResult"]
+        # type: (...) -> Iterable["_models.RoleAssignmentListResult"]
         """Gets all role assignments for the subscription.
 
         :param filter: The filter to apply on the operation. Use $filter=atScope() to return all role
@@ -591,7 +591,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -654,7 +654,7 @@ class RoleAssignmentsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RoleAssignmentListResult"]
+        # type: (...) -> Iterable["_models.RoleAssignmentListResult"]
         """Gets role assignments for a scope.
 
         :param scope: The scope of the role assignments.
@@ -668,7 +668,7 @@ class RoleAssignmentsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.authorization.v2018_01_01_preview.models.RoleAssignmentListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RoleAssignmentListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleAssignmentListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
