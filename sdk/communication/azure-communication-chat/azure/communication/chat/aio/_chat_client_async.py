@@ -21,6 +21,7 @@ from azure.core.async_paging import AsyncItemPaged
 from ._chat_thread_client_async import ChatThreadClient
 from .._common import CommunicationUserCredentialPolicy
 from .._shared.user_credential_async import CommunicationUserCredential
+from .._shared.response import return_response
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     CreateChatThreadRequest,
@@ -148,14 +149,23 @@ class ChatClient(object):
         participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
         create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants)
 
-        create_chat_thread_result = await self._client.create_chat_thread(create_thread_request, **kwargs)
-
-        thread_id = create_chat_thread_result.id
-
+        response, create_chat_thread_result = await self._client.create_chat_thread(
+            create_thread_request, cls=return_response, **kwargs)
+        if response is not None:
+            response_header = response.http_response.headers
+            if ('Azure-Acs-InvalidParticipants' in response_header.keys() and
+                response_header['Azure-Acs-InvalidParticipants'] is not None):
+                invalid_participant_and_reason_list = response_header['Azure-Acs-InvalidParticipants'].split('|')
+                errors = []
+                for invalid_participant_and_reason in invalid_participant_and_reason_list:
+                    participant, reason = invalid_participant_and_reason.split(',', 1)
+                    errors.append('participant ' + participant + ' failed to join thread '
+                    + create_chat_thread_result.id + ' return statue code ' + reason)
+                raise ValueError(errors)
         return ChatThreadClient(
             endpoint=self._endpoint,
             credential=self._credential,
-            thread_id=thread_id,
+            thread_id=create_chat_thread_result.id,
             **kwargs
         )
 
