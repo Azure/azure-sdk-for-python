@@ -314,15 +314,17 @@ class ChatThreadClientTestAsync(AsyncCommunicationTestCase):
             await self._create_thread()
 
             async with self.chat_thread_client:
-                await self._send_message()
 
-                # send read receipts first
-                await self.chat_thread_client.send_read_receipt(self.message_id)
-                if self.is_live:
-                    await asyncio.sleep(2)
+                for i in range(2):
+                    await self._send_message()
+
+                    # send read receipts first
+                    await self.chat_thread_client.send_read_receipt(self.message_id)
+                    if self.is_live:
+                        await asyncio.sleep(2)
 
                 # list read receipts
-                read_receipts = self.chat_thread_client.list_read_receipts()
+                read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=1)
 
                 items = []
                 async for item in read_receipts:

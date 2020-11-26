@@ -172,7 +172,7 @@ class ChatThreadClientTest(CommunicationTestCase):
             li = list(chat_thread_participant_page)
             assert len(li) <= 1
             participant_count += len(li)
-            li[0].user.id = self.user.identifier  # TODO: Chat: What is the purpose of this statement?
+            li[0].user.id = self.user.identifier
         assert participant_count == 1
 
     @pytest.mark.live_test_only
@@ -236,17 +236,18 @@ class ChatThreadClientTest(CommunicationTestCase):
     @pytest.mark.live_test_only
     def test_list_read_receipts(self):
         self._create_thread()
-        self._send_message()
 
-        # send read receipts first
-        self.chat_thread_client.send_read_receipt(self.message_id)
-        if self.is_live:
-            time.sleep(2)
+        # send messages and read receipts
+        for i in range(2):
+            self._send_message()
+            self.chat_thread_client.send_read_receipt(self.message_id)
+            if self.is_live:
+                time.sleep(2)
 
         # list read receipts
-        read_receipts = self.chat_thread_client.list_read_receipts()
+        read_receipts = self.chat_thread_client.list_read_receipts(results_per_page=1, skip=1)
 
         items = []
         for item in read_receipts:
             items.append(item)
-        assert len(items) > 0
+        assert len(items) == 0
