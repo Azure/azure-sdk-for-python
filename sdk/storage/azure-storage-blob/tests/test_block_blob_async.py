@@ -194,7 +194,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         resp, headers = await blob.stage_block(0, 'block 0', cls=return_response)
 
         # Assert
-        self.assertEqual(201, resp.status_code)
+        self.assertEqual(201, resp.http_response.status_code)
         self.assertIn('x-ms-content-crc64', headers)
 
     @GlobalStorageAccountPreparer()
