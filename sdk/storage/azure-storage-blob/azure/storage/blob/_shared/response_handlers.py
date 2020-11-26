@@ -84,6 +84,9 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
 
 
 def process_storage_error(storage_error):
+    # If its PartialBatchErrorException then it has already been processed and serialized to the specific exception.
+    if isinstance(storage_error, PartialBatchErrorException):
+        raise storage_error
     raise_error = HttpResponseError
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
