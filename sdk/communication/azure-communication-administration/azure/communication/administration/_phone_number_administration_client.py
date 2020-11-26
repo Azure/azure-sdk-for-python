@@ -13,24 +13,6 @@ from ._polling import ReleasePhoneNumberPolling, ReservePhoneNumberPolling, Purc
 from ._phonenumber._generated._phone_number_administration_service\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
 
-from ._phonenumber._generated.models import (
-    AcquiredPhoneNumbers,
-    AreaCodes,
-    LocationOptionsResponse,
-    NumberConfigurationResponse,
-    NumberUpdateCapabilities,
-    PhoneNumberCountries,
-    PhoneNumberEntities,
-    PhoneNumberRelease,
-    PhoneNumberReservation,
-    PhonePlanGroups,
-    PhonePlansResponse,
-    PstnConfiguration,
-    SearchStatus,
-    UpdateNumberCapabilitiesResponse,
-    UpdatePhoneNumberCapabilitiesResponse
-)
-
 from ._shared.utils import parse_connection_str
 from ._shared.policy import HMACCredentialsPolicy
 from ._version import SDK_MONIKER
@@ -85,515 +67,136 @@ class PhoneNumberAdministrationClient(object):
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace
-    def list_all_phone_numbers(
-            self,
-            **kwargs  # type: Any
+    def begin_search_phone_numbers(
+        self,
+        country_code, #type: str
+        **kwargs  # type: Any
+    ):
+        # type: (str, Any) -> LROPoller[SearchResult]
+        """Begins creating a phone number search to reserve phone numbers.
+        :param str country_code: country code for the search
+        :keyword number_type: Required. The phone number type. Possible values include: "tollFree",
+        "geographic".
+        :type number_type: str or ~azure.communication.administration.models.PhoneNumberType
+        :keyword assignment_type: Required. The phone number's assignment type. Possible values include:
+        "person", "application".
+        :type assignment_type: str or ~azure.communication.administration.models.AssignmentType
+        :keyword capabilities: Required. The phone number's capabilities.
+        :type capabilities: ~azure.communication.administration.models.SearchCapabilities
+        :keyword area_code: The desired area code.
+        :type area_code: str
+        :keyword quantity: The desired quantity of phone numbers.
+        :type quantity: int
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.SearchResult]
+        """
+        pass
+
+    @distributed_trace
+    def begin_purchase_phone_numbers(
+        self,
+        search_id, #type: str
+        **kwargs # type: Any
+    ):
+        #type: (str, Any) -> LROPoller[SearchResult]
+        """Begins purchasing a phone number search
+        :param str search_id: Id for the search
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.SearchResult]
+        """
+        pass
+
+    @distributed_trace
+    def get_search_result(
+        self,
+        search_id, #type: str
+        **kwargs # type: Any
+    ):
+        #type: (str, Any) -> SearchResult
+        """Gets the search associated with the id
+        :param str search_id: Id for the search
+        :returns: Search result associated with the search id
+        :rtype: ~azure.communication.administration.SearchResult
+        """
+        pass
+
+    @distributed_trace
+    def get_operation(
+        self,
+        operation_id, #type: str
+        **kwargs # type: Any
+    ):
+        #type: (str, Any) -> Operation
+        """Gets the operation associated with the id
+        :param str operation_id: Id for the operation
+        :returns: Operation associated with the Id
+        :rtype: ~azure.communication.administration.Operation
+        """
+        pass
+
+    @distributed_trace
+    def cancel_operation(
+        self,
+        operation_id, #type: str
+        **kwargs # type: Any
+    ):
+        #type: (str, Any) -> None
+        """Cancels the operation associated with the id
+        :param str operation_id: Id for the operation
+        """
+        pass
+
+    @distributed_trace
+    def list_acquired_phone_numbers(
+        self,
+        **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[AcquiredPhoneNumbers]
         """Gets the list of the acquired phone numbers.
-
-        :keyword str locale: A language-locale pairing which will be used to localise the names of countries.
-        The default is "en-US".
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.AcquiredPhoneNumbers]
         """
-        return self._phone_number_administration_client.phone_number_administration.get_all_phone_numbers(
-            **kwargs
-        )
+        pass
 
     @distributed_trace
-    def get_all_area_codes(
-            self,
-            location_type,  # type: str
-            country_code,  # type: str
-            phone_plan_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> AreaCodes
-        """Gets a list of the supported area codes.
-
-        :param location_type: The type of location information required by the plan.
-        :type location_type: str
-        :param country_code: The ISO 3166-2 country code.
-        :type country_code: str
-        :param phone_plan_id: The plan id from which to search area codes.
-        :type phone_plan_id: str
-        :keyword List["LocationOptionsQuery"] location_options:
-        Represents the underlying list of countries.
-        :rtype: ~azure.communication.administration.AreaCodes
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_all_area_codes(
-            location_type=location_type,
-            country_code=country_code,
-            phone_plan_id=phone_plan_id,
-            **kwargs
-        )
-
-    @distributed_trace
-    def get_capabilities_update(
+    def get_phone_number(
         self,
-        capabilities_update_id,  # type: str
+        phone_number, #type: str
+        **kwargs # type: Any
+    ):
+        #type: (str, Any) -> AcquiredPhoneNumber
+        """Gets the details of the phone number
+        :param str phone_number: The phone number to get details
+        :returns: The phone number details
+        :rtype: ~azure.communication.administration.AcquiredPhoneNumber
+        """
+        pass
+
+    @distributed_trace
+    def begin_update_phone_number(
+        self,
+        phone_number, #type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> UpdatePhoneNumberCapabilitiesResponse
-        """Get capabilities by capabilities update id.
-
-        :param capabilities_update_id:
-        :type capabilities_update_id: str
-        :rtype: ~azure.communication.administration.UpdatePhoneNumberCapabilitiesResponse
+        # type: (str, Any) -> LROPoller[AcquiredPhoneNumber]
+        """Updates the phone number capabailities
+        :param str phone_number: The phone number to get details
+        :keyword callback_url: The webhook URL for receiving incoming events.
+        :type callback_url: str
+        :keyword application_id: The application id the number has been assigned to.
+        :type application_id: str
+        :keyword capabilities: The new set of enabled capabilities.
+        :type capabilities: ~azure.communication.administration.models.Capabilities
+        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.SearchResult]
         """
-        return self._phone_number_administration_client.phone_number_administration.get_capabilities_update(
-            capabilities_update_id,
-            **kwargs
-        )
+        pass
 
     @distributed_trace
-    def update_capabilities(
+    def begin_release_phone_number(
         self,
-        phone_number_capabilities_update,  # type: Dict[str, NumberUpdateCapabilities]
+        phone_number, #type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> UpdateNumberCapabilitiesResponse
-        """Adds or removes phone number capabilities.
-
-        :param phone_number_capabilities_update: The map of phone numbers to the capabilities update
-         applied to the phone number.
-        :type phone_number_capabilities_update:
-         dict[str, ~azure.communication.administration.NumberUpdateCapabilities]
-        :rtype: ~azure.communication.administration.UpdateNumberCapabilitiesResponse
+        # type: (str, Any) -> LROPoller[None]
+        """Releases an already acquired phone number 
+        :param str phone_number: The phone number to get details
         """
-        return self._phone_number_administration_client.phone_number_administration.update_capabilities(
-            phone_number_capabilities_update,
-            **kwargs
-        )
+        pass
 
-    @distributed_trace
-    def list_all_supported_countries(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[PhoneNumberCountries]
-        """Gets a list of supported countries.
-
-        :keyword str locale: A language-locale pairing which will be used to localise the names of countries.
-        The default is "en-US".
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.PhoneNumberCountries]
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_all_supported_countries(
-            **kwargs
-        )
-
-    @distributed_trace
-    def get_number_configuration(
-        self,
-        phone_number,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> NumberConfigurationResponse
-        """Endpoint for getting number configurations.
-
-        :param phone_number: The phone number in the E.164 format.
-        :type phone_number: str
-        :rtype: ~azure.communication.administration.NumberConfigurationResponse
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_number_configuration(
-            phone_number,
-            **kwargs
-        )
-
-    @distributed_trace
-    def configure_number(
-        self,
-        pstn_configuration,  # type: PstnConfiguration
-        phone_number,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Endpoint for configuring a pstn number.
-
-        :param pstn_configuration: Definition for pstn number configuration.
-        :type pstn_configuration: ~azure.communication.administration.PstnConfiguration
-        :param phone_number: The phone number to configure.
-        :type phone_number: str
-        :rtype: None
-        """
-        return self._phone_number_administration_client.phone_number_administration.configure_number(
-            pstn_configuration,
-            phone_number,
-            **kwargs
-        )
-
-    @distributed_trace
-    def unconfigure_number(
-        self,
-        phone_number,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Endpoint for unconfiguring a pstn number by removing the configuration.
-
-        :param phone_number: The phone number in the E.164 format.
-        :type phone_number: str
-        :rtype: None
-        """
-        return self._phone_number_administration_client.phone_number_administration.unconfigure_number(
-            phone_number,
-            **kwargs
-        )
-
-    @distributed_trace
-    def list_phone_plan_groups(
-        self,
-        country_code,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[PhonePlanGroups]
-        """Gets a list of phone plan groups for the given country.
-
-        :param country_code: The ISO 3166-2 country code.
-        :type country_code: str
-        :keyword str locale: A language-locale pairing which will be used to localise the names of countries.
-        The default is "en-US".
-        :keyword include_rate_information bool: An optional boolean parameter for including rate information in result.
-        The default is False".
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.PhonePlanGroups]
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_phone_plan_groups(
-            country_code,
-            **kwargs
-        )
-
-    @distributed_trace
-    def list_phone_plans(
-        self,
-        country_code,  # type: str
-        phone_plan_group_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[PhonePlansResponse]
-        """Gets a list of phone plans for a phone plan group.
-
-        :param country_code: The ISO 3166-2 country code.
-        :type country_code: str
-        :param phone_plan_group_id:
-        :type phone_plan_group_id: str
-        :keyword str locale: A language-locale pairing which will be used to localise the names of countries.
-        The default is "en-US".
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.PhonePlansResponse]
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_phone_plans(
-            country_code,
-            phone_plan_group_id,
-            **kwargs
-        )
-
-    @distributed_trace
-    def get_phone_plan_location_options(
-        self,
-        country_code,  # type: str
-        phone_plan_group_id,  # type: str
-        phone_plan_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LocationOptionsResponse
-        """Gets a list of location options for a phone plan.
-
-        :param country_code: The ISO 3166-2 country code.
-        :type country_code: str
-        :param phone_plan_group_id:
-        :type phone_plan_group_id: str
-        :param phone_plan_id:
-        :type phone_plan_id: str
-        :keyword str locale: A language-locale pairing which will be used to localise the names of countries.
-        The default is "en-US".
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
-        :rtype: ~azure.communication.administration.LocationOptionsResponse
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_phone_plan_location_options(
-            country_code=country_code,
-            phone_plan_group_id=phone_plan_group_id,
-            phone_plan_id=phone_plan_id,
-            **kwargs
-        )
-
-    @distributed_trace
-    def get_release_by_id(
-            self,
-            release_id,  # type: str
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> PhoneNumberRelease
-        """Gets a release by a release id.
-
-        :param release_id: Represents the release id.
-        :type release_id: str
-        :rtype: ~azure.communication.administration.PhoneNumberRelease
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_release_by_id(
-            release_id,
-            **kwargs
-        )
-
-    @distributed_trace
-    def begin_release_phone_numbers(
-            self,
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[PhoneNumberRelease]
-        """Begins creating a release for the given phone numbers.
-        Caller must provide either phone_numbers, or continuation_token keywords to use the method.
-        If both phone_numbers and continuation_token are specified, only continuation_token will be used to
-        restart a poller from a saved state, and keyword phone_numbers will be ignored.
-
-        :keyword list[str] phone_numbers: The list of phone numbers in the release request.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberRelease]
-        """
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-
-        release_polling = ReleasePhoneNumberPolling(
-            is_terminated=lambda status: status in [
-                ReleaseStatus.Complete,
-                ReleaseStatus.Failed,
-                ReleaseStatus.Expired
-            ]
-        )
-
-        if cont_token is not None:
-            return LROPoller.from_continuation_token(
-                polling_method=release_polling,
-                continuation_token=cont_token,
-                client=self._phone_number_administration_client.phone_number_administration
-            )
-
-        if "phone_numbers" not in kwargs:
-            raise ValueError("Either kwarg 'phone_numbers' or 'continuation_token' needs to be specified")
-
-        create_release_response = self._phone_number_administration_client.\
-            phone_number_administration.release_phone_numbers(
-                **kwargs
-        )
-
-        initial_state = self._phone_number_administration_client.phone_number_administration.get_release_by_id(
-            release_id=create_release_response.release_id
-        )
-
-        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
-                         initial_response=initial_state,
-                         deserialization_callback=None,
-                         polling_method=release_polling)
-
-    @distributed_trace
-    def list_all_releases(
-            self,
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[PhoneNumberEntities]
-        """Gets a list of all releases.
-
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.PhoneNumberEntities]
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_all_releases(
-            **kwargs
-        )
-
-    @distributed_trace
-    def get_reservation_by_id(
-        self,
-        reservation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> PhoneNumberReservation
-        """Get reservation by reservation id.
-
-        :param reservation_id: The reservation id to get reservation.
-        :type reservation_id: str
-        :rtype: ~azure.communication.administration.PhoneNumberReservation
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id=reservation_id,
-            **kwargs
-        )
-
-    @distributed_trace
-    def begin_reserve_phone_numbers(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[PhoneNumberReservation]
-        """Begins creating a phone number search to reserve phone numbers.
-        Caller must provide one of the following:
-         (1) all of keywords display_name, description, phone_plan_ids, area_code, quantity if all the phone plans
-         to reserve are toll-free plans.
-         (2) all of keywords display_name, description, phone_plan_ids, area_code, quantity, location_options
-         if at least one phone plan to reserve is not toll-free plans.
-         (3) only keyword continuation_token to restart a poller from a saved state.
-        If both continuation_token and other keywords are specified, only continuation_token will be used to
-        restart a poller from a saved state, and other keywords will be ignored.
-        :keyword str display_name: display name of the search.
-        :keyword str description: description of the search.
-        :keyword list[str] phone_plan_ids: the plan subtype ids from which to create the search.
-        :keyword str area_code: the area code from which to create the search.
-        :keyword int quantity: the quantity of phone numbers to request.
-        :keyword list[~azure.communication.administration.models.LocationOptionsDetails] location_options:
-            the location options of the search.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberReservation]
-        """
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-
-        reservation_polling = ReservePhoneNumberPolling(
-            is_terminated=lambda status: status in [
-                SearchStatus.Reserved,
-                SearchStatus.Expired,
-                SearchStatus.Success,
-                SearchStatus.Cancelled,
-                SearchStatus.Error
-            ]
-        )
-
-        if cont_token is not None:
-            return LROPoller.from_continuation_token(
-                polling_method=reservation_polling,
-                continuation_token=cont_token,
-                client=self._phone_number_administration_client.phone_number_administration
-            )
-
-        required_kwargs = ['display_name', 'description', 'phone_plan_ids', 'area_code', 'quantity']
-        for required_kwarg in required_kwargs:
-            if required_kwarg not in kwargs:
-                raise ValueError("Either kwarg 'continuation_token', or a set of kwargs " +
-                                 "'display_name', 'description', 'phone_plan_ids', "
-                                 "'area_code', 'quantity' needs to be specified")
-
-        reservation_options = CreateSearchOptions(
-                display_name=kwargs.pop('display_name'),
-                description=kwargs.pop('description'),
-                phone_plan_ids=kwargs.pop('phone_plan_ids'),
-                area_code=kwargs.pop('area_code'),
-                quantity=kwargs.pop('quantity')
-            )
-
-        if 'location_options' in kwargs:
-            reservation_options.location_options = kwargs.pop('location_options')
-
-        create_reservation_response = self._phone_number_administration_client.\
-            phone_number_administration.create_search(
-                body=reservation_options,
-                **kwargs
-        )
-
-        initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id=create_reservation_response.search_id
-        )
-        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
-                         initial_response=initial_state,
-                         deserialization_callback=None,
-                         polling_method=reservation_polling)
-
-    @distributed_trace
-    def list_all_reservations(
-            self,
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[PhoneNumberEntities]
-        """Gets a list of all reservations.
-
-        :keyword int skip: An optional parameter for how many entries to skip, for pagination purposes.
-        The default is 0.
-        :keyword int take: An optional parameter for how many entries to return, for pagination purposes.
-        The default is 100.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.PhoneNumberEntities]
-        """
-        return self._phone_number_administration_client.phone_number_administration.get_all_searches(
-            **kwargs
-        )
-
-    @distributed_trace
-    def cancel_reservation(
-        self,
-        reservation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Cancels the reservation. This means existing numbers in the reservation will be made available.
-
-        :param reservation_id: The reservation id to be canceled.
-        :type reservation_id: str
-        :rtype: None
-        """
-        return self._phone_number_administration_client.phone_number_administration.cancel_search(
-            search_id=reservation_id,
-            **kwargs
-        )
-
-    @distributed_trace
-    def begin_purchase_reservation(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[PhoneNumberReservation]
-        """Begins purchase the reserved phone numbers of a phone number search.
-        Caller must provide either reservation_id, or continuation_token keywords to use the method.
-        If both reservation_id and continuation_token are specified, only continuation_token will be used to
-        restart a poller from a saved state, and keyword reservation_id will be ignored.
-        :keyword str reservation_id: The reservation id to be purchased.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :rtype: ~azure.core.polling.LROPoller[~azure.communication.administration.PhoneNumberReservation]
-        """
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-
-        reservation_polling = PurchaseReservationPolling(
-            is_terminated=lambda status: status in [
-                SearchStatus.Success,
-                SearchStatus.Expired,
-                SearchStatus.Cancelled,
-                SearchStatus.Error
-            ]
-        )
-
-        if cont_token is not None:
-            return LROPoller.from_continuation_token(
-                polling_method=reservation_polling,
-                continuation_token=cont_token,
-                client=self._phone_number_administration_client.phone_number_administration
-            )
-
-        if "reservation_id" not in kwargs:
-            raise ValueError("Either kwarg 'reservation_id' or 'continuation_token' needs to be specified")
-
-        reservation_id = kwargs.pop('reservation_id')  # type: str
-
-        self._phone_number_administration_client.phone_number_administration.purchase_search(
-            search_id=reservation_id,
-            **kwargs
-        )
-        initial_state = self._phone_number_administration_client.phone_number_administration.get_search_by_id(
-            search_id=reservation_id
-        )
-        return LROPoller(client=self._phone_number_administration_client.phone_number_administration,
-                         initial_response=initial_state,
-                         deserialization_callback=None,
-                         polling_method=reservation_polling)
