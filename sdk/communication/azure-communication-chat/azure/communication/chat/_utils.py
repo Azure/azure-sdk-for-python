@@ -6,3 +6,6 @@
 
 def _to_utc_datetime(value):
     return value.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+def return_response(response, deserialized, _):  # pylint: disable=unused-argument
+    return response, deserialized

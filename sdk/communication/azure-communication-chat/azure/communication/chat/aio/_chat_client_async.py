@@ -21,7 +21,6 @@ from azure.core.async_paging import AsyncItemPaged
 from ._chat_thread_client_async import ChatThreadClient
 from .._common import CommunicationUserCredentialPolicy
 from .._shared.user_credential_async import CommunicationUserCredential
-from .._shared.response import return_response
 from .._generated.aio import AzureCommunicationChatService
 from .._generated.models import (
     CreateChatThreadRequest,
@@ -31,7 +30,7 @@ from .._models import (
     ChatThread,
     ChatThreadParticipant
 )
-from .._utils import _to_utc_datetime  # pylint: disable=unused-import
+from .._utils import _to_utc_datetime, return_response  # pylint: disable=unused-import
 from .._version import SDK_MONIKER
 
 
