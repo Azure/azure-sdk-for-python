@@ -8,14 +8,14 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
 
-from .. import models as _models
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -38,7 +38,7 @@ class PhoneNumberAdministrationOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -49,24 +49,21 @@ class PhoneNumberAdministrationOperations(object):
     def _search_available_phone_numbers_initial(
         self,
         country_code,  # type: str
-        number_type,  # type: Union[str, "_models.PhoneNumberType"]
-        assignment_type,  # type: Union[str, "_models.AssignmentType"]
-        capabilities,  # type: "_models.SearchCapabilities"
+        number_type,  # type: Union[str, "models.PhoneNumberType"]
+        assignment_type,  # type: Union[str, "models.AssignmentType"]
+        capabilities,  # type: "models.SearchCapabilities"
         area_code=None,  # type: Optional[str]
         quantity=1,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
-        _search = _models.SearchRequest(number_type=number_type, assignment_type=assignment_type, capabilities=capabilities, area_code=area_code, quantity=quantity)
+        _search = models.SearchRequest(number_type=number_type, assignment_type=assignment_type, capabilities=capabilities, area_code=area_code, quantity=quantity)
         api_version = "2020-07-20-preview1"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._search_available_phone_numbers_initial.metadata['url']  # type: ignore
@@ -83,18 +80,18 @@ class PhoneNumberAdministrationOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_search, 'SearchRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -108,9 +105,9 @@ class PhoneNumberAdministrationOperations(object):
     def begin_search_available_phone_numbers(
         self,
         country_code,  # type: str
-        number_type,  # type: Union[str, "_models.PhoneNumberType"]
-        assignment_type,  # type: Union[str, "_models.AssignmentType"]
-        capabilities,  # type: "_models.SearchCapabilities"
+        number_type,  # type: Union[str, "models.PhoneNumberType"]
+        assignment_type,  # type: Union[str, "models.AssignmentType"]
+        capabilities,  # type: "models.SearchCapabilities"
         area_code=None,  # type: Optional[str]
         quantity=1,  # type: Optional[int]
         **kwargs  # type: Any
@@ -168,12 +165,7 @@ class PhoneNumberAdministrationOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'countryCode': self._serialize.url("country_code", country_code, 'str'),
-        }
-
-        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -192,7 +184,7 @@ class PhoneNumberAdministrationOperations(object):
         search_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.SearchResult"
+        # type: (...) -> "models.SearchResult"
         """Get a search result by its id.
 
         Get a search result by its id.
@@ -204,13 +196,10 @@ class PhoneNumberAdministrationOperations(object):
         :rtype: ~azure.communication.administration.models.SearchResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SearchResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.SearchResult"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview1"
-        accept = "application/json"
 
         # Construct URL
         url = self.get_search_result.metadata['url']  # type: ignore
@@ -226,7 +215,7 @@ class PhoneNumberAdministrationOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -234,7 +223,7 @@ class PhoneNumberAdministrationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('SearchResult', pipeline_response)
@@ -252,15 +241,12 @@ class PhoneNumberAdministrationOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
-        _purchase = _models.PurchaseRequest(search_id=search_id)
+        _purchase = models.PurchaseRequest(search_id=search_id)
         api_version = "2020-07-20-preview1"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self._purchase_phone_numbers_initial.metadata['url']  # type: ignore
@@ -276,18 +262,18 @@ class PhoneNumberAdministrationOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_purchase, 'PurchaseRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -341,11 +327,7 @@ class PhoneNumberAdministrationOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-
-        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -364,7 +346,7 @@ class PhoneNumberAdministrationOperations(object):
         operation_id,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Operation"
+        # type: (...) -> "models.Operation"
         """Get an operation by its id.
 
         Get an operation by its id.
@@ -376,13 +358,10 @@ class PhoneNumberAdministrationOperations(object):
         :rtype: ~azure.communication.administration.models.Operation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Operation"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.Operation"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview1"
-        accept = "application/json"
 
         # Construct URL
         url = self.get_operation.metadata['url']  # type: ignore
@@ -398,7 +377,7 @@ class PhoneNumberAdministrationOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -406,7 +385,7 @@ class PhoneNumberAdministrationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('Operation', pipeline_response)
@@ -435,12 +414,9 @@ class PhoneNumberAdministrationOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview1"
-        accept = "application/json"
 
         # Construct URL
         url = self.cancel_operation.metadata['url']  # type: ignore
@@ -456,7 +432,6 @@ class PhoneNumberAdministrationOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -464,7 +439,7 @@ class PhoneNumberAdministrationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -476,7 +451,7 @@ class PhoneNumberAdministrationOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.AcquiredPhoneNumbers"]
+        # type: (...) -> Iterable["models.AcquiredPhoneNumbers"]
         """Lists acquired phone numbers.
 
         Lists acquired phone numbers.
@@ -486,18 +461,15 @@ class PhoneNumberAdministrationOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.administration.models.AcquiredPhoneNumbers]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumbers"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AcquiredPhoneNumbers"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview1"
-        accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL
@@ -535,7 +507,7 @@ class PhoneNumberAdministrationOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -551,7 +523,7 @@ class PhoneNumberAdministrationOperations(object):
         phone_number,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.AcquiredPhoneNumber"
+        # type: (...) -> "models.AcquiredPhoneNumber"
         """Gets information about an acquired phone number.
 
         Gets information about an acquired phone number.
@@ -564,13 +536,10 @@ class PhoneNumberAdministrationOperations(object):
         :rtype: ~azure.communication.administration.models.AcquiredPhoneNumber
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AcquiredPhoneNumber"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview1"
-        accept = "application/json"
 
         # Construct URL
         url = self.get_phone_number.metadata['url']  # type: ignore
@@ -586,7 +555,7 @@ class PhoneNumberAdministrationOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -594,7 +563,7 @@ class PhoneNumberAdministrationOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize('AcquiredPhoneNumber', pipeline_response)
@@ -610,20 +579,17 @@ class PhoneNumberAdministrationOperations(object):
         phone_number,  # type: str
         callback_url=None,  # type: Optional[str]
         application_id=None,  # type: Optional[str]
-        capabilities=None,  # type: Optional["_models.Capabilities"]
+        capabilities=None,  # type: Optional["models.Capabilities"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.AcquiredPhoneNumber"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        # type: (...) -> "models.AcquiredPhoneNumber"
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AcquiredPhoneNumber"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
-        _update = _models.AcquiredPhoneNumberUpdate(callback_url=callback_url, application_id=application_id, capabilities=capabilities)
+        _update = models.AcquiredPhoneNumberUpdate(callback_url=callback_url, application_id=application_id, capabilities=capabilities)
         api_version = "2020-07-20-preview1"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
-        accept = "application/json"
 
         # Construct URL
         url = self._update_phone_number_initial.metadata['url']  # type: ignore
@@ -640,18 +606,19 @@ class PhoneNumberAdministrationOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_update, 'AcquiredPhoneNumberUpdate')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -669,10 +636,10 @@ class PhoneNumberAdministrationOperations(object):
         phone_number,  # type: str
         callback_url=None,  # type: Optional[str]
         application_id=None,  # type: Optional[str]
-        capabilities=None,  # type: Optional["_models.Capabilities"]
+        capabilities=None,  # type: Optional["models.Capabilities"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.AcquiredPhoneNumber"]
+        # type: (...) -> LROPoller["models.AcquiredPhoneNumber"]
         """Update an acquired phone number.
 
         Update an acquired phone number.
@@ -697,7 +664,7 @@ class PhoneNumberAdministrationOperations(object):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop('polling', False)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AcquiredPhoneNumber"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.AcquiredPhoneNumber"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -726,12 +693,7 @@ class PhoneNumberAdministrationOperations(object):
                 return cls(pipeline_response, deserialized, response_headers)
             return deserialized
 
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'phoneNumber': self._serialize.url("phone_number", phone_number, 'str'),
-        }
-
-        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -752,12 +714,9 @@ class PhoneNumberAdministrationOperations(object):
     ):
         # type: (...) -> None
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview1"
-        accept = "application/json"
 
         # Construct URL
         url = self._release_phone_number_initial.metadata['url']  # type: ignore
@@ -773,7 +732,6 @@ class PhoneNumberAdministrationOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -781,7 +739,7 @@ class PhoneNumberAdministrationOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -836,12 +794,7 @@ class PhoneNumberAdministrationOperations(object):
             if cls:
                 return cls(pipeline_response, None, {})
 
-        path_format_arguments = {
-            'endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-            'phoneNumber': self._serialize.url("phone_number", phone_number, 'str'),
-        }
-
-        if polling is True: polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = LROBasePolling(lro_delay,  **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

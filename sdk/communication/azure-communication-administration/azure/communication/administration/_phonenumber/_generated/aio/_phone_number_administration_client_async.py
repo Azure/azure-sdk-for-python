@@ -11,18 +11,19 @@ from typing import Any
 from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
-from ._configuration import CommunicationIdentityClientConfiguration
-from .operations import CommunicationIdentityOperations
+from ._configuration_async import PhoneNumberAdministrationClientConfiguration
+from .operations_async import PhoneNumberAdministrationOperations
 from .. import models
 
 
-class CommunicationIdentityClient(object):
-    """Azure Communication Identity Service.
+class PhoneNumberAdministrationClient(object):
+    """The phone number administration client uses the Communication Services to acquire and manage phone numbers.
 
-    :ivar communication_identity: CommunicationIdentityOperations operations
-    :vartype communication_identity: azure.communication.administration.aio.operations.CommunicationIdentityOperations
-    :param endpoint: Auth and Identity endpoint.
+    :ivar phone_number_administration: PhoneNumberAdministrationOperations operations
+    :vartype phone_number_administration: azure.communication.administration.aio.operations_async.PhoneNumberAdministrationOperations
+    :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -31,21 +32,20 @@ class CommunicationIdentityClient(object):
         **kwargs: Any
     ) -> None:
         base_url = '{endpoint}'
-        self._config = CommunicationIdentityClientConfiguration(endpoint, **kwargs)
+        self._config = PhoneNumberAdministrationClientConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.communication_identity = CommunicationIdentityOperations(
+        self.phone_number_administration = PhoneNumberAdministrationOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "CommunicationIdentityClient":
+    async def __aenter__(self) -> "PhoneNumberAdministrationClient":
         await self._client.__aenter__()
         return self
 

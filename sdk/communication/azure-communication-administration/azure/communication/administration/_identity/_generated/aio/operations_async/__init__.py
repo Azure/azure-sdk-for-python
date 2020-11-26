@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._communication_identity_operations import CommunicationIdentityOperations
+from ._communication_identity_operations_async import CommunicationIdentityOperations
 
 __all__ = [
     'CommunicationIdentityOperations',

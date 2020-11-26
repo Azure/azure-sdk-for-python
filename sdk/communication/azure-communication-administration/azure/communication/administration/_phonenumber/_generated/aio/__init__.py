@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._phone_number_administration_client import PhoneNumberAdministrationClient
+from ._phone_number_administration_client_async import PhoneNumberAdministrationClient
 __all__ = ['PhoneNumberAdministrationClient']

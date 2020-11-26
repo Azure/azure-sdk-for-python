@@ -9,11 +9,11 @@ import datetime
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models as _models
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class CommunicationIdentityOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,7 +48,7 @@ class CommunicationIdentityOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CommunicationIdentity"
+        # type: (...) -> "models.CommunicationIdentity"
         """Create a new identity.
 
         Create a new identity.
@@ -58,13 +58,10 @@ class CommunicationIdentityOperations(object):
         :rtype: ~azure.communication.administration.models.CommunicationIdentity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationIdentity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationIdentity"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview2"
-        accept = "application/json"
 
         # Construct URL
         url = self.create.metadata['url']  # type: ignore
@@ -79,7 +76,7 @@ class CommunicationIdentityOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.post(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -115,9 +112,7 @@ class CommunicationIdentityOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         api_version = "2020-07-20-preview2"
 
@@ -170,12 +165,10 @@ class CommunicationIdentityOperations(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
-        _body = _models.CommunicationIdentityUpdateRequest(tokens_valid_from=tokens_valid_from)
+        _body = models.CommunicationIdentityUpdateRequest(tokens_valid_from=tokens_valid_from)
         api_version = "2020-07-20-preview2"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
 
@@ -199,6 +192,7 @@ class CommunicationIdentityOperations(object):
         body_content = self._serialize.body(_body, 'CommunicationIdentityUpdateRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -217,7 +211,7 @@ class CommunicationIdentityOperations(object):
         scopes,  # type: List[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.CommunicationIdentityToken"
+        # type: (...) -> "models.CommunicationIdentityToken"
         """Generate a new token for an identity.
 
         Generate a new token for an identity.
@@ -231,16 +225,13 @@ class CommunicationIdentityOperations(object):
         :rtype: ~azure.communication.administration.models.CommunicationIdentityToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationIdentityToken"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationIdentityToken"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
 
-        _body = _models.CommunicationTokenRequest(scopes=scopes)
+        _body = models.CommunicationTokenRequest(scopes=scopes)
         api_version = "2020-07-20-preview2"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self.issue_token.metadata['url']  # type: ignore
@@ -257,12 +248,13 @@ class CommunicationIdentityOperations(object):
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(_body, 'CommunicationTokenRequest')
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

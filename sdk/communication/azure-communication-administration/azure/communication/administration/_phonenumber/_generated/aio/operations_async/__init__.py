@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._phone_number_administration_operations import PhoneNumberAdministrationOperations
+from ._phone_number_administration_operations_async import PhoneNumberAdministrationOperations
 
 __all__ = [
     'PhoneNumberAdministrationOperations',
