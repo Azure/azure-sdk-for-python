@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class PhoneNumberAdministrationServiceConfiguration(Configuration):
-    """Configuration for PhoneNumberAdministrationService.
+class PhoneNumberAdministrationClientConfiguration(Configuration):
+    """Configuration for PhoneNumberAdministrationClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -35,11 +35,11 @@ class PhoneNumberAdministrationServiceConfiguration(Configuration):
         # type: (...) -> None
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(PhoneNumberAdministrationServiceConfiguration, self).__init__(**kwargs)
+        super(PhoneNumberAdministrationClientConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
         self.api_version = "2020-07-20-preview1"
-        kwargs.setdefault('sdk_moniker', 'phonenumberadministrationservice/{}'.format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'phonenumberadministrationclient/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(

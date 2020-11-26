@@ -13,7 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class CommunicationIdentityOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -48,7 +48,7 @@ class CommunicationIdentityOperations(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CommunicationIdentity"
+        # type: (...) -> "_models.CommunicationIdentity"
         """Create a new identity.
 
         Create a new identity.
@@ -58,7 +58,7 @@ class CommunicationIdentityOperations(object):
         :rtype: ~azure.communication.administration.models.CommunicationIdentity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationIdentity"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationIdentity"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -175,7 +175,7 @@ class CommunicationIdentityOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _body = models.CommunicationIdentityUpdateRequest(tokens_valid_from=tokens_valid_from)
+        _body = _models.CommunicationIdentityUpdateRequest(tokens_valid_from=tokens_valid_from)
         api_version = "2020-07-20-preview2"
         content_type = kwargs.pop("content_type", "application/merge-patch+json")
 
@@ -217,7 +217,7 @@ class CommunicationIdentityOperations(object):
         scopes,  # type: List[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.CommunicationIdentityToken"
+        # type: (...) -> "_models.CommunicationIdentityToken"
         """Generate a new token for an identity.
 
         Generate a new token for an identity.
@@ -231,13 +231,13 @@ class CommunicationIdentityOperations(object):
         :rtype: ~azure.communication.administration.models.CommunicationIdentityToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.CommunicationIdentityToken"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CommunicationIdentityToken"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _body = models.CommunicationTokenRequest(scopes=scopes)
+        _body = _models.CommunicationTokenRequest(scopes=scopes)
         api_version = "2020-07-20-preview2"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"

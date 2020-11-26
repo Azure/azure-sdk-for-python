@@ -15,18 +15,19 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
-from ._configuration import CommunicationIdentityClientConfiguration
-from .operations import CommunicationIdentityOperations
+from ._configuration import PhoneNumberAdministrationClientConfiguration
+from .operations import PhoneNumberAdministrationOperations
 from . import models
 
 
-class CommunicationIdentityClient(object):
-    """Azure Communication Identity Service.
+class PhoneNumberAdministrationClient(object):
+    """The phone number administration client uses the Communication Services to acquire and manage phone numbers.
 
-    :ivar communication_identity: CommunicationIdentityOperations operations
-    :vartype communication_identity: azure.communication.administration.operations.CommunicationIdentityOperations
-    :param endpoint: Auth and Identity endpoint.
+    :ivar phone_number_administration: PhoneNumberAdministrationOperations operations
+    :vartype phone_number_administration: azure.communication.administration.operations.PhoneNumberAdministrationOperations
+    :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
@@ -36,7 +37,7 @@ class CommunicationIdentityClient(object):
     ):
         # type: (...) -> None
         base_url = '{endpoint}'
-        self._config = CommunicationIdentityClientConfiguration(endpoint, **kwargs)
+        self._config = PhoneNumberAdministrationClientConfiguration(endpoint, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -44,7 +45,7 @@ class CommunicationIdentityClient(object):
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
-        self.communication_identity = CommunicationIdentityOperations(
+        self.phone_number_administration = PhoneNumberAdministrationOperations(
             self._client, self._config, self._serialize, self._deserialize)
 
     def close(self):
@@ -52,7 +53,7 @@ class CommunicationIdentityClient(object):
         self._client.close()
 
     def __enter__(self):
-        # type: () -> CommunicationIdentityClient
+        # type: () -> PhoneNumberAdministrationClient
         self._client.__enter__()
         return self
 
