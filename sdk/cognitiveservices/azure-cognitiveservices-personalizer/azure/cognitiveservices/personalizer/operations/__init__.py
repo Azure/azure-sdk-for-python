@@ -9,8 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .events_operations import EventsOperations
+from ._service_configuration_operations import ServiceConfigurationOperations
+from ._policy_operations import PolicyOperations
+from ._evaluations_operations import EvaluationsOperations
+from ._events_operations import EventsOperations
+from ._log_operations import LogOperations
+from ._model_operations import ModelOperations
+from ._personalizer_client_operations import PersonalizerClientOperationsMixin
 
 __all__ = [
+    'ServiceConfigurationOperations',
+    'PolicyOperations',
+    'EvaluationsOperations',
     'EventsOperations',
+    'LogOperations',
+    'ModelOperations',
+    'PersonalizerClientOperationsMixin',
 ]
