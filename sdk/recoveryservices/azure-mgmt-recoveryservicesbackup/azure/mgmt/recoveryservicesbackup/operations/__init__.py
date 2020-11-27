@@ -9,6 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from ._backup_resource_encryption_configs_operations import BackupResourceEncryptionConfigsOperations
+from ._bms_prepare_data_move_operation_result_operations import BMSPrepareDataMoveOperationResultOperations
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
 from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._protected_items_operations import ProtectedItemsOperations
@@ -51,6 +53,8 @@ from ._operations import Operations
 from ._recovery_services_backup_client_operations import RecoveryServicesBackupClientOperationsMixin
 
 __all__ = [
+    'BackupResourceEncryptionConfigsOperations',
+    'BMSPrepareDataMoveOperationResultOperations',
     'PrivateEndpointConnectionOperations',
     'BackupResourceVaultConfigsOperations',
     'ProtectedItemsOperations',

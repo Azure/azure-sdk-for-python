@@ -742,21 +742,15 @@ class AzureFileshareProtectedItem(ProtectedItem):
      'ProtectionStopped', 'ProtectionPaused'
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param last_backup_status: Last backup operation status. Possible values:
      Healthy, Unhealthy.
     :type last_backup_status: str
     :param last_backup_time: Timestamp of the last backup operation on this
      backup item.
     :type last_backup_time: datetime
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     :param extended_info: Additional information with this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureFileshareProtectedItemExtendedInfo
@@ -784,10 +778,9 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'protection_status': {'key': 'protectionStatus', 'type': 'str'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureFileshareProtectedItemExtendedInfo'},
     }
 
@@ -796,10 +789,9 @@ class AzureFileshareProtectedItem(ProtectedItem):
         self.friendly_name = kwargs.get('friendly_name', None)
         self.protection_status = kwargs.get('protection_status', None)
         self.protection_state = kwargs.get('protection_state', None)
-        self.health_status = kwargs.get('health_status', None)
-        self.health_details = kwargs.get('health_details', None)
         self.last_backup_status = kwargs.get('last_backup_status', None)
         self.last_backup_time = kwargs.get('last_backup_time', None)
+        self.kpis_healths = kwargs.get('kpis_healths', None)
         self.extended_info = kwargs.get('extended_info', None)
         self.protected_item_type = 'AzureFileShareProtectedItem'
 
@@ -1435,14 +1427,15 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
     :type health_details:
      list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMHealthDetails]
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     :param last_backup_status: Last backup operation status.
     :type last_backup_status: str
     :param last_backup_time: Timestamp of the last backup operation on this
@@ -1483,6 +1476,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'protection_state': {'key': 'protectionState', 'type': 'str'},
         'health_status': {'key': 'healthStatus', 'type': 'str'},
         'health_details': {'key': 'healthDetails', 'type': '[AzureIaaSVMHealthDetails]'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
@@ -1502,6 +1496,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         self.protection_state = kwargs.get('protection_state', None)
         self.health_status = kwargs.get('health_status', None)
         self.health_details = kwargs.get('health_details', None)
+        self.kpis_healths = kwargs.get('kpis_healths', None)
         self.last_backup_status = kwargs.get('last_backup_status', None)
         self.last_backup_time = kwargs.get('last_backup_time', None)
         self.protected_item_data_id = kwargs.get('protected_item_data_id', None)
@@ -1575,14 +1570,15 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
     :type health_details:
      list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMHealthDetails]
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     :param last_backup_status: Last backup operation status.
     :type last_backup_status: str
     :param last_backup_time: Timestamp of the last backup operation on this
@@ -1623,6 +1619,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'protection_state': {'key': 'protectionState', 'type': 'str'},
         'health_status': {'key': 'healthStatus', 'type': 'str'},
         'health_details': {'key': 'healthDetails', 'type': '[AzureIaaSVMHealthDetails]'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
@@ -1794,14 +1791,15 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :type protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
     :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
+     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Invalid'
     :type health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
     :param health_details: Health details on this backup item.
     :type health_details:
      list[~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMHealthDetails]
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     :param last_backup_status: Last backup operation status.
     :type last_backup_status: str
     :param last_backup_time: Timestamp of the last backup operation on this
@@ -1842,6 +1840,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'protection_state': {'key': 'protectionState', 'type': 'str'},
         'health_status': {'key': 'healthStatus', 'type': 'str'},
         'health_details': {'key': 'healthDetails', 'type': '[AzureIaaSVMHealthDetails]'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
@@ -1894,7 +1893,7 @@ class AzureIaaSVMErrorInfo(Model):
         self.recommendations = None
 
 
-class HealthDetails(Model):
+class ResourceHealthDetails(Model):
     """Health Details for backup items.
 
     Variables are only populated by the server, and will be ignored when
@@ -1925,14 +1924,14 @@ class HealthDetails(Model):
     }
 
     def __init__(self, **kwargs):
-        super(HealthDetails, self).__init__(**kwargs)
+        super(ResourceHealthDetails, self).__init__(**kwargs)
         self.code = None
         self.title = None
         self.message = None
         self.recommendations = None
 
 
-class AzureIaaSVMHealthDetails(HealthDetails):
+class AzureIaaSVMHealthDetails(ResourceHealthDetails):
     """Azure IaaS VM workload-specific Health Details.
 
     Variables are only populated by the server, and will be ignored when
@@ -3506,18 +3505,12 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     """
 
     _validation = {
@@ -3550,9 +3543,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
     }
 
     _subtype_map = {
@@ -3572,9 +3564,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         self.last_backup_error_detail = kwargs.get('last_backup_error_detail', None)
         self.protected_item_data_source_id = kwargs.get('protected_item_data_source_id', None)
         self.protected_item_health_status = kwargs.get('protected_item_health_status', None)
-        self.health_status = kwargs.get('health_status', None)
-        self.health_details = kwargs.get('health_details', None)
         self.extended_info = kwargs.get('extended_info', None)
+        self.kpis_healths = kwargs.get('kpis_healths', None)
         self.protected_item_type = 'AzureVmWorkloadProtectedItem'
 
 
@@ -3740,18 +3731,12 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     """
 
     _validation = {
@@ -3784,9 +3769,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
     }
 
     def __init__(self, **kwargs):
@@ -4129,18 +4113,12 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     """
 
     _validation = {
@@ -4173,9 +4151,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
     }
 
     def __init__(self, **kwargs):
@@ -4588,18 +4565,12 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
      'Invalid', 'Healthy', 'Unhealthy', 'NotReachable', 'IRPending'
     :type protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
-    :param health_status: Health status of protected item. Possible values
-     include: 'Passed', 'ActionRequired', 'ActionSuggested', 'Healthy',
-     'TransientDegraded', 'PersistentDegraded', 'TransientUnhealthy',
-     'PersistentUnhealthy', 'Invalid'
-    :type health_status: str or
-     ~azure.mgmt.recoveryservicesbackup.models.HealthStatus
-    :param health_details: Health details on this backup item.
-    :type health_details:
-     list[~azure.mgmt.recoveryservicesbackup.models.HealthDetails]
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
+    :param kpis_healths: Health details of different KPIs
+    :type kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
     """
 
     _validation = {
@@ -4632,9 +4603,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
         'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
         'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[HealthDetails]'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
+        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
     }
 
     def __init__(self, **kwargs):
@@ -6091,6 +6061,90 @@ class BackupResourceConfigResource(Resource):
         self.properties = kwargs.get('properties', None)
 
 
+class BackupResourceEncryptionConfig(Model):
+    """BackupResourceEncryptionConfig.
+
+    :param encryption_at_rest_type: Encryption At Rest Type. Possible values
+     include: 'Invalid', 'MicrosoftManaged', 'CustomerManaged'
+    :type encryption_at_rest_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.EncryptionAtRestType
+    :param key_uri: Key Vault Key URI
+    :type key_uri: str
+    :param subscription_id: Key Vault Subscription Id
+    :type subscription_id: str
+    :param last_update_status: Possible values include: 'Invalid',
+     'NotEnabled', 'PartiallySucceeded', 'PartiallyFailed', 'Failed',
+     'Succeeded'
+    :type last_update_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.LastUpdateStatus
+    :param infrastructure_encryption_state: Possible values include:
+     'Invalid', 'Disabled', 'Enabled'
+    :type infrastructure_encryption_state: str or
+     ~azure.mgmt.recoveryservicesbackup.models.InfrastructureEncryptionState
+    """
+
+    _attribute_map = {
+        'encryption_at_rest_type': {'key': 'encryptionAtRestType', 'type': 'str'},
+        'key_uri': {'key': 'keyUri', 'type': 'str'},
+        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        'last_update_status': {'key': 'lastUpdateStatus', 'type': 'str'},
+        'infrastructure_encryption_state': {'key': 'infrastructureEncryptionState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupResourceEncryptionConfig, self).__init__(**kwargs)
+        self.encryption_at_rest_type = kwargs.get('encryption_at_rest_type', None)
+        self.key_uri = kwargs.get('key_uri', None)
+        self.subscription_id = kwargs.get('subscription_id', None)
+        self.last_update_status = kwargs.get('last_update_status', None)
+        self.infrastructure_encryption_state = kwargs.get('infrastructure_encryption_state', None)
+
+
+class BackupResourceEncryptionConfigResource(Resource):
+    """BackupResourceEncryptionConfigResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    :param e_tag: Optional ETag.
+    :type e_tag: str
+    :param properties: BackupResourceEncryptionConfigResource properties
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfig
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'BackupResourceEncryptionConfig'},
+    }
+
+    def __init__(self, **kwargs):
+        super(BackupResourceEncryptionConfigResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
 class BackupResourceVaultConfig(Model):
     """Backup resource vault config details.
 
@@ -7395,7 +7449,11 @@ class ErrorDetail(Model):
 
 
 class ErrorResponse(Model):
-    """The resource management error response.
+    """Error Response.
+
+    Common error response for all Azure Resource Manager APIs to return error
+    details for failed operations. (This also follows the OData error response
+    format.).
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -8364,6 +8422,30 @@ class KeyAndSecretDetails(Model):
         self.encryption_mechanism = kwargs.get('encryption_mechanism', None)
 
 
+class KPIResourceHealthDetails(Model):
+    """KPI Resource Health Details.
+
+    :param resource_health_status: Resource Health Status. Possible values
+     include: 'Healthy', 'TransientDegraded', 'PersistentDegraded',
+     'TransientUnhealthy', 'PersistentUnhealthy', 'Invalid'
+    :type resource_health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ResourceHealthStatus
+    :param resource_health_details: Resource Health Status
+    :type resource_health_details:
+     list[~azure.mgmt.recoveryservicesbackup.models.ResourceHealthDetails]
+    """
+
+    _attribute_map = {
+        'resource_health_status': {'key': 'resourceHealthStatus', 'type': 'str'},
+        'resource_health_details': {'key': 'resourceHealthDetails', 'type': '[ResourceHealthDetails]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KPIResourceHealthDetails, self).__init__(**kwargs)
+        self.resource_health_status = kwargs.get('resource_health_status', None)
+        self.resource_health_details = kwargs.get('resource_health_details', None)
+
+
 class SchedulePolicy(Model):
     """Base class for backup schedule.
 
@@ -9059,6 +9141,80 @@ class NameInfo(Model):
         self.localized_value = kwargs.get('localized_value', None)
 
 
+class NewErrorResponse(Model):
+    """The resource management error response.
+
+    :param error: The error object.
+    :type error:
+     ~azure.mgmt.recoveryservicesbackup.models.NewErrorResponseError
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'NewErrorResponseError'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NewErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+
+
+class NewErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'NewErrorResponse'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(NewErrorResponseException, self).__init__(deserialize, response, 'NewErrorResponse', *args)
+
+
+class NewErrorResponseError(Model):
+    """The error object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.recoveryservicesbackup.models.NewErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.recoveryservicesbackup.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[NewErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NewErrorResponseError, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
 class OperationResultInfo(OperationResultInfoBase):
     """Operation result info.
 
@@ -9380,6 +9536,108 @@ class PreBackupValidation(Model):
         self.status = kwargs.get('status', None)
         self.code = kwargs.get('code', None)
         self.message = kwargs.get('message', None)
+
+
+class PrepareDataMoveRequest(Model):
+    """Prepare DataMove Request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param target_resource_id: Required. ARM Id of target vault
+    :type target_resource_id: str
+    :param target_region: Required. Target Region
+    :type target_region: str
+    :param data_move_level: Required. DataMove Level. Possible values include:
+     'Invalid', 'Vault', 'Container'
+    :type data_move_level: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataMoveLevel
+    :param source_container_arm_ids: Source Container ArmIds
+     This needs to be populated only if DataMoveLevel is set to container
+    :type source_container_arm_ids: list[str]
+    :param ignore_moved: Ignore the artifacts which are already moved.
+    :type ignore_moved: bool
+    """
+
+    _validation = {
+        'target_resource_id': {'required': True},
+        'target_region': {'required': True},
+        'data_move_level': {'required': True},
+    }
+
+    _attribute_map = {
+        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        'target_region': {'key': 'targetRegion', 'type': 'str'},
+        'data_move_level': {'key': 'dataMoveLevel', 'type': 'str'},
+        'source_container_arm_ids': {'key': 'sourceContainerArmIds', 'type': '[str]'},
+        'ignore_moved': {'key': 'ignoreMoved', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrepareDataMoveRequest, self).__init__(**kwargs)
+        self.target_resource_id = kwargs.get('target_resource_id', None)
+        self.target_region = kwargs.get('target_region', None)
+        self.data_move_level = kwargs.get('data_move_level', None)
+        self.source_container_arm_ids = kwargs.get('source_container_arm_ids', None)
+        self.ignore_moved = kwargs.get('ignore_moved', None)
+
+
+class VaultStorageConfigOperationResultResponse(Model):
+    """Operation result response for Vault Storage Config.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: PrepareDataMoveResponse
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'object_type': {'PrepareDataMoveResponse': 'PrepareDataMoveResponse'}
+    }
+
+    def __init__(self, **kwargs):
+        super(VaultStorageConfigOperationResultResponse, self).__init__(**kwargs)
+        self.object_type = None
+
+
+class PrepareDataMoveResponse(VaultStorageConfigOperationResultResponse):
+    """Prepare DataMove Response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
+    :type object_type: str
+    :param correlation_id: Co-relationId for move operation
+    :type correlation_id: str
+    :param source_vault_properties: Source Vault Properties
+    :type source_vault_properties: dict[str, str]
+    """
+
+    _validation = {
+        'object_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'correlation_id': {'key': 'correlationId', 'type': 'str'},
+        'source_vault_properties': {'key': 'sourceVaultProperties', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrepareDataMoveResponse, self).__init__(**kwargs)
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.source_vault_properties = kwargs.get('source_vault_properties', None)
+        self.object_type = 'PrepareDataMoveResponse'
 
 
 class PreValidateEnableBackupRequest(Model):
@@ -10401,6 +10659,53 @@ class TokenInformation(Model):
         self.token = kwargs.get('token', None)
         self.expiry_time_in_utc_ticks = kwargs.get('expiry_time_in_utc_ticks', None)
         self.security_pin = kwargs.get('security_pin', None)
+
+
+class TriggerDataMoveRequest(Model):
+    """Trigger DataMove Request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source_resource_id: Required. ARM Id of source vault
+    :type source_resource_id: str
+    :param source_region: Required. Source Region
+    :type source_region: str
+    :param data_move_level: Required. DataMove Level. Possible values include:
+     'Invalid', 'Vault', 'Container'
+    :type data_move_level: str or
+     ~azure.mgmt.recoveryservicesbackup.models.DataMoveLevel
+    :param correlation_id: Required. Correlation Id
+    :type correlation_id: str
+    :param source_container_arm_ids: Source Container ArmIds
+    :type source_container_arm_ids: list[str]
+    :param pause_gc: Pause GC
+    :type pause_gc: bool
+    """
+
+    _validation = {
+        'source_resource_id': {'required': True},
+        'source_region': {'required': True},
+        'data_move_level': {'required': True},
+        'correlation_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
+        'source_region': {'key': 'sourceRegion', 'type': 'str'},
+        'data_move_level': {'key': 'dataMoveLevel', 'type': 'str'},
+        'correlation_id': {'key': 'correlationId', 'type': 'str'},
+        'source_container_arm_ids': {'key': 'sourceContainerArmIds', 'type': '[str]'},
+        'pause_gc': {'key': 'pauseGC', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TriggerDataMoveRequest, self).__init__(**kwargs)
+        self.source_resource_id = kwargs.get('source_resource_id', None)
+        self.source_region = kwargs.get('source_region', None)
+        self.data_move_level = kwargs.get('data_move_level', None)
+        self.correlation_id = kwargs.get('correlation_id', None)
+        self.source_container_arm_ids = kwargs.get('source_container_arm_ids', None)
+        self.pause_gc = kwargs.get('pause_gc', None)
 
 
 class ValidateOperationRequest(Model):

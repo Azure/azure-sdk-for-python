@@ -12,6 +12,37 @@
 from enum import Enum
 
 
+class EncryptionAtRestType(str, Enum):
+
+    invalid = "Invalid"
+    microsoft_managed = "MicrosoftManaged"
+    customer_managed = "CustomerManaged"
+
+
+class LastUpdateStatus(str, Enum):
+
+    invalid = "Invalid"
+    not_enabled = "NotEnabled"
+    partially_succeeded = "PartiallySucceeded"
+    partially_failed = "PartiallyFailed"
+    failed = "Failed"
+    succeeded = "Succeeded"
+
+
+class InfrastructureEncryptionState(str, Enum):
+
+    invalid = "Invalid"
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class DataMoveLevel(str, Enum):
+
+    invalid = "Invalid"
+    vault = "Vault"
+    container = "Container"
+
+
 class OperationStatusValues(str, Enum):
 
     invalid = "Invalid"
@@ -47,11 +78,8 @@ class ProtectionState(str, Enum):
     protection_paused = "ProtectionPaused"
 
 
-class HealthStatus(str, Enum):
+class ResourceHealthStatus(str, Enum):
 
-    passed = "Passed"
-    action_required = "ActionRequired"
-    action_suggested = "ActionSuggested"
     healthy = "Healthy"
     transient_degraded = "TransientDegraded"
     persistent_degraded = "PersistentDegraded"
@@ -118,6 +146,14 @@ class JobSupportedAction(str, Enum):
     invalid = "Invalid"
     cancellable = "Cancellable"
     retriable = "Retriable"
+
+
+class HealthStatus(str, Enum):
+
+    passed = "Passed"
+    action_required = "ActionRequired"
+    action_suggested = "ActionSuggested"
+    invalid = "Invalid"
 
 
 class ProtectedItemState(str, Enum):
