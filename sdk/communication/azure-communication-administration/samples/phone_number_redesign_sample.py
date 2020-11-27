@@ -114,4 +114,4 @@ if __name__ == '__main__':
     begin_purchase_phone_numbers()
     begin_update_phone_number()
     begin_release_phone_number()
-    list_acquired_phone_numbers
+    list_acquired_phone_numbers()
