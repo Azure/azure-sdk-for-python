@@ -33,7 +33,7 @@ class CustomVisionPredictionClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/customvision/v3.0/prediction'
+        base_url = '{Endpoint}/customvision/v3.1/prediction'
 
         super(CustomVisionPredictionClientConfiguration, self).__init__(base_url)
 
