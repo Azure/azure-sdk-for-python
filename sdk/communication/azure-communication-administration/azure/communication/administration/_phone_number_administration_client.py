@@ -4,11 +4,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.communication.administration._phonenumber._generated.models import ReleaseStatus, CreateSearchOptions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
-from ._polling import ReleasePhoneNumberPolling, ReservePhoneNumberPolling, PurchaseReservationPolling
 
 from ._phonenumber._generated._phone_number_administration_service\
     import PhoneNumberAdministrationService as PhoneNumberAdministrationClientGen
@@ -33,22 +31,7 @@ class PhoneNumberAdministrationClient(object):
             **kwargs # type: Any
     ):
         # type: (...) -> None
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
-
-        if not credential:
-            raise ValueError(
-                "You need to provide account shared key to authenticate.")
-
-        self._endpoint = endpoint
-        self._phone_number_administration_client = PhoneNumberAdministrationClientGen(
-            self._endpoint,
-            authentication_policy=HMACCredentialsPolicy(endpoint, credential),
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
+        pass
 
     @classmethod
     def from_connection_string(
@@ -62,9 +45,7 @@ class PhoneNumberAdministrationClient(object):
         :returns: Instance of PhoneNumberAdministrationClient.
         :rtype: ~azure.communication.PhoneNumberAdministrationClient
         """
-        endpoint, access_key = parse_connection_str(conn_str)
-
-        return cls(endpoint, access_key, **kwargs)
+        pass
 
     @distributed_trace
     def begin_search_phone_numbers(
