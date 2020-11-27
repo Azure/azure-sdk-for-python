@@ -6,24 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 
-from .. import models as _models
+from ... import models as _models
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-class PathOperations(object):
-    """PathOperations operations.
+class PathOperations:
+    """PathOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -38,31 +34,30 @@ class PathOperations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
-    def create(
+    async def create(
         self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        resource=None,  # type: Optional[Union[str, "_models.PathResourceType"]]
-        continuation=None,  # type: Optional[str]
-        mode=None,  # type: Optional[Union[str, "_models.PathRenameMode"]]
-        rename_source=None,  # type: Optional[str]
-        source_lease_id=None,  # type: Optional[str]
-        properties=None,  # type: Optional[str]
-        permissions=None,  # type: Optional[str]
-        umask=None,  # type: Optional[str]
-        path_http_headers=None,  # type: Optional["_models.PathHTTPHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        source_modified_access_conditions=None,  # type: Optional["_models.SourceModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        resource: Optional[Union[str, "_models.PathResourceType"]] = None,
+        continuation: Optional[str] = None,
+        mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
+        rename_source: Optional[str] = None,
+        source_lease_id: Optional[str] = None,
+        properties: Optional[str] = None,
+        permissions: Optional[str] = None,
+        umask: Optional[str] = None,
+        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Create File | Create Directory | Rename File | Rename Directory.
 
         Create or rename a file or directory.    By default, the destination is overwritten and if the
@@ -239,7 +234,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -261,31 +256,30 @@ class PathOperations(object):
 
     create.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def update(
+    async def update(
         self,
-        action,  # type: Union[str, "_models.PathUpdateAction"]
-        mode,  # type: Union[str, "_models.PathSetAccessControlRecursiveMode"]
-        body,  # type: IO
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        max_records=None,  # type: Optional[int]
-        continuation=None,  # type: Optional[str]
-        force_flag=None,  # type: Optional[bool]
-        position=None,  # type: Optional[int]
-        retain_uncommitted_data=None,  # type: Optional[bool]
-        close=None,  # type: Optional[bool]
-        content_length=None,  # type: Optional[int]
-        properties=None,  # type: Optional[str]
-        owner=None,  # type: Optional[str]
-        group=None,  # type: Optional[str]
-        permissions=None,  # type: Optional[str]
-        acl=None,  # type: Optional[str]
-        path_http_headers=None,  # type: Optional["_models.PathHTTPHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.SetAccessControlRecursiveResponse"]
+        action: Union[str, "_models.PathUpdateAction"],
+        mode: Union[str, "_models.PathSetAccessControlRecursiveMode"],
+        body: IO,
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        max_records: Optional[int] = None,
+        continuation: Optional[str] = None,
+        force_flag: Optional[bool] = None,
+        position: Optional[int] = None,
+        retain_uncommitted_data: Optional[bool] = None,
+        close: Optional[bool] = None,
+        content_length: Optional[int] = None,
+        properties: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        permissions: Optional[str] = None,
+        acl: Optional[str] = None,
+        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> Optional["_models.SetAccessControlRecursiveResponse"]:
         """Append Data | Flush Data | Set Properties | Set Access Control.
 
         Uploads data to be appended to a file, flushes (writes) previously uploaded data to a file,
@@ -500,7 +494,7 @@ class PathOperations(object):
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content_kwargs['stream_content'] = body
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -541,19 +535,18 @@ class PathOperations(object):
         return deserialized
     update.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def lease(
+    async def lease(
         self,
-        x_ms_lease_action,  # type: Union[str, "_models.PathLeaseAction"]
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        x_ms_lease_duration=None,  # type: Optional[int]
-        x_ms_lease_break_period=None,  # type: Optional[int]
-        proposed_lease_id=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        x_ms_lease_action: Union[str, "_models.PathLeaseAction"],
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        x_ms_lease_duration: Optional[int] = None,
+        x_ms_lease_break_period: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Lease Path.
 
         Create and manage a lease to restrict write and delete access to the path. This operation
@@ -656,7 +649,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.post(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
@@ -693,17 +686,16 @@ class PathOperations(object):
 
     lease.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def read(
+    async def read(
         self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        range=None,  # type: Optional[str]
-        x_ms_range_get_content_md5=None,  # type: Optional[bool]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> IO
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        x_ms_range_get_content_md5: Optional[bool] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> IO:
         """Read File.
 
         Read the contents of a file.  For read operations, range requests are supported. This operation
@@ -790,7 +782,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
@@ -850,17 +842,16 @@ class PathOperations(object):
         return deserialized
     read.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def get_properties(
+    async def get_properties(
         self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        action=None,  # type: Optional[Union[str, "_models.PathGetPropertiesAction"]]
-        upn=None,  # type: Optional[bool]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        action: Optional[Union[str, "_models.PathGetPropertiesAction"]] = None,
+        upn: Optional[bool] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Get Properties | Get Status | Get Access Control List.
 
         Get Properties returns all system and user defined properties for a path. Get Status returns
@@ -951,7 +942,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.head(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -989,17 +980,16 @@ class PathOperations(object):
 
     get_properties.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def delete(
+    async def delete(
         self,
-        request_id_parameter=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
-        recursive=None,  # type: Optional[bool]
-        continuation=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        request_id_parameter: Optional[str] = None,
+        timeout: Optional[int] = None,
+        recursive: Optional[bool] = None,
+        continuation: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Delete File | Delete Directory.
 
         Delete the file or directory. This operation supports conditional HTTP requests.  For more
@@ -1085,7 +1075,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1104,19 +1094,18 @@ class PathOperations(object):
 
     delete.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def set_access_control(
+    async def set_access_control(
         self,
-        timeout=None,  # type: Optional[int]
-        owner=None,  # type: Optional[str]
-        group=None,  # type: Optional[str]
-        permissions=None,  # type: Optional[str]
-        acl=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        permissions: Optional[str] = None,
+        acl: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Set the owner, group, permissions, or access control list for a path.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1209,7 +1198,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.patch(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1230,18 +1219,17 @@ class PathOperations(object):
 
     set_access_control.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def set_access_control_recursive(
+    async def set_access_control_recursive(
         self,
-        mode,  # type: Union[str, "_models.PathSetAccessControlRecursiveMode"]
-        timeout=None,  # type: Optional[int]
-        continuation=None,  # type: Optional[str]
-        force_flag=None,  # type: Optional[bool]
-        max_records=None,  # type: Optional[int]
-        acl=None,  # type: Optional[str]
-        request_id_parameter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.SetAccessControlRecursiveResponse"
+        mode: Union[str, "_models.PathSetAccessControlRecursiveMode"],
+        timeout: Optional[int] = None,
+        continuation: Optional[str] = None,
+        force_flag: Optional[bool] = None,
+        max_records: Optional[int] = None,
+        acl: Optional[str] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs
+    ) -> "_models.SetAccessControlRecursiveResponse":
         """Set the access control list for a path and subpaths.
 
         :param mode: Mode "set" sets POSIX access control rights on files and directories, "modify"
@@ -1320,7 +1308,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.patch(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1342,20 +1330,19 @@ class PathOperations(object):
         return deserialized
     set_access_control_recursive.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def flush_data(
+    async def flush_data(
         self,
-        timeout=None,  # type: Optional[int]
-        position=None,  # type: Optional[int]
-        retain_uncommitted_data=None,  # type: Optional[bool]
-        close=None,  # type: Optional[bool]
-        content_length=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        path_http_headers=None,  # type: Optional["_models.PathHTTPHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        timeout: Optional[int] = None,
+        position: Optional[int] = None,
+        retain_uncommitted_data: Optional[bool] = None,
+        close: Optional[bool] = None,
+        content_length: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Set the owner, group, permissions, or access control list for a path.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1489,7 +1476,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.patch(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1511,19 +1498,18 @@ class PathOperations(object):
 
     flush_data.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def append_data(
+    async def append_data(
         self,
-        body,  # type: IO
-        position=None,  # type: Optional[int]
-        timeout=None,  # type: Optional[int]
-        content_length=None,  # type: Optional[int]
-        transactional_content_crc64=None,  # type: Optional[bytearray]
-        request_id_parameter=None,  # type: Optional[str]
-        path_http_headers=None,  # type: Optional["_models.PathHTTPHeaders"]
-        lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        body: IO,
+        position: Optional[int] = None,
+        timeout: Optional[int] = None,
+        content_length: Optional[int] = None,
+        transactional_content_crc64: Optional[bytearray] = None,
+        request_id_parameter: Optional[str] = None,
+        path_http_headers: Optional["_models.PathHTTPHeaders"] = None,
+        lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
+        **kwargs
+    ) -> None:
         """Append data to the file.
 
         :param body: Initial data.
@@ -1609,7 +1595,7 @@ class PathOperations(object):
         body_content = self._serialize.body(body, 'IO')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1632,15 +1618,14 @@ class PathOperations(object):
 
     append_data.metadata = {'url': '/{filesystem}/{path}'}  # type: ignore
 
-    def set_expiry(
+    async def set_expiry(
         self,
-        expiry_options,  # type: Union[str, "_models.PathExpiryOptions"]
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        expires_on=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        expiry_options: Union[str, "_models.PathExpiryOptions"],
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        expires_on: Optional[str] = None,
+        **kwargs
+    ) -> None:
         """Sets the time a blob will expire and be deleted.
 
         :param expiry_options: Required. Indicates mode of the expiry time.
@@ -1691,7 +1676,7 @@ class PathOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
