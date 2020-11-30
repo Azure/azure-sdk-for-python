@@ -18,7 +18,6 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._deserialize import get_page_ranges_result, parse_tags
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions
-from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
 from .._deserialize import deserialize_blob_properties
@@ -117,7 +116,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async

@@ -9,10 +9,6 @@
 from ._azure_blob_storage import AzureBlobStorage
 __all__ = ['AzureBlobStorage']
 
-from .version import VERSION
-
-__version__ = VERSION
-
 try:
     from ._patch import patch_sdk  # type: ignore
     patch_sdk()
