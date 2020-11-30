@@ -103,7 +103,7 @@ class StorageTableTest(TableTestCase):
 
 
     # --Test cases for tables --------------------------------------------------
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos Tables does not yet support service properties")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_properties(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -116,7 +116,7 @@ class StorageTableTest(TableTestCase):
         # Assert
         assert created.table_name == table_name
 
-        properties = ts.get_service_properties()
+        # properties = ts.get_service_properties()
         ts.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
 
         p = ts.get_service_properties()
@@ -130,7 +130,6 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_table(self, resource_group, location, cosmos_account, cosmos_account_key):
@@ -364,14 +363,12 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos URLs support unicode table names")
         ts = TableServiceClient(url, cosmos_account_key)
         table_name = u'啊齄丂狛狜'
 
@@ -382,13 +379,12 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_get_table_acl(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(self.account_url(cosmos_account, "cosmos"), cosmos_account_key)
         table = self._create_table(ts)
         try:
@@ -404,15 +400,13 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, cosmos_account,
                                                          cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
@@ -429,15 +423,13 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, cosmos_account,
                                                         cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
@@ -457,15 +449,13 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, cosmos_account,
                                                    cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         client = ts.get_table_client(table_name=table.table_name)
@@ -488,13 +478,12 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
+    @pytest.mark.skip("Cosmos does not support table access policy")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_too_many_ids(self, resource_group, location, cosmos_account, cosmos_account_key):
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         ts = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(ts)
         try:
@@ -512,7 +501,7 @@ class StorageTableTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("Merge operation fails from Tables SDK, issue #13844")
+    @pytest.mark.skip("Cosmos Tables does not yet support sas")
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
@@ -521,8 +510,6 @@ class StorageTableTest(TableTestCase):
 
         # Arrange
         url = self.account_url(cosmos_account, "cosmos")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support sas")
         tsc = TableServiceClient(url, cosmos_account_key)
         table = self._create_table(tsc)
         try:
@@ -560,7 +547,7 @@ class StorageTableTest(TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
+    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_locale(self, resource_group, location, cosmos_account, cosmos_account_key):

@@ -104,8 +104,6 @@ class TableServicePropertiesTest(TableTestCase):
     def test_table_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         # Act
         resp = tsc.set_service_properties(
@@ -127,8 +125,6 @@ class TableServicePropertiesTest(TableTestCase):
     def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         logging = TableAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -146,8 +142,6 @@ class TableServicePropertiesTest(TableTestCase):
     def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
@@ -165,8 +159,6 @@ class TableServicePropertiesTest(TableTestCase):
     def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -185,8 +177,6 @@ class TableServicePropertiesTest(TableTestCase):
     def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos Tables does not yet support service properties")
         tsc = TableServiceClient(url, storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
