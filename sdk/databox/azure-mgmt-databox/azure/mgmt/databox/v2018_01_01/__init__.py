@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._data_box_management_client import DataBoxManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['DataBoxManagementClient']
 
 try:

@@ -8,9 +8,3 @@
 
 from ._data_box_management_client import DataBoxManagementClient
 __all__ = ['DataBoxManagementClient']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
