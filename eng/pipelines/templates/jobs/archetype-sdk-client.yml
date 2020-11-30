@@ -43,7 +43,7 @@ parameters:
       RunForPR: false
     Linux_Python39:
       OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.9.0'
+      PythonVersion: '3.9'
       CoverageArg: ''
       RunForPR: true
   AdditionalTestMatrix: []
