@@ -9,46 +9,151 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Serializer, Deserializer
 
+from azure.profiles import KnownProfiles, ProfileDefinition
+from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import AttestationManagementClientConfiguration
-from .operations import Operations
-from .operations import AttestationProvidersOperations
-from . import models
 
+class _SDKClient(object):
+    def __init__(self, *args, **kwargs):
+        """This is a fake class to support current implemetation of MultiApiClientMixin."
+        Will be removed in final version of multiapi azure-core based client
+        """
+        pass
 
-class AttestationManagementClient(SDKClient):
-    """Various APIs for managing resources in attestation service. This primarily encompasses per-tenant instance management.
+class AttestationManagementClient(MultiApiClientMixin, _SDKClient):
+    """Various APIs for managing resources in attestation service. This primarily encompasses per-provider management.
 
-    :ivar config: Configuration for client.
-    :vartype config: AttestationManagementClientConfiguration
+    This ready contains multiple API versions, to help you deal with all of the Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, it uses the latest API version available on public Azure.
+    For production, you should stick to a particular api-version and/or profile.
+    The profile sets a mapping between an operation group and its API version.
+    The api-version parameter sets the default API version if the operation
+    group is not described in the profile.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.attestation.operations.Operations
-    :ivar attestation_providers: AttestationProviders operations
-    :vartype attestation_providers: azure.mgmt.attestation.operations.AttestationProvidersOperations
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
+    :param str api_version: API version to use if no profile is provided, or if
+     missing in profile.
     :param str base_url: Service URL
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
+    DEFAULT_API_VERSION = '2020-10-01'
+    _PROFILE_TAG = "azure.mgmt.attestation.AttestationManagementClient"
+    LATEST_PROFILE = ProfileDefinition({
+        _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
+        }},
+        _PROFILE_TAG + " latest"
+    )
+
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+        self,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None,
+        base_url=None,
+        profile=KnownProfiles.default,
+        **kwargs  # type: Any
+    ):
+        if not base_url:
+            base_url = 'https://management.azure.com'
+        self._config = AttestationManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        super(AttestationManagementClient, self).__init__(
+            api_version=api_version,
+            profile=profile
+        )
 
-        self.config = AttestationManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(AttestationManagementClient, self).__init__(self.config.credentials, self.config)
+    @classmethod
+    def _models_dict(cls, api_version):
+        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-09-01-preview'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+    @classmethod
+    def models(cls, api_version=DEFAULT_API_VERSION):
+        """Module depends on the API version:
 
-        self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.attestation_providers = AttestationProvidersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+           * 2018-09-01-preview: :mod:`v2018_09_01_preview.models<azure.mgmt.attestation.v2018_09_01_preview.models>`
+           * 2020-10-01: :mod:`v2020_10_01.models<azure.mgmt.attestation.v2020_10_01.models>`
+        """
+        if api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview import models
+            return models
+        elif api_version == '2020-10-01':
+            from .v2020_10_01 import models
+            return models
+        raise ValueError("API version {} is not available".format(api_version))
+
+    @property
+    def attestation_providers(self):
+        """Instance depends on the API version:
+
+           * 2018-09-01-preview: :class:`AttestationProvidersOperations<azure.mgmt.attestation.v2018_09_01_preview.operations.AttestationProvidersOperations>`
+           * 2020-10-01: :class:`AttestationProvidersOperations<azure.mgmt.attestation.v2020_10_01.operations.AttestationProvidersOperations>`
+        """
+        api_version = self._get_api_version('attestation_providers')
+        if api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview.operations import AttestationProvidersOperations as OperationClass
+        elif api_version == '2020-10-01':
+            from .v2020_10_01.operations import AttestationProvidersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'attestation_providers'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2018-09-01-preview: :class:`Operations<azure.mgmt.attestation.v2018_09_01_preview.operations.Operations>`
+           * 2020-10-01: :class:`Operations<azure.mgmt.attestation.v2020_10_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2018-09-01-preview':
+            from .v2018_09_01_preview.operations import Operations as OperationClass
+        elif api_version == '2020-10-01':
+            from .v2020_10_01.operations import Operations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def private_endpoint_connections(self):
+        """Instance depends on the API version:
+
+           * 2020-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.attestation.v2020_10_01.operations.PrivateEndpointConnectionsOperations>`
+        """
+        api_version = self._get_api_version('private_endpoint_connections')
+        if api_version == '2020-10-01':
+            from .v2020_10_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def private_link_resources(self):
+        """Instance depends on the API version:
+
+           * 2020-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.attestation.v2020_10_01.operations.PrivateLinkResourcesOperations>`
+        """
+        api_version = self._get_api_version('private_link_resources')
+        if api_version == '2020-10-01':
+            from .v2020_10_01.operations import PrivateLinkResourcesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)
