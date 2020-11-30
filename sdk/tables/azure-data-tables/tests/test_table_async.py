@@ -197,6 +197,11 @@ class TableTestAsync(AsyncTableTestCase):
         prefix = 'listtable'
         account_url = self.account_url(storage_account, "table")
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
+
+        # Delete any existing tables
+        async for table in ts.list_tables():
+            await ts.delete_table(table.table_name)
+
         table_list = []
         for i in range(0, 4):
             await self._create_table(ts, prefix + str(i), table_list)
