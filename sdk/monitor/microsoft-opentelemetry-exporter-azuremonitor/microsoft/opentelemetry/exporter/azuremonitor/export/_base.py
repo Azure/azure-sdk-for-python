@@ -15,7 +15,6 @@ from microsoft.opentelemetry.exporter.azuremonitor._storage import LocalFileStor
 from microsoft.opentelemetry.exporter.azuremonitor._options import ExporterOptions
 
 
-
 logger = logging.getLogger(__name__)
 
 TEMPDIR_PREFIX = "opentelemetry-python-"

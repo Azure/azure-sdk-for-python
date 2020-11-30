@@ -48,7 +48,7 @@ class TestBaseExporter(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(TEST_FOLDER, True)
 
-    def shutdown(self):
+    def setUp(self):
         try:
             # Clean storage
             if os.path.exists(STORAGE_PATH):
