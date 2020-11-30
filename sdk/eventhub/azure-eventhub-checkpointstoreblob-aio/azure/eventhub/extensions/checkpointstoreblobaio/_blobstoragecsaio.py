@@ -146,7 +146,7 @@ class BlobCheckpointStore(CheckpointStore):
                     "eventhub_name": eventhub_name,
                     "consumer_group": consumer_group,
                     "partition_id": blob.name.split("/")[-1],
-                    "owner_id": blob.metadata["ownerid"],
+                    "owner_id": blob.metadata.get("ownerid"),
                     "etag": blob.etag,
                     "last_modified_time": blob.last_modified.timestamp()
                     if blob.last_modified
