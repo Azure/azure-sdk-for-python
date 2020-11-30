@@ -33,8 +33,11 @@ jobs:
   - job: ${{ parameters.JobName }}
     variables:
       skipComponentGovernanceDetection: true
-      CoverageArg: --disablecov
-
+      # CoverageArg: #--disablecov
+      ${{ if eq(parameters.Matrix, 'Linux_Python39') }}:
+        CoverageArg: ''
+      ${{ if ne(parameters.Matrix, 'Linux_Python39') }}:
+        CoverageArg: --disablecov
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     strategy:
       maxParallel: ${{ parameters.MaxParallel }}
