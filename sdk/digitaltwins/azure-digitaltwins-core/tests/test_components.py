@@ -33,7 +33,19 @@ class DigitalTwinsComponentTests(AzureTestCase):
             endpoint=endpoint,
             **kwargs)
 
+    def _clean_up_models(self, client, *models):
+        models = [m.id for m in client.list_models()]
+        while models:
+            print("Cleaning up {} models".format(len(models)))
+            for model in models:
+                try:
+                    client.delete_model(model)
+                except:
+                    pass
+            models = [m.id for m in client.list_models()]
+
     def _set_up_models(self, client):
+        self._clean_up_models(client)
         component = {
             "@id": COMPONENT_ID,
             "@type": "Interface",
@@ -76,10 +88,7 @@ class DigitalTwinsComponentTests(AzureTestCase):
             }
             ]
         }
-        try:
-            client.create_models([component, model])
-        except ResourceExistsError:
-            pass
+        client.create_models([component, model])
 
         temporary_twin = {
             "$metadata": {
@@ -372,6 +381,18 @@ class DigitalTwinsComponentTests(AzureTestCase):
             DIGITAL_TWIN_ID,
             "Component1",
             telemetry
+        )
+
+    @DigitalTwinsRGPreparer(name_prefix="dttest")
+    @DigitalTwinsPreparer(name_prefix="dttest")
+    def test_publish_component_telemetry_with_message_id(self, resource_group, location, digitaltwin):
+        telemetry = {"ComponentTelemetry1": 5} # ComponentTelemetry1
+        client = self._get_client(digitaltwin.host_name)
+        client.publish_component_telemetry(
+            DIGITAL_TWIN_ID,
+            "Component1",
+            telemetry,
+            message_id=self.create_random_name('message-')
         )
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")

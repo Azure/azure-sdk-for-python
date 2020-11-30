@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel90490aa1%3B1?includeModelDefinition=false&api-version=2020-10-31
   response:
@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 01:22:48 GMT
+      - Tue, 24 Nov 2020 21:09:55 GMT
       strict-transport-security:
       - max-age=2592000
     status:
@@ -46,19 +46,19 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models?api-version=2020-10-31
   response:
     body:
-      string: '[{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-08T01:22:48.609357+00:00"}]'
+      string: '[{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:55.8499349+00:00"}]'
     headers:
       content-length:
-      - '174'
+      - '175'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 01:22:48 GMT
+      - Tue, 24 Nov 2020 21:09:55 GMT
       strict-transport-security:
       - max-age=2592000
     status:
@@ -74,19 +74,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/models/dtmi%3Acom%3Asamples%3AComponentModel90490aa1%3B1?includeModelDefinition=false&api-version=2020-10-31
   response:
     body:
-      string: '{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-08T01:22:48.609357+00:00"}'
+      string: '{"id":"dtmi:com:samples:ComponentModel90490aa1;1","description":{},"displayName":{"en":"Component1"},"decommissioned":false,"uploadTime":"2020-11-24T21:09:55.8499349+00:00"}'
     headers:
       content-length:
-      - '172'
+      - '173'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 08 Nov 2020 01:22:48 GMT
+      - Tue, 24 Nov 2020 21:09:55 GMT
       strict-transport-security:
       - max-age=2592000
     status:

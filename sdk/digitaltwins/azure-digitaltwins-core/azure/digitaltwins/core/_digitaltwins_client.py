@@ -7,16 +7,18 @@
 import uuid
 from datetime import datetime
 from typing import Dict, List, Any, TYPE_CHECKING
+
+from msrest import Serializer
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import MatchConditions
-from ._version import SDK_MONIKER
 
+from ._version import SDK_MONIKER
 from ._utils import (
     prep_if_match,
     prep_if_none_match
 )
-
 from ._generated.models import (
     QuerySpecification,
     DigitalTwinsAddOptions,
@@ -393,13 +395,13 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
-    def publish_telemetry(self, digital_twin_id, payload, **kwargs):
+    def publish_telemetry(self, digital_twin_id, telemetry, **kwargs):
         # type: (str, object, **Any) -> None
         """Publish telemetry from a digital twin, which is then consumed by
         one or many destination endpoints (subscribers) defined under.
 
         :param str digital_twin_id: The ID of the digital twin
-        :param object payload: The telemetry payload to be sent
+        :param object telemetry: The telemetry data to be sent
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -408,11 +410,11 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
             digital twin with the provided ID.
         """
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
-        timestamp = datetime.now()
+        timestamp = Serializer.serialize_iso(datetime.utcnow())
         return self._client.digital_twins.send_telemetry(
             digital_twin_id,
             message_id=message_id,
-            telemetry=payload,
+            telemetry=telemetry,
             telemetry_source_time=timestamp,
             **kwargs
         )
@@ -422,7 +424,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
         self,
         digital_twin_id,
         component_name,
-        payload,
+        telemetry,
         **kwargs
     ):
         # type: (str, str, object, **Any) -> None
@@ -431,7 +433,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.
-        :param object payload: The telemetry payload to be sent.
+        :param object telemetry: The telemetry data to be sent.
         :keyword str message_id: The message ID. If not specified, a UUID will be generated.
         :return: None
         :rtype: None
@@ -440,12 +442,12 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
             digital twin with the provided ID or the component name is invalid.
         """
         message_id = kwargs.pop('message_id', None) or str(uuid.uuid4())
-        timestamp = datetime.now()
+        timestamp = Serializer.serialize_iso(datetime.utcnow())
         return self._client.digital_twins.send_component_telemetry(
             digital_twin_id,
             component_name,
             message_id=message_id,
-            telemetry=payload,
+            telemetry=telemetry,
             telemetry_source_time=timestamp,
             **kwargs
         )
@@ -473,7 +475,7 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_models(self, dependencies_for=None, **kwargs):
-        # type: (List[str], **Any) -> ItemPaged[DigitalTwinsModelData]
+        # type: (Optional[List[str]], **Any) -> ItemPaged[DigitalTwinsModelData]
         """Get the list of models.
 
         :param List[str] dependencies_for: The model IDs to have dependencies retrieved.
