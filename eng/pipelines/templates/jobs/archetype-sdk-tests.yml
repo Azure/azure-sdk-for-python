@@ -27,7 +27,7 @@ parameters:
       PythonVersion: 'pypy3'
     Linux_Python39:
       OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.9.0'
+      PythonVersion: '3.9'
 
 jobs:
   - job: ${{ parameters.JobName }}
