@@ -11,7 +11,7 @@ from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.communication.chat import (
     ChatClient,
-    ChatThreadMember,
+    ChatThreadParticipant,
     CommunicationUser,
     CommunicationUserCredential
 )
@@ -37,19 +37,19 @@ class TestChatClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=207, json_payload={"multipleStatus": [{"id": thread_id, "statusCode": 201, "type": "Thread"}]})
+            return mock_response(status_code=201, json_payload={"id": thread_id})
         
         chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
 
         topic="test topic"
         user = CommunicationUser("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-        members=[ChatThreadMember(
+        participants=[ChatThreadParticipant(
             user=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
         try:
-            chat_thread_client = chat_client.create_chat_thread(topic, members)
+            chat_thread_client = chat_client.create_chat_thread(topic, participants)
         except:
             raised = True
             raise
@@ -64,13 +64,13 @@ class TestChatClient(unittest.TestCase):
 
         topic="test topic",
         user = CommunicationUser("8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041")
-        thread_members=[ChatThreadMember(
+        thread_participants=[ChatThreadParticipant(
             user=user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
 
-        self.assertRaises(HttpResponseError, chat_client.create_chat_thread, topic=topic, thread_members=thread_members)
+        self.assertRaises(HttpResponseError, chat_client.create_chat_thread, topic=topic, thread_participants=thread_participants)
 
     def test_delete_chat_thread(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
@@ -95,7 +95,7 @@ class TestChatClient(unittest.TestCase):
             return mock_response(status_code=200, json_payload={
                 "id": thread_id,
                 "created_by": "8:acs:resource_user",
-                "members": [{"id": "", "display_name": "name", "share_history_time": "1970-01-01T00:00:00Z"}]
+                "participants": [{"id": "", "display_name": "name", "share_history_time": "1970-01-01T00:00:00Z"}]
                 })
         chat_client = ChatClient("https://endpoint", TestChatClient.credential, transport=Mock(send=mock_send))
 

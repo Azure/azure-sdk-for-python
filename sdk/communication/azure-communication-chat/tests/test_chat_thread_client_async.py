@@ -9,7 +9,7 @@ from msrest.serialization import TZ_UTC
 from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import (
     ChatMessagePriority,
-    ChatThreadMember,
+    ChatThreadParticipant,
     CommunicationUser,
 )
 from unittest_helpers import mock_response
@@ -26,17 +26,17 @@ credential = Mock()
 credential.get_token = Mock(return_value=AccessToken("some_token", datetime.now().replace(tzinfo=TZ_UTC)))
 
 @pytest.mark.asyncio
-async def test_update_thread():
+async def test_update_topic():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=200)
+        return mock_response(status_code=204)
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     topic = "update topic"
     try:
-        await chat_thread_client.update_thread(topic=topic)
+        await chat_thread_client.update_topic(topic=topic)
     except:
         raised = True
 
@@ -52,13 +52,13 @@ async def test_send_message():
         return mock_response(status_code=201, json_payload={"id": message_id})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
-    create_message_result = None
+    create_message_result_id = None
     try:
         priority=ChatMessagePriority.NORMAL
         content='hello world'
         sender_display_name='sender name'
 
-        create_message_result = await chat_thread_client.send_message(
+        create_message_result_id = await chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
@@ -66,7 +66,7 @@ async def test_send_message():
         raised = True
 
     assert raised == False
-    assert create_message_result.id == message_id
+    assert create_message_result_id == message_id
 
 @pytest.mark.asyncio
 async def test_get_message():
@@ -149,7 +149,7 @@ async def test_update_message():
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=200)
+        return mock_response(status_code=204)
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     try:
@@ -178,56 +178,78 @@ async def test_delete_message():
     assert raised == False
 
 @pytest.mark.asyncio
-async def test_list_members():
+async def test_list_participants():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-    member_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+    participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=200, json_payload={"value": [{"id": member_id}]})
+        return mock_response(status_code=200, json_payload={"value": [{"id": participant_id}]})
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
-    chat_thread_members = None
+    chat_thread_participants = None
     try:
-        chat_thread_members = chat_thread_client.list_members()
+        chat_thread_participants = chat_thread_client.list_participants()
     except:
         raised = True
 
     assert raised == False
 
     items = []
-    async for item in chat_thread_members:
+    async for item in chat_thread_participants:
         items.append(item)
 
     assert len(items) == 1
 
 @pytest.mark.asyncio
-async def test_add_members():
+async def test_add_participant():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-    new_member_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+    new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
     raised = False
 
     async def mock_send(*_, **__):
-        return mock_response(status_code=207)
+        return mock_response(status_code=201)
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
-    new_member = ChatThreadMember(
-            user=CommunicationUser(new_member_id),
+    new_participant = ChatThreadParticipant(
+            user=CommunicationUser(new_participant_id),
             display_name='name',
             share_history_time=datetime.utcnow())
-    members = [new_member]
 
     try:
-        await chat_thread_client.add_members(members)
+        await chat_thread_client.add_participant(new_participant)
     except:
         raised = True
 
     assert raised == False
 
 @pytest.mark.asyncio
-async def test_remove_member():
+async def test_add_participants():
     thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
-    member_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+    new_participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
+    raised = False
+
+    async def mock_send(*_, **__):
+        return mock_response(status_code=201)
+    chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
+
+    new_participant = ChatThreadParticipant(
+            user=CommunicationUser(new_participant_id),
+            display_name='name',
+            share_history_time=datetime.utcnow())
+    participants = [new_participant]
+
+    try:
+        await chat_thread_client.add_participants(participants)
+    except:
+        raised = True
+
+    assert raised == False
+
+@pytest.mark.asyncio
+async def test_remove_participant():
+    thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
+    participant_id="8:acs:57b9bac9-df6c-4d39-a73b-26e944adf6ea_9b0110-08007f1041"
     raised = False
 
     async def mock_send(*_, **__):
@@ -235,7 +257,7 @@ async def test_remove_member():
     chat_thread_client = ChatThreadClient("https://endpoint", credential, thread_id, transport=Mock(send=mock_send))
 
     try:
-        await chat_thread_client.remove_member(CommunicationUser(member_id))
+        await chat_thread_client.remove_participant(CommunicationUser(participant_id))
     except:
         raised = True
 

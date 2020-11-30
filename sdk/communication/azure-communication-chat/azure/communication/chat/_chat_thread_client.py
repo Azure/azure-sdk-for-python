@@ -16,16 +16,16 @@ from ._shared.user_credential import CommunicationUserCredential
 from ._common import CommunicationUserCredentialPolicy
 from ._generated import AzureCommunicationChatService
 from ._generated.models import (
-    AddChatThreadMembersRequest,
+    AddChatParticipantsRequest,
     SendReadReceiptRequest,
     SendChatMessageRequest,
     UpdateChatMessageRequest,
     UpdateChatThreadRequest
 )
 from ._models import (
-    ChatThreadMember,
+    ChatThreadParticipant,
     ChatMessage,
-    ReadReceipt
+    ChatMessageReadReceipt
 )
 
 from ._utils import _to_utc_datetime # pylint: disable=unused-import
@@ -42,7 +42,7 @@ class ChatThreadClient(object):
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally created by ChatClient.create_chat_thread()
 
-    This client provides operations to add member to chat thread, remove member from
+    This client provides operations to add participant to chat thread, remove participant from
     chat thread, send message, delete message, update message, send typing notifications,
     send and list read receipt
 
@@ -113,7 +113,7 @@ class ChatThreadClient(object):
         return self._thread_id
 
     @distributed_trace
-    def update_thread(
+    def update_topic(
         self,
         topic=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -132,17 +132,17 @@ class ChatThreadClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START update_thread]
-                :end-before: [END update_thread]
+                :start-after: [START update_topic]
+                :end-before: [END update_topic]
                 :language: python
                 :dedent: 8
                 :caption: Updating chat thread.
         """
 
-        update_thread_request = UpdateChatThreadRequest(topic=topic)
+        update_topic_request = UpdateChatThreadRequest(topic=topic)
         return self._client.update_chat_thread(
             chat_thread_id=self._thread_id,
-            body=update_thread_request,
+            update_chat_thread_request=update_topic_request,
             **kwargs)
 
     @distributed_trace
@@ -176,7 +176,7 @@ class ChatThreadClient(object):
         post_read_receipt_request = SendReadReceiptRequest(chat_message_id=message_id)
         return self._client.send_chat_read_receipt(
             self._thread_id,
-            body=post_read_receipt_request,
+            send_read_receipt_request=post_read_receipt_request,
             **kwargs)
 
     @distributed_trace
@@ -184,11 +184,11 @@ class ChatThreadClient(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[ReadReceipt]
+        # type: (...) -> ItemPaged[ChatMessageReadReceipt]
         """Gets read receipts for a thread.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged[:class:`~azure.communication.chat.ReadReceipt`]
+        :return: ItemPaged[:class:`~azure.communication.chat.ChatMessageReadReceipt`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -203,7 +203,7 @@ class ChatThreadClient(object):
         """
         return self._client.list_chat_read_receipts(
             self._thread_id,
-            cls=lambda objs: [ReadReceipt._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            cls=lambda objs: [ChatMessageReadReceipt._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
     @distributed_trace
@@ -236,7 +236,7 @@ class ChatThreadClient(object):
         content,  # type: str
         **kwargs  # type: Any
     ):
-        # type: (...) -> SendChatMessageResult
+        # type: (...) -> str
         """Sends a message to a thread.
 
         :param content: Required. Chat message content.
@@ -246,8 +246,8 @@ class ChatThreadClient(object):
         :keyword str sender_display_name: The display name of the message sender. This property is used to
           populate sender name for push notifications.
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SendChatMessageResult, or the result of cls(response)
-        :rtype: ~azure.communication.chat.SendChatMessageResult
+        :return: str, or the result of cls(response)
+        :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -270,10 +270,12 @@ class ChatThreadClient(object):
             priority=priority,
             sender_display_name=sender_display_name
         )
-        return self._client.send_chat_message(
+
+        send_chat_message_result = self._client.send_chat_message(
             chat_thread_id=self._thread_id,
-            body=create_message_request,
+            send_chat_message_request=create_message_request,
             **kwargs)
+        return send_chat_message_result.id
 
     @distributed_trace
     def get_message(
@@ -376,7 +378,7 @@ class ChatThreadClient(object):
         return self._client.update_chat_message(
             chat_thread_id=self._thread_id,
             chat_message_id=message_id,
-            body=update_message_request,
+            update_chat_message_request=update_message_request,
             **kwargs)
 
     @distributed_trace
@@ -413,44 +415,44 @@ class ChatThreadClient(object):
             **kwargs)
 
     @distributed_trace
-    def list_members(
+    def list_participants(
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> ItemPaged[ChatThreadMember]
-        """Gets the members of a thread.
+        # type: (...) -> ItemPaged[ChatThreadParticipant]
+        """Gets the participants of a thread.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ItemPaged[:class:`~azure.communication.chat.ChatThreadMember`]
+        :return: ItemPaged[:class:`~azure.communication.chat.ChatThreadParticipant`]
         :rtype: ~azure.core.paging.ItemPaged
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START list_members]
-                :end-before: [END list_members]
+                :start-after: [START list_participants]
+                :end-before: [END list_participants]
                 :language: python
                 :dedent: 8
-                :caption: Listing members of chat thread.
+                :caption: Listing participants of chat thread.
         """
 
-        return self._client.list_chat_thread_members(
+        return self._client.list_chat_participants(
             self._thread_id,
-            cls=lambda objs: [ChatThreadMember._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            cls=lambda objs: [ChatThreadParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
     @distributed_trace
-    def add_members(
-        self,
-        thread_members,  # type: list[ChatThreadMember]
-        **kwargs  # type: Any
+    def add_participant(
+            self,
+            thread_participant,  # type: ChatThreadParticipant
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Adds thread members to a thread. If members already exist, no change occurs.
+        """Adds single thread participant to a thread. If participant already exist, no change occurs.
 
-        :param thread_members: Required. Thread members to be added to the thread.
-        :type thread_members: list[~azure.communication.chat.ChatThreadMember]
+        :param thread_participant: Required. Single thread participant to be added to the thread.
+        :type thread_participant: ~azure.communication.chat.ChatThreadParticipant
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -459,33 +461,69 @@ class ChatThreadClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START add_members]
-                :end-before: [END add_members]
+                :start-after: [START add_participant]
+                :end-before: [END add_participant]
                 :language: python
                 :dedent: 8
-                :caption: Adding members to chat thread.
+                :caption: Adding single participant to chat thread.
         """
-        if not thread_members:
-            raise ValueError("thread_members cannot be None.")
+        if not thread_participant:
+            raise ValueError("thread_participant cannot be None.")
 
-        members = [m._to_generated() for m in thread_members]  # pylint:disable=protected-access
-        add_thread_members_request = AddChatThreadMembersRequest(members=members)
+        participants = [thread_participant._to_generated()]  # pylint:disable=protected-access
+        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
 
-        return self._client.add_chat_thread_members(
+        return self._client.add_chat_participants(
             chat_thread_id=self._thread_id,
-            body=add_thread_members_request,
+            add_chat_participants_request=add_thread_participants_request,
             **kwargs)
 
     @distributed_trace
-    def remove_member(
+    def add_participants(
+        self,
+        thread_participants,  # type: list[ChatThreadParticipant]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Adds thread participants to a thread. If participants already exist, no change occurs.
+
+        :param thread_participants: Required. Thread participants to be added to the thread.
+        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/chat_thread_client_sample.py
+                :start-after: [START add_participants]
+                :end-before: [END add_participants]
+                :language: python
+                :dedent: 8
+                :caption: Adding participants to chat thread.
+        """
+        if not thread_participants:
+            raise ValueError("thread_participants cannot be None.")
+
+        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+        add_thread_participants_request = AddChatParticipantsRequest(participants=participants)
+
+        return self._client.add_chat_participants(
+            chat_thread_id=self._thread_id,
+            add_chat_participants_request=add_thread_participants_request,
+            **kwargs)
+
+    @distributed_trace
+    def remove_participant(
         self,
         user,  # type: CommunicationUser
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """Remove a member from a thread.
+        """Remove a participant from a thread.
 
-        :param user: Required. User identity of the thread member to remove from the thread.
+        :param user: Required. User identity of the thread participant to remove from the thread.
         :type user: ~azure.communication.chat.CommunicationUser
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -495,18 +533,18 @@ class ChatThreadClient(object):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/chat_thread_client_sample.py
-                :start-after: [START remove_member]
-                :end-before: [END remove_member]
+                :start-after: [START remove_participant]
+                :end-before: [END remove_participant]
                 :language: python
                 :dedent: 8
-                :caption: Removing member from chat thread.
+                :caption: Removing participant from chat thread.
         """
         if not user:
             raise ValueError("user cannot be None.")
 
-        return self._client.remove_chat_thread_member(
+        return self._client.remove_chat_participant(
             chat_thread_id=self._thread_id,
-            chat_member_id=user.identifier,
+            chat_participant_id=user.identifier,
             **kwargs)
 
     def close(self):

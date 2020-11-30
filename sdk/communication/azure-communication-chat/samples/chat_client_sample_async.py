@@ -53,18 +53,18 @@ class ChatClientSamplesAsync(object):
     async def create_thread_async(self):
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
-        from azure.communication.chat import ChatThreadMember, CommunicationUser
+        from azure.communication.chat import ChatThreadParticipant, CommunicationUser
 
         chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
         async with chat_client:
             # [START create_thread]
             topic = "test topic"
-            members = [ChatThreadMember(
+            participants = [ChatThreadParticipant(
                 user=self.user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
             )]
-            chat_thread_client = await chat_client.create_chat_thread(topic, members)
+            chat_thread_client = await chat_client.create_chat_thread(topic, participants)
             # [END create_thread]
 
             self._thread_id = chat_thread_client.thread_id

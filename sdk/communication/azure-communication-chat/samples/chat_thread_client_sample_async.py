@@ -9,8 +9,8 @@ FILE: chat_thread_client_sample_async.py
 DESCRIPTION:
     These samples demonstrate create a chat thread client, to update
     chat thread, get chat message, list chat messages, update chat message, send
-    read receipt, list read receipts, delete chat message, add members, remove
-    members, list members, send typing notification
+    read receipt, list read receipts, delete chat message, add participants, remove
+    participants, list participants, send typing notification
     You need to use azure.communication.configuration module to get user access
     token and user identity before run this sample
 
@@ -50,34 +50,34 @@ class ChatThreadClientSamplesAsync(object):
         # [START create_chat_thread_client]
         from datetime import datetime
         from azure.communication.chat.aio import ChatClient, CommunicationUserCredential
-        from azure.communication.chat import ChatThreadMember, CommunicationUser
+        from azure.communication.chat import ChatThreadParticipant, CommunicationUser
 
         chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
 
         async with chat_client:
             topic = "test topic"
-            members = [ChatThreadMember(
+            participants = [ChatThreadParticipant(
                 user=self.user,
                 display_name='name',
                 share_history_time=datetime.utcnow()
             )]
-            chat_thread_client = await chat_client.create_chat_thread(topic, members)
+            chat_thread_client = await chat_client.create_chat_thread(topic, participants)
         # [END create_chat_thread_client]
 
         self._thread_id = chat_thread_client.thread_id
         print("thread created, id: " + self._thread_id)
 
-    async def update_thread_async(self):
+    async def update_topic_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
 
         async with chat_thread_client:
-            # [START update_thread]
+            # [START update_topic]
             topic = "updated thread topic"
-            await chat_thread_client.update_thread(topic=topic)
-            # [END update_thread]
+            await chat_thread_client.update_topic(topic=topic)
+            # [END update_topic]
 
-        print("update_thread succeeded")
+        print("update_topic succeeded")
 
     async def send_message_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
@@ -91,12 +91,12 @@ class ChatThreadClientSamplesAsync(object):
             content='hello world'
             sender_display_name='sender name'
 
-            send_message_result = await chat_thread_client.send_message(
+            send_message_result_id = await chat_thread_client.send_message(
                 content,
                 priority=priority,
                 sender_display_name=sender_display_name)
             # [END send_message]
-            self._message_id = send_message_result.id
+            self._message_id = send_message_result_id
             print("send_message succeeded, message id:", self._message_id)
 
     async def get_message_async(self):
@@ -169,44 +169,60 @@ class ChatThreadClientSamplesAsync(object):
             # [END delete_message]
             print("delete_message succeeded")
 
-    async def list_members_async(self):
+    async def list_participants_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
 
         async with chat_thread_client:
-            # [START list_members]
-            chat_thread_members = chat_thread_client.list_members()
-            print("list_members succeeded, members:")
-            async for chat_thread_member in chat_thread_members:
-                print(chat_thread_member)
-            # [END list_members]
+            # [START list_participants]
+            chat_thread_participants = chat_thread_client.list_participants()
+            print("list_participants succeeded, participants:")
+            async for chat_thread_participant in chat_thread_participants:
+                print(chat_thread_participant)
+            # [END list_participants]
 
-    async def add_members_async(self):
+    async def add_participant_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
 
         async with chat_thread_client:
-            # [START add_members]
-            from azure.communication.chat import ChatThreadMember, CommunicationUser
+            # [START add_participant]
+            from azure.communication.chat import ChatThreadParticipant, CommunicationUser
             from datetime import datetime
-            new_member = ChatThreadMember(
+            new_chat_thread_participant = ChatThreadParticipant(
                     user=self.new_user,
                     display_name='name',
                     share_history_time=datetime.utcnow())
-            members = [new_member]
-            await chat_thread_client.add_members(members)
-            # [END add_members]
-            print("add_members succeeded")
+            await chat_thread_client.add_participant(new_chat_thread_participant)
+            # [END add_participant]
+            print("add_participant succeeded")
 
-    async def remove_member_async(self):
+    async def add_participants_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
         chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
 
         async with chat_thread_client:
-            # [START remove_member]
-            await chat_thread_client.remove_member(self.new_user)
-            # [END remove_member]
-            print("remove_member_async succeeded")
+            # [START add_participants]
+            from azure.communication.chat import ChatThreadParticipant, CommunicationUser
+            from datetime import datetime
+            new_participant = ChatThreadParticipant(
+                    user=self.new_user,
+                    display_name='name',
+                    share_history_time=datetime.utcnow())
+            participants = [new_participant]
+            await chat_thread_client.add_participants(participants)
+            # [END add_participants]
+            print("add_participants succeeded")
+
+    async def remove_participant_async(self):
+        from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
+        chat_thread_client = ChatThreadClient(self.endpoint, CommunicationUserCredential(self.token), self._thread_id)
+
+        async with chat_thread_client:
+            # [START remove_participant]
+            await chat_thread_client.remove_participant(self.new_user)
+            # [END remove_participant]
+            print("remove_participant_async succeeded")
 
     async def send_typing_notification_async(self):
         from azure.communication.chat.aio import ChatThreadClient, CommunicationUserCredential
@@ -227,7 +243,7 @@ class ChatThreadClientSamplesAsync(object):
 async def main():
     sample = ChatThreadClientSamplesAsync()
     await sample.create_chat_thread_client_async()
-    await sample.update_thread_async()
+    await sample.update_topic_async()
     await sample.send_message_async()
     await sample.get_message_async()
     await sample.list_messages_async()
@@ -235,9 +251,10 @@ async def main():
     await sample.send_read_receipt_async()
     await sample.list_read_receipts_async()
     await sample.delete_message_async()
-    await sample.add_members_async()
-    await sample.list_members_async()
-    await sample.remove_member_async()
+    await sample.add_participant_async()
+    await sample.add_participants_async()
+    await sample.list_participants_async()
+    await sample.remove_participant_async()
     await sample.send_typing_notification_async()
     sample.clean_up()
 

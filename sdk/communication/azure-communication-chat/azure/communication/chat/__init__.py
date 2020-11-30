@@ -8,10 +8,10 @@ from ._generated.models import (
 )
 from ._shared.user_credential import CommunicationUserCredential
 from ._models import (
-    ChatThreadMember,
+    ChatThreadParticipant,
     ChatMessage,
     ChatThread,
-    ReadReceipt,
+    ChatMessageReadReceipt,
 )
 from ._shared.models import CommunicationUser
 
@@ -20,12 +20,12 @@ __all__ = [
     'ChatThreadClient',
     'ChatMessage',
     'ChatMessagePriority',
-    'ReadReceipt',
+    'ChatMessageReadReceipt',
     'SendChatMessageResult',
     'ChatThread',
     'ChatThreadInfo',
     'CommunicationUserCredential',
-    'ChatThreadMember',
+    'ChatThreadParticipant',
     'CommunicationUser',
 ]
 __version__ = VERSION

@@ -14,7 +14,7 @@ from azure.communication.administration import CommunicationIdentityClient
 from azure.communication.chat import (
     ChatClient,
     CommunicationUserCredential,
-    ChatThreadMember,
+    ChatThreadParticipant,
     ChatMessagePriority
 )
 from azure.communication.chat._shared.utils import parse_connection_str
@@ -32,7 +32,7 @@ class ChatThreadClientTest(CommunicationTestCase):
     def setUp(self):
         super(ChatThreadClientTest, self).setUp()
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["id", "token", "senderId", "chatMessageId", "nextLink", "members", "multipleStatus", "value"]),
+            BodyReplacerProcessor(keys=["id", "token", "senderId", "chatMessageId", "nextLink", "participants", "multipleStatus", "value"]),
             URIIdentityReplacer(),
             ChatURIReplacer()])
 
@@ -67,12 +67,12 @@ class ChatThreadClientTest(CommunicationTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        members = [ChatThreadMember(
+        participants = [ChatThreadParticipant(
             user=self.user,
             display_name='name',
             share_history_time=share_history_time
         )]
-        self.chat_thread_client = self.chat_client.create_chat_thread(topic, members)
+        self.chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
         self.thread_id = self.chat_thread_client.thread_id
 
     @pytest.mark.live_test_only
@@ -81,17 +81,17 @@ class ChatThreadClientTest(CommunicationTestCase):
         priority = ChatMessagePriority.NORMAL
         content = 'hello world'
         sender_display_name = 'sender name'
-        create_message_result = self.chat_thread_client.send_message(
+        create_message_result_id = self.chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
-        self.message_id = create_message_result.id
+        self.message_id = create_message_result_id
 
     @pytest.mark.live_test_only
-    def test_update_thread(self):
+    def test_update_topic(self):
         self._create_thread()
         topic = "update topic"
-        self.chat_thread_client.update_thread(topic=topic)
+        self.chat_thread_client.update_topic(topic=topic)
 
     @pytest.mark.live_test_only
     def test_send_message(self):
@@ -101,12 +101,12 @@ class ChatThreadClientTest(CommunicationTestCase):
         content = 'hello world'
         sender_display_name = 'sender name'
 
-        create_message_result = self.chat_thread_client.send_message(
+        create_message_result_id = self.chat_thread_client.send_message(
             content,
             priority=priority,
             sender_display_name=sender_display_name)
 
-        assert create_message_result.id is not None
+        assert create_message_result_id is not None
 
     @pytest.mark.live_test_only
     def test_get_message(self):
@@ -144,49 +144,62 @@ class ChatThreadClientTest(CommunicationTestCase):
         self.chat_thread_client.delete_message(self.message_id)
 
     @pytest.mark.live_test_only
-    def test_list_members(self):
+    def test_list_participants(self):
         self._create_thread()
         if self.is_live:
             time.sleep(2)
 
-        chat_thread_members = self.chat_thread_client.list_members()
+        chat_thread_participants = self.chat_thread_client.list_participants()
 
-        for chat_thread_member_page in chat_thread_members.by_page():
-            li = list(chat_thread_member_page)
+        for chat_thread_participant_page in chat_thread_participants.by_page():
+            li = list(chat_thread_participant_page)
             assert len(li) == 1
             li[0].user.id = self.user.identifier
 
     @pytest.mark.live_test_only
-    def test_add_members(self):
+    def test_add_participant(self):
         self._create_thread()
 
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        new_member = ChatThreadMember(
-                user=self.new_user,
-                display_name='name',
-                share_history_time=share_history_time)
-        members = [new_member]
+        new_participant = ChatThreadParticipant(
+            user=self.new_user,
+            display_name='name',
+            share_history_time=share_history_time)
 
-        self.chat_thread_client.add_members(members)
+        self.chat_thread_client.add_participant(new_participant)
 
     @pytest.mark.live_test_only
-    def test_remove_member(self):
+    def test_add_participants(self):
         self._create_thread()
 
-        # add member first
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        new_member = ChatThreadMember(
+        new_participant = ChatThreadParticipant(
                 user=self.new_user,
                 display_name='name',
                 share_history_time=share_history_time)
-        members = [new_member]
+        participants = [new_participant]
 
-        self.chat_thread_client.add_members(members)
+        self.chat_thread_client.add_participants(participants)
 
-        # test remove member
-        self.chat_thread_client.remove_member(self.new_user)
+    @pytest.mark.live_test_only
+    def test_remove_participant(self):
+        self._create_thread()
+
+        # add participant first
+        share_history_time = datetime.utcnow()
+        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        new_participant = ChatThreadParticipant(
+                user=self.new_user,
+                display_name='name',
+                share_history_time=share_history_time)
+        participants = [new_participant]
+
+        self.chat_thread_client.add_participants(participants)
+
+        # test remove participant
+        self.chat_thread_client.remove_participant(self.new_user)
 
     @pytest.mark.live_test_only
     def test_send_typing_notification(self):

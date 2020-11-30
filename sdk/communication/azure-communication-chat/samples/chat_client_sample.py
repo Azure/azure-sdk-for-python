@@ -54,7 +54,7 @@ class ChatClientSamples(object):
         from datetime import datetime
         from azure.communication.chat import(
             ChatClient,
-            ChatThreadMember,
+            ChatThreadParticipant,
             CommunicationUser,
             CommunicationUserCredential
         )
@@ -62,12 +62,12 @@ class ChatClientSamples(object):
         chat_client = ChatClient(self.endpoint, CommunicationUserCredential(self.token))
 
         topic = "test topic"
-        members = [ChatThreadMember(
+        participants = [ChatThreadParticipant(
             user=self.user,
             display_name='name',
             share_history_time=datetime.utcnow()
         )]
-        chat_thread_client = chat_client.create_chat_thread(topic, members)
+        chat_thread_client = chat_client.create_chat_thread(topic, participants)
         # [END create_thread]
 
         self._thread_id = chat_thread_client.thread_id

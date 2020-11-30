@@ -11,15 +11,17 @@ except ImportError:
     from urlparse import urlparse # type: ignore
 
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
 
 from ._chat_thread_client import ChatThreadClient
 from ._common import CommunicationUserCredentialPolicy
 from ._shared.user_credential import CommunicationUserCredential
 from ._generated import AzureCommunicationChatService
 from ._generated.models import CreateChatThreadRequest
-from ._models import ChatThread
-from ._utils import _to_utc_datetime # pylint: disable=unused-import
+from ._models import (
+    ChatThread,
+    ChatThreadParticipant
+)
+from ._utils import _to_utc_datetime, return_response # pylint: disable=unused-import
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
@@ -117,7 +119,7 @@ class ChatClient(object):
     @distributed_trace
     def create_chat_thread(
         self, topic,  # type: str
-        thread_members,  # type: list[ChatThreadMember]
+        thread_participants,  # type: list[ChatThreadParticipant]
         **kwargs  # type: Any
     ):
         # type: (...) -> ChatThreadClient
@@ -125,8 +127,8 @@ class ChatClient(object):
 
         :param topic: Required. The thread topic.
         :type topic: str
-        :param thread_members: Required. Members to be added to the thread.
-        :type thread_members: list[~azure.communication.chat.ChatThreadMember]
+        :param thread_participants: Required. Participants to be added to the thread.
+        :type thread_participants: list[~azure.communication.chat.ChatThreadParticipant]
         :return: ChatThreadClient
         :rtype: ~azure.communication.chat.ChatThreadClient
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -142,28 +144,29 @@ class ChatClient(object):
         """
         if not topic:
             raise ValueError("topic cannot be None.")
-        if not thread_members:
-            raise ValueError("List of ThreadMember cannot be None.")
+        if not thread_participants:
+            raise ValueError("List of ChatThreadParticipant cannot be None.")
 
-        members = [m._to_generated() for m in thread_members]  # pylint:disable=protected-access
-        create_thread_request = CreateChatThreadRequest(topic=topic, members=members)
+        participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
+        create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants)
 
-        create_chat_thread_result = self._client.create_chat_thread(create_thread_request, **kwargs)
-
-        multiple_status = create_chat_thread_result.multiple_status
-        thread_status = [status for status in multiple_status if status.type == "Thread"]
-        if not thread_status:
-            raise HttpResponseError(message="Can not find chat thread status result from: {}".format(thread_status))
-        if thread_status[0].status_code != 201:
-            raise HttpResponseError(message="Chat thread creation failed with status code {}, message: {}.".format(
-                thread_status[0].status_code, thread_status[0].message))
-
-        thread_id = thread_status[0].id
-
+        response, create_chat_thread_result = self._client.create_chat_thread(
+            create_thread_request, cls=return_response, **kwargs)
+        if response is not None:
+            response_header = response.http_response.headers
+            if ('Azure-Acs-InvalidParticipants' in response_header.keys() and
+                response_header['Azure-Acs-InvalidParticipants'] is not None):
+                invalid_participant_and_reason_list = response_header['Azure-Acs-InvalidParticipants'].split('|')
+                errors = []
+                for invalid_participant_and_reason in invalid_participant_and_reason_list:
+                    participant, reason = invalid_participant_and_reason.split(',', 1)
+                    errors.append('participant ' + participant + ' failed to join thread '
+                    + create_chat_thread_result.id + ' return statue code ' + reason)
+                raise ValueError(errors)
         return ChatThreadClient(
             endpoint=self._endpoint,
             credential=self._credential,
-            thread_id=thread_id,
+            thread_id=create_chat_thread_result.id,
             **kwargs
         )
 

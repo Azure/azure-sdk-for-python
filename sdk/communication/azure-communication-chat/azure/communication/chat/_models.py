@@ -5,19 +5,19 @@
 # ------------------------------------
 
 from ._shared.models import CommunicationUser
-from ._generated.models import ChatThreadMember as ChatThreadMemberAutorest
+from ._generated.models import ChatParticipant as ChatParticipantAutorest
 
 
-class ChatThreadMember(object):
-    """A member of the chat thread.
+class ChatThreadParticipant(object):
+    """A participant of the chat thread.
 
     All required parameters must be populated in order to send to Azure.
 
     :param user: Required. The CommunicationUser.
     :type user: CommunicationUser
-    :param display_name: Display name for the chat thread member.
+    :param display_name: Display name for the chat thread participant.
     :type display_name: str
-    :param share_history_time: Time from which the chat history is shared with the member. The
+    :param share_history_time: Time from which the chat history is shared with the participant. The
      timestamp is in ISO8601 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :type share_history_time: ~datetime.datetime
     """
@@ -31,15 +31,15 @@ class ChatThreadMember(object):
         self.share_history_time = kwargs.get('share_history_time', None)
 
     @classmethod
-    def _from_generated(cls, chat_thread_member):
+    def _from_generated(cls, chat_thread_participant):
         return cls(
-            user=CommunicationUser(chat_thread_member.id),
-            display_name=chat_thread_member.display_name,
-            share_history_time=chat_thread_member.share_history_time
+            user=CommunicationUser(chat_thread_participant.id),
+            display_name=chat_thread_participant.display_name,
+            share_history_time=chat_thread_participant.share_history_time
         )
 
     def _to_generated(self):
-        return ChatThreadMemberAutorest(
+        return ChatParticipantAutorest(
             id=self.user.identifier,
             display_name=self.display_name,
             share_history_time=self.share_history_time
@@ -54,7 +54,7 @@ class ChatMessage(object):
     :ivar id: The id of the chat message. This id is server generated.
     :vartype id: str
     :param type: Type of the chat message. Possible values include: "Text",
-     "ThreadActivity/TopicUpdate", "ThreadActivity/AddMember", "ThreadActivity/DeleteMember".
+     "ThreadActivity/TopicUpdate", "ThreadActivity/AddParticipant", "ThreadActivity/DeleteParticipant".
     :type type: str
     :param priority: The chat message priority. Possible values include: "Normal", "High".
     :type priority: str or ~azure.communication.chat.models.ChatMessagePriority
@@ -123,8 +123,8 @@ class ChatThread(object):
     :vartype created_on: ~datetime.datetime
     :ivar created_by: the chat thread owner.
     :vartype created_by: CommunicationUser
-    :param members: Chat thread members.
-    :type members: list[~azure.communication.chat.ChatThreadMember]
+    :param participants: Chat thread participants.
+    :type participants: list[~azure.communication.chat.ChatThreadParticipant]
     """
 
     # pylint:disable=protected-access
@@ -137,7 +137,7 @@ class ChatThread(object):
         self.topic = kwargs.get('topic', None)
         self.created_on = kwargs['created_on']
         self.created_by = kwargs['created_by']
-        self.members = kwargs.get('members', None)
+        self.participants = kwargs.get('participants', None)
 
     @classmethod
     def _from_generated(cls, chat_thread):
@@ -146,12 +146,12 @@ class ChatThread(object):
             topic=chat_thread.topic,
             created_on=chat_thread.created_on,
             created_by=CommunicationUser(chat_thread.created_by),
-            members=[ChatThreadMember._from_generated(x) for x in chat_thread.members]
+            participants=[ChatThreadParticipant._from_generated(x) for x in chat_thread.participants]
         )
 
 
-class ReadReceipt(object):
-    """A read receipt indicates the time a chat message was read by a recipient.
+class ChatMessageReadReceipt(object):
+    """A chat message read receipt indicates the time a chat message was read by a recipient.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
