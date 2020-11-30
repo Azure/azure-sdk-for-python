@@ -15,7 +15,7 @@ from azure.communication.chat import (
     ChatClient,
     CommunicationTokenCredential,
     CommunicationTokenRefreshOptions,
-    ChatThreadMember
+    ChatThreadParticipant
 )
 from azure.communication.chat._shared.utils import parse_connection_str
 
@@ -33,7 +33,7 @@ class ChatClientTest(CommunicationTestCase):
         super(ChatClientTest, self).setUp()
 
         self.recording_processors.extend([
-            BodyReplacerProcessor(keys=["id", "token", "createdBy", "members", "multipleStatus", "value"]),
+            BodyReplacerProcessor(keys=["id", "token", "createdBy", "participants", "multipleStatus", "value"]),
             URIIdentityReplacer(),
             ChatURIReplacer()])
 
@@ -65,12 +65,12 @@ class ChatClientTest(CommunicationTestCase):
         topic = "test topic"
         share_history_time = datetime.utcnow()
         share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
-        members = [ChatThreadMember(
+        participants = [ChatThreadParticipant(
             user=self.user,
             display_name='name',
             share_history_time=share_history_time
         )]
-        chat_thread_client = self.chat_client.create_chat_thread(topic, members)
+        chat_thread_client = self.chat_client.create_chat_thread(topic, participants)
         self.thread_id = chat_thread_client.thread_id
 
     @pytest.mark.live_test_only
