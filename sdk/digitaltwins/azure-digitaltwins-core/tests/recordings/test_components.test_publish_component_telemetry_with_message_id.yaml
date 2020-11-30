@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - 6dec8a9e-9fd2-48a5-8851-8500639678bc
+      - message-64161aa1
       Telemetry-Source-Time:
-      - '2020-11-25 10:03:54.074027'
+      - '2020-11-25 10:03:59.895037'
       User-Agent:
       - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 24 Nov 2020 21:03:57 GMT
+      - Tue, 24 Nov 2020 21:04:01 GMT
       strict-transport-security:
       - max-age=2592000
     status:

@@ -16,19 +16,19 @@ interactions:
       User-Agent:
       - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-64b71110?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ae02179b?api-version=2020-10-31
   response:
     body:
-      string: '{"$dtId":"digitalTwin-64b71110","$etag":"W/\"ff4592df-1105-49cd-804d-720bfb34d28d\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2020-11-24T21:06:19.8351479Z"}}}'
+      string: '{"$dtId":"digitalTwin-ae02179b","$etag":"W/\"cb8f8a39-0235-4c38-8ffe-32bafba9e9ac\"","AverageTemperature":68,"$metadata":{"$model":"dtmi:samples:DTTestBuilding;1","AverageTemperature":{"lastUpdateTime":"2020-11-24T21:06:24.2079669Z"}}}'
     headers:
       content-length:
       - '235'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 24 Nov 2020 21:06:19 GMT
+      - Tue, 24 Nov 2020 21:06:24 GMT
       etag:
-      - W/"ff4592df-1105-49cd-804d-720bfb34d28d"
+      - W/"cb8f8a39-0235-4c38-8ffe-32bafba9e9ac"
       strict-transport-security:
       - max-age=2592000
     status:
@@ -48,13 +48,13 @@ interactions:
       Content-Type:
       - application/json
       Message-Id:
-      - e37404e0-2a17-46ce-909e-02811d281d71
+      - message-ae02179b
       Telemetry-Source-Time:
-      - '2020-11-25 10:06:19.968709'
+      - '2020-11-25 10:06:24.350647'
       User-Agent:
       - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-64b71110/telemetry?api-version=2020-10-31
+    uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/digitalTwin-ae02179b/telemetry?api-version=2020-10-31
   response:
     body:
       string: ''
@@ -62,7 +62,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 24 Nov 2020 21:06:19 GMT
+      - Tue, 24 Nov 2020 21:06:24 GMT
       strict-transport-security:
       - max-age=2592000
     status:

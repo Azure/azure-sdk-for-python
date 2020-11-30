@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/DTComponentTestsTempTwin/components/Component3?api-version=2020-10-31
   response:
@@ -16,7 +16,7 @@ interactions:
     headers:
       content-length: '245'
       content-type: application/json; charset=utf-8
-      date: Sun, 08 Nov 2020 20:34:08 GMT
+      date: Tue, 24 Nov 2020 21:04:54 GMT
       strict-transport-security: max-age=2592000
     status:
       code: 404
@@ -28,7 +28,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azuredigitaltwinsapi/unknown Python/3.7.4 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-digitaltwins-core/1.1.0 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://dttestdigitaltwinsname.api.wcus.digitaltwins.azure.net/digitaltwins/foo/components/Component1?api-version=2020-10-31
   response:
@@ -40,7 +40,7 @@ interactions:
     headers:
       content-length: '256'
       content-type: application/json; charset=utf-8
-      date: Sun, 08 Nov 2020 20:34:08 GMT
+      date: Tue, 24 Nov 2020 21:04:54 GMT
       strict-transport-security: max-age=2592000
     status:
       code: 404
