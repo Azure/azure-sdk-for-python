@@ -76,8 +76,6 @@ class StorageTableClientTest(TableTestCase):
         # Arrange
         url = self.account_url(storage_account, "table")
         suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -95,8 +93,6 @@ class StorageTableClientTest(TableTestCase):
     async def test_create_service_with_token_async(self, resource_group, location, storage_account, storage_account_key):
         url = self.account_url(storage_account, "table")
         suffix = '.table.core.windows.net'
-        if 'cosmos' in url:
-            suffix = '.table.cosmos.azure.com'
         for service_type in SERVICES:
             # Act
             service = service_type(url, credential=self.token_credential, table_name='foo')
@@ -126,8 +122,6 @@ class StorageTableClientTest(TableTestCase):
         for service_type in SERVICES.items():
             # Act
             url = self.account_url(storage_account, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
-            if 'cosmos.azure' in url:
-                pytest.skip("Confirm cosmos national cloud URLs")
             service = service_type[0](
                 url, credential=storage_account_key, table_name='foo')
 
@@ -355,7 +349,6 @@ class StorageTableClientTest(TableTestCase):
             assert service.credential.account_key ==  storage_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_create_service_with_custom_account_endpoint_path_async(self, resource_group, location, storage_account, storage_account_key):
@@ -393,7 +386,6 @@ class StorageTableClientTest(TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
@@ -409,7 +401,6 @@ class StorageTableClientTest(TableTestCase):
         tables = service.list_tables(raw_response_hook=callback)
         assert tables is not None
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     async def test_user_agent_custom_async(self, resource_group, location, storage_account, storage_account_key):

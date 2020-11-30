@@ -95,7 +95,6 @@ class StorageTableTest(TableTestCase):
                 pass
 
     # --Test cases for tables --------------------------------------------------
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_create_properties(self, resource_group, location, storage_account, storage_account_key):
@@ -383,17 +382,11 @@ class StorageTableTest(TableTestCase):
         with pytest.raises(HttpResponseError):
             ts.delete_table(table_name)
 
-        # Assert
-
-    # @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_unicode_create_table_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
-
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table_name = u'啊齄丂狛狜'
@@ -410,8 +403,6 @@ class StorageTableTest(TableTestCase):
     def test_get_table_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self.account_url(storage_account, "table")
-        if 'cosmos' in url:
-            pytest.skip("Cosmos endpoint does not support this")
         account_url = self.account_url(storage_account, "table")
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
         table = self._create_table(ts)
@@ -425,15 +416,12 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account,
                                                          storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
@@ -449,15 +437,12 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_empty_signed_identifier(self, resource_group, location, storage_account,
                                                         storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
@@ -476,15 +461,12 @@ class StorageTableTest(TableTestCase):
         finally:
             ts.delete_table(table.table_name)
 
-    @pytest.mark.skip("pending")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_set_table_acl_with_signed_identifiers(self, resource_group, location, storage_account,
                                                    storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
@@ -511,8 +493,6 @@ class StorageTableTest(TableTestCase):
     def test_set_table_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos URLs do notsupport unicode table names")
 
         ts = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
@@ -537,9 +517,6 @@ class StorageTableTest(TableTestCase):
 
         # Arrange
         account_url = self.account_url(storage_account, "table")
-        if 'cosmos' in account_url:
-            pytest.skip("Cosmos Tables does not yet support sas")
-
         tsc = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
 
         table = self._create_table(tsc)
@@ -583,7 +560,7 @@ class StorageTableTest(TableTestCase):
         finally:
             self._delete_table(table=table, ts=tsc)
 
-    @pytest.mark.skip("msrest fails deserialization: https://github.com/Azure/msrest-for-python/issues/192")
+    @pytest.mark.skip("Test fails on Linux and in Python2. Throws a locale.Error: unsupported locale setting")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedStorageAccountPreparer(name_prefix="tablestest")
     def test_locale(self, resource_group, location, storage_account, storage_account_key):

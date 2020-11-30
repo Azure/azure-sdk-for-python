@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: '{"TableName": "uttable496f15be"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 17 Nov 2020 01:25:07 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:25:07 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables
+  response:
+    body:
+      string: '{"TableName":"uttable496f15be","odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/$metadata#Tables/@Element"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Tue, 17 Nov 2020 01:25:08 GMT
+      etag: W/"datetime'2020-11-17T01%3A25%3A08.4491783Z'"
+      location: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable496f15be')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Ok
+    url: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/Tables
+- request:
+    body: '{"PartitionKey": "001", "PartitionKey@odata.type": "Edm.String", "RowKey":
+      "batch_negative_1", "RowKey@odata.type": "Edm.String", "age": 39, "sex": "male",
+      "sex@odata.type": "Edm.String", "married": true, "deceased": false, "ratio":
+      3.1, "evenratio": 3.0, "large": 933311100, "Birthday": "1973-10-04T00:00:00Z",
+      "Birthday@odata.type": "Edm.DateTime", "birthday": "1970-10-04T00:00:00Z", "birthday@odata.type":
+      "Edm.DateTime", "binary": "YmluYXJ5", "binary@odata.type": "Edm.Binary", "other":
+      20, "clsid": "c9da6455-213d-42c9-9a79-3e9149a57833", "clsid@odata.type": "Edm.Guid"}'
+    headers:
+      Accept:
+      - application/json;odata=minimalmetadata
+      Content-Length:
+      - '576'
+      Content-Type:
+      - application/json;odata=nometadata
+      DataServiceVersion:
+      - '3.0'
+      Date:
+      - Tue, 17 Nov 2020 01:25:08 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:25:08 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: POST
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/uttable496f15be
+  response:
+    body:
+      string: '{"odata.metadata":"https://tablestestcosmosname.table.cosmos.azure.com/uttable496f15be/$metadata#uttable496f15be/@Element","odata.etag":"W/\"datetime''2020-11-17T01%3A25%3A08.8486407Z''\"","PartitionKey":"001","RowKey":"batch_negative_1","age":39,"sex":"male","married":true,"deceased":false,"ratio":3.1,"evenratio":3.0,"large":933311100,"Birthday@odata.type":"Edm.DateTime","Birthday":"1973-10-04T00:00:00.0000000Z","birthday@odata.type":"Edm.DateTime","birthday":"1970-10-04T00:00:00.0000000Z","binary@odata.type":"Edm.Binary","binary":"YmluYXJ5","other":20,"clsid@odata.type":"Edm.Guid","clsid":"c9da6455-213d-42c9-9a79-3e9149a57833","Timestamp":"2020-11-17T01:25:08.8486407Z"}'
+    headers:
+      content-type: application/json;odata=minimalmetadata
+      date: Tue, 17 Nov 2020 01:25:08 GMT
+      etag: W/"datetime'2020-11-17T01%3A25%3A08.8486407Z'"
+      location: https://tablestestcosmosname.table.cosmos.azure.com/uttable496f15be(PartitionKey='001',RowKey='batch_negative_1')
+      server: Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+    status:
+      code: 201
+      message: Created
+    url: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/uttable496f15be
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Date:
+      - Tue, 17 Nov 2020 01:25:08 GMT
+      User-Agent:
+      - azsdk-python-data-tables/12.0.0a20201110001 Python/3.9.0rc1 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 17 Nov 2020 01:25:08 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://tablestestcosmosname.table.cosmos.azure.com/Tables('uttable496f15be')
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 17 Nov 2020 01:25:08 GMT
+      server: Microsoft-HTTPAPI/2.0
+    status:
+      code: 204
+      message: No Content
+    url: https://tablestestqzxwn47gjlmshe.table.cosmos.azure.com/Tables('uttable496f15be')
+version: 1
