@@ -7,6 +7,8 @@ import os
 import tempfile
 import uuid
 
+from azure_devtools.perfstress_tests import get_random_bytes
+
 from ._test_base_legacy import _LegacyShareTest
 
 
@@ -15,7 +17,7 @@ class LegacyDownloadToFileTest(_LegacyShareTest):
 
     async def global_setup(self):
         await super().global_setup()
-        data = b'a' * self.args.size
+        data = get_random_bytes(self.args.size)
         self.service_client.create_file_from_bytes(
             share_name=self.share_name,
             directory_name=None,

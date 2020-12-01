@@ -6,6 +6,8 @@
 import os
 import tempfile
 
+from azure_devtools.perfstress_tests import get_random_bytes
+
 from ._test_base import _FileTest
 
 
@@ -13,7 +15,7 @@ class UploadFromFileTest(_FileTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.temp_file = None
-        self.data = b'a' * self.args.size
+        self.data = get_random_bytes(self.args.size)
 
     async def global_setup(self):
         await super().global_setup()

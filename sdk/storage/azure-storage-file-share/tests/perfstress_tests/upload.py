@@ -5,14 +5,14 @@
 
 from ._test_base import _FileTest
 
-from azure_devtools.perfstress_tests import RandomStream
+from azure_devtools.perfstress_tests import RandomStream, get_random_bytes
 from azure_devtools.perfstress_tests import AsyncRandomStream
 
 
 class UploadTest(_FileTest):
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.data = b'a' * self.args.size
+        self.data = get_random_bytes(self.args.size)
 
     def run_sync(self):
         data = RandomStream(self.args.size) if self.args.stream else self.data

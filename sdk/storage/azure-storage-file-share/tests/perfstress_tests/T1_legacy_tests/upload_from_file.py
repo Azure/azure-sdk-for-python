@@ -7,6 +7,8 @@ import os
 import tempfile
 import uuid
 
+from azure_devtools.perfstress_tests import get_random_bytes
+
 from ._test_base_legacy import _LegacyShareTest
 
 
@@ -14,7 +16,7 @@ class LegacyUploadFromFileTest(_LegacyShareTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.file_name = "sharefiletest-" + str(uuid.uuid4())
-        self.data = b'a' * self.args.size
+        self.data = get_random_bytes(self.args.size)
 
     async def global_setup(self):
         await super().global_setup()

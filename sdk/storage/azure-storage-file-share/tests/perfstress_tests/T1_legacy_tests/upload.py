@@ -5,16 +5,16 @@
 
 import uuid
 
-from ._test_base_legacy import _LegacyShareTest
+from azure_devtools.perfstress_tests import RandomStream, get_random_bytes
 
-from azure_devtools.perfstress_tests import RandomStream
+from ._test_base_legacy import _LegacyShareTest
 
 
 class LegacyUploadTest(_LegacyShareTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         self.file_name = "sharefiletest-" + str(uuid.uuid4())
-        self.data = b'a' * self.args.size
+        self.data = get_random_bytes(self.args.size)
 
     def run_sync(self):
         if self.args.stream:

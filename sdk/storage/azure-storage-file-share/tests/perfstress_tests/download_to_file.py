@@ -5,6 +5,8 @@
 
 import tempfile
 
+from azure_devtools.perfstress_tests import get_random_bytes
+
 from ._test_base import _ShareTest
 
 
@@ -17,7 +19,7 @@ class DownloadToFileTest(_ShareTest):
 
     async def global_setup(self):
         await super().global_setup()
-        data = b'a' * self.args.size
+        data = get_random_bytes(self.args.size)
         await self.async_sharefile_client.upload_file(data)
 
     def run_sync(self):
