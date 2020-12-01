@@ -29,13 +29,14 @@ pip install --pre azure-data-tables
 The Azure Data Tables library allows you to interact with two types of resources:
 * the tables in your account
 * the entities within those tables.
-Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The account name portion of the `account_url` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
+Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `account_url` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
 
 ```bash
 # Get the table service URL for the account
 az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryEndpoints.table"
 ```
 
+Once you have the account URL, it can be used to create the service client:
 ```python
 from azure.data.tables import TableServiceClient
 service = TableServiceClient(account_url="https://<my_account_name>.table.core.windows.net/", credential=credential)
@@ -119,8 +120,8 @@ Two different clients are provided to interact with the various components of th
     * Get a `TableClient` to access a specific table using the `get_table_client` method.
 2. **`TableClient`** -
     * Interacts with a specific table (which need not exist yet).
-    * Provides operations to create or delete a table
-    * Create, delete, query, get, and upsert entities within a table
+    * Create, delete, query, and upsert entities within the specified table.
+    * Create or delete the specified table itself.
 
 ### Entities
 Entities are similar to rows. An entity has a **`PartitionKey`**, a **`RowKey`**, and a set of properties. A property is a name value pair, similar to a column. Every entity in a table does not need to have the same properties. Entities can be represented as dictionaries like this as an example:
@@ -133,14 +134,14 @@ entity = {
     'price': '5'
 }
 ```
-* **Create** - Add an entity to the table.
-* **Delete** - Delete an entity from the table.
-* **Update** - Update an entity's information by either merging or replacing the existing entity.
+* **[create_entity][create_entity]** - Add an entity to the table.
+* **[delete_entity][delete_entity]** - Delete an entity from the table.
+* **[update_entity][update_entity]** - Update an entity's information by either merging or replacing the existing entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
     * `UpdateMode.REPLACE` will replace the existing entity with the given one, deleting any existing properties not included in the submitted entity
-* **Query** - Query existing entities in a table using [OData filters][odata_syntax].
-* **Get** - Get a specific entity from a table by partition and row key.
-* **Upsert** - Merge or replace an entity in a table, or if the entity does not exist, inserts the entity.
+* **[query_entities][query_entities]** - Query existing entities in a table using [OData filters][odata_syntax].
+* **[get_entity][get_entity]** - Get a specific entity from a table by partition and row key.
+* **[upsert_entity][upsert_entity]** - Merge or replace an entity in a table, or if the entity does not exist, inserts the entity.
     * `UpdateMode.MERGE` will add new properties to an existing entity it will not delete an existing properties
     * `UpdateMode.REPLACE` will replace the existing entity with the given one, deleting any existing properties not included in the submitted entity
 
@@ -164,7 +165,7 @@ table_client = table_service_client.create_table(table_name=table_name)
 ```
 
 ### Creating entities
-Create entities in the table. The properties
+Create entities in the table:
 
 ```python
 from azure.data.tables import TableServiceClient
@@ -192,7 +193,7 @@ entity = table_client.create_entity(entity=my_entity)
 ```
 
 ### Querying entities
-Querying entities in the table
+Querying entities in the table:
 
 ```python
 from azure.data.tables import TableClient
@@ -362,5 +363,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [contact_msft_oss]:mailto:opencode@microsoft.com
 
 [tables_rest]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
+
+[create_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L51-L57
+[delete_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L73-L80
+[update_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L128-L129
+[query_entities]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_query_table.py#L63-L72
+[get_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L52-L55
+[upsert_entity]:https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L103-L120
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)
