@@ -29,8 +29,3 @@ class LegacyDownloadTest(_LegacyShareTest):
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")
-
-    @staticmethod
-    def add_arguments(parser):
-        super(LegacyDownloadTest, LegacyDownloadTest).add_arguments(parser)
-        parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of files to download.  Default is 10240.', default=10240)

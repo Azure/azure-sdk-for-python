@@ -35,8 +35,3 @@ class DownloadToFileTest(_ShareTest):
     async def close(self):
         await self.async_sharefile_client.close()
         await super().close()
-
-    @staticmethod
-    def add_arguments(parser):
-        super(DownloadToFileTest, DownloadToFileTest).add_arguments(parser)
-        parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of files to download.  Default is 10240.', default=10240)

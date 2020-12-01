@@ -31,5 +31,4 @@ class UploadTest(_FileTest):
     @staticmethod
     def add_arguments(parser):
         super(UploadTest, UploadTest).add_arguments(parser)
-        parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of blobs to upload.  Default is 10240.', default=10240)
         parser.add_argument('--stream', action='store_true', help='Upload stream instead of byte array.', default=False)

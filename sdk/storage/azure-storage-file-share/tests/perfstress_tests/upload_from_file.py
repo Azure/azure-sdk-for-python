@@ -34,8 +34,3 @@ class UploadFromFileTest(_FileTest):
     async def run_async(self):
         with open(self.temp_file) as fp:
             await self.async_sharefile_client.upload_file(fp, max_concurrency=self.args.max_concurrency)
-
-    @staticmethod
-    def add_arguments(parser):
-        super(UploadFromFileTest, UploadFromFileTest).add_arguments(parser)
-        parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of blobs to upload.  Default is 10240.', default=10240)
