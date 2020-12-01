@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
+
 
 class PerfStressTest:
     '''Base class for implementing a python perf test.  
@@ -52,3 +54,10 @@ class PerfStressTest:
         These are accessible in __init__() and the self.args property.
         """
         return
+
+    @staticmethod
+    def get_from_env(variable):
+        value = os.environ.get(variable)
+        if not value:
+            raise Exception("Undefined environment variable {}".format(variable))
+        return value

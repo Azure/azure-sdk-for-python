@@ -20,10 +20,7 @@ class _ServiceTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-        connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
-        if not connection_string:
-            raise Exception("Undefined environment variable AZURE_STORAGE_CONNECTION_STRING")
-
+        connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
         if not _ServiceTest.service_client or self.args.service_client_per_instance:
             if self.args.max_range_size:
                 _ServiceTest.service_client = SyncShareServiceClient.from_connection_string(conn_str=connection_string, max_range_size=self.args.max_range_size)
