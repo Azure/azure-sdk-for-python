@@ -1,5 +1,12 @@
 # Release History
 
+## 3.1.0b2 (Unreleased)
+
+**Bug Fixes**
+
+- Package requires [azure-core](https://pypi.org/project/azure-core/) version 1.8.2 or greater
+
+
 ## 3.1.0b1 (2020-11-23)
 
 This version of the SDK defaults to the latest supported API version, which currently is v2.1-preview.

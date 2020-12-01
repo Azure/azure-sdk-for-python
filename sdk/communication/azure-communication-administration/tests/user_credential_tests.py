@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 from unittest import TestCase
 from unittest.mock import MagicMock
-from .user_credential import CommunicationUserCredential
-from .utils import create_access_token
+from azure.communication.administration._shared.user_credential import CommunicationUserCredential
+from azure.communication.administration._shared.utils import create_access_token
 
 
 class TestCommunicationUserCredential(TestCase):

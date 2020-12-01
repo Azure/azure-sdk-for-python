@@ -14,7 +14,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -37,7 +37,7 @@ class RecommendationsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = models
+    models = _models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -51,7 +51,7 @@ class RecommendationsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RecommendationCollection"]
+        # type: (...) -> Iterable["_models.RecommendationCollection"]
         """List all recommendations for a subscription.
 
         List all recommendations for a subscription.
@@ -68,7 +68,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -234,7 +234,7 @@ class RecommendationsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RecommendationCollection"]
+        # type: (...) -> Iterable["_models.RecommendationCollection"]
         """Get past recommendations for an app, optionally specified by the time range.
 
         Get past recommendations for an app, optionally specified by the time range.
@@ -252,7 +252,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -319,7 +319,7 @@ class RecommendationsOperations(object):
         filter=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["models.RecommendationCollection"]
+        # type: (...) -> Iterable["_models.RecommendationCollection"]
         """Get all recommendations for an app.
 
         Get all recommendations for an app.
@@ -339,7 +339,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.web.v2016_03_01.models.RecommendationCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationCollection"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationCollection"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -521,7 +521,7 @@ class RecommendationsOperations(object):
         recommendation_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "models.RecommendationRule"
+        # type: (...) -> "_models.RecommendationRule"
         """Get a recommendation rule for an app.
 
         Get a recommendation rule for an app.
@@ -543,7 +543,7 @@ class RecommendationsOperations(object):
         :rtype: ~azure.mgmt.web.v2016_03_01.models.RecommendationRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.RecommendationRule"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RecommendationRule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }

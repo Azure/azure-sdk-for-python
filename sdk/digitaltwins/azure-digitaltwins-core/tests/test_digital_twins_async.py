@@ -20,6 +20,8 @@ from azure.core.exceptions import (
     ResourceNotModifiedError
 )
 
+BUILDING_MODEL_ID = "dtmi:samples:DTTestBuilding;1"
+
 
 class DigitalTwinsTestsAsync(AzureTestCase):
 
@@ -31,30 +33,29 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             endpoint=endpoint,
             **kwargs)
 
-    async def _set_up_models(self, client, old_id=None):
+    async def _clean_up_models(self, client, *models):
+        models = []
+        async for m in client.list_models():
+            models.append(m)
+        while models:
+            print("Cleaning up {} models".format(len(models)))
+            for model in models:
+                try:
+                    await client.delete_model(model.id)
+                except:
+                    pass
+            models = []
+            async for m in client.list_models():
+                models.append(m)
+
+    async def _set_up_models(self, client, dt_id):
+        await self._clean_up_models(client)
         dtdl_model_building = {
-            "@id": "dtmi:samples:Building;1",
+            "@id": BUILDING_MODEL_ID,
             "@type": "Interface",
             "@context": "dtmi:dtdl:context;2",
             "displayName": "Building",
             "contents": [
-                {
-                "@type": "Relationship",
-                "name": "has",
-                "target": "dtmi:samples:Floor;1",
-                "properties": [
-                    {
-                    "@type": "Property",
-                    "name": "isAccessRestricted",
-                    "schema": "boolean"
-                    }
-                ]
-                },
-                {
-                "@type": "Relationship",
-                "name": "isEquippedWith",
-                "target": "dtmi:samples:HVAC;1"
-                },
                 {
                 "@type": "Property",
                 "name": "AverageTemperature",
@@ -67,16 +68,12 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 }
             ]
         }
+        await client.create_models([dtdl_model_building])
+
         try:
-            await client.create_models([dtdl_model_building])
-        except ResourceExistsError:
+            await client.delete_digital_twin(dt_id)
+        except ResourceNotFoundError:
             pass
-        if old_id:
-            try:
-                await client.delete_digital_twin(old_id)
-            except ResourceNotFoundError:
-                pass
-        return "dtmi:samples:Building;1"
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")
     @DigitalTwinsPreparer(name_prefix="dttest")
@@ -84,13 +81,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin["AverageTemperature"] == dtdl_digital_twins_building_twin["AverageTemperature"]
         assert created_twin.get('$etag')
@@ -117,12 +114,12 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "LowestTemperature": 68,
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         with pytest.raises(HttpResponseError):
             await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -132,13 +129,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client, old_id=digital_twin_id)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(
             digital_twin_id,
             dtdl_digital_twins_building_twin,
@@ -158,13 +155,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client, old_id=digital_twin_id)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin.get('$dtId') == digital_twin_id
 
@@ -190,13 +187,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin.get('$dtId') == digital_twin_id
 
@@ -211,7 +208,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
@@ -249,13 +246,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         twin = await client.get_digital_twin(digital_twin_id)
@@ -274,13 +271,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         deleted = await client.delete_digital_twin(digital_twin_id)
@@ -301,13 +298,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         with pytest.raises(ResourceModifiedError):
@@ -330,13 +327,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         deleted = await client.delete_digital_twin(
             digital_twin_id,
@@ -378,13 +375,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin['AverageTemperature'] == 68
         patch = [
@@ -406,13 +403,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         patch = [
@@ -433,12 +430,12 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         patch = [
@@ -460,12 +457,12 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         patch = [
@@ -493,13 +490,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         patch = [
@@ -528,13 +525,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         patch = [
             {
@@ -563,13 +560,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
         client = self._get_client(digitaltwin.host_name)
-        await self._set_up_models(client)
+        await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         patch = [
             {
@@ -644,7 +641,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
@@ -673,7 +670,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
-                "$model": "dtmi:samples:Building;1"
+                "$model": BUILDING_MODEL_ID
             },
             "AverageTemperature": 68
         }
@@ -681,6 +678,23 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         published = await client.publish_telemetry(digital_twin_id, telemetry)
+        assert published is None
+
+    @DigitalTwinsRGPreparer(name_prefix="dttest")
+    @DigitalTwinsPreparer(name_prefix="dttest")
+    async def test_publish_telemetry_with_message_id(self, resource_group, location, digitaltwin):
+        telemetry = {"ComponentTelemetry1": 5}
+        digital_twin_id = self.create_random_name('digitalTwin-')
+        dtdl_digital_twins_building_twin = {
+            "$metadata": {
+                "$model": BUILDING_MODEL_ID
+            },
+            "AverageTemperature": 68
+        }
+        client = self._get_client(digitaltwin.host_name)
+        await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
+
+        published = await client.publish_telemetry(digital_twin_id, telemetry, message_id=self.create_random_name('message-'))
         assert published is None
 
     @DigitalTwinsRGPreparer(name_prefix="dttest")

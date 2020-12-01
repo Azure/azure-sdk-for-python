@@ -28,7 +28,7 @@ parameters:
       PythonVersion: 'pypy3'
     Linux_Python39:
       OSVmImage: 'ubuntu-18.04'
-      PythonVersion: '3.8'
+      PythonVersion: '3.9'
   CloudConfigurations:
     AzureCloud:
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

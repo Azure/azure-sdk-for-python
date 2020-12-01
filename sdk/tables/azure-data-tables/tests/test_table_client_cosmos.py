@@ -11,7 +11,10 @@ from time import sleep
 
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables._version import VERSION
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils import (
+    ResourceGroupPreparer,
+    StorageAccountPreparer
+)
 from _shared.testcase import (
     TableTestCase,
     RERUNS_DELAY,
@@ -268,7 +271,7 @@ class StorageTableClientTest(TableTestCase):
             assert service._primary_endpoint.startswith('https://' + tables_cosmos_account_name + '.table.cosmos.azure.com')
             assert service.scheme ==  'https'
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Tests fail with non-standard clouds")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_create_service_with_connection_string_endpoint_protocol(self, cosmos_account, cosmos_account_key):
@@ -285,7 +288,7 @@ class StorageTableClientTest(TableTestCase):
             assert service.account_name ==  cosmos_account.name
             assert service.credential.account_name ==  cosmos_account.name
             assert service.credential.account_key ==  cosmos_account_key
-            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, "table"))
+            assert service._primary_endpoint.startswith('http://{}.{}.core.chinacloudapi.cn'.format(cosmos_account.name, "table"))
             assert service.scheme ==  'http'
 
     @CosmosPSPreparer()
@@ -427,7 +430,7 @@ class StorageTableClientTest(TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Tests fail with non-standard clouds")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_user_agent_default(self, cosmos_account, cosmos_account_key):
@@ -435,11 +438,10 @@ class StorageTableClientTest(TableTestCase):
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
-            assert response.http_request.headers['User-Agent'] in "azsdk-python-data-tables/{} Python/{} ({})".format(
+            assert "azsdk-python-data-tables/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
-                    platform.platform())
-
+                    platform.platform()) in response.http_request.headers['User-Agent']
 
         tables = list(service.list_tables(raw_response_hook=callback))
         assert isinstance(tables,  list)
@@ -447,7 +449,7 @@ class StorageTableClientTest(TableTestCase):
         if self.is_live:
             sleep(SLEEP_DELAY)
 
-    @pytest.mark.skip("pending")
+    @pytest.mark.skip("Tests fail with non-standard clouds")
     @CachedResourceGroupPreparer(name_prefix="tablestest")
     @CachedCosmosAccountPreparer(name_prefix="tablestest")
     def test_user_agent_custom(self, tables_cosmos_account_name, cosmos_account_key):

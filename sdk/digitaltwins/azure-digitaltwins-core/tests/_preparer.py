@@ -6,9 +6,7 @@
 from collections import namedtuple
 import functools
 import os
-import datetime
-import time
-from functools import partial
+import uuid
 
 from devtools_testutils import AzureMgmtPreparer
 from azure_devtools.scenario_tests.exceptions import AzureTestError
@@ -44,8 +42,9 @@ class DigitalTwinsPreparer(AzureMgmtPreparer):
     def __init__(self, name_prefix='',
                     use_cache=False,
                     random_name_length=50,
-                    location='westus',
+                    location='westcentralus',
                     parameter_name='digitaltwin',
+                    role_assignment_name='Azure Digital Twins Data Owner',
                     resource_group_parameter_name='resource_group',
                     disable_recording=True,
                     playback_fake_resource=None,
@@ -64,13 +63,14 @@ class DigitalTwinsPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
         self.resource_moniker = self.name_prefix
         self.use_cache = use_cache
+        self.role_name = role_assignment_name
         if random_name_enabled:
             self.resource_moniker += "digitaltwinsname"
         self.set_cache(use_cache, None, location)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            if 'AZURE_DIGITAL_TWINS_HOSTNAME' in os.environ:
+            if os.environ.get('AZURE_DIGITAL_TWINS_HOSTNAME'):
                 host_name=os.environ['AZURE_DIGITAL_TWINS_HOSTNAME']
                 name = host_name.split('.')[0]
                 self.resource = FakeResource(name=name, id=name, host_name=host_name)
@@ -81,12 +81,14 @@ class DigitalTwinsPreparer(AzureMgmtPreparer):
             else:
                 # We have to import here due to a bug in the mgmt SDK
                 from azure.mgmt.digitaltwins import AzureDigitalTwinsManagementClient
+
                 self.client = self.create_mgmt_client(AzureDigitalTwinsManagementClient)
                 group = self._get_resource_group(**kwargs)
 
                 result = self.client.digital_twins.create_or_update(group.name, name, self.location)
                 self.resource = result.result()
                 self.id = self.resource.id
+                self._add_role_assignment(group)
                 self.test_class_instance.scrubber.register_name_pair(
                     name,
                     self.resource_moniker
@@ -111,6 +113,29 @@ class DigitalTwinsPreparer(AzureMgmtPreparer):
             template = 'To create a Digital Twin, a resource group is required. Please add ' \
                        'decorator @{} in front of this preparer.'
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+    
+    def _add_role_assignment(self, resource_group):
+        from azure.mgmt.authorization import AuthorizationManagementClient
+        role_client = self.create_mgmt_client(AuthorizationManagementClient)
+        sp_id = os.environ.get('AZURE_CLIENT_ID')
+        if not sp_id:
+            raise ValueError("Cannot assign role to DigitalTwins with AZURE_CLIENT_ID.")
+
+        roles = list(role_client.role_definitions.list(
+            resource_group.id,
+            filter="roleName eq '{}'".format(self.role_name)
+        ))
+        assert len(roles) == 1
+        dt_role = roles[0]
+
+        role_client.role_assignments.create(
+            self.id,
+            uuid.uuid4(), # Role assignment random name
+            {
+                'role_definition_id': dt_role.id,
+                'principal_id': sp_id
+            }
+        )
 
 
 CachedDigitalTwinsRGPreparer = functools.partial(DigitalTwinsRGPreparer, use_cache=True)
