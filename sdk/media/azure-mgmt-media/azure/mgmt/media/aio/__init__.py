@@ -8,9 +8,3 @@
 
 from ._azure_media_services import AzureMediaServices
 __all__ = ['AzureMediaServices']
-
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
