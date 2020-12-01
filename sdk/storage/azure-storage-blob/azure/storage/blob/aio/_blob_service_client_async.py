@@ -22,7 +22,6 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTran
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._shared.parser import _to_utc_datetime
 from .._shared.response_handlers import parse_to_internal_user_delegation_key
-from .._generated import VERSION
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
@@ -116,7 +115,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             credential=credential,
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs, VERSION)  # pylint: disable=protected-access
+        default_api_version = self._client._config.version  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, default_api_version)  # pylint: disable=protected-access
         self._loop = kwargs.get('loop', None)
 
     @distributed_trace_async

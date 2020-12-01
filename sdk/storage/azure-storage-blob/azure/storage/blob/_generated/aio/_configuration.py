@@ -11,7 +11,7 @@ from typing import Any
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from ..version import VERSION
+VERSION = "unknown"
 
 class AzureBlobStorageConfiguration(Configuration):
     """Configuration for AzureBlobStorage.
