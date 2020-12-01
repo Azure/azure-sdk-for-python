@@ -172,7 +172,7 @@ from azure.data.tables import TableServiceClient
 from datetime import datetime
 
 PRODUCT_ID = '001234'
-PRODUCT_NAME = 'RedMarker
+PRODUCT_NAME = 'RedMarker'
 
 my_entity = {
     'PartitionKey': PRODUCT_NAME,
@@ -197,7 +197,7 @@ Querying entities in the table:
 
 ```python
 from azure.data.tables import TableClient
-my_filter = "RowKey eq 'product_id'"
+my_filter = "RowKey eq 'RedMarker'"
 table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
 entities = table_client.query_entities(filter=my_filter)
 for entity in entities:
