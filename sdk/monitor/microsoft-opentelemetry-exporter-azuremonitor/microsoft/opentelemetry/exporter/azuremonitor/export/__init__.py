@@ -47,6 +47,7 @@ class BaseExporter:
         default_storage_path = os.path.join(
             tempfile.gettempdir(), TEMPDIR_PREFIX + temp_suffix
         )
+        retry_policy = RetryPolicy(timeout=self._timeout)
         
         self.client = AzureMonitorClient(
             parsed_connection_string.endpoint, retry_policy=retry_policy)
