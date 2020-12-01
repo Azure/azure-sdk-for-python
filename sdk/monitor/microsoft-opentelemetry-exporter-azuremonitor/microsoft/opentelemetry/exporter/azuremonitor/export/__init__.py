@@ -62,7 +62,7 @@ class BaseExporter:
             config.custom_hook_policy,
             config.logging_policy,
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
-            # DistributedTracingPolicy(**kwargs),   
+            # DistributedTracingPolicy(**kwargs),
             config.http_logging_policy or HttpLoggingPolicy(**kwargs)
         ]
 
