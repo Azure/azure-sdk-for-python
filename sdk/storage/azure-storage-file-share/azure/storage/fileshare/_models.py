@@ -336,8 +336,8 @@ class ShareProperties(DictMixin):
         This is a service returned value, and the value will be set when list shared including deleted ones.
     :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
         Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-    :ivar ~azure.storage.fileshare.models.ShareProtocols or str protocols:
-        Indicates the protocol enabled on the share. This can be either SMB or NFS.
+    :ivar list(str) protocols:
+        Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
     """
 
     def __init__(self, **kwargs):
