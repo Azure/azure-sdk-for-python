@@ -121,7 +121,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     # method: add_configuration_setting
     @app_config_decorator
-    @AppConfigPreparer()
     def test_add_configuration_setting(self, appconfiguration_connection_string, client):
         kv = ConfigurationSetting(
             key=KEY + "_ADD",
@@ -145,7 +144,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         self._delete_setting(client, created_kv)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_add_existing_configuration_setting(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         with pytest.raises(ResourceExistsError):
             client.add_configuration_setting(
@@ -157,7 +155,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     # method: set_configuration_setting
     @app_config_decorator
-    @AppConfigPreparer()
     def test_set_existing_configuration_setting_label_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_set_kv = test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
@@ -173,7 +170,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         )
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_set_existing_configuration_setting_label_wrong_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_set_kv = test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
@@ -183,7 +179,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_set_configuration_setting_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         kv = ConfigurationSetting(
             key=KEY + "_SET",
@@ -197,7 +192,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_set_configuration_setting_no_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_set_kv = ConfigurationSetting(
             key=KEY + "_SET",
@@ -219,7 +213,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     # method: get_configuration_setting
     @app_config_decorator
-    @AppConfigPreparer()
     def test_get_configuration_setting_no_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         compare_kv = test_config_setting_no_label
         fetched_kv = client.get_configuration_setting(compare_kv.key)
@@ -232,7 +225,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert fetched_kv.label is None
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_get_configuration_setting_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         compare_kv = test_config_setting
         fetched_kv = client.get_configuration_setting(
@@ -247,7 +239,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert fetched_kv.label is not None
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_get_non_existing_configuration_setting(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         compare_kv = test_config_setting
         with pytest.raises(ResourceNotFoundError):
@@ -257,7 +248,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     # method: delete_configuration_setting
     @app_config_decorator
-    @AppConfigPreparer()
     def test_delete_with_key_no_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_delete_kv = test_config_setting_no_label
         client.delete_configuration_setting(to_delete_kv.key)
@@ -266,7 +256,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_delete_with_key_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_delete_kv = test_config_setting
         client.delete_configuration_setting(
@@ -279,7 +268,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             )
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_delete_non_existing(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         deleted_kv = client.delete_configuration_setting(
             "not_exist_" + KEY
@@ -287,7 +275,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert deleted_kv is None
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_delete_correct_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_delete_kv = test_config_setting_no_label
         deleted_kv = client.delete_configuration_setting(
@@ -299,7 +286,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_delete_wrong_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_delete_kv = test_config_setting_no_label
         with pytest.raises(ResourceModifiedError):
@@ -309,7 +295,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     # method: list_configuration_settings
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_key_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_configuration_settings(
             label_filter=LABEL, key_filter=KEY
@@ -318,21 +303,18 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == KEY and x.label == LABEL for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_only_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_configuration_settings(label_filter=LABEL)
         assert len(items) == 1
         assert all(x.label == LABEL for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_only_key(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_configuration_settings(key_filter=KEY)
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_fields(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_configuration_settings(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
@@ -341,7 +323,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key and not x.label and x.content_type for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_reserved_chars(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         resered_char_kv = ConfigurationSetting(
             key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE
@@ -359,7 +340,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     @pytest.mark.skip("Bad Request")
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_contains(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_configuration_settings(
             label_filter="*" + LABEL + "*"
@@ -368,7 +348,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.label == LABEL for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_correct_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_list_kv = test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
@@ -379,7 +358,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_multi_pages(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         try:
@@ -410,13 +388,11 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             pass
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_null_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_configuration_settings(label_filter="\0")
         assert len(list(items)) > 0
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_configuration_settings_only_accepttime(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         exclude_today = client.list_configuration_settings(
             accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
@@ -426,7 +402,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
 
     # method: list_revisions
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_revisions_key_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_list1 = test_config_setting
         items = client.list_revisions(
@@ -436,21 +411,18 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_revisions_only_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_revisions(label_filter=LABEL)
         assert len(items) >= 1
         assert all(x.label == LABEL for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_revisions_key_no_label(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_revisions(key_filter=KEY)
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_revisions_fields(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         items = client.list_revisions(
             key_filter="*", label_filter=LABEL, fields=["key", "content_type"]
@@ -458,7 +430,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key and not x.label and x.content_type and not x.tags and not x.etag for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_list_revisions_correct_etag(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_list_kv = test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
@@ -469,7 +440,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_read_only(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         kv = test_config_setting_no_label
         read_only_kv = client.set_read_only(kv)
@@ -478,7 +448,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
         assert not readable_kv.read_only
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_delete_read_only(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_delete_kv = test_config_setting_no_label
         read_only_kv = client.set_read_only(to_delete_kv)
@@ -491,7 +460,6 @@ class AppConfigurationClientTest(AzureMgmtTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_decorator
-    @AppConfigPreparer()
     def test_set_read_only(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
         to_set_kv = test_config_setting
         to_set_kv.value = to_set_kv.value + "a"
