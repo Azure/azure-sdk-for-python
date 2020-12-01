@@ -31,7 +31,7 @@ $ pip install microsoft-opentelemetry-exporter-azuremonitor
 
 ```sh
 $ # from this directory
-$ python trace.py
+$ python sample_trace.py
 ```
 
 ### Request
@@ -43,7 +43,7 @@ $ python trace.py
 ```sh
 $ pip install opentelemetry-instrumentation-requests
 $ # from this directory
-$ python request.py
+$ python sample_request.py
 ```
 
 ### Server
@@ -56,7 +56,7 @@ $ python request.py
 $ pip install opentelemetry-instrumentation-requests
 $ pip install opentelemetry-instrumentation-wsgi
 $ # from this directory
-$ python server.py
+$ python sample_server.py
 ```
 
 * Open http://localhost:8080/ 

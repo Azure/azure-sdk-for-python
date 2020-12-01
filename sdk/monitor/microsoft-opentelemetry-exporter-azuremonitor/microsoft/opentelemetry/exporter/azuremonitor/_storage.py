@@ -86,14 +86,13 @@ class LocalFileStorage:
         retention_period=7 * 24 * 60 * 60,  # 7 days
         write_timeout=60,  # 1 minute
     ):
-        self.path = os.path.abspath(path)
-        self.max_size = max_size
-        self.maintenance_period = maintenance_period
-        self.retention_period = retention_period
-        self.write_timeout = write_timeout
+        self._path = os.path.abspath(path)
+        self._max_size = max_size
+        self._retention_period = retention_period
+        self._write_timeout = write_timeout
         self._maintenance_routine()
         self._maintenance_task = PeriodicTask(
-            interval=self.maintenance_period,
+            interval=maintenance_period,
             function=self._maintenance_routine,
         )
         self._maintenance_task.daemon = True
@@ -122,25 +121,34 @@ class LocalFileStorage:
     def gets(self):
         now = _now()
         lease_deadline = _fmt(now)
-        retention_deadline = _fmt(now - _seconds(self.retention_period))
-        timeout_deadline = _fmt(now - _seconds(self.write_timeout))
+        retention_deadline = _fmt(now - _seconds(self._retention_period))
+        timeout_deadline = _fmt(now - _seconds(self._write_timeout))
         try:
-            for name in sorted(os.listdir(self.path)):
-                path = os.path.join(self.path, name)
+            for name in sorted(os.listdir(self._path)):
+                path = os.path.join(self._path, name)
                 if not os.path.isfile(path):
                     continue  # skip if not a file
                 if path.endswith(".tmp"):
                     if name < timeout_deadline:
-                        os.remove(path)  # TODO: log data loss
+                        try:
+                            os.remove(path)  # TODO: log data loss
+                        except Exception:
+                            pass  # keep silent
                 if path.endswith(".lock"):
                     if path[path.rindex("@") + 1: -5] > lease_deadline:
                         continue  # under lease
                     new_path = path[: path.rindex("@")]
-                    os.rename(path, new_path)
+                    try:
+                        os.rename(path, new_path)
+                    except Exception:
+                        pass  # keep silent
                     path = new_path
                 if path.endswith(".blob"):
                     if name < retention_deadline:
-                        os.remove(path)  # TODO: log data loss
+                        try:
+                            os.remove(path)  # TODO: log data loss
+                        except Exception:
+                            pass  # keep silent
                     else:
                         yield LocalFileBlob(path)
         except Exception:
@@ -157,15 +165,15 @@ class LocalFileStorage:
     def put(self, data, lease_period=0):
         # Create path if it doesn't exist
         try:
-            if not os.path.isdir(self.path):
-                os.makedirs(self.path, exist_ok=True)
+            if not os.path.isdir(self._path):
+                os.makedirs(self._path, exist_ok=True)
         except Exception:
             pass  # keep silent
         if not self._check_storage_size():
             return None
         blob = LocalFileBlob(
             os.path.join(
-                self.path,
+                self._path,
                 "{}-{}.blob".format(
                     _fmt(_now()),
                     "{:08x}".format(
@@ -179,7 +187,7 @@ class LocalFileStorage:
     def _check_storage_size(self):
         size = 0
         # pylint: disable=unused-variable
-        for dirpath, dirnames, filenames in os.walk(self.path):
+        for dirpath, dirnames, filenames in os.walk(self._path):
             for filename in filenames:
                 path = os.path.join(dirpath, filename)
                 # skip if it is symbolic link
@@ -192,7 +200,7 @@ class LocalFileStorage:
                             path,
                         )
                         continue
-                    if size >= self.max_size:
+                    if size >= self._max_size:
                         # pylint: disable=logging-format-interpolation
                         logger.warning(
                             "Persistent storage max capacity has been "

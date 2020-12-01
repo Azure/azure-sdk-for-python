@@ -1,9 +1,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from microsoft.opentelemetry.exporter.azuremonitor._utils import BaseObject
 
-__all__ = ["ExporterOptions"]
+class BaseObject:
+    __slots__ = ()
+
+    def __repr__(self):
+        tmp = {}
+
+        for key in self.__slots__:
+            data = getattr(self, key, None)
+            if isinstance(data, BaseObject):
+                tmp[key] = repr(data)
+            else:
+                tmp[key] = data
+
+        return repr(tmp)
 
 
 class ExporterOptions(BaseObject):

@@ -20,9 +20,6 @@ from microsoft.opentelemetry.exporter.azuremonitor.export._base import (
 from microsoft.opentelemetry.exporter.azuremonitor._options import ExporterOptions
 from microsoft.opentelemetry.exporter.azuremonitor._generated.models import TelemetryItem
 
-TEST_FOLDER = os.path.abspath(".test.base")
-STORAGE_PATH = os.path.join(TEST_FOLDER)
-
 
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
@@ -36,33 +33,15 @@ def throw(exc_type, *args, **kwargs):
 class TestBaseExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         cls._base = BaseExporter()
-        cls._base.storage.path = STORAGE_PATH
         cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(TEST_FOLDER, True)
-
-    def setUp(self):
-        try:
-            # Clean storage
-            if os.path.exists(STORAGE_PATH):
-                for filename in os.listdir(STORAGE_PATH):
-                    file_path = os.path.join(STORAGE_PATH, filename)
-                    try:
-                        if os.path.isfile(file_path) or os.path.islink(file_path):
-                            os.unlink(file_path)
-                        elif os.path.isdir(file_path):
-                            shutil.rmtree(file_path, True)
-                    except OSError as e:
-                        print("Failed to delete %s. Reason: %s" % (file_path, e))
-        except Exception:
-            pass
+        shutil.rmtree(cls._base.storage._path, True)
 
     def test_constructor(self):
         """Test the constructor."""
@@ -73,9 +52,8 @@ class TestBaseExporter(unittest.TestCase):
             base._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
-        self.assertEqual(base.storage.max_size, 52428800)
-        self.assertEqual(base.storage.maintenance_period, 60)
-        self.assertEqual(base.storage.retention_period, 604800)
+        self.assertEqual(base.storage._max_size, 52428800)
+        self.assertEqual(base.storage._retention_period, 604800)
         self.assertEqual(base._timeout, 10)
 
     def test_constructor_wrong_options(self):
@@ -92,7 +70,7 @@ class TestBaseExporter(unittest.TestCase):
         # Run storage process to check lease, retention and timeout and clean file if needed
         self._base.storage.get()
         # File no longer present
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+        self.assertEqual(len(os.listdir(self._base.storage._path)), 0)
 
     def test_transmit_from_storage_failed_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
@@ -103,7 +81,7 @@ class TestBaseExporter(unittest.TestCase):
         # File would be locked for 1 second
         self.assertIsNone(self._base.storage.get())
         # File still present
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 1)
+        self.assertEqual(len(os.listdir(self._base.storage._path)), 1)
 
     def test_transmit_from_storage_failed_not_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
@@ -114,7 +92,7 @@ class TestBaseExporter(unittest.TestCase):
             self._base._transmit_from_storage()
         self._base.storage.get()
         # File no longer present
-        self.assertEqual(len(os.listdir(self._base.storage.path)), 0)
+        self.assertEqual(len(os.listdir(self._base.storage._path)), 0)
 
     def test_transmit_from_storage_nothing(self):
         with mock.patch("requests.Session.request") as post:

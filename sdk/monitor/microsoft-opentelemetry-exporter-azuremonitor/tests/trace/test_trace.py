@@ -20,9 +20,6 @@ from microsoft.opentelemetry.exporter.azuremonitor.export.trace._exporter import
 )
 from microsoft.opentelemetry.exporter.azuremonitor._options import ExporterOptions
 
-TEST_FOLDER = os.path.abspath(".test.trace")
-STORAGE_PATH = os.path.join(TEST_FOLDER)
-
 
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
@@ -37,29 +34,15 @@ def throw(exc_type, *args, **kwargs):
 class TestAzureTraceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.makedirs(TEST_FOLDER, exist_ok=True)
         os.environ.clear()
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         cls._exporter = AzureMonitorTraceExporter()
-        cls._exporter.storage.path=STORAGE_PATH
 
     @classmethod
     def tearDownClass(cls):
-        shutil.rmtree(TEST_FOLDER, True)
-
-    def setUp(self):
-        if os.path.exists(STORAGE_PATH):
-            for filename in os.listdir(STORAGE_PATH):
-                file_path = os.path.join(STORAGE_PATH, filename)
-                try:
-                    if os.path.isfile(file_path) or os.path.islink(file_path):
-                        os.unlink(file_path)
-                    elif os.path.isdir(file_path):
-                        shutil.rmtree(file_path, True)
-                except OSError as e:
-                    print("Failed to delete %s. Reason: %s" % (file_path, e))
+        shutil.rmtree(cls._exporter.storage._path, True)
 
     def test_constructor(self):
         """Test the constructor."""
@@ -73,8 +56,8 @@ class TestAzureTraceExporter(unittest.TestCase):
 
     def test_export_empty(self):
         exporter = self._exporter
-        exporter.export([])
-        self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
+        result = exporter.export([])
+        self.assertEqual(result, SpanExportResult.SUCCESS)
 
     def test_export_failure(self):
         exporter = self._exporter
@@ -93,7 +76,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             test_span.end()
             transmit.return_value = ExportResult.FAILED_RETRYABLE
             exporter.export([test_span])
-        self.assertEqual(len(os.listdir(exporter.storage.path)), 1)
+        self.assertEqual(len(os.listdir(exporter.storage._path)), 1)
         self.assertIsNone(exporter.storage.get())
 
     def test_export_success(self):
@@ -114,12 +97,9 @@ class TestAzureTraceExporter(unittest.TestCase):
             transmit.return_value = ExportResult.SUCCESS
             storage_mock = mock.Mock()
             exporter._transmit_from_storage = storage_mock
-            exporter.export([test_span])
+            result = exporter.export([test_span])
+            self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
-            try:
-                self.assertEqual(len(os.listdir(exporter.storage.path)), 0)
-            except FileNotFoundError as ex:
-                pass
 
     @mock.patch("microsoft.opentelemetry.exporter.azuremonitor.export.trace._exporter.logger")
     def test_export_exception(self, logger_mock):
@@ -170,8 +150,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         exporter = AzureMonitorTraceExporter(
             connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",
         )
-        exporter.storage.path==os.path.join(TEST_FOLDER, self.id())
-
         parent_span = SpanContext(
             trace_id=36873507687745823477771305566750195431,
             span_id=12030755672171557338,
@@ -338,7 +316,8 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
         self.assertTrue(envelope.data.base_data.success)
-        self.assertEqual(envelope.data.base_data.type, "Queue Message | messaging")
+        self.assertEqual(envelope.data.base_data.type,
+                         "Queue Message | messaging")
         self.assertEqual(envelope.data.base_data.target, "127.0.0.1/celery")
 
         # SpanKind.INTERNAL
