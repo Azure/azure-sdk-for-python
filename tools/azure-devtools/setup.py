@@ -55,6 +55,7 @@ setup(
     entry_points={
         'console_scripts': [
             'perfstress = azure_devtools.perfstress_tests:run_perfstress_cmd',
+            'systemperf = azure_devtools.perfstress_tests:run_system_perfstress_tests_cmd',
         ],
     },
     extras_require={
