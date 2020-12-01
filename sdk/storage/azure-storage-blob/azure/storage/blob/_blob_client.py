@@ -52,7 +52,7 @@ from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
-    upload_page_blob)
+    upload_page_blob, _any_conditions)
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError
 from ._download import StorageStreamDownloader
 from ._lease import BlobLeaseClient
@@ -410,6 +410,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Dict[str, Any]
         headers = kwargs.pop('headers', {})
         tier = kwargs.pop('standard_blob_tier', None)
+        overwrite = kwargs.pop('overwrite', False)
         include_source_blob_properties = kwargs.pop('include_source_blob_properties', True)
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
@@ -452,6 +453,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options['lease_access_conditions'] = dest_access_conditions
         options['tier'] = tier.value if tier else None
         options.update(kwargs)
+        if not overwrite and not _any_conditions(**options): # pylint: disable=protected-access
+            options['modified_access_conditions'].if_none_match = '*'
         return options
 
     @distributed_trace
@@ -473,6 +476,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
+            If True, upload_blob will overwrite the existing data. If set to False, the
+            operation will fail with ResourceExistsError.
         :keyword bool include_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
         :keyword tags:

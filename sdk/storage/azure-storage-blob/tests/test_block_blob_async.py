@@ -127,6 +127,30 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_with_and_without_overwrite(
+            self, resource_group, location, storage_account, storage_account_key):
+        await self._setup(storage_account, storage_account_key)
+        blob = await self._create_blob(data=b"source blob data")
+        # Act
+        sas = generate_blob_sas(account_name=storage_account.name, account_key=storage_account_key,
+                                container_name=self.container_name, blob_name=blob.blob_name,
+                                permission=BlobSasPermissions(read=True), expiry=datetime.utcnow() + timedelta(hours=1))
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account, "blob"), self.container_name, blob.blob_name, sas)
+
+        new_blob_client = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        await new_blob_client.upload_blob(b'destination blob data')
+        # Assert
+        with self.assertRaises(ResourceExistsError):
+            await new_blob_client.upload_blob_from_url(source_blob, overwrite=False)
+        new_blob = await new_blob_client.upload_blob_from_url(source_blob, overwrite=True)
+        self.assertIsNotNone(new_blob)
+        new_blob_download = await new_blob_client.download_blob()
+        new_blob_content = await new_blob_download.readall()
+        self.assertEqual(new_blob_content, b'source blob data')
+
+    @GlobalStorageAccountPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_upload_blob_from_url_with_existing_blob(
             self, resource_group, location, storage_account, storage_account_key):
         await self._setup(storage_account, storage_account_key, container_name="testcontainer")
@@ -212,24 +236,24 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         # Assert
         with self.assertRaises(ResourceModifiedError):
             await new_blob_client.upload_blob_from_url(
-                source_blob_url, if_modified_since=late_test_datetime)
+                source_blob_url, if_modified_since=late_test_datetime, overwrite=True)
         await new_blob_client.upload_blob_from_url(
-            source_blob_url, if_modified_since=early_test_datetime)
+            source_blob_url, if_modified_since=early_test_datetime, overwrite=True)
         with self.assertRaises(ResourceModifiedError):
             await new_blob_client.upload_blob_from_url(
-                source_blob_url, if_unmodified_since=early_test_datetime)
+                source_blob_url, if_unmodified_since=early_test_datetime, overwrite=True)
         await new_blob_client.upload_blob_from_url(
-            source_blob_url, if_unmodified_since=late_test_datetime)
+            source_blob_url, if_unmodified_since=late_test_datetime, overwrite=True)
         with self.assertRaises(ResourceNotFoundError):
             await new_blob_client.upload_blob_from_url(
-                source_blob_url, source_if_modified_since=late_test_datetime)
+                source_blob_url, source_if_modified_since=late_test_datetime, overwrite=True)
         await new_blob_client.upload_blob_from_url(
-            source_blob_url, source_if_modified_since=early_test_datetime)
+            source_blob_url, source_if_modified_since=early_test_datetime, overwrite=True)
         with self.assertRaises(ResourceNotFoundError):
             await new_blob_client.upload_blob_from_url(
-                source_blob_url, source_if_unmodified_since=early_test_datetime)
+                source_blob_url, source_if_unmodified_since=early_test_datetime, overwrite=True)
         await new_blob_client.upload_blob_from_url(
-            source_blob_url, source_if_unmodified_since=late_test_datetime)
+            source_blob_url, source_if_unmodified_since=late_test_datetime, overwrite=True)
 
     @GlobalStorageAccountPreparer()
     @AsyncStorageTestCase.await_prepared_test

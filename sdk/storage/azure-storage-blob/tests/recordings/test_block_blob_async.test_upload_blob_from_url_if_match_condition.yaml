@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:40 GMT
+      - Tue, 01 Dec 2020 21:42:21 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:40 GMT
-      etag: '"0x8D88C10E1C7D577"'
-      last-modified: Wed, 18 Nov 2020 22:25:40 GMT
+      date: Tue, 01 Dec 2020 21:42:18 GMT
+      etag: '"0x8D89641FA8C5A35"'
+      last-modified: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2020-04-08'
     status:
@@ -38,7 +38,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -49,14 +49,14 @@ interactions:
     headers:
       content-length: '0'
       content-md5: 1B2M2Y8AsgTpgAmY7PhCfg==
-      date: Wed, 18 Nov 2020 22:25:40 GMT
-      etag: '"0x8D88C10E1D20A0A"'
-      last-modified: Wed, 18 Nov 2020 22:25:40 GMT
+      date: Tue, 01 Dec 2020 21:42:18 GMT
+      etag: '"0x8D89641FA95B87A"'
+      last-modified: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: AAAAAAAAAAA=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:40.8929290Z'
+      x-ms-version-id: '2020-12-01T21:42:19.4081914Z'
     status:
       code: 201
       message: Created
@@ -75,7 +75,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -86,14 +86,14 @@ interactions:
     headers:
       content-length: '0'
       content-md5: DHa+SUlusmH+AAI91Dli4g==
-      date: Wed, 18 Nov 2020 22:25:40 GMT
-      etag: '"0x8D88C10E1DC4523"'
-      last-modified: Wed, 18 Nov 2020 22:25:40 GMT
+      date: Tue, 01 Dec 2020 21:42:18 GMT
+      etag: '"0x8D89641FA9F572C"'
+      last-modified: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: i5c8XC72eYw=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:40.9599779Z'
+      x-ms-version-id: '2020-12-01T21:42:19.4712364Z'
     status:
       code: 201
       message: Created
@@ -104,17 +104,17 @@ interactions:
       Content-Length:
       - '0'
       If-Modified-Since:
-      - Wed, 18 Nov 2020 22:40:41 GMT
+      - Tue, 01 Dec 2020 21:57:22 GMT
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -122,11 +122,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:8a8be9d1-901e-0036-80f9-bd57b2000000\nTime:2020-11-18T22:25:41.2483478Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:4f30d4b2-101e-0065-222a-c87486000000\nTime:2020-12-01T21:42:19.7660949Z</Message></Error>"
     headers:
       content-length: '252'
       content-type: application/xml
-      date: Wed, 18 Nov 2020 22:25:40 GMT
+      date: Tue, 01 Dec 2020 21:42:18 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ConditionNotMet
       x-ms-version: '2020-04-08'
@@ -140,17 +140,17 @@ interactions:
       Content-Length:
       - '0'
       If-Modified-Since:
-      - Wed, 18 Nov 2020 22:10:41 GMT
+      - Tue, 01 Dec 2020 21:27:22 GMT
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -160,14 +160,14 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:40 GMT
-      etag: '"0x8D88C10E2147660"'
-      last-modified: Wed, 18 Nov 2020 22:25:41 GMT
+      date: Tue, 01 Dec 2020 21:42:18 GMT
+      etag: '"0x8D89641FAD62894"'
+      last-modified: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: AAAAAAAAAAA=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:41.3292400Z'
+      x-ms-version-id: '2020-12-01T21:42:19.8314916Z'
     status:
       code: 201
       message: Created
@@ -178,17 +178,17 @@ interactions:
       Content-Length:
       - '0'
       If-Unmodified-Since:
-      - Wed, 18 Nov 2020 22:10:41 GMT
+      - Tue, 01 Dec 2020 21:27:22 GMT
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -196,11 +196,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:8a8beaf2-901e-0036-67f9-bd57b2000000\nTime:2020-11-18T22:25:41.4004561Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:4f30d512-101e-0065-762a-c87486000000\nTime:2020-12-01T21:42:19.9071953Z</Message></Error>"
     headers:
       content-length: '252'
       content-type: application/xml
-      date: Wed, 18 Nov 2020 22:25:40 GMT
+      date: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ConditionNotMet
       x-ms-version: '2020-04-08'
@@ -214,17 +214,17 @@ interactions:
       Content-Length:
       - '0'
       If-Unmodified-Since:
-      - Wed, 18 Nov 2020 22:40:41 GMT
+      - Tue, 01 Dec 2020 21:57:22 GMT
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -234,14 +234,14 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:40 GMT
-      etag: '"0x8D88C10E22A252A"'
-      last-modified: Wed, 18 Nov 2020 22:25:41 GMT
+      date: Tue, 01 Dec 2020 21:42:19 GMT
+      etag: '"0x8D89641FAEC258F"'
+      last-modified: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: AAAAAAAAAAA=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:41.4713402Z'
+      x-ms-version-id: '2020-12-01T21:42:19.9755935Z'
     status:
       code: 201
       message: Created
@@ -256,13 +256,13 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-source-if-modified-since:
-      - Wed, 18 Nov 2020 22:40:41 GMT
+      - Tue, 01 Dec 2020 21:57:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -272,7 +272,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:40 GMT
+      date: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: CannotVerifyCopySource
       x-ms-version: '2020-04-08'
@@ -290,13 +290,13 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:41 GMT
+      - Tue, 01 Dec 2020 21:42:22 GMT
       x-ms-source-if-modified-since:
-      - Wed, 18 Nov 2020 22:10:41 GMT
+      - Tue, 01 Dec 2020 21:27:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -306,14 +306,14 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:41 GMT
-      etag: '"0x8D88C10E260CF7B"'
-      last-modified: Wed, 18 Nov 2020 22:25:41 GMT
+      date: Tue, 01 Dec 2020 21:42:19 GMT
+      etag: '"0x8D89641FB053062"'
+      last-modified: Tue, 01 Dec 2020 21:42:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: AAAAAAAAAAA=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:41.8305961Z'
+      x-ms-version-id: '2020-12-01T21:42:20.1397106Z'
     status:
       code: 201
       message: Created
@@ -328,13 +328,13 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:42 GMT
+      - Tue, 01 Dec 2020 21:42:23 GMT
       x-ms-source-if-unmodified-since:
-      - Wed, 18 Nov 2020 22:10:41 GMT
+      - Tue, 01 Dec 2020 21:27:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -342,11 +342,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>CannotVerifyCopySource</Code><Message>The
-        condition specified using HTTP conditional header(s) is not met.\nRequestId:8a8bebd0-901e-0036-25f9-bd57b2000000\nTime:2020-11-18T22:25:41.8978110Z</Message></Error>"
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:4f30d579-101e-0065-502a-c87486000000\nTime:2020-12-01T21:42:20.2024053Z</Message></Error>"
     headers:
       content-length: '259'
       content-type: application/xml
-      date: Wed, 18 Nov 2020 22:25:41 GMT
+      date: Tue, 01 Dec 2020 21:42:19 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: CannotVerifyCopySource
       x-ms-version: '2020-04-08'
@@ -364,13 +364,13 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-11-18T23%3A25%3A41Z&sp=rt&sv=2020-04-08&sr=b&sig=lhpEjgb9EOIZb%2BUmEQdqADS5mcoDfcBgDOc5h0dathQ%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer866c1afb/blob866c1afb?se=2020-12-01T22%3A42%3A22Z&sp=rt&sv=2020-04-08&sr=b&sig=tUsKRm%2BcTzv6%2Bhf0NWjLM7vUBbz4477Ct%2BxTXarX5b0%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:42 GMT
+      - Tue, 01 Dec 2020 21:42:23 GMT
       x-ms-source-if-unmodified-since:
-      - Wed, 18 Nov 2020 22:40:41 GMT
+      - Tue, 01 Dec 2020 21:57:22 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -380,14 +380,14 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:41 GMT
-      etag: '"0x8D88C10E27741CD"'
-      last-modified: Wed, 18 Nov 2020 22:25:41 GMT
+      date: Tue, 01 Dec 2020 21:42:19 GMT
+      etag: '"0x8D89641FB1894DC"'
+      last-modified: Tue, 01 Dec 2020 21:42:20 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: AAAAAAAAAAA=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:41.9767005Z'
+      x-ms-version-id: '2020-12-01T21:42:20.2668012Z'
     status:
       code: 201
       message: Created
