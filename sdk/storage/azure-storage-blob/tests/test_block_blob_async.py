@@ -210,7 +210,7 @@ class StorageBlockBlobTestAsync(AsyncStorageTestCase):
         new_blob_lease = await new_blob_client.acquire_lease()
         with self.assertRaises(HttpResponseError):
             await new_blob_client.upload_blob_from_url(
-                source_blob_url, destination_lease="baddde9e-8247-4276-8bfa-c7a8081eba1d")
+                source_blob_url, destination_lease="baddde9e-8247-4276-8bfa-c7a8081eba1d", overwrite=True)
         with self.assertRaises(HttpResponseError):
             await new_blob_client.upload_blob_from_url(source_blob_url)
         await new_blob_client.upload_blob_from_url(

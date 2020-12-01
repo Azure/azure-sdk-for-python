@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:50 GMT
+      - Tue, 01 Dec 2020 21:50:25 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:50 GMT
-      etag: '"0x8D88C10E7C3FEB4"'
-      last-modified: Wed, 18 Nov 2020 22:25:50 GMT
+      date: Tue, 01 Dec 2020 21:50:21 GMT
+      etag: '"0x8D896431A79909E"'
+      last-modified: Tue, 01 Dec 2020 21:50:22 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2020-04-08'
     status:
@@ -38,7 +38,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:51 GMT
+      - Tue, 01 Dec 2020 21:50:25 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -49,14 +49,14 @@ interactions:
     headers:
       content-length: '0'
       content-md5: BmRZdU7mXzYVn1nIbsazYg==
-      date: Wed, 18 Nov 2020 22:25:50 GMT
-      etag: '"0x8D88C10E7D0A3BF"'
-      last-modified: Wed, 18 Nov 2020 22:25:50 GMT
+      date: Tue, 01 Dec 2020 21:50:21 GMT
+      etag: '"0x8D896431A82CA10"'
+      last-modified: Tue, 01 Dec 2020 21:50:22 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: OIyBbegbJhU=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:50.9500863Z'
+      x-ms-version-id: '2020-12-01T21:50:22.4679440Z'
     status:
       code: 201
       message: Created
@@ -66,16 +66,18 @@ interactions:
     headers:
       Content-Length:
       - '0'
+      If-None-Match:
+      - '*'
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-copy-source:
-      - https://seanmcccanary3.blob.core.windows.net/utcontainer8c7016f3/blob8c7016f3?se=2020-11-18T23%3A25%3A51Z&sp=rt&sv=2020-04-08&sr=b&sig=1HBCzbiuUfCSTFLq7KNV4zLn7QYRNCLf8oW6fyShKJ8%3D
+      - https://seanmcccanary3.blob.core.windows.net/utcontainer8c7016f3/blob8c7016f3?se=2020-12-01T22%3A50%3A25Z&sp=rt&sv=2020-04-08&sr=b&sig=vIubiDsSGCqopVd/3b2Ow2nNkmjlbIsWL1DSYMx%2BEYo%3D
       x-ms-copy-source-blob-properties:
       - 'true'
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:51 GMT
+      - Tue, 01 Dec 2020 21:50:25 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -91,15 +93,15 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:51 GMT
-      etag: '"0x8D88C10E84D8BA1"'
-      last-modified: Wed, 18 Nov 2020 22:25:51 GMT
+      date: Tue, 01 Dec 2020 21:50:21 GMT
+      etag: '"0x8D896431A99636D"'
+      last-modified: Tue, 01 Dec 2020 21:50:22 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64: OIyBbegbJhU=
       x-ms-encryption-key-sha256: 3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:51.7686689Z'
+      x-ms-version-id: '2020-12-01T21:50:22.6160493Z'
     status:
       code: 201
       message: Created
@@ -110,7 +112,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:51 GMT
+      - Tue, 01 Dec 2020 21:50:25 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
@@ -119,11 +121,11 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobUsesCustomerSpecifiedEncryption</Code><Message>The
         blob is encrypted with customer specified encryption, but it was not provided
-        in the request.\nRequestId:73aa9471-e01e-005e-4bf9-bd3122000000\nTime:2020-11-18T22:25:51.8489148Z</Message></Error>"
+        in the request.\nRequestId:5832e890-701e-0011-202b-c84076000000\nTime:2020-12-01T21:50:22.6776811Z</Message></Error>"
     headers:
       content-length: '301'
       content-type: application/xml
-      date: Wed, 18 Nov 2020 22:25:51 GMT
+      date: Tue, 01 Dec 2020 21:50:22 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: BlobUsesCustomerSpecifiedEncryption
       x-ms-version: '2020-04-08'
@@ -138,7 +140,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.6.0b2 Python/3.8.5 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Wed, 18 Nov 2020 22:25:52 GMT
+      - Tue, 01 Dec 2020 21:50:25 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-encryption-key:
@@ -154,14 +156,14 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Wed, 18 Nov 2020 22:25:51 GMT
-      etag: '"0x8D88C10E84D8BA1"'
-      last-modified: Wed, 18 Nov 2020 22:25:51 GMT
+      date: Tue, 01 Dec 2020 21:50:22 GMT
+      etag: '"0x8D896431A99636D"'
+      last-modified: Tue, 01 Dec 2020 21:50:22 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'false'
-      x-ms-snapshot: '2020-11-18T22:25:51.9167733Z'
+      x-ms-snapshot: '2020-12-01T21:50:22.7391351Z'
       x-ms-version: '2020-04-08'
-      x-ms-version-id: '2020-11-18T22:25:51.9177733Z'
+      x-ms-version-id: '2020-12-01T21:50:22.7401351Z'
     status:
       code: 201
       message: Created
