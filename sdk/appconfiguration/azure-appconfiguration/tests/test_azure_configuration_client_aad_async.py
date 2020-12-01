@@ -16,7 +16,6 @@ from azure.appconfiguration import (
     ConfigurationSetting,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from azure.identity.aio import DefaultAzureCredential
 from consts import (
     KEY,
     LABEL,
@@ -26,103 +25,19 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from async_proxy import AzureAppConfigurationClientProxy
 import pytest
 import datetime
 import os
 import logging
-from unittest.mock import Mock
-from azure.core.credentials import AccessToken
 import asyncio
 import re
-import functools
 
-AppConfigPreparer = functools.partial(
-    PowerShellPreparer,
-    'appconfiguration',
-    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
-    appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io")
-
-
-def _add_for_test(client, kv):
-    exist = bool(
-        list(
-            client.list_configuration_settings(
-                key_filter=kv.key, label_filter=kv.label
-            )
-        )
-    )
-    if exist:
-        _delete_from_test(client, kv.key, kv.label)
-    return client.add_configuration_setting(kv)
-
-def _delete_from_test(client, key, label):
-    try:
-        client.delete_configuration_setting(key=key, label=label)
-    except AzureError:
-        logging.debug(
-            "Error occurred removing configuration setting %s %s during unit test"
-            % (key, label)
-        )
-
-def app_config_decorator(func, **kwargs):
-
-    @AppConfigPreparer()
-    def wrapper(*args, **kwargs):
-        appconfiguration_connection_string = kwargs.pop("appconfiguration_connection_string")
-        client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        client = AzureAppConfigurationClientProxy(client)
-
-        kwargs['client'] = client
-        kwargs['appconfiguration_connection_string'] = appconfiguration_connection_string
-
-        # Do setUp on client
-        test_config_setting = _add_for_test(
-            client,
-            ConfigurationSetting(
-                key=KEY,
-                label=LABEL,
-                value=TEST_VALUE,
-                content_type=TEST_CONTENT_TYPE,
-                tags={"tag1": "tag1", "tag2": "tag2"},
-            )
-        )
-        test_config_setting_no_label = _add_for_test(
-            client,
-            ConfigurationSetting(
-                key=KEY,
-                label=None,
-                value=TEST_VALUE,
-                content_type=TEST_CONTENT_TYPE,
-                tags={"tag1": "tag1", "tag2": "tag2"},
-            )
-        )
-        to_delete = [test_config_setting, test_config_setting_no_label]
-
-        kwargs['test_config_setting'] = test_config_setting
-        kwargs['test_config_setting_no_label'] = test_config_setting_no_label
-
-        func(*args, **kwargs)
-
-        # do tearDown on client
-        for item in to_delete:
-            client.delete_configuration_setting(
-                key=item.key, label=item.label
-            )
-
-    return wrapper
-
+from async_wrapper import app_config_decorator
 
 class AppConfigurationClientTest(AzureMgmtTestCase):
     def __init__(self, method_name):
         super(AppConfigurationClientTest, self).__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
-
-    def setUp(self):
-        super(AppConfigurationClientTest, self).setUp()
-
-    def tearDown(self):
-        super(AppConfigurationClientTest, self).tearDown()
 
     def _delete_setting(self, client, item):
         client.delete_configuration_setting(
