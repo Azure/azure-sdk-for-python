@@ -46,7 +46,7 @@
     },
     "config": {
         "credential": true,
-        "credential_scopes": ["https://management.azure.com"],
+        "credential_scopes": ["https://management.azure.com/.default"],
         "credential_default_policy_type": "BearerTokenCredentialPolicy",
         "credential_default_policy_type_has_async_version": true,
         "credential_key_header_name": null

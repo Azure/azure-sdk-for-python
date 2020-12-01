@@ -588,6 +588,10 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionItem(msrest.serialization.Model):
     """Private endpoint connection item.
 
+    :param name: Name of the connection item.
+    :type name: str
+    :param id: ID of  the connection item.
+    :type id: str
     :param type: Type of the connection item.
     :type type: str
     :param properties:
@@ -595,6 +599,8 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'properties': {'key': 'properties', 'type': 'PrivateLinkConnectionItemProperties'},
     }
@@ -604,6 +610,8 @@ class PrivateEndpointConnectionItem(msrest.serialization.Model):
         **kwargs
     ):
         super(PrivateEndpointConnectionItem, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
         self.properties = kwargs.get('properties', None)
 

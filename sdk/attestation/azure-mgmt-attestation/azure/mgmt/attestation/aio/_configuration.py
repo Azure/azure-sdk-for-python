@@ -43,7 +43,7 @@ class AttestationManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com'])
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'azure-mgmt-attestation/{}'.format(VERSION))
         self._configure(**kwargs)
 

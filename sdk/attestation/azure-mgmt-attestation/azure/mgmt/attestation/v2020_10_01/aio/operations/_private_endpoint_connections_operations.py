@@ -318,7 +318,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         provider_name: str,
         **kwargs
-    ) -> "_models.PrivateLinkResourceListResult":
+    ) -> "_models.PrivateEndpointConnectionsListResult":
         """Gets the private link resources supported for the provider.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -326,11 +326,11 @@ class PrivateEndpointConnectionsOperations:
         :param provider_name: The name of the attestation provider.
         :type provider_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourceListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.attestation.models.PrivateLinkResourceListResult
+        :return: PrivateEndpointConnectionsListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.attestation.models.PrivateEndpointConnectionsListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionsListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -363,7 +363,7 @@ class PrivateEndpointConnectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResourceListResult', pipeline_response)
+        deserialized = self._deserialize('PrivateEndpointConnectionsListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
