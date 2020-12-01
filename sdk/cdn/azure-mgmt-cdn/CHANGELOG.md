@@ -1,6 +1,6 @@
 # Release History
 
-## 5.2.0 (2020-11-18)
+## 5.2.0 (2020-12-01)
 
 **Features**
   - Some parameters is not required to input
