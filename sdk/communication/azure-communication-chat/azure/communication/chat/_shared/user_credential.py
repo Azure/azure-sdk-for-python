@@ -10,6 +10,7 @@ from typing import ( # pylint: disable=unused-import
     Tuple,
 )
 import six
+
 from msrest.serialization import TZ_UTC
 from .utils import create_access_token
 
@@ -70,7 +71,6 @@ class CommunicationUserCredential(object):
                     self._lock.notify_all()
 
                 raise
-
         return self._token
 
     def _wait_till_inprogress_thread_finish_refreshing(self):

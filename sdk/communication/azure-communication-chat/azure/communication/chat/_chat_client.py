@@ -14,7 +14,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
-from ._shared.token_credential import CommunicationTokenCredential
 from ._chat_thread_client import ChatThreadClient
 from ._shared.user_credential import CommunicationUserCredential
 from ._generated import AzureCommunicationChatService
@@ -74,11 +73,9 @@ class ChatClient(object):
         self._endpoint = endpoint
         self._credential = credential
 
-        token_credential = CommunicationTokenCredential(self._credential)
-
         self._client = AzureCommunicationChatService(
             self._endpoint,
-            authentication_policy=BearerTokenCredentialPolicy(token_credential),
+            authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
