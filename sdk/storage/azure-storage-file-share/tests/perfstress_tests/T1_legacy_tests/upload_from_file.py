@@ -31,10 +31,11 @@ class LegacyUploadFromFileTest(_LegacyShareTest):
             share_name=self.share_name,
             directory_name=None,
             file_name=self.file_name,
-            local_file_path=self.temp_file)
+            local_file_path=self.temp_file,
+            max_connections=self.args.max_concurrency)
 
     async def run_async(self):
-        raise NotImplementedError("Async not supported for legacy tests.")
+        raise NotImplementedError("Async not supported for legacy T1 tests.")
 
     @staticmethod
     def add_arguments(parser):

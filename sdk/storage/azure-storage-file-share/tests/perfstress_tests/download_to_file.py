@@ -22,12 +22,12 @@ class DownloadToFileTest(_ShareTest):
 
     def run_sync(self):
         with tempfile.TemporaryFile() as fp:
-            stream = self.sharefile_client.download_file(max_concurrency=self.args.parallel)
+            stream = self.sharefile_client.download_file(max_concurrency=self.args.max_concurrency)
             stream.readinto(fp)
 
     async def run_async(self):
         with tempfile.TemporaryFile() as fp:
-            stream = await self.async_sharefile_client.download_file(max_concurrency=self.args.parallel)
+            stream = await self.async_sharefile_client.download_file(max_concurrency=self.args.max_concurrency)
             await stream.readinto(fp)
 
     async def close(self):

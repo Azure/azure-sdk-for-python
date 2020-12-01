@@ -23,16 +23,18 @@ class LegacyUploadTest(_LegacyShareTest):
                 share_name=self.share_name,
                 directory_name=None,
                 file_name=self.file_name,
-                stream=data)
+                stream=data,
+                max_connections=self.args.max_concurrency)
         else:
             self.service_client.create_file_from_bytes(
                 share_name=self.share_name,
                 directory_name=None,
                 file_name=self.file_name,
-                file=self.data)
+                file=self.data,
+                max_connections=self.args.max_concurrency)
 
     async def run_async(self):
-        raise NotImplementedError("Async not supported for legacy tests.")
+        raise NotImplementedError("Async not supported for legacy T1 tests.")
 
     @staticmethod
     def add_arguments(parser):

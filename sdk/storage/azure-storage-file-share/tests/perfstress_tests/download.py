@@ -19,11 +19,11 @@ class DownloadTest(_ShareTest):
         await self.async_sharefile_client.upload_file(data)
 
     def run_sync(self):
-        stream = self.sharefile_client.download_file(max_concurrency=self.args.parallel)
+        stream = self.sharefile_client.download_file(max_concurrency=self.args.max_concurrency)
         stream.readall()
 
     async def run_async(self):
-        stream = await self.async_sharefile_client.download_file(max_concurrency=self.args.parallel)
+        stream = await self.async_sharefile_client.download_file(max_concurrency=self.args.max_concurrency)
         await stream.readall()
 
     async def close(self):

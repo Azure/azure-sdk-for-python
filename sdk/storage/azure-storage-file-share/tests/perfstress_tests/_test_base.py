@@ -41,6 +41,7 @@ class _ServiceTest(PerfStressTest):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
         parser.add_argument('--max-range-size', nargs='?', type=int, help='Maximum size of file uploading in single HTTP PUT. Defaults to 4*1024*1024', default=4*1024*1024)
         parser.add_argument('--service-client-per-instance', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+        parser.add_argument('--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
 
 
 class _ShareTest(_ServiceTest):

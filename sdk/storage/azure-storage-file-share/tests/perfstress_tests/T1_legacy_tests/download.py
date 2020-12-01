@@ -23,10 +23,10 @@ class LegacyDownloadTest(_LegacyShareTest):
             share_name=self.share_name,
             directory_name=None,
             file_name=self.file_name,
-            max_connections=self.args.parallel)
+            max_connections=self.args.max_concurrency)
 
     async def run_async(self):
-        raise NotImplementedError("Async not supported for legacy tests.")
+        raise NotImplementedError("Async not supported for legacy T1 tests.")
 
     @staticmethod
     def add_arguments(parser):

@@ -16,11 +16,17 @@ class UploadTest(_FileTest):
 
     def run_sync(self):
         data = RandomStream(self.args.size) if self.args.stream else self.data
-        self.sharefile_client.upload_file(data, length=self.args.size)
+        self.sharefile_client.upload_file(
+            data,
+            length=self.args.size,
+            max_concurrency=self.args.max_concurrency)
 
     async def run_async(self):
         data = AsyncRandomStream(self.args.size) if self.args.stream else self.data
-        await self.async_sharefile_client.upload_file(data, length=self.args.size)
+        await self.async_sharefile_client.upload_file(
+            data,
+            length=self.args.size,
+            max_concurrency=self.args.max_concurrency)
 
     @staticmethod
     def add_arguments(parser):

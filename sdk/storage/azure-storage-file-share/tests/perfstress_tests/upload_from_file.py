@@ -27,10 +27,11 @@ class UploadFromFileTest(_FileTest):
 
     def run_sync(self):
         with open(self.temp_file) as fp:
-            self.sharefile_client.upload_file(fp)
+            self.sharefile_client.upload_file(fp, max_concurrency=self.args.max_concurrency)
 
     async def run_async(self):
-        await self.async_sharefile_client.upload_file(self.temp_file)
+        with open(self.temp_file) as fp:
+            await self.async_sharefile_client.upload_file(fp, max_concurrency=self.args.max_concurrency)
 
     @staticmethod
     def add_arguments(parser):
