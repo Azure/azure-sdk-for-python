@@ -81,7 +81,7 @@ class TestBaseExporter(unittest.TestCase):
         # File would be locked for 1 second
         self.assertIsNone(self._base.storage.get())
         # File still present
-        self.assertEqual(len(os.listdir(self._base.storage._path)), 1)
+        self.assertGreaterEqual(len(os.listdir(self._base.storage._path)), 1)
 
     def test_transmit_from_storage_failed_not_retryable(self):
         envelopes_to_store = [x.as_dict() for x in self._envelopes_to_export]
