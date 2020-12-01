@@ -63,6 +63,13 @@ setup(
             "PyGithub>=1.40", # Can Merge PR after 1.36, "requests" and tests after 1.40
             "GitPython",
             "requests>=2.0"
+        ],
+        'systemperf':[
+            "aiohttp>=3.0",
+            "requests>=2.0",
+            "tornado==6.0.3"
+            "pycurl==7.43.0.5"
+            "httpx==0.11.1"
         ]
     },
     package_dir={'': 'src'},
