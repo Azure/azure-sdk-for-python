@@ -6,10 +6,11 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 from azure.core.async_paging import AsyncPageIterator
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob.aio._models import ContainerPropertiesPaged
 
 from .._deserialize import return_headers_and_deserialized_path_list, process_storage_error
-from .._generated.models import StorageErrorException, Path
+from .._generated.models import Path
 from .._models import PathProperties
 
 from .._models import FileSystemProperties
@@ -91,7 +92,7 @@ class PathPropertiesPaged(AsyncPageIterator):
                 max_results=self.results_per_page,
                 upn=self.upn,
                 cls=return_headers_and_deserialized_path_list)
-        except StorageErrorException as error:
+        except HttpResponseError as error:
             process_storage_error(error)
 
     async def _extract_data_cb(self, get_next_return):
