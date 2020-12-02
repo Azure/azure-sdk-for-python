@@ -408,12 +408,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def _upload_blob_from_url_options(self, source_url, **kwargs):
         # type: (...) -> Dict[str, Any]
-        headers = kwargs.pop('headers', {})
         tier = kwargs.pop('standard_blob_tier', None)
         overwrite = kwargs.pop('overwrite', False)
         include_source_blob_properties = kwargs.pop('include_source_blob_properties', True)
-        timeout = kwargs.pop('timeout', None)
-        dest_mod_conditions = get_modify_conditions(kwargs)
         blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
         content_settings = kwargs.pop('content_settings', None)
         source_content_md5 = kwargs.pop('source_content_md5', None)
@@ -433,25 +430,21 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
-        kwargs['cpk_info'] = cpk_info
-        kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
 
         options = {
             'content_length': 0,
             'copy_source_blob_properties': include_source_blob_properties,
             'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
             'copy_source': source_url,
-            'timeout': timeout,
-            'modified_access_conditions': dest_mod_conditions,
+            'modified_access_conditions': get_modify_conditions(kwargs),
             'blob_tags_string': blob_tags_string,
-            'headers': headers,
             'cls': return_response_headers,
+            'lease_access_conditions': get_access_conditions(kwargs.pop('destination_lease', None)),
+            'tier': tier.value if tier else None,
+            'source_modified_access_conditions': get_source_conditions(kwargs),
+            'cpk_info': cpk_info,
+            'cpk_scope_info': get_cpk_scope_info(kwargs)
         }
-        source_mod_conditions = get_source_conditions(kwargs)
-        dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
-        options['source_modified_access_conditions'] = source_mod_conditions
-        options['lease_access_conditions'] = dest_access_conditions
-        options['tier'] = tier.value if tier else None
         options.update(kwargs)
         if not overwrite and not _any_conditions(**options): # pylint: disable=protected-access
             options['modified_access_conditions'].if_none_match = '*'
