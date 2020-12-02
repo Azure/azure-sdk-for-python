@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .relay_management_client import RelayManagementClient
-from .version import VERSION
+from ._configuration import RelayManagementClientConfiguration
+from ._relay_management_client import RelayManagementClient
+__all__ = ['RelayManagementClient', 'RelayManagementClientConfiguration']
 
-__all__ = ['RelayManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

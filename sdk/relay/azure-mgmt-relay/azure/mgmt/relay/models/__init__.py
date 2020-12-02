@@ -10,45 +10,45 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_namespace_patch_py3 import ResourceNamespacePatch
-    from .resource_py3 import Resource
-    from .hybrid_connection_py3 import HybridConnection
-    from .wcf_relay_py3 import WcfRelay
-    from .sku_py3 import Sku
-    from .relay_namespace_py3 import RelayNamespace
-    from .relay_update_parameters_py3 import RelayUpdateParameters
-    from .authorization_rule_py3 import AuthorizationRule
-    from .access_keys_py3 import AccessKeys
-    from .regenerate_access_key_parameters_py3 import RegenerateAccessKeyParameters
-    from .check_name_availability_py3 import CheckNameAvailability
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import AccessKeys
+    from ._models_py3 import AuthorizationRule
+    from ._models_py3 import CheckNameAvailability
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import HybridConnection
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import RegenerateAccessKeyParameters
+    from ._models_py3 import RelayNamespace
+    from ._models_py3 import RelayUpdateParameters
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceNamespacePatch
+    from ._models_py3 import Sku
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import WcfRelay
 except (SyntaxError, ImportError):
-    from .tracked_resource import TrackedResource
-    from .resource_namespace_patch import ResourceNamespacePatch
-    from .resource import Resource
-    from .hybrid_connection import HybridConnection
-    from .wcf_relay import WcfRelay
-    from .sku import Sku
-    from .relay_namespace import RelayNamespace
-    from .relay_update_parameters import RelayUpdateParameters
-    from .authorization_rule import AuthorizationRule
-    from .access_keys import AccessKeys
-    from .regenerate_access_key_parameters import RegenerateAccessKeyParameters
-    from .check_name_availability import CheckNameAvailability
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .error_response import ErrorResponse, ErrorResponseException
-from .operation_paged import OperationPaged
-from .relay_namespace_paged import RelayNamespacePaged
-from .authorization_rule_paged import AuthorizationRulePaged
-from .hybrid_connection_paged import HybridConnectionPaged
-from .wcf_relay_paged import WcfRelayPaged
-from .relay_management_client_enums import (
+    from ._models import AccessKeys
+    from ._models import AuthorizationRule
+    from ._models import CheckNameAvailability
+    from ._models import CheckNameAvailabilityResult
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import HybridConnection
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import RegenerateAccessKeyParameters
+    from ._models import RelayNamespace
+    from ._models import RelayUpdateParameters
+    from ._models import Resource
+    from ._models import ResourceNamespacePatch
+    from ._models import Sku
+    from ._models import TrackedResource
+    from ._models import WcfRelay
+from ._paged_models import AuthorizationRulePaged
+from ._paged_models import HybridConnectionPaged
+from ._paged_models import OperationPaged
+from ._paged_models import RelayNamespacePaged
+from ._paged_models import WcfRelayPaged
+from ._relay_management_client_enums import (
     Relaytype,
     SkuTier,
     ProvisioningStateEnum,
@@ -58,22 +58,22 @@ from .relay_management_client_enums import (
 )
 
 __all__ = [
-    'TrackedResource',
-    'ResourceNamespacePatch',
-    'Resource',
-    'HybridConnection',
-    'WcfRelay',
-    'Sku',
-    'RelayNamespace',
-    'RelayUpdateParameters',
-    'AuthorizationRule',
     'AccessKeys',
-    'RegenerateAccessKeyParameters',
+    'AuthorizationRule',
     'CheckNameAvailability',
     'CheckNameAvailabilityResult',
-    'OperationDisplay',
-    'Operation',
     'ErrorResponse', 'ErrorResponseException',
+    'HybridConnection',
+    'Operation',
+    'OperationDisplay',
+    'RegenerateAccessKeyParameters',
+    'RelayNamespace',
+    'RelayUpdateParameters',
+    'Resource',
+    'ResourceNamespacePatch',
+    'Sku',
+    'TrackedResource',
+    'WcfRelay',
     'OperationPaged',
     'RelayNamespacePaged',
     'AuthorizationRulePaged',

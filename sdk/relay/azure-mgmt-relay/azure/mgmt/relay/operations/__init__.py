@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .namespaces_operations import NamespacesOperations
-from .hybrid_connections_operations import HybridConnectionsOperations
-from .wcf_relays_operations import WCFRelaysOperations
+from ._operations import Operations
+from ._namespaces_operations import NamespacesOperations
+from ._hybrid_connections_operations import HybridConnectionsOperations
+from ._wcf_relays_operations import WCFRelaysOperations
 
 __all__ = [
     'Operations',
