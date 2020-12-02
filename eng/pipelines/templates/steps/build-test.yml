@@ -23,7 +23,7 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - ${{ if eq(parameters.PythonVersion), '3.9.0') }}:
+  - ${{ if eq(parameters.PythonVersion, '3.9.0') }}:
     parameters.RunCoverage: true
     parameters.CoverageArg: ''
     - pwsh: |
