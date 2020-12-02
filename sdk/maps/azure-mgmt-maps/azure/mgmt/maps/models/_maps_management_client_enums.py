@@ -9,11 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import MapsManagementClientConfiguration
-from ._maps_management_client import MapsManagementClient
-__all__ = ['MapsManagementClient', 'MapsManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class CreatedByType(str, Enum):
 
+    user = "User"
+    application = "Application"
+    managed_identity = "ManagedIdentity"
+    key = "Key"
+
+
+class KeyType(str, Enum):
+
+    primary = "primary"
+    secondary = "secondary"
