@@ -74,7 +74,7 @@ additional questions or comments.
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
 
-[package]: placeholder
+[package]: TODO://link-to-published-package
 [source]: TODO://link-to-path-in-the-SDK-repo
 [samples]: https://github.com/Azure-Samples/live-video-analytics-iot-edge-python
 
